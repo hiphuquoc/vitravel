@@ -1,0 +1,220 @@
+# ViTravel — Kiến trúc cơ sở dữ liệu
+
+> **Ngày:** 2026-07-27  
+> **Stack:** Laravel 13 · MySQL/MariaDB (utf8mb4) · Eloquent  
+> **Tham chiếu:** `docs/03-data-models.md` (product schema) · Hitour.dev V3.1 (`system.md` §4.3 — Translation Table + SEO hub)  
+> **Phạm vi:** Toàn bộ entity phục vụ UI hiện tại (Blade + `SampleData`) và roadmap lead-gen agency. **Không** gồm booking/payment/cart (ngoài V1).
+
+---
+
+## 1. Mục tiêu thiết kế
+
+| Mục tiêu | Cách đạt |
+|---|---|
+| Linh hoạt | Taxonomy chuẩn hoá (travel style, category, tag); JSON chỉ cho list không-facet; polymorphic FAQ/media |
+| Ổn định | FK + soft delete nội dung; status workflow (`draft/published/archived`); lead/comment moderation |
+| Tối ưu query | Index facet listing (`country_id`, `duration_days`, pivots); unique `(language_id, slug_full)` cho routing |
+| Đẳng cấp i18n/SEO | Pattern Hitour: `languages` + `seo_entries` hub + `*_translations` — sẵn sàng VI/EN (và locale mới) |
+| Greenfield sạch | Không kế thừa legacy Blade-as-content của Hitour; body rich text lưu DB |
+
+---
+
+## 2. Triết lý (vay từ Hitour, điều chỉnh cho ViTravel)
+
+### 2.1. Giữ từ Hitour (nâng cấp)
+
+1. **Translation Table (hướng B)** — mỗi entity có bảng `*_translations` với `UNIQUE(entity_id, language_id)`.
+2. **SEO hub** — mọi URL công khai đi qua `seo_entries` + `seo_entry_translations` (slug / meta / status theo locale).
+3. **Tách cột locale-independent vs dependent** — giá, ngày, rating, FK ở bảng gốc; title/content/slug ở translation.
+4. **Trait `HasTranslations` + `HasSeo`** — magic accessor / fallback locale.
+
+### 2.2. Khác Hitour (vì product khác)
+
+| Hitour (OTA) | ViTravel (Agency / lead-gen) |
+|---|---|
+| `tour_info`, ship, hotel, combo, booking | `packages` (tour \| cruise), blog, brand, **3 lead forms** |
+| Blade file content theo slug | Rich text / HTML trong DB |
+| Bảng `seo` legacy + migrate dần | `seo_entries` greenfield sạch |
+| Commerce / giá động / booking qty | `price_from` display-only; CTA → inquiry |
+
+### 2.3. Package thống nhất Tour + Cruise
+
+UI có 2 route (`/tours/...`, `/cruises/...`) nhưng layout chi tiết gần như giống nhau. DB dùng **một bảng `packages`** với `type = tour|cruise` + cột cruise-only nullable (`cruise_type`, `departure_port`, `boat_class`, `nights_on_board`). Cabin types / itinerary gắn theo `package_id`.
+
+---
+
+## 3. Sơ đồ lớp bảng
+
+```
+┌─────────────┐     ┌──────────────┐     ┌─────────────────────┐
+│  languages  │◄────│ seo_entries  │────►│ seo_entry_translations│
+└─────────────┘     │  (hub URL)   │     │  slug, meta, status │
+       ▲            └──────┬───────┘     └─────────────────────┘
+       │                   │ morph reference_type/id
+       │            ┌──────▼───────┐
+       │            │   packages   │◄── pivots: categories, styles, related, destinations
+       │            │ tour|cruise  │
+       │            └──────┬───────┘
+       │                   ├── package_translations
+       │                   ├── package_itinerary_days (+ translations)
+       │                   └── package_cabin_types (+ translations) [cruise]
+       │
+       ├── countries / destinations (+ translations)
+       ├── taxonomies: travel_styles, tour_categories, blog_categories,
+       │               content_type_tags, keyword_tags
+       ├── articles (+ translations, tag pivots, related tours/articles)
+       ├── comments (moderation)
+       ├── reviews (morph package|company)
+       ├── brand: company_*, team, offices, usps, hero_pills, static_pages
+       ├── media + media_attachments (morph gallery)
+       ├── faqs (morph)
+       └── leads: quick_inquiries, custom_tour_requests, contact_messages
+```
+
+---
+
+## 4. Chi tiết nhóm bảng
+
+### 4.1. Nền tảng
+
+| Bảng | Vai trò |
+|---|---|
+| `languages` | Danh mục locale (`vi` default, `en` active) |
+| `media` | Thư viện asset (path, mime, size, w/h) |
+| `seo_entries` | Hub routing: `reference_type`, `reference_id`, og image, aggregate rating cache |
+| `seo_entry_translations` | `slug`, `slug_full`, meta title/description, keywords, status, translation_status |
+
+### 4.2. Địa lý & taxonomy
+
+| Bảng | Facet / UI |
+|---|---|
+| `countries` | Mega menu, bento Home, listing `/tours/{country}` |
+| `destinations` | Filter phụ, blog sidebar level=destination |
+| `travel_styles` | Facet 11 “Stile di viaggio” |
+| `tour_categories` | Duration/region/theme listing + FAQ category |
+| `blog_categories` | Sidebar “Categorie del blog” |
+| `content_type_tags` | “Filtra articoli” |
+| `keyword_tags` | Tag cloud SEO |
+
+### 4.3. Sản phẩm (`packages`)
+
+Cột quan trọng (locale-independent):
+
+- `type`, `country_id`, `code`, `duration_days`, `duration_nights`
+- `rating`, `review_count`, `price_from`, `currency`
+- `is_featured`, `is_hot_deal`, `status`, `published_at`
+- Cruise: `cruise_type`, `departure_port`, `boat_class`, `nights_on_board`
+
+Translation: `title`, `start/end_location`, `places_to_visit` (JSON), `featured_quote_*`, highlights, inclusions/exclusions/notes (JSON), body fields.
+
+Itinerary: `day_number`, meals, `transport_icons` (JSON), overnight, content (translated).
+
+### 4.4. Content hub
+
+`articles` + translations + pivots tags + `article_package` (cầu nối content→product) + `article_related` + `comments` (`pending|approved|rejected`).
+
+### 4.5. Social proof & brand
+
+`reviews` (morph), `team_members`, `offices`, `experience_albums`/`photos`, `experience_videos`, `usps`, `company_values`, `reasons_to_choose_us`, `reference_persons`, `company_profiles` (intro/mission/vision/policy singleton-ish), `hero_pills`, `review_platforms`, `static_pages`.
+
+### 4.6. Shared
+
+- `faqs`: `faqable_type/id`, order, translations (question/answer)
+- `media_attachments`: `mediable_type/id`, `media_id`, role (`cover|gallery|map|avatar|og`), sort
+
+### 4.7. Leads (3 schema tách — bắt buộc)
+
+1. `quick_inquiry_leads`
+2. `custom_tour_requests` (JSON arrays cho countries/accommodation)
+3. `contact_messages`
+
+Không gộp 1 bảng “leads” chung — reporting nguồn lead phải tách sạch.
+
+---
+
+## 5. Quy ước kỹ thuật
+
+### 5.1. Naming
+
+- Bảng: `snake_case` số nhiều (`packages`, `seo_entries`)
+- Translation: `<entity>_translations`
+- Pivot: alphabetical hoặc domain-first (`package_travel_style`, `article_content_type_tag`)
+- Enum string ngắn, ổn định (`tour`, `cruise`, `published`, `pending`)
+
+### 5.2. Status
+
+| Entity | Status |
+|---|---|
+| Nội dung public | `draft` \| `published` \| `archived` |
+| Lead | `new` \| `contacted` \| `quoted` \| `closed` \| `spam` |
+| Comment | `pending` \| `approved` \| `rejected` |
+| SEO locale | `draft` \| `published` \| `archived` |
+
+### 5.3. Index bắt buộc
+
+- `seo_entry_translations (language_id, slug_full)` UNIQUE
+- `packages (type, country_id, status, is_featured)`
+- `packages (duration_days)`, `packages (cruise_type)`
+- Pivot FKs có index hai chiều
+- `articles (status, published_at)`, `comments (article_id, status)`
+- Lead `created_at`, `status`
+
+### 5.4. Soft delete
+
+Áp dụng cho: packages, articles, countries, destinations, taxonomies, team, media (không xoá cứng khi đang gắn). Lead/comment **không** soft-delete mặc định (giữ audit; dùng status `spam`/`rejected`).
+
+### 5.5. Fallback locale
+
+Đọc translation: locale hiện tại → `languages.is_default` → null. Không bao giờ “lai” `slug_full` giữa 2 locale (quy tắc Hitour).
+
+---
+
+## 6. Mapping UI → bảng
+
+| UI / Route | Bảng chính |
+|---|---|
+| Home hero pills | `hero_pills` |
+| Home featured tours | `packages` (`is_featured`, type=tour) |
+| Bento destinations | `countries.home_grid_size` |
+| Tour listing + filter | `packages` + `travel_styles` + duration buckets (query) |
+| Tour/Cruise detail | `packages` + itinerary + cabin + faqs + reviews |
+| Blog listing/detail | `articles` + blog taxonomies + comments |
+| About | `company_profiles`, values, reasons, reference_persons, team |
+| Reviews page | `reviews` (company + package) |
+| Gallery / Video | `experience_albums`, `experience_videos` |
+| Customize / Contact / Quick inquiry | 3 bảng lead |
+| Header VI/EN | `languages` + seo translations |
+
+---
+
+## 7. Lộ trình dùng schema
+
+1. **Migrate** toàn bộ file `database/migrations/2026_07_27_*`
+2. **Seed** `LanguageSeeder` + `TaxonomySeeder` (11 travel styles, cruise types constants)
+3. **(Tiếp theo)** Seeder nội dung từ `SampleData` → thay mock trong controllers
+4. **(Tiếp theo)** API/Form submit → 3 lead tables + comments pending
+5. **(Tiếp theo)** Admin CMS đọc/ghi qua Eloquent + SEO hub
+
+---
+
+## 8. File liên quan
+
+| File | Nội dung |
+|---|---|
+| `docs/03-data-models.md` | Product field spec (đã cập nhật ánh xạ SQL) |
+| `database/migrations/2026_07_27_*` | Schema thật |
+| `app/Models/*` | Eloquent + relations |
+| `app/Models/Concerns/HasTranslations.php` | Trait i18n |
+| `app/Models/Concerns/HasSeo.php` | Trait SEO hub |
+| `database/seeders/LanguageSeeder.php` | vi / en |
+| `database/seeders/TaxonomySeeder.php` | travel styles & tags khung |
+
+---
+
+## 9. Quyết định đã chốt
+
+1. Một bảng `packages` cho tour + cruise (DRY, vẫn phục vụ 2 URL group).
+2. SEO hub bắt buộc cho mọi entity có URL public.
+3. Ba bảng lead tách — khớp form thật & analytics.
+4. FAQ / gallery polymorphic — tránh nhân bảng FAQ cho từng entity.
+5. Không implement booking tables trong V1.

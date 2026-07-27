@@ -1,0 +1,42 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\Concerns\HasTranslations;
+use Illuminate\Database\Eloquent\Model;
+
+class Usp extends Model
+{
+    use HasTranslations;
+
+    /** @var list<string> */
+    protected array $translatable = ['title', 'description'];
+
+    public static function iconOptions(): array
+    {
+        return [
+            'expert' => 'Chuyên gia (expert)',
+            'refund' => 'Hoàn tiền (refund)',
+            'value' => 'Giá trị (value)',
+            'support' => 'Hỗ trợ (support)',
+            'shield' => 'Bảo vệ (shield)',
+            'compass' => 'La bàn (compass)',
+            'sparkles' => 'Nổi bật (sparkles)',
+        ];
+    }
+
+    protected $fillable = ['icon', 'sort', 'is_active'];
+
+    protected function casts(): array
+    {
+        return [
+            'sort' => 'integer',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    protected function translationClass(): string
+    {
+        return UspTranslation::class;
+    }
+}

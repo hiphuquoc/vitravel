@@ -1,0 +1,140 @@
+<?php
+
+use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\CommentController;
+use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\HomeSectionController;
+use App\Http\Controllers\Admin\HomeSlideController;
+use App\Http\Controllers\Admin\HelperController;
+use App\Http\Controllers\Admin\LeadController;
+use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\TourCategoryController;
+use App\Http\Controllers\Auth\LoginController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/he-thong', [LoginController::class, 'loginForm'])->name('admin.loginForm');
+Route::post('/loginAdmin', [LoginController::class, 'loginAdmin'])->name('admin.loginAdmin');
+Route::get('/logout', [LoginController::class, 'logout'])->name('admin.logout');
+
+Route::middleware(['auth', 'role:admin'])
+    ->prefix('he-thong')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        /* ===== Tour packages ===== */
+        Route::prefix('san-pham/tour')->group(function () {
+            Route::get('/', [PackageController::class, 'list'])->defaults('packageType', 'tour')->name('packages.tours');
+            Route::get('/list', [PackageController::class, 'list'])->defaults('packageType', 'tour');
+            Route::get('/view', [PackageController::class, 'view'])->defaults('packageType', 'tour')->name('packages.tours.view');
+            Route::post('/createAndUpdate', [PackageController::class, 'createAndUpdate'])->defaults('packageType', 'tour')->name('packages.tours.save');
+            Route::get('/delete', [PackageController::class, 'delete'])->defaults('packageType', 'tour')->name('packages.tours.delete');
+        });
+
+        /* ===== Cruise packages ===== */
+        Route::prefix('san-pham/cruise')->group(function () {
+            Route::get('/', [PackageController::class, 'list'])->defaults('packageType', 'cruise')->name('packages.cruises');
+            Route::get('/list', [PackageController::class, 'list'])->defaults('packageType', 'cruise');
+            Route::get('/view', [PackageController::class, 'view'])->defaults('packageType', 'cruise')->name('packages.cruises.view');
+            Route::post('/createAndUpdate', [PackageController::class, 'createAndUpdate'])->defaults('packageType', 'cruise')->name('packages.cruises.save');
+            Route::get('/delete', [PackageController::class, 'delete'])->defaults('packageType', 'cruise')->name('packages.cruises.delete');
+        });
+
+        /* Backward-compatible aliases */
+        Route::get('/san-pham/view', fn () => redirect()->route('admin.packages.tours.view', request()->query()));
+        Route::post('/san-pham/save', fn () => redirect()->route('admin.packages.tours.save'));
+        Route::get('/san-pham/delete', fn () => redirect()->route('admin.packages.tours.delete', request()->query()));
+
+        /* ===== Countries ===== */
+        Route::prefix('san-pham/quoc-gia')->group(function () {
+            Route::get('/', [CountryController::class, 'list'])->name('countries.list');
+            Route::get('/list', [CountryController::class, 'list']);
+            Route::get('/view', [CountryController::class, 'view'])->name('countries.view');
+            Route::post('/createAndUpdate', [CountryController::class, 'createAndUpdate'])->name('countries.save');
+            Route::get('/delete', [CountryController::class, 'delete'])->name('countries.delete');
+        });
+
+        /* ===== Tour categories ===== */
+        Route::prefix('san-pham/danh-muc-tour')->group(function () {
+            Route::get('/', [TourCategoryController::class, 'list'])->name('tourCategories.list');
+            Route::get('/list', [TourCategoryController::class, 'list']);
+            Route::get('/view', [TourCategoryController::class, 'view'])->name('tourCategories.view');
+            Route::post('/createAndUpdate', [TourCategoryController::class, 'createAndUpdate'])->name('tourCategories.save');
+            Route::get('/delete', [TourCategoryController::class, 'delete'])->name('tourCategories.delete');
+        });
+
+        /* ===== Articles ===== */
+        Route::prefix('bai-viet')->group(function () {
+            Route::get('/', [ArticleController::class, 'list'])->name('articles.list');
+            Route::get('/list', [ArticleController::class, 'list']);
+            Route::get('/view', [ArticleController::class, 'view'])->name('articles.view');
+            Route::post('/createAndUpdate', [ArticleController::class, 'createAndUpdate'])->name('articles.save');
+            Route::get('/delete', [ArticleController::class, 'delete'])->name('articles.delete');
+        });
+
+        /* ===== Team members ===== */
+        Route::prefix('doi-ngu')->group(function () {
+            Route::get('/', [TeamMemberController::class, 'list'])->name('team.list');
+            Route::get('/list', [TeamMemberController::class, 'list']);
+            Route::get('/view', [TeamMemberController::class, 'view'])->name('team.view');
+            Route::post('/createAndUpdate', [TeamMemberController::class, 'createAndUpdate'])->name('team.save');
+            Route::get('/delete', [TeamMemberController::class, 'delete'])->name('team.delete');
+        });
+
+        /* ===== Leads ===== */
+        Route::prefix('yeu-cau-nhanh')->group(function () {
+            Route::get('/', [LeadController::class, 'quickInquiries'])->name('leads.quickInquiries');
+            Route::post('/status', [LeadController::class, 'updateQuickInquiryStatus'])->name('leads.quickInquiries.status');
+        });
+        Route::prefix('tour-rieng')->group(function () {
+            Route::get('/', [LeadController::class, 'customTours'])->name('leads.customTours');
+            Route::post('/status', [LeadController::class, 'updateCustomTourStatus'])->name('leads.customTours.status');
+        });
+        Route::prefix('lien-he')->group(function () {
+            Route::get('/', [LeadController::class, 'contacts'])->name('leads.contacts');
+            Route::post('/status', [LeadController::class, 'updateContactStatus'])->name('leads.contacts.status');
+        });
+
+        /* ===== Comments ===== */
+        Route::prefix('binh-luan')->group(function () {
+            Route::get('/', [CommentController::class, 'list'])->name('leads.comments');
+            Route::get('/approve', [CommentController::class, 'approve'])->name('comments.approve');
+            Route::get('/reject', [CommentController::class, 'reject'])->name('comments.reject');
+        });
+
+        /* ===== Home page content ===== */
+        Route::prefix('noi-dung-trang-chu')->group(function () {
+            Route::get('/', [HomeSectionController::class, 'edit'])->name('homeSections.edit');
+            Route::get('/list', fn () => redirect()->route('admin.homeSections.edit', request()->query()));
+            Route::get('/view', fn () => redirect()->route('admin.homeSections.edit', request()->query()));
+            Route::post('/save', [HomeSectionController::class, 'save'])->name('homeSections.save');
+        });
+
+        /* ===== Home slider ===== */
+        Route::prefix('slider-trang-chu')->group(function () {
+            Route::get('/', [HomeSlideController::class, 'list'])->name('homeSlides.list');
+            Route::get('/list', [HomeSlideController::class, 'list']);
+            Route::get('/view', [HomeSlideController::class, 'view'])->name('homeSlides.view');
+            Route::post('/createAndUpdate', [HomeSlideController::class, 'createAndUpdate'])->name('homeSlides.save');
+            Route::get('/delete', [HomeSlideController::class, 'delete'])->name('homeSlides.delete');
+        });
+
+        /* ===== Helpers ===== */
+        Route::post('/helper/convertStrToSlug', [HelperController::class, 'convertStrToSlug'])->name('helper.convertStrToSlug');
+        Route::post('/helper/slug', [HelperController::class, 'convertStrToSlug'])->name('helper.slug');
+        Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+
+        /* Placeholders */
+        Route::get('/chuyen-muc-blog', fn () => redirect()->route('admin.dashboard'))->name('blogCategories.list');
+        Route::get('/van-phong', fn () => redirect()->route('admin.dashboard'))->name('offices.list');
+        Route::get('/cong-ty', fn () => redirect()->route('admin.dashboard'))->name('company.profile');
+        Route::get('/danh-gia', fn () => redirect()->route('admin.dashboard'))->name('reviews.list');
+        Route::get('/thu-vien-anh', fn () => redirect()->route('admin.dashboard'))->name('gallery.list');
+        Route::get('/video', fn () => redirect()->route('admin.dashboard'))->name('videos.list');
+        Route::get('/cai-dat/ngon-ngu', fn () => redirect()->route('admin.dashboard'))->name('settings.languages');
+        Route::get('/cai-dat/phong-cach', fn () => redirect()->route('admin.dashboard'))->name('settings.travelStyles');
+        Route::get('/cai-dat/media', fn () => redirect()->route('admin.homeSlides.list'))->name('settings.media');
+    });
