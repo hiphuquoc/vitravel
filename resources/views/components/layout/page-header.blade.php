@@ -6,13 +6,15 @@
 ])
 
 {{-- Pattern chuẩn toàn site: banner ảnh + card trắng chứa H1/breadcrumb đè lên --}}
-<section class="relative">
-    <x-ph class="h-44 w-full sm:h-56 lg:h-64" :label="$bannerLabel ?? 'Ảnh banner: ' . $title" icon="photo" icon-class="size-12" />
+<section class="relative page-header">
+    <div class="page-header__banner">
+        <x-ph class="h-full w-full" :label="$bannerLabel ?? 'Ảnh banner: ' . $title" icon="photo" icon-class="size-12" />
+    </div>
     <div class="container-site">
-        <div class="relative -mt-14 sm:-mt-16">
-            <div class="card max-w-3xl px-6 py-5 sm:px-8">
+        <div class="page-header__card-wrap">
+            <div class="card page-header__card">
                 <x-layout.breadcrumb :items="$breadcrumbs" class="mb-3" />
-                <h1 class="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">{{ $title }}</h1>
+                <h1 class="page-header__title">{{ $title }}</h1>
                 @if ($subtitle)
                     <p class="body-text mt-2">{{ $subtitle }}</p>
                 @endif

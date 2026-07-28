@@ -21,7 +21,7 @@
     @keydown.arrow-left.prevent="if (total > 1) goPrev()"
     @keydown.arrow-right.prevent="if (total > 1) goNext()">
 
-    <div class="relative h-[420px] w-full overflow-hidden sm:h-[480px] lg:h-[540px]">
+    <div class="hero-slider-stage relative w-full overflow-hidden">
         @forelse ($slides as $index => $slide)
             <div
                 class="absolute inset-0 transition-opacity duration-700 ease-in-out"
@@ -57,7 +57,7 @@
 
                 @if ($slide['title'] || $slide['titleAccent'] || $slide['description'])
                     <div @class([
-                        'absolute inset-0 flex flex-col justify-center px-4 sm:px-6',
+                        'absolute inset-0 flex flex-col justify-center hero-slide-copy',
                         'items-start' => ($slide['textAlign'] ?? 'center') === 'left',
                         'items-end' => ($slide['textAlign'] ?? 'center') === 'right',
                         'items-center' => ($slide['textAlign'] ?? 'center') === 'center',
@@ -70,14 +70,14 @@
                         ])>
                             @if ($slide['title'] || $slide['titleAccent'])
                                 <h1>
-                                    @if ($slide['title'])<span class="hero-slide-title">{{ $slide['title'] }}</span>@endif
+                                    @if ($slide['title'])<span class="hero-slide-title max-line-1">{{ $slide['title'] }}</span>@endif
                                     @if ($slide['titleAccent'])
-                                        <span class="hero-slide-accent">{{ $slide['titleAccent'] }}</span>
+                                        <span class="hero-slide-accent max-line-1">{{ $slide['titleAccent'] }}</span>
                                     @endif
                                 </h1>
                             @endif
                             @if ($slide['description'])
-                                <p class="hero-slide-desc">{{ $slide['description'] }}</p>
+                                <p class="hero-slide-desc max-line-2">{{ $slide['description'] }}</p>
                             @endif
                             @if ($slide['buttonLabel'] && $slide['linkUrl'])
                                 <a href="{{ $slide['linkUrl'] }}" class="btn-primary inline-flex">
@@ -93,13 +93,13 @@
             <x-ph class="h-full w-full" label="Ảnh hero: vịnh Hạ Long lúc hoàng hôn" icon-class="size-16" />
             <div class="absolute inset-0 bg-gradient-to-t from-ink/60 via-ink/15 to-ink/30"></div>
             <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_55%_at_50%_42%,rgb(39_43_35/0.28),transparent_68%)]"></div>
-            <div class="absolute inset-0 flex flex-col items-center justify-center px-4 sm:px-6">
+            <div class="absolute inset-0 flex flex-col items-center justify-center hero-slide-copy">
                 <div class="hero-slide-caption text-center">
                     <h1>
-                        <span class="hero-slide-title">Miền Bắc Việt Nam</span>
-                        <span class="hero-slide-accent">theo cách của bạn</span>
+                        <span class="hero-slide-title max-line-1">Miền Bắc Việt Nam</span>
+                        <span class="hero-slide-accent max-line-1">theo cách của bạn</span>
                     </h1>
-                    <p class="hero-slide-desc">
+                    <p class="hero-slide-desc max-line-2">
                         Tour trọn gói & hành trình riêng qua Hạ Long, Sa Pa, Ninh Bình, Hà Giang — thiết kế bởi chuyên gia bản địa.
                     </p>
                 </div>

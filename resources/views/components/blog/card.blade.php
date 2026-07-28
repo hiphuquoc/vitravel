@@ -22,18 +22,20 @@
             @endif
         </div>
     </a>
-    <div class="flex flex-1 flex-col p-5">
-        <p class="flex items-center gap-4 text-xs text-muted">
-            <span class="inline-flex items-center gap-1.5"><x-icon name="calendar" class="size-3.5" /> {{ $article['publishedAt'] }}</span>
-            <span class="inline-flex items-center gap-1.5"><x-icon name="eye" class="size-3.5" /> {{ number_format($article['views']) }} lượt xem</span>
-        </p>
-        <h3 class="item-title mt-2.5 line-clamp-2 text-lg leading-snug">
-            <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $article['title'] }}</a>
-        </h3>
-        <p class="mt-2.5 flex flex-wrap items-center gap-2 text-xs">
-            <span class="inline-flex items-center gap-1.5 text-muted"><x-icon name="user" class="size-3.5" /> {{ $article['author'] }}</span>
-            <span class="rounded-full bg-primary-50 px-2.5 py-0.5 font-semibold text-primary-700">{{ $article['category'] }}</span>
-        </p>
-        <p class="body-text mt-3 line-clamp-2 flex-1">{{ $article['excerpt'] }}</p>
+    <div class="card-body flex flex-1 flex-col">
+        <div class="card-inner flex-1">
+            <p class="blog-card-meta">
+                <span class="inline-flex items-center gap-1.5"><x-icon name="calendar" class="size-3.5" /> {{ $article['publishedAt'] }}</span>
+                <span class="inline-flex items-center gap-1.5"><x-icon name="eye" class="size-3.5" /> {{ number_format($article['views']) }} lượt xem</span>
+            </p>
+            <h3 class="item-title line-clamp-2 leading-snug">
+                <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $article['title'] }}</a>
+            </h3>
+            <p class="card-meta-row text-xs">
+                <span class="inline-flex items-center gap-1.5 text-muted"><x-icon name="user" class="size-3.5" /> {{ $article['author'] }}</span>
+                <span class="blog-card-tag">{{ $article['category'] }}</span>
+            </p>
+            <p class="body-text line-clamp-2">{{ $article['excerpt'] }}</p>
+        </div>
     </div>
 </article>

@@ -9,10 +9,10 @@
 @endphp
 
 {{-- "Hành trình chân thật" — khối giới thiệu công ty dùng chung Home + About Us --}}
-<section {{ $attributes->merge(['class' => 'cv-auto py-14']) }} aria-label="{{ $data['title'] ?? 'Giới thiệu ViTravel' }}">
+<section {{ $attributes->merge(['class' => 'cv-auto section-band']) }} aria-label="{{ $data['title'] ?? 'Giới thiệu ViTravel' }}">
     <div class="container-site">
         <div class="card grid overflow-hidden lg:grid-cols-2">
-            <div class="flex h-full min-h-0 flex-col p-8 sm:p-10 lg:p-12">
+            <div class="flex h-full min-h-0 flex-col site-pad">
                 <div>
                     @if (! empty($data['eyebrow']))
                         <span class="section-eyebrow">{{ $data['eyebrow'] }}</span>
@@ -21,23 +21,23 @@
                         <h2 class="section-title mt-1 text-balance">{{ $data['title'] }}</h2>
                     @endif
                     @if (! empty($data['body']))
-                        <p class="body-text mt-4">{!! $data['body'] !!}</p>
+                        <p class="body-text site-mt">{!! $data['body'] !!}</p>
                     @endif
                     @if (! empty($data['metaLine']))
-                        <div class="mt-6 flex items-start gap-3.5 border-t border-line pt-5">
-                            <span class="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-full bg-leaf-500/12 text-leaf-600" aria-hidden="true">
+                        <div class="company-intro__license">
+                            <span class="company-intro__license-icon" aria-hidden="true">
                                 <x-icon name="shield" class="size-5" />
                             </span>
                             <div class="min-w-0">
-                                <p class="text-sm font-semibold tracking-wide text-muted uppercase">{{ $licenseLabel }}</p>
-                                <p class="mt-1.5 text-base leading-snug font-semibold text-ink sm:text-lg">{{ $data['metaLine'] }}</p>
+                                <p class="company-intro__license-label">{{ $licenseLabel }}</p>
+                                <p class="company-intro__license-value">{{ $data['metaLine'] }}</p>
                             </div>
                         </div>
                     @endif
                 </div>
 
                 @if ($showCta && ! empty($data['ctaLabel']) && ! empty($data['ctaUrl']))
-                    <div class="mt-auto pt-8">
+                    <div class="company-intro__cta">
                         <a href="{{ $data['ctaUrl'] }}" class="btn-primary">
                             {{ $data['ctaLabel'] }}
                             <x-icon name="arrow-right" class="size-4" />

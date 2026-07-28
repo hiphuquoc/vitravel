@@ -6,13 +6,13 @@
 
 @if (count($faqs))
     <section {{ $attributes->merge(['class' => 'cv-auto']) }} aria-label="{{ $title }}">
-        <h2 class="section-title mb-6">{{ $title }}</h2>
-        <div class="space-y-3" x-data="{ open: 0 }">
+        <h2 class="section-title faq__title">{{ $title }}</h2>
+        <div class="faq-list" x-data="{ open: 0 }">
             @foreach ($faqs as $faq)
                 <div class="card overflow-hidden">
                     <h3>
                         <button type="button" @click="open = open === {{ $loop->index }} ? null : {{ $loop->index }}"
-                            class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-base font-semibold transition hover:text-primary-600"
+                            class="faq-item__trigger"
                             :aria-expanded="open === {{ $loop->index }}">
                             {{ $faq['q'] }}
                             <x-icon name="chevron-down" class="size-4 shrink-0 transition"
@@ -20,7 +20,7 @@
                         </button>
                     </h3>
                     <div x-show="open === {{ $loop->index }}" x-collapse x-cloak>
-                        <p class="body-text px-5 pb-4">{{ $faq['a'] }}</p>
+                        <p class="body-text faq-item__answer">{{ $faq['a'] }}</p>
                     </div>
                 </div>
             @endforeach

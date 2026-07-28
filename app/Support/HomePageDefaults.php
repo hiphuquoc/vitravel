@@ -14,48 +14,48 @@ class HomePageDefaults
                 'icon' => 'expert',
                 'sort' => 0,
                 'vi' => [
-                    'title' => 'Thiết kế bởi chuyên gia bản địa',
-                    'description' => 'Lịch trình cá nhân hoá từ người am hiểu từng cung đường, mùa đẹp và văn hoá địa phương.',
+                    'title' => 'trải nghiệm bản địa',
+                    'description' => 'Hành trình do chuyên gia địa phương thiết kế, chọn đúng mùa đẹp, tuyến điểm hay và trải nghiệm văn hoá chân thực.',
                 ],
                 'en' => [
-                    'title' => 'Designed by local experts',
-                    'description' => 'Personalised itineraries from people who know every route, season and local culture.',
+                    'title' => 'local-led experiences',
+                    'description' => 'Curated by local experts who pick the best seasons, routes, and truly authentic cultural moments.',
                 ],
             ],
             [
                 'icon' => 'refund',
                 'sort' => 1,
                 'vi' => [
-                    'title' => 'Cam kết hoàn tiền minh bạch',
-                    'description' => 'Chính sách huỷ linh hoạt, điều khoản rõ ràng ngay từ báo giá đầu tiên.',
+                    'title' => 'giá rõ ràng, minh bạch',
+                    'description' => 'Báo giá trọn gói, không chi phí ẩn. Chính sách huỷ linh hoạt và hoàn tiền rõ ràng ngay từ đầu.',
                 ],
                 'en' => [
-                    'title' => 'Transparent refund promise',
-                    'description' => 'Flexible cancellation with clear terms from your very first quote.',
+                    'title' => 'clear, transparent pricing',
+                    'description' => 'All-in pricing with no hidden fees. Flexible cancellation and clear refund terms from the start.',
                 ],
             ],
             [
                 'icon' => 'value',
                 'sort' => 2,
                 'vi' => [
-                    'title' => 'Giá trị vượt trội',
-                    'description' => 'Chất lượng cao cấp, giá cạnh tranh — làm việc trực tiếp với đối tác, không qua trung gian.',
+                    'title' => 'giá trị xứng đáng',
+                    'description' => 'Dịch vụ chọn lọc chất lượng cao, tối ưu chi phí để bạn nhận được trải nghiệm tốt nhất trong ngân sách.',
                 ],
                 'en' => [
-                    'title' => 'Outstanding value',
-                    'description' => 'Premium quality at competitive prices — direct partnerships, no middlemen.',
+                    'title' => 'best value for your trip',
+                    'description' => 'Carefully selected quality services to give you the best travel experience within your budget.',
                 ],
             ],
             [
                 'icon' => 'support',
                 'sort' => 3,
                 'vi' => [
-                    'title' => 'Hỗ trợ 24/7 tại chỗ',
-                    'description' => 'Đội ngũ bản địa luôn sẵn sàng — từ lúc lên ý tưởng đến khi bạn về nhà an toàn.',
+                    'title' => 'hỗ trợ xuyên suốt',
+                    'description' => 'Đội ngũ đồng hành trước, trong và sau chuyến đi, hỗ trợ nhanh chóng để hành trình luôn suôn sẻ.',
                 ],
                 'en' => [
-                    'title' => '24/7 on-the-ground support',
-                    'description' => 'Local team always on call — from first idea to safe return home.',
+                    'title' => 'seamless travel support',
+                    'description' => 'Dedicated support before, during, and after your trip, ensuring everything runs smoothly.',
                 ],
             ],
         ];

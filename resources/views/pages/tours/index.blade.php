@@ -10,45 +10,40 @@
             ['label' => 'Tour ' . $country['name']],
         ]" />
 
-    <div class="container-site grid items-start gap-8 py-10 lg:grid-cols-[280px_1fr]">
-        {{-- Bộ lọc trái --}}
+    <div class="container-site listing-layout section-band--sm">
         <x-tour.filter-sidebar :durations="$durations" :styles="$styles" />
 
-        {{-- Danh sách tour phải --}}
         <div class="min-w-0">
-            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <span class="inline-flex items-center gap-2 rounded-full bg-leaf-500 px-4 py-1.5 text-sm font-bold text-white">
-                    <x-icon name="sparkles" class="size-4" /> Top {{ count($tours) }} — {{ date('Y') }}
-                </span>
+            <div class="listing-toolbar">
                 <x-shared.sort-dropdown />
             </div>
 
             @if (count($tours))
-                <div class="space-y-6">
+                <div class="site-stack">
                     @foreach ($tours as $tour)
                         <x-tour.card :item="$tour" :href="route('tours.show', ['country' => $tour['countrySlug'], 'slug' => $tour['slug']])" />
                     @endforeach
                 </div>
             @else
-                <div class="card flex flex-col items-center gap-3 p-12 text-center">
+                <div class="card listing-empty">
                     <x-icon name="compass" class="size-10 text-muted" />
                     <p class="font-semibold">Chưa có tour nào cho điểm đến này.</p>
                     <p class="body-text text-muted">Hãy để chuyên gia của chúng tôi thiết kế hành trình riêng cho bạn.</p>
-                    <a href="{{ route('customize') }}" class="btn-primary mt-2">
+                    <a href="{{ route('customize') }}" class="btn-primary site-mt">
                         <x-icon name="sparkles" class="size-4" /> Thiết kế tour riêng
                     </a>
                 </div>
             @endif
 
             {{-- Rating tổng danh mục --}}
-            <div class="mt-10 flex flex-col items-center gap-2 text-center">
-                <p class="font-display text-4xl font-bold text-primary-600">5.0</p>
+            <div class="listing-rating-summary">
+                <p class="listing-rating-summary__score">5.0</p>
                 <x-shared.stars :rating="5" aria-label="5 trên 5 sao" />
-                <p class="text-sm text-muted">{{ array_sum(array_column($tours, 'reviewCount')) }} đánh giá từ khách hàng đã đi tour {{ $country['name'] }}</p>
+                <p class="listing-rating-summary__meta">{{ array_sum(array_column($tours, 'reviewCount')) }} đánh giá từ khách hàng đã đi tour {{ $country['name'] }}</p>
             </div>
 
             {{-- Đoạn giới thiệu SEO --}}
-            <div class="prose-travel mt-10 border-t border-line pt-8">
+            <div class="prose-travel listing-seo">
                 <p>
                     Một <strong>tour {{ $country['name'] }} trọn gói</strong> là cách trọn vẹn nhất để khám phá
                     {{ $country['tagline'] }} mà không phải bận tâm khâu tổ chức. Mỗi lịch trình của ViTravel đều do
@@ -62,8 +57,7 @@
                 </p>
             </div>
 
-            {{-- FAQ danh mục --}}
-            <x-shared.faq :faqs="$faqs" class="mt-10" title="Câu hỏi thường gặp về tour {{ $country['name'] }}" />
+            <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về tour {{ $country['name'] }}" />
         </div>
     </div>
 @endsection

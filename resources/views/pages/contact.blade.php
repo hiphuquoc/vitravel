@@ -5,42 +5,41 @@
 @section('hide-inquiry', '1')
 
 @section('content')
-    <div class="container-site pt-8 pb-14">
+    <div class="container-site contact-page">
         <x-layout.breadcrumb :items="[['label' => 'Liên hệ']]" />
 
-        <div class="mt-6 max-w-2xl">
-            <h1 class="font-display text-4xl font-bold tracking-tight sm:text-5xl">ViTravel</h1>
-            <p class="body-text mt-3">
+        <div class="site-mt max-w-2xl">
+            <h1 class="contact-intro__title">ViTravel</h1>
+            <p class="body-text site-mt">
                 Bạn muốn giữ liên lạc với chúng tôi? Dưới đây là tất cả các cách để tìm thấy ViTravel —
                 dù bạn cần tư vấn hành trình, hỗ trợ trong chuyến đi hay chỉ đơn giản muốn trò chuyện về Đông Nam Á.
             </p>
-            <ul class="mt-5 space-y-2.5 text-base">
-                <li class="flex items-center gap-2.5">
+            <ul class="contact-channels">
+                <li class="contact-channels__item">
                     <x-icon name="mail" class="size-4.5 text-primary-600" />
                     <span><span class="font-semibold">Email:</span> <a href="mailto:hello@vitravel.example" class="text-primary-600 hover:underline">hello@vitravel.example</a></span>
                 </li>
-                <li class="flex items-center gap-2.5">
+                <li class="contact-channels__item">
                     <x-icon name="phone" class="size-4.5 text-primary-600" />
                     <span><span class="font-semibold">Điện thoại & WhatsApp:</span> +84 24 3999 8888 · +84 912 345 678</span>
                 </li>
             </ul>
         </div>
 
-        <div class="mt-10 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
-            {{-- Form liên hệ --}}
+        <div class="site-mt-lg contact-layout">
             @if (session('success') === 'contact')
-                <div class="card flex flex-col items-center p-7 py-12 text-center sm:p-8">
-                    <span class="flex size-14 items-center justify-center rounded-full bg-leaf-100 text-leaf-600">
+                <div class="card form-success">
+                    <span class="form-success__icon">
                         <x-icon name="check" class="size-7" />
                     </span>
-                    <h3 class="mt-4 font-display text-xl font-bold">Lời nhắn đã được gửi!</h3>
-                    <p class="body-text mt-2 max-w-sm">Chúng tôi sẽ phản hồi qua email trong vòng 24 giờ làm việc.</p>
+                    <h3 class="form-success__title">Lời nhắn đã được gửi!</h3>
+                    <p class="body-text max-w-sm">Chúng tôi sẽ phản hồi qua email trong vòng 24 giờ làm việc.</p>
                 </div>
             @else
-                <form action="{{ route('leads.contact') }}" method="POST" class="card p-7 sm:p-8">
+                <form action="{{ route('leads.contact') }}" method="POST" class="card contact-form-card">
                     @csrf
-                    <h2 class="section-title mb-6">Gửi lời nhắn cho chúng tôi</h2>
-                    <div class="grid gap-4 sm:grid-cols-2">
+                    <h2 class="section-title faq__title">Gửi lời nhắn cho chúng tôi</h2>
+                    <div class="form-grid form-grid--2">
                         <div>
                             <label for="ct-name" class="field-label field-required">Họ và tên</label>
                             <input id="ct-name" name="name" type="text" required autocomplete="name" value="{{ old('name') }}" class="field-input">
@@ -73,17 +72,16 @@
                 </form>
             @endif
 
-            {{-- Văn phòng --}}
-            <div class="space-y-5">
+            <div class="office-stack">
                 @foreach ($offices as $office)
                     <article class="card overflow-hidden">
-                        <x-ph class="h-36 w-full" :label="'Bản đồ văn phòng ' . $office['city']" icon="map-pin" icon-class="size-8" />
-                        <div class="p-5">
+                        <x-ph class="office-card__map" :label="'Bản đồ văn phòng ' . $office['city']" icon="map-pin" icon-class="size-8" />
+                        <div class="office-card__body">
                             <h3 class="font-bold">{{ $office['city'] }}</h3>
-                            <p class="body-text mt-1.5 flex items-start gap-2">
+                            <p class="body-text site-mt flex items-start gap-2">
                                 <x-icon name="map-pin" class="mt-0.5 size-4 shrink-0 text-primary-600" /> {{ $office['address'] }}
                             </p>
-                            <p class="body-text mt-1 flex items-center gap-2">
+                            <p class="body-text flex items-center gap-2">
                                 <x-icon name="phone" class="size-4 shrink-0 text-primary-600" /> {{ $office['phone'] }}
                             </p>
                         </div>

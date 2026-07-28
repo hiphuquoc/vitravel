@@ -72,7 +72,7 @@
             </span>
             <span class="leading-none">
                 <span class="block font-display text-xl font-bold tracking-tight">ViTravel</span>
-                <span class="mt-0.5 block text-[10px] font-medium tracking-widest text-muted uppercase">Hài lòng hơn mong đợi</span>
+                <span class="header-wordmark__tagline">Hài lòng hơn mong đợi</span>
             </span>
         </a>
 

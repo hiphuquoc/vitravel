@@ -4,7 +4,6 @@
 @section('meta_description', $article['excerpt'])
 
 @php
-    // TOC tự sinh từ heading H2/H3 trong nội dung — không lưu riêng để tránh lệch dữ liệu
     $toc = collect($article['content'])
         ->filter(fn ($b) => in_array($b['type'], ['h2', 'h3']))
         ->map(fn ($b) => ['id' => $b['id'], 'text' => $b['text'], 'level' => $b['type'] === 'h2' ? 2 : 3])
@@ -18,16 +17,15 @@
 @endphp
 
 @section('content')
-    <div class="container-site pt-8" x-data="scrollSpy(@js(array_column($toc, 'id')))">
+    <div class="container-site blog-page-intro" x-data="scrollSpy(@js(array_column($toc, 'id')))">
         <x-layout.breadcrumb :items="array_filter([
             ['label' => 'Cẩm nang du lịch', 'url' => route('guide.index')],
             filled($article['countrySlug'] ?? '')
                 ? ['label' => 'Cẩm nang ' . $article['country'], 'url' => route('guide.country', ['country' => $article['countrySlug']])]
                 : null,
             ['label' => $article['category']],
-        ])" class="mb-4" />
+        ])" class="site-mb" />
 
-        {{-- Gallery collage đầu bài: 1 ảnh lớn + 4 ảnh nhỏ --}}
         @php
             $coverSrc = $article['imageDetail'] ?? $article['image'] ?? null;
             $coverSrcset = $article['imageDetailSrcset'] ?? $article['imageSrcset'] ?? null;
@@ -37,7 +35,7 @@
                 $thumbs[] = ['src' => $coverSrc, 'srcset' => $coverSrcset];
             }
         @endphp
-        <div class="mt-5 grid gap-3 lg:grid-cols-[2fr_1fr]">
+        <div class="blog-article-gallery">
             @if ($coverSrc)
                 <x-img
                     :src="$coverSrc"
@@ -51,7 +49,7 @@
             @else
                 <x-ph class="h-64 w-full rounded-2xl sm:h-80" :label="'Ảnh: ' . $article['title']" icon-class="size-12" />
             @endif
-            <div class="grid grid-cols-4 gap-3 lg:grid-cols-2">
+            <div class="detail-gallery__thumbs">
                 @for ($i = 0; $i < 4; $i++)
                     @php $thumb = $thumbs[$i] ?? null; @endphp
                     <div class="relative overflow-hidden rounded-xl">
@@ -78,17 +76,15 @@
             </div>
         </div>
 
-        {{-- Meta + tiêu đề --}}
-        <p class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted">
+        <p class="blog-article-meta">
             <span class="inline-flex items-center gap-1.5"><x-icon name="calendar" class="size-3.5" /> Đăng ngày {{ $article['publishedAt'] }}</span>
             <span class="inline-flex items-center gap-1.5"><x-icon name="clock" class="size-3.5" /> Cập nhật {{ $article['updatedAt'] }}</span>
             <span class="inline-flex items-center gap-1.5"><x-icon name="eye" class="size-3.5" /> {{ number_format($article['views']) }} lượt xem</span>
             <span class="inline-flex items-center gap-1.5"><x-icon name="user" class="size-3.5" /> {{ $article['author'] }}</span>
         </p>
-        <h1 class="mt-2 max-w-4xl font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">{{ $article['title'] }}</h1>
+        <h1 class="blog-page-title site-mt max-w-4xl">{{ $article['title'] }}</h1>
 
-        {{-- Layout 2 cột: nội dung TRÁI + sidebar PHẢI --}}
-        <div class="mt-8 grid items-start gap-10 lg:grid-cols-[1fr_300px]">
+        <div class="site-mt blog-layout">
             <div class="min-w-0">
                 <div class="prose-travel">
                     @foreach ($article['content'] as $block)
@@ -114,15 +110,14 @@
                                 @break
 
                             @case('image')
-                                <figure class="my-6">
+                                <figure class="site-mt-lg">
                                     <x-ph class="h-64 w-full rounded-2xl" :label="$block['caption']" icon-class="size-10" />
                                     <figcaption>{{ $block['caption'] }}</figcaption>
                                 </figure>
                                 @break
 
                             @case('links')
-                                {{-- Box liên kết nội bộ chèn giữa luồng đọc --}}
-                                <div class="my-6 rounded-2xl border-l-4 border-primary-500 bg-primary-50 p-5">
+                                <div class="blog-inline-links">
                                     <p class="mb-2 text-base font-bold text-primary-800">{{ $block['title'] }}</p>
                                     <ul class="list-none space-y-1.5 !pl-0">
                                         @foreach ($block['links'] as $link)
@@ -140,13 +135,12 @@
                     @endforeach
                 </div>
 
-                {{-- Rating cuối bài + chia sẻ --}}
-                <div class="mt-10 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-5 shadow-(--shadow-card)">
+                <div class="blog-share-bar">
                     <div class="flex items-center gap-3">
                         <x-shared.rating :rating="$article['rating']" :count="$article['ratingCount']" />
                     </div>
                     <div class="flex items-center gap-2" aria-label="Chia sẻ bài viết">
-                        <span class="mr-1 text-sm font-semibold">Chia sẻ:</span>
+                        <span class="text-sm font-semibold">Chia sẻ:</span>
                         @foreach (['facebook' => 'Facebook', 'twitter' => 'X (Twitter)', 'share' => 'Sao chép liên kết'] as $icon => $label)
                             <button type="button"
                                 class="flex size-9 items-center justify-center rounded-full border border-line transition hover:border-primary-300 hover:text-primary-600"
@@ -157,12 +151,11 @@
                     </div>
                 </div>
 
-                {{-- Bình luận --}}
-                <section class="mt-12" aria-label="Bình luận">
-                    <h2 class="section-title mb-6">Bình luận ({{ count($comments) }})</h2>
-                    <div class="space-y-4">
+                <section class="blog-comments" aria-label="Bình luận">
+                    <h2 class="section-title faq__title">Bình luận ({{ count($comments) }})</h2>
+                    <div class="comment-list">
                         @foreach ($comments as $c)
-                            <article class="card p-5">
+                            <article class="card comment-card">
                                 <div class="flex items-center gap-3">
                                     <x-ph class="size-10 rounded-full" icon="user" icon-class="size-5" :label="null" />
                                     <div>
@@ -170,24 +163,24 @@
                                         <p class="text-xs text-muted">{{ $c['date'] }}</p>
                                     </div>
                                 </div>
-                                <p class="body-text mt-3">{{ $c['content'] }}</p>
+                                <p class="body-text site-mt">{{ $c['content'] }}</p>
                             </article>
                         @endforeach
                     </div>
 
                     @if (session('success') === 'comment')
-                        <div class="card mt-6 flex flex-col items-center p-6 py-8 text-center">
-                            <span class="flex size-12 items-center justify-center rounded-full bg-leaf-100 text-leaf-600">
+                        <div class="card form-success site-mt">
+                            <span class="form-success__icon">
                                 <x-icon name="check" class="size-6" />
                             </span>
-                            <p class="mt-3 font-semibold">Cảm ơn bạn! Bình luận đang chờ kiểm duyệt.</p>
+                            <p class="font-semibold">Cảm ơn bạn! Bình luận đang chờ kiểm duyệt.</p>
                         </div>
                     @else
-                        <form action="{{ route('leads.comment') }}" method="POST" class="card mt-6 p-6">
+                        <form action="{{ route('leads.comment') }}" method="POST" class="card comment-form">
                             @csrf
                             <input type="hidden" name="article_id" value="{{ $article['id'] ?? '' }}">
-                            <h3 class="item-title mb-4 text-lg">Để lại bình luận</h3>
-                            <div class="grid gap-4 sm:grid-cols-2">
+                            <h3 class="item-title faq__title">Để lại bình luận</h3>
+                            <div class="form-grid form-grid--2">
                                 <div>
                                     <label for="cm-name" class="field-label field-required">Họ và tên</label>
                                     <input id="cm-name" name="full_name" type="text" required value="{{ old('full_name') }}" class="field-input">
@@ -215,13 +208,12 @@
                     @endif
                 </section>
 
-                <x-shared.faq :faqs="$article['faqs']" class="mt-12" title="Câu hỏi liên quan" />
+                <x-shared.faq :faqs="$article['faqs']" class="page-follow" title="Câu hỏi liên quan" />
 
-                {{-- Bài viết liên quan --}}
                 @if (count($related))
-                    <section class="mt-12" aria-label="Bài viết cùng chuyên mục">
-                        <h2 class="section-title mb-6">Bài viết cùng chuyên mục</h2>
-                        <div class="grid gap-6 sm:grid-cols-2">
+                    <section class="page-follow" aria-label="Bài viết cùng chuyên mục">
+                        <h2 class="section-title faq__title">Bài viết cùng chuyên mục</h2>
+                        <div class="site-mt grid site-gap sm:grid-cols-2">
                             @foreach ($related as $r)
                                 <x-blog.card :article="$r" />
                             @endforeach
@@ -235,7 +227,6 @@
         </div>
     </div>
 
-    {{-- JSON-LD Article --}}
     @php
         $articleJsonLd = [
             '@context' => 'https://schema.org',

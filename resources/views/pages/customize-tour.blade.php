@@ -10,39 +10,38 @@
         :breadcrumbs="[['label' => 'Thiết kế tour riêng']]" banner-label="Ảnh banner: hành trình theo yêu cầu" />
 
     @if (session('success') === 'custom_tour')
-        <div class="container-site max-w-4xl py-12">
-            <div class="card flex flex-col items-center p-14 text-center">
-                <span class="flex size-16 items-center justify-center rounded-full bg-leaf-100 text-leaf-600">
+        <div class="container-site max-w-4xl section-band">
+            <div class="card form-success">
+                <span class="form-success__icon">
                     <x-icon name="check" class="size-8" />
                 </span>
-                <h2 class="mt-5 font-display text-2xl font-bold">Yêu cầu đã được gửi!</h2>
-                <p class="body-text mt-3 max-w-md">
+                <h2 class="form-success__title">Yêu cầu đã được gửi!</h2>
+                <p class="body-text max-w-md">
                     Cảm ơn bạn đã tin tưởng ViTravel. Chuyên gia phụ trách tuyến của bạn sẽ nghiên cứu yêu cầu và gửi
                     lịch trình chi tiết kèm báo giá qua email trong vòng 24 giờ làm việc.
                 </p>
-                <a href="{{ route('guide.index') }}" class="btn-outline mt-6">Đọc cẩm nang trong lúc chờ</a>
+                <a href="{{ route('guide.index') }}" class="btn-outline site-mt">Đọc cẩm nang trong lúc chờ</a>
             </div>
         </div>
     @else
-        <form action="{{ route('leads.custom-tour') }}" method="POST" class="container-site max-w-4xl space-y-8 py-12">
+        <form action="{{ route('leads.custom-tour') }}" method="POST" class="container-site max-w-4xl customize-form section-band">
             @csrf
-            {{-- Khối 1: Thông tin chuyến đi --}}
-            <fieldset class="card p-7 sm:p-8">
+            <fieldset class="card form-section">
                 <legend class="sr-only">Thông tin chuyến đi của bạn</legend>
-                <h2 class="mb-6 flex items-center gap-3 font-display text-xl font-bold">
-                    <span class="flex size-8 items-center justify-center rounded-full bg-primary-500 text-sm text-white">1</span>
+                <h2 class="form-section__title">
+                    <span class="form-section__index">1</span>
                     Thông tin chuyến đi của bạn
                 </h2>
 
                 <p class="field-label field-required">Số lượng khách</p>
-                <div class="grid gap-3 sm:grid-cols-3">
+                <div class="form-grid form-grid--3">
                     <x-form.stepper label="Người lớn" sub="Trên 10 tuổi" name="adults" :initial="old('adults', 2)" />
                     <x-form.stepper label="Trẻ em" sub="4 – 10 tuổi" name="children" :initial="old('children', 0)" />
                     <x-form.stepper label="Em bé" sub="0 – 3 tuổi" name="infants" :initial="old('infants', 0)" />
                 </div>
                 @error('adults')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
-                <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <div class="form-section__block form-grid form-grid--2">
                     <div>
                         <label for="cz-days" class="field-label field-required">Bạn có bao nhiêu ngày cho chuyến đi?</label>
                         <input id="cz-days" name="duration_text" type="text" required value="{{ old('duration_text') }}" class="field-input" placeholder="Ví dụ: 10 ngày">
@@ -55,23 +54,23 @@
                     </div>
                 </div>
 
-                <p class="field-label field-required mt-6">Bạn muốn ghé thăm quốc gia nào?</p>
-                <div class="flex flex-wrap gap-2.5">
+                <p class="field-label field-required form-section__block">Bạn muốn ghé thăm quốc gia nào?</p>
+                <div class="form-pills">
                     @foreach (['VIỆT NAM', 'THÁI LAN', 'CAMPUCHIA', 'LÀO', 'BALI (INDONESIA)'] as $c)
                         <x-form.checkbox-pill name="countries[]" :value="$c" :label="$c" :checked="in_array($c, old('countries', []))" />
                     @endforeach
                 </div>
                 @error('countries')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
-                <p class="field-label field-required mt-6">Bạn thích loại lưu trú nào?</p>
-                <div class="flex flex-wrap gap-2.5">
+                <p class="field-label field-required form-section__block">Bạn thích loại lưu trú nào?</p>
+                <div class="form-pills">
                     @foreach (['Tiêu chuẩn (khách sạn 3*)', 'Cao cấp (khách sạn 4*)', 'Sang trọng (khách sạn 5*)', 'Nhờ tư vấn giúp tôi'] as $a)
                         <x-form.checkbox-pill name="accommodation[]" :value="$a" :label="$a" :checked="in_array($a, old('accommodation', []))" />
                     @endforeach
                 </div>
                 @error('accommodation')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
-                <p class="field-label mt-6">Ngân sách dự kiến (chưa gồm vé máy bay quốc tế)</p>
+                <p class="field-label form-section__block">Ngân sách dự kiến (chưa gồm vé máy bay quốc tế)</p>
                 <div class="flex max-w-md gap-3">
                     <div class="relative flex-1">
                         <span class="absolute inset-y-0 left-4 flex items-center text-sm font-bold text-muted">₫</span>
@@ -84,18 +83,17 @@
                 </div>
             </fieldset>
 
-            {{-- Khối 2: Thông tin cá nhân --}}
-            <fieldset class="card p-7 sm:p-8">
+            <fieldset class="card form-section">
                 <legend class="sr-only">Thông tin cá nhân của bạn</legend>
-                <h2 class="mb-6 flex items-center gap-3 font-display text-xl font-bold">
-                    <span class="flex size-8 items-center justify-center rounded-full bg-primary-500 text-sm text-white">2</span>
+                <h2 class="form-section__title">
+                    <span class="form-section__index">2</span>
                     Thông tin cá nhân của bạn
                 </h2>
 
                 <p class="field-label field-required">Danh xưng</p>
-                <div class="flex gap-5">
+                <div class="form-radio-row">
                     @foreach (['Ông', 'Bà'] as $g)
-                        <label class="flex cursor-pointer items-center gap-2 text-sm font-medium">
+                        <label class="flex cursor-pointer items-center gap-2 font-medium">
                             <input type="radio" name="gender" value="{{ $g }}" class="size-4 border-line text-primary-500 focus:ring-primary-400" @checked(old('gender', 'Ông') === $g)>
                             {{ $g }}
                         </label>
@@ -103,7 +101,7 @@
                 </div>
                 @error('gender')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
-                <div class="mt-5 grid gap-4 sm:grid-cols-2">
+                <div class="form-section__block form-grid form-grid--2">
                     <div>
                         <label for="cz-firstname" class="field-label field-required">Tên</label>
                         <input id="cz-firstname" name="first_name" type="text" required autocomplete="given-name" value="{{ old('first_name') }}" class="field-input">
@@ -142,11 +140,10 @@
                 </div>
             </fieldset>
 
-            {{-- Khối 3: Yêu cầu đặc biệt --}}
-            <fieldset class="card p-7 sm:p-8">
+            <fieldset class="card form-section">
                 <legend class="sr-only">Yêu cầu đặc biệt khác</legend>
-                <h2 class="mb-6 flex items-center gap-3 font-display text-xl font-bold">
-                    <span class="flex size-8 items-center justify-center rounded-full bg-primary-500 text-sm text-white">3</span>
+                <h2 class="form-section__title">
+                    <span class="form-section__index">3</span>
                     Yêu cầu đặc biệt khác
                 </h2>
                 <textarea name="additional_notes" rows="5" class="field-input resize-none"
@@ -156,11 +153,11 @@
             <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
 
             <div class="text-center">
-                <p class="body-text mb-4 flex items-center justify-center gap-2">
+                <p class="form-submit-note">
                     <x-icon name="clock" class="size-4 text-leaf-600" />
                     Một tư vấn viên sẽ liên hệ với bạn trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>. Hãy kiểm tra email nhé!
                 </p>
-                <button type="submit" class="btn-primary px-12">
+                <button type="submit" class="btn-primary">
                     <x-icon name="sparkles" class="size-4" /> Gửi yêu cầu
                 </button>
             </div>

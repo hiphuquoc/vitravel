@@ -8,21 +8,21 @@
         subtitle="Những trải nghiệm chân thật — không chỉnh sửa, không kịch bản"
         :breadcrumbs="[['label' => 'Cảm nhận khách hàng']]" banner-label="Ảnh banner: khách hàng ViTravel" />
 
-    <section class="container-site py-12" aria-label="Tất cả cảm nhận">
+    <section class="container-site section-band" aria-label="Tất cả cảm nhận">
         @php
             $avg = count($testimonials)
                 ? round(array_sum(array_column($testimonials, 'rating')) / count($testimonials), 1)
                 : 5.0;
         @endphp
-        <div class="mb-8 flex flex-col items-center gap-2 text-center">
-            <p class="font-display text-5xl font-bold text-primary-600">{{ number_format($avg, 1) }}</p>
+        <div class="reviews-summary">
+            <p class="reviews-summary__score">{{ number_format($avg, 1) }}</p>
             <x-shared.stars :rating="$avg" aria-label="{{ $avg }} trên 5 sao" />
-            <p class="text-sm text-muted">{{ count($testimonials) }} cảm nhận từ khách hàng ViTravel</p>
+            <p class="reviews-summary__meta">{{ count($testimonials) }} cảm nhận từ khách hàng ViTravel</p>
         </div>
 
-        <div class="columns-1 gap-6 space-y-6 sm:columns-2 lg:columns-3">
+        <div class="columns-1 site-gap space-y-[var(--space-gap)] sm:columns-2 lg:columns-3">
             @forelse ($testimonials as $t)
-                <article class="card break-inside-avoid p-6">
+                <article class="card review-masonry-card">
                     <div class="flex items-center gap-3">
                         @if (! empty($t['avatar']))
                             <x-img
@@ -37,18 +37,18 @@
                         @endif
                         <div>
                             <p class="text-base font-bold">{{ $t['name'] }}</p>
-                            <p class="mt-0.5 text-sm text-muted">{{ $t['flag'] }} {{ $t['country'] }}@if (! empty($t['trip'])) · {{ $t['trip'] }}@endif</p>
+                            <p class="text-sm text-muted">{{ $t['flag'] }} {{ $t['country'] }}@if (! empty($t['trip'])) · {{ $t['trip'] }}@endif</p>
                         </div>
                     </div>
-                    <x-shared.rating :rating="$t['rating']" class="mt-3" />
-                    <p class="body-text mt-3">{{ $t['quote'] }}</p>
+                    <x-shared.rating :rating="$t['rating']" class="site-mt" />
+                    <p class="body-text site-mt">{{ $t['quote'] }}</p>
                     @php
                         $urls = $t['photoUrls'] ?? [];
                         $srcsets = $t['photoSrcsets'] ?? [];
                         $photoCount = (int) ($t['photos'] ?? 0);
                     @endphp
                     @if ($photoCount > 0 || count($urls) > 0)
-                        <div class="mt-4 flex gap-2">
+                        <div class="site-mt flex gap-2">
                             @if (! empty($urls[0]))
                                 <x-img
                                     :src="$urls[0]"
@@ -76,7 +76,7 @@
                     @endif
                 </article>
             @empty
-                <div class="card col-span-full p-10 text-center">
+                <div class="card listing-empty col-span-full">
                     <p class="font-semibold">Chưa có cảm nhận nào được xuất bản.</p>
                 </div>
             @endforelse

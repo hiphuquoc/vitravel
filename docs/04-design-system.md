@@ -92,10 +92,17 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 
 | Class | Vai trò |
 |---|---|
-| `.section-title` | H2 section, Fraunces bold |
-| `.section-eyebrow` | Script accent trên tiêu đề |
+| `.section-title` | H2 section, Fraunces bold — size theo `--fs-section-title` |
+| `.section-eyebrow` | Script accent trên tiêu đề — size theo `--fs-section-eyebrow` |
 | `.section-subtitle` | Mô tả dưới H2 — `text-base` |
-| `.body-text` | **Đoạn nội dung chính trong box** — `text-base leading-7 text-ink-soft` |
+| `.section-band` / `.section-band--sm` | Nhịp dọc section — `padding-block` theo `--space-section-y*`; follower liền nhau auto `padding-top: 0` (§3.5) |
+| `.section-band--spaced-top` | Khôi phục `padding-top` khi cần tách rộng section follower |
+| `.site-gap` / `.site-gap-sm` / `.site-gap-lg` | Gap lưới theo token |
+| `.site-stack` / `.site-stack-lg` | Xếp dọc theo `--space-stack*` |
+| `.site-mt` / `.site-mt-lg` / `.site-mb` | Margin block theo token |
+| `.site-pad` / `.site-pad-x` / `.site-pad-y` | Padding khung theo gutter/card |
+| `.body-text` | **Đoạn nội dung chính trong box** — `text-base` + `--lh-body` |
+| `.max-line-1` / `.max-line-2` / `.max-line-3` | Giới hạn số dòng chữ (ellipsis) — dùng chung toàn site |
 | `.item-title` | Tiêu đề cấp item (sans bold) |
 | `.tour-card-title` / `.tour-card-places` / `.tour-card-quote` / `.tour-card-route*` | Typography + layout route trên tour card |
 | `.nav-link` / `.nav-panel-item` / `.nav-panel-meta` / `.nav-panel-link` | Menu chính + mega menu |
@@ -106,20 +113,68 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 | `.btn-ghost` | Link-CTA (thường + `arrow-right` bên phải) |
 | `.btn-whatsapp` | CTA WhatsApp — radius 10px |
 | `.btn-chip` | Chip chọn nhanh (hero pills, loại cruise) — radius 10px |
-| `.kicker` | Nhãn viết hoa nhỏ |
-| `.rating` / `.rating-badge` | Hàng rating + badge điểm tròn |
+| `.kicker` | Nhãn viết hoa nhỏ — `--fs-kicker` |
+| `.header-wordmark__tagline` | Tagline dưới logo header — ẩn ≤567px |
+| `.rating` / `.rating-badge` | Hàng rating + badge điểm tròn — `--size-rating-badge` |
 | `.prose-travel` | Nội dung dài (blog / SEO) |
+| **Card inner** | |
+| `.card-body` | Padding card — `--space-card` |
+| `.card-inner` | Stack dọc trong card — `--space-card-stack` |
+| `.card-meta-row` | Hàng meta (rating + badge…) — `--space-gap-sm` / `--space-gap` |
+| `.card-footer` / `.card-footer-row` | Footer card / hàng CTA — `--space-card-stack-lg` |
+| **Tour / blog card** | |
+| `.tour-card-*` | Typography + media + highlights accordion |
+| `.blog-card-meta` | Meta hàng blog card |
+| **Grid block dùng chung** | |
+| `.usp-item` / `.usp-item__title` | 4 cam kết dưới hero — title `text-transform: capitalize` |
+| `.team-card` / `.team-card-avatar` | Grid đội ngũ — 1 cột ≤567, gap avatar↔tên |
+| `.review-card` / `.review-card__brand` | 3 card nền tảng đánh giá — stars căn giữa |
+| `.snap-carousel` / `.snap-carousel__item` | Testimonial carousel — width theo `--space-gap` |
+| **Footer** | |
+| `.footer-contact__*` | Contact strip (brand, channels, office, QR) |
+| `.footer-nav__*` / `.footer-seo` / `.footer-bottom` | Footer chính, SEO links, copyright |
+| `.footer-col__title` | Tiêu đề cột — gạch ngang brand |
+| **About page** | |
+| `.signpost-card` / `.signpost-card__*` | Block Sứ mệnh / Tầm nhìn (ảnh + copy) |
+| `.values-diagram` / `.values-diagram__*` | Sơ đồ vòng tròn 4 giá trị |
+| `.reason-list` / `.reason-list__*` | Danh sách đánh số "Vì sao chọn" |
+| `.ref-person-card` / `.ref-person-card__*` | Card đại diện nước ngoài |
+| `.company-intro__license` | Khối giấy phép trong company intro |
+| **Listing tour/cruise** | |
+| `.listing-layout` | Grid sidebar 280px + danh sách — `--space-gap-lg` |
+| `.listing-toolbar` | Hàng sort (căn phải) |
+| `.listing-empty` / `.listing-seo` / `.listing-faq` | Empty state, khối SEO, offset FAQ |
+| `.listing-rating-summary` | Điểm 5.0 tổng danh mục tour |
+| `.cruise-type-nav` | Pill chuyển tuyến du thuyền |
+| `.filter-sidebar__*` | Drawer filter mobile + panel desktop |
+| `.sort-dropdown__*` | Dropdown sắp xếp danh mục |
+| `.faq-list` / `.faq-item__*` | FAQ accordion (dùng chung) |
+| `.tour-card-duration` | Badge thời lượng trên tour card |
+| **Detail tour/cruise** | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
+| **Blog** | `.blog-layout`, `.blog-sidebar__*`, `.blog-article-*`, `.blog-inline-links`, `.blog-card-tag` |
+| **Form / liên hệ** | `.customize-form`, `.form-section__*`, `.form-stepper__*`, `.form-pill__label`, `.contact-*`, `.form-success` |
+| **Gallery / reviews / search** | `.gallery-card__*`, `.reviews-summary`, `.search-section__*`, `.page-follow` |
 
 ## 2.5 Buttons (CTA)
 
-| Class | Radius | Font | Padding | Dùng khi |
+Padding và min-height **không hardcode** — dùng token responsive:
+
+| Token | Vai trò |
+|---|---|
+| `--btn-pad-x` / `--btn-pad-y` | `.btn-primary`, `.btn-outline` |
+| `--btn-pad-x-sm` / `--btn-pad-y-sm` | `.btn-primary-sm`, `.btn-whatsapp`, `.btn-zalo`, `.nav-link` |
+| `--btn-pad-x-chip` / `--btn-pad-y-chip` | `.btn-chip` |
+| `--btn-gap` | Khoảng cách icon ↔ chữ trong mọi `.btn-*` |
+| `--space-hit` | `min-height` tất cả CTA (≥44px mobile) |
+
+| Class | Radius | Font | Padding (desktop) | Dùng khi |
 |---|---|---|---|---|
-| `.btn-primary` | **12px** | `text-base` | `px-7 py-3` | CTA chính trong nội dung / form |
-| `.btn-primary-sm` | **10px** | `text-base` | `px-5 py-2` | Header, filter, card tour, FAB |
-| `.btn-outline` | **12px** | `text-base` | `px-7 py-3` | CTA phụ |
-| `.btn-ghost` | — | `text-base` | — | Link-CTA trong card |
-| `.btn-whatsapp` | **10px** | `text-base` | như sm | Chat WhatsApp |
-| `.btn-chip` | **10px** | `text-base` | `px-4 py-2` | Chip chọn (hero / loại cruise) |
+| `.btn-primary` | **12px** | `--fs-body` | `--btn-pad-x/y` | CTA chính trong nội dung / form |
+| `.btn-primary-sm` | **10px** | `--fs-body` | `--btn-pad-x-sm/y-sm` | Header, filter, card tour, FAB |
+| `.btn-outline` | **12px** | `--fs-body` | `--btn-pad-x/y` | CTA phụ |
+| `.btn-ghost` | — | `--fs-body` | — | Link-CTA trong card |
+| `.btn-whatsapp` / `.btn-zalo` | **10px** | `--fs-body` | `--btn-pad-x-sm/y-sm` | FAB chat |
+| `.btn-chip` | **10px** | `--fs-body` | `--btn-pad-x-chip/y-chip` | Chip hero / loại cruise |
 
 - **Cấm** `rounded-full` trên CTA (tránh pill tròn).
 - **Vệt sáng:** lớp `::after` gradient trắng mỏng (~28% opacity) trượt ngang khi hover — **không** nhuộm đậm nền button; nền giữ `primary-500` / hover `primary-600` như palette cũ.
@@ -128,11 +183,285 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 
 Body line-height mục tiêu: **1.6–1.75** (`.body-text` / `.prose-travel`).
 
-## 3. Layout Grid
-- Container max-width ~1200–1280px
+## 3. Layout Grid & Responsive (chuẩn bắt buộc)
+
+### 3.1 Container & lưới
+- Container max-width ~1200–1280px (`.container-site` → `max-w-7xl`)
 - **Breadcrumb + H1 luôn nằm trong 1 card trắng bo góc đè lên banner ảnh** (không phải text rời trên nền ảnh) — pattern quan sát nhất quán ở Tour Listing, About Us
 - Trang danh mục Tour: sidebar filter trái cố định (~280px desktop, chuyển thành offcanvas mobile) + list card phải
 - Trang danh mục Blog: grid bài viết 2 cột (khu vực chính, rộng hơn) + sidebar phải hẹp hơn (~300px) — **ngược vị trí so với Tour Listing** (Tour: filter bên TRÁI; Blog: sidebar bên PHẢI) — cần lưu ý khi build layout component, không dùng chung 1 layout 2 cột cứng cho cả 2 loại trang
+
+### 3.2 Breakpoint ladder (max-width — bắt buộc toàn site)
+
+Hệ responsive dùng **5 mốc `max-width`** cố định (không thêm mốc ad-hoc mới trừ khi cập nhật doc này). Token spacing / typography / container gutter được cascade qua CSS variables trong `resources/css/app.css` (`:root` + `@media (max-width: …)`).
+
+| Mốc | `max-width` | Vai trò thiết kế | Hành vi chính |
+|---|---|---|---|
+| **BP-XL** | `1199px` | Laptop nhỏ / tablet ngang lớn | Thu gutter container, section Y nhẹ, H1/H2 giảm 1 bậc |
+| **BP-LG** | `1023px` | Tablet ngang / dưới desktop | Ẩn mega menu → mobile nav; grid 2–3 cột → 2 cột; sidebar → drawer |
+| **BP-MD+** | `990px` | Tablet trung | Section stack; card listing chuyển layout dọc khi cần; form 2 cột → 1 cột |
+| **BP-MD** | `768px` | Tablet dọc / mobile lớn | Typography mobile; FAB chỉ icon; tour card full-bleed ảnh trên |
+| **BP-SM** | `567px` | Mobile hẹp | Gutter tối thiểu; giảm section Y; chữ hero/section compact; tránh hover-only UX |
+
+**Quy tắc triển khai:**
+1. **Token trước, utility sau** — spacing section dùng `var(--space-section-y)`, gutter dùng `var(--space-gutter)`, không hardcode `py-16` / `px-8` rời trên nhiều trang nếu có class dùng chung (`.section-band`, `.container-site`).
+2. **Mobile không phụ thuộc hover** — mega menu, tooltip, drawer phải mở bằng tap; FAB luôn đủ hit-area ≥44px.
+3. **Performance** — ảnh `loading="lazy"` dưới fold; section dài dùng `.cv-auto` (`content-visibility`); tránh layout shift (aspect-ratio / kích thước cố định cho media).
+4. **Một nguồn sự thật** — mọi media query custom mới phải map vào 1 trong 5 mốc trên (hoặc `min-width` đối xứng: `1200px` / `1024px` / `991px` / `769px` / `568px`). Không dùng `900px`, `1100px`, `600px` ad-hoc.
+5. **Tailwind `sm/md/lg/xl`** vẫn dùng được khi khớp gần mốc (`md≈768`, `lg≈1024`); với `990` / `1199` / `567` ưu tiên CSS variable + `@media (max-width: …)` trong `app.css`.
+
+### 3.3 Spacing scale (responsive)
+
+**Gutter khung (bắt buộc — `.container-site` + khung lớn):**
+
+| Token | ≥1200 | ≤1199 | ≤1023 | ≤990 | ≤768 | ≤567 |
+|---|---|---|---|---|---|---|
+| `--space-gutter` | **2rem** | **1.25rem** | **1rem** | **1rem** | **0.75rem** | **0.75rem** |
+
+**Gap / margin / card (đồng bộ qua utility `.site-gap*`, `.site-stack*`, `.site-mt*`, `.site-pad*`):**
+
+| Token | ≥1200 | ≤1199 | ≤1023 | ≤990 | ≤768 | ≤567 | Dùng cho |
+|---|---|---|---|---|---|---|---|
+| `--space-gap-sm` | 0.75rem | 0.7rem | 0.65rem | 0.6rem | 0.5rem | 0.5rem | Chip, meta row, icon+text |
+| `--space-gap` | 1.25rem | 1.1rem | 1rem | 0.95rem | 0.85rem | 0.75rem | Grid card mặc định |
+| `--space-gap-lg` | 2rem | 1.75rem | 1.5rem | 1.35rem | 1.15rem | 1rem | Layout 2 cột, footer grid |
+| `--space-stack` | 1.5rem | 1.25rem | 1.15rem | 1.1rem | 1rem | 0.85rem | Khối xếp dọc trong section |
+| `--space-stack-lg` | 2.5rem | 2.15rem | 1.85rem | 1.7rem | 1.5rem | 1.25rem | Khoảng giữa các cụm lớn |
+| `--space-heading-mb` | 2.25rem | 2rem | 1.75rem | 1.6rem | 1.35rem | 1.15rem | `.section-heading` → nội dung bên dưới |
+| `--space-section-y` | 4.5rem | 4rem | 3.25rem | 2.85rem | 2.15rem | 1.75rem | `.section-band` |
+| `--space-section-y-sm` | 3rem | 2.75rem | 2.15rem | 1.85rem | 1.45rem | 1.2rem | `.section-band--sm` |
+| `--space-section-follow` | — | — | 0.45 | 0.42 | 0.38 | 0.35 | *(deprecated — dùng §3.5 padding-top: 0)* |
+| `--space-card` | 1.5rem | 1.25rem | 1.15rem | 1.1rem | 1rem | 0.85rem | Padding trong card |
+| `--space-card-stack` | 0.75rem | 0.7rem | 0.65rem | 0.6rem | 0.55rem | 0.5rem | Gap giữa phần tử **bên trong** card (title → meta → body) |
+| `--space-card-stack-lg` | 1rem | 0.9rem | 0.85rem | 0.8rem | 0.75rem | 0.65rem | Footer card, CTA row, khối highlights |
+
+**Class dùng chung cho card inner:** `.card-body` (padding), `.card-inner` (stack dọc), `.card-meta-row`, `.card-footer` / `.card-footer-row`. Tour/blog/review/team/testimonial grid **bắt buộc** dùng các class này thay `p-5` / `mt-3` / `pt-4` ad-hoc.
+
+**Quy tắc:** ưu tiên `.site-gap` / `.site-gap-lg` / `.site-stack` thay cho `gap-8` / `gap-6` / `space-y-*` ad-hoc trên layout trang. Chỉ giữ Tailwind gap cứng cho khoảng micro (≤0.5rem) trong chrome UI.
+
+### 3.4 Typography scale (responsive)
+
+Base `html` font-size cascade theo breakpoint (giữ dễ đọc, tránh nhảy quá mạnh):
+
+| | ≥1200 | ≤1199 | ≤1023 | ≤990 | ≤768 | ≤567 |
+|---|---|---|---|---|---|---|
+| `html` | 106.25% (~17px) | 106.25% | 103% | 100% | 100% | 100% |
+| `--fs-body` / `text-base` | **1rem** (~17px) | 0.9875rem | 0.96875rem | **0.9375rem** (15px) | 0.90625rem | **0.875rem** (14px) |
+| `--fs-meta` / `text-sm` | 0.875rem | 0.859rem | 0.844rem | 0.8125rem | 0.797rem | 0.781rem |
+| `--fs-kicker` / `.kicker` | 0.75rem | 0.734rem | 0.719rem | 0.6875rem | 0.672rem | 0.656rem |
+| `--btn-pad-x` / `--btn-pad-y` | 1.75/0.75rem | ↓ | ↓ | ↓ | 1.35/0.6rem | 1.2/0.55rem |
+| `--btn-pad-x-sm` / `--btn-pad-y-sm` | 1.25/0.5rem | ↓ | ↓ | ↓ | 0.95/0.42rem | 0.85/0.4rem |
+| `--lh-body` | 1.75 | 1.75 | 1.72 | 1.68 | 1.65 | 1.62 |
+| `.section-title` | ~2.25–2.5rem | clamp xuống | ↓ | ↓ | ~1.75rem | ~1.6rem |
+| `.section-eyebrow` | ~1.875–2rem | ↓ | ↓ | ↓ | ~1.35rem | ~1.25rem |
+| Hero H1 | clamp lớn | thu nhẹ | thu | thu | mobile clamp | compact |
+
+Body dùng `.body-text` hoặc `text-base` — **cả hai** map `--fs-body` theo breakpoint (desktop giữ 1rem, mobile thu nhẹ để cân với heading/card đã scale). **Không** hạ xuống `text-sm` cho nội dung đọc chính.
+
+### 3.5 Section liền nhau
+
+Section cùng loại (`.section-band`, `.section-band--sm`, `.vt-dest`, `.vt-videos`) **liền nhau** tự động **bỏ `padding-top`** ở section sau — khoảng cách giữa hai block = `padding-bottom` của section trước (một lần `--space-section-y`), **mọi breakpoint**.
+
+Rule đặt **unlayered** (sau định nghĩa `.vt-dest` / `.vt-videos`), specificity ≥ `(0,2,0)` — **không** dùng `:where()` (specificity 0 sẽ thua `padding-block` của `.vt-dest`).
+
+- Không gắn `py-*` / `pt-*` ad-hoc lên section Home (vd. `py-4` từng làm company intro dính tour nổi bật).
+- Cần **tách rộng hơn**: thêm `.section-band--spaced-top` lên section sau.
+- Media query chỉ được đổi `padding-bottom` của `.vt-videos` / `.vt-dest` — tránh `padding-block` shorthand ghi đè `padding-top: 0`.
+
+### 3.6 Card inner & grid con (đã triển khai)
+
+**Quy tắc:** mọi card trong grid (tour, blog, team, review, testimonial, about…) **không** dùng `p-5`, `mt-3`, `space-y-6` ad-hoc — dùng class/token below.
+
+| Thành phần | Class Blade | Token / CSS |
+|---|---|---|
+| Padding card | `.card-body` / `.site-pad` | `--space-card` |
+| Stack title → meta → body | `.card-inner` | `--space-card-stack` |
+| Hàng rating + badge | `.card-meta-row` | `--space-gap-sm`, `--space-gap` |
+| Footer card / CTA row | `.card-footer`, `.card-footer-row` | `--space-card-stack-lg` |
+| Grid gap | `.site-gap`, `.site-gap-lg` | `--space-gap*` |
+| Stack section con | `.site-stack`, `.site-stack-lg` | `--space-stack*` |
+
+**Tour card** (`x-tour.card`, `x-tour.card-compact`): `.tour-card-title`, `.tour-card-places`, `.tour-card-quote`, `.tour-card-route`, `.tour-card-media`, `.tour-card-highlights`, `.tour-card-badge` — font theo `--fs-tour-*`.
+
+**USP** (`x-shared.usp-badges`): seed lưu title **chữ thường**; hiển thị `.usp-item__title { text-transform: capitalize }`.
+
+**Team grid**: `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`; `.team-card` + gap avatar↔copy.
+
+**Review platforms**: `.review-card .card-inner { align-items: center }` — sao căn giữa.
+
+**Testimonial carousel**: `.snap-carousel__item` — `calc((100% - var(--space-gap) * n) / m)` theo breakpoint.
+
+**Video showcase** (`.vt-videos`): `padding-block: var(--space-section-y)`; caption/play scale ≤567px.
+
+**Destinations** (`.vt-dest`): grid portrait gap `--space-gap-sm` → `--space-gap-lg`; copy padding `--space-card-stack*`.
+
+### 3.7 Quick inquiry teaser (padding 2 tầng)
+
+`.qi-teaser` dùng 2 lớp inset:
+
+| Token | Vai trò |
+|---|---|
+| `--qi-accent-inset` | Mép box → đường góc trang trí |
+| `--qi-content-gap` | Đường góc → nội dung chữ |
+| `--qi-pad` | `inset + gap` — padding thực của teaser |
+
+Đường góc: `.qi-teaser__accent::before/after` — top-left & bottom-right. Modal: `.vt-letter--modal` (padding `--space-card`).
+
+### 3.8 Footer & header chrome
+
+**Footer contact strip:** `.footer-contact__brand-row`, `__channels`, `.footer-office`, `__qr` — typography `--fs-body`, `--fs-meta`, `--fs-footer-brand`. `--footer-contact-pad-top` cho overlap quick inquiry.
+
+**Footer main:** `.footer-nav__link`, `.footer-seo`, `.footer-copyright` (`--fs-meta`), `.footer-social__link`, `.footer-badge` (`--fs-kicker`).
+
+**Header:** `.header-wordmark__tagline` — **ẩn** `@media (max-width: 567px)`.
+
+### 3.9 Hero slider (responsive)
+
+- `.hero-slider-stage` — height theo breakpoint
+- `.hero-slide-copy` — padding trái/phải tránh nút nav; `max-line-1/2` cho title/desc
+- Text shadow tăng contrast trên mọi breakpoint
+
+### 3.10 Checklist khi build / rà soát trang mới
+
+1. Section wrapper: `.section-band` hoặc `.section-band--sm` + `.container-site`
+2. Grid: `.site-gap` / `.site-gap-lg` — không `gap-6`, `gap-8`
+3. Stack dọc: `.site-stack` — không `space-y-*` (trừ micro ≤0.5rem)
+4. Card nội dung: `.card-body` + `.card-inner`
+5. Typography body: `.body-text`; meta: `.text-sm` (map `--fs-meta`)
+6. CTA: `.btn-*` — không override padding/font
+7. Section heading: `x-shared.section-heading` (margin `--space-heading-mb`)
+8. Media query custom chỉ tại 5 mốc §3.2
+9. Section liền nhau: CSS §3.5 tự bỏ `padding-top` follower — chỉ thêm `.section-band--spaced-top` khi cần tách rộng
+
+### 3.11 Trang Về chúng tôi — mapping component
+
+| Block | Component / class | Ghi chú |
+|---|---|---|
+| Page header | `x-layout.page-header` | Token page-header__* |
+| Company intro | `x-shared.company-intro` | `.company-intro__cta`, `__license` |
+| Team | `x-shared.team-grid` | Token — spacing liền intro do §3.5 |
+| Sứ mệnh / Tầm nhìn | `.signpost-card` ×2 | Grid `site-gap lg:grid-cols-2` |
+| Giá trị cốt lõi | `.values-diagram` | Hub + 4 nhãn; side stacks `.site-stack-lg` |
+| Chính sách bán hàng | `.card` + `.site-pad` | CTA `.btn-ghost` + `.site-mt` |
+| Vì sao chọn | `.reason-list` | Ảnh + `.section-title` + numbered items |
+| USP / Review / Testimonial | shared components | USP + review + carousel |
+| Đại diện nước ngoài | `.ref-person-card` | Grid `site-gap sm:2 lg:3` |
+| Video | `x-shared.video-showcase` | Token vt-videos |
+
+### 3.12 Nhật ký tối ưu responsive (2026-07)
+
+Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển khai — từ token toàn site đến cấp con trong card/grid — để rà soát trang mới không lặp lại hardcode cũ.
+
+#### A. Hệ token & breakpoint (`resources/css/app.css`)
+
+| Hạng mục | Chi tiết |
+|---|---|
+| Breakpoint | 5 mốc `max-width`: **1199 / 1023 / 990 / 768 / 567** — cascade `:root` variables |
+| Gutter | `--space-gutter` trên `.container-site` |
+| Section | `--space-section-y`, `--space-section-y-sm`; follower liền nhau → `padding-top: 0` (§3.5) |
+| Layout gap | `--space-gap`, `--space-gap-sm`, `--space-gap-lg` → utility `.site-gap*` |
+| Stack | `--space-stack`, `--space-stack-lg` → `.site-stack*` |
+| Margin block | `.site-mt`, `.site-mt-lg`, `.site-mb` |
+| Padding khung | `.site-pad`, `.site-pad-x`, `.site-pad-y` |
+| Card inner | `--space-card`, `--space-card-stack`, `--space-card-stack-lg` → `.card-body`, `.card-inner`, `.card-footer*` |
+| Typography | `--fs-body`, `--fs-meta`, `--fs-kicker`, `--fs-item-title`, `--fs-tour-*`, `--fs-footer-brand` — override `.text-base`, `.text-sm`, `.body-text` |
+| Buttons | `--btn-pad-*`, `--btn-gap`, `--space-hit` (min-height ≥44px mobile) |
+| Quick inquiry | `--qi-accent-inset`, `--qi-content-gap`, `--qi-pad` (padding 2 tầng) |
+| Footer | `--footer-contact-pad-top`, class `.footer-contact__*`, `.footer-nav__*`, `.footer-copyright` |
+
+#### B. Layout & chrome toàn site
+
+| Thành phần | Thay đổi |
+|---|---|
+| `.section-band` | Padding block theo token; section liền nhau auto `padding-top: 0` (§3.5) |
+| Header | `.header-wordmark__tagline` ẩn ≤567px |
+| Footer contact strip | Token padding + typography từng hàng (brand, channels, office, QR) |
+| Footer nav / SEO / copyright | `.footer-nav__link`, `.footer-seo`, `.footer-copyright` (`--fs-meta`) |
+| Hero slider | `.hero-slider-stage`, `.hero-slide-copy` — height/padding theo breakpoint |
+
+#### C. Grid & card dùng chung (cấp con)
+
+| Component | File | Token / class áp dụng |
+|---|---|---|
+| Tour card (listing) | `x-tour.card` | `.tour-card-*`, `.card-body`, `.card-inner`, `.card-footer-row` |
+| Tour card (compact) | `x-tour.card-compact` | Cùng pattern, media + highlights accordion |
+| Blog card | `x-shared.blog/card` | `.card-body`, `.blog-card-meta` |
+| USP badges | `x-shared.usp-badges` | `.usp-item`, `.usp-item__title { capitalize }` — seed title chữ thường |
+| Team grid | `x-shared.team-grid` | `grid-cols-1 sm:2 lg:4`, `.team-card`, gap avatar↔tên |
+| Review platforms | `x-shared.review-platforms` | `.review-card`, stars **căn giữa** (`.card-inner { align-items: center }`) |
+| Testimonial carousel | `x-shared.testimonial-carousel` | `.snap-carousel__item` width theo `--space-gap` |
+| Destinations bento | `components/home/destinations` | `.vt-dest` — gap + copy padding token |
+| Video showcase | `x-shared.video-showcase` | `.vt-videos` — section Y, caption/play scale ≤567px |
+| Company intro | `x-shared.company-intro` | `.site-pad`, `.company-intro__cta`, `.company-intro__license*` |
+
+#### D. Trang danh mục & chi tiết — rà soát hoàn tất
+
+- **Listing:** `tours/index`, `cruises/index` — §3.13
+- **Detail:** `x-tour.detail` — `.detail-*` toàn bộ section (gallery, tabs, itinerary, sidebar booking)
+- **Blog:** `guide/index`, `guide/show`, `x-blog.sidebar`, `x-blog.card`
+- **Form:** `contact`, `customize-tour`, `x-form.stepper`, `x-form.checkbox-pill`
+- **Khác:** `search`, `gallery`, `reviews`; `videos`/`team` qua shared components
+- **Home / About:** đã token trước đó (§3.11 + components dùng chung)
+
+#### E. Trang Về chúng tôi — rà soát hoàn tất (`about.blade.php`)
+
+| Block | Trước (hardcode) | Sau (token/class) |
+|---|---|---|
+| Company intro license | `mt-6 pt-5 text-sm text-base sm:text-lg` | `.company-intro__license*` |
+| Team | — | Spacing liền intro/sứ mệnh do §3.5 |
+| Sứ mệnh / Tầm nhìn | `p-7`, `text-xl`, `mt-3`, `sm:grid-cols-[200px_1fr]` | `.signpost-card`, `.signpost-card__*` |
+| Giá trị cốt lõi | `space-y-8`, `size-64/72`, `text-xs/sm/base` | `.values-diagram`, `.values-diagram__*` |
+| Chính sách | `mt-4`, `mt-5`, `lg:grid-cols-[1fr_320px]` | `.site-pad`, `.about-policy__lead/cta`, `minmax(0,20rem)` |
+| Vì sao chọn | `mt-6 space-y-5`, `size-9`, `mt-7`, `h-80` | `.reason-list*`, `.about-mockup`, `.reason-list__cta` |
+| USP / Review / Testimonial | shared components | Spacing liền nhau do §3.5 |
+| Đại diện nước ngoài | `p-7`, `mt-4`, `space-y-2.5`, `text-xs/base` | `.ref-person-card*` |
+
+#### F. Quy trình rà soát trang tiếp theo
+
+1. Mở Blade → grep `p-[567]`, `mt-[34567]`, `space-y-[567]`, `gap-[678]`, `text-xl` ad-hoc
+2. Map vào bảng §3.3–3.4 hoặc tạo class component mới trong `app.css` (không inline Tailwind spacing lặp lại)
+3. Section liền nhau: §3.5 tự xử lý — dùng `.section-band--spaced-top` nếu cần tách rộng
+4. Chạy `npm run build` + kiểm visual tại 5 breakpoint
+
+**Nguồn triển khai:** `resources/css/app.css` (`:root` + `@layer components`); Blade trong `resources/views/components/` và `resources/views/pages/`.
+
+### 3.13 Trang danh mục Tour / Du thuyền — mapping component
+
+| Block | Component / class | Ghi chú |
+|---|---|---|
+| Page header | `x-layout.page-header` | Token page-header |
+| Layout 2 cột | `.listing-layout` | Filter trái ~17.5rem + list phải; mobile stack |
+| Bộ lọc | `x-tour.filter-sidebar` | `.filter-sidebar__*` — drawer ≤1023, cột ≥1024 |
+| Toolbar | `.listing-toolbar` | Chỉ `sort-dropdown` (không badge đếm) |
+| Danh sách | `x-tour.card` | `.tour-card-*`, `.card-body`, `.card-inner` — đã token |
+| Empty state | `.listing-empty` | Padding `--space-stack-lg` |
+| Rating tổng (tour) | `.listing-rating-summary` | Score clamp responsive |
+| SEO intro | `.prose-travel.listing-seo` | Border-top + `--space-stack-lg` |
+| FAQ | `x-shared.faq.listing-faq` | `.faq-list`, `.faq-item__*` |
+| Cruise pills | `.cruise-type-nav` | `btn-chip` chuyển tuyến |
+
+**Không dùng:** badge pill “Top N — 2026” / đếm sản phẩm cạnh sort — toolbar chỉ giữ sắp xếp.
+
+### 3.14 Các trang còn lại — mapping component
+
+| Trang | File / component | Class chính |
+|---|---|---|
+| Chi tiết tour/cruise | `x-tour.detail` | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
+| Blog listing | `guide/index` | `.blog-layout`, `.blog-toolbar`, `.blog-seo`, `.page-follow` |
+| Blog chi tiết | `guide/show` | `.blog-article-gallery`, `.blog-share-bar`, `.comment-*`, `.blog-inline-links` |
+| Blog sidebar | `x-blog.sidebar` | `.blog-sidebar__*` |
+| Liên hệ | `contact.blade.php` | `.contact-page`, `.contact-layout`, `.office-card__*` |
+| Tour riêng | `customize-tour.blade.php` | `.customize-form`, `.form-section__*`, `.form-grid`, `.form-pills` |
+| Form controls | `x-form.stepper`, `x-form.checkbox-pill` | `.form-stepper__*`, `.form-pill__label` |
+| Tìm kiếm | `search.blade.php` | `.search-section`, `.search-dest-card`, `.listing-empty` |
+| Gallery | `gallery.blade.php` | `.gallery-card__*` |
+| Reviews | `reviews.blade.php` | `.reviews-summary`, `.review-masonry-card` |
+| Videos / Team | `videos`, `team` | Dùng `page-header` + shared components đã token |
+| Home | `home.blade.php` | Đã token từ các component dùng chung |
+| About | `about.blade.php` | §3.11 |
+| Danh mục tour/cruise | `tours/index`, `cruises/index` | §3.13 |
+
+Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạng thái gửi form thành công), `.listing-empty`.
 
 ## 4. Component Inventory (đã bổ sung component mới phát hiện từ ảnh)
 

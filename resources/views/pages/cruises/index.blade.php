@@ -11,7 +11,7 @@
         ]" />
 
     {{-- Pill chuyển nhanh giữa các tuyến du thuyền --}}
-    <div class="container-site mt-6 flex flex-wrap gap-2.5">
+    <div class="container-site cruise-type-nav">
         @foreach ($types as $t)
             <a href="{{ route('cruises.index', $t['slug']) }}"
                 class="btn-chip {{ $t['slug'] === $type['slug'] ? 'is-active' : '' }}">
@@ -20,34 +20,31 @@
         @endforeach
     </div>
 
-    <div class="container-site grid items-start gap-8 py-8 lg:grid-cols-[280px_1fr]">
+    <div class="container-site listing-layout section-band--sm">
         <x-tour.filter-sidebar :durations="$durations" :styles="$styles" />
 
         <div class="min-w-0">
-            <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <span class="inline-flex items-center gap-2 rounded-full bg-leaf-500 px-4 py-1.5 text-sm font-bold text-white">
-                    <x-icon name="cruise" class="size-4" /> {{ count($cruises) }} du thuyền tuyển chọn
-                </span>
+            <div class="listing-toolbar">
                 <x-shared.sort-dropdown />
             </div>
 
             @if (count($cruises))
-                <div class="space-y-6">
+                <div class="site-stack">
                     @foreach ($cruises as $cruise)
                         <x-tour.card :item="$cruise" :href="route('cruises.show', ['type' => $cruise['typeSlug'], 'slug' => $cruise['slug']])" />
                     @endforeach
                 </div>
             @else
-                <div class="card flex flex-col items-center gap-3 p-12 text-center">
+                <div class="card listing-empty">
                     <x-icon name="cruise" class="size-10 text-muted" />
                     <p class="font-semibold">Chưa có du thuyền nào trong tuyến này.</p>
-                    <a href="{{ route('customize') }}" class="btn-primary mt-2">
+                    <a href="{{ route('customize') }}" class="btn-primary site-mt">
                         <x-icon name="sparkles" class="size-4" /> Nhờ chuyên gia tư vấn
                     </a>
                 </div>
             @endif
 
-            <div class="prose-travel mt-10 border-t border-line pt-8">
+            <div class="prose-travel listing-seo">
                 <p>
                     Ngủ đêm trên <strong>{{ strtolower($type['name']) }}</strong> là trải nghiệm không thể thay thế:
                     thức dậy giữa làn nước xanh ngọc, đón bình minh ngay trên boong tàu và dùng bữa tối dưới bầu trời sao.
@@ -56,7 +53,7 @@
                 </p>
             </div>
 
-            <x-shared.faq :faqs="$faqs" class="mt-10" title="Câu hỏi thường gặp về {{ strtolower($type['name']) }}" />
+            <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về {{ strtolower($type['name']) }}" />
         </div>
     </div>
 @endsection

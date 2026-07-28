@@ -43,19 +43,4 @@ return [
             'parent_relation' => null,
         ],
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Slug full builders per locale — return path starting with /
-    |--------------------------------------------------------------------------
-    */
-    'slug_full_builders' => [
-        'country' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => '/tours/'.($context['country_code'] ?? $slug),
-        'package_tour' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => rtrim((string) $parentSlugFull, '/').'/'.$slug,
-        'tour_category' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => rtrim((string) $parentSlugFull, '/').'/'.$slug,
-        'package_cruise' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => '/cruises/'.($context['country_code'] ?? 'vn').'/'.$slug,
-        'article' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => '/cam-nang-du-lich/'.($context['country_code'] ?? 'vn').'/'.$slug,
-        'blog_category' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => '/cam-nang-du-lich/'.$slug,
-        'static_page' => fn (string $locale, string $slug, ?string $parentSlugFull = null, array $context = []): string => '/'.$slug,
-    ],
 ];

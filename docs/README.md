@@ -40,7 +40,7 @@ autourasia-clone-docs/
 | `01-sitemap-ia.md` | Toàn bộ sitemap, menu, URL pattern, breadcrumb, block dùng chung |
 | `02-page-specs.md` | Đặc tả UI chi tiết từng loại trang — **có ghi rõ ảnh tham chiếu ở đầu mỗi mục** |
 | `03-data-models.md` | Schema dữ liệu product + ánh xạ SQL Laravel |
-| `04-design-system.md` | Style guide, component inventory (~35 component), nguyên tắc UX cần giữ |
+| `04-design-system.md` | Style guide, responsive breakpoints, **§3.5–3.14** (mapping toàn bộ trang public + nhật ký tối ưu), component inventory, UX |
 | `05-tech-stack-va-trien-khai.md` | Stack đề xuất (lịch sử Next.js) + ghi chú triển khai Laravel hiện tại |
 | `06-tham-chieu-hinh-anh.md` | Bảng ánh xạ ảnh ↔ trang, danh sách UI bổ sung từ ảnh |
 | `07-database-architecture.md` | **Kiến trúc CSDL thực thi** — SEO hub, i18n, packages, leads (tham chiếu Hitour) |

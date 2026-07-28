@@ -24,7 +24,7 @@
 @endphp
 
 {{-- Gallery đầu trang: ảnh lớn + dải thumbnail --}}
-<section class="container-site pt-6" aria-label="Thư viện ảnh">
+<section class="container-site detail-gallery" aria-label="Thư viện ảnh">
     @php
         $coverSrc = $item['imageDetail'] ?? $item['image'] ?? null;
         $coverSrcset = $item['imageDetailSrcset'] ?? $item['imageSrcset'] ?? null;
@@ -35,7 +35,7 @@
             $thumbs[] = ['src' => $coverSrc, 'srcset' => $coverSrcset];
         }
     @endphp
-    <div class="grid gap-3 lg:grid-cols-[2.2fr_1fr]">
+    <div class="detail-gallery__grid">
         @if ($coverSrc)
             <x-img
                 :src="$coverSrc"
@@ -44,12 +44,12 @@
                 :alt="$item['title']"
                 loading="eager"
                 fetchpriority="high"
-                class="h-72 w-full rounded-2xl object-cover sm:h-96"
+                class="detail-gallery__cover"
             />
         @else
-            <x-ph class="h-72 w-full rounded-2xl sm:h-96" :label="'Ảnh chính: ' . $item['title']" icon-class="size-14" />
+            <x-ph class="detail-gallery__cover" :label="'Ảnh chính: ' . $item['title']" icon-class="size-14" />
         @endif
-        <div class="grid grid-cols-4 gap-3 lg:grid-cols-2 lg:grid-rows-2">
+        <div class="detail-gallery__thumbs">
             @for ($i = 0; $i < 4; $i++)
                 @php $thumb = $thumbs[$i] ?? null; @endphp
                 <div class="relative overflow-hidden rounded-xl">
@@ -77,11 +77,11 @@
     </div>
 
     {{-- Card tiêu đề + breadcrumb --}}
-    <div class="card mt-5 px-6 py-5 sm:px-8">
+    <div class="card detail-title-card">
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
                 <x-layout.breadcrumb :items="$breadcrumbs" class="mb-3" />
-                <h1 class="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">{{ $item['title'] }}</h1>
+                <h1 class="detail-title-card__h1">{{ $item['title'] }}</h1>
             </div>
             <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
         </div>
@@ -90,26 +90,26 @@
 
 <div x-data="scrollSpy(@js($sectionIds))">
     {{-- Tab anchor sticky --}}
-    <nav class="sticky top-16 z-30 mt-6 border-y border-line bg-page-soft/95 backdrop-blur lg:top-[72px]" aria-label="Điều hướng trong trang">
-        <div class="container-site flex gap-1 overflow-x-auto">
+    <nav class="detail-tabs" aria-label="Điều hướng trong trang">
+        <div class="container-site detail-tabs__inner">
             @foreach ($tabs as $id => $label)
                 <a href="#{{ $id }}"
-                    class="border-b-2 px-4 py-3 text-sm font-semibold whitespace-nowrap transition"
-                    :class="active === '{{ $id }}' ? 'border-primary-500 text-primary-600' : 'border-transparent text-ink-soft hover:text-ink'">
+                    class="detail-tabs__link"
+                    :class="active === '{{ $id }}' ? 'is-active' : ''">
                     {{ $label }}
                 </a>
             @endforeach
         </div>
     </nav>
 
-    <div class="container-site grid items-start gap-8 py-8 lg:grid-cols-[1fr_340px]">
+    <div class="container-site detail-layout section-band--sm">
         {{-- ── Cột nội dung chính ── --}}
-        <div class="min-w-0 space-y-10">
+        <div class="min-w-0 detail-stack">
 
             {{-- Tổng quan --}}
-            <section id="tong-quan" class="scroll-mt-32" aria-label="Tổng quan">
-                <div class="card p-6 sm:p-7">
-                    <dl class="grid gap-x-8 gap-y-4 text-base sm:grid-cols-2">
+            <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
+                <div class="card detail-meta-card">
+                    <dl class="detail-meta-card__grid">
                         <div class="flex gap-2.5"><dt class="flex items-center gap-1.5 font-semibold"><x-icon name="tag" class="size-4 text-primary-600" /> Mã {{ $isCruise ? 'du thuyền' : 'tour' }}:</dt><dd class="text-ink-soft">{{ $item['tourCode'] }}</dd></div>
                         <div class="flex gap-2.5"><dt class="flex items-center gap-1.5 font-semibold"><x-icon name="calendar" class="size-4 text-primary-600" /> Thời lượng:</dt><dd class="text-ink-soft">{{ $item['duration'] }}</dd></div>
                         <div class="flex gap-2.5"><dt class="flex items-center gap-1.5 font-semibold"><x-icon name="map-pin" class="size-4 text-primary-600" /> Khởi hành:</dt><dd class="text-ink-soft">{{ $item['start'] }}</dd></div>
@@ -126,10 +126,10 @@
                 </div>
 
                 {{-- Bản đồ tuyến --}}
-                <div class="card group mt-5 cursor-zoom-in overflow-hidden" role="button" tabindex="0" aria-label="Phóng to bản đồ hành trình">
+                <div class="card detail-map-card group cursor-zoom-in overflow-hidden" role="button" tabindex="0" aria-label="Phóng to bản đồ hành trình">
                     <div class="relative">
                         <x-ph class="h-56 w-full sm:h-64" label="Bản đồ tuyến hành trình" icon="map-pin" icon-class="size-10" />
-                        <span class="absolute right-4 bottom-4 rounded-full bg-white/95 px-4 py-1.5 text-xs font-semibold shadow transition group-hover:bg-primary-500 group-hover:text-white">
+                        <span class="detail-map-card__hint transition group-hover:bg-primary-500 group-hover:text-white">
                             Nhấn để xem bản đồ lớn
                         </span>
                     </div>
@@ -137,13 +137,13 @@
             </section>
 
             {{-- Điểm nhấn --}}
-            <section id="diem-nhan" class="scroll-mt-32" aria-label="Điểm nhấn hành trình">
-                <h2 class="section-title mb-4">Điểm nhấn hành trình</h2>
+            <section id="diem-nhan" class="detail-section" aria-label="Điểm nhấn hành trình">
+                <h2 class="section-title site-mb">Điểm nhấn hành trình</h2>
                 <p class="prose-travel">{{ $item['highlightsIntro'] }}</p>
-                <ul class="mt-4 space-y-2.5">
+                <ul class="detail-highlights-list">
                     @foreach ($item['highlights'] as $h)
                         <li class="flex gap-3 text-base leading-7">
-                            <span class="mt-1 flex size-5 shrink-0 items-center justify-center rounded-full bg-leaf-100 text-leaf-600">
+                            <span class="detail-highlights-list__icon">
                                 <x-icon name="check" class="size-3" />
                             </span>
                             {{ $h }}
@@ -154,15 +154,15 @@
 
             {{-- Hạng cabin (chỉ du thuyền) --}}
             @if ($isCruise && !empty($item['cabinTypes']))
-                <section id="hang-cabin" class="scroll-mt-32" aria-label="Hạng cabin">
-                    <h2 class="section-title mb-5">Hạng cabin</h2>
-                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <section id="hang-cabin" class="detail-section" aria-label="Hạng cabin">
+                    <h2 class="section-title site-mb">Hạng cabin</h2>
+                    <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($item['cabinTypes'] as $cabin)
                             <article class="card overflow-hidden transition hover:shadow-(--shadow-card-hover)">
                                 <div class="relative aspect-[3/2]">
                                     <x-ph class="absolute inset-0" :label="'Cabin ' . $cabin['name']" icon-class="size-8" />
                                 </div>
-                                <div class="p-4">
+                                <div class="cabin-card__body">
                                     <h3 class="text-sm font-bold">{{ $cabin['name'] }}</h3>
                                     <p class="mt-1 flex items-center gap-1.5 text-xs text-muted">
                                         <x-icon name="users" class="size-3.5" /> Tối đa {{ $cabin['capacity'] }} khách · {{ $cabin['note'] }}
@@ -175,23 +175,23 @@
             @endif
 
             {{-- Lịch trình --}}
-            <section id="lich-trinh" class="scroll-mt-32" aria-label="Lịch trình chi tiết"
+            <section id="lich-trinh" class="detail-section" aria-label="Lịch trình chi tiết"
                 x-data="{ opened: [1], all: false,
                     toggle(d) { this.opened.includes(d) ? this.opened = this.opened.filter(x => x !== d) : this.opened.push(d) },
                     toggleAll() { this.all = !this.all; this.opened = this.all ? @js(array_column($item['itinerary'], 'day')) : [] } }">
-                <div class="mb-5 flex items-center justify-between gap-4">
+                <div class="site-mb flex items-center justify-between gap-4">
                     <h2 class="section-title">Lịch trình từng ngày</h2>
                     <button type="button" @click="toggleAll"
                         class="btn-ghost shrink-0" x-text="all ? 'Thu gọn tất cả' : 'Mở rộng tất cả'"></button>
                 </div>
-                <ol class="space-y-3">
+                <ol class="detail-itinerary-list">
                     @foreach ($item['itinerary'] as $day)
                         <li class="card overflow-hidden">
                             <h3>
                                 <button type="button" @click="toggle({{ $day['day'] }})"
-                                    class="flex w-full items-center gap-4 px-5 py-4 text-left transition hover:bg-page-soft"
+                                    class="detail-itinerary__trigger"
                                     :aria-expanded="opened.includes({{ $day['day'] }})">
-                                    <span class="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-primary-500 leading-none text-white">
+                                    <span class="detail-itinerary__day">
                                         <span class="text-[9px] font-semibold uppercase">Ngày</span>
                                         <span class="text-sm font-bold">{{ $day['day'] }}</span>
                                     </span>
@@ -211,7 +211,7 @@
                                 </button>
                             </h3>
                             <div x-show="opened.includes({{ $day['day'] }})" x-collapse x-cloak>
-                                <div class="grid gap-4 border-t border-line px-5 py-4 sm:grid-cols-[1fr_180px]">
+                                <div class="detail-itinerary__body">
                                     <div>
                                         <p class="body-text">{{ $day['content'] }}</p>
                                         @if ($day['overnight'])
@@ -229,11 +229,11 @@
             </section>
 
             {{-- Bao gồm / Không bao gồm / Lưu ý --}}
-            <section id="bao-gom" class="scroll-mt-32" aria-label="Giá bao gồm và không bao gồm">
-                <h2 class="section-title mb-5">Giá đã bao gồm những gì?</h2>
-                <div class="grid gap-5 md:grid-cols-2">
-                    <div class="card p-6">
-                        <h3 class="mb-4 flex items-center gap-2 text-base font-bold text-leaf-700">
+            <section id="bao-gom" class="detail-section" aria-label="Giá bao gồm và không bao gồm">
+                <h2 class="section-title site-mb">Giá đã bao gồm những gì?</h2>
+                <div class="detail-inclusion-grid">
+                    <div class="card detail-inclusion-card">
+                        <h3 class="site-mb flex items-center gap-2 text-base font-bold text-leaf-700">
                             <x-icon name="check" class="size-4.5" /> Bao gồm
                         </h3>
                         <ul class="body-text space-y-2.5">
@@ -242,8 +242,8 @@
                             @endforeach
                         </ul>
                     </div>
-                    <div class="card p-6">
-                        <h3 class="mb-4 flex items-center gap-2 text-base font-bold text-primary-700">
+                    <div class="card detail-inclusion-card">
+                        <h3 class="site-mb flex items-center gap-2 text-base font-bold text-primary-700">
                             <x-icon name="x-mark" class="size-4.5" /> Không bao gồm
                         </h3>
                         <ul class="body-text space-y-2.5">
@@ -252,7 +252,7 @@
                             @endforeach
                         </ul>
                         @if (!empty($item['notes']))
-                            <h3 class="mt-6 mb-3 text-base font-bold">Lưu ý</h3>
+                            <h3 class="site-mt site-mb text-base font-bold">Lưu ý</h3>
                             <ul class="space-y-2 text-base leading-7 text-muted">
                                 @foreach ($item['notes'] as $note)
                                     <li class="flex gap-2">• {{ $note }}</li>
@@ -264,11 +264,11 @@
             </section>
 
             {{-- Đánh giá khách hàng (Q&A) --}}
-            <section id="danh-gia" class="scroll-mt-32" aria-label="Đánh giá của khách hàng">
-                <h2 class="section-title mb-5">Khách hàng nói gì về hành trình này</h2>
-                <div class="space-y-4">
+            <section id="danh-gia" class="detail-section" aria-label="Đánh giá của khách hàng">
+                <h2 class="section-title site-mb">Khách hàng nói gì về hành trình này</h2>
+                <div class="detail-review-list">
                     @foreach ($reviews as $r)
-                        <article class="card p-6">
+                        <article class="card detail-review-card">
                             <div class="flex items-center gap-3">
                                 <x-ph class="size-11 rounded-full" icon="user" icon-class="size-5" :label="null" />
                                 <div>
@@ -277,33 +277,33 @@
                                 </div>
                                 <span class="ml-auto text-xs text-muted">{{ $r['trip'] }}</span>
                             </div>
-                            <p class="body-text mt-3">{{ $r['quote'] }}</p>
+                            <p class="body-text site-mt">{{ $r['quote'] }}</p>
                         </article>
                     @endforeach
                 </div>
             </section>
 
             {{-- FAQ cuối trang --}}
-            <div id="faq" class="scroll-mt-32">
+            <div id="faq" class="detail-section">
                 <x-shared.faq :faqs="$item['faqs']" title="Câu hỏi thường gặp về {{ $isCruise ? 'du thuyền' : 'tour' }} này" />
             </div>
         </div>
 
         {{-- ── Sidebar đặt tour sticky ── --}}
-        <aside class="top-32 space-y-5 lg:sticky" aria-label="Đặt tour">
+        <aside class="detail-sidebar" aria-label="Đặt tour">
             <div class="card overflow-hidden">
-                <div class="bg-primary-500 px-6 py-4 text-white">
+                <div class="detail-sidebar__head">
                     <p class="kicker opacity-90">Giá trọn gói theo yêu cầu</p>
-                    <p class="mt-1 font-display text-2xl font-bold">Nhận báo giá trong 24h</p>
+                    <p class="detail-sidebar__price">Nhận báo giá trong 24h</p>
                 </div>
-                <div class="p-6">
+                <div class="detail-sidebar__body">
                     @if ($item['badge'])
-                        <p class="mb-4 inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-3 py-1 text-xs font-bold text-accent-700">
+                        <p class="site-mb inline-flex items-center gap-1.5 rounded-full bg-accent-50 px-3 py-1 text-xs font-bold text-accent-700">
                             <x-icon name="sparkles" class="size-3.5" /> {{ $item['badge'] }}
                         </p>
                     @endif
                     <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
-                    <div class="mt-5 space-y-3">
+                    <div class="detail-sidebar__actions">
                         <a href="{{ route('customize') }}" class="btn-primary w-full">
                             <x-icon name="sparkles" class="size-4" /> Yêu cầu báo giá
                         </a>
@@ -312,13 +312,13 @@
                             <x-icon name="whatsapp" class="size-4.5" /> Chat WhatsApp
                         </a>
                     </div>
-                    <ul class="mt-6 space-y-2.5 border-t border-line pt-5 text-sm leading-6 text-ink-soft">
+                    <ul class="detail-sidebar__usp">
                         <li class="flex gap-2"><x-icon name="expert" class="mt-0.5 size-4 shrink-0 text-leaf-600" /> Chuyên gia bản địa thiết kế riêng</li>
                         <li class="flex gap-2"><x-icon name="refund" class="mt-0.5 size-4 shrink-0 text-leaf-600" /> Cam kết hoàn tiền minh bạch</li>
                         <li class="flex gap-2"><x-icon name="value" class="mt-0.5 size-4 shrink-0 text-leaf-600" /> Giá trị vượt trội, không phí ẩn</li>
                         <li class="flex gap-2"><x-icon name="support" class="mt-0.5 size-4 shrink-0 text-leaf-600" /> Hỗ trợ 24/7 suốt hành trình</li>
                     </ul>
-                    <p class="mt-5 flex items-center justify-center gap-2 rounded-xl bg-page px-4 py-2.5 text-[11px] font-semibold text-muted">
+                    <p class="detail-sidebar__trust">
                         <x-icon name="shield" class="size-4" /> Được đề xuất trên TripAdvisor
                     </p>
                 </div>
@@ -329,9 +329,9 @@
 
 {{-- Tour/du thuyền tương tự --}}
 @if (count($related))
-    <section class="cv-auto container-site py-10" aria-label="Hành trình tương tự">
+    <section class="cv-auto container-site section-band--sm" aria-label="Hành trình tương tự">
         <x-shared.section-heading title="Hành trình tương tự bạn có thể thích" />
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($related as $r)
                 <x-tour.card-compact :item="$r"
                     :href="$isCruise

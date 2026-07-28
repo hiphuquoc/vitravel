@@ -5,7 +5,7 @@
 @endphp
 
 {{-- Nút nổi Zalo + WhatsApp --}}
-<div class="fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2.5 sm:right-6 sm:bottom-6">
+<div class="site-fab fixed z-40 flex flex-col items-end site-gap-sm">
     <a href="https://zalo.me/{{ $zaloPhone }}" target="_blank" rel="noopener"
         class="btn-zalo w-auto self-end shadow-(--shadow-float)"
         aria-label="Trò chuyện Zalo">

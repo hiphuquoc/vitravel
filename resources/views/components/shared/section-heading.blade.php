@@ -5,7 +5,7 @@
     'align' => 'center', // center | left
 ])
 
-<div {{ $attributes->merge(['class' => 'mb-9 ' . ($align === 'center' ? 'text-center' : '')]) }}>
+<div {{ $attributes->merge(['class' => 'section-heading' . ($align === 'center' ? ' section-heading--center' : '')]) }}>
     @if ($eyebrow)
         <span class="section-eyebrow" aria-hidden="true">{{ $eyebrow }}</span>
     @endif
@@ -13,5 +13,5 @@
     @if ($subtitle)
         <p class="section-subtitle {{ $align === 'center' ? 'mx-auto max-w-2xl' : 'max-w-2xl' }}">{{ $subtitle }}</p>
     @endif
-    <span class="mt-3.5 block h-1 w-14 rounded-full bg-primary-500 {{ $align === 'center' ? 'mx-auto' : '' }}"></span>
+    <span class="section-heading__rule" aria-hidden="true"></span>
 </div>

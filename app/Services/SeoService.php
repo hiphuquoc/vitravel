@@ -77,17 +77,30 @@ class SeoService
             $parentSlugFull = $parentTranslation?->slug_full;
         }
 
-        $builder = config("seo.slug_full_builders.{$seoType}");
+        return $this->slugFullForType($seoType, $slug, $parentSlugFull, $context);
+    }
 
-        if (is_callable($builder)) {
-            return $builder($locale, $slug, $parentSlugFull, $context);
-        }
-
-        if ($parentSlugFull) {
-            return rtrim($parentSlugFull, '/').'/'.ltrim($slug, '/');
-        }
-
-        return '/'.ltrim($slug, '/');
+    /**
+     * @param  array<string, mixed>  $context
+     */
+    protected function slugFullForType(
+        string $seoType,
+        string $slug,
+        ?string $parentSlugFull,
+        array $context,
+    ): string {
+        return match ($seoType) {
+            'country' => '/tours/'.($context['country_code'] ?? $slug),
+            'package_tour' => rtrim((string) $parentSlugFull, '/').'/'.$slug,
+            'tour_category' => rtrim((string) $parentSlugFull, '/').'/'.$slug,
+            'package_cruise' => '/cruises/'.($context['country_code'] ?? 'vn').'/'.$slug,
+            'article' => '/cam-nang-du-lich/'.($context['country_code'] ?? 'vn').'/'.$slug,
+            'blog_category' => '/cam-nang-du-lich/'.$slug,
+            'static_page' => '/'.$slug,
+            default => $parentSlugFull
+                ? rtrim($parentSlugFull, '/').'/'.ltrim($slug, '/')
+                : '/'.ltrim($slug, '/'),
+        };
     }
 
     public function resolveParentEntry(Model $model, ?string $seoType, mixed $parentId = null): ?SeoEntry

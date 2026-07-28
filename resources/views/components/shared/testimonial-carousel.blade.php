@@ -6,7 +6,7 @@
 @endphp
 
 {{-- Carousel cảm nhận khách hàng — trust block dùng chung nhiều trang --}}
-<section {{ $attributes->merge(['class' => 'cv-auto py-14']) }} aria-label="{{ $data['title'] ?? 'Cảm nhận khách hàng' }}">
+<section {{ $attributes->merge(['class' => 'cv-auto section-band']) }} aria-label="{{ $data['title'] ?? 'Cảm nhận khách hàng' }}">
     <div class="container-site">
         <x-shared.section-heading
             :eyebrow="$data['eyebrow'] ?? null"
@@ -18,7 +18,7 @@
             <div x-ref="track" class="snap-carousel" role="list">
                 @foreach ($testimonials as $t)
                     <article role="listitem"
-                        class="card flex w-[calc((100%-1.25rem)/1.5)] shrink-0 flex-col p-5 transition hover:shadow-(--shadow-card-hover) sm:w-[calc((100%-2.5rem)/2.5)] sm:p-6 lg:w-[calc((100%-3.75rem)/3.5)]">
+                        class="card snap-carousel__item flex shrink-0 flex-col card-body transition hover:shadow-(--shadow-card-hover)">
                         <div class="flex items-center gap-3">
                             @if (! empty($t['avatar']))
                                 <x-img
@@ -36,18 +36,20 @@
                                 <p class="mt-0.5 text-sm text-muted">{{ $t['flag'] }} {{ $t['country'] }}@if (! empty($t['trip'])) · {{ $t['trip'] }}@endif</p>
                             </div>
                         </div>
-                        <x-shared.rating :rating="$t['rating']" class="mt-3.5" />
-                        <blockquote class="body-text mt-3.5 flex flex-1 gap-2">
-                            <x-icon name="quote" class="mt-1 size-5 shrink-0 text-primary-300" />
-                            <span>{{ $t['quote'] }}</span>
-                        </blockquote>
+                        <div class="card-inner flex-1">
+                            <x-shared.rating :rating="$t['rating']" />
+                            <blockquote class="body-text flex flex-1 gap-2">
+                                <x-icon name="quote" class="mt-1 size-5 shrink-0 text-primary-300" />
+                                <span>{{ $t['quote'] }}</span>
+                            </blockquote>
+                        </div>
                         @php
                             $urls = $t['photoUrls'] ?? [];
                             $srcsets = $t['photoSrcsets'] ?? [];
                             $photoCount = (int) ($t['photos'] ?? 0);
                         @endphp
                         @if ($photoCount > 0 || count($urls) > 0)
-                            <div class="mt-5 flex gap-2">
+                            <div class="card-footer flex gap-2">
                                 @for ($i = 0; $i < 2; $i++)
                                     @if (! empty($urls[$i]))
                                         <x-img
@@ -94,7 +96,7 @@
         </div>
 
         @if (! empty($data['ctaLabel']) && ! empty($data['ctaUrl']))
-            <div class="mt-9 text-center">
+            <div class="site-mt-lg text-center">
                 <a href="{{ $data['ctaUrl'] }}" class="btn-outline">{{ $data['ctaLabel'] }}</a>
             </div>
         @endif

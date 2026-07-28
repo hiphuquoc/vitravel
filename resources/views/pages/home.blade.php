@@ -6,27 +6,27 @@
     <x-home.hero-slider :slides="$slides" :pills="$pills" :countries="$countries" />
 
     {{-- ── 4 USP ── --}}
-    <section class="container-site py-14" aria-label="Cam kết dịch vụ">
+    <section class="container-site section-band" aria-label="Cam kết dịch vụ">
         <x-shared.usp-badges />
     </section>
 
     {{-- ── Giới thiệu công ty ── --}}
     @php $companyIntro = view_data()->homeSection('company_intro'); @endphp
     @unless ($companyIntro['hidden'] ?? false)
-        <x-shared.company-intro class="py-4" :section="$companyIntro" />
+        <x-shared.company-intro :section="$companyIntro" />
     @endunless
 
     {{-- ── Tour nổi bật ── --}}
     @php $featuredSection = view_data()->homeSection('featured_tours'); @endphp
     @unless ($featuredSection['hidden'] ?? false)
-        <section class="cv-auto py-14" aria-label="{{ $featuredSection['title'] ?? 'Tour được yêu cầu nhiều nhất' }}">
+        <section class="cv-auto section-band" aria-label="{{ $featuredSection['title'] ?? 'Tour được yêu cầu nhiều nhất' }}">
             <div class="container-site">
                 <x-shared.section-heading
                     :eyebrow="$featuredSection['eyebrow'] ?? null"
                     :title="$featuredSection['title'] ?? ''"
                     :subtitle="$featuredSection['subtitle'] ?? null"
                 />
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($featuredTours as $tour)
                         <x-tour.card-compact :item="$tour" :href="route('tours.show', ['country' => $tour['countrySlug'], 'slug' => $tour['slug']])" />
                     @endforeach
@@ -38,14 +38,14 @@
     {{-- ── Du thuyền nổi bật ── --}}
     @php $cruisesSection = view_data()->homeSection('featured_cruises'); @endphp
     @unless ($cruisesSection['hidden'] ?? false)
-        <section class="cv-auto py-14" aria-label="{{ $cruisesSection['title'] ?? 'Du thuyền nổi bật' }}">
+        <section class="cv-auto section-band" aria-label="{{ $cruisesSection['title'] ?? 'Du thuyền nổi bật' }}">
             <div class="container-site">
                 <x-shared.section-heading
                     :eyebrow="$cruisesSection['eyebrow'] ?? null"
                     :title="$cruisesSection['title'] ?? ''"
                     :subtitle="$cruisesSection['subtitle'] ?? null"
                 />
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($featuredCruises as $cruise)
                         <x-tour.card-compact :item="$cruise" :href="route('cruises.show', ['type' => $cruise['typeSlug'], 'slug' => $cruise['slug']])" />
                     @endforeach
