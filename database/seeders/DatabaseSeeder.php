@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             TourCategorySeeder::class,
             HomeSlideSeeder::class,
             HomeSectionSeeder::class,
+            ReviewSeeder::class,
+            ExperienceVideoSeeder::class,
+            HomeFeaturedSeeder::class,
         ]);
 
         User::query()->updateOrCreate(

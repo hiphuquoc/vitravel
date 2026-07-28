@@ -13,9 +13,9 @@
         <x-layout.breadcrumb :items="array_filter([
             ['label' => 'Cẩm nang du lịch', 'url' => $country ? route('guide.index') : null],
             $country ? ['label' => 'Cẩm nang ' . $country['name']] : null,
-        ])" />
+        ])" class="mb-4" />
 
-        <div class="mt-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center justify-between gap-4">
             <h1 class="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">{{ $pageTitle }}</h1>
             <x-shared.sort-dropdown :options="['Bài mới nhất', 'Xem nhiều nhất', 'Đánh giá cao nhất']" />
         </div>

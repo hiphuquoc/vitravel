@@ -59,7 +59,4 @@
             <x-shared.faq :faqs="$faqs" class="mt-10" title="Câu hỏi thường gặp về {{ strtolower($type['name']) }}" />
         </div>
     </div>
-
-    <x-shared.testimonial-carousel />
-    <x-shared.review-platforms class="pt-0" />
 @endsection

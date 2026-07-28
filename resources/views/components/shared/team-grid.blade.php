@@ -17,7 +17,13 @@
             @foreach ($members as $m)
                 <article class="card group flex flex-col items-center p-5 text-center transition hover:shadow-(--shadow-card-hover) sm:p-6">
                     @if (!empty($m['image']))
-                        <img src="{{ $m['image'] }}" alt="{{ $m['name'] }}" class="size-24 rounded-full object-cover ring-4 ring-page transition group-hover:ring-primary-100 sm:size-28" loading="lazy">
+                        <x-img
+                            :src="$m['image']"
+                            :srcset="$m['imageSrcset'] ?? null"
+                            preset="avatar"
+                            :alt="$m['name']"
+                            class="size-24 rounded-full object-cover ring-4 ring-page transition group-hover:ring-primary-100 sm:size-28"
+                        />
                     @else
                         <x-ph class="size-24 rounded-full ring-4 ring-page transition group-hover:ring-primary-100 sm:size-28" icon="user" icon-class="size-10" :label="null" />
                     @endif

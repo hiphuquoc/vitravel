@@ -38,8 +38,13 @@ class TeamMember extends Model
         return $this->belongsTo(Media::class, 'avatar_media_id');
     }
 
-    public function avatarUrl(): ?string
+    public function avatarUrl(?string $variant = 'thumb'): ?string
     {
-        return app(MediaService::class)->publicUrl($this->avatar);
+        return app(MediaService::class)->publicUrl($this->avatar, $variant);
+    }
+
+    public function avatarSrcset(): ?string
+    {
+        return app(MediaService::class)->srcset($this->avatar);
     }
 }

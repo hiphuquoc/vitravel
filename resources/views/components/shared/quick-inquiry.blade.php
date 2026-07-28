@@ -1,68 +1,145 @@
-{{-- "Hỏi nhanh về tour" — form lead lặp lại cuối hầu hết các trang, ngay trước footer --}}
-<section class="cv-auto py-14" aria-label="Hỏi nhanh về tour">
+{{-- Hỏi nhanh — teaser thu gọn, form letter mở trong modal --}}
+@php
+    $qi = view_data()->quickInquiry();
+    $qiTitle = $qi['title'] ?? 'Hỏi nhanh về tour';
+    $qiBody = $qi['body'] ?? $qi['subtitle'] ?? 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.';
+    $qiHasErrors = $errors->hasAny(['name', 'email', 'phone', 'address', 'message']);
+    $qiSuccess = session('success') === 'quick_inquiry';
+@endphp
+@unless ($qi['hidden'] ?? false)
+<section
+    class="qi-band cv-auto"
+    aria-label="{{ $qiTitle }}"
+    x-data="quickInquiry({ openOnLoad: @js($qiHasErrors) })"
+    @keydown.escape.window="closeModal()"
+>
     <div class="container-site">
-        <div class="card overflow-hidden">
-            <div class="grid lg:grid-cols-2">
-                {{-- Trái: lời dẫn + minh hoạ --}}
-                <div class="flex flex-col justify-center bg-leaf-100/60 p-8 sm:p-10 lg:p-12">
-                    <h2 class="section-title">Hỏi nhanh về tour</h2>
-                    <p class="section-subtitle max-w-md">
-                        Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn —
-                        chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.
-                    </p>
-                    <div class="mt-8 flex items-end gap-5 sm:mt-10 sm:gap-6">
-                        <x-ph class="h-32 w-40 rounded-xl" label="Minh hoạ: xe đạp chở hoa" icon="bike" icon-class="size-8" />
-                        <x-ph class="h-24 w-32 rounded-xl" label="Minh hoạ: gánh hàng rong" icon="walking" icon-class="size-7" />
-                    </div>
+        @if ($qiSuccess)
+            <div class="qi-teaser qi-teaser--success" role="status">
+                <span class="qi-teaser__accent" aria-hidden="true"></span>
+                <div class="qi-teaser__copy">
+                    <p class="qi-teaser__eyebrow">Đã gửi thành công</p>
+                    <h2 class="qi-teaser__title">Cảm ơn bạn đã viết thư!</h2>
+                    <p class="qi-teaser__lead">Tư vấn viên ViTravel sẽ liên hệ qua email hoặc điện thoại trong vòng 24 giờ làm việc.</p>
                 </div>
+            </div>
+        @else
+            <button type="button" class="qi-teaser" @click="openModal()" aria-haspopup="dialog">
+                <span class="qi-teaser__accent" aria-hidden="true"></span>
+                <div class="qi-teaser__copy">
+                    <p class="qi-teaser__eyebrow">Một lời nhắn gửi chúng tôi</p>
+                    <h2 class="qi-teaser__title">{{ $qiTitle }}</h2>
+                    <p class="qi-teaser__lead">{!! $qiBody !!}</p>
+                </div>
+                <span class="qi-teaser__action">
+                    <span class="btn-primary shrink-0">
+                        <x-icon name="mail" class="size-4" />
+                        Viết lời nhắn
+                    </span>
+                </span>
+            </button>
+        @endif
+    </div>
 
-                {{-- Phải: form --}}
-                @if (session('success') === 'quick_inquiry')
-                    <div class="flex h-full flex-col items-center justify-center p-8 py-10 text-center sm:p-10 lg:p-12">
-                        <span class="flex size-14 items-center justify-center rounded-full bg-leaf-100 text-leaf-600">
-                            <x-icon name="check" class="size-7" />
-                        </span>
-                        <h3 class="mt-4 font-display text-xl font-bold sm:text-2xl">Đã nhận được lời nhắn của bạn!</h3>
-                        <p class="body-text mt-3 max-w-sm">Tư vấn viên sẽ liên hệ qua email hoặc điện thoại trong vòng 24 giờ làm việc. Hãy kiểm tra hộp thư nhé.</p>
-                    </div>
-                @else
-                    <form action="{{ route('leads.quick-inquiry') }}" method="POST" class="p-8 sm:p-10 lg:p-12">
-                        @csrf
-                        <div class="grid gap-4 sm:grid-cols-2 sm:gap-5">
-                            <div>
-                                <label for="qi-name" class="field-label field-required">Họ và tên</label>
-                                <input id="qi-name" name="name" type="text" required autocomplete="name" value="{{ old('name') }}" class="field-input" placeholder="Nguyễn Văn A">
-                                @error('name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div>
-                                <label for="qi-email" class="field-label field-required">Email</label>
-                                <input id="qi-email" name="email" type="email" required autocomplete="email" value="{{ old('email') }}" class="field-input" placeholder="ban@email.com">
-                                @error('email')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div>
-                                <label for="qi-phone" class="field-label field-required">Số điện thoại</label>
-                                <input id="qi-phone" name="phone" type="tel" required autocomplete="tel" value="{{ old('phone') }}" class="field-input" placeholder="+84 ...">
-                                @error('phone')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
-                            </div>
-                            <div>
-                                <label for="qi-address" class="field-label">Địa chỉ</label>
-                                <input id="qi-address" name="address" type="text" autocomplete="street-address" value="{{ old('address') }}" class="field-input" placeholder="Thành phố bạn đang sống">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label for="qi-message" class="field-label">Bạn cần chúng tôi tư vấn điều gì?</label>
-                                <textarea id="qi-message" name="message" rows="4" class="field-input resize-none"
-                                    placeholder="VD: Gia đình 4 người, muốn đi miền Bắc 8 ngày vào tháng 10...">{{ old('message') }}</textarea>
-                            </div>
-                            <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
-                            <div class="sm:col-span-2 pt-1">
-                                <button type="submit" class="btn-primary w-full sm:w-auto">
-                                    <x-icon name="mail" class="size-4" /> Gửi lời nhắn
-                                </button>
-                            </div>
-                        </div>
-                    </form>
-                @endif
+    {{-- Modal box vừa nội dung — nền đen mờ xung quanh --}}
+    <template x-teleport="body">
+        <div
+            x-cloak
+            x-show="open"
+            class="qi-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="qi-modal-title"
+            @keydown.escape.window="closeModal()"
+        >
+            <div
+                class="qi-modal__backdrop"
+                x-show="open"
+                x-transition:enter="transition ease-out duration-250"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                @click="closeModal()"
+            ></div>
+
+            <div
+                class="qi-modal__panel"
+                x-show="open"
+                x-transition:enter="transition ease-out duration-280"
+                x-transition:enter-start="opacity-0 scale-[0.97] translate-y-3"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                x-transition:leave-end="opacity-0 scale-[0.98] translate-y-2"
+                @click.stop
+            >
+                <button type="button" class="qi-modal__close" @click="closeModal()" aria-label="Đóng">
+                    <x-icon name="close" class="size-5" />
+                </button>
+
+                <article class="vt-letter vt-letter--modal">
+                            <header class="vt-letter__head">
+                                <div class="vt-letter__mast">
+                                    <span class="vt-letter__seal" aria-hidden="true">
+                                        <x-icon name="compass" class="size-5" />
+                                    </span>
+                                    <span class="vt-letter__wordmark">ViTravel</span>
+                                </div>
+                                <p class="vt-letter__eyebrow">Một lời nhắn gửi chúng tôi</p>
+                                <h2 id="qi-modal-title" class="vt-letter__title">{{ $qiTitle }}</h2>
+                                <p class="vt-letter__lead">{!! $qiBody !!}</p>
+                            </header>
+
+                            <form action="{{ route('leads.quick-inquiry') }}" method="POST" class="vt-letter__form">
+                                @csrf
+                                <p class="vt-letter__salutation">Kính gửi đội ngũ ViTravel,</p>
+
+                                <div class="vt-letter__grid">
+                                    <div class="vt-letter__field">
+                                        <label for="qi-name" class="vt-letter__label">Tôi là <span class="text-primary-600">*</span></label>
+                                        <input id="qi-name" name="name" type="text" required autocomplete="name" x-ref="firstInput"
+                                            value="{{ old('name') }}" class="vt-letter__line" placeholder="Họ và tên của bạn">
+                                        @error('name')<p class="vt-letter__error">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div class="vt-letter__field">
+                                        <label for="qi-email" class="vt-letter__label">Email <span class="text-primary-600">*</span></label>
+                                        <input id="qi-email" name="email" type="email" required autocomplete="email"
+                                            value="{{ old('email') }}" class="vt-letter__line" placeholder="ban@email.com">
+                                        @error('email')<p class="vt-letter__error">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div class="vt-letter__field">
+                                        <label for="qi-phone" class="vt-letter__label">Liên hệ qua <span class="text-primary-600">*</span></label>
+                                        <input id="qi-phone" name="phone" type="tel" required autocomplete="tel"
+                                            value="{{ old('phone') }}" class="vt-letter__line" placeholder="+84 ...">
+                                        @error('phone')<p class="vt-letter__error">{{ $message }}</p>@enderror
+                                    </div>
+                                    <div class="vt-letter__field">
+                                        <label for="qi-address" class="vt-letter__label">Đang ở</label>
+                                        <input id="qi-address" name="address" type="text" autocomplete="street-address"
+                                            value="{{ old('address') }}" class="vt-letter__line" placeholder="Thành phố, quốc gia">
+                                    </div>
+                                </div>
+
+                                <div class="vt-letter__field vt-letter__field--wide">
+                                    <label for="qi-message" class="vt-letter__label">Tôi muốn hỏi</label>
+                                    <textarea id="qi-message" name="message" rows="3" class="vt-letter__area resize-none"
+                                        placeholder="Chia sẻ ý tưởng hành trình, mùa đi, số người, ngân sách dự kiến…">{{ old('message') }}</textarea>
+                                </div>
+
+                                <input type="text" name="website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true">
+
+                                <div class="vt-letter__sign">
+                                    <button type="submit" class="btn-primary">
+                                        <x-icon name="mail" class="size-4" />
+                                        Gửi lời nhắn
+                                    </button>
+                                </div>
+                            </form>
+                        </article>
             </div>
         </div>
-    </div>
+    </template>
 </section>
+@endunless

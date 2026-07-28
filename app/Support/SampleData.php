@@ -300,6 +300,11 @@ class SampleData
         return array_slice(array_values(array_filter(static::tours(), fn ($t) => $t['featured'])), 0, $limit);
     }
 
+    public static function featuredCruises(int $limit = 3): array
+    {
+        return array_slice(static::cruises(), 0, $limit);
+    }
+
     public static function toursByCountry(string $countrySlug): array
     {
         return array_values(array_filter(static::tours(), fn ($t) => $t['countrySlug'] === $countrySlug));
@@ -668,21 +673,21 @@ class SampleData
     public static function testimonials(): array
     {
         return [
-            ['name' => 'Nguyễn Minh Anh', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 5.0, 'quote' => 'Từ lúc lên lịch trình đến khi kết thúc chuyến đi, mọi thứ đều chỉn chu. Hướng dẫn viên am hiểu và cực kỳ nhiệt tình.', 'photos' => 5, 'trip' => 'Việt Nam 10 ngày'],
-            ['name' => 'Sarah Mitchell', 'country' => 'Úc', 'flag' => '🇦🇺', 'rating' => 5.0, 'quote' => 'Chuyến đi Việt Nam – Campuchia 15 ngày vượt xa kỳ vọng. Angkor lúc bình minh thật sự kỳ diệu.', 'photos' => 8, 'trip' => 'Việt Nam & Campuchia 15 ngày'],
-            ['name' => 'Trần Quốc Bảo', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 4.9, 'quote' => 'Du thuyền Lan Hạ yên tĩnh, đồ ăn ngon, nhân viên chu đáo. Sẽ quay lại cùng gia đình.', 'photos' => 4, 'trip' => 'Du thuyền Lan Hạ 3 ngày'],
-            ['name' => 'Claude Millet', 'country' => 'Pháp', 'flag' => '🇫🇷', 'rating' => 5.0, 'quote' => 'Đội ngũ tư vấn phản hồi trong vòng vài giờ và điều chỉnh lịch trình theo đúng mong muốn của chúng tôi.', 'photos' => 6, 'trip' => 'Xuyên Việt 2 tuần'],
-            ['name' => 'Lê Hoài Nam', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 4.8, 'quote' => 'Trekking Sa Pa 4 ngày là trải nghiệm đáng nhớ nhất năm của tôi. Homestay ấm cúng, cảnh đẹp mê hồn.', 'photos' => 7, 'trip' => 'Sa Pa trekking 4 ngày'],
-            ['name' => 'Emma Rossi', 'country' => 'Ý', 'flag' => '🇮🇹', 'rating' => 5.0, 'quote' => 'Một công ty địa phương thực sự hiểu khách châu Âu. Mọi khách sạn đều được chọn rất tinh tế.', 'photos' => 3, 'trip' => 'Việt Nam 3 tuần'],
+            ['name' => 'Nguyễn Minh Anh', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 5.0, 'quote' => 'Từ lúc lên lịch trình đến khi kết thúc chuyến đi, mọi thứ đều chỉn chu. Hướng dẫn viên am hiểu và cực kỳ nhiệt tình.', 'photos' => 5, 'trip' => 'Việt Nam 10 ngày', 'avatar' => null, 'photoUrls' => []],
+            ['name' => 'Sarah Mitchell', 'country' => 'Úc', 'flag' => '🇦🇺', 'rating' => 5.0, 'quote' => 'Chuyến đi Việt Nam – Campuchia 15 ngày vượt xa kỳ vọng. Angkor lúc bình minh thật sự kỳ diệu.', 'photos' => 8, 'trip' => 'Việt Nam & Campuchia 15 ngày', 'avatar' => null, 'photoUrls' => []],
+            ['name' => 'Trần Quốc Bảo', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 4.9, 'quote' => 'Du thuyền Lan Hạ yên tĩnh, đồ ăn ngon, nhân viên chu đáo. Sẽ quay lại cùng gia đình.', 'photos' => 4, 'trip' => 'Du thuyền Lan Hạ 3 ngày', 'avatar' => null, 'photoUrls' => []],
+            ['name' => 'Claude Millet', 'country' => 'Pháp', 'flag' => '🇫🇷', 'rating' => 5.0, 'quote' => 'Đội ngũ tư vấn phản hồi trong vòng vài giờ và điều chỉnh lịch trình theo đúng mong muốn của chúng tôi.', 'photos' => 6, 'trip' => 'Xuyên Việt 2 tuần', 'avatar' => null, 'photoUrls' => []],
+            ['name' => 'Lê Hoài Nam', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 4.8, 'quote' => 'Trekking Sa Pa 4 ngày là trải nghiệm đáng nhớ nhất năm của tôi. Homestay ấm cúng, cảnh đẹp mê hồn.', 'photos' => 7, 'trip' => 'Sa Pa trekking 4 ngày', 'avatar' => null, 'photoUrls' => []],
+            ['name' => 'Emma Rossi', 'country' => 'Ý', 'flag' => '🇮🇹', 'rating' => 5.0, 'quote' => 'Một công ty địa phương thực sự hiểu khách châu Âu. Mọi khách sạn đều được chọn rất tinh tế.', 'photos' => 3, 'trip' => 'Việt Nam 3 tuần', 'avatar' => null, 'photoUrls' => []],
         ];
     }
 
     public static function reviewPlatforms(): array
     {
         return [
-            ['name' => 'TripAdvisor', 'quote' => 'Xếp hạng 5/5 từ hơn 900 đánh giá — Giải thưởng Travelers\' Choice 3 năm liên tiếp.', 'link' => 'Đọc đánh giá trên TripAdvisor'],
-            ['name' => 'Google', 'quote' => '4.9/5 trên Google Maps với hơn 600 nhận xét từ du khách khắp thế giới.', 'link' => 'Xem đánh giá trên Google Maps'],
-            ['name' => 'Trustpilot', 'quote' => 'Điểm "Xuất sắc" trên Trustpilot — 96% khách hàng chấm 5 sao.', 'link' => 'Đọc đánh giá trên Trustpilot'],
+            ['name' => 'TripAdvisor', 'rating' => 5.0, 'quote' => 'Xếp hạng 5/5 từ hơn 900 đánh giá — Giải thưởng Travelers\' Choice 3 năm liên tiếp.', 'link' => 'Đọc đánh giá trên TripAdvisor', 'url' => '#'],
+            ['name' => 'Google', 'rating' => 4.9, 'quote' => '4.9/5 trên Google Maps với hơn 600 nhận xét từ du khách khắp thế giới.', 'link' => 'Xem đánh giá trên Google Maps', 'url' => '#'],
+            ['name' => 'Trustpilot', 'rating' => 4.7, 'quote' => 'Điểm "Xuất sắc" trên Trustpilot — 96% khách hàng chấm 5 sao.', 'link' => 'Đọc đánh giá trên Trustpilot', 'url' => '#'],
         ];
     }
 
@@ -698,11 +703,26 @@ class SampleData
 
     public static function videos(): array
     {
+        $mk = function (string $id, string $title, string $tag, string $duration, string $date, string $description = ''): array {
+            return [
+                'title' => $title,
+                'description' => $description,
+                'date' => $date,
+                'duration' => $duration,
+                'tag' => $tag,
+                'image' => 'https://i.ytimg.com/vi/'.$id.'/hqdefault.jpg',
+                'imageSrcset' => null,
+                'embedUrl' => 'https://www.youtube.com/embed/'.$id.'?autoplay=1&rel=0&modestbranding=1&playsinline=1',
+                'provider' => 'youtube',
+                'youtubeId' => $id,
+            ];
+        };
+
         return [
-            ['title' => 'Hành trình xuyên Việt 14 ngày cùng gia đình chị Sarah', 'date' => '05/07/2026', 'duration' => '12:40'],
-            ['title' => 'Một đêm trên du thuyền vịnh Lan Hạ', 'date' => '21/06/2026', 'duration' => '08:15'],
-            ['title' => 'Trekking mùa lúa chín Sa Pa — nhật ký bằng hình', 'date' => '02/06/2026', 'duration' => '10:02'],
-            ['title' => 'Bình minh Angkor Wat qua ống kính khách hàng', 'date' => '18/05/2026', 'duration' => '06:47'],
+            $mk('LXb3EKWsInQ', 'Hành trình xuyên Việt 14 ngày cùng gia đình chị Sarah', 'Xuyên Việt', '12:40', '05/07/2026', 'Những khoảnh khắc chân thật trên cung đường dài.'),
+            $mk('sNPnbDn9b4k', 'Một đêm trên du thuyền vịnh Lan Hạ', 'Vịnh Lan Hạ', '08:15', '21/06/2026', 'Bình minh trên vịnh — góc nhìn từ boong tàu.'),
+            $mk('C0DPdy98e4c', 'Trekking mùa lúa chín Sa Pa — nhật ký bằng hình', 'Sa Pa', '10:02', '02/06/2026', 'Leo núi, bản làng và mùa vàng.'),
+            $mk('ScMzIvxBSi4', 'Bình minh Angkor Wat qua ống kính khách hàng', 'Angkor', '06:47', '18/05/2026', 'Khoảnh khắc thiêng liêng trước đền tháp.'),
         ];
     }
 
@@ -908,12 +928,38 @@ class SampleData
                     'imageAlt' => null,
                 ],
             ],
+            'featured_cruises' => [
+                'vi' => [
+                    'key' => 'featured_cruises',
+                    'eyebrow' => 'Trên mặt nước',
+                    'title' => 'Những chuyến du thuyền đáng trải nghiệm',
+                    'subtitle' => 'Ba hành trình trên vịnh và sông nước được khách hàng đánh giá cao nhất.',
+                    'body' => null,
+                    'metaLine' => null,
+                    'ctaLabel' => null,
+                    'ctaUrl' => null,
+                    'image' => null,
+                    'imageAlt' => null,
+                ],
+                'en' => [
+                    'key' => 'featured_cruises',
+                    'eyebrow' => 'On the water',
+                    'title' => 'Cruises worth experiencing',
+                    'subtitle' => 'Three bay and river journeys our guests rate highest.',
+                    'body' => null,
+                    'metaLine' => null,
+                    'ctaLabel' => null,
+                    'ctaUrl' => null,
+                    'image' => null,
+                    'imageAlt' => null,
+                ],
+            ],
             'destinations' => [
                 'vi' => [
                     'key' => 'destinations',
-                    'eyebrow' => null,
+                    'eyebrow' => 'Đông Nam Á',
                     'title' => 'Những điểm đến được yêu thích nhất',
-                    'subtitle' => null,
+                    'subtitle' => 'Mỗi điểm đến một sắc màu — chọn nơi bạn muốn lắng nghe câu chuyện bản địa.',
                     'body' => null,
                     'metaLine' => null,
                     'ctaLabel' => null,
@@ -923,9 +969,9 @@ class SampleData
                 ],
                 'en' => [
                     'key' => 'destinations',
-                    'eyebrow' => null,
+                    'eyebrow' => 'Southeast Asia',
                     'title' => 'Our most loved destinations',
-                    'subtitle' => null,
+                    'subtitle' => 'Each place has its own colour — choose where you want to hear local stories.',
                     'body' => null,
                     'metaLine' => null,
                     'ctaLabel' => null,
@@ -1015,9 +1061,9 @@ class SampleData
             'videos' => [
                 'vi' => [
                     'key' => 'videos',
-                    'eyebrow' => null,
-                    'title' => 'Video trải nghiệm chân thật',
-                    'subtitle' => null,
+                    'eyebrow' => 'Trải nghiệm thật',
+                    'title' => 'Đông Nam Á qua từng thước phim đẹp',
+                    'subtitle' => 'Những video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
                     'body' => null,
                     'metaLine' => null,
                     'ctaLabel' => 'Xem tất cả video',
@@ -1027,13 +1073,39 @@ class SampleData
                 ],
                 'en' => [
                     'key' => 'videos',
-                    'eyebrow' => null,
-                    'title' => 'Authentic experience videos',
-                    'subtitle' => null,
+                    'eyebrow' => 'Real experiences',
+                    'title' => 'Southeast Asia in unforgettable frames',
+                    'subtitle' => 'Authentic films from guests and our local team — tap any moment to watch full screen.',
                     'body' => null,
                     'metaLine' => null,
                     'ctaLabel' => 'View all videos',
                     'ctaUrl' => url('/video-trai-nghiem'),
+                    'image' => null,
+                    'imageAlt' => null,
+                ],
+            ],
+            'quick_inquiry' => [
+                'vi' => [
+                    'key' => 'quick_inquiry',
+                    'eyebrow' => null,
+                    'title' => 'Hỏi nhanh về tour',
+                    'subtitle' => null,
+                    'body' => 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.',
+                    'metaLine' => null,
+                    'ctaLabel' => null,
+                    'ctaUrl' => null,
+                    'image' => null,
+                    'imageAlt' => null,
+                ],
+                'en' => [
+                    'key' => 'quick_inquiry',
+                    'eyebrow' => null,
+                    'title' => 'Quick tour inquiry',
+                    'subtitle' => null,
+                    'body' => 'Not sure where to go, which season, or your budget? Leave a note — our local experts will reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.',
+                    'metaLine' => null,
+                    'ctaLabel' => null,
+                    'ctaUrl' => null,
                     'image' => null,
                     'imageAlt' => null,
                 ],

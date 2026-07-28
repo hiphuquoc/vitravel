@@ -11,11 +11,11 @@
     <div class="container-site">
         <div class="relative -mt-14 sm:-mt-16">
             <div class="card max-w-3xl px-6 py-5 sm:px-8">
+                <x-layout.breadcrumb :items="$breadcrumbs" class="mb-3" />
                 <h1 class="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl">{{ $title }}</h1>
                 @if ($subtitle)
                     <p class="body-text mt-2">{{ $subtitle }}</p>
                 @endif
-                <x-layout.breadcrumb :items="$breadcrumbs" class="mt-3" />
             </div>
         </div>
     </div>

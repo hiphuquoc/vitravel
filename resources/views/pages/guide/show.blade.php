@@ -19,21 +19,55 @@
 
 @section('content')
     <div class="container-site pt-8" x-data="scrollSpy(@js(array_column($toc, 'id')))">
-        <x-layout.breadcrumb :items="[
+        <x-layout.breadcrumb :items="array_filter([
             ['label' => 'Cẩm nang du lịch', 'url' => route('guide.index')],
-            ['label' => 'Cẩm nang ' . $article['country'], 'url' => route('guide.country', $article['countrySlug'])],
+            filled($article['countrySlug'] ?? '')
+                ? ['label' => 'Cẩm nang ' . $article['country'], 'url' => route('guide.country', ['country' => $article['countrySlug']])]
+                : null,
             ['label' => $article['category']],
-        ]" />
+        ])" class="mb-4" />
 
         {{-- Gallery collage đầu bài: 1 ảnh lớn + 4 ảnh nhỏ --}}
+        @php
+            $coverSrc = $article['imageDetail'] ?? $article['image'] ?? null;
+            $coverSrcset = $article['imageDetailSrcset'] ?? $article['imageSrcset'] ?? null;
+            $gallery = $article['gallery'] ?? [];
+            $thumbs = array_slice($gallery, 0, 4);
+            if ($thumbs === [] && $coverSrc) {
+                $thumbs[] = ['src' => $coverSrc, 'srcset' => $coverSrcset];
+            }
+        @endphp
         <div class="mt-5 grid gap-3 lg:grid-cols-[2fr_1fr]">
-            <x-ph class="h-64 w-full rounded-2xl sm:h-80" :label="'Ảnh: ' . $article['title']" icon-class="size-12" />
+            @if ($coverSrc)
+                <x-img
+                    :src="$coverSrc"
+                    :srcset="$coverSrcset"
+                    preset="detail"
+                    :alt="$article['title']"
+                    loading="eager"
+                    fetchpriority="high"
+                    class="h-64 w-full rounded-2xl object-cover sm:h-80"
+                />
+            @else
+                <x-ph class="h-64 w-full rounded-2xl sm:h-80" :label="'Ảnh: ' . $article['title']" icon-class="size-12" />
+            @endif
             <div class="grid grid-cols-4 gap-3 lg:grid-cols-2">
-                @for ($i = 1; $i <= 4; $i++)
+                @for ($i = 0; $i < 4; $i++)
+                    @php $thumb = $thumbs[$i] ?? null; @endphp
                     <div class="relative overflow-hidden rounded-xl">
                         <div class="relative aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[90px]">
-                            <x-ph class="absolute inset-0" icon-class="size-5" :label="null" />
-                            @if ($i === 4 && $article['galleryCount'] > 4)
+                            @if (! empty($thumb['src']))
+                                <x-img
+                                    :src="$thumb['src']"
+                                    :srcset="$thumb['srcset'] ?? null"
+                                    preset="gallery"
+                                    :alt="$article['title']"
+                                    class="absolute inset-0 h-full w-full object-cover"
+                                />
+                            @else
+                                <x-ph class="absolute inset-0" icon-class="size-5" :label="null" />
+                            @endif
+                            @if ($i === 3 && ($article['galleryCount'] ?? 0) > 4)
                                 <span class="absolute inset-0 flex items-center justify-center bg-ink/50 text-sm font-bold text-white">
                                     +{{ $article['galleryCount'] - 4 }}
                                 </span>

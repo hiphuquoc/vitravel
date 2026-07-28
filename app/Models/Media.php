@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,8 +33,27 @@ class Media extends Model
         return $this->hasMany(MediaAttachment::class);
     }
 
-    public function url(): string
+    /** URL theo variant: thumb|card|lg|full (+ aliases trong config/media.php). */
+    public function url(?string $variant = null): string
     {
-        return app(\App\Services\MediaService::class)->publicUrl($this) ?? '/storage/'.$this->path;
+        return app(MediaService::class)->publicUrl($this, $variant) ?? '/storage/'.$this->path;
+    }
+
+    public function srcset(?array $variants = null): ?string
+    {
+        return app(MediaService::class)->srcset($this, $variants);
+    }
+
+    /**
+     * @return array{src: ?string, srcset: ?string, width: ?int, height: ?int, alt: ?string, variant: string}
+     */
+    public function payload(string $variant = 'card'): array
+    {
+        return app(MediaService::class)->imagePayload($this, $variant);
+    }
+
+    public function hasVariants(): bool
+    {
+        return ! empty($this->meta['variants']);
     }
 }

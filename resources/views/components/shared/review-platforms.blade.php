@@ -15,9 +15,9 @@
                     <span class="flex h-12 items-center rounded-lg bg-page px-5 font-display text-xl font-bold text-ink">
                         {{ $p['name'] }}
                     </span>
-                    <x-shared.stars :rating="5" class="mt-4" aria-label="5 sao" />
+                    <x-shared.stars :rating="$p['rating'] ?? 5" class="mt-4" />
                     <p class="body-text mt-4 flex-1">{{ $p['quote'] }}</p>
-                    <a href="#" class="btn-ghost mt-5">{{ $p['link'] }} <x-icon name="arrow-right" class="size-4" /></a>
+                    <a href="{{ $p['url'] ?? '#' }}" class="btn-ghost mt-5" @if(($p['url'] ?? '#') !== '#') target="_blank" rel="noopener noreferrer" @endif>{{ $p['link'] }} <x-icon name="arrow-right" class="size-4" /></a>
                 </article>
             @endforeach
         </div>

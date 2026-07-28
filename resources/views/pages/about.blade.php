@@ -8,8 +8,8 @@
         subtitle="Hành trình chân thật, được thiết kế bởi những người bản địa yêu nghề"
         :breadcrumbs="[['label' => 'Về chúng tôi']]" banner-label="Ảnh banner: đội ngũ ViTravel" />
 
-    {{-- Giới thiệu công ty (dùng chung với Home) --}}
-    <x-shared.company-intro />
+    {{-- Giới thiệu công ty (dùng chung với Home) — ẩn CTA vì đã ở trang Về chúng tôi --}}
+    <x-shared.company-intro :show-cta="false" />
 
     {{-- Đội ngũ (dùng chung) --}}
     <x-shared.team-grid :team="$team" class="pt-0" />
@@ -135,7 +135,9 @@
                     @endforeach
                 </ol>
                 <a href="{{ route('customize') }}" class="btn-primary mt-7">
-                    Bắt đầu hành trình của bạn <x-icon name="arrow-right" class="size-4" />
+                    <x-icon name="route" class="size-5 shrink-0" />
+                    Bắt đầu hành trình của bạn
+                    <x-icon name="arrow-right" class="size-4" />
                 </a>
             </div>
         </div>
@@ -170,5 +172,5 @@
         </div>
     </section>
 
-    <x-shared.video-showcase class="pt-0" />
+    <x-shared.video-showcase :home-only="true" :limit="4" />
 @endsection

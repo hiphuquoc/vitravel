@@ -117,7 +117,7 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($country, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull('tours', $row['slug']),
+                'slug_full' => $this->seo->buildSlugFull('country', 'vi', $row['slug']),
                 'title' => $row['name'],
                 'description' => $row['tagline'],
                 'status' => 'published',
@@ -156,7 +156,9 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($category, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull('cam-nang-du-lich', $row['countrySlug'], $row['slug']),
+                'slug_full' => $this->seo->buildSlugFull('blog_category', 'vi', $row['slug'], null, [
+                    'country_code' => $row['countrySlug'],
+                ]),
                 'title' => $row['name'],
                 'status' => 'published',
             ]);
@@ -294,12 +296,14 @@ class ContentSeeder extends Seeder
             $package->faqs()->delete();
             $this->syncFaqs($package, $row['faqs'] ?? []);
 
-            $prefix = $isCruise ? 'cruises' : 'tours';
+            $seoType = $isCruise ? 'package_cruise' : 'package_tour';
             $typeSegment = $isCruise ? ($row['typeSlug'] ?? 'du-thuyen-ha-long') : $row['countrySlug'];
 
             $this->seo->syncSeo($package, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull($prefix, $typeSegment, $row['slug']),
+                'slug_full' => $this->seo->buildSlugFull($seoType, 'vi', $row['slug'], null, [
+                    'country_code' => $typeSegment,
+                ]),
                 'title' => $row['title'],
                 'description' => $row['highlightsIntro'] ?? $row['title'],
                 'rating_aggregate_star' => $row['rating'],
@@ -357,7 +361,9 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($article, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull('cam-nang-du-lich', $row['countrySlug'], $row['slug']),
+                'slug_full' => $this->seo->buildSlugFull('article', 'vi', $row['slug'], null, [
+                    'country_code' => $row['countrySlug'],
+                ]),
                 'title' => $row['title'],
                 'description' => $row['excerpt'],
                 'rating_aggregate_star' => $row['rating'],
@@ -427,14 +433,16 @@ class ContentSeeder extends Seeder
                 [
                     'author_country' => $row['country'],
                     'author_country_code' => $flags[$row['country']] ?? 'VN',
-                    'rating' => (int) round($row['rating']),
+                    'rating' => max(1, min(5, (int) round($row['rating']))),
                     'question_title' => $row['trip'],
+                    'photos_count' => (int) ($row['photos'] ?? 0),
+                    'reviewed_on' => now()->subDays(10 + $sort * 7)->toDateString(),
                     'is_featured' => true,
                     'show_on_home' => true,
                     'status' => 'published',
                     'sort' => $sort,
-                    'reviewable_type' => 'country',
-                    'reviewable_id' => $this->countryIds['viet-nam'] ?? null,
+                    'reviewable_type' => 'company',
+                    'reviewable_id' => null,
                 ]
             );
         }

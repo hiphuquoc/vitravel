@@ -36,18 +36,20 @@
         <h2 class="item-title mb-3 text-base">Danh mục cẩm nang</h2>
         <ul class="max-h-64 space-y-0.5 overflow-y-auto pr-1 text-base">
             @foreach ($categories as $cat)
-                <li>
-                    <a href="{{ route('guide.country', $cat['countrySlug']) }}"
-                        class="{{ $activeCategory === $cat['slug'] ? 'bg-primary-50 font-semibold text-primary-700' : 'text-ink-soft hover:text-primary-600' }} flex items-center justify-between rounded-md px-2 py-2 transition">
-                        {{ $cat['name'] }}
-                        <span class="text-sm text-muted">{{ $cat['count'] }}</span>
-                    </a>
-                </li>
+                @if (filled($cat['countrySlug']))
+                    <li>
+                        <a href="{{ route('guide.country', ['country' => $cat['countrySlug']]) }}"
+                            class="{{ $activeCategory === $cat['slug'] ? 'bg-primary-50 font-semibold text-primary-700' : 'text-ink-soft hover:text-primary-600' }} flex items-center justify-between rounded-md px-2 py-2 transition">
+                            {{ $cat['name'] }}
+                            <span class="text-sm text-muted">{{ $cat['count'] }}</span>
+                        </a>
+                    </li>
+                @endif
             @endforeach
         </ul>
-        <div class="mt-3 space-y-0.5 border-t border-line pt-3 text-base">
+        <div class="mt-3 space-y-0.5 text-base">
             @foreach ($countries as $c)
-                <a href="{{ route('guide.country', $c['slug']) }}"
+                <a href="{{ route('guide.country', ['country' => $c['slug']]) }}"
                     class="block rounded-md px-2 py-2 font-medium text-ink-soft transition hover:text-primary-600">
                     Cẩm nang {{ $c['name'] }}
                 </a>

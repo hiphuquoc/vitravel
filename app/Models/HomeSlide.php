@@ -83,14 +83,26 @@ class HomeSlide extends Model
         return null;
     }
 
-    public function imageUrl(): ?string
+    public function imageUrl(?string $variant = 'full'): ?string
     {
-        return app(MediaService::class)->publicUrl($this->image);
+        return app(MediaService::class)->publicUrl($this->image, $variant);
     }
 
-    public function imageMobileUrl(): ?string
+    public function imageSrcset(): ?string
     {
-        return app(MediaService::class)->publicUrl($this->imageMobile) ?? $this->imageUrl();
+        return app(MediaService::class)->srcset($this->image);
+    }
+
+    public function imageMobileUrl(?string $variant = 'lg'): ?string
+    {
+        return app(MediaService::class)->publicUrl($this->imageMobile, $variant)
+            ?? $this->imageUrl($variant === 'lg' ? 'lg' : $variant);
+    }
+
+    public function imageMobileSrcset(): ?string
+    {
+        return app(MediaService::class)->srcset($this->imageMobile)
+            ?? $this->imageSrcset();
     }
 
     public function scopeActive($query)

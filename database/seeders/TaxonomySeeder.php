@@ -84,15 +84,42 @@ class TaxonomySeeder extends Seeder
         }
 
         $platforms = [
-            ['code' => 'tripadvisor', 'name' => 'Tripadvisor', 'rating' => 4.9, 'review_count' => 320, 'sort' => 0],
-            ['code' => 'google', 'name' => 'Google', 'rating' => 4.8, 'review_count' => 210, 'sort' => 1],
-            ['code' => 'trustpilot', 'name' => 'Trustpilot', 'rating' => 4.7, 'review_count' => 95, 'sort' => 2],
+            [
+                'code' => 'tripadvisor',
+                'name' => 'Tripadvisor',
+                'rating' => 4.9,
+                'review_count' => 320,
+                'sort' => 0,
+                'quote' => 'Xếp hạng 5/5 từ hơn 900 đánh giá — Giải thưởng Travelers\' Choice 3 năm liên tiếp.',
+                'link_label' => 'Đọc đánh giá trên Tripadvisor',
+                'url' => 'https://www.tripadvisor.com',
+            ],
+            [
+                'code' => 'google',
+                'name' => 'Google',
+                'rating' => 4.8,
+                'review_count' => 210,
+                'sort' => 1,
+                'quote' => '4.9/5 trên Google Maps với hơn 600 nhận xét từ du khách khắp thế giới.',
+                'link_label' => 'Xem đánh giá trên Google',
+                'url' => 'https://www.google.com/maps',
+            ],
+            [
+                'code' => 'trustpilot',
+                'name' => 'Trustpilot',
+                'rating' => 4.7,
+                'review_count' => 95,
+                'sort' => 2,
+                'quote' => 'Điểm "Xuất sắc" trên Trustpilot — 96% khách hàng chấm 5 sao.',
+                'link_label' => 'Đọc đánh giá trên Trustpilot',
+                'url' => 'https://www.trustpilot.com',
+            ],
         ];
 
         foreach ($platforms as $platform) {
             ReviewPlatform::query()->updateOrCreate(
                 ['code' => $platform['code']],
-                array_merge($platform, ['is_active' => true])
+                array_merge($platform, ['is_active' => true, 'show_on_home' => true])
             );
         }
     }

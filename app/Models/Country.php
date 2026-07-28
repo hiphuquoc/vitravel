@@ -44,9 +44,14 @@ class Country extends Model
         return $this->belongsTo(Media::class, 'banner_media_id');
     }
 
-    public function bannerUrl(): ?string
+    public function bannerUrl(?string $variant = 'card'): ?string
     {
-        return app(MediaService::class)->publicUrl($this->banner);
+        return app(MediaService::class)->publicUrl($this->banner, $variant);
+    }
+
+    public function bannerSrcset(): ?string
+    {
+        return app(MediaService::class)->srcset($this->banner);
     }
 
     public function destinations(): HasMany

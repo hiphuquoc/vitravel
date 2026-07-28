@@ -33,8 +33,21 @@ trait HasMediaAttachments
         return $attachment?->media;
     }
 
-    public function coverUrl(): ?string
+    public function coverUrl(?string $variant = null): ?string
     {
-        return app(MediaService::class)->publicUrl($this->coverMedia());
+        return app(MediaService::class)->publicUrl($this->coverMedia(), $variant);
+    }
+
+    public function coverSrcset(?array $variants = null): ?string
+    {
+        return app(MediaService::class)->srcset($this->coverMedia(), $variants);
+    }
+
+    /**
+     * @return array{src: ?string, srcset: ?string, width: ?int, height: ?int, alt: ?string, variant: string}
+     */
+    public function coverPayload(string $variant = 'card'): array
+    {
+        return app(MediaService::class)->imagePayload($this->coverMedia(), $variant);
     }
 }

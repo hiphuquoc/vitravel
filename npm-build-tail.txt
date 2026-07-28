@@ -1,0 +1,8 @@
+public/build/assets/dancing-script-700-normal-LI5MgW9m.woff    30.63 kB
+public/build/assets/dancing-script-600-normal-8nA_0nHX.woff    31.18 kB
+public/build/assets/fonts-wN3-EXpw.css                         11.84 kB │ gzip:  0.85 kB
+public/build/assets/app-C5ArhIg_.css                          115.16 kB │ gzip: 19.86 kB
+public/build/assets/style-UQJGbmJQ.css                        282.08 kB │ gzip: 37.48 kB
+public/build/assets/app-Bmlnmrow.js                            48.47 kB │ gzip: 17.15 kB
+
+✓ built in 1.82s

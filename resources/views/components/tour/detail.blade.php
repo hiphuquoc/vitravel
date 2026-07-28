@@ -25,14 +25,47 @@
 
 {{-- Gallery đầu trang: ảnh lớn + dải thumbnail --}}
 <section class="container-site pt-6" aria-label="Thư viện ảnh">
+    @php
+        $coverSrc = $item['imageDetail'] ?? $item['image'] ?? null;
+        $coverSrcset = $item['imageDetailSrcset'] ?? $item['imageSrcset'] ?? null;
+        $gallery = $item['gallery'] ?? [];
+        // Cover + gallery thumbs (skip duplicate cover if first gallery is cover-like)
+        $thumbs = array_slice($gallery, 0, 4);
+        if ($thumbs === [] && $coverSrc) {
+            $thumbs[] = ['src' => $coverSrc, 'srcset' => $coverSrcset];
+        }
+    @endphp
     <div class="grid gap-3 lg:grid-cols-[2.2fr_1fr]">
-        <x-ph class="h-72 w-full rounded-2xl sm:h-96" :label="'Ảnh chính: ' . $item['title']" icon-class="size-14" />
+        @if ($coverSrc)
+            <x-img
+                :src="$coverSrc"
+                :srcset="$coverSrcset"
+                preset="detail"
+                :alt="$item['title']"
+                loading="eager"
+                fetchpriority="high"
+                class="h-72 w-full rounded-2xl object-cover sm:h-96"
+            />
+        @else
+            <x-ph class="h-72 w-full rounded-2xl sm:h-96" :label="'Ảnh chính: ' . $item['title']" icon-class="size-14" />
+        @endif
         <div class="grid grid-cols-4 gap-3 lg:grid-cols-2 lg:grid-rows-2">
-            @for ($i = 1; $i <= 4; $i++)
+            @for ($i = 0; $i < 4; $i++)
+                @php $thumb = $thumbs[$i] ?? null; @endphp
                 <div class="relative overflow-hidden rounded-xl">
                     <div class="relative aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[110px]">
-                        <x-ph class="absolute inset-0" icon-class="size-6" :label="null" />
-                        @if ($i === 4 && $item['galleryCount'] > 4)
+                        @if (! empty($thumb['src']))
+                            <x-img
+                                :src="$thumb['src']"
+                                :srcset="$thumb['srcset'] ?? null"
+                                preset="gallery"
+                                :alt="$item['title']"
+                                class="absolute inset-0 h-full w-full object-cover"
+                            />
+                        @else
+                            <x-ph class="absolute inset-0" icon-class="size-6" :label="null" />
+                        @endif
+                        @if ($i === 3 && ($item['galleryCount'] ?? 0) > 4)
                             <button type="button" class="absolute inset-0 flex items-center justify-center bg-ink/50 text-sm font-bold text-white">
                                 +{{ $item['galleryCount'] - 4 }} ảnh
                             </button>
@@ -47,8 +80,8 @@
     <div class="card mt-5 px-6 py-5 sm:px-8">
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
+                <x-layout.breadcrumb :items="$breadcrumbs" class="mb-3" />
                 <h1 class="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl">{{ $item['title'] }}</h1>
-                <x-layout.breadcrumb :items="$breadcrumbs" class="mt-3" />
             </div>
             <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
         </div>
@@ -308,9 +341,6 @@
         </div>
     </section>
 @endif
-
-<x-shared.testimonial-carousel />
-<x-shared.review-platforms class="pt-0" />
 
 {{-- JSON-LD sản phẩm du lịch --}}
 @php

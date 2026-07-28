@@ -85,16 +85,17 @@
                     Điểm đến <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'dest'" x-transition.opacity.duration.150ms
-                    class="absolute top-full left-0 w-[580px] rounded-2xl border border-line bg-white p-5 shadow-(--shadow-card-hover)">
-                    <div class="grid grid-cols-2 gap-x-6 gap-y-0.5">
+                    class="absolute top-full left-0 w-[580px] rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
                         @foreach ($destinations as $c)
-                            <a href="{{ route('tours.index', $c['slug']) }}"
-                                class="group flex items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-primary-50">
-                                <span class="min-w-0 pr-3">
+                            <a href="{{ route('tours.index', $c['slug']) }}" class="nav-panel-row group">
+                                <span class="nav-panel-item-row">
                                     <span class="nav-panel-item">Tour {{ $c['name'] }}</span>
-                                    <span class="nav-panel-meta">{{ $c['tagline'] }}</span>
+                                    <span class="nav-panel-count">{{ $c['tourCount'] }}</span>
                                 </span>
-                                <span class="shrink-0 text-sm font-medium text-muted">{{ $c['tourCount'] }}</span>
+                                @if (! empty($c['tagline']))
+                                    <span class="nav-panel-meta">{{ $c['tagline'] }}</span>
+                                @endif
                             </a>
                         @endforeach
                     </div>
@@ -108,15 +109,14 @@
                     Du thuyền <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'cruise'" x-transition.opacity.duration.150ms
-                    class="absolute top-full left-0 w-80 rounded-2xl border border-line bg-white p-4 shadow-(--shadow-card-hover)">
+                    class="absolute top-full left-0 w-80 rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
                     @foreach ($cruiseTypes as $t)
-                        <a href="{{ route('cruises.index', $t['slug']) }}"
-                            class="group flex items-center justify-between rounded-lg px-3 py-2.5 transition hover:bg-primary-50">
-                            <span class="flex items-center gap-2.5">
-                                <x-icon name="cruise" class="size-5 shrink-0 text-leaf-500" />
+                        <a href="{{ route('cruises.index', $t['slug']) }}" class="nav-panel-row group">
+                            <span class="nav-panel-item-row">
+                                <x-icon name="cruise" class="size-4 shrink-0 text-primary-600" />
                                 <span class="nav-panel-item">{{ $t['name'] }}</span>
+                                <span class="nav-panel-count">{{ $t['count'] }}</span>
                             </span>
-                            <span class="shrink-0 text-sm font-medium text-muted">{{ $t['count'] }} du thuyền</span>
                         </a>
                     @endforeach
                 </div>
@@ -129,20 +129,23 @@
                     Cẩm nang <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'guide'" x-transition.opacity.duration.150ms
-                    class="absolute top-full left-0 w-80 rounded-2xl border border-line bg-white p-4 shadow-(--shadow-card-hover)">
-                    <a href="{{ route('guide.index') }}"
-                        class="block rounded-lg px-3 py-2.5 text-base font-semibold transition hover:bg-primary-50 hover:text-primary-600">
-                        Tất cả bài viết
-                    </a>
-                    <div class="my-1.5 border-t border-line"></div>
-                    @foreach ($guideCountries as $c)
-                        <a href="{{ route('guide.country', $c['slug']) }}" class="nav-panel-link">
-                            Cẩm nang {{ $c['name'] }}
+                    class="absolute top-full left-0 w-80 rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
+                    <div class="nav-panel-group">
+                        <p class="nav-panel-group__title">Bài viết</p>
+                        <a href="{{ route('guide.index') }}" class="nav-panel-link">
+                            Tất cả bài viết
                         </a>
-                    @endforeach
-                    <div class="my-1.5 border-t border-line"></div>
-                    <a href="{{ route('videos') }}" class="nav-panel-link">Video trải nghiệm</a>
-                    <a href="{{ route('gallery') }}" class="nav-panel-link">Thư viện khoảnh khắc</a>
+                        @foreach ($guideCountries as $c)
+                            <a href="{{ route('guide.country', ['country' => $c['slug']]) }}" class="nav-panel-link">
+                                Cẩm nang {{ $c['name'] }}
+                            </a>
+                        @endforeach
+                    </div>
+                    <div class="nav-panel-group">
+                        <p class="nav-panel-group__title">Thư viện</p>
+                        <a href="{{ route('videos') }}" class="nav-panel-link">Video trải nghiệm</a>
+                        <a href="{{ route('gallery') }}" class="nav-panel-link">Thư viện khoảnh khắc</a>
+                    </div>
                 </div>
             </div>
 
@@ -161,7 +164,7 @@
             <x-layout.region-switcher variant="mobile" />
 
             <a href="{{ route('customize') }}" class="btn-primary-sm hidden whitespace-nowrap sm:inline-flex">
-                <x-icon name="trekking" class="size-5 shrink-0" /> Tour riêng
+                <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
             </a>
 
             <button type="button" @click="mobileOpen = true"
@@ -318,10 +321,14 @@
                     Cẩm nang <x-icon name="chevron-down" class="size-4 transition" ::class="sub === 'guide' && 'rotate-180'" />
                 </button>
                 <div x-show="sub === 'guide'" x-collapse>
-                    <a href="{{ route('guide.index') }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Tất cả bài viết</a>
+                    <p class="nav-panel-group__title !px-0 !pt-2">Bài viết</p>
+                    <a href="{{ route('guide.index') }}" class="block rounded-lg py-2.5 pl-6 text-base font-medium text-ink-soft hover:text-primary-600">Tất cả bài viết</a>
                     @foreach ($guideCountries as $c)
-                        <a href="{{ route('guide.country', $c['slug']) }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Cẩm nang {{ $c['name'] }}</a>
+                        <a href="{{ route('guide.country', ['country' => $c['slug']]) }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Cẩm nang {{ $c['name'] }}</a>
                     @endforeach
+                    <p class="nav-panel-group__title !mt-3 !px-0">Thư viện</p>
+                    <a href="{{ route('videos') }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Video trải nghiệm</a>
+                    <a href="{{ route('gallery') }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Thư viện khoảnh khắc</a>
                 </div>
 
                 <a href="{{ route('about') }}" class="block rounded-lg px-3 py-3 text-base font-semibold hover:bg-page">Về chúng tôi</a>
@@ -330,7 +337,7 @@
 
             <div class="space-y-3 border-t border-line p-4">
                 <a href="{{ route('customize') }}" class="btn-primary w-full">
-                    <x-icon name="trekking" class="size-5 shrink-0" /> Tour riêng
+                    <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
                 </a>
             </div>
         </div>

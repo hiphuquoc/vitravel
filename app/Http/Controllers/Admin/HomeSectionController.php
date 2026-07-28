@@ -8,6 +8,9 @@ use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\HeroPill;
 use App\Models\HeroPillTranslation;
+use App\Models\HomeFeaturedCountry;
+use App\Models\HomeFeaturedCruise;
+use App\Models\HomeFeaturedReviewPlatform;
 use App\Models\HomeFeaturedTour;
 use App\Models\HomeSection;
 use App\Models\HomeSectionTranslation;
@@ -60,6 +63,27 @@ class HomeSectionController extends Controller
 
         $featuredTourOptions = HomeFeaturedTour::tourOptions($locale);
 
+        $featuredCruises = HomeFeaturedCruise::query()
+            ->orderBy('sort')
+            ->with(['package.translations', 'package.country.translations'])
+            ->get();
+
+        $featuredCruiseOptions = HomeFeaturedCruise::cruiseOptions($locale);
+
+        $featuredCountries = HomeFeaturedCountry::query()
+            ->orderBy('sort')
+            ->with(['country.translations'])
+            ->get();
+
+        $featuredCountryOptions = HomeFeaturedCountry::countryOptions($locale);
+
+        $featuredPlatforms = HomeFeaturedReviewPlatform::query()
+            ->orderBy('sort')
+            ->with('platform')
+            ->get();
+
+        $featuredPlatformOptions = HomeFeaturedReviewPlatform::platformOptions();
+
         $languages = $this->activeLanguages();
         $title = 'Nội dung trang chủ';
         $mediaDisk = $this->mediaService->defaultDisk();
@@ -68,6 +92,9 @@ class HomeSectionController extends Controller
         return view('admin.home-section.edit', compact(
             'sections', 'usps', 'heroPills', 'heroPillLinkOptions',
             'featuredTours', 'featuredTourOptions',
+            'featuredCruises', 'featuredCruiseOptions',
+            'featuredCountries', 'featuredCountryOptions',
+            'featuredPlatforms', 'featuredPlatformOptions',
             'locale', 'language', 'languages',
             'title', 'mediaDisk', 'uspIconOptions',
         ));
@@ -78,6 +105,9 @@ class HomeSectionController extends Controller
         $locale = $request->string('language', 'vi')->toString();
         $maxKb = (int) config('media.max_upload_kb', 5120);
         $iconKeys = implode(',', array_keys(Usp::iconOptions()));
+
+        // jquery.repeater names checkboxes as field[] → PHP gets ["1"]; flatten before validate.
+        $this->normalizeRepeaterBooleans($request, 'pills', ['is_active']);
 
         $validated = $request->validate([
             'language' => 'required|string',
@@ -107,6 +137,15 @@ class HomeSectionController extends Controller
             'featured_tours' => 'nullable|array|max:12',
             'featured_tours.*.id' => 'nullable|integer|exists:home_featured_tours,id',
             'featured_tours.*.package_id' => 'nullable|integer|exists:packages,id',
+            'featured_cruises' => 'nullable|array|max:12',
+            'featured_cruises.*.id' => 'nullable|integer|exists:home_featured_cruises,id',
+            'featured_cruises.*.package_id' => 'nullable|integer|exists:packages,id',
+            'featured_countries' => 'nullable|array|max:12',
+            'featured_countries.*.id' => 'nullable|integer|exists:home_featured_countries,id',
+            'featured_countries.*.country_id' => 'nullable|integer|exists:countries,id',
+            'featured_platforms' => 'nullable|array|max:8',
+            'featured_platforms.*.id' => 'nullable|integer|exists:home_featured_review_platforms,id',
+            'featured_platforms.*.review_platform_id' => 'nullable|integer|exists:review_platforms,id',
         ]);
 
         DB::transaction(function () use ($request, $validated, $locale) {
@@ -187,6 +226,9 @@ class HomeSectionController extends Controller
 
             $this->saveHeroPills($request, $validated['pills'] ?? [], $locale);
             $this->saveFeaturedTours($request, $validated['featured_tours'] ?? []);
+            $this->saveFeaturedCruises($request, $validated['featured_cruises'] ?? []);
+            $this->saveFeaturedCountries($request, $validated['featured_countries'] ?? []);
+            $this->saveFeaturedPlatforms($request, $validated['featured_platforms'] ?? []);
         });
 
         return redirect()
@@ -292,6 +334,121 @@ class HomeSectionController extends Controller
         HomeFeaturedTour::query()->whereNotIn('id', $keptIds ?: [0])->delete();
     }
 
+    /** @param  array<int|string, array<string, mixed>>  $rows */
+    protected function saveFeaturedCruises(Request $request, array $rows): void
+    {
+        $hasAnyData = collect($rows)->contains(
+            fn (array $row) => ! empty($row['package_id']) || ! empty($row['id']),
+        );
+
+        if (! $hasAnyData) {
+            return;
+        }
+
+        $sort = 0;
+        $usedPackageIds = [];
+        $keptIds = [];
+
+        foreach ($rows as $row) {
+            if (empty($row['package_id'])) {
+                continue;
+            }
+
+            $packageId = (int) $row['package_id'];
+
+            if (in_array($packageId, $usedPackageIds, true)) {
+                continue;
+            }
+
+            $usedPackageIds[] = $packageId;
+
+            $item = ! empty($row['id'])
+                ? HomeFeaturedCruise::query()->findOrFail($row['id'])
+                : new HomeFeaturedCruise;
+
+            $item->fill([
+                'package_id' => $packageId,
+                'sort' => $sort,
+            ]);
+            $item->save();
+            $keptIds[] = $item->id;
+
+            $sort++;
+        }
+
+        HomeFeaturedCruise::query()->whereNotIn('id', $keptIds ?: [0])->delete();
+    }
+
+    /** @param  array<int|string, array<string, mixed>>  $rows */
+    protected function saveFeaturedCountries(Request $request, array $rows): void
+    {
+        if (! $request->exists('featured_countries')) {
+            return;
+        }
+
+        $sort = 0;
+        $used = [];
+        $keptIds = [];
+
+        foreach ($rows as $row) {
+            if (empty($row['country_id'])) {
+                continue;
+            }
+
+            $countryId = (int) $row['country_id'];
+            if (in_array($countryId, $used, true)) {
+                continue;
+            }
+            $used[] = $countryId;
+
+            $item = ! empty($row['id'])
+                ? HomeFeaturedCountry::query()->findOrFail($row['id'])
+                : new HomeFeaturedCountry;
+
+            $item->fill(['country_id' => $countryId, 'sort' => $sort]);
+            $item->save();
+            $keptIds[] = $item->id;
+            $sort++;
+        }
+
+        HomeFeaturedCountry::query()->whereNotIn('id', $keptIds ?: [0])->delete();
+    }
+
+    /** @param  array<int|string, array<string, mixed>>  $rows */
+    protected function saveFeaturedPlatforms(Request $request, array $rows): void
+    {
+        if (! $request->exists('featured_platforms')) {
+            return;
+        }
+
+        $sort = 0;
+        $used = [];
+        $keptIds = [];
+
+        foreach ($rows as $row) {
+            if (empty($row['review_platform_id'])) {
+                continue;
+            }
+
+            $platformId = (int) $row['review_platform_id'];
+            if (in_array($platformId, $used, true)) {
+                continue;
+            }
+            $used[] = $platformId;
+
+            $item = ! empty($row['id'])
+                ? HomeFeaturedReviewPlatform::query()->findOrFail($row['id'])
+                : new HomeFeaturedReviewPlatform;
+
+            $item->fill(['review_platform_id' => $platformId, 'sort' => $sort]);
+            $item->save();
+            $keptIds[] = $item->id;
+            $sort++;
+        }
+
+        HomeFeaturedReviewPlatform::query()->whereNotIn('id', $keptIds ?: [0])->delete();
+    }
+
     protected function ensureDefaults(): void
     {
         $viId = Language::idByCode('vi');
@@ -338,5 +495,35 @@ class HomeSectionController extends Controller
 
         HomeSectionSeeder::seedHeroPillsIfEmpty();
         HomeSectionSeeder::seedFeaturedToursIfEmpty();
+        HomeSectionSeeder::seedFeaturedCruisesIfEmpty();
+    }
+
+    /**
+     * jquery.repeater appends [] to checkbox names, so PHP receives ["1"] instead of "1".
+     *
+     * @param  list<string>  $fields
+     */
+    protected function normalizeRepeaterBooleans(Request $request, string $listKey, array $fields): void
+    {
+        $rows = $request->input($listKey);
+        if (! is_array($rows)) {
+            return;
+        }
+
+        foreach ($rows as $i => $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            foreach ($fields as $field) {
+                if (! array_key_exists($field, $row) || ! is_array($row[$field])) {
+                    continue;
+                }
+
+                $rows[$i][$field] = ! empty(array_filter($row[$field], fn ($v) => $v !== null && $v !== '' && $v !== false));
+            }
+        }
+
+        $request->merge([$listKey => $rows]);
     }
 }

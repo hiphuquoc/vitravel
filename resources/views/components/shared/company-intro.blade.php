@@ -1,37 +1,58 @@
-@props(['section' => null])
+@props([
+    'section' => null,
+    'showCta' => true,
+])
 
 @php
     $data = $section ?? view_data()->homeSection('company_intro');
+    $licenseLabel = app()->getLocale() === 'en' ? 'Travel license' : 'Giấy chứng nhận';
 @endphp
 
 {{-- "Hành trình chân thật" — khối giới thiệu công ty dùng chung Home + About Us --}}
 <section {{ $attributes->merge(['class' => 'cv-auto py-14']) }} aria-label="{{ $data['title'] ?? 'Giới thiệu ViTravel' }}">
     <div class="container-site">
         <div class="card grid overflow-hidden lg:grid-cols-2">
-            <div class="flex flex-col justify-center p-8 sm:p-10 lg:p-12">
-                @if (! empty($data['eyebrow']))
-                    <p class="kicker text-primary-600">{{ $data['eyebrow'] }}</p>
-                @endif
-                @if (! empty($data['title']))
-                    <h2 class="section-title mt-2">{{ $data['title'] }}</h2>
-                @endif
-                @if (! empty($data['body']))
-                    <p class="body-text mt-4">{!! $data['body'] !!}</p>
-                @endif
-                @if (! empty($data['metaLine']))
-                    <p class="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-muted">
-                        <x-icon name="shield" class="size-4 text-leaf-600" />
-                        {{ $data['metaLine'] }}
-                    </p>
-                @endif
-                @if (! empty($data['ctaLabel']) && ! empty($data['ctaUrl']))
-                    <div class="mt-6">
-                        <a href="{{ $data['ctaUrl'] }}" class="btn-primary">{{ $data['ctaLabel'] }}</a>
+            <div class="flex h-full min-h-0 flex-col p-8 sm:p-10 lg:p-12">
+                <div>
+                    @if (! empty($data['eyebrow']))
+                        <span class="section-eyebrow">{{ $data['eyebrow'] }}</span>
+                    @endif
+                    @if (! empty($data['title']))
+                        <h2 class="section-title mt-1 text-balance">{{ $data['title'] }}</h2>
+                    @endif
+                    @if (! empty($data['body']))
+                        <p class="body-text mt-4">{!! $data['body'] !!}</p>
+                    @endif
+                    @if (! empty($data['metaLine']))
+                        <div class="mt-6 flex items-start gap-3.5 border-t border-line pt-5">
+                            <span class="mt-0.5 flex size-11 shrink-0 items-center justify-center rounded-full bg-leaf-500/12 text-leaf-600" aria-hidden="true">
+                                <x-icon name="shield" class="size-5" />
+                            </span>
+                            <div class="min-w-0">
+                                <p class="text-sm font-semibold tracking-wide text-muted uppercase">{{ $licenseLabel }}</p>
+                                <p class="mt-1.5 text-base leading-snug font-semibold text-ink sm:text-lg">{{ $data['metaLine'] }}</p>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                @if ($showCta && ! empty($data['ctaLabel']) && ! empty($data['ctaUrl']))
+                    <div class="mt-auto pt-8">
+                        <a href="{{ $data['ctaUrl'] }}" class="btn-primary">
+                            {{ $data['ctaLabel'] }}
+                            <x-icon name="arrow-right" class="size-4" />
+                        </a>
                     </div>
                 @endif
             </div>
             @if (! empty($data['image']))
-                <img src="{{ $data['image'] }}" alt="{{ $data['imageAlt'] ?? '' }}" class="min-h-64 w-full object-cover lg:min-h-full">
+                <x-img
+                    :src="$data['image']"
+                    :srcset="$data['imageSrcset'] ?? null"
+                    preset="section"
+                    :alt="$data['imageAlt'] ?? ''"
+                    class="min-h-64 w-full object-cover lg:min-h-full"
+                />
             @else
                 <x-ph class="min-h-64 lg:min-h-full" :label="$data['imageAlt'] ?? 'Ảnh đội ngũ ViTravel'" icon="users" icon-class="size-12" />
             @endif

@@ -20,7 +20,7 @@
     $currentImage = $currentImage ?? $currentUrl ?? null;
     $hasCurrentImage = filled($currentImage);
     $removeName = $removeName ?? 'remove_image';
-    $maxKb = (int) config('media.max_upload_kb', 5120);
+    $maxKb = (int) ($maxKb ?? config('media.max_upload_kb', 5120));
 @endphp
 
 <div class="adminFormImageUpload">
@@ -248,7 +248,13 @@ document.addEventListener('DOMContentLoaded', function () {
         uploadArea.addEventListener('drop', function (e) {
             const files = e.dataTransfer.files;
             if (files.length > 0) {
-                input.files = files;
+                try {
+                    const dt = new DataTransfer();
+                    dt.items.add(files[0]);
+                    input.files = dt.files;
+                } catch (err) {
+                    input.files = files;
+                }
                 input.dispatchEvent(new Event('change', { bubbles: true }));
             }
         }, false);

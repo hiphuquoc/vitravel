@@ -12,6 +12,18 @@
     <meta property="og:locale" content="vi_VN">
     <link rel="canonical" href="{{ url()->current() }}">
 
+    @php
+        $gcsPublic = rtrim((string) config('services.gcs.public_url', ''), '/');
+        $gcsHost = $gcsPublic !== '' ? parse_url($gcsPublic, PHP_URL_HOST) : null;
+        if (! $gcsHost && config('media.disk') === 'gcs' && config('services.gcs.bucket')) {
+            $gcsHost = 'storage.googleapis.com';
+        }
+    @endphp
+    @if ($gcsHost)
+        <link rel="preconnect" href="https://{{ $gcsHost }}" crossorigin>
+        <link rel="dns-prefetch" href="https://{{ $gcsHost }}">
+    @endif
+
     {{-- JSON-LD Organization dùng chung toàn site --}}
     @php
         $orgJsonLd = [

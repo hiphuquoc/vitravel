@@ -2,11 +2,12 @@
     $offices = view_data()->offices();
     $columns = view_data()->footerColumns();
     $seoLinks = view_data()->footerSeoLinks();
+    $contact = view_data()->companyContact();
 @endphp
 
 <footer>
-    {{-- Tầng 1 — Contact strip nền be --}}
-    <section class="cv-auto bg-strip" aria-label="Thông tin liên hệ">
+    {{-- Tầng 1 — Contact strip nền be (teaser hỏi nhanh chồng lên) --}}
+    <section class="footer-contact-strip cv-auto bg-strip" aria-label="Thông tin liên hệ">
         <div class="container-site grid gap-8 py-12 lg:grid-cols-[1.2fr_1fr_auto] lg:gap-12 lg:py-14">
             <div>
                 <div class="flex items-center gap-3">
@@ -15,21 +16,21 @@
                     </span>
                     <span>
                         <span class="block font-display text-2xl font-bold leading-none sm:text-[1.75rem]">ViTravel</span>
-                        <span class="mt-1 block text-sm font-medium text-ink-soft italic">“Hài lòng hơn cả mong đợi”</span>
+                        <span class="mt-1 block text-sm font-medium text-ink-soft italic">{{ $contact['slogan'] }}</span>
                     </span>
                 </div>
                 <ul class="mt-6 space-y-3 text-base">
                     <li class="flex items-center gap-2.5">
                         <x-icon name="mail" class="size-4.5 shrink-0 text-primary-600" />
-                        <a href="mailto:hello@vitravel.example" class="font-medium hover:text-primary-600">hello@vitravel.example</a>
+                        <a href="mailto:{{ $contact['email'] }}" class="font-medium hover:text-primary-600">{{ $contact['email'] }}</a>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <x-icon name="phone" class="size-4.5 shrink-0 text-primary-600" />
-                        <a href="tel:+842439998888" class="font-medium hover:text-primary-600">+84 24 3999 8888</a>
+                        <a href="tel:{{ preg_replace('/\s+/', '', $contact['phone']) }}" class="font-medium hover:text-primary-600">{{ $contact['phone'] }}</a>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <x-icon name="whatsapp" class="size-4.5 shrink-0 text-leaf-600" />
-                        <span class="font-medium">WhatsApp: +84 912 345 678</span>
+                        <span class="font-medium">WhatsApp: {{ $contact['whatsapp'] }}</span>
                     </li>
                 </ul>
             </div>
@@ -63,7 +64,7 @@
             <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
                 @foreach ($columns as $col)
                     <nav aria-label="{{ $col['title'] }}">
-                        <h3 class="kicker mb-4 text-white/95">{{ $col['title'] }}</h3>
+                        <h3 class="footer-col__title">{{ $col['title'] }}</h3>
                         <ul class="space-y-3">
                             @foreach ($col['links'] as $link)
                                 <li>

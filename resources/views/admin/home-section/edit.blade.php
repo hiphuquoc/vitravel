@@ -98,8 +98,16 @@
                                     <p class="adminFormSection_description">
                                         @if ($sectionKey === 'featured_tours')
                                             Tiêu đề/mô tả section và danh sách tour hiển thị — chọn từ chương trình tour có sẵn bên dưới.
-                                        @elseif (in_array($sectionKey, ['destinations', 'testimonials', 'review_platforms', 'team', 'videos'], true))
-                                            Chỉ tiêu đề/mô tả — dữ liệu danh sách load từ module khác.
+                                        @elseif ($sectionKey === 'featured_cruises')
+                                            Tiêu đề/mô tả section và danh sách du thuyền hiển thị — chọn từ chương trình cruise có sẵn bên dưới.
+                                        @elseif ($sectionKey === 'destinations')
+                                            Tiêu đề section và danh sách quốc gia hiển thị — chọn/bớt bên dưới.
+                                        @elseif ($sectionKey === 'review_platforms')
+                                            Tiêu đề section và nền tảng đánh giá hiển thị — chọn/bớt bên dưới.
+                                        @elseif ($sectionKey === 'quick_inquiry')
+                                            Tiêu đề và mô tả khối form hỏi nhanh (cuối trang).
+                                        @elseif (in_array($sectionKey, ['testimonials', 'team', 'videos'], true))
+                                            Chỉ tiêu đề/mô tả — dữ liệu danh sách load từ module khác (cờ hiển thị trang chủ).
                                         @else
                                             Khối nội dung đầy đủ trên trang chủ.
                                         @endif
@@ -202,6 +210,24 @@
                                         'data' => $featuredTours,
                                         'oldData' => old('featured_tours'),
                                         'tourOptions' => $featuredTourOptions,
+                                    ])
+                                @elseif ($sectionKey === 'featured_cruises')
+                                    @include('admin.components.homeRepeaterFeaturedCruises', [
+                                        'data' => $featuredCruises,
+                                        'oldData' => old('featured_cruises'),
+                                        'cruiseOptions' => $featuredCruiseOptions,
+                                    ])
+                                @elseif ($sectionKey === 'destinations')
+                                    @include('admin.components.homeRepeaterFeaturedCountries', [
+                                        'data' => $featuredCountries,
+                                        'oldData' => old('featured_countries'),
+                                        'countryOptions' => $featuredCountryOptions,
+                                    ])
+                                @elseif ($sectionKey === 'review_platforms')
+                                    @include('admin.components.homeRepeaterFeaturedPlatforms', [
+                                        'data' => $featuredPlatforms,
+                                        'oldData' => old('featured_platforms'),
+                                        'platformOptions' => $featuredPlatformOptions,
                                     ])
                                 @endif
                             </div>

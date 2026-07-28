@@ -17,8 +17,8 @@ class CompanyProfile extends Model
     ];
 
     protected $fillable = [
-        'license_number', 'intro_image_id', 'mission_image_id',
-        'vision_image_id', 'policy_image_id',
+        'license_number', 'contact_email', 'contact_phone', 'contact_whatsapp', 'slogan',
+        'intro_image_id', 'mission_image_id', 'vision_image_id', 'policy_image_id',
     ];
 
     protected function translationClass(): string
@@ -49,5 +49,19 @@ class CompanyProfile extends Model
     public static function current(): ?self
     {
         return static::query()->with('translations')->first();
+    }
+
+    /** @return array{email: string, phone: string, whatsapp: string, slogan: string, license: ?string} */
+    public static function contact(): array
+    {
+        $profile = static::current();
+
+        return [
+            'email' => $profile?->contact_email ?: 'hello@vitravel.example',
+            'phone' => $profile?->contact_phone ?: '+84 24 3999 8888',
+            'whatsapp' => $profile?->contact_whatsapp ?: '+84 912 345 678',
+            'slogan' => $profile?->slogan ?: '“Hài lòng hơn cả mong đợi”',
+            'license' => $profile?->license_number,
+        ];
     }
 }

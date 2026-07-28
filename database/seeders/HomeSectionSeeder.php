@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Country;
 use App\Models\HeroPill;
 use App\Models\HeroPillTranslation;
+use App\Models\HomeFeaturedCruise;
 use App\Models\HomeFeaturedTour;
 use App\Models\HomeSection;
 use App\Models\HomeSectionTranslation;
@@ -64,6 +65,7 @@ class HomeSectionSeeder extends Seeder
 
         $this->seedHeroPills($viId, $enId);
         $this->seedFeaturedTours();
+        $this->seedFeaturedCruises();
     }
 
     public static function seedHeroPillsIfEmpty(): void
@@ -84,6 +86,15 @@ class HomeSectionSeeder extends Seeder
         (new self)->seedFeaturedTours();
     }
 
+    public static function seedFeaturedCruisesIfEmpty(): void
+    {
+        if (HomeFeaturedCruise::query()->exists()) {
+            return;
+        }
+
+        (new self)->seedFeaturedCruises();
+    }
+
     protected function seedFeaturedTours(): void
     {
         $packages = Package::query()
@@ -95,6 +106,23 @@ class HomeSectionSeeder extends Seeder
 
         foreach ($packages as $sort => $package) {
             HomeFeaturedTour::query()->updateOrCreate(
+                ['package_id' => $package->id],
+                ['sort' => $sort],
+            );
+        }
+    }
+
+    protected function seedFeaturedCruises(): void
+    {
+        $packages = Package::query()
+            ->where('type', Package::TYPE_CRUISE)
+            ->where('status', 'published')
+            ->orderBy('sort')
+            ->limit(3)
+            ->get();
+
+        foreach ($packages as $sort => $package) {
+            HomeFeaturedCruise::query()->updateOrCreate(
                 ['package_id' => $package->id],
                 ['sort' => $sort],
             );

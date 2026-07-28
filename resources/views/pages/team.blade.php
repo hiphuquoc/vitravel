@@ -12,5 +12,4 @@
         ]" banner-label="Ảnh banner: đội ngũ ViTravel" />
 
     <x-shared.team-grid :team="$team" :show-more="false" />
-    <x-shared.testimonial-carousel class="pt-0" />
 @endsection

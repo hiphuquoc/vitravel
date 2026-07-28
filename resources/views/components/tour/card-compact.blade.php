@@ -5,7 +5,13 @@
     <a href="{{ $href }}" class="relative block" aria-hidden="true" tabindex="-1">
         <div class="relative aspect-[3/2] overflow-hidden">
             @if (!empty($item['image']))
-                <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+                <x-img
+                    :src="$item['image']"
+                    :srcset="$item['imageSrcset'] ?? null"
+                    preset="card"
+                    :alt="$item['title']"
+                    class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
             @else
                 <x-ph class="absolute inset-0" :label="'Ảnh: ' . $item['title']" />
             @endif

@@ -102,14 +102,36 @@ class HomePageDefaults
                 ],
             ],
             [
-                'key' => HomeSection::KEY_DESTINATIONS,
+                'key' => HomeSection::KEY_FEATURED_CRUISES,
                 'sort' => 2,
-                'vi' => ['title' => 'Những điểm đến được yêu thích nhất'],
-                'en' => ['title' => 'Our most loved destinations'],
+                'vi' => [
+                    'eyebrow' => 'Trên mặt nước',
+                    'title' => 'Những chuyến du thuyền đáng trải nghiệm',
+                    'subtitle' => 'Ba hành trình trên vịnh và sông nước được khách hàng đánh giá cao nhất.',
+                ],
+                'en' => [
+                    'eyebrow' => 'On the water',
+                    'title' => 'Cruises worth experiencing',
+                    'subtitle' => 'Three bay and river journeys our guests rate highest.',
+                ],
+            ],
+            [
+                'key' => HomeSection::KEY_DESTINATIONS,
+                'sort' => 3,
+                'vi' => [
+                    'eyebrow' => 'Đông Nam Á',
+                    'title' => 'Những điểm đến được yêu thích nhất',
+                    'subtitle' => 'Mỗi điểm đến một sắc màu — chọn nơi bạn muốn lắng nghe câu chuyện bản địa.',
+                ],
+                'en' => [
+                    'eyebrow' => 'Southeast Asia',
+                    'title' => 'Our most loved destinations',
+                    'subtitle' => 'Each place has its own colour — choose where you want to hear local stories.',
+                ],
             ],
             [
                 'key' => HomeSection::KEY_TESTIMONIALS,
-                'sort' => 3,
+                'sort' => 4,
                 'vi' => [
                     'eyebrow' => 'Khách hàng kể lại',
                     'title' => 'Trải nghiệm chân thật từ khách hàng',
@@ -127,13 +149,13 @@ class HomePageDefaults
             ],
             [
                 'key' => HomeSection::KEY_REVIEW_PLATFORMS,
-                'sort' => 4,
+                'sort' => 5,
                 'vi' => ['title' => 'ViTravel được đánh giá cao trên'],
                 'en' => ['title' => 'ViTravel is highly rated on'],
             ],
             [
                 'key' => HomeSection::KEY_TEAM,
-                'sort' => 5,
+                'sort' => 6,
                 'vi' => [
                     'eyebrow' => 'Con người ViTravel',
                     'title' => 'Đội ngũ tận tâm của chúng tôi',
@@ -151,16 +173,32 @@ class HomePageDefaults
             ],
             [
                 'key' => HomeSection::KEY_VIDEOS,
-                'sort' => 6,
+                'sort' => 7,
                 'vi' => [
-                    'title' => 'Video trải nghiệm chân thật',
+                    'eyebrow' => 'Trải nghiệm thật',
+                    'title' => 'Đông Nam Á qua từng thước phim đẹp',
+                    'subtitle' => 'Những video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
                     'cta_label' => 'Xem tất cả video',
                     'cta_url' => '/video-trai-nghiem',
                 ],
                 'en' => [
-                    'title' => 'Authentic experience videos',
+                    'eyebrow' => 'Real experiences',
+                    'title' => 'Southeast Asia in unforgettable frames',
+                    'subtitle' => 'Authentic films from guests and our local team — tap any moment to watch full screen.',
                     'cta_label' => 'View all videos',
                     'cta_url' => '/video-trai-nghiem',
+                ],
+            ],
+            [
+                'key' => HomeSection::KEY_QUICK_INQUIRY,
+                'sort' => 8,
+                'vi' => [
+                    'title' => 'Hỏi nhanh về tour',
+                    'body' => 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong>24 giờ làm việc</strong>, hoàn toàn miễn phí.',
+                ],
+                'en' => [
+                    'title' => 'Quick tour inquiry',
+                    'body' => 'Not sure where to go, which season, or your budget? Leave a note — our local experts will reply within <strong>1 business day</strong>, free of charge.',
                 ],
             ],
         ];

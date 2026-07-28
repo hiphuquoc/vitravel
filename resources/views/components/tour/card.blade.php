@@ -8,7 +8,13 @@
     <div class="grid sm:grid-cols-[40%_1fr]">
         <a href="{{ $href }}" class="relative block overflow-hidden" aria-hidden="true" tabindex="-1">
             @if (!empty($item['image']))
-                <img src="{{ $item['image'] }}" alt="{{ $item['title'] }}" class="h-52 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-full sm:min-h-64" loading="lazy">
+                <x-img
+                    :src="$item['image']"
+                    :srcset="$item['imageSrcset'] ?? null"
+                    preset="card-wide"
+                    :alt="$item['title']"
+                    class="h-52 w-full object-cover transition duration-500 group-hover:scale-105 sm:h-full sm:min-h-64"
+                />
             @else
                 <x-ph class="h-52 w-full sm:h-full sm:min-h-64" :label="'Ảnh: ' . $item['title']" />
             @endif

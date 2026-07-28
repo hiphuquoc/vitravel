@@ -33,10 +33,21 @@
                 @if ($slide['image'])
                     <picture>
                         @if ($slide['imageMobile'])
-                            <source media="(max-width: 768px)" srcset="{{ $slide['imageMobile'] }}">
+                            <source
+                                media="(max-width: 768px)"
+                                srcset="{{ $slide['imageMobileSrcset'] ?? $slide['imageMobile'] }}"
+                                sizes="100vw"
+                            >
                         @endif
-                        <img src="{{ $slide['image'] }}" alt="{{ $slide['imageAlt'] ?? '' }}"
-                            class="h-full w-full object-cover" loading="{{ $index === 0 ? 'eager' : 'lazy' }}">
+                        <x-img
+                            :src="$slide['image']"
+                            :srcset="$slide['imageSrcset'] ?? null"
+                            preset="hero"
+                            :alt="$slide['imageAlt'] ?? ''"
+                            :loading="$index === 0 ? 'eager' : 'lazy'"
+                            :fetchpriority="$index === 0 ? 'high' : null"
+                            class="h-full w-full object-cover"
+                        />
                     </picture>
                 @else
                     <x-ph class="h-full w-full" :label="$slide['imageAlt'] ?? 'Ảnh hero'" icon-class="size-16" />

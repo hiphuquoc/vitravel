@@ -35,34 +35,29 @@
         </section>
     @endunless
 
-    {{-- ── Bento grid điểm đến ── --}}
-    @php $destinationsSection = view_data()->homeSection('destinations'); @endphp
-    @unless ($destinationsSection['hidden'] ?? false)
-        <section class="cv-auto py-14" aria-label="{{ $destinationsSection['title'] ?? 'Điểm đến được yêu thích' }}">
+    {{-- ── Du thuyền nổi bật ── --}}
+    @php $cruisesSection = view_data()->homeSection('featured_cruises'); @endphp
+    @unless ($cruisesSection['hidden'] ?? false)
+        <section class="cv-auto py-14" aria-label="{{ $cruisesSection['title'] ?? 'Du thuyền nổi bật' }}">
             <div class="container-site">
                 <x-shared.section-heading
-                    :title="$destinationsSection['title'] ?? ''"
-                    :subtitle="$destinationsSection['subtitle'] ?? null"
+                    :eyebrow="$cruisesSection['eyebrow'] ?? null"
+                    :title="$cruisesSection['title'] ?? ''"
+                    :subtitle="$cruisesSection['subtitle'] ?? null"
                 />
-                <div class="grid auto-rows-[190px] grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
-                    @foreach ($countries as $c)
-                        <a href="{{ route('tours.index', $c['slug']) }}"
-                            class="{{ $c['size'] === 'large' ? 'col-span-2 row-span-2' : '' }} group relative overflow-hidden rounded-2xl">
-                            @if (!empty($c['image']))
-                                <img src="{{ $c['image'] }}" alt="{{ $c['name'] }}" class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-105" loading="lazy">
-                            @else
-                                <x-ph class="absolute inset-0 transition duration-300 group-hover:scale-105" :label="'Ảnh điểm đến: ' . $c['name']"
-                                    icon-class="{{ $c['size'] === 'large' ? 'size-12' : 'size-8' }}" />
-                            @endif
-                            <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 via-ink/35 to-transparent p-4 pt-12 sm:p-5 sm:pt-14">
-                                <span class="dest-card-name {{ $c['size'] === 'large' ? 'dest-card-name--large' : '' }}">{{ $c['name'] }}</span>
-                                <span class="dest-card-meta">{{ $c['tourCount'] }} tour</span>
-                            </span>
-                        </a>
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    @foreach ($featuredCruises as $cruise)
+                        <x-tour.card-compact :item="$cruise" :href="route('cruises.show', ['type' => $cruise['typeSlug'], 'slug' => $cruise['slug']])" />
                     @endforeach
                 </div>
             </div>
         </section>
+    @endunless
+
+    {{-- ── Điểm đến yêu thích: hero cinemascape + strip mosaic ── --}}
+    @php $destinationsSection = view_data()->homeSection('destinations'); @endphp
+    @unless ($destinationsSection['hidden'] ?? false)
+        <x-home.destinations :countries="$countries" :section="$destinationsSection" />
     @endunless
 
     {{-- ── Trust & nội dung dùng chung ── --}}
@@ -82,6 +77,6 @@
         <x-shared.team-grid class="pt-0" :section="$teamSection" />
     @endunless
     @unless ($videosSection['hidden'] ?? false)
-        <x-shared.video-showcase class="pt-0" :section="$videosSection" />
+        <x-shared.video-showcase :section="$videosSection" :home-only="true" :limit="4" />
     @endunless
 @endsection

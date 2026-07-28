@@ -10,6 +10,11 @@ use App\Http\Controllers\Admin\HelperController;
 use App\Http\Controllers\Admin\LeadController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PackageController;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\CompanyProfileController;
+use App\Http\Controllers\Admin\ExperienceVideoController;
+use App\Http\Controllers\Admin\OfficeController;
+use App\Http\Controllers\Admin\ReviewPlatformController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\TourCategoryController;
 use App\Http\Controllers\Auth\LoginController;
@@ -84,6 +89,15 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/delete', [TeamMemberController::class, 'delete'])->name('team.delete');
         });
 
+        /* ===== Customer reviews / testimonials ===== */
+        Route::prefix('danh-gia')->group(function () {
+            Route::get('/', [ReviewController::class, 'list'])->name('reviews.list');
+            Route::get('/list', [ReviewController::class, 'list']);
+            Route::get('/view', [ReviewController::class, 'view'])->name('reviews.view');
+            Route::post('/createAndUpdate', [ReviewController::class, 'createAndUpdate'])->name('reviews.save');
+            Route::get('/delete', [ReviewController::class, 'delete'])->name('reviews.delete');
+        });
+
         /* ===== Leads ===== */
         Route::prefix('yeu-cau-nhanh')->group(function () {
             Route::get('/', [LeadController::class, 'quickInquiries'])->name('leads.quickInquiries');
@@ -129,11 +143,39 @@ Route::middleware(['auth', 'role:admin'])
 
         /* Placeholders */
         Route::get('/chuyen-muc-blog', fn () => redirect()->route('admin.dashboard'))->name('blogCategories.list');
-        Route::get('/van-phong', fn () => redirect()->route('admin.dashboard'))->name('offices.list');
-        Route::get('/cong-ty', fn () => redirect()->route('admin.dashboard'))->name('company.profile');
-        Route::get('/danh-gia', fn () => redirect()->route('admin.dashboard'))->name('reviews.list');
-        Route::get('/thu-vien-anh', fn () => redirect()->route('admin.dashboard'))->name('gallery.list');
-        Route::get('/video', fn () => redirect()->route('admin.dashboard'))->name('videos.list');
+        Route::get('/thu-vien-anh', fn () => redirect()->route('admin.videos.list'))->name('gallery.list');
+
+        /* ===== Offices ===== */
+        Route::prefix('van-phong')->group(function () {
+            Route::get('/', [OfficeController::class, 'list'])->name('offices.list');
+            Route::get('/list', [OfficeController::class, 'list']);
+            Route::get('/view', [OfficeController::class, 'view'])->name('offices.view');
+            Route::post('/createAndUpdate', [OfficeController::class, 'createAndUpdate'])->name('offices.save');
+            Route::get('/delete', [OfficeController::class, 'delete'])->name('offices.delete');
+        });
+
+        /* ===== Company contact / footer ===== */
+        Route::get('/cong-ty', [CompanyProfileController::class, 'edit'])->name('company.profile');
+        Route::post('/cong-ty/save', [CompanyProfileController::class, 'save'])->name('company.save');
+
+        /* ===== Review platforms ===== */
+        Route::prefix('nen-tang-danh-gia')->group(function () {
+            Route::get('/', [ReviewPlatformController::class, 'list'])->name('reviewPlatforms.list');
+            Route::get('/list', [ReviewPlatformController::class, 'list']);
+            Route::get('/view', [ReviewPlatformController::class, 'view'])->name('reviewPlatforms.view');
+            Route::post('/createAndUpdate', [ReviewPlatformController::class, 'createAndUpdate'])->name('reviewPlatforms.save');
+            Route::get('/delete', [ReviewPlatformController::class, 'delete'])->name('reviewPlatforms.delete');
+        });
+
+        /* ===== Experience videos ===== */
+        Route::prefix('video')->group(function () {
+            Route::get('/', [ExperienceVideoController::class, 'list'])->name('videos.list');
+            Route::get('/list', [ExperienceVideoController::class, 'list']);
+            Route::get('/view', [ExperienceVideoController::class, 'view'])->name('videos.view');
+            Route::post('/createAndUpdate', [ExperienceVideoController::class, 'createAndUpdate'])->name('videos.save');
+            Route::get('/delete', [ExperienceVideoController::class, 'delete'])->name('videos.delete');
+        });
+
         Route::get('/cai-dat/ngon-ngu', fn () => redirect()->route('admin.dashboard'))->name('settings.languages');
         Route::get('/cai-dat/phong-cach', fn () => redirect()->route('admin.dashboard'))->name('settings.travelStyles');
         Route::get('/cai-dat/media', fn () => redirect()->route('admin.homeSlides.list'))->name('settings.media');

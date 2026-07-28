@@ -48,6 +48,22 @@
         });
     }
 
+    /**
+     * jquery.repeater appends [] to checkbox names (treats them like multi-value).
+     * PHP then receives is_active as ["1"] which fails Laravel's boolean rule.
+     */
+    function fixRepeaterCheckboxNames($root) {
+        $root.find('input[type="checkbox"][name$="[]"]').each(function () {
+            this.name = this.name.replace(/\[\]$/, '');
+        });
+    }
+
+    function afterRepeaterIndexes($repeaterList) {
+        fixRepeaterCheckboxNames($repeaterList);
+        initSortable($repeaterList);
+        updateRepeaterOrdering($repeaterList);
+    }
+
     function initRepeaters() {
         if (typeof jQuery.fn.repeater === 'undefined') {
             return;
@@ -71,19 +87,20 @@
                 initEmpty: false,
                 show: function () {
                     jQuery(this).slideDown(300);
-                    initSortable($repeaterList);
-                    updateRepeaterOrdering($repeaterList);
+                    afterRepeaterIndexes($repeaterList);
                 },
                 hide: function (deleteElement) {
                     jQuery(this).slideUp(300, deleteElement);
-                    updateRepeaterOrdering($repeaterList);
+                    afterRepeaterIndexes($repeaterList);
                 },
                 ready: function (setIndexes) {
                     setIndexes();
-                    initSortable($repeaterList);
-                    updateRepeaterOrdering($repeaterList);
+                    afterRepeaterIndexes($repeaterList);
                 },
             });
+
+            // setIndexes() also runs at plugin construct-time (before ready).
+            fixRepeaterCheckboxNames($repeaterList);
 
             $createButton.off('click.repeater').on('click.repeater', function (e) {
                 e.preventDefault();

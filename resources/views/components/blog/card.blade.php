@@ -1,11 +1,25 @@
 @props(['article'])
 
-@php $href = route('guide.show', ['country' => $article['countrySlug'], 'slug' => $article['slug']]); @endphp
+@php
+    $href = filled($article['countrySlug'] ?? null) && filled($article['slug'] ?? null)
+        ? route('guide.show', ['country' => $article['countrySlug'], 'slug' => $article['slug']])
+        : route('guide.index');
+@endphp
 
 <article {{ $attributes->merge(['class' => 'card group flex flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-(--shadow-card-hover)']) }}>
     <a href="{{ $href }}" aria-hidden="true" tabindex="-1">
         <div class="relative aspect-[16/9]">
-            <x-ph class="absolute inset-0" :label="'Ảnh bài viết: ' . $article['title']" />
+            @if (! empty($article['image']))
+                <x-img
+                    :src="$article['image']"
+                    :srcset="$article['imageSrcset'] ?? null"
+                    preset="card"
+                    :alt="$article['title']"
+                    class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+            @else
+                <x-ph class="absolute inset-0" :label="'Ảnh bài viết: ' . $article['title']" />
+            @endif
         </div>
     </a>
     <div class="flex flex-1 flex-col p-5">

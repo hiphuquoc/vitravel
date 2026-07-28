@@ -31,6 +31,4 @@
         </div>
         <x-shared.pagination class="mt-10" />
     </section>
-
-    <x-shared.testimonial-carousel class="pt-0" />
 @endsection

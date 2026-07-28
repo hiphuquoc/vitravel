@@ -11,6 +11,9 @@ use App\Models\ExperienceAlbum;
 use App\Models\ExperienceVideo;
 use App\Models\Faq;
 use App\Models\HeroPill;
+use App\Models\HomeFeaturedCountry;
+use App\Models\HomeFeaturedReviewPlatform;
+use App\Models\HomeFeaturedCruise;
 use App\Models\HomeFeaturedTour;
 use App\Models\HomeSection;
 use App\Models\KeywordTag;
@@ -38,6 +41,27 @@ class ViewDataService
     protected function languageId(): ?int
     {
         return Language::idByCode($this->locale());
+    }
+
+    public function homeCountries(): array
+    {
+        $featured = HomeFeaturedCountry::query()
+            ->orderBy('sort')
+            ->with(['country.translations', 'country.banner', 'country.packages' => fn ($q) => $q->published()->tours()])
+            ->get();
+
+        $mapped = $featured->isNotEmpty()
+            ? $featured
+                ->map(fn (HomeFeaturedCountry $row) => $row->country ? $this->mapCountry($row->country) : null)
+                ->filter()
+                ->values()
+            : collect($this->countries());
+
+        // Hero luôn là quốc gia size=large (Việt Nam) — đưa lên đầu danh sách.
+        return $mapped
+            ->sortByDesc(fn (array $c) => ($c['size'] ?? '') === 'large')
+            ->values()
+            ->all();
     }
 
     public function countries(): array
@@ -190,6 +214,35 @@ class ViewDataService
         return SampleData::featuredTours($limit);
     }
 
+    public function featuredCruises(int $limit = 3): array
+    {
+        $packages = HomeFeaturedCruise::query()
+            ->orderBy('sort')
+            ->with([
+                'package.translations',
+                'package.country.translations',
+                'package.travelStyles',
+                'package.itineraryDays.translations',
+                'package.cabinTypes.translations',
+                'package.faqs.translations',
+                'package.mediaAttachments.media',
+                'package.seoEntry.translations',
+            ])
+            ->get()
+            ->map(fn (HomeFeaturedCruise $row) => $row->package)
+            ->filter(fn (?Package $package) => $package && $package->status === 'published' && $package->type === Package::TYPE_CRUISE)
+            ->take($limit);
+
+        if ($packages->isNotEmpty()) {
+            return $packages
+                ->map(fn (Package $package) => $this->mapPackage($package, true))
+                ->values()
+                ->all();
+        }
+
+        return SampleData::featuredCruises($limit);
+    }
+
     public function toursByCountry(string $countrySlug): array
     {
         if (! Package::query()->published()->tours()->exists()) {
@@ -313,15 +366,15 @@ class ViewDataService
         return BlogCategory::query()
             ->where('is_active', true)
             ->orderBy('sort')
-            ->with(['translations', 'country.translations', 'articles'])
+            ->with(['translations', 'country' => fn ($q) => $q->withTrashed()->with('translations'), 'articles'])
             ->get()
             ->map(function (BlogCategory $category) {
-                $countrySlug = $category->country?->slug ?? '';
+                $countryTranslation = $category->country?->translation($this->locale());
 
                 return [
                     'slug' => $category->slug,
                     'name' => $category->name,
-                    'countrySlug' => $countrySlug,
+                    'countrySlug' => $countryTranslation?->slug ?? '',
                     'count' => $category->articles()->published()->count(),
                 ];
             })
@@ -429,28 +482,52 @@ class ViewDataService
         ];
     }
 
-    public function testimonials(): array
+    public function testimonials(bool $homeOnly = false): array
     {
         if (! Review::query()->published()->exists()) {
             return SampleData::testimonials();
         }
 
-        return Review::query()
+        $query = Review::query()
             ->published()
-            ->with(['mediaAttachments', 'reviewable'])
+            ->with(['avatar', 'mediaAttachments.media', 'reviewable'])
             ->orderBy('sort')
+            ->orderByDesc('id');
+
+        if ($homeOnly && Review::query()->published()->where('show_on_home', true)->exists()) {
+            $query->where('show_on_home', true);
+        }
+
+        return $query
             ->get()
-            ->map(fn (Review $review) => [
-                'name' => $review->author_name,
-                'country' => $review->author_country ?? '',
-                'flag' => $this->countryFlag($review->author_country_code),
-                'rating' => (float) $review->rating,
-                'quote' => $review->content,
-                'photos' => $review->mediaAttachments->count(),
-                'trip' => $review->question_title ?? optional($review->reviewable)->title ?? '',
-            ])
+            ->map(fn (Review $review) => $this->mapReview($review))
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array{name: string, country: string, flag: string, rating: float, quote: string, photos: int, photoUrls: list<string>, avatar: ?string, trip: string, reviewedOn: ?string}
+     */
+    protected function mapReview(Review $review): array
+    {
+        $avatar = media_payload($review->avatar, 'thumb');
+        $photos = $review->galleryPayloads(3, 'thumb');
+
+        return [
+            'name' => $review->author_name,
+            'country' => $review->author_country ?? '',
+            'flag' => $this->countryFlag($review->author_country_code),
+            'rating' => (float) $review->rating,
+            'quote' => $review->content,
+            'photos' => $review->displayPhotosCount(),
+            'photoUrls' => array_values(array_filter(array_column($photos, 'src'))),
+            'photoSrcsets' => array_values(array_filter(array_column($photos, 'srcset'))),
+            'avatar' => $avatar['src'],
+            'avatarSrcset' => $avatar['srcset'],
+            'trip' => $review->question_title
+                ?? (is_object($review->reviewable) && isset($review->reviewable->title) ? (string) $review->reviewable->title : ''),
+            'reviewedOn' => optional($review->reviewed_on)?->format('d/m/Y'),
+        ];
     }
 
     public function team(): array
@@ -468,7 +545,8 @@ class ViewDataService
                 'name' => $member->name,
                 'role' => $member->role,
                 'bio' => $member->short_bio,
-                'image' => $member->avatarUrl(),
+                'image' => $member->avatarUrl('thumb'),
+                'imageSrcset' => $member->avatarSrcset(),
             ])
             ->values()
             ->all();
@@ -595,27 +673,43 @@ class ViewDataService
 
     public function reviewPlatforms(): array
     {
-        if (! ReviewPlatform::query()->where('is_active', true)->exists()) {
+        $featured = HomeFeaturedReviewPlatform::query()
+            ->orderBy('sort')
+            ->with('platform')
+            ->get()
+            ->pluck('platform')
+            ->filter(fn ($p) => $p && $p->is_active);
+
+        $platforms = $featured->isNotEmpty()
+            ? $featured
+            : ReviewPlatform::query()->where('is_active', true)->where('show_on_home', true)->orderBy('sort')->get();
+
+        if ($platforms->isEmpty()) {
             return SampleData::reviewPlatforms();
         }
 
-        $quotes = [
-            'tripadvisor' => 'Xếp hạng 5/5 từ hơn 900 đánh giá — Giải thưởng Travelers\' Choice 3 năm liên tiếp.',
-            'google' => '4.9/5 trên Google Maps với hơn 600 nhận xét từ du khách khắp thế giới.',
-            'trustpilot' => 'Điểm "Xuất sắc" trên Trustpilot — 96% khách hàng chấm 5 sao.',
-        ];
-
-        return ReviewPlatform::query()
-            ->where('is_active', true)
-            ->orderBy('sort')
-            ->get()
+        return $platforms
             ->map(fn (ReviewPlatform $platform) => [
                 'name' => $platform->name,
-                'quote' => $quotes[$platform->code] ?? "{$platform->rating}/5 từ {$platform->review_count} đánh giá.",
-                'link' => $platform->url ? "Đọc đánh giá trên {$platform->name}" : "Xem đánh giá trên {$platform->name}",
+                'rating' => (float) ($platform->rating ?? 5),
+                'quote' => $platform->quote
+                    ?: "{$platform->rating}/5 từ {$platform->review_count} đánh giá.",
+                'link' => $platform->link_label
+                    ?: "Đọc đánh giá trên {$platform->name}",
+                'url' => $platform->url ?: '#',
             ])
             ->values()
             ->all();
+    }
+
+    public function companyContact(): array
+    {
+        return \App\Models\CompanyProfile::contact();
+    }
+
+    public function quickInquiry(): array
+    {
+        return $this->homeSection('quick_inquiry');
     }
 
     public function listingFaqs(): array
@@ -656,24 +750,46 @@ class ViewDataService
             ->all();
     }
 
-    public function videos(): array
+    public function videos(bool $homeOnly = false, int $limit = 24): array
     {
-        if (! ExperienceVideo::query()->where('status', 'published')->exists()) {
-            return SampleData::videos();
+        $query = ExperienceVideo::query()->published()->orderBy('sort')->orderByDesc('id');
+
+        if ($homeOnly) {
+            $query->where('show_on_home', true);
         }
 
-        return ExperienceVideo::query()
-            ->where('status', 'published')
-            ->orderBy('sort')
-            ->with('translations')
+        if (! (clone $query)->exists()) {
+            $samples = SampleData::videos();
+
+            return $homeOnly ? array_slice($samples, 0, min(4, $limit)) : array_slice($samples, 0, $limit);
+        }
+
+        return $query
+            ->with(['translations', 'thumbnail', 'videoFile', 'country.translations'])
+            ->limit($limit)
             ->get()
-            ->map(fn (ExperienceVideo $video) => [
-                'title' => $video->title,
-                'date' => optional($video->published_at)?->format('d/m/Y') ?? '',
-                'duration' => $video->description ?? '',
-            ])
+            ->map(fn (ExperienceVideo $video) => $this->mapVideo($video))
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array{title: string, description: ?string, date: string, duration: ?string, tag: ?string, image: ?string, imageSrcset: ?string, embedUrl: ?string, provider: ?string, youtubeId: ?string}
+     */
+    protected function mapVideo(ExperienceVideo $video): array
+    {
+        return [
+            'title' => $video->title,
+            'description' => $video->description,
+            'date' => optional($video->published_at)?->format('d/m/Y') ?? '',
+            'duration' => $video->duration,
+            'tag' => $video->tag ?: ($video->country?->name),
+            'image' => $video->thumbnailUrl('card'),
+            'imageSrcset' => $video->thumbnailSrcset(),
+            'embedUrl' => $video->embedUrl(),
+            'provider' => $video->provider(),
+            'youtubeId' => $video->resolvedYoutubeId(),
+        ];
     }
 
     public function footerColumns(): array
@@ -711,8 +827,9 @@ class ViewDataService
             ->orderByDesc('published_at')
             ->with([
                 'translations',
-                'country.translations',
+                'country' => fn ($q) => $q->withTrashed()->with('translations'),
                 'blogCategory.translations',
+                'blogCategory.country' => fn ($q) => $q->withTrashed()->with('translations'),
                 'contentTypeTags.translations',
                 'faqs.translations',
                 'mediaAttachments.media',
@@ -759,7 +876,8 @@ class ViewDataService
             'metaLine' => $translation?->meta_line,
             'ctaLabel' => $translation?->cta_label,
             'ctaUrl' => $this->resolveCtaUrl($translation?->cta_url),
-            'image' => $section->imageUrl(),
+            'image' => $section->imageUrl('lg'),
+            'imageSrcset' => $section->imageSrcset(),
             'imageAlt' => $translation?->image_alt,
         ];
     }
@@ -786,8 +904,10 @@ class ViewDataService
         $translation = $slide->translation($this->locale());
 
         return [
-            'image' => $slide->imageUrl(),
-            'imageMobile' => $slide->imageMobileUrl(),
+            'image' => $slide->imageUrl('full'),
+            'imageSrcset' => $slide->imageSrcset(),
+            'imageMobile' => $slide->imageMobileUrl('lg'),
+            'imageMobileSrcset' => $slide->imageMobileSrcset(),
             'imageAlt' => $translation?->image_alt ?? $slide->image?->alt,
             'title' => $translation?->title,
             'titleAccent' => $translation?->title_accent,
@@ -801,16 +921,20 @@ class ViewDataService
     protected function mapCountry(Country $country): array
     {
         $translation = $country->translation($this->locale());
+        $cardImage = $country->bannerUrl('card');
+        $heroImage = $country->bannerUrl('lg') ?: $country->bannerUrl('full') ?: $cardImage;
 
         return [
             'slug' => $translation?->slug ?? '',
             'name' => $translation?->name ?? '',
-            'size' => $country->home_grid_size,
+            'size' => $country->home_grid_size === 'large' ? 'large' : 'normal',
             'tourCount' => $country->relationLoaded('packages')
                 ? $country->packages->count()
                 : $country->packages()->published()->tours()->count(),
             'tagline' => $translation?->tagline ?? '',
-            'image' => $country->bannerUrl(),
+            'image' => $cardImage,
+            'imageHero' => $heroImage,
+            'imageSrcset' => $country->bannerSrcset(),
         ];
     }
 
@@ -841,7 +965,10 @@ class ViewDataService
             'rating' => $seoRating > 0 ? $seoRating : $pkgRating,
             'reviewCount' => $seoCount > 0 ? $seoCount : $pkgCount,
             'badge' => $package->discount_badge,
-            'image' => $package->coverUrl(),
+            'image' => $package->coverUrl('card'),
+            'imageSrcset' => $package->coverSrcset(),
+            'imageDetail' => $package->coverUrl('lg'),
+            'imageDetailSrcset' => $package->coverSrcset(),
             'styles' => $package->travelStyles->pluck('code')->all(),
             'quote' => [
                 'text' => $translation?->featured_quote_text ?? '',
@@ -867,7 +994,18 @@ class ViewDataService
                 'q' => $faq->question,
                 'a' => $faq->answer,
             ])->values()->all(),
-            'galleryCount' => max(1, $package->mediaAttachments->where('role', 'gallery')->count() ?: 4),
+            'gallery' => $package->mediaAttachments
+                ->where('role', 'gallery')
+                ->take(8)
+                ->map(fn ($a) => media_payload($a->media, 'card'))
+                ->filter(fn (array $p) => filled($p['src'] ?? null))
+                ->values()
+                ->all(),
+            'galleryCount' => max(
+                1,
+                $package->mediaAttachments->where('role', 'gallery')->count()
+                    ?: ($package->coverMedia() ? 1 : 4)
+            ),
         ];
 
         if ($isCruise) {
@@ -896,7 +1034,8 @@ class ViewDataService
     protected function mapArticle(Article $article): array
     {
         $translation = $article->translation($this->locale());
-        $countryTranslation = $article->country?->translation($this->locale());
+        $country = $article->country ?? $article->blogCategory?->country;
+        $countryTranslation = $country?->translation($this->locale());
         $categoryTranslation = $article->blogCategory?->translation($this->locale());
         $seoTranslation = $article->seoEntry?->translation($this->locale());
         $content = $translation?->content ?? [];
@@ -920,13 +1059,27 @@ class ViewDataService
             'rating' => (float) $article->rating,
             'ratingCount' => $article->rating_count,
             'excerpt' => $translation?->excerpt ?? '',
-            'image' => $article->coverUrl(),
+            'image' => $article->coverUrl('card'),
+            'imageSrcset' => $article->coverSrcset(),
+            'imageDetail' => $article->coverUrl('lg'),
+            'imageDetailSrcset' => $article->coverSrcset(),
             'content' => is_array($content) ? $content : [],
             'faqs' => $article->faqs->where('is_active', true)->map(fn (Faq $faq) => [
                 'q' => $faq->question,
                 'a' => $faq->answer,
             ])->values()->all(),
-            'galleryCount' => max(1, $article->mediaAttachments->where('role', 'gallery')->count() ?: 4),
+            'gallery' => $article->mediaAttachments
+                ->where('role', 'gallery')
+                ->take(8)
+                ->map(fn ($a) => media_payload($a->media, 'card'))
+                ->filter(fn (array $p) => filled($p['src'] ?? null))
+                ->values()
+                ->all(),
+            'galleryCount' => max(
+                1,
+                $article->mediaAttachments->where('role', 'gallery')->count()
+                    ?: ($article->coverMedia() ? 1 : 4)
+            ),
         ];
     }
 

@@ -1,59 +1,147 @@
-@props(['showMore' => true, 'section' => null])
+@props([
+    'homeOnly' => true,
+    'limit' => 8,
+    'section' => null,
+    'showCta' => true,
+])
 
 @php
-    $videos = view_data()->videos();
-    $main = $videos[0];
-    $others = array_slice($videos, 1, 3);
+    $videos = view_data()->videos($homeOnly, $limit);
     $data = $section ?? view_data()->homeSection('videos');
+    $count = count($videos);
+    $eyebrow = $data['eyebrow'] ?? 'Trải nghiệm thật';
+    $title = $data['title'] ?? 'Video trải nghiệm chân thật';
+    $subtitle = $data['subtitle'] ?? $data['body'] ?? null;
+    $ctaLabel = $data['ctaLabel'] ?? null;
+    $ctaUrl = $data['ctaUrl'] ?? null;
 @endphp
 
-{{-- 1 video lớn trái + danh sách video nhỏ phải --}}
-<section {{ $attributes->merge(['class' => 'cv-auto py-14']) }} aria-label="{{ $data['title'] ?? 'Video trải nghiệm' }}">
-    <div class="container-site">
-        <x-shared.section-heading :title="$data['title'] ?? ''" />
-        <div class="grid gap-5 sm:gap-6 lg:grid-cols-[1.6fr_1fr]">
-            <article class="card group overflow-hidden">
-                <div class="relative aspect-video">
-                    <x-ph class="absolute inset-0" :label="'Video: ' . $main['title']" icon="play" icon-class="size-12" />
-                    <button type="button"
-                        class="absolute inset-0 m-auto flex size-16 cursor-pointer items-center justify-center rounded-full bg-primary-500/95 text-white shadow-(--shadow-float) transition group-hover:scale-110"
-                        aria-label="Phát video: {{ $main['title'] }}">
-                        <x-icon name="play" class="size-7 translate-x-0.5" />
+@if ($count > 0)
+<section
+    {{ $attributes->merge(['class' => 'vt-videos cv-auto']) }}
+    aria-labelledby="vt-videos-title"
+    x-data="videoGallery(@js($videos))"
+>
+    <div class="vt-videos__scene" aria-hidden="true">
+        <span class="vt-videos__scene-mark">▶</span>
+        <span class="vt-videos__scene-leak vt-videos__scene-leak--gold"></span>
+        <span class="vt-videos__scene-leak vt-videos__scene-leak--leaf"></span>
+        <span class="vt-videos__scene-frame"></span>
+    </div>
+
+    <div class="vt-videos__intro">
+        @if ($eyebrow)
+            <div class="vt-videos__eyebrow-wrap">
+                <span class="vt-videos__eyebrow-dot" aria-hidden="true"></span>
+                <span class="vt-videos__eyebrow">{{ $eyebrow }}</span>
+            </div>
+        @endif
+        <h2 class="vt-videos__title" id="vt-videos-title">{{ $title }}</h2>
+        @if ($subtitle)
+            <p class="vt-videos__desc">{{ $subtitle }}</p>
+        @endif
+        <div class="vt-videos__meta">
+            <span class="vt-videos__count">
+                <strong>{{ str_pad((string) $count, 2, '0', STR_PAD_LEFT) }}</strong> video
+            </span>
+            <span class="vt-videos__meta-divider" aria-hidden="true"></span>
+            @if ($showCta && $ctaLabel && $ctaUrl)
+                <a href="{{ $ctaUrl }}" class="vt-videos__meta-link">{{ $ctaLabel }}</a>
+            @else
+                <span class="vt-videos__meta-caption">Thư viện video ViTravel</span>
+            @endif
+        </div>
+    </div>
+
+    <div class="vt-videos__band">
+        <div class="vt-videos__grid" role="list" aria-label="{{ $title }}">
+            @foreach ($videos as $i => $v)
+                @php $index = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT); @endphp
+                <article class="vt-videos__tile" role="listitem">
+                    <button
+                        type="button"
+                        class="vt-videos__tile-btn"
+                        @click="open({{ $i }})"
+                        aria-label="Xem video: {{ $v['title'] }}"
+                    >
+                        <figure class="vt-videos__frame">
+                            @if (! empty($v['image']))
+                                <x-img
+                                    :src="$v['image']"
+                                    :srcset="$v['imageSrcset'] ?? null"
+                                    preset="card"
+                                    :alt="$v['title']"
+                                    class="vt-videos__img"
+                                />
+                            @else
+                                <div class="vt-videos__ph" aria-hidden="true"></div>
+                            @endif
+                            <span class="vt-videos__play" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M8 5v14l11-7z"/></svg>
+                            </span>
+                            @if (! empty($v['duration']))
+                                <span class="vt-videos__duration">{{ $v['duration'] }}</span>
+                            @endif
+                            <figcaption class="vt-videos__cap">
+                                <span class="vt-videos__cap-index" aria-hidden="true">{{ $index }}</span>
+                                <span class="vt-videos__cap-rule" aria-hidden="true"></span>
+                                <span class="vt-videos__cap-title">{{ $v['tag'] ?: $v['title'] }}</span>
+                            </figcaption>
+                        </figure>
                     </button>
-                    <span class="absolute right-3 bottom-3 rounded bg-ink/70 px-2 py-0.5 text-sm font-semibold text-white">{{ $main['duration'] }}</span>
-                </div>
-                <div class="p-5 sm:p-6">
-                    <h3 class="item-title text-lg leading-snug">{{ $main['title'] }}</h3>
-                    <p class="mt-2 flex items-center gap-1.5 text-sm text-muted">
-                        <x-icon name="calendar" class="size-3.5" /> {{ $main['date'] }}
-                    </p>
-                </div>
-            </article>
+                </article>
+            @endforeach
+        </div>
+    </div>
 
-            <div class="flex flex-col gap-4">
-                @foreach ($others as $v)
-                    <article class="card group flex gap-4 p-3.5 transition hover:shadow-(--shadow-card-hover) sm:p-4">
-                        <div class="relative w-36 shrink-0 overflow-hidden rounded-xl sm:w-40">
-                            <div class="relative aspect-video">
-                                <x-ph class="absolute inset-0" icon="play" icon-class="size-6" :label="null" />
-                                <span class="absolute right-1.5 bottom-1.5 rounded bg-ink/70 px-1.5 py-px text-[11px] font-semibold text-white">{{ $v['duration'] }}</span>
-                            </div>
-                        </div>
-                        <div class="min-w-0 py-0.5">
-                            <h3 class="line-clamp-2 text-base font-semibold leading-snug transition group-hover:text-primary-600">{{ $v['title'] }}</h3>
-                            <p class="mt-2 flex items-center gap-1.5 text-sm text-muted">
-                                <x-icon name="calendar" class="size-3.5" /> {{ $v['date'] }}
-                            </p>
-                        </div>
-                    </article>
-                @endforeach
+    {{-- Fullscreen lightbox --}}
+    <div
+        class="vt-videos-lightbox"
+        x-show="active !== null"
+        x-cloak
+        x-transition.opacity.duration.200ms
+        @keydown.escape.window="close()"
+        @keydown.arrow-left.window="if (active !== null) prev()"
+        @keydown.arrow-right.window="if (active !== null) next()"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="activeItem?.title || 'Xem video'"
+    >
+        <div class="vt-videos-lightbox__backdrop" @click="close()"></div>
+        <div class="vt-videos-lightbox__panel">
+            <button type="button" class="vt-videos-lightbox__close" @click="close()" aria-label="Đóng">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+            <button type="button" class="vt-videos-lightbox__nav vt-videos-lightbox__nav--prev" @click="prev()" aria-label="Video trước" x-show="items.length > 1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button type="button" class="vt-videos-lightbox__nav vt-videos-lightbox__nav--next" @click="next()" aria-label="Video tiếp" x-show="items.length > 1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
 
-                @if ($showMore && ! empty($data['ctaLabel']) && ! empty($data['ctaUrl']))
-                    <a href="{{ $data['ctaUrl'] }}" class="btn-ghost mt-auto self-start">
-                        {{ $data['ctaLabel'] }} <x-icon name="arrow-right" class="size-4" />
-                    </a>
-                @endif
+            <div class="vt-videos-lightbox__stage">
+                <template x-if="active !== null && activeItem?.embedUrl && activeItem?.provider !== 'file'">
+                    <iframe
+                        class="vt-videos-lightbox__frame"
+                        :src="activeItem.embedUrl"
+                        :title="activeItem.title"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen
+                    ></iframe>
+                </template>
+                <template x-if="active !== null && activeItem?.provider === 'file' && activeItem?.embedUrl">
+                    <video class="vt-videos-lightbox__frame" :src="activeItem.embedUrl" controls autoplay playsinline></video>
+                </template>
+            </div>
+
+            <div class="vt-videos-lightbox__info" x-show="activeItem">
+                <p class="vt-videos-lightbox__index" x-text="activeLabel"></p>
+                <h3 class="vt-videos-lightbox__title" x-text="activeItem?.title"></h3>
+                <p class="vt-videos-lightbox__desc" x-show="activeItem?.description" x-text="activeItem?.description"></p>
             </div>
         </div>
     </div>
 </section>
+@endif

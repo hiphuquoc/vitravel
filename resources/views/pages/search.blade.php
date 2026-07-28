@@ -44,8 +44,8 @@
                 <x-icon name="search" class="size-10 text-muted" />
                 <p class="font-semibold">Không tìm thấy kết quả cho “{{ $q }}”</p>
                 <p class="body-text text-muted">Thử từ khóa ngắn hơn, hoặc xem tour theo điểm đến.</p>
-                <a href="{{ route('customize') }}" class="btn-primary mt-2">
-                    <x-icon name="trekking" class="size-5 shrink-0" /> Tour riêng
+                    <a href="{{ route('customize') }}" class="btn-primary mt-2">
+                    <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
                 </a>
             </div>
         @else
