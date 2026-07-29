@@ -17,6 +17,7 @@ use App\Models\Package;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ArticleController extends Controller
@@ -48,29 +49,39 @@ class ArticleController extends Controller
         $article = $request->filled('id')
             ? Article::query()->with([
                 'translations',
-                'blogCategory',
+                'blogCategory.seoEntry.translations',
                 'country',
                 'contentTypeTags',
                 'keywordTags',
                 'relatedPackages.translations',
                 'mediaAttachments.media',
                 'seoEntry.translations',
+                'seoEntry.parent',
             ])->findOrFail($request->integer('id'))
             : null;
 
         $languages = $this->activeLanguages();
         $translation = $article?->translation($locale);
         $seoTranslation = $article?->seoEntry?->translation($locale);
-        $categories = BlogCategory::query()->with('translations')->orderBy('sort')->get();
+        $categories = BlogCategory::query()->with(['translations', 'seoEntry'])->orderBy('sort')->get();
         $countries = Country::query()->with('translations')->orderBy('sort')->get();
         $contentTypeTags = ContentTypeTag::query()->with('translations')->where('is_active', true)->get();
         $keywordTags = KeywordTag::query()->with('translations')->where('is_active', true)->get();
         $packages = Package::query()->with('translations')->orderByDesc('id')->limit(200)->get();
+        $parents = $this->seoService()->parentOptions('blog_category');
+
+        $defaultParentId = old(
+            'seo_parent_id',
+            $article?->seoEntry?->parent_id
+                ?? $article?->blogCategory?->seoEntry?->id
+        );
+
         $title = $article ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới';
 
         return view('admin.article.view', compact(
             'article', 'locale', 'languages', 'translation', 'seoTranslation',
-            'categories', 'countries', 'contentTypeTags', 'keywordTags', 'packages', 'title',
+            'categories', 'countries', 'contentTypeTags', 'keywordTags', 'packages',
+            'title', 'parents', 'defaultParentId',
         ));
     }
 
@@ -91,6 +102,7 @@ class ArticleController extends Controller
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:320',
             'seo_keywords' => 'nullable|string|max:500',
+            'seo_parent_id' => 'nullable|integer|exists:seo_entries,id',
             'content_type_tag_ids' => 'nullable|array',
             'content_type_tag_ids.*' => 'integer|exists:content_type_tags,id',
             'keyword_tag_ids' => 'nullable|array',
@@ -127,8 +139,26 @@ class ArticleController extends Controller
                 ['title', 'excerpt', 'content'],
             );
 
-            $article->load('country');
+            $article->load(['country', 'blogCategory.translations', 'blogCategory.seoEntry']);
             $countryCode = $article->country?->code ?? 'vn';
+
+            $categoryParentId = null;
+            if ($article->blogCategory) {
+                $cat = $article->blogCategory;
+                $catSlug = $cat->translation($locale)?->slug
+                    ?? $cat->translation()?->slug
+                    ?? Str::slug((string) ($cat->translation($locale)?->name ?? 'category'));
+                $catSeo = $this->seoService()->ensureSeoFor($cat, 'blog_category', $locale, [
+                    'slug' => $catSlug,
+                    'title' => $cat->translation($locale)?->name ?? $catSlug,
+                    'seo_title' => $cat->translation($locale)?->name ?? $catSlug,
+                    'status' => 'published',
+                    'parent_id' => $this->seoService()->ensureGuideHub($locale)->id,
+                ]);
+                $categoryParentId = $catSeo->id;
+            }
+
+            $parentId = $validated['seo_parent_id'] ?? $categoryParentId;
 
             $this->saveSeoTranslations(
                 $article,
@@ -141,6 +171,7 @@ class ArticleController extends Controller
                         'keywords' => $validated['seo_keywords'] ?? null,
                         'status' => $validated['status'],
                         'country_code' => $countryCode,
+                        'parent_id' => $parentId,
                     ],
                 ],
                 'article',

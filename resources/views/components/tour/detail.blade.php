@@ -80,7 +80,7 @@
     <div class="card detail-title-card">
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div>
-                <x-layout.breadcrumb :items="$breadcrumbs" class="mb-3" />
+                <x-layout.breadcrumb :items="$breadcrumbs" class="breadcrumb--page" />
                 <h1 class="detail-title-card__h1">{{ $item['title'] }}</h1>
             </div>
             <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
@@ -327,31 +327,31 @@
     </div>
 </div>
 
-{{-- Tour/du thuyền tương tự --}}
-@if (count($related))
-    <section class="cv-auto container-site section-band--sm" aria-label="Hành trình tương tự">
-        <x-shared.section-heading title="Hành trình tương tự bạn có thể thích" />
-        <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
-            @foreach ($related as $r)
-                <x-tour.card-compact :item="$r"
-                    :href="$isCruise
-                        ? route('cruises.show', ['type' => $r['typeSlug'], 'slug' => $r['slug']])
-                        : route('tours.show', ['country' => $r['countrySlug'], 'slug' => $r['slug']])" />
-            @endforeach
-        </div>
-    </section>
-@endif
+{{-- Tour/du thuyền tương tự — skeleton → fetch --}}
+<section class="cv-auto container-site section-band--sm" aria-label="Hành trình tương tự"
+    x-data="listingGrid(@js([
+        'endpoint' => route('api.listings.related'),
+        'params' => [
+            'kind' => $isCruise ? 'cruise' : 'tour',
+            'type' => $item['typeSlug'] ?? '',
+            'country' => $item['countrySlug'] ?? '',
+            'exclude' => $item['slug'] ?? '',
+            'limit' => 3,
+        ],
+    ]))">
+    <x-shared.section-heading title="Hành trình tương tự bạn có thể thích" />
+    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
+    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
+        <x-tour.listing-skeleton :count="3" variant="compact" />
+    </div>
+</section>
 
-{{-- JSON-LD sản phẩm du lịch --}}
+{{-- JSON-LD TouristTrip --}}
 @php
-    $tripJsonLd = [
-        '@context' => 'https://schema.org',
-        '@type' => 'TouristTrip',
-        'name' => $item['title'],
-        'description' => $item['highlightsIntro'],
-        'touristType' => array_values(array_intersect_key(view_data()->travelStyles(), array_flip($item['styles']))),
-        'itinerary' => ['@type' => 'ItemList', 'numberOfItems' => count($item['itinerary'])],
-        'aggregateRating' => ['@type' => 'AggregateRating', 'ratingValue' => $item['rating'], 'reviewCount' => $item['reviewCount']],
-    ];
+    $tripUrl = $isCruise
+        ? locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']])
+        : locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]);
+    $styleLabels = array_values(array_intersect_key(view_data()->travelStyles(), array_flip($item['styles'] ?? [])));
+    $tripItem = array_merge($item, ['styles' => $styleLabels]);
 @endphp
-<script type="application/ld+json">{!! json_encode($tripJsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+{!! schema_ld(schema()->touristTrip($tripItem, $tripUrl, $isCruise)) !!}

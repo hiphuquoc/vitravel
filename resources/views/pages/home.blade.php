@@ -26,10 +26,14 @@
                     :title="$featuredSection['title'] ?? ''"
                     :subtitle="$featuredSection['subtitle'] ?? null"
                 />
-                <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($featuredTours as $tour)
-                        <x-tour.card-compact :item="$tour" :href="route('tours.show', ['country' => $tour['countrySlug'], 'slug' => $tour['slug']])" />
-                    @endforeach
+                <div x-data="listingGrid(@js([
+                    'endpoint' => route('api.listings.featured-tours'),
+                    'params' => ['limit' => 3],
+                ]))">
+                    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
+                    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
+                        <x-tour.listing-skeleton :count="3" variant="compact" />
+                    </div>
                 </div>
             </div>
         </section>
@@ -45,10 +49,14 @@
                     :title="$cruisesSection['title'] ?? ''"
                     :subtitle="$cruisesSection['subtitle'] ?? null"
                 />
-                <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
-                    @foreach ($featuredCruises as $cruise)
-                        <x-tour.card-compact :item="$cruise" :href="route('cruises.show', ['type' => $cruise['typeSlug'], 'slug' => $cruise['slug']])" />
-                    @endforeach
+                <div x-data="listingGrid(@js([
+                    'endpoint' => route('api.listings.featured-cruises'),
+                    'params' => ['limit' => 3],
+                ]))">
+                    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
+                    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
+                        <x-tour.listing-skeleton :count="3" variant="compact" />
+                    </div>
                 </div>
             </div>
         </section>

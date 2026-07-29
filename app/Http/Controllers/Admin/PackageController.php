@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Concerns\ManagesCoverImage;
 use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
+use App\Models\CruiseType;
 use App\Models\Faq;
 use App\Models\Language;
 use App\Models\Package;
@@ -17,6 +18,7 @@ use App\Models\TravelStyle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class PackageController extends Controller
@@ -34,7 +36,11 @@ class PackageController extends Controller
             ->where('type', $type);
 
         if ($request->filled('country_id')) {
-            $query->where('country_id', $request->integer('country_id'));
+            $countryId = $request->integer('country_id');
+            $query->where(function ($q) use ($countryId) {
+                $q->where('country_id', $countryId)
+                    ->orWhereHas('countries', fn ($c) => $c->where('countries.id', $countryId));
+            });
         }
 
         if ($request->filled('search')) {
@@ -71,6 +77,8 @@ class PackageController extends Controller
                 ->with([
                     'translations',
                     'country.seoEntry.translations',
+                    'cruiseType.seoEntry.translations',
+                    'countries.translations',
                     'travelStyles.translations',
                     'itineraryDays.translations',
                     'faqs.translations',
@@ -83,34 +91,53 @@ class PackageController extends Controller
 
         $countries = Country::query()->with('translations')->orderBy('sort')->get();
         $travelStyles = TravelStyle::query()->with('translations')->where('is_active', true)->orderBy('sort')->get();
+        $cruiseTypes = CruiseType::query()->with('seoEntry.translations')->orderBy('sort')->get();
         $languages = $this->activeLanguages();
         $translation = $package?->translation($locale);
         $seoTranslation = $package?->seoEntry?->translation($locale);
         $seoType = $this->seoTypeForPackage($type);
-        $parents = $this->seoService()->parentOptions('country');
 
-        // If no country SEO yet, seed options from Country models so parent select is never empty
-        if ($parents->isEmpty()) {
-            $countriesWithSeo = Country::query()->with(['seoEntry.translations', 'translations'])->orderBy('sort')->get();
-            foreach ($countriesWithSeo as $country) {
-                $this->seoService()->ensureSeoFor($country, 'country', $locale, [
-                    'slug' => $country->translation($locale)?->slug ?? $country->code,
-                    'title' => $country->translation($locale)?->name ?? $country->code,
-                    'seo_title' => $country->translation($locale)?->name ?? $country->code,
+        if ($type === Package::TYPE_CRUISE) {
+            $hubSeo = $this->seoService()->ensureCruisesHub($locale);
+            foreach ($cruiseTypes as $ct) {
+                $this->seoService()->ensureSeoFor($ct, 'cruise_type', $locale, [
+                    'slug' => $ct->slug,
+                    'title' => $ct->name,
+                    'seo_title' => $ct->name,
                     'status' => 'published',
-                    'country_code' => $country->code,
+                    'parent_id' => $hubSeo->id,
                 ]);
             }
+            $parents = $this->seoService()->parentOptions('cruise_type');
+            $defaultParentId = $package?->seoEntry?->parent_id
+                ?? $package?->cruiseType?->seoEntry?->id;
+        } else {
             $parents = $this->seoService()->parentOptions('country');
+            if ($parents->isEmpty()) {
+                $countriesWithSeo = Country::query()->with(['seoEntry.translations', 'translations'])->orderBy('sort')->get();
+                foreach ($countriesWithSeo as $country) {
+                    $this->seoService()->ensureSeoFor($country, 'country', $locale, [
+                        'slug' => $country->translation($locale)?->slug ?? $country->code,
+                        'title' => $country->translation($locale)?->name ?? $country->code,
+                        'seo_title' => $country->translation($locale)?->name ?? $country->code,
+                        'status' => 'published',
+                        'country_slug' => $country->translation($locale)?->slug ?? $country->code,
+                    ]);
+                }
+                $parents = $this->seoService()->parentOptions('country');
+            }
+            $defaultParentId = $package?->seoEntry?->parent_id
+                ?? $package?->country?->seoEntry?->id;
         }
+
         $listRoute = $type === Package::TYPE_CRUISE ? 'admin.packages.cruises' : 'admin.packages.tours';
         $viewRoute = $type === Package::TYPE_CRUISE ? 'admin.packages.cruises.view' : 'admin.packages.tours.view';
         $saveRoute = $type === Package::TYPE_CRUISE ? 'admin.packages.cruises.save' : 'admin.packages.tours.save';
         $title = ($package ? 'Chỉnh sửa' : 'Thêm mới').' — '.($type === Package::TYPE_CRUISE ? 'Cruise' : 'Tour');
 
         return view('admin.package.view', compact(
-            'package', 'type', 'locale', 'language', 'countries', 'travelStyles', 'languages',
-            'translation', 'seoTranslation', 'title', 'parents', 'seoType',
+            'package', 'type', 'locale', 'language', 'countries', 'travelStyles', 'cruiseTypes', 'languages',
+            'translation', 'seoTranslation', 'title', 'parents', 'seoType', 'defaultParentId',
             'listRoute', 'viewRoute', 'saveRoute',
         ));
     }
@@ -129,6 +156,8 @@ class PackageController extends Controller
         $validated = $request->validate([
             'id' => 'nullable|integer|exists:packages,id',
             'country_id' => 'required|integer|exists:countries,id',
+            'country_ids' => 'required|array|min:1',
+            'country_ids.*' => 'integer|exists:countries,id',
             'code' => 'nullable|string|max:64',
             'duration_days' => 'required|integer|min:1',
             'duration_nights' => 'nullable|integer|min:0',
@@ -172,7 +201,12 @@ class PackageController extends Controller
             ...$this->coverImageRules(),
         ]);
 
-        $package = DB::transaction(function () use ($request, $validated, $type, $locale, $seoType) {
+        $countryIds = array_values(array_unique(array_map('intval', $validated['country_ids'])));
+        if (! in_array((int) $validated['country_id'], $countryIds, true)) {
+            $countryIds[] = (int) $validated['country_id'];
+        }
+
+        $package = DB::transaction(function () use ($request, $validated, $type, $locale, $seoType, $countryIds) {
             $package = isset($validated['id'])
                 ? Package::query()->findOrFail($validated['id'])
                 : new Package(['type' => $type]);
@@ -224,25 +258,43 @@ class PackageController extends Controller
                 ],
             );
 
-            $package->load(['country.seoEntry.translations']);
+            $package->load(['country.seoEntry.translations', 'cruiseType.seoEntry.translations']);
 
             $country = $package->country;
             $countryCode = $country?->code ?? 'vn';
+            $countrySlug = $country?->translation($locale)?->slug
+                ?? $country?->translation()?->slug
+                ?? Str::slug((string) ($country?->translation($locale)?->name ?? $countryCode));
 
-            // Ensure country has an SEO entry so it can be used as parent (Hitour layering)
-            $countryParentId = null;
-            if ($country) {
-                $countrySeo = $this->seoService()->ensureSeoFor($country, 'country', $locale, [
-                    'slug' => $country->translation($locale)?->slug ?? $countryCode,
-                    'title' => $country->translation($locale)?->name ?? $countryCode,
-                    'seo_title' => $country->translation($locale)?->name ?? $countryCode,
-                    'status' => 'published',
-                    'country_code' => $countryCode,
-                ]);
-                $countryParentId = $countrySeo->id;
+            $parentId = $validated['seo_parent_id'] ?? null;
+
+            if ($type === Package::TYPE_CRUISE) {
+                $cruiseType = $package->cruiseType;
+                if ($cruiseType && ! $parentId) {
+                    $hubSeo = $this->seoService()->ensureCruisesHub($locale);
+                    $ctSeo = $this->seoService()->ensureSeoFor($cruiseType, 'cruise_type', $locale, [
+                        'slug' => $cruiseType->slug,
+                        'title' => $cruiseType->name,
+                        'seo_title' => $cruiseType->name,
+                        'status' => 'published',
+                        'parent_id' => $hubSeo->id,
+                    ]);
+                    $parentId = $ctSeo->id;
+                }
+            } else {
+                $countryParentId = null;
+                if ($country) {
+                    $countrySeo = $this->seoService()->ensureSeoFor($country, 'country', $locale, [
+                        'slug' => $countrySlug,
+                        'title' => $country->translation($locale)?->name ?? $countrySlug,
+                        'seo_title' => $country->translation($locale)?->name ?? $countrySlug,
+                        'status' => 'published',
+                        'country_slug' => $countrySlug,
+                    ]);
+                    $countryParentId = $countrySeo->id;
+                }
+                $parentId = $parentId ?: $countryParentId;
             }
-
-            $parentId = $validated['seo_parent_id'] ?? $countryParentId;
 
             $this->saveSeoTranslations(
                 $package,
@@ -255,7 +307,9 @@ class PackageController extends Controller
                         'keywords' => $validated['seo_keywords'] ?? null,
                         'status' => $validated['status'],
                         'parent_id' => $parentId,
+                        'country_slug' => $countrySlug,
                         'country_code' => $countryCode,
+                        'cruise_type' => $package->cruise_type ?? null,
                         'rating_aggregate_count' => $request->input('rating_aggregate_count'),
                         'rating_aggregate_star' => $request->input('rating_aggregate_star'),
                     ],
@@ -268,6 +322,12 @@ class PackageController extends Controller
             );
 
             $package->travelStyles()->sync($validated['travel_style_ids'] ?? []);
+
+            $syncCountries = [];
+            foreach ($countryIds as $sort => $cid) {
+                $syncCountries[$cid] = ['sort' => $sort];
+            }
+            $package->countries()->sync($syncCountries);
 
             $this->syncItineraryDays($package, $request->input('itinerary', []), $locale);
             $this->syncFaqs($package, $request->input('faqs', []), $locale);

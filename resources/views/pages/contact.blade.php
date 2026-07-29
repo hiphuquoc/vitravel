@@ -6,7 +6,7 @@
 
 @section('content')
     <div class="container-site contact-page">
-        <x-layout.breadcrumb :items="[['label' => 'Liên hệ']]" />
+        <x-layout.breadcrumb :items="[['label' => 'Liên hệ']]" class="breadcrumb--page" />
 
         <div class="site-mt max-w-2xl">
             <h1 class="contact-intro__title">ViTravel</h1>
@@ -90,4 +90,8 @@
             </div>
         </div>
     </div>
+
+    @foreach (schema()->localBusinesses($offices) as $officeSchema)
+        {!! schema_ld($officeSchema) !!}
+    @endforeach
 @endsection

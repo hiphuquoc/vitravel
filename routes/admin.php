@@ -1,13 +1,17 @@
 <?php
 
 use App\Http\Controllers\Admin\ArticleController;
+use App\Http\Controllers\Admin\BlogCategoryController;
+use App\Http\Controllers\Admin\CacheController;
 use App\Http\Controllers\Admin\CommentController;
 use App\Http\Controllers\Admin\CountryController;
+use App\Http\Controllers\Admin\CruiseTypeController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\HomeSlideController;
 use App\Http\Controllers\Admin\HelperController;
 use App\Http\Controllers\Admin\LeadController;
+use App\Http\Controllers\Admin\ListingHubController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -53,13 +57,30 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/san-pham/save', fn () => redirect()->route('admin.packages.tours.save'));
         Route::get('/san-pham/delete', fn () => redirect()->route('admin.packages.tours.delete', request()->query()));
 
-        /* ===== Countries ===== */
+        /* ===== Countries / tour destination tree ===== */
         Route::prefix('san-pham/quoc-gia')->group(function () {
             Route::get('/', [CountryController::class, 'list'])->name('countries.list');
             Route::get('/list', [CountryController::class, 'list']);
             Route::get('/view', [CountryController::class, 'view'])->name('countries.view');
             Route::post('/createAndUpdate', [CountryController::class, 'createAndUpdate'])->name('countries.save');
             Route::get('/delete', [CountryController::class, 'delete'])->name('countries.delete');
+        });
+
+        /* ===== Listing hubs (edit từ cây danh mục — tours / cruises / guide) ===== */
+        Route::get('/san-pham/hub/{hubKey}', [ListingHubController::class, 'edit'])
+            ->whereIn('hubKey', ['tours_hub', 'cruises_hub', 'guide_hub'])
+            ->name('listingHub.edit');
+        Route::post('/san-pham/hub/{hubKey}/save', [ListingHubController::class, 'save'])
+            ->whereIn('hubKey', ['tours_hub', 'cruises_hub', 'guide_hub'])
+            ->name('listingHub.save');
+
+        /* ===== Cruise types ===== */
+        Route::prefix('san-pham/loai-du-thuyen')->group(function () {
+            Route::get('/', [CruiseTypeController::class, 'list'])->name('cruiseTypes.list');
+            Route::get('/list', [CruiseTypeController::class, 'list']);
+            Route::get('/view', [CruiseTypeController::class, 'view'])->name('cruiseTypes.view');
+            Route::post('/createAndUpdate', [CruiseTypeController::class, 'createAndUpdate'])->name('cruiseTypes.save');
+            Route::get('/delete', [CruiseTypeController::class, 'delete'])->name('cruiseTypes.delete');
         });
 
         /* ===== Tour categories ===== */
@@ -69,6 +90,15 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/view', [TourCategoryController::class, 'view'])->name('tourCategories.view');
             Route::post('/createAndUpdate', [TourCategoryController::class, 'createAndUpdate'])->name('tourCategories.save');
             Route::get('/delete', [TourCategoryController::class, 'delete'])->name('tourCategories.delete');
+        });
+
+        /* ===== Blog categories ===== */
+        Route::prefix('chuyen-muc-blog')->group(function () {
+            Route::get('/', [BlogCategoryController::class, 'list'])->name('blogCategories.list');
+            Route::get('/list', [BlogCategoryController::class, 'list']);
+            Route::get('/view', [BlogCategoryController::class, 'view'])->name('blogCategories.view');
+            Route::post('/createAndUpdate', [BlogCategoryController::class, 'createAndUpdate'])->name('blogCategories.save');
+            Route::get('/delete', [BlogCategoryController::class, 'delete'])->name('blogCategories.delete');
         });
 
         /* ===== Articles ===== */
@@ -142,7 +172,6 @@ Route::middleware(['auth', 'role:admin'])
         Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
 
         /* Placeholders */
-        Route::get('/chuyen-muc-blog', fn () => redirect()->route('admin.dashboard'))->name('blogCategories.list');
         Route::get('/thu-vien-anh', fn () => redirect()->route('admin.videos.list'))->name('gallery.list');
 
         /* ===== Offices ===== */
@@ -176,7 +205,14 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/delete', [ExperienceVideoController::class, 'delete'])->name('videos.delete');
         });
 
-        Route::get('/cai-dat/ngon-ngu', fn () => redirect()->route('admin.dashboard'))->name('settings.languages');
+        Route::get('/cai-dat/ngon-ngu', function () {
+            return view('admin.settings.languages', [
+                'languages' => \App\Models\Language::listAll(),
+            ]);
+        })->name('settings.languages');
+
+        Route::get('/cai-dat/xoa-cache-html', [CacheController::class, 'clear'])->name('cache.clear');
+
         Route::get('/cai-dat/phong-cach', fn () => redirect()->route('admin.dashboard'))->name('settings.travelStyles');
         Route::get('/cai-dat/media', fn () => redirect()->route('admin.homeSlides.list'))->name('settings.media');
     });

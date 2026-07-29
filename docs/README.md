@@ -44,6 +44,7 @@ autourasia-clone-docs/
 | `05-tech-stack-va-trien-khai.md` | Stack đề xuất (lịch sử Next.js) + ghi chú triển khai Laravel hiện tại |
 | `06-tham-chieu-hinh-anh.md` | Bảng ánh xạ ảnh ↔ trang, danh sách UI bổ sung từ ảnh |
 | `07-database-architecture.md` | **Kiến trúc CSDL thực thi** — SEO hub, i18n, packages, leads (tham chiếu Hitour) |
+| `09-seo-technical.md` | Meta / JSON-LD: Organization, WebSite, Breadcrumb, FAQ, TouristTrip, Article |
 
 ## Trạng thái triển khai (2026-07)
 

@@ -41,13 +41,13 @@ trait ManagesCoverImage
         };
     }
 
-    protected function coverImageRules(string $fileField = 'image'): array
+    protected function coverImageRules(string $fileField = 'image', string $removeField = 'remove_image'): array
     {
         $maxKb = $this->effectiveUploadMaxKb();
 
         return [
             $fileField => 'nullable|image|mimes:jpeg,jpg,png,webp,gif|max:'.$maxKb,
-            'remove_image' => 'nullable|boolean',
+            $removeField => 'nullable|boolean',
         ];
     }
 
@@ -100,13 +100,14 @@ trait ManagesCoverImage
         Request $request,
         ?string $folder = null,
         string $fileField = 'image',
+        string $removeField = 'remove_image',
     ): void {
         $this->mediaService()->syncDirectMediaColumn(
             $model,
             $column,
             $request,
             $fileField,
-            'remove_image',
+            $removeField,
             $folder,
         );
     }

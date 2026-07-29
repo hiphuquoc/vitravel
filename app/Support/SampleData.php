@@ -27,6 +27,42 @@ class SampleData
         return Arr::first(static::countries(), fn ($c) => $c['slug'] === $slug);
     }
 
+    /** @param  array<string, mixed>  $item */
+    public static function enrichPackagePrice(array $item): array
+    {
+        if (! empty($item['priceFormatted'])) {
+            return $item;
+        }
+
+        $amount = isset($item['priceFrom'])
+            ? (float) $item['priceFrom']
+            : (float) (($item['days'] ?? 7) * 2_800_000);
+
+        $currency = $item['currency'] ?? 'VND';
+        $item['priceFrom'] = $amount;
+        $item['currency'] = $currency;
+        $item['priceFormatted'] = self::formatMoney($amount, $currency);
+
+        return $item;
+    }
+
+    public static function formatMoney(float $amount, string $currency = 'VND'): string
+    {
+        if (function_exists('format_price_plain') && strtoupper($currency) === 'VND') {
+            return format_price_plain($amount);
+        }
+
+        if (function_exists('currency_manager')) {
+            return currency_manager()->format($amount, strtoupper($currency), false);
+        }
+
+        if (strtoupper($currency) === 'VND') {
+            return number_format($amount, 0, ',', '.').' ₫';
+        }
+
+        return number_format($amount, 2).' '.strtoupper($currency);
+    }
+
     public static function travelStyles(): array
     {
         return [
@@ -56,7 +92,7 @@ class SampleData
 
     public static function tours(): array
     {
-        return [
+        return array_map([self::class, 'enrichPackagePrice'], [
             [
                 'slug' => 'viet-nam-10-ngay-di-san-mien-bac',
                 'title' => 'Việt Nam 10 ngày — Di sản miền Bắc & vịnh Hạ Long',
@@ -163,6 +199,7 @@ class SampleData
                 'slug' => 'viet-nam-campuchia-15-ngay',
                 'title' => 'Việt Nam & Campuchia 15 ngày — Mekong nối hai miền di sản',
                 'countrySlug' => 'tour-ket-hop',
+                'countrySlugs' => ['tour-ket-hop', 'viet-nam', 'campuchia'],
                 'country' => 'Tour kết hợp',
                 'tourCode' => 'VNKH15D-03',
                 'duration' => '15 ngày 14 đêm',
@@ -287,7 +324,7 @@ class SampleData
                 'faqs' => [],
                 'galleryCount' => 4,
             ],
-        ];
+        ]);
     }
 
     public static function tour(string $slug): ?array
@@ -307,21 +344,25 @@ class SampleData
 
     public static function toursByCountry(string $countrySlug): array
     {
-        return array_values(array_filter(static::tours(), fn ($t) => $t['countrySlug'] === $countrySlug));
+        return array_values(array_filter(static::tours(), function ($t) use ($countrySlug) {
+            $slugs = $t['countrySlugs'] ?? [($t['countrySlug'] ?? '')];
+
+            return in_array($countrySlug, $slugs, true);
+        }));
     }
 
     public static function cruiseTypes(): array
     {
         return [
-            ['slug' => 'du-thuyen-ha-long', 'name' => 'Du thuyền Hạ Long', 'count' => 14],
-            ['slug' => 'du-thuyen-mekong', 'name' => 'Du thuyền Mekong', 'count' => 8],
-            ['slug' => 'du-thuyen-lan-ha', 'name' => 'Du thuyền Lan Hạ', 'count' => 6],
+            ['slug' => 'du-thuyen-ha-long', 'name' => 'Du thuyền Hạ Long', 'count' => 14, 'image' => null, 'imageHero' => null, 'imageSrcset' => null],
+            ['slug' => 'du-thuyen-mekong', 'name' => 'Du thuyền Mekong', 'count' => 8, 'image' => null, 'imageHero' => null, 'imageSrcset' => null],
+            ['slug' => 'du-thuyen-lan-ha', 'name' => 'Du thuyền Lan Hạ', 'count' => 6, 'image' => null, 'imageHero' => null, 'imageSrcset' => null],
         ];
     }
 
     public static function cruises(): array
     {
-        return [
+        return array_map([self::class, 'enrichPackagePrice'], [
             [
                 'slug' => 'du-thuyen-ha-long-2-ngay',
                 'title' => 'Du thuyền Hạ Long 5* — 2 ngày 1 đêm giữa kỳ quan',
@@ -431,7 +472,7 @@ class SampleData
                 'faqs' => [],
                 'galleryCount' => 4,
             ],
-        ];
+        ]);
     }
 
     public static function cruise(string $slug): ?array

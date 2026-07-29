@@ -20,6 +20,12 @@
                     {{ $item['badge'] }}
                 </span>
             @endif
+            @if (!empty($item['duration']))
+                <span class="tour-card-duration">
+                    <x-icon name="calendar" class="tour-card-duration__icon" />
+                    {{ $item['duration'] }}
+                </span>
+            @endif
         </div>
     </a>
     <div class="card-body flex flex-1 flex-col">
@@ -68,10 +74,13 @@
             @endif
         </div>
 
-        <div class="card-footer card-footer-row">
-            <span class="tour-card-duration">
-                <x-icon name="calendar" class="size-3.5" /> {{ $item['duration'] }}
-            </span>
+        <div class="card-footer card-footer-row card-footer-row--price">
+            @if (!empty($item['priceFormatted']))
+                <div class="tour-card-price">
+                    <span class="tour-card-price__label">Giá từ</span>
+                    <span class="tour-card-price__value">{{ $item['priceFormatted'] }}</span>
+                </div>
+            @endif
             <a href="{{ $href }}" class="btn-primary-sm ml-auto">
                 Xem chi tiết <x-icon name="arrow-right" class="size-4" />
             </a>

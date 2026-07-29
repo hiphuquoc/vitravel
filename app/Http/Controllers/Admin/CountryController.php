@@ -20,23 +20,44 @@ class CountryController extends Controller
 
     public function list(Request $request): View
     {
-        $query = Country::query()->with('translations');
+        $locale = $request->string('language', 'vi')->toString();
+        $hubSeo = $this->seoService()->ensureToursHub($locale);
+        $hubSeo->load(['translations', 'reference']);
+
+        $query = Country::query()->with([
+            'translations',
+            'seoEntry.translations',
+            'seoEntry.parent.translations',
+        ]);
 
         if ($request->filled('search')) {
             $search = $request->string('search')->toString();
             $query->whereHas('translations', fn ($q) => $q->where('name', 'like', "%{$search}%"));
         }
 
-        $countries = $query->orderBy('sort')->paginate(20)->withQueryString();
+        $countries = $query->orderBy('sort')->orderBy('id')->get();
 
-        return view('admin.country.list', compact('countries'));
+        return view('admin.country.list', [
+            'countries' => $countries,
+            'hubSeo' => $hubSeo,
+            'locale' => $locale,
+            'title' => 'Danh mục Tour / điểm đến',
+        ]);
     }
 
     public function view(Request $request): View
     {
         $locale = $request->string('language', 'vi')->toString();
+        $hubSeo = $this->seoService()->ensureToursHub($locale);
+
         $country = $request->filled('id')
-            ? Country::query()->with(['translations', 'banner', 'seoEntry.translations'])->findOrFail($request->integer('id'))
+            ? Country::query()->with([
+                'translations',
+                'banner',
+                'listingBanner',
+                'seoEntry.translations',
+                'seoEntry.parent',
+            ])->findOrFail($request->integer('id'))
             : null;
 
         $languages = $this->activeLanguages();
@@ -44,13 +65,21 @@ class CountryController extends Controller
         $seoTranslation = $country?->seoEntry?->translation($locale);
         $language = $locale;
         $title = $country ? 'Chỉnh sửa quốc gia' : 'Thêm quốc gia mới';
+        $parents = $this->seoService()->parentOptions('tours_hub');
+        $defaultParentId = $country?->seoEntry?->parent_id ?: $hubSeo->id;
 
-        return view('admin.country.view', compact('country', 'locale', 'language', 'languages', 'translation', 'seoTranslation', 'title'));
+        return view('admin.country.view', compact(
+            'country', 'locale', 'language', 'languages', 'translation', 'seoTranslation',
+            'title', 'parents', 'defaultParentId', 'hubSeo',
+        ));
     }
 
     public function createAndUpdate(Request $request): RedirectResponse
     {
         $locale = $request->string('language', 'vi')->toString();
+
+        $this->assertUploadedFileOk($request);
+        $this->assertUploadedFileOk($request, 'listing_banner');
 
         $validated = $request->validate([
             'id' => 'nullable|integer|exists:countries,id',
@@ -69,12 +98,17 @@ class CountryController extends Controller
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:320',
             'seo_keywords' => 'nullable|string|max:500',
+            'seo_parent_id' => 'nullable|integer|exists:seo_entries,id',
             'rating_aggregate_count' => 'nullable|integer|min:0',
             'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
             ...$this->coverImageRules(),
+            ...$this->coverImageRules('listing_banner', 'remove_listing_banner'),
         ]);
 
         $country = DB::transaction(function () use ($request, $validated, $locale) {
+            $hubSeo = $this->seoService()->ensureToursHub($locale);
+            $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: $hubSeo->id;
+
             $country = isset($validated['id'])
                 ? Country::query()->findOrFail($validated['id'])
                 : new Country;
@@ -115,6 +149,7 @@ class CountryController extends Controller
                         'keywords' => $validated['seo_keywords'] ?? null,
                         'status' => $country->is_active ? 'published' : 'draft',
                         'country_code' => $country->code,
+                        'parent_id' => $parentId,
                     ],
                 ],
                 'country',
@@ -125,6 +160,14 @@ class CountryController extends Controller
             );
 
             $this->syncDirectCover($country, 'banner_media_id', $request, config('media.countries'));
+            $this->syncDirectCover(
+                $country,
+                'listing_banner_media_id',
+                $request,
+                config('media.countries'),
+                'listing_banner',
+                'remove_listing_banner',
+            );
 
             return $country;
         });

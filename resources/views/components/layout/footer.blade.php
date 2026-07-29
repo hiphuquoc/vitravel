@@ -15,7 +15,7 @@
                         <x-icon name="compass" class="size-5.5" />
                     </span>
                     <span>
-                        <span class="footer-contact__name">ViTravel</span>
+                        <span class="footer-contact__name">{{ $contact['name'] }}</span>
                         <span class="footer-contact__slogan">{{ $contact['slogan'] }}</span>
                     </span>
                 </div>
@@ -68,7 +68,7 @@
                         <ul class="footer-nav__list">
                             @foreach ($col['links'] as $link)
                                 <li>
-                                    <a href="{{ route($link['route'][0], $link['route'][1] ?? []) }}"
+                                    <a href="{{ locale_route($link['route'][0], $link['route'][1] ?? []) }}"
                                         class="footer-nav__link">{{ $link['label'] }}</a>
                                 </li>
                             @endforeach
@@ -81,22 +81,25 @@
             <nav class="footer-seo" aria-label="Liên kết nhanh">
                 <p class="footer-seo__inner">
                     @foreach ($seoLinks as $link)
-                        <a href="{{ route($link['route'][0], $link['route'][1] ?? []) }}">{{ $link['label'] }}</a>@if (!$loop->last)<span class="footer-seo__sep">|</span>@endif
+                        <a href="{{ locale_route($link['route'][0], $link['route'][1] ?? []) }}">{{ $link['label'] }}</a>@if (!$loop->last)<span class="footer-seo__sep">|</span>@endif
                     @endforeach
                 </p>
             </nav>
 
             <div class="footer-bottom">
-                <p class="footer-copyright">© {{ date('Y') }} ViTravel. Giấy phép lữ hành quốc tế số 01-2234/TCDL-GP-LHQT.</p>
+                <p class="footer-copyright">{{ $contact['footer_copyright'] }}</p>
                 <div class="footer-social">
-                    @foreach (['facebook' => 'Facebook', 'play' => 'YouTube', 'photo' => 'Instagram', 'share' => 'TikTok'] as $icon => $label)
-                        <a href="#" class="footer-social__link" aria-label="{{ $label }}">
-                            <x-icon :name="$icon" class="size-4" />
+                    @foreach ($contact['social'] as $social)
+                        <a href="{{ $social['url'] }}" class="footer-social__link" aria-label="{{ $social['label'] }}"
+                           target="_blank" rel="noopener noreferrer">
+                            <x-icon :name="$social['icon']" class="size-4" />
                         </a>
                     @endforeach
-                    <span class="footer-badge">
-                        <x-icon name="shield" class="size-3" /> DMCA
-                    </span>
+                    @if (! empty($contact['show_dmca_badge']))
+                        <span class="footer-badge">
+                            <x-icon name="shield" class="size-3" /> DMCA
+                        </span>
+                    @endif
                 </div>
             </div>
         </div>

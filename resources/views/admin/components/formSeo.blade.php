@@ -83,11 +83,11 @@
                 @endforeach
             </select>
             <div class="adminFormField_help">
-                Chọn trang cha để URL thành <code>/{slug-cha}/{slug-con}</code>. Ví dụ: <code>/tours/vn/ha-long-5-ngay</code>
+                Chọn trang cha để URL thành <code>{parent.slug_full}/{slug}</code>. Ví dụ: cha <code>/cruises</code> + slug <code>du-thuyen-ha-long</code> → <code>/cruises/du-thuyen-ha-long</code>; hoặc cha <code>/tours/viet-nam</code> + slug gói → <code>/tours/viet-nam/{slug}</code>.
             </div>
             @if ($parents->isEmpty())
                 <div class="adminFormField_error">
-                    Chưa có trang cha nào. Hãy tạo/lưu Quốc gia trước để có SEO entry làm parent.
+                    Chưa có trang cha nào. Hãy tạo/lưu Hub (cấp 1) hoặc entity cha phù hợp trước.
                 </div>
             @endif
         </div>

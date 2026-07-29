@@ -106,7 +106,10 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 | `.item-title` | Tiêu đề cấp item (sans bold) |
 | `.tour-card-title` / `.tour-card-places` / `.tour-card-quote` / `.tour-card-route*` | Typography + layout route trên tour card |
 | `.nav-link` / `.nav-panel-item` / `.nav-panel-meta` / `.nav-panel-link` | Menu chính + mega menu |
-| `.filter-legend` / `.filter-option` | Bộ lọc danh mục tour/cruise |
+| `.count-badge` / `.nav-panel-count` | Badge số lượng (tour/bài) — primary-500, dùng chung header + blog sidebar |
+| `.vt-check` / `__input` / `__box` / `__icon` / `__text` | Checkbox thương hiệu (listing + form) |
+| `.vt-chip` / `.vt-chip-list` | Chip tag sidebar / filter phụ |
+
 | `.btn-primary` | CTA chính — radius 12px, `text-base`, vệt sáng hover |
 | `.btn-primary-sm` | CTA gọn — radius 10px, cùng `text-base` |
 | `.btn-outline` | CTA viền — radius 12px |
@@ -142,14 +145,15 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 | `.company-intro__license` | Khối giấy phép trong company intro |
 | **Listing tour/cruise** | |
 | `.listing-layout` | Grid sidebar 280px + danh sách — `--space-gap-lg` |
-| `.listing-toolbar` | Hàng sort (căn phải) |
+| `.listing-toolbar` / `__count` / `__count-num` / `__count-label` | Count pill (Fraunces + primary) + sort |
 | `.listing-empty` / `.listing-seo` / `.listing-faq` | Empty state, khối SEO, offset FAQ |
 | `.listing-rating-summary` | Điểm 5.0 tổng danh mục tour |
 | `.cruise-type-nav` | Pill chuyển tuyến du thuyền |
 | `.filter-sidebar__*` | Drawer filter mobile + panel desktop |
 | `.sort-dropdown__*` | Dropdown sắp xếp danh mục |
 | `.faq-list` / `.faq-item__*` | FAQ accordion (dùng chung) |
-| `.tour-card-duration` | Badge thời lượng trên tour card |
+| `.tour-card-duration` | Chip thời lượng góc ảnh — font/padding khớp `.tour-card-badge` |
+| `.tour-card-price` / `__label` / `__value` | Label `fs-meta`; giá Fraunces `accent-500` |
 | **Detail tour/cruise** | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
 | **Blog** | `.blog-layout`, `.blog-sidebar__*`, `.blog-article-*`, `.blog-inline-links`, `.blog-card-tag` |
 | **Form / liên hệ** | `.customize-form`, `.form-section__*`, `.form-stepper__*`, `.form-pill__label`, `.contact-*`, `.form-success` |
@@ -247,6 +251,7 @@ Base `html` font-size cascade theo breakpoint (giữ dễ đọc, tránh nhảy 
 |---|---|---|---|---|---|---|
 | `html` | 106.25% (~17px) | 106.25% | 103% | 100% | 100% | 100% |
 | `--fs-body` / `text-base` | **1rem** (~17px) | 0.9875rem | 0.96875rem | **0.9375rem** (15px) | 0.90625rem | **0.875rem** (14px) |
+| `.listing-toolbar__count-num` | 1.375rem | 1.3125rem | 1.25rem | 1.1875rem | 1.125rem | 1.0625rem |
 | `--fs-meta` / `text-sm` | 0.875rem | 0.859rem | 0.844rem | 0.8125rem | 0.797rem | 0.781rem |
 | `--fs-kicker` / `.kicker` | 0.75rem | 0.734rem | 0.719rem | 0.6875rem | 0.672rem | 0.656rem |
 | `--btn-pad-x` / `--btn-pad-y` | 1.75/0.75rem | ↓ | ↓ | ↓ | 1.35/0.6rem | 1.2/0.55rem |
@@ -281,7 +286,7 @@ Rule đặt **unlayered** (sau định nghĩa `.vt-dest` / `.vt-videos`), specif
 | Grid gap | `.site-gap`, `.site-gap-lg` | `--space-gap*` |
 | Stack section con | `.site-stack`, `.site-stack-lg` | `--space-stack*` |
 
-**Tour card** (`x-tour.card`, `x-tour.card-compact`): `.tour-card-title`, `.tour-card-places`, `.tour-card-quote`, `.tour-card-route`, `.tour-card-media`, `.tour-card-highlights`, `.tour-card-badge` — font theo `--fs-tour-*`.
+**Tour card** (`x-tour.card`, `x-tour.card-compact`): `.tour-card-title`, `.tour-card-places`, `.tour-card-quote`, `.tour-card-route`, `.tour-card-media`, `.tour-card-highlights`, `.tour-card-badge`, `.tour-card-duration` (meta), `.tour-card-price` (footer) — font theo `--fs-tour-*`.
 
 **USP** (`x-shared.usp-badges`): seed lưu title **chữ thường**; hiển thị `.usp-item__title { text-transform: capitalize }`.
 
@@ -432,7 +437,7 @@ Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển kh
 | Page header | `x-layout.page-header` | Token page-header |
 | Layout 2 cột | `.listing-layout` | Filter trái ~17.5rem + list phải; mobile stack |
 | Bộ lọc | `x-tour.filter-sidebar` | `.filter-sidebar__*` — drawer ≤1023, cột ≥1024 |
-| Toolbar | `.listing-toolbar` | Chỉ `sort-dropdown` (không badge đếm) |
+| Toolbar | `.listing-toolbar` | Count (số Fraunces brand + nhãn body) `align-items: flex-end` + `sort-dropdown` |
 | Danh sách | `x-tour.card` | `.tour-card-*`, `.card-body`, `.card-inner` — đã token |
 | Empty state | `.listing-empty` | Padding `--space-stack-lg` |
 | Rating tổng (tour) | `.listing-rating-summary` | Score clamp responsive |
@@ -448,11 +453,12 @@ Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển kh
 |---|---|---|
 | Chi tiết tour/cruise | `x-tour.detail` | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
 | Blog listing | `guide/index` | `.blog-layout`, `.blog-toolbar`, `.blog-seo`, `.page-follow` |
-| Blog chi tiết | `guide/show` | `.blog-article-gallery`, `.blog-share-bar`, `.comment-*`, `.blog-inline-links` |
-| Blog sidebar | `x-blog.sidebar` | `.blog-sidebar__*` |
+| Blog chi tiết | `guide/show` | `.blog-article-gallery`, `.blog-share-bar`, `.comment-*`, `.blog-inline-links`, `.article-toc*` (TOC đầu bài + FAB/drawer) |
+| Blog sidebar | `x-blog.sidebar` | `.blog-sidebar__card` / `__title` / `__nav-link` / `__tag` |
+| Blog TOC | `x-blog.toc` | Mục lục đầu bài (đóng/mở) + FAB trái dưới + drawer — không sticky sidebar |
 | Liên hệ | `contact.blade.php` | `.contact-page`, `.contact-layout`, `.office-card__*` |
 | Tour riêng | `customize-tour.blade.php` | `.customize-form`, `.form-section__*`, `.form-grid`, `.form-pills` |
-| Form controls | `x-form.stepper`, `x-form.checkbox-pill` | `.form-stepper__*`, `.form-pill__label` |
+| Form controls | `x-form.stepper`, `x-form.checkbox-pill`, `x-form.check` | `.form-stepper__*`, `.form-pill__label`, `.vt-check*` |
 | Tìm kiếm | `search.blade.php` | `.search-section`, `.search-dest-card`, `.listing-empty` |
 | Gallery | `gallery.blade.php` | `.gallery-card__*` |
 | Reviews | `reviews.blade.php` | `.reviews-summary`, `.review-masonry-card` |
@@ -481,7 +487,7 @@ Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạ
 | `TeamGrid` (variant có bio) | Avatar + tên + chức danh + đoạn bio cắt "..." | Home, About Us |
 | `VideoShowcase` | 1 video lớn trái + list video nhỏ phải | Home, About Us |
 | `QuickInquiryForm` | Form 2 cột + 2 hình minh hoạ illustration (xe đạp, gánh hàng) | Cuối hầu hết các trang |
-| `Breadcrumb` | Auto-generate từ route, schema.org markup | Toàn site |
+| `Breadcrumb` | Text gọn (`fs-meta`→`fs-kicker`), không pill nền; `.breadcrumb--page` cho khoảng → H1 | Toàn site |
 | `ImageGallery` | Ảnh chính + thumbnail strip, lightbox | Tour/Cruise Detail |
 | `HeroCollageGallery` | 1 ảnh lớn + lưới 4 ảnh nhỏ (kiểu collage) | Blog Article đầu bài |
 | `TourMapViewer` | Ảnh bản đồ + lightbox zoom | Tour/Cruise Detail |
@@ -495,7 +501,7 @@ Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạ
 | `RelatedGrid` | Carousel/grid item liên quan | Nhiều trang |
 | `BlogCard` | Ảnh + ngày/views + tiêu đề + tác giả/tag + excerpt | Blog Listing |
 | `BlogSidebar` | "Categorie del blog" (list scroll) + "Filtra articoli" (tag button) + "Mots-clés populaires" (tag cloud) | Blog Listing, Blog Article |
-| `ArticleTOC` | "Sommario dell'articolo" — mục lục tự sinh từ heading | Blog Article |
+| `ArticleTOC` | `x-blog.toc` — mục lục đầu bài (đóng/mở), FAB trái dưới + drawer khi scroll qua TOC | Blog Article |
 | `InlineRelatedLinksBox` | Box "Vedi di più:" chèn giữa nội dung bài | Blog Article |
 | `ArticleRatingAndShare` | Rating cuối bài + nút share social | Blog Article |
 | `CommentForm` + `CommentList` | Form bình luận (Nome, Email, Telefono, Commento) | Blog Article |

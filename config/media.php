@@ -23,6 +23,7 @@ return [
 
     'packages' => env('MEDIA_PACKAGES_FOLDER', 'vitravel/packages'),
     'countries' => env('MEDIA_COUNTRIES_FOLDER', 'vitravel/countries'),
+    'cruise_types' => env('MEDIA_CRUISE_TYPES_FOLDER', 'vitravel/cruise-types'),
     'articles' => env('MEDIA_ARTICLES_FOLDER', 'vitravel/articles'),
     'team' => env('MEDIA_TEAM_FOLDER', 'vitravel/team'),
     'reviews' => env('MEDIA_REVIEWS_FOLDER', 'vitravel/reviews'),

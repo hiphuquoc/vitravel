@@ -63,6 +63,20 @@ class Package extends Model
         return $this->belongsTo(Country::class);
     }
 
+    /** Loại du thuyền (SEO parent cho package_cruise) — khớp packages.cruise_type = cruise_types.slug. */
+    public function cruiseType(): BelongsTo
+    {
+        return $this->belongsTo(CruiseType::class, 'cruise_type', 'slug');
+    }
+
+    /** Quốc gia gắn filter (tour kết hợp có thể nhiều). country_id = quốc gia chính URL/SEO. */
+    public function countries(): BelongsToMany
+    {
+        return $this->belongsToMany(Country::class, 'package_country')
+            ->withPivot('sort')
+            ->orderByPivot('sort');
+    }
+
     public function itineraryDays(): HasMany
     {
         return $this->hasMany(PackageItineraryDay::class)->orderBy('day_number');

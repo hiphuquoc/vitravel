@@ -86,28 +86,27 @@
         </div>
 
         <div class="admin-card">
-            <h2 class="mb-4 text-lg font-semibold">SEO</h2>
-            <div class="grid gap-4 md:grid-cols-2">
-                <div>
-                    <label class="admin-form-label">Slug</label>
-                    <div class="flex gap-2">
-                        <input type="text" name="seo_slug" id="field-seo-slug" value="{{ old('seo_slug', $seoTranslation?->slug) }}" class="admin-form-input">
-                        <button type="button" class="admin-btn admin-btn--secondary slug-btn" data-source="field-title" data-target="field-seo-slug">Tạo slug</button>
-                    </div>
-                </div>
-                <div>
-                    <label class="admin-form-label">SEO Title</label>
-                    <input type="text" name="seo_title" value="{{ old('seo_title', $seoTranslation?->seo_title) }}" class="admin-form-input">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="admin-form-label">SEO Description</label>
-                    <textarea name="seo_description" rows="2" class="admin-form-input">{{ old('seo_description', $seoTranslation?->seo_description) }}</textarea>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="admin-form-label">Keywords</label>
-                    <input type="text" name="seo_keywords" value="{{ old('seo_keywords', $seoTranslation?->keywords) }}" class="admin-form-input">
-                </div>
-            </div>
+            <h2 class="mb-4 text-lg font-semibold">SEO & URL phân tầng</h2>
+            <p class="mb-4 text-sm text-slate-500">
+                Chọn chuyên mục blog làm trang cha → slug_full = {cha.slug_full}/{slug}.
+            </p>
+            @include('admin.components.formSeo', [
+                'itemSeo' => [
+                    'slug' => old('seo_slug', $seoTranslation?->slug),
+                    'slug_full' => $seoTranslation?->slug_full,
+                    'seo_title' => old('seo_title', $seoTranslation?->seo_title),
+                    'seo_description' => old('seo_description', $seoTranslation?->seo_description),
+                    'keywords' => old('seo_keywords', $seoTranslation?->keywords),
+                    'parent_id' => old('seo_parent_id', $article?->seoEntry?->parent_id ?? $defaultParentId),
+                    'rating_aggregate_count' => $article?->seoEntry?->rating_aggregate_count,
+                    'rating_aggregate_star' => $article?->seoEntry?->rating_aggregate_star,
+                ],
+                'seoEntry' => $article?->seoEntry,
+                'language' => $locale,
+                'parents' => $parents ?? collect(),
+                'showParent' => true,
+                'titleFieldId' => 'field-title',
+            ])
         </div>
 
         <div class="admin-card">
@@ -160,20 +159,3 @@
         </div>
     </form>
 @endsection
-
-@push('scripts')
-<script>
-document.querySelectorAll('.slug-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const source = document.getElementById(btn.dataset.source);
-        const target = document.getElementById(btn.dataset.target);
-        if (!source?.value) return;
-        fetch('{{ route('admin.helper.slug') }}', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
-            body: JSON.stringify({str: source.value})
-        }).then(r => r.json()).then(d => { if (d.slug) target.value = d.slug; });
-    });
-});
-</script>
-@endpush

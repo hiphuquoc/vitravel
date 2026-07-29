@@ -51,17 +51,97 @@ class CompanyProfile extends Model
         return static::query()->with('translations')->first();
     }
 
-    /** @return array{email: string, phone: string, whatsapp: string, slogan: string, license: ?string} */
+    /**
+     * Liên hệ / branding cho public — config/company.php làm mặc định,
+     * field admin (Company Profile) ghi đè khi đã nhập.
+     *
+     * @return array{
+     *   name: string,
+     *   legal_name: string,
+     *   tagline: string,
+     *   slogan: string,
+     *   email: string,
+     *   phone: string,
+     *   whatsapp: string,
+     *   zalo: string,
+     *   hotline_label: string,
+     *   license: ?string,
+     *   address: array<string, mixed>,
+     *   social: list<array{key: string, label: string, icon: string, url: string}>,
+     *   same_as: list<string>,
+     *   footer_copyright: string,
+     *   show_dmca_badge: bool,
+     *   schema: array<string, mixed>
+     * }
+     */
     public static function contact(): array
     {
+        $cfg = config('company', []);
+        $contactCfg = is_array($cfg['contact'] ?? null) ? $cfg['contact'] : [];
         $profile = static::current();
 
+        $email = filled($profile?->contact_email)
+            ? (string) $profile->contact_email
+            : (string) ($contactCfg['email'] ?? 'hello@vitravel.vn');
+        $phone = filled($profile?->contact_phone)
+            ? (string) $profile->contact_phone
+            : (string) ($contactCfg['phone'] ?? '+84 24 3999 8888');
+        $whatsapp = filled($profile?->contact_whatsapp)
+            ? (string) $profile->contact_whatsapp
+            : (string) ($contactCfg['whatsapp'] ?? $phone);
+        $zalo = filled($contactCfg['zalo'] ?? null)
+            ? (string) $contactCfg['zalo']
+            : $phone;
+        $slogan = filled($profile?->slogan)
+            ? (string) $profile->slogan
+            : (string) ($cfg['slogan'] ?? '');
+        $license = filled($profile?->license_number)
+            ? (string) $profile->license_number
+            : (string) ($cfg['license_number'] ?? '');
+
+        $social = [];
+        $sameAs = [];
+        foreach ((array) ($cfg['social'] ?? []) as $key => $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+            $url = trim((string) ($row['url'] ?? ''));
+            if ($url === '' || $url === '#') {
+                continue;
+            }
+            $social[] = [
+                'key' => (string) $key,
+                'label' => (string) ($row['label'] ?? $key),
+                'icon' => (string) ($row['icon'] ?? 'share'),
+                'url' => $url,
+            ];
+            $sameAs[] = $url;
+        }
+
+        $copyrightTpl = (string) ($cfg['footer']['copyright'] ?? '© :year ViTravel.');
+        $copyright = str_replace(
+            [':year', ':license', ':name'],
+            [(string) date('Y'), $license !== '' ? $license : '—', (string) ($cfg['name'] ?? 'ViTravel')],
+            $copyrightTpl
+        );
+
         return [
-            'email' => $profile?->contact_email ?: 'hello@vitravel.example',
-            'phone' => $profile?->contact_phone ?: '+84 24 3999 8888',
-            'whatsapp' => $profile?->contact_whatsapp ?: '+84 912 345 678',
-            'slogan' => $profile?->slogan ?: '“Hài lòng hơn cả mong đợi”',
-            'license' => $profile?->license_number,
+            'name' => (string) ($cfg['name'] ?? 'ViTravel'),
+            'legal_name' => (string) ($cfg['legal_name'] ?? ($cfg['name'] ?? 'ViTravel')),
+            'tagline' => (string) ($cfg['tagline'] ?? ''),
+            'slogan' => $slogan,
+            'email' => $email,
+            'phone' => $phone,
+            'whatsapp' => $whatsapp,
+            'zalo' => $zalo,
+            'hotline_label' => (string) ($contactCfg['hotline_label'] ?? 'Hotline'),
+            'license' => $license !== '' ? $license : null,
+            'address' => is_array($cfg['address'] ?? null) ? $cfg['address'] : [],
+            'social' => $social,
+            'same_as' => $sameAs,
+            'footer_copyright' => $copyright,
+            'show_dmca_badge' => (bool) ($cfg['footer']['show_dmca_badge'] ?? true),
+            'schema' => is_array($cfg['schema'] ?? null) ? $cfg['schema'] : [],
         ];
     }
 }

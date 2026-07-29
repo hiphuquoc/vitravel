@@ -139,15 +139,18 @@ class TourCategoryController extends Controller
 
             $country = $category->country;
             $countryCode = $country?->code ?? 'vn';
+            $countrySlug = $country?->translation($locale)?->slug
+                ?? $country?->translation()?->slug
+                ?? $countryCode;
             $countryParentId = null;
 
             if ($country) {
                 $countrySeo = $this->seoService()->ensureSeoFor($country, 'country', $locale, [
-                    'slug' => $country->translation($locale)?->slug ?? $countryCode,
-                    'title' => $country->translation($locale)?->name ?? $countryCode,
-                    'seo_title' => $country->translation($locale)?->name ?? $countryCode,
+                    'slug' => $countrySlug,
+                    'title' => $country->translation($locale)?->name ?? $countrySlug,
+                    'seo_title' => $country->translation($locale)?->name ?? $countrySlug,
                     'status' => 'published',
-                    'country_code' => $countryCode,
+                    'country_slug' => $countrySlug,
                 ]);
                 $countryParentId = $countrySeo->id;
             }
@@ -165,6 +168,7 @@ class TourCategoryController extends Controller
                         'keywords' => $validated['seo_keywords'] ?? null,
                         'status' => $category->is_active ? 'published' : 'draft',
                         'parent_id' => $parentId,
+                        'country_slug' => $countrySlug,
                         'country_code' => $countryCode,
                     ],
                 ],

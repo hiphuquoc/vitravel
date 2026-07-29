@@ -24,19 +24,9 @@
         <link rel="dns-prefetch" href="https://{{ $gcsHost }}">
     @endif
 
-    {{-- JSON-LD Organization dùng chung toàn site --}}
-    @php
-        $orgJsonLd = [
-            '@context' => 'https://schema.org',
-            '@type' => 'TravelAgency',
-            'name' => 'ViTravel',
-            'url' => url('/'),
-            'slogan' => 'Hài lòng hơn cả mong đợi',
-            'telephone' => '+84 24 3999 8888',
-            'address' => ['@type' => 'PostalAddress', 'streetAddress' => '88 Xã Đàn, Đống Đa', 'addressLocality' => 'Hà Nội', 'addressCountry' => 'VN'],
-        ];
-    @endphp
-    <script type="application/ld+json">{!! json_encode($orgJsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    {{-- JSON-LD sitewide: Organization (root) + WebSite (root) — tách script để validator/Ctrl+F dễ nhận --}}
+    {!! schema_ld(schema()->organization()) !!}
+    {!! schema_ld(schema()->website()) !!}
 
     @stack('head')
     {{ Illuminate\Support\Facades\Vite::fonts() }}

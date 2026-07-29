@@ -1,63 +1,134 @@
 @props([
-    'durations' => [], // ['key' => 'label']
-    'styles' => [],    // ['key' => 'label']
+    'durations' => [],
+    'styles' => [],
+    'countries' => [],
+    'types' => [],
+    'showCountryFilter' => false,
+    'showTypeFilter' => false,
 ])
 
-{{-- Bộ lọc trang danh mục Tour/Du thuyền — desktop cột trái, mobile là drawer --}}
-<div x-data="{ drawer: false }">
-    <button type="button" @click="drawer = true"
-        class="btn-outline filter-sidebar__toggle">
-        <x-icon name="filter" class="size-4" /> Bộ lọc
-    </button>
+{{-- Nằm trong x-data="listingGrid" — dùng chung isChecked / toggleFilter / drawer --}}
+<button type="button" @click="drawer = true"
+    class="btn-outline filter-sidebar__toggle">
+    <x-icon name="filter" class="size-4" /> Bộ lọc
+</button>
 
-    <div x-cloak x-show="drawer" class="filter-sidebar__overlay lg:hidden" @click="drawer = false"></div>
+<div x-cloak x-show="drawer" class="filter-sidebar__overlay lg:hidden" @click="drawer = false"></div>
 
-    <form method="get"
-        x-cloak
-        :class="drawer ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-        class="filter-sidebar__panel"
-        aria-label="Bộ lọc tour">
+<div
+    x-cloak
+    :class="drawer ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
+    class="filter-sidebar__panel"
+    role="search"
+    aria-label="Bộ lọc">
 
-        <div class="filter-sidebar__head">
-            <h2 class="filter-sidebar__title">
-                <x-icon name="filter" class="size-5 text-primary-600" /> Lọc theo
-            </h2>
-            <button type="button" @click="drawer = false" class="filter-sidebar__close" aria-label="Đóng bộ lọc">
-                <x-icon name="close" class="size-4.5" />
-            </button>
-        </div>
+    <div class="filter-sidebar__head">
+        <h2 class="filter-sidebar__title">
+            <x-icon name="filter" class="size-5 text-primary-600" /> Lọc theo
+        </h2>
+        <button type="button" @click="drawer = false" class="filter-sidebar__close" aria-label="Đóng bộ lọc">
+            <x-icon name="close" class="size-4.5" />
+        </button>
+    </div>
 
+    @if ($showCountryFilter && count($countries))
         <fieldset class="filter-sidebar__fieldset">
-            <legend class="filter-legend">Thời lượng</legend>
+            <legend class="filter-legend">Quốc gia / điểm đến</legend>
             <div class="filter-sidebar__options">
-                @foreach ($durations as $key => $label)
-                    <label class="filter-option">
-                        <input type="checkbox" name="duration[]" value="{{ $key }}"
-                            class="size-[1.125rem] rounded border-line text-primary-500 focus:ring-primary-400">
-                        {{ $label }}
+                @foreach ($countries as $country)
+                    @php $slug = $country['slug'] ?? ''; @endphp
+                    @if ($slug === '')
+                        @continue
+                    @endif
+                    <label class="vt-check">
+                        <input type="checkbox"
+                            class="vt-check__input"
+                            value="{{ $slug }}"
+                            :checked="isChecked('country', @js($slug))"
+                            @change="toggleFilter('country', @js($slug))">
+                        <span class="vt-check__box" aria-hidden="true">
+                            <svg class="vt-check__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="vt-check__text">{{ $country['name'] ?? $slug }}</span>
                     </label>
                 @endforeach
             </div>
         </fieldset>
+    @endif
 
+    @if ($showTypeFilter && count($types))
         <fieldset class="filter-sidebar__fieldset">
-            <legend class="filter-legend">Phong cách du lịch</legend>
+            <legend class="filter-legend">Loại du thuyền</legend>
             <div class="filter-sidebar__options">
-                @foreach ($styles as $key => $label)
-                    <label class="filter-option">
-                        <input type="checkbox" name="style[]" value="{{ $key }}"
-                            class="size-[1.125rem] rounded border-line text-primary-500 focus:ring-primary-400">
-                        {{ $label }}
+                @foreach ($types as $cruiseType)
+                    @php $slug = $cruiseType['slug'] ?? ''; @endphp
+                    @if ($slug === '')
+                        @continue
+                    @endif
+                    <label class="vt-check">
+                        <input type="checkbox"
+                            class="vt-check__input"
+                            value="{{ $slug }}"
+                            :checked="isChecked('type', @js($slug))"
+                            @change="toggleFilter('type', @js($slug))">
+                        <span class="vt-check__box" aria-hidden="true">
+                            <svg class="vt-check__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="vt-check__text">
+                            {{ $cruiseType['name'] ?? $slug }}
+                            @if (isset($cruiseType['count']))
+                                <span class="opacity-60">({{ $cruiseType['count'] }})</span>
+                            @endif
+                        </span>
                     </label>
                 @endforeach
             </div>
         </fieldset>
+    @endif
 
-        <div class="filter-sidebar__actions">
-            <button type="reset" class="filter-sidebar__reset">Xoá lọc</button>
-            <button type="submit" class="btn-primary-sm ml-auto">
-                <x-icon name="check" class="size-4" /> Áp dụng
-            </button>
+    <fieldset class="filter-sidebar__fieldset">
+        <legend class="filter-legend">Thời lượng</legend>
+        <div class="filter-sidebar__options">
+            @foreach ($durations as $key => $label)
+                <label class="vt-check">
+                    <input type="checkbox"
+                        class="vt-check__input"
+                        value="{{ $key }}"
+                        :checked="isChecked('duration', @js((string) $key))"
+                        @change="toggleFilter('duration', @js((string) $key))">
+                    <span class="vt-check__box" aria-hidden="true">
+                        <svg class="vt-check__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="vt-check__text">{{ $label }}</span>
+                </label>
+            @endforeach
         </div>
-    </form>
+    </fieldset>
+
+    <fieldset class="filter-sidebar__fieldset">
+        <legend class="filter-legend">Phong cách du lịch</legend>
+        <div class="filter-sidebar__options">
+            @foreach ($styles as $key => $label)
+                <label class="vt-check">
+                    <input type="checkbox"
+                        class="vt-check__input"
+                        value="{{ $key }}"
+                        :checked="isChecked('style', @js((string) $key))"
+                        @change="toggleFilter('style', @js((string) $key))">
+                    <span class="vt-check__box" aria-hidden="true">
+                        <svg class="vt-check__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="vt-check__text">{{ $label }}</span>
+                </label>
+            @endforeach
+        </div>
+    </fieldset>
 </div>

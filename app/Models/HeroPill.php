@@ -58,7 +58,7 @@ class HeroPill extends Model
                 $categorySlug = $category->translation($locale)?->slug;
 
                 if ($countrySlug && $categorySlug) {
-                    return route('tours.show', ['country' => $countrySlug, 'slug' => $categorySlug]);
+                    return locale_route('tours.show', ['country' => $countrySlug, 'slug' => $categorySlug]);
                 }
             }
         }
@@ -71,12 +71,12 @@ class HeroPill extends Model
             $countrySlug = $country?->translation($locale)?->slug;
 
             if ($countrySlug) {
-                return route('tours.index', $countrySlug);
+                return locale_route('tours.index', $countrySlug);
             }
         }
 
         if ($this->target_url) {
-            return route('tours.index', $this->target_url);
+            return locale_route('tours.index', $this->target_url);
         }
 
         return '#';

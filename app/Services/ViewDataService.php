@@ -7,6 +7,7 @@ use App\Models\BlogCategory;
 use App\Models\CompanyValue;
 use App\Models\ContentTypeTag;
 use App\Models\Country;
+use App\Models\CruiseType;
 use App\Models\ExperienceAlbum;
 use App\Models\ExperienceVideo;
 use App\Models\Faq;
@@ -72,7 +73,7 @@ class ViewDataService
 
         return Country::query()
             ->active()
-            ->with(['translations', 'banner', 'packages' => fn ($q) => $q->published()->tours()])
+            ->with(['translations', 'banner', 'listingBanner', 'packages' => fn ($q) => $q->published()->tours()])
             ->get()
             ->map(fn (Country $country) => $this->mapCountry($country))
             ->values()
@@ -87,7 +88,7 @@ class ViewDataService
 
         $country = Country::query()
             ->active()
-            ->with(['translations', 'banner'])
+            ->with(['translations', 'banner', 'listingBanner'])
             ->whereHas('translations', fn ($q) => $q->where('language_id', $this->languageId())->where('slug', $slug))
             ->first();
 
@@ -255,7 +256,10 @@ class ViewDataService
         }
 
         return $this->packageQuery(Package::TYPE_TOUR)
-            ->where('country_id', $country->id)
+            ->where(function ($q) use ($country) {
+                $q->where('country_id', $country->id)
+                    ->orWhereHas('countries', fn ($c) => $c->where('countries.id', $country->id));
+            })
             ->get()
             ->map(fn (Package $package) => $this->mapPackage($package))
             ->values()
@@ -264,6 +268,15 @@ class ViewDataService
 
     public function cruiseTypes(): array
     {
+        $types = CruiseType::query()->active()->with('banner')->get();
+
+        if ($types->isNotEmpty()) {
+            return $types
+                ->map(fn (CruiseType $type) => $this->mapCruiseType($type))
+                ->values()
+                ->all();
+        }
+
         if (! Package::query()->published()->cruises()->exists()) {
             return SampleData::cruiseTypes();
         }
@@ -285,9 +298,30 @@ class ViewDataService
                 'slug' => $type,
                 'name' => $labels[$type] ?? ucfirst(str_replace('-', ' ', $type)),
                 'count' => Package::query()->published()->cruises()->where('cruise_type', $type)->count(),
+                'image' => null,
+                'imageHero' => null,
+                'imageSrcset' => null,
             ])
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array{slug: string, name: string, count: int, image: ?string, imageHero: ?string, imageSrcset: ?string}
+     */
+    protected function mapCruiseType(CruiseType $type): array
+    {
+        $cardImage = $type->bannerUrl('card');
+        $heroImage = $type->bannerUrl('lg') ?: $type->bannerUrl('full') ?: $cardImage;
+
+        return [
+            'slug' => $type->slug,
+            'name' => $type->name,
+            'count' => Package::query()->published()->cruises()->where('cruise_type', $type->slug)->count(),
+            'image' => $cardImage,
+            'imageHero' => $heroImage,
+            'imageSrcset' => $type->bannerSrcset(),
+        ];
     }
 
     public function cruises(): array
@@ -351,6 +385,47 @@ class ViewDataService
 
         return $this->articleQuery()
             ->where('country_id', $country->id)
+            ->get()
+            ->map(fn (Article $article) => $this->mapArticle($article))
+            ->values()
+            ->all();
+    }
+
+    public function blogCategoryBySlug(string $slug): ?array
+    {
+        foreach ($this->blogCategories() as $category) {
+            if (($category['slug'] ?? '') === $slug) {
+                return $category;
+            }
+        }
+
+        return null;
+    }
+
+    public function articlesByCategorySlug(string $categorySlug): array
+    {
+        if ($categorySlug === '') {
+            return [];
+        }
+
+        if (! Article::query()->published()->exists()) {
+            return array_values(array_filter(
+                SampleData::articles(),
+                fn ($a) => ($a['categorySlug'] ?? '') === $categorySlug
+            ));
+        }
+
+        $category = BlogCategory::query()
+            ->where('is_active', true)
+            ->whereHas('translations', fn ($q) => $q->where('language_id', $this->languageId())->where('slug', $categorySlug))
+            ->first();
+
+        if (! $category) {
+            return [];
+        }
+
+        return $this->articleQuery()
+            ->where('blog_category_id', $category->id)
             ->get()
             ->map(fn (Article $article) => $this->mapArticle($article))
             ->values()
@@ -712,6 +787,78 @@ class ViewDataService
         return $this->homeSection('quick_inquiry');
     }
 
+    public function toursHub(): array
+    {
+        return $this->listingHub('tours_hub');
+    }
+
+    public function cruisesHub(): array
+    {
+        return $this->listingHub('cruises_hub');
+    }
+
+    public function guideHub(): array
+    {
+        return $this->listingHub('guide_hub');
+    }
+
+    /**
+     * Hub cấp 1 từ config('seo.hubs.{hubKey}').
+     *
+     * @return array{title: string, subtitle: string, listingBanner: ?string, listingBannerSrcset: ?string, seoTitle: ?string, seoDescription: ?string}
+     */
+    public function listingHub(string $hubKey): array
+    {
+        $cfg = config("seo.hubs.{$hubKey}");
+        if (! is_array($cfg)) {
+            return [
+                'title' => 'Hub',
+                'subtitle' => '',
+                'listingBanner' => null,
+                'listingBannerSrcset' => null,
+                'seoTitle' => null,
+                'seoDescription' => null,
+            ];
+        }
+
+        $this->seoService()->ensureHub($hubKey, $this->locale());
+
+        $page = \App\Models\StaticPage::query()
+            ->with(['translations', 'banner', 'seoEntry.translations'])
+            ->where('template', $cfg['template'])
+            ->first();
+
+        if (! $page) {
+            return [
+                'title' => $cfg['default_title'] ?? 'Hub',
+                'subtitle' => $cfg['default_subtitle'] ?? '',
+                'listingBanner' => null,
+                'listingBannerSrcset' => null,
+                'seoTitle' => $cfg['default_seo_title'] ?? null,
+                'seoDescription' => $cfg['default_seo_description'] ?? null,
+            ];
+        }
+
+        $translation = $page->translation($this->locale());
+        $seoTrans = $page->seoEntry?->translation($this->locale());
+        $banner = $page->bannerUrl('lg') ?: $page->bannerUrl('full');
+        $subtitleRaw = $translation?->body ?: ($cfg['default_subtitle'] ?? '');
+
+        return [
+            'title' => $translation?->title ?: ($cfg['default_title'] ?? 'Hub'),
+            'subtitle' => trim(html_entity_decode(strip_tags((string) $subtitleRaw), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
+            'listingBanner' => $banner,
+            'listingBannerSrcset' => $page->bannerSrcset(),
+            'seoTitle' => $seoTrans?->seo_title ?? ($cfg['default_seo_title'] ?? null),
+            'seoDescription' => $seoTrans?->seo_description ?? ($cfg['default_seo_description'] ?? null),
+        ];
+    }
+
+    protected function seoService(): \App\Services\SeoService
+    {
+        return app(\App\Services\SeoService::class);
+    }
+
     public function listingFaqs(): array
     {
         $page = StaticPage::query()->where('template', 'listing_faqs')->first();
@@ -811,6 +958,7 @@ class ViewDataService
             ->with([
                 'translations',
                 'country.translations',
+                'countries.translations',
                 'travelStyles',
                 'itineraryDays.translations',
                 'cabinTypes.translations',
@@ -923,18 +1071,27 @@ class ViewDataService
         $translation = $country->translation($this->locale());
         $cardImage = $country->bannerUrl('card');
         $heroImage = $country->bannerUrl('lg') ?: $country->bannerUrl('full') ?: $cardImage;
+        $listingBanner = $country->listingBannerUrl('lg')
+            ?: $country->listingBannerUrl('full');
 
         return [
             'slug' => $translation?->slug ?? '',
             'name' => $translation?->name ?? '',
             'size' => $country->home_grid_size === 'large' ? 'large' : 'normal',
-            'tourCount' => $country->relationLoaded('packages')
-                ? $country->packages->count()
-                : $country->packages()->published()->tours()->count(),
+            'tourCount' => Package::query()
+                ->published()
+                ->tours()
+                ->where(function ($q) use ($country) {
+                    $q->where('country_id', $country->id)
+                        ->orWhereHas('countries', fn ($c) => $c->where('countries.id', $country->id));
+                })
+                ->count(),
             'tagline' => $translation?->tagline ?? '',
             'image' => $cardImage,
             'imageHero' => $heroImage,
             'imageSrcset' => $country->bannerSrcset(),
+            'listingBanner' => $listingBanner,
+            'listingBannerSrcset' => $country->listingBannerSrcset(),
         ];
     }
 
@@ -954,14 +1111,32 @@ class ViewDataService
         $pkgRating = (float) ($package->rating ?? 0);
         $pkgCount = (int) ($package->review_count ?? 0);
 
+        $primarySlug = $countryTranslation?->slug ?? '';
+        $countrySlugs = $package->relationLoaded('countries') && $package->countries->isNotEmpty()
+            ? $package->countries
+                ->map(fn (Country $c) => $c->translation($this->locale())?->slug)
+                ->filter()
+                ->values()
+                ->all()
+            : array_values(array_filter([$primarySlug]));
+        if ($primarySlug !== '' && ! in_array($primarySlug, $countrySlugs, true)) {
+            array_unshift($countrySlugs, $primarySlug);
+        }
+
         $data = [
             'slug' => $seoTranslation?->slug ?? '',
             'title' => $translation?->title ?? '',
-            'countrySlug' => $countryTranslation?->slug ?? '',
+            'countrySlug' => $primarySlug,
+            'countrySlugs' => $countrySlugs,
             'country' => $countryTranslation?->name ?? '',
             'tourCode' => $package->code ?? '',
             'duration' => $this->formatDuration($package->duration_days, $package->duration_nights),
             'days' => $package->duration_days,
+            'priceFrom' => $package->price_from !== null ? (float) $package->price_from : null,
+            'currency' => $package->currency ?? 'VND',
+            'priceFormatted' => $package->price_from !== null
+                ? $this->formatMoney((float) $package->price_from, $package->currency ?? 'VND')
+                : null,
             'rating' => $seoRating > 0 ? $seoRating : $pkgRating,
             'reviewCount' => $seoCount > 0 ? $seoCount : $pkgCount,
             'badge' => $package->discount_badge,
@@ -1009,15 +1184,17 @@ class ViewDataService
         ];
 
         if ($isCruise) {
-            $typeLabels = [
-                'du-thuyen-ha-long' => 'Du thuyền Hạ Long',
-                'du-thuyen-mekong' => 'Du thuyền Mekong',
-                'du-thuyen-lan-ha' => 'Du thuyền Lan Hạ',
-            ];
             $typeSlug = $package->cruise_type ?? '';
+            $typeName = CruiseType::query()->where('slug', $typeSlug)->value('name')
+                ?? match ($typeSlug) {
+                    'du-thuyen-ha-long' => 'Du thuyền Hạ Long',
+                    'du-thuyen-mekong' => 'Du thuyền Mekong',
+                    'du-thuyen-lan-ha' => 'Du thuyền Lan Hạ',
+                    default => $typeSlug,
+                };
 
             $data['typeSlug'] = $typeSlug;
-            $data['typeName'] = $typeLabels[$typeSlug] ?? $typeSlug;
+            $data['typeName'] = $typeName;
             $data['departurePort'] = $package->departure_port ?? '';
             $data['boatClass'] = $package->boat_class ?? '';
             $data['nightsOnBoard'] = $package->nights_on_board;
@@ -1046,6 +1223,7 @@ class ViewDataService
         return [
             'id' => $article->id,
             'slug' => $seoTranslation?->slug ?? '',
+            'slugFull' => $seoTranslation?->slug_full ?? null,
             'title' => $translation?->title ?? '',
             'countrySlug' => $countryTranslation?->slug ?? '',
             'country' => $countryTranslation?->name ?? '',
@@ -1086,6 +1264,23 @@ class ViewDataService
     protected function formatDuration(int $days, int $nights): string
     {
         return "{$days} ngày {$nights} đêm";
+    }
+
+    protected function formatMoney(float $amount, string $currency = 'VND'): string
+    {
+        $code = strtoupper(trim($currency));
+        if ($code === '' || $code === 'VND') {
+            return function_exists('format_price_plain')
+                ? format_price_plain($amount)
+                : number_format($amount, 0, ',', '.').' ₫';
+        }
+
+        if (function_exists('format_price_plain') && function_exists('currency_manager')) {
+            // Giá đã ở đúng đơn vị currency (không phải VND) — format trực tiếp
+            return currency_manager()->format($amount, $code, false);
+        }
+
+        return number_format($amount, 2).' '.strtoupper($currency);
     }
 
     protected function countryFlag(?string $code): string

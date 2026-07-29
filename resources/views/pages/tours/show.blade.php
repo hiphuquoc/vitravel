@@ -4,10 +4,10 @@
 @section('meta_description', $tour['highlightsIntro'])
 
 @section('content')
-    <x-tour.detail :item="$tour" type="tour" :related="$related"
+    <x-tour.detail :item="$tour" type="tour"
         :breadcrumbs="[
-            ['label' => 'Tour', 'url' => route('tours.index', 'viet-nam')],
-            ['label' => 'Tour ' . $tour['country'], 'url' => route('tours.index', $tour['countrySlug'])],
+            ['label' => 'Tour', 'url' => locale_route('tours.hub')],
+            ['label' => 'Tour ' . $tour['country'], 'url' => locale_route('tours.index', $tour['countrySlug'])],
             ['label' => $tour['title']],
         ]" />
 @endsection

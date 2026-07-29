@@ -17,14 +17,14 @@
 @endphp
 
 @section('content')
-    <div class="container-site blog-page-intro" x-data="scrollSpy(@js(array_column($toc, 'id')))">
+    <div class="container-site blog-page-intro">
         <x-layout.breadcrumb :items="array_filter([
-            ['label' => 'Cẩm nang du lịch', 'url' => route('guide.index')],
+            ['label' => 'Cẩm nang du lịch', 'url' => locale_route('guide.index')],
             filled($article['countrySlug'] ?? '')
-                ? ['label' => 'Cẩm nang ' . $article['country'], 'url' => route('guide.country', ['country' => $article['countrySlug']])]
+                ? ['label' => 'Cẩm nang ' . $article['country'], 'url' => locale_route('guide.country', ['country' => $article['countrySlug']])]
                 : null,
             ['label' => $article['category']],
-        ])" class="site-mb" />
+        ])" class="breadcrumb--page" />
 
         @php
             $coverSrc = $article['imageDetail'] ?? $article['image'] ?? null;
@@ -86,6 +86,8 @@
 
         <div class="site-mt blog-layout">
             <div class="min-w-0">
+                <x-blog.toc :items="$toc" />
+
                 <div class="prose-travel">
                     @foreach ($article['content'] as $block)
                         @switch($block['type'])
@@ -222,22 +224,10 @@
                 @endif
             </div>
 
-            <x-blog.sidebar :categories="$categories" :keywords="$keywords" :toc="$toc"
+            <x-blog.sidebar :categories="$categories" :keywords="$keywords"
                 :active-category="$article['categorySlug']" :content-tags="[]" />
         </div>
     </div>
 
-    @php
-        $articleJsonLd = [
-            '@context' => 'https://schema.org',
-            '@type' => 'Article',
-            'headline' => $article['title'],
-            'description' => $article['excerpt'],
-            'author' => ['@type' => 'Person', 'name' => $article['author']],
-            'datePublished' => $article['publishedAt'],
-            'dateModified' => $article['updatedAt'],
-            'publisher' => ['@type' => 'Organization', 'name' => 'ViTravel'],
-        ];
-    @endphp
-    <script type="application/ld+json">{!! json_encode($articleJsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}</script>
+    {!! schema_ld(schema()->article($article, locale_route('guide.show', ['country' => $article['countrySlug'], 'slug' => $article['slug']]))) !!}
 @endsection

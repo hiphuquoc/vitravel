@@ -70,13 +70,13 @@
                         <div class="adminFormSection_body">
                             <div class="adminFormGrid adminFormGrid--2cols">
                                 @include('admin.components.formField', [
-                                    'label' => 'Quốc gia',
+                                    'label' => 'Quốc gia chính (URL / SEO)',
                                     'name' => 'country_id',
                                     'type' => 'select',
                                     'required' => true,
                                     'value' => old('country_id', $package?->country_id),
                                     'options' => $countryOptions,
-                                    'tooltip' => 'Quốc gia của gói. SEO parent mặc định sẽ lấy từ quốc gia này nếu không chọn trang cha.',
+                                    'tooltip' => 'Quốc gia dùng trong URL (/tours/{slug}/…) và SEO parent mặc định. Phải nằm trong danh sách quốc gia bên dưới.',
                                 ])
                                 @include('admin.components.formField', [
                                     'label' => 'Mã gói',
@@ -151,11 +151,24 @@
                             </div>
 
                             @if ($type === 'cruise')
+                                @php
+                                    $cruiseTypeOptions = ['' => '— Chọn loại —'];
+                                    foreach ($cruiseTypes ?? [] as $ct) {
+                                        $cruiseTypeOptions[$ct->slug] = $ct->name;
+                                    }
+                                    $currentCruiseType = old('cruise_type', $package?->cruise_type);
+                                    if ($currentCruiseType && ! isset($cruiseTypeOptions[$currentCruiseType])) {
+                                        $cruiseTypeOptions[$currentCruiseType] = $currentCruiseType;
+                                    }
+                                @endphp
                                 <div class="adminFormGrid adminFormGrid--2cols" style="margin-top:1rem;">
                                     @include('admin.components.formField', [
                                         'label' => 'Loại cruise',
                                         'name' => 'cruise_type',
-                                        'value' => old('cruise_type', $package?->cruise_type),
+                                        'type' => 'select',
+                                        'options' => $cruiseTypeOptions,
+                                        'value' => $currentCruiseType,
+                                        'tooltip' => 'Quản lý loại + banner listing tại mục Loại du thuyền.',
                                     ])
                                     @include('admin.components.formField', [
                                         'label' => 'Cảng khởi hành',
@@ -175,6 +188,38 @@
                                     ])
                                 </div>
                             @endif
+                        </div>
+                    </div>
+
+                    {{-- Quốc gia bộ lọc (multi) --}}
+                    <div class="adminFormSection">
+                        <div class="adminFormSection_header">
+                            <div class="adminFormSection_header_info">
+                                <h2 class="adminFormSection_title">Quốc gia / điểm đến (bộ lọc)</h2>
+                                <p class="adminFormSection_description">Chọn một hoặc nhiều quốc gia. Tour kết hợp (VD: Việt Nam + Campuchia) sẽ hiện khi lọc bất kỳ quốc gia nào trong danh sách này.</p>
+                            </div>
+                        </div>
+                        <div class="adminFormSection_body">
+                            @php
+                                $selectedCountryIds = old(
+                                    'country_ids',
+                                    $package?->relationLoaded('countries') && $package->countries->isNotEmpty()
+                                        ? $package->countries->pluck('id')->all()
+                                        : ($package?->country_id ? [$package->country_id] : [])
+                                );
+                            @endphp
+                            <div class="adminFormGrid adminFormGrid--2cols">
+                                @foreach ($countries as $country)
+                                    <label class="adminFormField_checkbox">
+                                        <input type="checkbox" class="adminFormField_checkbox_input" name="country_ids[]" value="{{ $country->id }}"
+                                            @checked(in_array($country->id, $selectedCountryIds, false))>
+                                        <span class="adminFormField_checkbox_label">{{ $country->translation($locale)?->name ?? $country->code }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                            @error('country_ids')
+                                <p class="adminFormField_error">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
@@ -201,7 +246,7 @@
                                     'seo_title' => old('seo_title', $seoTranslation?->seo_title),
                                     'seo_description' => old('seo_description', $seoTranslation?->seo_description),
                                     'keywords' => old('seo_keywords', $seoTranslation?->keywords),
-                                    'parent_id' => old('seo_parent_id', $package?->seoEntry?->parent_id ?? $package?->country?->seoEntry?->id),
+                                    'parent_id' => old('seo_parent_id', $package?->seoEntry?->parent_id ?? $defaultParentId ?? $package?->country?->seoEntry?->id),
                                     'rating_aggregate_count' => old('rating_aggregate_count', $package?->seoEntry?->rating_aggregate_count),
                                     'rating_aggregate_star' => old('rating_aggregate_star', $package?->seoEntry?->rating_aggregate_star),
                                 ],

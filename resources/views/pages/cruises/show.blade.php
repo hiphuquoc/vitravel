@@ -4,10 +4,10 @@
 @section('meta_description', $cruise['highlightsIntro'])
 
 @section('content')
-    <x-tour.detail :item="$cruise" type="cruise" :related="$related"
+    <x-tour.detail :item="$cruise" type="cruise"
         :breadcrumbs="[
-            ['label' => 'Du thuyền', 'url' => route('cruises.index', 'du-thuyen-ha-long')],
-            ['label' => $cruise['typeName'], 'url' => route('cruises.index', $cruise['typeSlug'])],
+            ['label' => 'Du thuyền', 'url' => locale_route('cruises.hub')],
+            ['label' => $cruise['typeName'], 'url' => locale_route('cruises.index', $cruise['typeSlug'])],
             ['label' => $cruise['title']],
         ]" />
 @endsection

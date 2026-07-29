@@ -23,8 +23,8 @@
 
         <div class="mt-8 flex flex-wrap justify-center gap-3">
             <a href="{{ route('home') }}" class="btn-primary">Về trang chủ</a>
-            <a href="{{ route('tours.index', 'viet-nam') }}" class="btn-outline">Xem tour Việt Nam</a>
-            <a href="{{ route('guide.index') }}" class="btn-outline">Đọc cẩm nang du lịch</a>
+            <a href="{{ locale_route('tours.index', 'viet-nam') }}" class="btn-outline">Xem tour Việt Nam</a>
+            <a href="{{ locale_route('guide.index') }}" class="btn-outline">Đọc cẩm nang du lịch</a>
         </div>
     </section>
 @endsection

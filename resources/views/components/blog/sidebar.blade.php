@@ -3,7 +3,6 @@
     'contentTags' => [],
     'keywords' => [],
     'activeCategory' => null,
-    'toc' => null, // [['id' =>, 'text' =>, 'level' =>]] — chỉ ở trang bài viết
 ])
 
 @php
@@ -11,69 +10,67 @@
 @endphp
 
 <aside {{ $attributes->merge(['class' => 'blog-sidebar']) }} aria-label="Thông tin thêm">
-    @if ($toc)
-        <div class="card blog-sidebar__panel blog-sidebar__panel--sticky">
-            <h2 class="item-title blog-sidebar__title flex items-center gap-2">
-                <x-icon name="filter" class="size-4 text-primary-600" /> Mục lục bài viết
-            </h2>
-            <ol class="blog-sidebar__list">
-                @foreach ($toc as $entry)
-                    <li class="{{ $entry['level'] === 3 ? 'pl-4' : '' }}">
-                        <a href="#{{ $entry['id'] }}"
-                            class="blog-sidebar__link block"
-                            :class="active === '{{ $entry['id'] }}' && 'is-active'">
-                            {{ $entry['text'] }}
+    <div class="blog-sidebar__card">
+        <section class="blog-sidebar__section">
+            <h2 class="blog-sidebar__title">Danh mục cẩm nang</h2>
+            <div class="blog-sidebar__tags" role="list">
+                @foreach ($categories as $cat)
+                    @if (filled($cat['countrySlug']))
+                        <a href="{{ locale_route('guide.country', ['country' => $cat['slug']]) }}"
+                            role="listitem"
+                            @class([
+                                'blog-sidebar__tag',
+                                'blog-sidebar__tag--cat',
+                                'is-active' => $activeCategory === $cat['slug'],
+                            ])>
+                            <span class="blog-sidebar__tag-label">{{ $cat['name'] }}</span>
+                            <span class="blog-sidebar__tag-count">{{ $cat['count'] ?? 0 }}</span>
                         </a>
-                    </li>
+                    @endif
                 @endforeach
-            </ol>
-        </div>
-    @endif
+            </div>
+        </section>
 
-    <div class="card blog-sidebar__panel">
-        <h2 class="item-title blog-sidebar__title">Danh mục cẩm nang</h2>
-        <ul class="blog-sidebar__list max-h-64 overflow-y-auto pr-1">
-            @foreach ($categories as $cat)
-                @if (filled($cat['countrySlug']))
-                    <li>
-                        <a href="{{ route('guide.country', ['country' => $cat['countrySlug']]) }}"
-                            class="blog-sidebar__link {{ $activeCategory === $cat['slug'] ? 'is-active' : '' }}">
-                            {{ $cat['name'] }}
-                            <span class="text-sm text-muted">{{ $cat['count'] }}</span>
-                        </a>
-                    </li>
-                @endif
-            @endforeach
-        </ul>
-        <div class="blog-sidebar__list site-mt">
-            @foreach ($countries as $c)
-                <a href="{{ route('guide.country', ['country' => $c['slug']]) }}"
-                    class="blog-sidebar__link font-medium">
-                    Cẩm nang {{ $c['name'] }}
-                </a>
-            @endforeach
-        </div>
+        @if (count($countries))
+            <section class="blog-sidebar__section">
+                <h2 class="blog-sidebar__title">Theo quốc gia</h2>
+                <ul class="blog-sidebar__menu">
+                    @foreach ($countries as $c)
+                        <li>
+                            <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}"
+                                class="blog-sidebar__nav-link">
+                                <span class="blog-sidebar__nav-label">{{ $c['name'] }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
     </div>
 
     @if (count($contentTags))
-        <div class="card blog-sidebar__panel">
-            <h2 class="item-title blog-sidebar__title">Lọc bài viết</h2>
-            <div class="form-pills">
-                @foreach ($contentTags as $tag)
-                    <a href="#" class="pill">{{ $tag }}</a>
-                @endforeach
-            </div>
+        <div class="blog-sidebar__card">
+            <section class="blog-sidebar__section">
+                <h2 class="blog-sidebar__title">Chủ đề</h2>
+                <div class="blog-sidebar__tags" role="list">
+                    @foreach ($contentTags as $tag)
+                        <a href="#" class="blog-sidebar__tag" role="listitem">{{ $tag }}</a>
+                    @endforeach
+                </div>
+            </section>
         </div>
     @endif
 
     @if (count($keywords))
-        <div class="card blog-sidebar__panel">
-            <h2 class="item-title blog-sidebar__title">Từ khoá phổ biến</h2>
-            <div class="form-pills">
-                @foreach ($keywords as $kw)
-                    <a href="#" class="pill bg-page">{{ $kw }}</a>
-                @endforeach
-            </div>
+        <div class="blog-sidebar__card">
+            <section class="blog-sidebar__section">
+                <h2 class="blog-sidebar__title">Từ khoá phổ biến</h2>
+                <div class="blog-sidebar__tags" role="list">
+                    @foreach ($keywords as $kw)
+                        <a href="#" class="blog-sidebar__tag blog-sidebar__tag--soft" role="listitem">{{ $kw }}</a>
+                    @endforeach
+                </div>
+            </section>
         </div>
     @endif
 </aside>

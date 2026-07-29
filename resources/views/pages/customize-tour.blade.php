@@ -20,7 +20,7 @@
                     Cảm ơn bạn đã tin tưởng ViTravel. Chuyên gia phụ trách tuyến của bạn sẽ nghiên cứu yêu cầu và gửi
                     lịch trình chi tiết kèm báo giá qua email trong vòng 24 giờ làm việc.
                 </p>
-                <a href="{{ route('guide.index') }}" class="btn-outline site-mt">Đọc cẩm nang trong lúc chờ</a>
+                <a href="{{ locale_route('guide.index') }}" class="btn-outline site-mt">Đọc cẩm nang trong lúc chờ</a>
             </div>
         </div>
     @else

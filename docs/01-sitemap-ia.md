@@ -97,8 +97,9 @@ Theo ảnh `ve-chung-toi-about.png`, **CHI SIAMO là 1 trang dài duy nhất** g
 | Loại trang | Pattern thực tế | Đề xuất pattern khi clone |
 |---|---|---|
 | Trang chủ | `/` | `/` |
+| **Hub tất cả tour** | — | **`/tours`** |
 | Danh mục tour theo quốc gia | `/tours/{country-slug}` | `/tours/{country}` |
-| Danh mục tour theo chủ đề/thời lượng | `/tours/{topic-slug}-c{id}/{country}` | `/tours/{country}/{topic-slug}` |
+| Danh mục tour theo chủ đề/thời lượng | `/tours/{topic-slug}-c{id}/{country}` | `/tours/{country}/{topic-slug}` *(SEO sẵn; route public topic TBD)* |
 | Chi tiết tour | `/t{id}-{slug}.html` | `/tours/{country}/{slug}` |
 | Danh mục cruise | `/cruises/{cruise-type-slug}/` | `/cruises/{type}` |
 | Chi tiết cruise | `/cruises/{slug}/` | `/cruises/{type}/{slug}` |
@@ -115,9 +116,13 @@ Ghi chú: site gốc dùng ID số (`c503`, `t589`, `b397`) do CMS cũ generate 
 
 Mọi trang tour/cruise/travel-guide đều có breadcrumb, đặt trong 1 card trắng đè lên banner ảnh (xem `danh-muc-tour.png` — breadcrumb + H1 nằm trong khối card bo góc, không nằm trực tiếp trên nền ảnh):
 ```
-Home / Tours / {Country} Tours / {Sub-category} / {Tour name}
+Home / Tour                          → /tours
+Home / Tour / Tour {Country}         → /tours/{country}
+Home / Tour / Tour {Country} / {Tour name}
 Home / Cose da fare / Cose da vedere in {Country} / {Article title}
 ```
+
+JSON-LD `BreadcrumbList` emit từ `x-layout.breadcrumb` → `SchemaService::breadcrumbList`. Layer SEO admin có thể build bằng `SeoService::breadcrumbsForEntry` (đi ngược `parent_id`).
 → Breadcrumb là component dùng chung, cần schema.org `BreadcrumbList`.
 
 ## 4. Footer (dùng chung toàn site)

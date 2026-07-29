@@ -36,7 +36,7 @@
 
         {{-- Hero Việt Nam — trong container, nổi bật --}}
         <a
-            href="{{ route('tours.index', $hero['slug']) }}"
+            href="{{ locale_route('tours.index', $hero['slug']) }}"
             class="vt-dest__hero group"
             aria-label="{{ $exploreLabel }}: {{ $hero['name'] }}"
         >
@@ -83,7 +83,7 @@
                     @foreach ($strip as $i => $c)
                         @php $index = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT); @endphp
                         <a
-                            href="{{ route('tours.index', $c['slug']) }}"
+                            href="{{ locale_route('tours.index', $c['slug']) }}"
                             class="vt-dest__portrait group"
                             role="listitem"
                             style="--vt-dest-i: {{ $i }}"

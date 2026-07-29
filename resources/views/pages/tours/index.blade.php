@@ -4,60 +4,76 @@
 @section('meta_description', 'Danh sách tour ' . $country['name'] . ' trọn gói được thiết kế bởi chuyên gia bản địa: ' . $country['tagline'] . '. Nhận báo giá miễn phí trong 24 giờ.')
 
 @section('content')
-    <x-layout.page-header :title="'Tour ' . $country['name']" :subtitle="$country['tagline']"
+    @php
+        $durationKeys = array_map('strval', array_keys($durations));
+        $styleKeys = array_map('strval', array_keys($styles));
+        $filterDefaults = [
+            // Chỉ quốc gia trang hiện tại được check; user có thể thêm quốc gia khác → fetch thêm
+            'country' => [$country['slug']],
+            'duration' => $durationKeys,
+            'style' => $styleKeys,
+        ];
+        $schemaItems = collect($tours)->map(fn ($t) => [
+            'name' => $t['title'],
+            'url' => locale_route('tours.show', ['country' => $t['countrySlug'], 'slug' => $t['slug']]),
+        ])->all();
+    @endphp
+
+    <x-layout.page-header
+        :title="'Tour ' . $country['name']"
+        :subtitle="$country['tagline']"
+        :banner-src="$country['listingBanner'] ?? null"
+        :banner-srcset="$country['listingBannerSrcset'] ?? null"
+        :banner-alt="'Banner Tour ' . $country['name']"
         :breadcrumbs="[
-            ['label' => 'Tour', 'url' => route('tours.index', 'viet-nam')],
+            ['label' => 'Tour', 'url' => locale_route('tours.hub')],
             ['label' => 'Tour ' . $country['name']],
         ]" />
 
-    <div class="container-site listing-layout section-band--sm">
-        <x-tour.filter-sidebar :durations="$durations" :styles="$styles" />
+    <div class="container-site listing-layout section-band--sm"
+        x-data="listingGrid(@js([
+            'endpoint' => route('api.listings.tours'),
+            'syncUrl' => true,
+            'filters' => $filterDefaults,
+        ]))">
+        <x-tour.filter-sidebar
+            :durations="$durations"
+            :styles="$styles"
+            :countries="$countries"
+            :show-country-filter="true" />
 
         <div class="min-w-0">
             <div class="listing-toolbar">
+                <p class="listing-toolbar__count" x-show="count !== null" x-cloak>
+                    <span class="listing-toolbar__count-num" x-text="count"></span>
+                    <span class="listing-toolbar__count-label">tour</span>
+                </p>
                 <x-shared.sort-dropdown />
             </div>
 
-            @if (count($tours))
-                <div class="site-stack">
-                    @foreach ($tours as $tour)
-                        <x-tour.card :item="$tour" :href="route('tours.show', ['country' => $tour['countrySlug'], 'slug' => $tour['slug']])" />
-                    @endforeach
-                </div>
-            @else
-                <div class="card listing-empty">
-                    <x-icon name="compass" class="size-10 text-muted" />
-                    <p class="font-semibold">Chưa có tour nào cho điểm đến này.</p>
-                    <p class="body-text text-muted">Hãy để chuyên gia của chúng tôi thiết kế hành trình riêng cho bạn.</p>
-                    <a href="{{ route('customize') }}" class="btn-primary site-mt">
-                        <x-icon name="sparkles" class="size-4" /> Thiết kế tour riêng
-                    </a>
-                </div>
-            @endif
+            <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
 
-            {{-- Rating tổng danh mục --}}
+            <div class="listing-results" x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
+                <x-tour.listing-skeleton :count="4" variant="wide" />
+            </div>
+
             <div class="listing-rating-summary">
                 <p class="listing-rating-summary__score">5.0</p>
                 <x-shared.stars :rating="5" aria-label="5 trên 5 sao" />
-                <p class="listing-rating-summary__meta">{{ array_sum(array_column($tours, 'reviewCount')) }} đánh giá từ khách hàng đã đi tour {{ $country['name'] }}</p>
+                <p class="listing-rating-summary__meta">Đánh giá từ khách hàng đã đi tour {{ $country['name'] }}</p>
             </div>
 
-            {{-- Đoạn giới thiệu SEO --}}
             <div class="prose-travel listing-seo">
                 <p>
                     Một <strong>tour {{ $country['name'] }} trọn gói</strong> là cách trọn vẹn nhất để khám phá
                     {{ $country['tagline'] }} mà không phải bận tâm khâu tổ chức. Mỗi lịch trình của ViTravel đều do
-                    <strong>chuyên gia bản địa</strong> thiết kế và có thể tuỳ chỉnh 100% theo nhịp đi, ngân sách và sở thích của bạn —
-                    từ những di sản nổi tiếng cho tới các bản làng chưa nhiều người biết đến.
-                </p>
-                <p>
-                    Tất cả tour đều bao gồm khách sạn tuyển chọn, xe riêng, hướng dẫn viên chuyên tuyến và các bữa ăn đặc sản địa phương.
-                    Nếu chưa tìm thấy hành trình ưng ý, hãy <a href="{{ route('customize') }}">gửi yêu cầu thiết kế tour riêng</a> —
-                    chúng tôi sẽ phản hồi kèm lịch trình chi tiết trong vòng 24 giờ làm việc.
+                    <strong>chuyên gia bản địa</strong> thiết kế và có thể tuỳ chỉnh 100%.
                 </p>
             </div>
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về tour {{ $country['name'] }}" />
         </div>
     </div>
+
+    {!! schema_ld(schema()->itemList($schemaItems, 'Tour ' . $country['name'] . ' — ViTravel')) !!}
 @endsection

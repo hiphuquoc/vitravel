@@ -11,8 +11,10 @@ use App\Models\Package;
 use App\Models\Review;
 use App\Models\StaticPage;
 use App\Models\TourCategory;
+use App\Services\CurrencyManager;
 use App\Services\ViewDataService;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -20,10 +22,16 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ViewDataService::class);
+        $this->app->singleton(CurrencyManager::class);
     }
 
     public function boot(): void
     {
+        $appUrl = config('app.url');
+        if (is_string($appUrl) && $appUrl !== '') {
+            URL::forceRootUrl($appUrl);
+        }
+
         Relation::enforceMorphMap([
             'package' => Package::class,
             'article' => Article::class,
@@ -34,6 +42,7 @@ class AppServiceProvider extends ServiceProvider
             'static_page' => StaticPage::class,
             'company' => CompanyProfile::class,
             'review' => Review::class,
+            'cruise_type' => \App\Models\CruiseType::class,
         ]);
     }
 }

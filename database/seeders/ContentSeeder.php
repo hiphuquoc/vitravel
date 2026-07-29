@@ -214,6 +214,8 @@ class ContentSeeder extends Seeder
                     'country_id' => $countryId,
                     'duration_days' => $days,
                     'duration_nights' => $nights,
+                    'price_from' => $row['priceFrom'] ?? ($days * 2_800_000),
+                    'currency' => $row['currency'] ?? 'VND',
                     'rating' => $row['rating'],
                     'review_count' => $row['reviewCount'],
                     'is_featured' => $row['featured'] ?? false,
@@ -251,6 +253,19 @@ class ContentSeeder extends Seeder
                 ->whereIn('code', $row['styles'] ?? [])
                 ->pluck('id');
             $package->travelStyles()->sync($styleIds);
+
+            $countrySlugList = $row['countrySlugs'] ?? [$countrySlug];
+            $syncCountries = [];
+            foreach (array_values(array_unique($countrySlugList)) as $sort => $slug) {
+                $cid = $this->countryIds[$slug] ?? null;
+                if ($cid) {
+                    $syncCountries[$cid] = ['sort' => $sort];
+                }
+            }
+            if ($syncCountries === [] && $countryId) {
+                $syncCountries[$countryId] = ['sort' => 0];
+            }
+            $package->countries()->sync($syncCountries);
 
             $package->itineraryDays()->delete();
             foreach ($row['itinerary'] ?? [] as $dayRow) {
@@ -361,15 +376,18 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($article, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull('article', 'vi', $row['slug'], null, [
-                    'country_code' => $row['countrySlug'],
-                ]),
+                'slug_full' => $this->seo->normalizeSlugFull(
+                    rtrim($this->seo->hubSlugFullPath('guide_hub', 'vi'), '/').'/'.$row['countrySlug'].'/'.$row['slug']
+                ),
                 'title' => $row['title'],
                 'description' => $row['excerpt'],
                 'rating_aggregate_star' => $row['rating'],
                 'rating_aggregate_count' => $row['ratingCount'],
                 'status' => 'published',
-            ]);
+                'parent_id' => isset($this->blogCategoryIds[$row['categorySlug'] ?? ''])
+                    ? (BlogCategory::query()->find($this->blogCategoryIds[$row['categorySlug']])?->seoEntry?->id)
+                    : null,
+            ], 'article');
         }
     }
 

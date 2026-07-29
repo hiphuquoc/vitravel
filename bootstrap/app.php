@@ -20,10 +20,18 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => RoleMiddleware::class,
+            'detectLocale' => \App\Http\Middleware\DetectLocale::class,
+            'detectCurrency' => \App\Http\Middleware\DetectCurrency::class,
+        ]);
+
+        $middleware->encryptCookies(except: [
+            'app_currency',
         ]);
 
         $middleware->web(append: [
-            \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\DetectLocale::class,
+            \App\Http\Middleware\DetectCurrency::class,
+            \App\Http\Middleware\CheckRedirect::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

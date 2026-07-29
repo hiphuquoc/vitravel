@@ -88,7 +88,7 @@ UI có 2 route (`/tours/...`, `/cruises/...`) nhưng layout chi tiết gần nh�
 
 | Bảng | Facet / UI |
 |---|---|
-| `countries` | Mega menu, bento Home, listing `/tours/{country}` |
+| `countries` | Mega menu, hub `/tours`, listing `/tours/{country}` |
 | `destinations` | Filter phụ, blog sidebar level=destination |
 | `travel_styles` | Facet 11 “Stile di viaggio” |
 | `tour_categories` | Duration/region/theme listing + FAQ category |
@@ -100,7 +100,8 @@ UI có 2 route (`/tours/...`, `/cruises/...`) nhưng layout chi tiết gần nh�
 
 Cột quan trọng (locale-independent):
 
-- `type`, `country_id`, `code`, `duration_days`, `duration_nights`
+- `type`, `country_id` (quốc gia chính URL/SEO), `code`, `duration_days`, `duration_nights`
+- Pivot `package_country` — nhiều quốc gia cho bộ lọc (tour kết hợp: VN + Campuchia hiện khi lọc VN hoặc Campuchia)
 - `rating`, `review_count`, `price_from`, `currency`
 - `is_featured`, `is_hot_deal`, `status`, `published_at`
 - Cruise: `cruise_type`, `departure_port`, `boat_class`, `nights_on_board`
@@ -166,6 +167,52 @@ Không gộp 1 bảng “leads” chung — reporting nguồn lead phải tách 
 ### 5.5. Fallback locale
 
 Đọc translation: locale hiện tại → `languages.is_default` → null. Không bao giờ “lai” `slug_full` giữa 2 locale (quy tắc Hitour).
+
+### 5.6. Phân tầng URL (SEO hub — Hitour universal rule)
+
+**Quy tắc duy nhất** (`SeoService::buildSlugFull`) — áp dụng cho **mọi** `type`, không hardcode path theo type:
+
+| Điều kiện | `slug_full` |
+|---|---|
+| Có parent + `parent.slug_full` | `{parent.slug_full}/{slug}` |
+| Không parent (hub / root) | `/{slug}` |
+
+Hubs cấp 1 (`parent_id = null`, `level = 1`) từ `config('seo.hubs')`:
+
+| Hub key | Public URL (mặc định) | SEO `type` | Con điển hình |
+|---|---|---|---|
+| `tours_hub` | `/tours` | `tours_hub` | `country` → `package_tour` / `tour_category` |
+| `cruises_hub` | `/cruises` | `cruises_hub` | `cruise_type` → `package_cruise` |
+| `guide_hub` | `/cam-nang-du-lich` | `guide_hub` | `blog_category` → `article` |
+
+Ví dụ cây:
+
+| Layer | URL | `type` | Parent |
+|---|---|---|---|
+| Hub tour | `/tours` | `tours_hub` | null |
+| Quốc gia | `/tours/viet-nam` | `country` | hub tour |
+| Tour | `/tours/viet-nam/ha-long-5-ngay` | `package_tour` | country |
+| Hub cruise | `/cruises` | `cruises_hub` | null |
+| Loại | `/cruises/du-thuyen-ha-long` | `cruise_type` | hub cruise |
+| Cabin | `/cruises/du-thuyen-ha-long/...` | `package_cruise` | cruise_type |
+| Hub guide | `/cam-nang-du-lich` | `guide_hub` | null |
+| Chuyên mục | `/cam-nang-du-lich/{cat}` | `blog_category` | hub / category |
+| Bài viết | `…/{cat}/{slug}` | `article` | blog_category |
+
+Luồng admin:
+
+1. Tạo/sửa **Hub** (cấp 1) — banner + SEO, `parent=null`, `level=1`
+2. Entity con chọn **Trang cha** → `level = parent.level + 1`
+3. `buildSlugFull` nối `parent.slug_full` + `slug` (không hardcode `/tours`/`/cruises`)
+4. `assertSlugFullUnique(language_id, slug_full)` — throw ValidationException nếu trùng locale
+5. Lưu `seo_entry_translations.slug_full`
+6. Đổi slug/parent cha → `cascadeSlugFullChildren` cập nhật mọi con cùng locale + `redirect_info` 301 (`createRedirect301`, prefix locale nếu không default)
+
+**Public routing (Hitour catch-all):** `Route::fallback(RoutingController)` → `SeoService::findBySlugFull` → dispatch theo `seo_entries.type`. Default locale unprefixed; khác: `/{locale}/…`. `locale_route()` resolve `tours.*` / `cruises.*` / `guide.*` qua slug_full hiện tại — **không** còn hardcoded `/cruises|/tours|/cam-nang-du-lich` trên public GET.
+
+Bảng `redirect_info` (`url_old`, `url_new`) + middleware `CheckRedirect` (sau DetectLocale / DetectCurrency).
+
+Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`); schema qua `SchemaService::breadcrumbList`.
 
 ---
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
+use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,5 +32,15 @@ class StaticPage extends Model
     public function banner(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'banner_media_id');
+    }
+
+    public function bannerUrl(?string $variant = 'lg'): ?string
+    {
+        return app(MediaService::class)->publicUrl($this->banner, $variant);
+    }
+
+    public function bannerSrcset(): ?string
+    {
+        return app(MediaService::class)->srcset($this->banner);
     }
 }

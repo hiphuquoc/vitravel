@@ -150,7 +150,7 @@
     {{-- Search box --}}
     @if ($countries)
         <div class="container-site">
-            <form action="{{ route('tours.index', 'viet-nam') }}" method="get"
+            <form action="{{ locale_route('tours.index', 'viet-nam') }}" method="get"
                 class="card relative -mt-12 z-30 grid gap-3 p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end sm:gap-4 sm:p-5 lg:mx-auto lg:max-w-3xl">
                 <div>
                     <label for="hero-dest" class="field-label">Điểm đến</label>

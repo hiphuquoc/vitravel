@@ -9,36 +9,29 @@ class LanguageSeeder extends Seeder
 {
     public function run(): void
     {
-        $rows = [
-            [
-                'code' => 'vi',
-                'name' => 'Tiếng Việt',
-                'name_native' => 'Tiếng Việt',
-                'flag' => '/images/flags/vi.svg',
-                'og_locale' => 'vi_VN',
-                'hreflang' => 'vi',
-                'dir' => 'ltr',
-                'is_active' => true,
-                'is_default' => true,
-                'sort' => 0,
-            ],
-            [
-                'code' => 'en',
-                'name' => 'English',
-                'name_native' => 'English',
-                'flag' => '/images/flags/en.svg',
-                'og_locale' => 'en_US',
-                'hreflang' => 'en',
-                'dir' => 'ltr',
-                'is_active' => true,
-                'is_default' => false,
-                'sort' => 1,
-            ],
-        ];
-
-        foreach ($rows as $row) {
-            Language::query()->updateOrCreate(['code' => $row['code']], $row);
+        foreach (config('language.list', []) as $cfg) {
+            Language::query()->updateOrCreate(
+                ['code' => $cfg['code']],
+                [
+                    'name' => $cfg['name'],
+                    'name_native' => $cfg['name_native'] ?? null,
+                    'flag' => $cfg['flag'] ?? null,
+                    'og_locale' => $cfg['og_locale'] ?? null,
+                    'hreflang' => $cfg['hreflang'] ?? $cfg['code'],
+                    'dir' => $cfg['dir'] ?? 'ltr',
+                    'is_active' => ! empty($cfg['is_active']),
+                    'is_default' => ! empty($cfg['is_default']),
+                    'sort' => $cfg['sort'] ?? 0,
+                ]
+            );
         }
+
+        $defaultCode = config('language.default_code', 'vi');
+        Language::query()->update(['is_default' => false]);
+        Language::query()->where('code', $defaultCode)->update([
+            'is_default' => true,
+            'is_active' => true,
+        ]);
 
         Language::clearCache();
     }

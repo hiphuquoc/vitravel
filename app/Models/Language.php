@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -21,6 +22,37 @@ class Language extends Model
         ];
     }
 
+    /**
+     * Cache dạng array (Laravel 13: serializable_classes=false không cho serialize Model).
+     */
+    private static function rememberRows(string $key, callable $query): array
+    {
+        return Cache::remember($key, 86400, function () use ($query) {
+            $result = $query();
+
+            if ($result instanceof Collection) {
+                return $result->map->toArray()->all();
+            }
+
+            return $result ? $result->toArray() : [];
+        });
+    }
+
+    private static function hydrate(?array $row): ?self
+    {
+        if (empty($row)) {
+            return null;
+        }
+
+        return (new static)->forceFill($row)->syncOriginal();
+    }
+
+    /** @return Collection<int, self> */
+    private static function hydrateMany(array $rows): Collection
+    {
+        return (new Collection($rows))->map(fn (array $row) => self::hydrate($row));
+    }
+
     public static function idByCode(string $code): ?int
     {
         return Cache::remember("language:id:{$code}", 3600, function () use ($code) {
@@ -28,15 +60,31 @@ class Language extends Model
         });
     }
 
-    public static function byCode(string $code): ?self
+    /** Hỗ trợ hyphen codes (zh-cn, zh-tw). */
+    public static function byCode(?string $code): ?self
     {
-        return static::query()->where('code', $code)->where('is_active', true)->first();
+        if (empty($code)) {
+            return null;
+        }
+
+        return self::active()->firstWhere('code', $code)
+            ?? static::query()->where('code', $code)->first();
+    }
+
+    public static function default(): ?self
+    {
+        $row = self::rememberRows('languages:default:v2', function () {
+            return self::where('is_default', 1)->first()
+                ?? self::where('code', config('language.default_code', 'vi'))->first();
+        });
+
+        return self::hydrate($row ?: null);
     }
 
     public static function defaultId(): ?int
     {
         return Cache::remember('language:default_id', 3600, function () {
-            return static::query()->where('is_default', true)->value('id')
+            return static::default()?->id
                 ?? static::query()->where('code', 'vi')->value('id');
         });
     }
@@ -44,17 +92,46 @@ class Language extends Model
     public static function defaultCode(): string
     {
         return Cache::remember('language:default_code', 3600, function () {
-            return static::query()->where('is_default', true)->value('code')
-                ?? static::query()->where('code', 'vi')->value('code')
-                ?? 'vi';
+            return static::default()?->code
+                ?? (string) config('language.default_code', 'vi');
         });
+    }
+
+    /** @return Collection<int, self> */
+    public static function active(): Collection
+    {
+        return self::hydrateMany(
+            self::rememberRows('languages:active:v2', fn () => self::where('is_active', 1)->orderBy('sort')->get())
+        );
+    }
+
+    public static function listAll(): Collection
+    {
+        return self::hydrateMany(
+            self::rememberRows('languages:all:v2', fn () => self::orderBy('sort')->get())
+        );
     }
 
     public static function clearCache(): void
     {
+        self::flushCache();
         Cache::forget('language:default_id');
         Cache::forget('language:default_code');
-        static::query()->pluck('code')->each(fn ($code) => Cache::forget("language:id:{$code}"));
+        try {
+            static::query()->pluck('code')->each(fn ($code) => Cache::forget("language:id:{$code}"));
+        } catch (\Throwable $e) {
+            // DB may be unavailable during early boot
+        }
+    }
+
+    public static function flushCache(): void
+    {
+        foreach ([
+            'languages:active', 'languages:all', 'languages:default',
+            'languages:active:v2', 'languages:all:v2', 'languages:default:v2',
+        ] as $key) {
+            Cache::forget($key);
+        }
     }
 
     public function scopeActive($query)
@@ -62,9 +139,9 @@ class Language extends Model
         return $query->where('is_active', true)->orderBy('sort');
     }
 
-    /** Collection các ngôn ngữ đang active. */
-    public static function active(): \Illuminate\Support\Collection
+    protected static function booted(): void
     {
-        return static::query()->active()->get();
+        static::saved(fn () => self::clearCache());
+        static::deleted(fn () => self::clearCache());
     }
 }

@@ -1,9 +1,14 @@
 @props(['article'])
 
 @php
-    $href = filled($article['countrySlug'] ?? null) && filled($article['slug'] ?? null)
-        ? route('guide.show', ['country' => $article['countrySlug'], 'slug' => $article['slug']])
-        : route('guide.index');
+    $href = filled($article['slugFull'] ?? null)
+        ? url(seo_url($article['slugFull']))
+        : (filled($article['slug'] ?? null)
+            ? locale_route('guide.show', [
+                'country' => $article['countrySlug'] ?: ($article['categorySlug'] ?? ''),
+                'slug' => $article['slug'],
+            ])
+            : locale_route('guide.index'));
 @endphp
 
 <article {{ $attributes->merge(['class' => 'card group flex flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-(--shadow-card-hover)']) }}>

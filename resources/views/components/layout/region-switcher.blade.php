@@ -1,5 +1,5 @@
 {{--
-   Region Switcher — Language (Hitour UX: deferred-apply).
+   Region Switcher — Language + Currency (Hitour UX: deferred-apply).
 
    Props:
    - $variant: 'desktop' | 'mobile' (mặc định 'desktop')
@@ -15,21 +15,20 @@
         $__activeLangs = collect();
     }
 
-    $__configFlags = collect(config('language', []))->mapWithKeys(function ($lang, $key) {
-        $code = $lang['key'] ?? $key;
+    $__configFlags = collect(config('language.list', []))->mapWithKeys(function ($lang, $key) {
+        $code = $lang['code'] ?? $key;
 
         return [$code => $lang['flag'] ?? null];
     });
 
     if ($__activeLangs->isEmpty()) {
-        $__activeLangs = collect(config('language', []))->map(fn ($lang, $key) => (object) [
-            'code' => $lang['key'] ?? $key,
+        $__activeLangs = collect(config('language.list', []))->map(fn ($lang, $key) => (object) [
+            'code' => $lang['code'] ?? $key,
             'name' => $lang['name'] ?? strtoupper($key),
-            'name_native' => $lang['name_by_language'] ?? ($lang['name'] ?? strtoupper($key)),
+            'name_native' => $lang['name_native'] ?? ($lang['name'] ?? strtoupper($key)),
             'flag' => $lang['flag'] ?? null,
         ]);
     } else {
-        // DB thiếu flag → fallback config (Hitour: /images/flags/{code}.svg)
         $__activeLangs = $__activeLangs->map(function ($lang) use ($__configFlags) {
             $code = $lang->code ?? '';
             if (empty($lang->flag)) {
@@ -44,32 +43,44 @@
     }
 
     $__languageUxMap = [
-        'vi' => ['native' => 'Tiếng Việt', 'english' => 'Vietnamese', 'note' => 'Phù hợp cho khách nội địa'],
-        'en' => ['native' => 'English', 'english' => 'English', 'note' => 'Recommended for international guests'],
-        'ko' => ['native' => '한국어', 'english' => 'Korean', 'note' => 'Dành cho khách Hàn Quốc'],
-        'ja' => ['native' => '日本語', 'english' => 'Japanese', 'note' => 'Dành cho khách Nhật Bản'],
-        'zh' => ['native' => '中文', 'english' => 'Chinese', 'note' => 'Dành cho khách Trung Quốc'],
-        'fr' => ['native' => 'Français', 'english' => 'French', 'note' => 'Dành cho khách Pháp ngữ'],
-        'de' => ['native' => 'Deutsch', 'english' => 'German', 'note' => 'Dành cho khách Đức'],
-        'ru' => ['native' => 'Русский', 'english' => 'Russian', 'note' => 'Dành cho khách Nga'],
-        'th' => ['native' => 'ไทย', 'english' => 'Thai', 'note' => 'Dành cho khách Thái Lan'],
+        'vi' => ['native' => 'Tiếng Việt', 'english' => 'Vietnamese'],
+        'en' => ['native' => 'English', 'english' => 'English'],
+        'zh-cn' => ['native' => '简体中文', 'english' => 'Chinese (Simplified)'],
+        'zh-tw' => ['native' => '繁體中文', 'english' => 'Chinese (Traditional)'],
+        'ko' => ['native' => '한국어', 'english' => 'Korean'],
+        'ja' => ['native' => '日本語', 'english' => 'Japanese'],
+        'es' => ['native' => 'Español', 'english' => 'Spanish'],
+        'fr' => ['native' => 'Français', 'english' => 'French'],
+        'de' => ['native' => 'Deutsch', 'english' => 'German'],
+        'ru' => ['native' => 'Русский', 'english' => 'Russian'],
     ];
 
     $__currentLang = $__activeLangs->firstWhere('code', $__currentLocale) ?? $__activeLangs->first();
-    $__currentLangCode = strtolower($__currentLang->code ?? $__currentLocale ?? 'vi');
     $__isEmojiFlag = is_string($__currentLang->flag ?? null)
         && ! str_starts_with((string) $__currentLang->flag, 'http')
         && ! str_starts_with((string) $__currentLang->flag, '/');
 
+    $__currencies = $availableCurrencies ?? (function_exists('available_currencies') ? available_currencies() : []);
+    $__currentCurrency = $currentCurrency ?? (function_exists('current_currency') ? current_currency() : 'VND');
+    $__rateBase = function_exists('currency_rate_base') ? currency_rate_base() : 'USD';
+    $__switchEndpoint = (string) config('currency.switch_endpoint', '/currency/switch');
+    $__cookieName = (string) config('currency.cookie.name', 'app_currency');
+    $__cookieTtlDays = (int) config('currency.cookie.ttl_days', 365);
+    $__hasCurrency = ! empty($__currencies);
+
     $__ui = [
-        'choose' => $__currentLocale === 'en' ? 'Choose language' : 'Chọn ngôn ngữ',
+        'choose' => $__currentLocale === 'en' ? 'Choose language & currency' : 'Chọn ngôn ngữ & tiền tệ',
         'language' => $__currentLocale === 'en' ? 'Language' : 'Ngôn ngữ',
+        'currency' => $__currentLocale === 'en' ? 'Currency' : 'Tiền tệ',
         'display' => $__currentLocale === 'en' ? 'Display content' : 'Hiển thị nội dung',
+        'convertFrom' => $__currentLocale === 'en' ? 'Convert from' : 'Quy đổi từ',
+        'intlRef' => $__currentLocale === 'en' ? 'International reference' : 'Chuẩn quốc tế',
         'cancel' => $__currentLocale === 'en' ? 'Cancel' : 'Hủy',
         'apply' => $__currentLocale === 'en' ? 'Apply' : 'Áp dụng',
         'applying' => $__currentLocale === 'en' ? 'Applying…' : 'Đang áp dụng…',
         'close' => $__currentLocale === 'en' ? 'Close' : 'Đóng',
-        'title' => $__currentLocale === 'en' ? 'Language' : 'Ngôn ngữ',
+        'title' => $__currentLocale === 'en' ? 'Language & currency' : 'Ngôn ngữ & tiền tệ',
+        'currencyColon' => $__currentLocale === 'en' ? 'Currency:' : 'Tiền tệ:',
     ];
 
     $__rootClass = 'regionSwitcher'.($isMobile ? ' regionSwitcher--mobile' : '');
@@ -79,7 +90,10 @@
 <div class="{{ $__rootClass }}"
      data-region-switcher
      data-variant="{{ $variant }}"
-     data-current-locale="{{ $__currentLocale }}">
+     data-current-locale="{{ $__currentLocale }}"
+     data-current-currency="{{ $__currentCurrency }}"
+     data-cookie-name="{{ $__cookieName }}"
+     data-cookie-days="{{ $__cookieTtlDays }}">
 
     <button type="button"
             class="{{ $__triggerClass }}"
@@ -98,6 +112,10 @@
                 @endif
             @endif
             <span class="regionSwitcher_lang">{{ strtoupper($__currentLang->code ?? $__currentLocale) }}</span>
+            @if ($__hasCurrency)
+                <span class="regionSwitcher_sep" aria-hidden="true">·</span>
+                <span class="regionSwitcher_currency_code">{{ $__currentCurrency }}</span>
+            @endif
         </span>
         @unless ($isMobile)
             <x-icon name="chevron-down" class="regionSwitcher_chevron size-3" />
@@ -117,7 +135,7 @@
             </div>
         @endif
 
-        <div class="regionSwitcher_grid regionSwitcher_grid--langOnly">
+        <div class="regionSwitcher_grid{{ $__hasCurrency ? '' : ' regionSwitcher_grid--langOnly' }}">
             <section class="regionSwitcher_col regionSwitcher_col--lang" aria-label="{{ $__ui['language'] }}">
                 <header class="regionSwitcher_col_header">
                     <x-icon name="globe" class="size-3.5" />
@@ -128,7 +146,7 @@
                     @foreach ($__activeLangs as $__lang)
                         @php
                             $__isCurrent = ($__lang->code ?? '') === $__currentLocale;
-                            $__href = locale_switch_url($__lang->code);
+                            $__href = locale_url($__lang->code);
                             $__langCode = strtolower($__lang->code);
                             $__langUx = $__languageUxMap[$__langCode] ?? [
                                 'native' => $__lang->name_native ?: strtoupper($__lang->code),
@@ -169,6 +187,50 @@
                     @endforeach
                 </div>
             </section>
+
+            @if ($__hasCurrency)
+            <section class="regionSwitcher_col regionSwitcher_col--currency" aria-label="{{ $__ui['currency'] }}">
+                <header class="regionSwitcher_col_header">
+                    <x-icon name="coins" class="size-3.5" />
+                    <span class="regionSwitcher_col_header_title">{{ $__ui['currency'] }}</span>
+                    <span class="regionSwitcher_col_header_sub">{{ $__ui['convertFrom'] }} {{ $__rateBase }}</span>
+                </header>
+                <div class="regionSwitcher_col_list regionSwitcher_col_list--2col" role="group" data-region-col="currency">
+                    @foreach ($__currencies as $__code => $__cur)
+                        @php
+                            $__isCur = strtoupper($__code) === strtoupper($__currentCurrency);
+                            $__isBase = strtoupper($__code) === strtoupper($__rateBase);
+                            $__rateHtml = function_exists('format_rate_from_base')
+                                ? format_rate_from_base($__code, $__rateBase, true)
+                                : '';
+                        @endphp
+                        <button type="button"
+                                role="menuitemradio"
+                                aria-checked="{{ $__isCur ? 'true' : 'false' }}"
+                                class="regionSwitcher_item regionSwitcher_item--currency{{ $__isCur ? ' is-selected is-current' : '' }}"
+                                data-currency-code="{{ $__code }}"
+                                title="{{ ($__cur['name_local'] ?? $__cur['name'] ?? $__code) }} ({{ $__code }})">
+                            <span class="regionSwitcher_item_flag" aria-hidden="true">{{ $__cur['flag'] ?? '💱' }}</span>
+                            <span class="regionSwitcher_item_text">
+                                <span class="regionSwitcher_item_title">
+                                    {{ $__code }}
+                                    <span class="regionSwitcher_item_subname">· {{ $__cur['name_local'] ?? ($__cur['name'] ?? $__code) }}</span>
+                                </span>
+                                @if ($__isBase)
+                                    <span class="regionSwitcher_item_sub regionSwitcher_item_sub--base">{{ $__ui['intlRef'] }}</span>
+                                @else
+                                    <span class="regionSwitcher_item_sub">1 {{ $__rateBase }} ≈ {!! $__rateHtml !!}</span>
+                                @endif
+                            </span>
+                            <span class="regionSwitcher_item_symbol" aria-hidden="true">{!! $__cur['symbol_html'] ?? ($__cur['symbol'] ?? '') !!}</span>
+                            <span class="regionSwitcher_item_check" aria-hidden="true">
+                                <x-icon name="check" class="size-2.5" />
+                            </span>
+                        </button>
+                    @endforeach
+                </div>
+            </section>
+            @endif
         </div>
 
         <footer class="regionSwitcher_footer">
@@ -186,6 +248,24 @@
             <div class="regionSwitcher_loading_spinner"></div>
             <div class="regionSwitcher_loading_text">{{ $__ui['applying'] }}</div>
         </div>
+
+        @if ($__hasCurrency)
+        <noscript>
+            <form method="post" action="{{ $__switchEndpoint }}" class="regionSwitcher_noscript">
+                @csrf
+                <input type="hidden" name="redirect" value="{{ '/'.ltrim(request()->path(), '/') }}" />
+                <label>{{ $__ui['currencyColon'] }}
+                    <select name="to" onchange="this.form.submit()">
+                        @foreach ($__currencies as $__code => $__cur)
+                            <option value="{{ $__code }}" @selected(strtoupper($__code) === strtoupper($__currentCurrency))>
+                                {{ $__code }} · {{ $__cur['name_local'] ?? ($__cur['name'] ?? $__code) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </label>
+            </form>
+        </noscript>
+        @endif
     </div>
 </div>
 
@@ -195,6 +275,15 @@
 (function () {
     if (window.__regionSwitcherInit) return;
     window.__regionSwitcherInit = true;
+
+    function setCookie(name, value, days) {
+        var maxAge = (parseInt(days, 10) || 365) * 24 * 60 * 60;
+        var secure = (location.protocol === 'https:') ? '; Secure' : '';
+        document.cookie = name + '=' + encodeURIComponent(value) +
+            '; Max-Age=' + maxAge +
+            '; Path=/' +
+            '; SameSite=Lax' + secure;
+    }
 
     function lockBodyScroll(yes) {
         try { document.body.classList.toggle('is-regionSwitcherFullscreen', !!yes); } catch (e) {}
@@ -224,7 +313,9 @@
         var applyBtn = menu.querySelector('[data-region-apply]');
         var cancelBtns = menu.querySelectorAll('[data-region-cancel]');
         var langCol = menu.querySelector('[data-region-col="lang"]');
+        var curCol = menu.querySelector('[data-region-col="currency"]');
         var currentLang = root.getAttribute('data-current-locale') || '';
+        var currentCurrency = root.getAttribute('data-current-currency') || '';
         var isMobile = root.getAttribute('data-variant') === 'mobile';
 
         function getSelected(col) {
@@ -233,18 +324,23 @@
 
         function pendingState() {
             var ls = getSelected(langCol);
+            var cs = getSelected(curCol);
             var langCode = ls ? (ls.getAttribute('data-lang-code') || '') : currentLang;
+            var curCode = cs ? (cs.getAttribute('data-currency-code') || '') : currentCurrency;
             return {
                 langCode: langCode,
                 langHref: ls ? (ls.getAttribute('data-lang-href') || '') : '',
+                curCode: curCode,
                 langChanged: langCode && langCode !== currentLang,
+                curChanged: curCode && curCode !== currentCurrency,
             };
         }
 
         function refreshApply() {
             var s = pendingState();
+            var changed = !!(s.langChanged || s.curChanged);
             applyBtn.removeAttribute('disabled');
-            applyBtn.classList.toggle('is-ready', !!s.langChanged);
+            applyBtn.classList.toggle('is-ready', changed);
         }
 
         function resetSelection() {
@@ -291,11 +387,12 @@
             }
         });
 
-        if (langCol) {
-            langCol.querySelectorAll('.regionSwitcher_item').forEach(function (btn) {
+        function bindItems(col) {
+            if (!col) return;
+            col.querySelectorAll('.regionSwitcher_item').forEach(function (btn) {
                 btn.addEventListener('click', function (e) {
                     e.preventDefault();
-                    langCol.querySelectorAll('.is-selected').forEach(function (el) {
+                    col.querySelectorAll('.is-selected').forEach(function (el) {
                         el.classList.remove('is-selected');
                     });
                     btn.classList.add('is-selected');
@@ -303,10 +400,12 @@
                 });
             });
         }
+        bindItems(langCol);
+        bindItems(curCol);
 
         applyBtn.addEventListener('click', function () {
             var s = pendingState();
-            if (!s.langChanged) {
+            if (!s.langChanged && !s.curChanged) {
                 closeMenu();
                 return;
             }
@@ -314,10 +413,21 @@
             applyBtn.classList.add('is-loading');
             applyBtn.setAttribute('disabled', 'disabled');
             cancelBtns.forEach(function (c) { c.setAttribute('disabled', 'disabled'); });
+
+            if (s.curChanged) {
+                var cookieName = root.getAttribute('data-cookie-name') || 'app_currency';
+                var days = root.getAttribute('data-cookie-days') || '365';
+                setCookie(cookieName, s.curCode, days);
+            }
+
             try {
-                window.location.assign(s.langHref);
+                if (s.langChanged && s.langHref) {
+                    window.location.assign(s.langHref);
+                } else {
+                    window.location.reload();
+                }
             } catch (err) {
-                window.location.href = s.langHref || window.location.href;
+                window.location.href = s.langChanged && s.langHref ? s.langHref : window.location.href;
             }
         });
 

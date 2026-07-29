@@ -4,56 +4,70 @@
 @section('meta_description', 'Tuyển chọn ' . strtolower($type['name']) . ' tốt nhất với đánh giá thật từ khách hàng. Đặt cabin qua chuyên gia bản địa, nhận báo giá trong 24 giờ.')
 
 @section('content')
-    <x-layout.page-header :title="$type['name']" subtitle="Tuyển chọn những du thuyền đáng trải nghiệm nhất, được kiểm chứng bởi chính khách hàng của chúng tôi"
+    @php
+        $durationKeys = array_map('strval', array_keys($durations));
+        $styleKeys = array_map('strval', array_keys($styles));
+        $filterDefaults = [
+            // Chỉ loại trang hiện tại được check; user có thể thêm loại khác → fetch thêm
+            'type' => [$type['slug']],
+            'duration' => $durationKeys,
+            'style' => $styleKeys,
+        ];
+        $schemaItems = collect($cruises)->map(fn ($c) => [
+            'name' => $c['title'],
+            'url' => locale_route('cruises.show', ['type' => $c['typeSlug'], 'slug' => $c['slug']]),
+        ])->all();
+    @endphp
+
+    <x-layout.page-header
+        :title="$type['name']"
+        subtitle="Tuyển chọn những du thuyền đáng trải nghiệm nhất, được kiểm chứng bởi chính khách hàng của chúng tôi"
+        :banner-src="$type['imageHero'] ?? null"
+        :banner-srcset="$type['imageSrcset'] ?? null"
+        :banner-alt="'Banner ' . $type['name']"
         :breadcrumbs="[
-            ['label' => 'Du thuyền', 'url' => route('cruises.index', 'du-thuyen-ha-long')],
+            ['label' => 'Du thuyền', 'url' => locale_route('cruises.hub')],
             ['label' => $type['name']],
         ]" />
 
-    {{-- Pill chuyển nhanh giữa các tuyến du thuyền --}}
-    <div class="container-site cruise-type-nav">
-        @foreach ($types as $t)
-            <a href="{{ route('cruises.index', $t['slug']) }}"
-                class="btn-chip {{ $t['slug'] === $type['slug'] ? 'is-active' : '' }}">
-                {{ $t['name'] }} <span class="opacity-70">({{ $t['count'] }})</span>
-            </a>
-        @endforeach
-    </div>
-
-    <div class="container-site listing-layout section-band--sm">
-        <x-tour.filter-sidebar :durations="$durations" :styles="$styles" />
+    <div class="container-site listing-layout section-band--sm"
+        x-data="listingGrid(@js([
+            'endpoint' => route('api.listings.cruises'),
+            'params' => ['variant' => 'wide'],
+            'syncUrl' => true,
+            'filters' => $filterDefaults,
+        ]))">
+        <x-tour.filter-sidebar
+            :durations="$durations"
+            :styles="$styles"
+            :types="$types"
+            :show-type-filter="true" />
 
         <div class="min-w-0">
             <div class="listing-toolbar">
+                <p class="listing-toolbar__count" x-show="count !== null" x-cloak>
+                    <span class="listing-toolbar__count-num" x-text="count"></span>
+                    <span class="listing-toolbar__count-label">du thuyền</span>
+                </p>
                 <x-shared.sort-dropdown />
             </div>
 
-            @if (count($cruises))
-                <div class="site-stack">
-                    @foreach ($cruises as $cruise)
-                        <x-tour.card :item="$cruise" :href="route('cruises.show', ['type' => $cruise['typeSlug'], 'slug' => $cruise['slug']])" />
-                    @endforeach
-                </div>
-            @else
-                <div class="card listing-empty">
-                    <x-icon name="cruise" class="size-10 text-muted" />
-                    <p class="font-semibold">Chưa có du thuyền nào trong tuyến này.</p>
-                    <a href="{{ route('customize') }}" class="btn-primary site-mt">
-                        <x-icon name="sparkles" class="size-4" /> Nhờ chuyên gia tư vấn
-                    </a>
-                </div>
-            @endif
+            <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
+
+            <div class="listing-results" x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
+                <x-tour.listing-skeleton :count="4" variant="wide" />
+            </div>
 
             <div class="prose-travel listing-seo">
                 <p>
-                    Ngủ đêm trên <strong>{{ strtolower($type['name']) }}</strong> là trải nghiệm không thể thay thế:
-                    thức dậy giữa làn nước xanh ngọc, đón bình minh ngay trên boong tàu và dùng bữa tối dưới bầu trời sao.
-                    ViTravel làm việc trực tiếp với từng nhà thuyền — không qua trung gian — nên bạn luôn nhận được
-                    <strong>giá tốt nhất kèm ưu đãi riêng</strong> cho khách đặt sớm.
+                    Ngủ đêm trên <strong>{{ strtolower($type['name']) }}</strong> là trải nghiệm không thể thay thế.
+                    ViTravel làm việc trực tiếp với từng nhà thuyền — không qua trung gian.
                 </p>
             </div>
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về {{ strtolower($type['name']) }}" />
         </div>
     </div>
+
+    {!! schema_ld(schema()->itemList($schemaItems, $type['name'] . ' — ViTravel')) !!}
 @endsection

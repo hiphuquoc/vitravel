@@ -23,6 +23,12 @@
                     {{ $item['badge'] }}
                 </span>
             @endif
+            @if (!empty($item['duration']))
+                <span class="tour-card-duration">
+                    <x-icon name="calendar" class="tour-card-duration__icon" />
+                    {{ $item['duration'] }}
+                </span>
+            @endif
         </a>
 
         <div class="card-body flex flex-col">
@@ -31,12 +37,7 @@
                     <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $item['title'] }}</a>
                 </h3>
 
-                <div class="card-meta-row">
-                    <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
-                    <span class="tour-card-duration">
-                        <x-icon name="calendar" class="size-3.5" /> {{ $item['duration'] }}
-                    </span>
-                </div>
+                <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
 
                 @if (!empty($item['places']))
                     <p class="tour-card-places">
@@ -76,21 +77,31 @@
                 @endif
             </div>
 
-            <div class="card-footer card-footer-row" x-data="{ open: false }">
-                @if (!empty($item['highlights']))
-                    <button type="button" @click="open = !open"
-                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink transition hover:text-primary-600"
-                        :aria-expanded="open">
-                        Điểm nhấn chính
-                        <x-icon name="chevron-down" class="size-4 transition" ::class="open && 'rotate-180'" />
-                    </button>
-                @endif
-                <a href="{{ $href }}" class="btn-primary-sm ml-auto">
-                    Xem chi tiết <x-icon name="arrow-right" class="size-4" />
-                </a>
+            <div class="card-footer" x-data="{ open: false }">
+                <div class="card-footer-row card-footer-row--price">
+                    @if (!empty($item['priceFormatted']))
+                        <div class="tour-card-price">
+                            <span class="tour-card-price__label">Giá từ</span>
+                            <span class="tour-card-price__value">{{ $item['priceFormatted'] }}</span>
+                        </div>
+                    @endif
+
+                    @if (!empty($item['highlights']))
+                        <button type="button" @click="open = !open"
+                            class="inline-flex items-center gap-1.5 text-sm font-semibold text-ink transition hover:text-primary-600"
+                            :aria-expanded="open">
+                            Điểm nhấn chính
+                            <x-icon name="chevron-down" class="size-4 transition" ::class="open && 'rotate-180'" />
+                        </button>
+                    @endif
+
+                    <a href="{{ $href }}" class="btn-primary-sm ml-auto">
+                        Xem chi tiết <x-icon name="arrow-right" class="size-4" />
+                    </a>
+                </div>
 
                 @if (!empty($item['highlights']))
-                    <div x-show="open" x-collapse x-cloak class="w-full">
+                    <div x-show="open" x-collapse x-cloak class="w-full site-mt">
                         <ul class="tour-card-highlights">
                             @foreach ($item['highlights'] as $h)
                                 <li class="flex gap-2">

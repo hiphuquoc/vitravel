@@ -27,7 +27,7 @@
                 <p class="mb-3 text-sm font-semibold text-ink-soft">Điểm đến phổ biến</p>
                 <div class="form-pills">
                     @foreach ($destinations as $c)
-                        <a href="{{ route('tours.index', $c['slug']) }}" class="site-search-chip">{{ $c['name'] }}</a>
+                        <a href="{{ locale_route('tours.index', $c['slug']) }}" class="site-search-chip">{{ $c['name'] }}</a>
                     @endforeach
                 </div>
                 @if (count($keywords))
@@ -54,7 +54,7 @@
                     <h2 class="search-section__title">Điểm đến</h2>
                     <div class="site-mt grid site-gap-sm sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($results['destinations'] as $c)
-                            <a href="{{ route('tours.index', $c['slug']) }}" class="search-dest-card">
+                            <a href="{{ locale_route('tours.index', $c['slug']) }}" class="search-dest-card">
                                 <span>
                                     <span class="block font-semibold text-ink">Tour {{ $c['name'] }}</span>
                                     <span class="text-sm text-muted">{{ $c['tagline'] }}</span>
@@ -71,7 +71,7 @@
                     <h2 class="search-section__title">Tour ({{ count($results['tours']) }})</h2>
                     <div class="site-mt site-stack">
                         @foreach ($results['tours'] as $tour)
-                            <x-tour.card :item="$tour" :href="route('tours.show', ['country' => $tour['countrySlug'], 'slug' => $tour['slug']])" />
+                            <x-tour.card :item="$tour" :href="locale_route('tours.show', ['country' => $tour['countrySlug'], 'slug' => $tour['slug']])" />
                         @endforeach
                     </div>
                 </section>
@@ -83,7 +83,7 @@
                     <div class="site-mt grid site-gap sm:grid-cols-2 lg:grid-cols-3">
                         @foreach ($results['cruises'] as $cruise)
                             <x-tour.card-compact :item="$cruise"
-                                :href="route('cruises.show', ['type' => $cruise['typeSlug'] ?? 'du-thuyen-ha-long', 'slug' => $cruise['slug']])" />
+                                :href="locale_route('cruises.show', ['type' => $cruise['typeSlug'] ?? 'du-thuyen-ha-long', 'slug' => $cruise['slug']])" />
                         @endforeach
                     </div>
                 </section>

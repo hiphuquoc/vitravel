@@ -17,7 +17,7 @@
         <div class="adminFormPage_content">
             @include('admin.components.pageHeader', [
                 'title' => $title,
-                'desc' => 'Quốc gia làm trang cha cho tour/cruise — slug_full thường là /tours/{code}.',
+                'desc' => 'Quốc gia làm trang cha cho tour — slug_full = /tours/{slug} (vd. /tours/viet-nam).',
                 'icon' => '<path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3"/>',
                 'backUrl' => route('admin.countries.list'),
                 'backText' => 'Quay lại',
@@ -110,7 +110,9 @@
                             </div>
                             <div class="adminFormSection_header_info">
                                 <h2 class="adminFormSection_title">Thông tin SEO</h2>
-                                <p class="adminFormSection_description">Quốc gia thường là trang gốc (không có parent). Tour/Cruise sẽ chọn quốc gia làm trang cha.</p>
+                                <p class="adminFormSection_description">
+                                    Chọn trang cha (Hub Tour) → level = cha.level+1 → slug_full = {cha.slug_full}/{slug}.
+                                </p>
                             </div>
                         </div>
                         <div class="adminFormSection_body">
@@ -121,14 +123,14 @@
                                     'seo_title' => old('seo_title', $seoTranslation?->seo_title),
                                     'seo_description' => old('seo_description', $seoTranslation?->seo_description),
                                     'keywords' => old('seo_keywords', $seoTranslation?->keywords),
-                                    'parent_id' => null,
+                                    'parent_id' => old('seo_parent_id', $country?->seoEntry?->parent_id ?? $defaultParentId),
                                     'rating_aggregate_count' => $country?->seoEntry?->rating_aggregate_count,
                                     'rating_aggregate_star' => $country?->seoEntry?->rating_aggregate_star,
                                 ],
                                 'seoEntry' => $country?->seoEntry,
                                 'language' => $locale,
-                                'parents' => collect(),
-                                'showParent' => false,
+                                'parents' => $parents,
+                                'showParent' => true,
                                 'titleFieldId' => 'name',
                             ])
                         </div>
@@ -194,9 +196,20 @@
                                 'currentImage' => $country?->bannerUrl(),
                                 'removeName' => 'remove_image',
                                 'aspectRatio' => '16/10',
-                                'tooltip' => 'Ảnh bento grid trang chủ / banner quốc gia.',
+                                'tooltip' => 'Ảnh thumbnail bento grid trang chủ.',
                                 'hint' => 'JPG, PNG, WebP — tối đa '.config('media.max_upload_kb').'KB. Tự tối ưu về WebP ≤1920px.',
                             ])
+                            <div style="margin-top:1.25rem;">
+                                @include('admin.components.formImageUpload', [
+                                    'name' => 'listing_banner',
+                                    'label' => 'Ảnh banner listing',
+                                    'currentImage' => $country?->listingBannerUrl('lg') ?: $country?->listingBannerUrl('full'),
+                                    'removeName' => 'remove_listing_banner',
+                                    'aspectRatio' => '21/9',
+                                    'tooltip' => 'Banner ngang dài first-view trang /tours/{slug}. Khác ảnh đại diện trang chủ.',
+                                    'hint' => 'JPG, PNG, WebP — tối đa '.config('media.max_upload_kb').'KB. Nên dùng ảnh ngang (~1920×820).',
+                                ])
+                            </div>
                         </div>
                     </div>
                 </div>

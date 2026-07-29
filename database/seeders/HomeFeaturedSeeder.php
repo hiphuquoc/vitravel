@@ -62,24 +62,28 @@ class HomeFeaturedSeeder extends Seeder
 
     protected function seedCompanyContact(): void
     {
+        $defaults = [
+            'contact_email' => (string) config('company.contact.email', 'hello@vitravel.vn'),
+            'contact_phone' => (string) config('company.contact.phone', '+84 24 3999 8888'),
+            'contact_whatsapp' => (string) config('company.contact.whatsapp', '+84 912 345 678'),
+            'slogan' => (string) config('company.slogan', '“Hài lòng hơn cả mong đợi”'),
+            'license_number' => (string) config('company.license_number', ''),
+        ];
+
         $profile = CompanyProfile::query()->first();
 
         if ($profile) {
             $profile->fill([
-                'contact_email' => $profile->contact_email ?: 'hello@vitravel.example',
-                'contact_phone' => $profile->contact_phone ?: '+84 24 3999 8888',
-                'contact_whatsapp' => $profile->contact_whatsapp ?: '+84 912 345 678',
-                'slogan' => $profile->slogan ?: '“Hài lòng hơn cả mong đợi”',
+                'contact_email' => $profile->contact_email ?: $defaults['contact_email'],
+                'contact_phone' => $profile->contact_phone ?: $defaults['contact_phone'],
+                'contact_whatsapp' => $profile->contact_whatsapp ?: $defaults['contact_whatsapp'],
+                'slogan' => $profile->slogan ?: $defaults['slogan'],
+                'license_number' => $profile->license_number ?: $defaults['license_number'],
             ])->save();
 
             return;
         }
 
-        CompanyProfile::query()->create([
-            'contact_email' => 'hello@vitravel.example',
-            'contact_phone' => '+84 24 3999 8888',
-            'contact_whatsapp' => '+84 912 345 678',
-            'slogan' => '“Hài lòng hơn cả mong đợi”',
-        ]);
+        CompanyProfile::query()->create($defaults);
     }
 }

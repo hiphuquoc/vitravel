@@ -1,39 +1,76 @@
 <?php
 
-use App\Http\Controllers\CruiseController;
-use App\Http\Controllers\GuideController;
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\RoutingController;
 use App\Http\Controllers\SearchController;
-use App\Http\Controllers\TourController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
+/*
+| Public GET pages — registered twice: default locale (named) + /{locale}/ (unnamed).
+| Tours / cruises / guide listing URLs are catch-all via RoutingController + slug_full.
+| Named SEO stubs in routes/seo_names.php keep route()/locale_route fallbacks valid.
+*/
+$registerPublicRoutes = function (bool $named = true): void {
+    $home = Route::get('/', [HomeController::class, 'index']);
+    $search = Route::get('/tim-kiem', [SearchController::class, 'index']);
 
-Route::get('/tim-kiem', [SearchController::class, 'index'])->name('search');
+    $about = Route::get('/ve-chung-toi', [PageController::class, 'about']);
+    $contact = Route::get('/lien-he', [PageController::class, 'contact']);
+    $customize = Route::get('/thiet-ke-tour-rieng', [PageController::class, 'customize']);
+    $team = Route::get('/doi-ngu', [PageController::class, 'team']);
+    $reviews = Route::get('/cam-nhan-khach-hang', [PageController::class, 'reviews']);
+    $gallery = Route::get('/thu-vien-khoanh-khac', [PageController::class, 'gallery']);
+    $videos = Route::get('/video-trai-nghiem', [PageController::class, 'videos']);
 
-// ── Tours ────────────────────────────────────────────────────────────────
-Route::get('/tours/{country}', [TourController::class, 'index'])->name('tours.index');
-Route::get('/tours/{country}/{slug}', [TourController::class, 'show'])->name('tours.show');
+    if ($named) {
+        $home->name('home');
+        $search->name('search');
+        $about->name('about');
+        $contact->name('contact');
+        $customize->name('customize');
+        $team->name('team');
+        $reviews->name('reviews');
+        $gallery->name('gallery');
+        $videos->name('videos');
+    }
+};
 
-// ── Cruises ──────────────────────────────────────────────────────────────
-Route::get('/cruises/{type}', [CruiseController::class, 'index'])->name('cruises.index');
-Route::get('/cruises/{type}/{slug}', [CruiseController::class, 'show'])->name('cruises.show');
+/* Default locale (vi) — unprefixed, named routes */
+$registerPublicRoutes(true);
 
-// ── Travel Guide / Blog ──────────────────────────────────────────────────
-Route::get('/cam-nang-du-lich', [GuideController::class, 'index'])->name('guide.index');
-Route::get('/cam-nang-du-lich/{country}', [GuideController::class, 'country'])->name('guide.country');
-Route::get('/cam-nang-du-lich/{country}/{slug}', [GuideController::class, 'show'])->name('guide.show');
+/* Non-default locales: /en/..., /zh-cn/..., ... — same handlers, no route names */
+$localePattern = collect(config('language.list', []))
+    ->reject(fn ($l) => ! empty($l['is_default']))
+    ->pluck('code')
+    ->map(fn ($c) => preg_quote((string) $c, '/'))
+    ->implode('|');
 
-// ── Trang thương hiệu & form ─────────────────────────────────────────────
-Route::get('/ve-chung-toi', [PageController::class, 'about'])->name('about');
-Route::get('/lien-he', [PageController::class, 'contact'])->name('contact');
-Route::get('/thiet-ke-tour-rieng', [PageController::class, 'customize'])->name('customize');
-Route::get('/doi-ngu', [PageController::class, 'team'])->name('team');
-Route::get('/cam-nhan-khach-hang', [PageController::class, 'reviews'])->name('reviews');
-Route::get('/thu-vien-khoanh-khac', [PageController::class, 'gallery'])->name('gallery');
-Route::get('/video-trai-nghiem', [PageController::class, 'videos'])->name('videos');
+if ($localePattern !== '') {
+    Route::prefix('{locale}')
+        ->where(['locale' => $localePattern])
+        ->group(function () use ($registerPublicRoutes) {
+            $registerPublicRoutes(false);
+        });
+}
+
+/* Named SEO route stubs — URI never hit publicly; locale_route resolves via slug_full */
+require __DIR__.'/seo_names.php';
+
+Route::match(['get', 'post'], '/currency/switch', [CurrencyController::class, 'switch'])
+    ->name('currency.switch');
+
+// ── Listing JSON (filter / skeleton fetch — không reload trang) ───────────
+Route::prefix('api/listings')->name('api.listings.')->group(function () {
+    Route::get('/tours', [ListingController::class, 'tours'])->name('tours');
+    Route::get('/cruises', [ListingController::class, 'cruises'])->name('cruises');
+    Route::get('/featured-tours', [ListingController::class, 'featuredTours'])->name('featured-tours');
+    Route::get('/featured-cruises', [ListingController::class, 'featuredCruises'])->name('featured-cruises');
+    Route::get('/related', [ListingController::class, 'related'])->name('related');
+});
 
 // ── Lead forms ───────────────────────────────────────────────────────────
 Route::post('/leads/quick-inquiry', [LeadController::class, 'storeQuickInquiry'])->name('leads.quick-inquiry');
@@ -41,4 +78,4 @@ Route::post('/leads/custom-tour', [LeadController::class, 'storeCustomTour'])->n
 Route::post('/leads/contact', [LeadController::class, 'storeContact'])->name('leads.contact');
 Route::post('/leads/comment', [LeadController::class, 'storeComment'])->name('leads.comment');
 
-Route::fallback(fn () => response()->view('errors.404', [], 404));
+Route::fallback([RoutingController::class, 'routing']);

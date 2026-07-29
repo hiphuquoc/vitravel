@@ -52,10 +52,16 @@ class AdminMenuHelper
             ];
 
             if (isset($item['route'])) {
+                $params = $item['params'] ?? [];
                 $menuItem['route'] = $item['route'];
-                $menuItem['url'] = route($item['route']);
+                $menuItem['url'] = route($item['route'], $params);
                 $menuItem['active'] = $currentRoute === $item['route']
                     || str_starts_with($currentRoute, str_replace('.list', '', $item['route']).'.');
+
+                // Hub routes share one name — match hubKey when provided
+                if ($menuItem['active'] && isset($params['hubKey'])) {
+                    $menuItem['active'] = request()->route('hubKey') === $params['hubKey'];
+                }
             } elseif (isset($item['url'])) {
                 $menuItem['url'] = $item['url'];
             }
