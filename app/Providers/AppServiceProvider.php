@@ -10,6 +10,7 @@ use App\Models\Destination;
 use App\Models\Package;
 use App\Models\Review;
 use App\Models\StaticPage;
+use App\Models\TeamMember;
 use App\Models\TourCategory;
 use App\Services\CurrencyManager;
 use App\Services\ViewDataService;
@@ -43,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
             'company' => CompanyProfile::class,
             'review' => Review::class,
             'cruise_type' => \App\Models\CruiseType::class,
+            'team_member' => TeamMember::class,
         ]);
     }
 }

@@ -2,21 +2,25 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TeamMember extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
-    protected array $translatable = ['name', 'role', 'short_bio'];
+    protected array $translatable = ['name', 'role', 'short_bio', 'bio_html'];
 
     protected $fillable = [
         'department', 'avatar_media_id', 'sort', 'is_active', 'show_on_home',
+        'phone', 'email', 'area', 'years_experience', 'languages',
+        'stat_clients', 'stat_tours', 'stat_awards', 'is_verified',
     ];
 
     protected function casts(): array
@@ -24,7 +28,13 @@ class TeamMember extends Model
         return [
             'is_active' => 'boolean',
             'show_on_home' => 'boolean',
+            'is_verified' => 'boolean',
             'sort' => 'integer',
+            'years_experience' => 'integer',
+            'stat_clients' => 'integer',
+            'stat_tours' => 'integer',
+            'stat_awards' => 'integer',
+            'languages' => 'array',
         ];
     }
 
@@ -36,6 +46,31 @@ class TeamMember extends Model
     public function avatar(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'avatar_media_id');
+    }
+
+    public function achievements(): HasMany
+    {
+        return $this->hasMany(TeamMemberAchievement::class)->orderBy('ordering');
+    }
+
+    public function skills(): HasMany
+    {
+        return $this->hasMany(TeamMemberSkill::class)->orderBy('ordering');
+    }
+
+    public function experiences(): HasMany
+    {
+        return $this->hasMany(TeamMemberExperience::class)->orderBy('ordering');
+    }
+
+    public function degrees(): HasMany
+    {
+        return $this->hasMany(TeamMemberDegree::class)->orderBy('ordering');
+    }
+
+    public function activityImages(): HasMany
+    {
+        return $this->hasMany(TeamMemberActivityImage::class)->orderBy('ordering');
     }
 
     public function avatarUrl(?string $variant = 'thumb'): ?string

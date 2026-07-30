@@ -116,7 +116,7 @@ Itinerary: `day_number`, meals, `transport_icons` (JSON), overnight, content (tr
 
 ### 4.5. Social proof & brand
 
-`reviews` (morph), `team_members`, `offices`, `experience_albums`/`photos`, `experience_videos`, `usps`, `company_values`, `reasons_to_choose_us`, `reference_persons`, `company_profiles` (intro/mission/vision/policy singleton-ish), `hero_pills`, `review_platforms`, `static_pages`.
+`reviews` (morph), `team_members` (+ achievements/skills/experiences/degrees/activity_images), `offices`, `experience_albums`/`photos`, `experience_videos`, `usps`, `company_values`, `reasons_to_choose_us`, `reference_persons`, `company_profiles` (intro/mission/vision/policy singleton-ish), `hero_pills`, `review_platforms`, `static_pages`.
 
 ### 4.6. Shared
 

@@ -102,6 +102,19 @@ return [
             'parent_type' => ['static_page'],
             'parent_relation' => null,
         ],
+
+        'team_hub' => [
+            'label' => 'Hub Đội ngũ',
+            'hub' => true,
+            'default_slug' => 'doi-ngu',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
+        'team_member' => [
+            'label' => 'Thành viên đội ngũ',
+            'parent_type' => 'team_hub',
+            'parent_relation' => null,
+        ],
     ],
 
     /*
@@ -136,6 +149,15 @@ return [
             'default_subtitle' => 'Kinh nghiệm, lịch trình và cảm hứng cho hành trình Đông Nam Á.',
             'default_seo_title' => 'Cẩm nang du lịch Đông Nam Á — ViTravel',
             'default_seo_description' => 'Bài viết hướng dẫn và cảm hứng du lịch từ đội ngũ ViTravel.',
+        ],
+        'team_hub' => [
+            'template' => 'team_hub',
+            'seo_type' => 'team_hub',
+            'default_slug' => 'doi-ngu',
+            'default_title' => 'Đội ngũ',
+            'default_subtitle' => 'Những người bản địa yêu nghề, trực tiếp thiết kế và chăm chút từng hành trình.',
+            'default_seo_title' => 'Đội ngũ ViTravel — Chuyên gia bản địa',
+            'default_seo_description' => 'Gặp gỡ đội ngũ chuyên gia bản địa của ViTravel — những người trực tiếp thiết kế và đồng hành cùng hành trình của bạn.',
         ],
     ],
 ];

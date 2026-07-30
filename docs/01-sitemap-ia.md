@@ -109,6 +109,8 @@ Theo ảnh `ve-chung-toi-about.png`, **CHI SIAMO là 1 trang dài duy nhất** g
 | Trang tĩnh | `/{slug}.html` | `/{slug}` |
 | Trang Customize Tour | `/customize-tour` | `/customize-tour` |
 | Form yêu cầu báo giá theo tour | `/tour/{slug}/inquiry.html` | `/tours/{country}/{slug}/inquiry` |
+| Đội ngũ (list) | — | `/doi-ngu` (named route + SEO hub `team_hub`) |
+| Hồ sơ thành viên | — | `/doi-ngu/{slug}` (SEO type `team_member`, catch-all) |
 
 Ghi chú: site gốc dùng ID số (`c503`, `t589`, `b397`) do CMS cũ generate — khi clone **không cần giữ ID**, nên dùng slug sạch để thân thiện & dễ maintain hơn.
 

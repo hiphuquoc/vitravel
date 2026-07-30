@@ -217,6 +217,8 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 
 **Ghi chú:** Trang này nên build từ các **section component độc lập, có thể tái sắp xếp** (không hard-code thứ tự cứng trong 1 component khổng lồ) — vì đây là trang dễ được yêu cầu chỉnh sửa thứ tự/nội dung nhất trong toàn site.
 
+**CMS (2026-07):** About-only content đã wire DB + admin đa ngôn ngữ qua `CompanyProfile` / translations + CRUD `CompanyValue`, `ReasonToChooseUs`, `ReferencePerson`. Shared Home blocks (company-intro, team-grid, usp, review-platforms, testimonials, video-showcase) vẫn dùng `HomeSection` / related. Public payload: `ViewDataService::aboutPage()` (+ fallback `SampleData::aboutPage()`). Admin: `/he-thong/cong-ty` (story + chrome + ảnh), `/he-thong/gia-tri`, `/he-thong/ly-do-chon`, `/he-thong/dai-dien`.
+
 ---
 
 ## G. Trang Contact (Contattaci) — `/contact-us`
@@ -282,6 +284,22 @@ Footer (đầy đủ) bên dưới.
 ## I. Trang Our Team, Reviews, Experience Gallery/Video
 
 Các trang này ở bản .it được **nhúng làm block trong About Us / Home** thay vì trang riêng biệt rõ ràng trong bộ ảnh — nếu bạn muốn có URL riêng (như bản .com: `/our-team.html`, `/customers-reviews`, `/experience-gallery`, `/experience-video`) thì tái sử dụng chính các component "Uno staff dedicato", "Esperienze Autentiche", "Video di esperienze autentiche" đã mô tả, chỉ hiển thị **đầy đủ danh sách** (không giới hạn số lượng như khi nhúng ở trang khác) + thêm filter/pagination nếu danh sách dài.
+
+### I.1 Hồ sơ thành viên đội ngũ — `/doi-ngu/{slug}`
+
+**Mục đích:** Trang CV đầy đủ của từng thành viên (port UI từ trainer profile).
+
+**URL:** SEO `team_member` dưới hub `team_hub` (`/doi-ngu`). Named route list giữ `/doi-ngu`.
+
+**Thành phần:**
+1. Breadcrumb: Đội ngũ → {Tên}
+2. Sidebar: avatar, huy hiệu xác minh, tên, vai trò, sao (SEO rating), CTA Liên hệ → `/lien-he`
+3. Thông tin cá nhân: khu vực, năm KN, ngôn ngữ, email, phone
+4. Main: `bio_html`, thống kê (Khách đồng hành / Tour dẫn dắt / Giải thưởng), thành tích, skill bars, bằng cấp, timeline kinh nghiệm, gallery hoạt động
+
+**Component:** `x-team.profile` · CSS namespace `.team-profile`
+
+**Dữ liệu:** `TeamMember` + child tables (achievements, skills, experiences/items, degrees/items, activity_images) — xem `03-data-models.md` §8.
 
 ---
 

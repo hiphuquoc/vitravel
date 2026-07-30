@@ -81,7 +81,7 @@
         $testimonialsSection = view_data()->homeSection('testimonials');
     @endphp
     @unless ($teamSection['hidden'] ?? false)
-        <x-shared.team-grid :section="$teamSection" />
+        <x-shared.team-grid :team="view_data()->teamForHome()" :section="$teamSection" />
     @endunless
     @unless ($reviewPlatformsSection['hidden'] ?? false)
         <x-shared.review-platforms :section="$reviewPlatformsSection" />

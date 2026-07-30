@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TeamMemberTranslation extends Model
 {
-    protected $fillable = ['team_member_id', 'language_id', 'name', 'role', 'short_bio'];
+    protected $fillable = ['team_member_id', 'language_id', 'name', 'role', 'short_bio', 'bio_html'];
 
     public function teamMember(): BelongsTo
     {

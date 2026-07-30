@@ -71,10 +71,15 @@ npm run build
 | Quốc gia | `/he-thong/san-pham/quoc-gia` |
 | Bài viết | `/he-thong/bai-viet` |
 | Đội ngũ | `/he-thong/doi-ngu` |
+| Văn phòng | `/he-thong/van-phong` |
+| Công ty (About CMS) | `/he-thong/cong-ty` |
+| Giá trị cốt lõi | `/he-thong/gia-tri` |
+| Lý do chọn | `/he-thong/ly-do-chon` |
+| Đại diện NN | `/he-thong/dai-dien` |
 | Leads (3 loại) | `/he-thong/yeu-cau-nhanh`, `/he-thong/tour-rieng`, `/he-thong/lien-he` |
 | Bình luận | `/he-thong/binh-luan` |
 
-Các module brand còn lại (văn phòng, gallery, video, công ty…) đang placeholder — sẽ bổ sung theo cùng pattern.
+Các module brand còn lại (gallery placeholder, video, cảm nhận…) theo cùng pattern CRUD.
 
 ## Điểm khác biệt quan trọng so với bản khảo sát ban đầu (chỉ dựa trên text)
 

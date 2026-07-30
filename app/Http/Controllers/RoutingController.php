@@ -9,6 +9,7 @@ use App\Models\CruiseType;
 use App\Models\Package;
 use App\Models\SeoEntry;
 use App\Models\StaticPage;
+use App\Models\TeamMember;
 use App\Services\SeoService;
 use App\Support\UrlPath;
 use Illuminate\Http\Request;
@@ -71,6 +72,8 @@ class RoutingController extends Controller
             ),
             'article' => $this->dispatchArticle($entry, $ref, $locale, $seoTrans?->slug),
             'static_page' => $this->dispatchStaticPage($ref),
+            'team_hub' => app(PageController::class)->team(),
+            'team_member' => $this->dispatchTeamMember($ref),
             default => abort(404),
         };
     }
@@ -169,6 +172,15 @@ class RoutingController extends Controller
             ?? abort(404);
 
         return app(GuideController::class)->show($parentCatSlug, $articleSlug);
+    }
+
+    protected function dispatchTeamMember(mixed $ref): Response
+    {
+        if (! $ref instanceof TeamMember) {
+            abort(404);
+        }
+
+        return app(PageController::class)->teamShow($ref);
     }
 
     protected function dispatchStaticPage(mixed $ref): Response

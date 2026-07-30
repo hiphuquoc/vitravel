@@ -34,7 +34,7 @@
         lastScrollY: 0,
         headerHeight: 104,
         topHeight: 36,
-        mainHeight: 68,
+        mainHeight: 54,
         _ignoreScroll: false,
         q: '',
         destinations: @js($searchDestinations),
@@ -72,6 +72,10 @@
         syncSpacer() {
             const top = this.topPinned ? this.topHeight : 0;
             this.headerHeight = Math.min(Math.max(this.mainHeight + top, 56), 140);
+            // Offset sticky nội dung (sidebar chi tiết…) = chiều cao header đang chiếm viewport
+            try {
+                document.documentElement.style.setProperty('--site-header-offset', this.headerHeight + 'px');
+            } catch (e) {}
         },
         /**
          * Ghim/thu headerTop + bù spacer.
@@ -238,15 +242,15 @@
 
     {{-- ── headerMain: logo + nav + CTA ── --}}
     <header class="headerMain" x-ref="headerMain">
-    <div class="container-site flex h-16 items-center gap-3 lg:h-[68px]">
+    <div class="container-site headerMain__inner">
 
         {{-- Logo --}}
-        <a href="{{ locale_route('home') }}" class="flex shrink-0 items-center gap-2" aria-label="ViTravel — về trang chủ">
-            <span class="flex size-9 items-center justify-center rounded-full bg-leaf-500 text-white">
-                <x-icon name="compass" class="size-5" />
+        <a href="{{ locale_route('home') }}" class="header-wordmark" aria-label="ViTravel — về trang chủ">
+            <span class="header-wordmark__mark" aria-hidden="true">
+                <x-icon name="compass" class="header-wordmark__icon" />
             </span>
-            <span class="leading-none">
-                <span class="block font-display text-xl font-bold tracking-tight">ViTravel</span>
+            <span class="header-wordmark__text">
+                <span class="header-wordmark__name">ViTravel</span>
                 <span class="header-wordmark__tagline">Hài lòng hơn mong đợi</span>
             </span>
         </a>
@@ -355,9 +359,9 @@
             </a>
 
             <button type="button" @click="mobileOpen = true"
-                class="flex size-10 cursor-pointer items-center justify-center rounded-full transition hover:bg-white lg:hidden"
+                class="headerMain__menuBtn lg:hidden"
                 aria-label="Mở menu">
-                <x-icon name="menu" class="size-6" />
+                <x-icon name="menu" class="headerMain__menuIcon" />
             </button>
         </div>
     </div>

@@ -26,6 +26,7 @@ return [
     'cruise_types' => env('MEDIA_CRUISE_TYPES_FOLDER', 'vitravel/cruise-types'),
     'articles' => env('MEDIA_ARTICLES_FOLDER', 'vitravel/articles'),
     'team' => env('MEDIA_TEAM_FOLDER', 'vitravel/team'),
+    'company' => env('MEDIA_COMPANY_FOLDER', 'vitravel/company'),
     'reviews' => env('MEDIA_REVIEWS_FOLDER', 'vitravel/reviews'),
     'tour_categories' => env('MEDIA_TOUR_CATEGORIES_FOLDER', 'vitravel/tour-categories'),
     'videos' => env('MEDIA_VIDEOS_FOLDER', 'vitravel/videos'),

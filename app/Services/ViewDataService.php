@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Article;
 use App\Models\BlogCategory;
+use App\Models\CompanyProfile;
 use App\Models\CompanyValue;
 use App\Models\ContentTypeTag;
 use App\Models\Country;
@@ -608,23 +609,150 @@ class ViewDataService
     public function team(): array
     {
         if (! TeamMember::query()->where('is_active', true)->exists()) {
-            return SampleData::team();
+            return array_map(fn (array $row) => $this->mapSampleTeamCard($row), SampleData::team());
         }
 
         return TeamMember::query()
             ->where('is_active', true)
             ->orderBy('sort')
-            ->with(['translations', 'avatar'])
+            ->with(['translations', 'avatar', 'seoEntry.translations'])
             ->get()
-            ->map(fn (TeamMember $member) => [
-                'name' => $member->name,
-                'role' => $member->role,
-                'bio' => $member->short_bio,
-                'image' => $member->avatarUrl('thumb'),
-                'imageSrcset' => $member->avatarSrcset(),
-            ])
+            ->map(fn (TeamMember $member) => $this->mapTeamCard($member))
             ->values()
             ->all();
+    }
+
+    public function teamForHome(): array
+    {
+        if (! TeamMember::query()->where('is_active', true)->where('show_on_home', true)->exists()) {
+            if (! TeamMember::query()->where('is_active', true)->exists()) {
+                return array_map(fn (array $row) => $this->mapSampleTeamCard($row), SampleData::team());
+            }
+        }
+
+        $hasHome = TeamMember::query()->where('is_active', true)->where('show_on_home', true)->exists();
+
+        return TeamMember::query()
+            ->where('is_active', true)
+            ->when($hasHome, fn ($q) => $q->where('show_on_home', true))
+            ->orderBy('sort')
+            ->with(['translations', 'avatar', 'seoEntry.translations'])
+            ->get()
+            ->map(fn (TeamMember $member) => $this->mapTeamCard($member))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function mapTeamCard(TeamMember $member): array
+    {
+        $locale = app()->getLocale();
+        $seoTrans = $member->seoEntry?->translation($locale);
+
+        return [
+            'id' => $member->id,
+            'name' => $member->name,
+            'role' => $member->role,
+            'bio' => $member->short_bio,
+            'image' => $member->avatarUrl('thumb'),
+            'imageSrcset' => $member->avatarSrcset(),
+            'slug' => $seoTrans?->slug,
+            'url' => $seoTrans ? seo_public_url($seoTrans, $locale) : null,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return array<string, mixed>
+     */
+    protected function mapSampleTeamCard(array $row): array
+    {
+        return [
+            'id' => null,
+            'name' => $row['name'],
+            'role' => $row['role'],
+            'bio' => $row['bio'] ?? $row['short_bio'] ?? null,
+            'image' => $row['image'] ?? null,
+            'imageSrcset' => $row['imageSrcset'] ?? null,
+            'slug' => $row['slug'] ?? null,
+            'url' => $row['url'] ?? null,
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function formatTeamMember(TeamMember $member): array
+    {
+        $locale = app()->getLocale();
+
+        $member->loadMissing([
+            'translations',
+            'avatar',
+            'seoEntry.translations',
+            'achievements',
+            'skills',
+            'experiences.items',
+            'degrees.items',
+            'activityImages.media',
+        ]);
+
+        $seoTrans = $member->seoEntry?->translation($locale);
+        $rating = (float) ($member->seoEntry?->rating_aggregate_star ?? 5);
+        $ratingCount = (int) ($member->seoEntry?->rating_aggregate_count ?? 0);
+
+        $languages = $member->languages;
+        if (is_array($languages)) {
+            $languagesLabel = implode(', ', array_filter(array_map('strval', $languages)));
+        } else {
+            $languagesLabel = is_string($languages) ? $languages : '';
+        }
+
+        return [
+            'id' => $member->id,
+            'name' => $member->name,
+            'role' => $member->role,
+            'short_bio' => $member->short_bio,
+            'bio_html' => $member->bio_html,
+            'image' => $member->avatarUrl('lg') ?? $member->avatarUrl('thumb'),
+            'imageSrcset' => $member->avatarSrcset(),
+            'phone' => $member->phone,
+            'email' => $member->email,
+            'area' => $member->area,
+            'years_experience' => $member->years_experience,
+            'languages' => $languagesLabel,
+            'stat_clients' => (int) $member->stat_clients,
+            'stat_tours' => (int) $member->stat_tours,
+            'stat_awards' => (int) $member->stat_awards,
+            'is_verified' => (bool) $member->is_verified,
+            'slug' => $seoTrans?->slug,
+            'url' => $seoTrans ? seo_public_url($seoTrans, $locale) : null,
+            'rating' => $rating,
+            'rating_count' => $ratingCount,
+            'achievements' => $member->achievements->map(fn ($a) => [
+                'content' => $a->content,
+            ])->values()->all(),
+            'skills' => $member->skills->map(fn ($s) => [
+                'skill' => $s->skill,
+                'percent' => (int) $s->percent,
+            ])->values()->all(),
+            'experiences' => $member->experiences->map(fn ($e) => [
+                'title' => $e->title,
+                'company' => $e->company,
+                'items' => $e->items->pluck('content')->values()->all(),
+            ])->values()->all(),
+            'degrees' => $member->degrees->map(fn ($d) => [
+                'title' => $d->title,
+                'school' => $d->school,
+                'items' => $d->items->pluck('content')->values()->all(),
+            ])->values()->all(),
+            'activity_images' => $member->activityImages->map(fn ($img) => [
+                'url' => $img->imageUrl('lg') ?? $img->imageUrl(),
+                'thumb' => $img->thumbUrl() ?? $img->imageUrl('thumb'),
+            ])->filter(fn ($row) => filled($row['url']))->values()->all(),
+        ];
     }
 
     public function offices(): array
@@ -733,7 +861,7 @@ class ViewDataService
         return ReferencePerson::query()
             ->where('is_active', true)
             ->orderBy('sort')
-            ->with('country.translations')
+            ->with(['country.translations', 'photo'])
             ->get()
             ->map(fn (ReferencePerson $person) => [
                 'name' => $person->name,
@@ -741,9 +869,87 @@ class ViewDataService
                 'email' => $person->email ?? '',
                 'phone' => $person->phone ?? '',
                 'skype' => $person->skype ?? '',
+                'image' => $person->photoUrl('card'),
+                'imageSrcset' => $person->photoSrcset(),
             ])
             ->values()
             ->all();
+    }
+
+    /**
+     * Nội dung CMS trang Về chúng tôi (SEO, chrome sections, mission/vision/policy).
+     *
+     * @return array<string, mixed>
+     */
+    public function aboutPage(): array
+    {
+        $fallback = SampleData::aboutPage();
+        $profile = CompanyProfile::current();
+
+        if (! $profile) {
+            return $fallback;
+        }
+
+        $pick = function (?string $value, string $key) use ($fallback): string {
+            return filled($value) ? (string) $value : (string) ($fallback[$key] ?? '');
+        };
+
+        $nested = function (?string $value, string $section, string $key) use ($fallback): string {
+            $fallbackValue = $fallback[$section][$key] ?? '';
+
+            return filled($value) ? (string) $value : (string) $fallbackValue;
+        };
+
+        return [
+            'seo_title' => $pick($profile->about_seo_title, 'seo_title'),
+            'seo_description' => $pick($profile->about_seo_description, 'seo_description'),
+            'page_title' => $pick($profile->about_page_title, 'page_title'),
+            'page_subtitle' => $pick($profile->about_page_subtitle, 'page_subtitle'),
+            'banner' => [
+                'src' => $profile->mediaUrl('aboutBanner', 'lg'),
+                'srcset' => $profile->mediaSrcset('aboutBanner'),
+                'alt' => $fallback['banner']['alt'] ?? $pick($profile->about_page_title, 'page_title'),
+            ],
+            'mission' => [
+                'title' => $nested($profile->mission_title, 'mission', 'title'),
+                'text' => $nested($profile->mission_text, 'mission', 'text'),
+                'image' => $profile->mediaUrl('missionImage', 'lg'),
+                'imageSrcset' => $profile->mediaSrcset('missionImage'),
+            ],
+            'vision' => [
+                'title' => $nested($profile->vision_title, 'vision', 'title'),
+                'text' => $nested($profile->vision_text, 'vision', 'text'),
+                'image' => $profile->mediaUrl('visionImage', 'lg'),
+                'imageSrcset' => $profile->mediaSrcset('visionImage'),
+            ],
+            'sales_policy' => [
+                'title' => $nested($profile->sales_policy_title, 'sales_policy', 'title'),
+                'content' => $nested($profile->sales_policy_content, 'sales_policy', 'content'),
+                'cta_label' => $nested($profile->sales_policy_cta_label, 'sales_policy', 'cta_label'),
+                'cta_url' => filled($profile->sales_policy_cta_url)
+                    ? (string) $profile->sales_policy_cta_url
+                    : null,
+                'image' => $profile->mediaUrl('policyImage', 'lg'),
+                'imageSrcset' => $profile->mediaSrcset('policyImage'),
+            ],
+            'values_section' => [
+                'title' => $nested($profile->values_section_title, 'values_section', 'title'),
+                'hub_label' => $nested($profile->values_hub_label, 'values_section', 'hub_label'),
+            ],
+            'reasons_section' => [
+                'title' => $nested($profile->reasons_section_title, 'reasons_section', 'title'),
+                'cta_label' => $nested($profile->reasons_cta_label, 'reasons_section', 'cta_label'),
+                'cta_url' => filled($profile->reasons_cta_url)
+                    ? (string) $profile->reasons_cta_url
+                    : null,
+                'image' => $profile->mediaUrl('reasonsImage', 'lg'),
+                'imageSrcset' => $profile->mediaSrcset('reasonsImage'),
+            ],
+            'reference_section' => [
+                'title' => $nested($profile->reference_section_title, 'reference_section', 'title'),
+                'subtitle' => $nested($profile->reference_section_subtitle, 'reference_section', 'subtitle'),
+            ],
+        ];
     }
 
     public function reviewPlatforms(): array
@@ -1169,17 +1375,21 @@ class ViewDataService
                 'q' => $faq->question,
                 'a' => $faq->answer,
             ])->values()->all(),
-            'gallery' => $package->mediaAttachments
-                ->where('role', 'gallery')
-                ->take(8)
-                ->map(fn ($a) => media_payload($a->media, 'card'))
-                ->filter(fn (array $p) => filled($p['src'] ?? null))
-                ->values()
-                ->all(),
+            'gallery' => (function () use ($package) {
+                $coverMediaId = $package->coverMedia()?->id;
+
+                return $package->mediaAttachments
+                    ->where('role', 'gallery')
+                    ->filter(fn ($a) => ! $coverMediaId || (int) $a->media_id !== (int) $coverMediaId)
+                    ->take(8)
+                    ->map(fn ($a) => media_payload($a->media, 'card'))
+                    ->filter(fn (array $p) => filled($p['src'] ?? null))
+                    ->values()
+                    ->all();
+            })(),
             'galleryCount' => max(
-                1,
+                0,
                 $package->mediaAttachments->where('role', 'gallery')->count()
-                    ?: ($package->coverMedia() ? 1 : 4)
             ),
         ];
 

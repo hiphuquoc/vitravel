@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\RendersWithHtmlCache;
+use App\Models\TeamMember;
 use App\Services\ViewDataService;
 
 class PageController extends Controller
@@ -14,6 +15,7 @@ class PageController extends Controller
     public function about()
     {
         return $this->cachedHtmlResponse(fn () => view('pages.about', [
+            'about' => $this->data->aboutPage(),
             'team' => $this->data->team(),
             'values' => $this->data->values(),
             'reasons' => $this->data->reasons(),
@@ -37,6 +39,17 @@ class PageController extends Controller
     {
         return $this->cachedHtmlResponse(fn () => view('pages.team', [
             'team' => $this->data->team(),
+        ])->render());
+    }
+
+    public function teamShow(TeamMember $member)
+    {
+        abort_unless($member->is_active, 404);
+
+        $payload = $this->data->formatTeamMember($member);
+
+        return $this->cachedHtmlResponse(fn () => view('pages.team-show', [
+            'member' => $payload,
         ])->render());
     }
 

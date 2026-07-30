@@ -15,7 +15,11 @@
         />
         <div class="grid grid-cols-1 site-gap sm:grid-cols-2 lg:grid-cols-4">
             @foreach ($members as $m)
+                @php $profileUrl = $m['url'] ?? null; @endphp
                 <article class="card team-card group card-body text-center transition hover:shadow-(--shadow-card-hover)">
+                    @if ($profileUrl)
+                        <a href="{{ $profileUrl }}" class="team-card-link" aria-label="Xem hồ sơ {{ $m['name'] }}">
+                    @endif
                     @if (!empty($m['image']))
                         <x-img
                             :src="$m['image']"
@@ -31,7 +35,16 @@
                         <h3 class="item-title leading-snug">{{ $m['name'] }}</h3>
                         <p class="text-sm text-primary-600 italic">{{ $m['role'] }}</p>
                         <p class="body-text line-clamp-3">{{ $m['bio'] }}</p>
+                        @if ($profileUrl)
+                            <span class="team-card-cta mt-2 inline-flex items-center justify-center gap-1 text-sm font-medium text-primary-700 transition group-hover:text-primary-800">
+                                Xem hồ sơ
+                                <x-icon name="arrow-right" class="size-3.5" />
+                            </span>
+                        @endif
                     </div>
+                    @if ($profileUrl)
+                        </a>
+                    @endif
                 </article>
             @endforeach
         </div>

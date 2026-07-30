@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasTranslations;
+use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -14,11 +15,17 @@ class CompanyProfile extends Model
     protected array $translatable = [
         'greeting_title', 'intro_text', 'mission_title', 'mission_text',
         'vision_title', 'vision_text', 'sales_policy_title', 'sales_policy_content',
+        'about_page_title', 'about_page_subtitle', 'about_seo_title', 'about_seo_description',
+        'values_section_title', 'values_hub_label',
+        'reasons_section_title', 'reasons_cta_label', 'reasons_cta_url',
+        'sales_policy_cta_label', 'sales_policy_cta_url',
+        'reference_section_title', 'reference_section_subtitle',
     ];
 
     protected $fillable = [
         'license_number', 'contact_email', 'contact_phone', 'contact_whatsapp', 'slogan',
         'intro_image_id', 'mission_image_id', 'vision_image_id', 'policy_image_id',
+        'reasons_image_id', 'about_banner_media_id',
     ];
 
     protected function translationClass(): string
@@ -46,9 +53,41 @@ class CompanyProfile extends Model
         return $this->belongsTo(Media::class, 'policy_image_id');
     }
 
+    public function reasonsImage(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'reasons_image_id');
+    }
+
+    public function aboutBanner(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'about_banner_media_id');
+    }
+
+    public function mediaUrl(string $relation, ?string $variant = 'lg'): ?string
+    {
+        $media = $this->{$relation};
+
+        return app(MediaService::class)->publicUrl($media instanceof Media ? $media : null, $variant);
+    }
+
+    public function mediaSrcset(string $relation): ?string
+    {
+        $media = $this->{$relation};
+
+        return app(MediaService::class)->srcset($media instanceof Media ? $media : null);
+    }
+
     public static function current(): ?self
     {
-        return static::query()->with('translations')->first();
+        return static::query()->with([
+            'translations',
+            'introImage',
+            'missionImage',
+            'visionImage',
+            'policyImage',
+            'reasonsImage',
+            'aboutBanner',
+        ])->first();
     }
 
     /**

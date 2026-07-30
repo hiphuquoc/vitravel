@@ -6,6 +6,8 @@ use App\Models\Article;
 use App\Models\ArticleTranslation;
 use App\Models\BlogCategory;
 use App\Models\BlogCategoryTranslation;
+use App\Models\CompanyProfile;
+use App\Models\CompanyProfileTranslation;
 use App\Models\CompanyValue;
 use App\Models\CompanyValueTranslation;
 use App\Models\ContentTypeTag;
@@ -439,10 +441,27 @@ class ContentSeeder extends Seeder
 
     protected function seedTeam(): void
     {
+        $hub = $this->seo->ensureHub('team_hub', 'vi');
+        if ($this->enId) {
+            $this->seo->ensureHub('team_hub', 'en');
+        }
+
         foreach (SampleData::team() as $sort => $row) {
             $member = TeamMember::query()->updateOrCreate(
                 ['sort' => $sort],
-                ['is_active' => true, 'show_on_home' => true]
+                [
+                    'is_active' => true,
+                    'show_on_home' => true,
+                    'is_verified' => (bool) ($row['is_verified'] ?? true),
+                    'phone' => $row['phone'] ?? null,
+                    'email' => $row['email'] ?? null,
+                    'area' => $row['area'] ?? null,
+                    'years_experience' => $row['years_experience'] ?? null,
+                    'languages' => $row['languages'] ?? null,
+                    'stat_clients' => $row['stat_clients'] ?? 0,
+                    'stat_tours' => $row['stat_tours'] ?? 0,
+                    'stat_awards' => $row['stat_awards'] ?? 0,
+                ]
             );
 
             if ($this->viId) {
@@ -452,8 +471,95 @@ class ContentSeeder extends Seeder
                         'name' => $row['name'],
                         'role' => $row['role'],
                         'short_bio' => $row['bio'],
+                        'bio_html' => $row['bio_html'] ?? null,
                     ]
                 );
+            }
+
+            if ($this->enId) {
+                TeamMemberTranslation::query()->updateOrCreate(
+                    ['team_member_id' => $member->id, 'language_id' => $this->enId],
+                    [
+                        'name' => $row['name_en'] ?? $row['name'],
+                        'role' => $row['role_en'] ?? $row['role'],
+                        'short_bio' => $row['short_bio_en'] ?? $row['bio'],
+                        'bio_html' => $row['bio_html_en'] ?? ($row['bio_html'] ?? null),
+                    ]
+                );
+            }
+
+            $member->achievements()->delete();
+            foreach (array_values($row['achievements'] ?? []) as $i => $content) {
+                $member->achievements()->create([
+                    'content' => $content,
+                    'ordering' => $i,
+                ]);
+            }
+
+            $member->skills()->delete();
+            foreach (array_values($row['skills'] ?? []) as $i => $skill) {
+                $member->skills()->create([
+                    'skill' => $skill['skill'],
+                    'percent' => (int) ($skill['percent'] ?? 0),
+                    'ordering' => $i,
+                ]);
+            }
+
+            $member->experiences->each(function ($exp) {
+                $exp->items()->delete();
+                $exp->delete();
+            });
+            foreach (array_values($row['experiences'] ?? []) as $i => $expRow) {
+                $exp = $member->experiences()->create([
+                    'title' => $expRow['title'],
+                    'company' => $expRow['company'] ?? null,
+                    'ordering' => $i,
+                ]);
+                foreach ($expRow['items'] ?? [] as $line) {
+                    $exp->items()->create(['content' => $line]);
+                }
+            }
+
+            $member->degrees->each(function ($degree) {
+                $degree->items()->delete();
+                $degree->delete();
+            });
+            foreach (array_values($row['degrees'] ?? []) as $i => $degRow) {
+                $degree = $member->degrees()->create([
+                    'title' => $degRow['title'],
+                    'school' => $degRow['school'] ?? null,
+                    'ordering' => $i,
+                ]);
+                foreach ($degRow['items'] ?? [] as $line) {
+                    $degree->items()->create(['content' => $line]);
+                }
+            }
+
+            $slug = $row['slug'] ?? \Illuminate\Support\Str::slug($row['name']);
+
+            $this->seo->ensureSeoFor($member, 'team_member', 'vi', [
+                'slug' => $slug,
+                'title' => $row['name'],
+                'seo_title' => $row['name'].' — Đội ngũ ViTravel',
+                'seo_description' => \Illuminate\Support\Str::limit(strip_tags((string) ($row['bio'] ?? '')), 160),
+                'status' => 'published',
+                'parent_id' => $hub->id,
+                'rating_aggregate_star' => 5,
+                'rating_aggregate_count' => 12 + $sort * 3,
+            ]);
+
+            if ($this->enId) {
+                $hubEn = $this->seo->ensureHub('team_hub', 'en');
+                $this->seo->ensureSeoFor($member, 'team_member', 'en', [
+                    'slug' => $slug,
+                    'title' => $row['name_en'] ?? $row['name'],
+                    'seo_title' => ($row['name_en'] ?? $row['name']).' — ViTravel Team',
+                    'seo_description' => \Illuminate\Support\Str::limit(strip_tags((string) ($row['short_bio_en'] ?? $row['bio'] ?? '')), 160),
+                    'status' => 'published',
+                    'parent_id' => $hubEn->id,
+                    'rating_aggregate_star' => 5,
+                    'rating_aggregate_count' => 12 + $sort * 3,
+                ]);
             }
         }
     }
@@ -514,22 +620,34 @@ class ContentSeeder extends Seeder
 
     protected function seedBrandContent(): void
     {
-        foreach (SampleData::values() as $sort => $row) {
+        foreach (SampleData::valueDefinitions() as $sort => $row) {
             $value = CompanyValue::query()->updateOrCreate(['sort' => $sort], ['is_active' => true]);
             if ($this->viId) {
                 CompanyValueTranslation::query()->updateOrCreate(
                     ['company_value_id' => $value->id, 'language_id' => $this->viId],
-                    ['name' => $row['name'], 'description' => $row['desc']]
+                    ['name' => $row['vi']['name'], 'description' => $row['vi']['desc']]
+                );
+            }
+            if ($this->enId) {
+                CompanyValueTranslation::query()->updateOrCreate(
+                    ['company_value_id' => $value->id, 'language_id' => $this->enId],
+                    ['name' => $row['en']['name'], 'description' => $row['en']['desc']]
                 );
             }
         }
 
-        foreach (SampleData::reasons() as $sort => $row) {
+        foreach (SampleData::reasonDefinitions() as $sort => $row) {
             $reason = ReasonToChooseUs::query()->updateOrCreate(['sort' => $sort], ['is_active' => true]);
             if ($this->viId) {
                 ReasonToChooseUsTranslation::query()->updateOrCreate(
                     ['reason_to_choose_us_id' => $reason->id, 'language_id' => $this->viId],
-                    ['title' => $row['title'], 'description' => $row['desc']]
+                    ['title' => $row['vi']['title'], 'description' => $row['vi']['desc']]
+                );
+            }
+            if ($this->enId) {
+                ReasonToChooseUsTranslation::query()->updateOrCreate(
+                    ['reason_to_choose_us_id' => $reason->id, 'language_id' => $this->enId],
+                    ['title' => $row['en']['title'], 'description' => $row['en']['desc']]
                 );
             }
         }
@@ -544,6 +662,61 @@ class ContentSeeder extends Seeder
                     'sort' => $sort,
                     'is_active' => true,
                 ]
+            );
+        }
+
+        $this->seedCompanyProfileAbout();
+    }
+
+    protected function seedCompanyProfileAbout(): void
+    {
+        $profile = CompanyProfile::query()->first() ?? new CompanyProfile;
+        if (! $profile->exists) {
+            $profile->save();
+        }
+
+        $previousLocale = app()->getLocale();
+        app()->setLocale('vi');
+        $aboutVi = SampleData::aboutPage();
+        app()->setLocale('en');
+        $aboutEn = SampleData::aboutPage();
+        app()->setLocale($previousLocale);
+
+        $mapAbout = static function (array $about): array {
+            return [
+                'about_page_title' => $about['page_title'] ?? null,
+                'about_page_subtitle' => $about['page_subtitle'] ?? null,
+                'about_seo_title' => $about['seo_title'] ?? null,
+                'about_seo_description' => $about['seo_description'] ?? null,
+                'mission_title' => $about['mission']['title'] ?? null,
+                'mission_text' => $about['mission']['text'] ?? null,
+                'vision_title' => $about['vision']['title'] ?? null,
+                'vision_text' => $about['vision']['text'] ?? null,
+                'sales_policy_title' => $about['sales_policy']['title'] ?? null,
+                'sales_policy_content' => $about['sales_policy']['content'] ?? null,
+                'sales_policy_cta_label' => $about['sales_policy']['cta_label'] ?? null,
+                'sales_policy_cta_url' => $about['sales_policy']['cta_url'] ?? null,
+                'values_section_title' => $about['values_section']['title'] ?? null,
+                'values_hub_label' => $about['values_section']['hub_label'] ?? null,
+                'reasons_section_title' => $about['reasons_section']['title'] ?? null,
+                'reasons_cta_label' => $about['reasons_section']['cta_label'] ?? null,
+                'reasons_cta_url' => $about['reasons_section']['cta_url'] ?? null,
+                'reference_section_title' => $about['reference_section']['title'] ?? null,
+                'reference_section_subtitle' => $about['reference_section']['subtitle'] ?? null,
+            ];
+        };
+
+        if ($this->viId) {
+            CompanyProfileTranslation::query()->updateOrCreate(
+                ['company_profile_id' => $profile->id, 'language_id' => $this->viId],
+                $mapAbout($aboutVi)
+            );
+        }
+
+        if ($this->enId) {
+            CompanyProfileTranslation::query()->updateOrCreate(
+                ['company_profile_id' => $profile->id, 'language_id' => $this->enId],
+                $mapAbout($aboutEn)
             );
         }
     }

@@ -16,8 +16,11 @@ use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\PackageController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\CompanyProfileController;
+use App\Http\Controllers\Admin\CompanyValueController;
 use App\Http\Controllers\Admin\ExperienceVideoController;
 use App\Http\Controllers\Admin\OfficeController;
+use App\Http\Controllers\Admin\ReasonToChooseUsController;
+use App\Http\Controllers\Admin\ReferencePersonController;
 use App\Http\Controllers\Admin\ReviewPlatformController;
 use App\Http\Controllers\Admin\TeamMemberController;
 use App\Http\Controllers\Admin\TourCategoryController;
@@ -183,9 +186,33 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/delete', [OfficeController::class, 'delete'])->name('offices.delete');
         });
 
-        /* ===== Company contact / footer ===== */
+        /* ===== Company contact / About CMS ===== */
         Route::get('/cong-ty', [CompanyProfileController::class, 'edit'])->name('company.profile');
         Route::post('/cong-ty/save', [CompanyProfileController::class, 'save'])->name('company.save');
+
+        Route::prefix('gia-tri')->group(function () {
+            Route::get('/', [CompanyValueController::class, 'list'])->name('values.list');
+            Route::get('/list', [CompanyValueController::class, 'list']);
+            Route::get('/view', [CompanyValueController::class, 'view'])->name('values.view');
+            Route::post('/createAndUpdate', [CompanyValueController::class, 'createAndUpdate'])->name('values.save');
+            Route::get('/delete', [CompanyValueController::class, 'delete'])->name('values.delete');
+        });
+
+        Route::prefix('ly-do-chon')->group(function () {
+            Route::get('/', [ReasonToChooseUsController::class, 'list'])->name('reasons.list');
+            Route::get('/list', [ReasonToChooseUsController::class, 'list']);
+            Route::get('/view', [ReasonToChooseUsController::class, 'view'])->name('reasons.view');
+            Route::post('/createAndUpdate', [ReasonToChooseUsController::class, 'createAndUpdate'])->name('reasons.save');
+            Route::get('/delete', [ReasonToChooseUsController::class, 'delete'])->name('reasons.delete');
+        });
+
+        Route::prefix('dai-dien')->group(function () {
+            Route::get('/', [ReferencePersonController::class, 'list'])->name('referencePersons.list');
+            Route::get('/list', [ReferencePersonController::class, 'list']);
+            Route::get('/view', [ReferencePersonController::class, 'view'])->name('referencePersons.view');
+            Route::post('/createAndUpdate', [ReferencePersonController::class, 'createAndUpdate'])->name('referencePersons.save');
+            Route::get('/delete', [ReferencePersonController::class, 'delete'])->name('referencePersons.delete');
+        });
 
         /* ===== Review platforms ===== */
         Route::prefix('nen-tang-danh-gia')->group(function () {

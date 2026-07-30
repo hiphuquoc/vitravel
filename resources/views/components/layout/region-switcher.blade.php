@@ -99,27 +99,48 @@
             class="{{ $__triggerClass }}"
             aria-haspopup="true" aria-expanded="false"
             aria-label="{{ $__ui['choose'] }}">
-        <span class="regionSwitcher_label">
-            @if (! empty($__currentLang->flag))
-                @if ($__isEmojiFlag)
-                    <span class="regionSwitcher_flag regionSwitcher_flag--emoji" aria-hidden="true">{{ $__currentLang->flag }}</span>
+        @if ($isMobile)
+            {{-- Mobile (Hitour): flag · currency — pill compact, không hiện mã ngôn ngữ --}}
+            <span class="regionSwitcher_label">
+                @if (! empty($__currentLang->flag))
+                    @if ($__isEmojiFlag)
+                        <span class="regionSwitcher_flag regionSwitcher_flag--emoji" aria-hidden="true">{{ $__currentLang->flag }}</span>
+                    @else
+                        <img class="regionSwitcher_flag"
+                             src="{{ str_starts_with((string) $__currentLang->flag, 'http') ? $__currentLang->flag : asset(ltrim($__currentLang->flag, '/')) }}"
+                             width="18" height="18"
+                             decoding="async"
+                             alt="{{ $__currentLang->name_native }}" />
+                    @endif
                 @else
-                    <img class="regionSwitcher_flag"
-                         src="{{ str_starts_with((string) $__currentLang->flag, 'http') ? $__currentLang->flag : asset(ltrim($__currentLang->flag, '/')) }}"
-                         width="24" height="24"
-                         decoding="async"
-                         alt="{{ $__currentLang->name_native }}" />
+                    <span class="regionSwitcher_lang">{{ strtoupper($__currentLang->code ?? $__currentLocale) }}</span>
                 @endif
-            @endif
-            <span class="regionSwitcher_lang">{{ strtoupper($__currentLang->code ?? $__currentLocale) }}</span>
-            @if ($__hasCurrency)
-                <span class="regionSwitcher_sep" aria-hidden="true">·</span>
-                <span class="regionSwitcher_currency_code">{{ $__currentCurrency }}</span>
-            @endif
-        </span>
-        @unless ($isMobile)
+                @if ($__hasCurrency)
+                    <span class="regionSwitcher_sep" aria-hidden="true">·</span>
+                    <span class="regionSwitcher_currency_code">{{ $__currentCurrency }}</span>
+                @endif
+            </span>
+        @else
+            <span class="regionSwitcher_label">
+                @if (! empty($__currentLang->flag))
+                    @if ($__isEmojiFlag)
+                        <span class="regionSwitcher_flag regionSwitcher_flag--emoji" aria-hidden="true">{{ $__currentLang->flag }}</span>
+                    @else
+                        <img class="regionSwitcher_flag"
+                             src="{{ str_starts_with((string) $__currentLang->flag, 'http') ? $__currentLang->flag : asset(ltrim($__currentLang->flag, '/')) }}"
+                             width="24" height="24"
+                             decoding="async"
+                             alt="{{ $__currentLang->name_native }}" />
+                    @endif
+                @endif
+                <span class="regionSwitcher_lang">{{ strtoupper($__currentLang->code ?? $__currentLocale) }}</span>
+                @if ($__hasCurrency)
+                    <span class="regionSwitcher_sep" aria-hidden="true">·</span>
+                    <span class="regionSwitcher_currency_code">{{ $__currentCurrency }}</span>
+                @endif
+            </span>
             <x-icon name="chevron-down" class="regionSwitcher_chevron size-3" />
-        @endunless
+        @endif
     </button>
 
     <div class="regionSwitcher_menu" role="dialog" aria-label="{{ $__ui['choose'] }}">

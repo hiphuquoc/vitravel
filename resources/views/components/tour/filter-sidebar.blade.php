@@ -7,10 +7,15 @@
     'showTypeFilter' => false,
 ])
 
-{{-- Nằm trong x-data="listingGrid" — dùng chung isChecked / toggleFilter / drawer --}}
-<button type="button" @click="drawer = true"
-    class="btn-outline filter-sidebar__toggle">
-    <x-icon name="filter" class="size-4" /> Bộ lọc
+{{-- FAB mobile: mở drawer bộ lọc — cố định bottom-left, đối xứng site-fab --}}
+<button
+    type="button"
+    @click="drawer = true"
+    x-show="!drawer"
+    x-cloak
+    class="filter-sidebar__fab"
+    aria-label="Mở bộ lọc">
+    <x-icon name="filter" class="filter-sidebar__fab-icon" />
 </button>
 
 <div x-cloak x-show="drawer" class="filter-sidebar__overlay lg:hidden" @click="drawer = false"></div>

@@ -198,13 +198,30 @@ BlogCategory.seoIntro     richText   // đoạn văn SEO cuối trang danh mục
 
 ## 8. `TeamMember`
 ```
+team_members:
 - id
-- name                 string
-- role                  string
-- shortBio               string       // đoạn bio ngắn hiển thị cắt "..." ở card (mới phát hiện từ ảnh)
-- department             enum
-- avatar                 image
-- order                  number
+- department            string?
+- avatar_media_id       FK media?
+- phone / email / area  string?
+- years_experience      uint?
+- languages             json?          // list ngôn ngữ
+- stat_clients / stat_tours / stat_awards  uint (default 0)
+- is_verified           bool (default true)
+- sort / is_active / show_on_home
+- soft deletes
+
+team_member_translations:
+- name, role, short_bio, bio_html (longText — intro đầy đủ trên trang CV)
+
+Child tables (ordering):
+- team_member_achievements (content)
+- team_member_skills (skill, percent 0–100)
+- team_member_experiences (title, company?) + team_member_experience_items (content)
+- team_member_degrees (title, school?) + team_member_degree_items (content)
+- team_member_activity_images (media_id?, ordering)
+
+SEO: type `team_member`, parent `team_hub` → slug_full `/doi-ngu/{slug}`
+Public: list `/doi-ngu`, profile via catch-all slug_full.
 ```
 
 ## 9. `ExperienceAlbum` / `ExperienceVideo`
@@ -228,6 +245,7 @@ ExperienceVideo: id, title, youtubeId/videoUrl, thumbnail, country, publishedAt
 - licenseNumber           string     // "01-2234-2023-TCDL-GP-LHQT"
 - image
 ```
+→ **Implement:** `HomeSection` key `company_intro` (không phải CompanyProfile).
 
 ### 11.2 `CompanyValue` (cho sơ đồ "Impegno nei valori fondamentali")
 ```
@@ -236,37 +254,44 @@ ExperienceVideo: id, title, youtubeId/videoUrl, thumbnail, country, publishedAt
 - description           string      // mô tả 1 dòng
 - order                  number      // vị trí quanh vòng tròn (trên/dưới/trái/phải)
 ```
+→ **Admin:** `/he-thong/gia-tri` (`admin.values.*`), i18n name/description.
 
-### 11.3 `MissionVision`
+### 11.3 `MissionVision` + About chrome (trong `CompanyProfile`)
 ```
-- missionTitle / missionText (richText) / missionImage
-- visionTitle / visionText (richText) / visionImage
+company_profiles:
+- mission_image_id / vision_image_id / policy_image_id / reasons_image_id / about_banner_media_id
+- contact_* / license_number / slogan (locale-independent)
+
+company_profile_translations:
+- mission_title / mission_text / vision_title / vision_text
+- sales_policy_title / sales_policy_content / sales_policy_cta_label / sales_policy_cta_url
+- about_page_title / about_page_subtitle / about_seo_title / about_seo_description
+- values_section_title / values_hub_label
+- reasons_section_title / reasons_cta_label / reasons_cta_url
+- reference_section_title / reference_section_subtitle
 ```
+→ **Admin:** `/he-thong/cong-ty` — form đa ngôn ngữ + upload ảnh.
 
 ### 11.4 `SalesPolicy`
-```
-- title / content (richText)
-- image
-```
+Gộp vào `CompanyProfile` (không tách model riêng).
 
 ### 11.5 `ReasonToChooseUs`
 ```
-- id / title / description / order
-- sectionImage    // ảnh chung minh hoạ cả block (điện thoại hiển thị app)
+- id / title / description / order / is_active
+- sectionImage    // legacy per-row; UI dùng company_profiles.reasons_image_id
 ```
+→ **Admin:** `/he-thong/ly-do-chon` (`admin.reasons.*`).
 
-### 11.6 `ReferencePersonAbroad`
+### 11.6 `ReferencePersonAbroad` (`reference_persons`)
 ```
 - id
 - name             string      // "Mr. Claude MILLET"
-- photo
-- email
-- phone
-- skype             string
-- country            ref(Country)   // để biết referent phụ trách/đến từ đâu
-- order
+- photo            (photo_media_id → media)
+- email / phone / skype
+- country            ref(Country)
+- order / is_active
 ```
-
+→ **Admin:** `/he-thong/dai-dien` (`admin.referencePersons.*`). Helper: `ReferencePerson::photoUrl()`.
 ## 12. `Office` (văn phòng — dùng cho Footer + trang Contact)
 ```
 - id

@@ -941,10 +941,214 @@ class SampleData
     public static function team(): array
     {
         return [
-            ['name' => 'Phạm Thu Trang', 'role' => 'Giám đốc điều hành', 'bio' => 'Hơn 15 năm dẫn dắt các đoàn khách quốc tế khắp Đông Nam Á, Trang tin rằng mỗi hành trình phải kể một câu chuyện riêng...'],
-            ['name' => 'Đỗ Việt Cường', 'role' => 'Trưởng phòng thiết kế tour', 'bio' => 'Cường đã đặt chân tới 63 tỉnh thành và tự tay vẽ từng lịch trình để mỗi ngày của khách đều có một điểm chạm đáng nhớ...'],
-            ['name' => 'Lê Mai Chi', 'role' => 'Chuyên gia tư vấn cao cấp', 'bio' => 'Thành thạo ba ngoại ngữ, Chi là người bạn đồng hành tin cậy của các gia đình châu Âu khi đến Việt Nam lần đầu...'],
-            ['name' => 'Hoàng Anh Tuấn', 'role' => 'Điều hành tuyến miền Bắc', 'bio' => 'Sinh ra ở Lào Cai, Tuấn thuộc từng khúc cua trên đèo Ô Quy Hồ và biết chính xác bản nào có mùa lúa đẹp nhất...'],
+            [
+                'slug' => 'pham-thu-trang',
+                'name' => 'Phạm Thu Trang',
+                'role' => 'Giám đốc điều hành',
+                'bio' => 'Hơn 15 năm dẫn dắt các đoàn khách quốc tế khắp Đông Nam Á, Trang tin rằng mỗi hành trình phải kể một câu chuyện riêng...',
+                'phone' => '+84 24 3999 8888',
+                'email' => 'trang.pham@vitravel.dev',
+                'area' => 'Hà Nội, Việt Nam',
+                'years_experience' => 15,
+                'languages' => ['Tiếng Việt', 'English', 'Français'],
+                'stat_clients' => 3200,
+                'stat_tours' => 480,
+                'stat_awards' => 6,
+                'is_verified' => true,
+                'bio_html' => '<p>Hơn 15 năm dẫn dắt các đoàn khách quốc tế khắp Đông Nam Á, Phạm Thu Trang tin rằng mỗi hành trình phải kể một câu chuyện riêng — không phải bản sao của lịch trình có sẵn.</p><p>Với bề dày kinh nghiệm điều hành và thiết kế tour cao cấp, Trang xây dựng ViTravel như một đội ngũ bản địa đồng hành sát sao từ lúc lên ý tưởng đến khi khách về nhà.</p>',
+                'bio_html_en' => '<p>With over 15 years guiding international groups across Southeast Asia, Thu Trang believes every journey should tell its own story.</p><p>She built ViTravel as a local expert team that stays close from the first idea to the moment guests return home.</p>',
+                'name_en' => 'Pham Thu Trang',
+                'role_en' => 'Chief Executive Officer',
+                'short_bio_en' => 'Over 15 years leading international groups across Southeast Asia — every journey must tell its own story.',
+                'achievements' => [
+                    'Giải Travelers\' Choice TripAdvisor 3 năm liên tiếp (cùng đội ngũ ViTravel)',
+                    'Thiết kế hơn 200 hành trình riêng cho khách châu Âu & Úc',
+                    'Diễn giả khách mời tại diễn đàn du lịch bền vững Hà Nội 2024',
+                ],
+                'skills' => [
+                    ['skill' => 'Thiết kế tour cao cấp', 'percent' => 95],
+                    ['skill' => 'Quản trị trải nghiệm khách', 'percent' => 92],
+                    ['skill' => 'Đàm phán đối tác địa phương', 'percent' => 90],
+                    ['skill' => 'Du lịch bền vững', 'percent' => 88],
+                ],
+                'experiences' => [
+                    [
+                        'title' => 'Giám đốc điều hành',
+                        'company' => 'ViTravel',
+                        'items' => [
+                            'Điều hành chiến lược sản phẩm tour & du thuyền Đông Nam Á',
+                            'Xây dựng tiêu chuẩn dịch vụ và quy trình chăm sóc khách',
+                        ],
+                    ],
+                    [
+                        'title' => 'Trưởng phòng sản phẩm',
+                        'company' => 'Đại lý du lịch inbound',
+                        'items' => [
+                            'Phát triển các tuyến xuyên Việt và Campuchia cho thị trường châu Âu',
+                        ],
+                    ],
+                ],
+                'degrees' => [
+                    [
+                        'title' => 'Cử nhân Quản trị Du lịch',
+                        'school' => 'Đại học Khoa học Xã hội & Nhân văn',
+                        'items' => ['Chuyên ngành Lữ hành quốc tế'],
+                    ],
+                    [
+                        'title' => 'Chứng chỉ hướng dẫn viên quốc tế',
+                        'school' => 'Tổng cục Du lịch Việt Nam',
+                        'items' => [],
+                    ],
+                ],
+            ],
+            [
+                'slug' => 'do-viet-cuong',
+                'name' => 'Đỗ Việt Cường',
+                'role' => 'Trưởng phòng thiết kế tour',
+                'bio' => 'Cường đã đặt chân tới 63 tỉnh thành và tự tay vẽ từng lịch trình để mỗi ngày của khách đều có một điểm chạm đáng nhớ...',
+                'phone' => '+84 24 3999 8812',
+                'email' => 'cuong.do@vitravel.dev',
+                'area' => 'Hà Nội & toàn quốc',
+                'years_experience' => 12,
+                'languages' => ['Tiếng Việt', 'English'],
+                'stat_clients' => 2100,
+                'stat_tours' => 650,
+                'stat_awards' => 3,
+                'is_verified' => true,
+                'bio_html' => '<p>Đỗ Việt Cường đã đặt chân tới 63 tỉnh thành và tự tay vẽ từng lịch trình để mỗi ngày của khách đều có một điểm chạm đáng nhớ — từ quán cà phê góc phố đến bình minh trên đèo.</p><p>Anh chuyên cân bằng nhịp độ chuyến đi: vừa đủ khám phá, vừa đủ nghỉ ngơi, và luôn chừa chỗ cho bất ngờ đẹp.</p>',
+                'bio_html_en' => '<p>Viet Cuong has traveled all 63 provinces and handcrafts each itinerary so every day has a memorable touchpoint.</p>',
+                'name_en' => 'Do Viet Cuong',
+                'role_en' => 'Head of Tour Design',
+                'short_bio_en' => 'Has set foot in all 63 provinces — crafting itineraries with a memorable touch every day.',
+                'achievements' => [
+                    'Thiết kế tuyến xuyên Việt 21 ngày được khách Ý bình chọn cao nhất 2025',
+                    'Khảo sát thực địa hơn 120 điểm đến phụ tại miền núi phía Bắc',
+                ],
+                'skills' => [
+                    ['skill' => 'Lập lịch trình đa quốc gia', 'percent' => 96],
+                    ['skill' => 'Khảo sát thực địa', 'percent' => 94],
+                    ['skill' => 'Tối ưu logistics đoàn', 'percent' => 90],
+                    ['skill' => 'Kể chuyện điểm đến', 'percent' => 85],
+                ],
+                'experiences' => [
+                    [
+                        'title' => 'Trưởng phòng thiết kế tour',
+                        'company' => 'ViTravel',
+                        'items' => [
+                            'Phụ trách sản phẩm tour trọn gói 5 quốc gia Đông Nam Á',
+                            'Đào tạo đội tư vấn về cấu trúc lịch trình và nhịp độ chuyến đi',
+                        ],
+                    ],
+                ],
+                'degrees' => [
+                    [
+                        'title' => 'Thạc sĩ Địa lý Du lịch',
+                        'school' => 'Đại học Khoa học Tự nhiên',
+                        'items' => ['Luận văn: Hành lang di sản miền núi phía Bắc'],
+                    ],
+                ],
+            ],
+            [
+                'slug' => 'le-mai-chi',
+                'name' => 'Lê Mai Chi',
+                'role' => 'Chuyên gia tư vấn cao cấp',
+                'bio' => 'Thành thạo ba ngoại ngữ, Chi là người bạn đồng hành tin cậy của các gia đình châu Âu khi đến Việt Nam lần đầu...',
+                'phone' => '+84 28 3888 9901',
+                'email' => 'chi.le@vitravel.dev',
+                'area' => 'TP. Hồ Chí Minh',
+                'years_experience' => 10,
+                'languages' => ['Tiếng Việt', 'English', 'Italiano', 'Français'],
+                'stat_clients' => 1800,
+                'stat_tours' => 410,
+                'stat_awards' => 2,
+                'is_verified' => true,
+                'bio_html' => '<p>Thành thạo nhiều ngoại ngữ, Lê Mai Chi là người bạn đồng hành tin cậy của các gia đình châu Âu khi đến Việt Nam lần đầu.</p><p>Chi lắng nghe nhu cầu tinh tế — từ nhịp nghỉ của trẻ nhỏ đến sở thích ẩm thực — rồi chuyển thành lịch trình vừa vặn và ấm áp.</p>',
+                'bio_html_en' => '<p>Fluent in multiple languages, Mai Chi is a trusted companion for European families visiting Vietnam for the first time.</p>',
+                'name_en' => 'Le Mai Chi',
+                'role_en' => 'Senior Travel Consultant',
+                'short_bio_en' => 'Fluent in three languages — a trusted companion for European families visiting Vietnam.',
+                'achievements' => [
+                    'Đồng hành hơn 400 gia đình khách châu Âu (2018–2026)',
+                    'Tỷ lệ giới thiệu lại (referral) trên 70% trong phân khúc gia đình',
+                ],
+                'skills' => [
+                    ['skill' => 'Tư vấn gia đình & đa thế hệ', 'percent' => 97],
+                    ['skill' => 'Giao tiếp đa ngôn ngữ', 'percent' => 95],
+                    ['skill' => 'Thiết kế tour riêng', 'percent' => 90],
+                    ['skill' => 'Chăm sóc khách VIP', 'percent' => 88],
+                ],
+                'experiences' => [
+                    [
+                        'title' => 'Chuyên gia tư vấn cao cấp',
+                        'company' => 'ViTravel',
+                        'items' => [
+                            'Phụ trách thị trường Ý, Pháp và khách nói tiếng Anh',
+                            'Thiết kế tour riêng theo sở thích ẩm thực & nhịp nghỉ gia đình',
+                        ],
+                    ],
+                ],
+                'degrees' => [
+                    [
+                        'title' => 'Cử nhân Ngôn ngữ Anh',
+                        'school' => 'Đại học Sư phạm TP.HCM',
+                        'items' => ['Chứng chỉ tiếng Ý B2'],
+                    ],
+                ],
+            ],
+            [
+                'slug' => 'hoang-anh-tuan',
+                'name' => 'Hoàng Anh Tuấn',
+                'role' => 'Điều hành tuyến miền Bắc',
+                'bio' => 'Sinh ra ở Lào Cai, Tuấn thuộc từng khúc cua trên đèo Ô Quy Hồ và biết chính xác bản nào có mùa lúa đẹp nhất...',
+                'phone' => '+84 214 3888 112',
+                'email' => 'tuan.hoang@vitravel.dev',
+                'area' => 'Lào Cai — Hà Giang — Sa Pa',
+                'years_experience' => 14,
+                'languages' => ['Tiếng Việt', 'English', 'H\'Mông (cơ bản)'],
+                'stat_clients' => 2500,
+                'stat_tours' => 720,
+                'stat_awards' => 4,
+                'is_verified' => true,
+                'bio_html' => '<p>Sinh ra ở Lào Cai, Hoàng Anh Tuấn thuộc từng khúc cua trên đèo Ô Quy Hồ và biết chính xác bản nào có mùa lúa đẹp nhất trong năm.</p><p>Tuấn điều hành các đoàn trekking và tour văn hóa miền núi với tiêu chí an toàn trước, trải nghiệm sâu sau — luôn tôn trọng cộng đồng địa phương.</p>',
+                'bio_html_en' => '<p>Born in Lao Cai, Anh Tuan knows every bend of O Quy Ho Pass and which village has the best rice season.</p>',
+                'name_en' => 'Hoang Anh Tuan',
+                'role_en' => 'Northern Routes Operations',
+                'short_bio_en' => 'Born in Lao Cai — knows every bend of O Quy Ho Pass and the best rice-season villages.',
+                'achievements' => [
+                    'Hơn 700 đoàn trekking / văn hóa miền Bắc an toàn không sự cố lớn',
+                    'Đối tác lâu năm với cộng đồng bản ở Sa Pa, Hà Giang',
+                ],
+                'skills' => [
+                    ['skill' => 'Trekking & an toàn núi', 'percent' => 98],
+                    ['skill' => 'Điều hành đoàn thực địa', 'percent' => 95],
+                    ['skill' => 'Hiểu biết văn hóa dân tộc', 'percent' => 92],
+                    ['skill' => 'Logistics miền núi', 'percent' => 90],
+                ],
+                'experiences' => [
+                    [
+                        'title' => 'Điều hành tuyến miền Bắc',
+                        'company' => 'ViTravel',
+                        'items' => [
+                            'Phụ trách Sa Pa, Hà Giang, Cao Bằng và các tuyến kết hợp',
+                            'Huấn luyện hướng dẫn viên địa phương về tiêu chuẩn an toàn',
+                        ],
+                    ],
+                    [
+                        'title' => 'Hướng dẫn viên quốc tế',
+                        'company' => 'Độc lập / đối tác inbound',
+                        'items' => [
+                            'Dẫn đoàn trekking Fansipan và vòng cung Đông Bắc',
+                        ],
+                    ],
+                ],
+                'degrees' => [
+                    [
+                        'title' => 'Chứng chỉ hướng dẫn viên quốc tế',
+                        'school' => 'Sở Du lịch Lào Cai',
+                        'items' => ['Chuyên tuyến trekking & văn hóa dân tộc'],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -1008,31 +1212,178 @@ class SampleData
 
     public static function values(): array
     {
+        $locale = app()->getLocale() === 'en' ? 'en' : 'vi';
+
+        return array_map(fn (array $row) => [
+            'name' => $row[$locale]['name'] ?? $row['vi']['name'],
+            'desc' => $row[$locale]['desc'] ?? $row['vi']['desc'],
+        ], self::valueDefinitions());
+    }
+
+    /** @return list<array{vi: array{name: string, desc: string}, en: array{name: string, desc: string}}> */
+    public static function valueDefinitions(): array
+    {
         return [
-            ['name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'],
-            ['name' => 'Thấu cảm', 'desc' => 'Lắng nghe để hiểu điều bạn thực sự mong muốn'],
-            ['name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'],
-            ['name' => 'Trách nhiệm', 'desc' => 'Du lịch bền vững, tôn trọng cộng đồng bản địa'],
+            [
+                'vi' => ['name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'],
+                'en' => ['name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family'],
+            ],
+            [
+                'vi' => ['name' => 'Thấu cảm', 'desc' => 'Lắng nghe để hiểu điều bạn thực sự mong muốn'],
+                'en' => ['name' => 'Empathy', 'desc' => 'We listen to understand what you truly want'],
+            ],
+            [
+                'vi' => ['name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'],
+                'en' => ['name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing'],
+            ],
+            [
+                'vi' => ['name' => 'Trách nhiệm', 'desc' => 'Du lịch bền vững, tôn trọng cộng đồng bản địa'],
+                'en' => ['name' => 'Responsibility', 'desc' => 'Sustainable travel that respects local communities'],
+            ],
         ];
     }
 
     public static function reasons(): array
     {
+        $locale = app()->getLocale() === 'en' ? 'en' : 'vi';
+
+        return array_map(fn (array $row) => [
+            'title' => $row[$locale]['title'] ?? $row['vi']['title'],
+            'desc' => $row[$locale]['desc'] ?? $row['vi']['desc'],
+        ], self::reasonDefinitions());
+    }
+
+    /** @return list<array{vi: array{title: string, desc: string}, en: array{title: string, desc: string}}> */
+    public static function reasonDefinitions(): array
+    {
         return [
-            ['title' => 'Chuyên gia bản địa thiết kế tour riêng', 'desc' => 'Đội ngũ sinh ra và lớn lên tại điểm đến, hiểu từng cung đường và mùa đẹp nhất.'],
-            ['title' => 'Cam kết hoàn tiền rõ ràng', 'desc' => 'Chính sách huỷ/hoàn minh bạch, được ghi rõ trong hợp đồng trước khi thanh toán.'],
-            ['title' => 'Giá trị vượt trội trên từng đồng chi phí', 'desc' => 'Làm việc trực tiếp với khách sạn, nhà thuyền — không qua trung gian.'],
-            ['title' => 'Hỗ trợ 24/7 trong suốt hành trình', 'desc' => 'Hotline và WhatsApp trực người thật, phản hồi trong vòng 15 phút.'],
-            ['title' => 'Du lịch có trách nhiệm & bền vững', 'desc' => 'Ưu tiên homestay bản địa, hạn chế nhựa dùng một lần trên mọi tour.'],
+            [
+                'vi' => ['title' => 'Chuyên gia bản địa thiết kế tour riêng', 'desc' => 'Đội ngũ sinh ra và lớn lên tại điểm đến, hiểu từng cung đường và mùa đẹp nhất.'],
+                'en' => ['title' => 'Local experts design private journeys', 'desc' => 'Our team grew up at the destinations — we know every road and the best season to go.'],
+            ],
+            [
+                'vi' => ['title' => 'Cam kết hoàn tiền rõ ràng', 'desc' => 'Chính sách huỷ/hoàn minh bạch, được ghi rõ trong hợp đồng trước khi thanh toán.'],
+                'en' => ['title' => 'Clear refund commitment', 'desc' => 'Transparent cancellation and refund terms written into the contract before payment.'],
+            ],
+            [
+                'vi' => ['title' => 'Giá trị vượt trội trên từng đồng chi phí', 'desc' => 'Làm việc trực tiếp với khách sạn, nhà thuyền — không qua trung gian.'],
+                'en' => ['title' => 'Outstanding value for every dollar', 'desc' => 'We work directly with hotels and boat owners — no middlemen.'],
+            ],
+            [
+                'vi' => ['title' => 'Hỗ trợ 24/7 trong suốt hành trình', 'desc' => 'Hotline và WhatsApp trực người thật, phản hồi trong vòng 15 phút.'],
+                'en' => ['title' => '24/7 support throughout your trip', 'desc' => 'Real people on hotline and WhatsApp, responding within 15 minutes.'],
+            ],
+            [
+                'vi' => ['title' => 'Du lịch có trách nhiệm & bền vững', 'desc' => 'Ưu tiên homestay bản địa, hạn chế nhựa dùng một lần trên mọi tour.'],
+                'en' => ['title' => 'Responsible & sustainable travel', 'desc' => 'We favour local homestays and minimise single-use plastic on every tour.'],
+            ],
         ];
     }
 
     public static function referencePersons(): array
     {
         return [
-            ['name' => 'Mr. Claude Millet', 'country' => 'Pháp', 'email' => 'claude@vitravel.example', 'phone' => '+33 6 12 34 56 78', 'skype' => 'claude.millet'],
-            ['name' => 'Ms. Emma Rossi', 'country' => 'Ý', 'email' => 'emma@vitravel.example', 'phone' => '+39 320 123 4567', 'skype' => 'emma.rossi.travel'],
-            ['name' => 'Mr. David Chen', 'country' => 'Úc', 'email' => 'david@vitravel.example', 'phone' => '+61 4 1234 5678', 'skype' => 'david.chen.au'],
+            ['name' => 'Mr. Claude Millet', 'country' => 'Pháp', 'email' => 'claude@vitravel.example', 'phone' => '+33 6 12 34 56 78', 'skype' => 'claude.millet', 'image' => null, 'imageSrcset' => null],
+            ['name' => 'Ms. Emma Rossi', 'country' => 'Ý', 'email' => 'emma@vitravel.example', 'phone' => '+39 320 123 4567', 'skype' => 'emma.rossi.travel', 'image' => null, 'imageSrcset' => null],
+            ['name' => 'Mr. David Chen', 'country' => 'Úc', 'email' => 'david@vitravel.example', 'phone' => '+61 4 1234 5678', 'skype' => 'david.chen.au', 'image' => null, 'imageSrcset' => null],
+        ];
+    }
+
+    /**
+     * Fallback nội dung trang Về chúng tôi (mission/vision/policy/chrome/SEO).
+     *
+     * @return array<string, mixed>
+     */
+    public static function aboutPage(): array
+    {
+        $en = app()->getLocale() === 'en';
+
+        if ($en) {
+            return [
+                'seo_title' => 'About us — ViTravel, Southeast Asia local travel agency',
+                'seo_description' => 'Our story, mission and team at ViTravel — an international local travel agency with over 10 years designing private journeys in Vietnam and Southeast Asia.',
+                'page_title' => 'About us',
+                'page_subtitle' => 'Authentic journeys designed by locals who love what they do',
+                'banner' => ['src' => null, 'srcset' => null, 'alt' => 'ViTravel team banner'],
+                'mission' => [
+                    'title' => 'Our mission',
+                    'text' => 'To deliver authentic journeys that let travellers touch local life, culture and people — while creating sustainable livelihoods for communities along every route we travel.',
+                    'image' => null,
+                    'imageSrcset' => null,
+                ],
+                'vision' => [
+                    'title' => 'Our vision',
+                    'text' => 'To become the most trusted local travel agency in Southeast Asia — where every guest leaves feeling “more than satisfied” and leaves a piece of their heart at the destination.',
+                    'image' => null,
+                    'imageSrcset' => null,
+                ],
+                'sales_policy' => [
+                    'title' => 'Transparent sales policy',
+                    'content' => 'Every ViTravel quote lists each line item clearly — no hidden fees, no misleading “from” prices. Children under 4 travel free on ground services; ages 4–10 get 25% off the tour price when sharing a bed with parents. Cancellation and refund terms are written into the contract: free before 30 days, transparent by each deadline.',
+                    'cta_label' => 'Ask about our policy',
+                    'cta_url' => null,
+                    'image' => null,
+                    'imageSrcset' => null,
+                ],
+                'values_section' => [
+                    'title' => 'Commitment to core values',
+                    'hub_label' => 'Commitment to core values',
+                ],
+                'reasons_section' => [
+                    'title' => 'Why choose ViTravel?',
+                    'cta_label' => 'Start your journey',
+                    'cta_url' => null,
+                    'image' => null,
+                    'imageSrcset' => null,
+                ],
+                'reference_section' => [
+                    'title' => 'Our representatives abroad',
+                    'subtitle' => 'You can speak directly in your own language with ViTravel representatives in Europe and Australia.',
+                ],
+            ];
+        }
+
+        return [
+            'seo_title' => 'Về chúng tôi — ViTravel, đại lý du lịch bản địa Đông Nam Á',
+            'seo_description' => 'Câu chuyện, sứ mệnh và đội ngũ ViTravel — đại lý lữ hành quốc tế bản địa với hơn 10 năm thiết kế hành trình riêng tại Việt Nam và Đông Nam Á.',
+            'page_title' => 'Về chúng tôi',
+            'page_subtitle' => 'Hành trình chân thật, được thiết kế bởi những người bản địa yêu nghề',
+            'banner' => ['src' => null, 'srcset' => null, 'alt' => 'Ảnh banner: đội ngũ ViTravel'],
+            'mission' => [
+                'title' => 'Sứ mệnh của chúng tôi',
+                'text' => 'Mang đến những hành trình chân thật giúp du khách chạm vào đời sống, văn hoá và con người bản địa — đồng thời tạo sinh kế bền vững cho cộng đồng tại mỗi điểm đến chúng tôi đi qua.',
+                'image' => null,
+                'imageSrcset' => null,
+            ],
+            'vision' => [
+                'title' => 'Tầm nhìn của chúng tôi',
+                'text' => 'Trở thành đại lý du lịch bản địa được tin cậy nhất Đông Nam Á — nơi mỗi du khách rời đi với cảm giác "hài lòng hơn cả mong đợi" và một phần trái tim ở lại với điểm đến.',
+                'image' => null,
+                'imageSrcset' => null,
+            ],
+            'sales_policy' => [
+                'title' => 'Chính sách bán hàng minh bạch',
+                'content' => 'Mọi báo giá của ViTravel đều liệt kê rõ từng hạng mục — không phụ phí ẩn, không "giá từ" gây hiểu lầm. Trẻ em dưới 4 tuổi được miễn phí dịch vụ mặt đất; trẻ 4–10 tuổi giảm 25% giá tour khi ngủ chung giường với bố mẹ. Chính sách huỷ/hoàn tiền được ghi rõ trong hợp đồng: miễn phí trước 30 ngày, minh bạch theo từng mốc thời gian.',
+                'cta_label' => 'Hỏi thêm về chính sách',
+                'cta_url' => null,
+                'image' => null,
+                'imageSrcset' => null,
+            ],
+            'values_section' => [
+                'title' => 'Cam kết với giá trị cốt lõi',
+                'hub_label' => 'Cam kết với giá trị cốt lõi',
+            ],
+            'reasons_section' => [
+                'title' => 'Vì sao chọn ViTravel?',
+                'cta_label' => 'Bắt đầu hành trình của bạn',
+                'cta_url' => null,
+                'image' => null,
+                'imageSrcset' => null,
+            ],
+            'reference_section' => [
+                'title' => 'Người đại diện của chúng tôi tại nước ngoài',
+                'subtitle' => 'Bạn có thể trao đổi trực tiếp bằng ngôn ngữ của mình với đại diện ViTravel tại châu Âu và châu Úc.',
+            ],
         ];
     }
 

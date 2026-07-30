@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,5 +33,15 @@ class ReferencePerson extends Model
     public function photo(): BelongsTo
     {
         return $this->belongsTo(Media::class, 'photo_media_id');
+    }
+
+    public function photoUrl(?string $variant = 'thumb'): ?string
+    {
+        return app(MediaService::class)->publicUrl($this->photo, $variant);
+    }
+
+    public function photoSrcset(): ?string
+    {
+        return app(MediaService::class)->srcset($this->photo);
     }
 }
