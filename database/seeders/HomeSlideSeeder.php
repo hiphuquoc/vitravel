@@ -20,14 +20,14 @@ class HomeSlideSeeder extends Seeder
                 'text_align' => 'center',
                 'link_url' => '/tours/viet-nam',
                 'vi' => [
-                    'title' => 'Miền Bắc Việt Nam',
+                    'title' => 'Du lịch Việt Nam',
                     'title_accent' => 'theo cách của bạn',
                     'description' => 'Tour trọn gói & hành trình riêng qua Hạ Long, Sa Pa, Ninh Bình, Hà Giang — thiết kế bởi chuyên gia bản địa.',
                     'button_label' => 'Khám phá tour Việt Nam',
                     'image_alt' => 'Vịnh Hạ Long lúc hoàng hôn',
                 ],
                 'en' => [
-                    'title' => 'Northern Vietnam',
+                    'title' => 'Vietnam Travel',
                     'title_accent' => 'your way',
                     'description' => 'Fully inclusive tours & private journeys through Halong, Sapa, Ninh Binh and Ha Giang — designed by local experts.',
                     'button_label' => 'Explore Vietnam tours',

@@ -91,7 +91,7 @@ class ContentSeeder extends Seeder
         ];
 
         foreach (SampleData::countries() as $sort => $row) {
-            $country = Country::query()->updateOrCreate(
+            $country = Country::withTrashed()->updateOrCreate(
                 ['code' => $codes[$row['slug']] ?? strtoupper(substr($row['slug'], 0, 2))],
                 [
                     'home_grid_size' => $row['size'],
@@ -99,6 +99,7 @@ class ContentSeeder extends Seeder
                     'is_active' => true,
                     'show_in_menu' => true,
                     'show_in_customize_form' => $row['slug'] !== 'tour-ket-hop',
+                    'deleted_at' => null,
                 ]
             );
 
@@ -249,6 +250,26 @@ class ContentSeeder extends Seeder
                 );
             }
 
+            $en = $row['en'] ?? null;
+            if ($this->enId && is_array($en)) {
+                PackageTranslation::query()->updateOrCreate(
+                    ['package_id' => $package->id, 'language_id' => $this->enId],
+                    [
+                        'title' => $en['title'] ?? $row['title'],
+                        'start_location' => $en['start'] ?? $row['start'],
+                        'end_location' => $en['end'] ?? $row['end'],
+                        'places_to_visit' => $en['places'] ?? $row['places'],
+                        'featured_quote_text' => $en['quote']['text'] ?? ($row['quote']['text'] ?? null),
+                        'featured_quote_author' => $en['quote']['author'] ?? ($row['quote']['author'] ?? null),
+                        'highlights_intro' => $en['highlightsIntro'] ?? ($row['highlightsIntro'] ?? null),
+                        'highlight_bullets' => $en['highlights'] ?? ($row['highlights'] ?? []),
+                        'inclusions' => $en['inclusions'] ?? ($row['inclusions'] ?? []),
+                        'exclusions' => $en['exclusions'] ?? ($row['exclusions'] ?? []),
+                        'notes' => $en['notes'] ?? ($row['notes'] ?? []),
+                    ]
+                );
+            }
+
             $styleIds = TravelStyle::query()
                 ->whereIn('code', $row['styles'] ?? [])
                 ->pluck('id');
@@ -268,7 +289,7 @@ class ContentSeeder extends Seeder
             $package->countries()->sync($syncCountries);
 
             $package->itineraryDays()->delete();
-            foreach ($row['itinerary'] ?? [] as $dayRow) {
+            foreach ($row['itinerary'] ?? [] as $dayIndex => $dayRow) {
                 $day = PackageItineraryDay::query()->create([
                     'package_id' => $package->id,
                     'day_number' => $dayRow['day'],
@@ -284,6 +305,17 @@ class ContentSeeder extends Seeder
                         'title' => $dayRow['title'],
                         'content' => $dayRow['content'] ?? '',
                         'overnight_at' => $dayRow['overnight'] ?? null,
+                    ]);
+                }
+
+                $enDay = is_array($en) ? ($en['itinerary'][$dayIndex] ?? null) : null;
+                if ($this->enId && is_array($enDay)) {
+                    PackageItineraryDayTranslation::query()->create([
+                        'package_itinerary_day_id' => $day->id,
+                        'language_id' => $this->enId,
+                        'title' => $enDay['title'] ?? $dayRow['title'],
+                        'content' => $enDay['content'] ?? ($dayRow['content'] ?? ''),
+                        'overnight_at' => $enDay['overnight'] ?? ($dayRow['overnight'] ?? null),
                     ]);
                 }
             }
@@ -309,7 +341,7 @@ class ContentSeeder extends Seeder
             }
 
             $package->faqs()->delete();
-            $this->syncFaqs($package, $row['faqs'] ?? []);
+            $this->syncFaqs($package, $row['faqs'] ?? [], is_array($en) ? ($en['faqs'] ?? []) : []);
 
             $seoType = $isCruise ? 'package_cruise' : 'package_tour';
             $typeSegment = $isCruise ? ($row['typeSlug'] ?? 'du-thuyen-ha-long') : $row['countrySlug'];
@@ -325,6 +357,20 @@ class ContentSeeder extends Seeder
                 'rating_aggregate_count' => $row['reviewCount'],
                 'status' => 'published',
             ]);
+
+            if (is_array($en)) {
+                $this->seo->syncSeo($package, 'en', [
+                    'slug' => $row['slug'],
+                    'slug_full' => $this->seo->buildSlugFull($seoType, 'en', $row['slug'], null, [
+                        'country_code' => $typeSegment,
+                    ]),
+                    'title' => $en['title'] ?? $row['title'],
+                    'description' => $en['highlightsIntro'] ?? ($row['highlightsIntro'] ?? $row['title']),
+                    'rating_aggregate_star' => $row['rating'],
+                    'rating_aggregate_count' => $row['reviewCount'],
+                    'status' => 'published',
+                ]);
+            }
         }
     }
 
@@ -522,8 +568,9 @@ class ContentSeeder extends Seeder
 
     /**
      * @param  array<int, array{q: string, a: string}>  $faqs
+     * @param  array<int, array{q: string, a: string}>  $faqsEn
      */
-    protected function syncFaqs(object $model, array $faqs): void
+    protected function syncFaqs(object $model, array $faqs, array $faqsEn = []): void
     {
         foreach ($faqs as $sort => $faqRow) {
             $faq = Faq::query()->create([
@@ -539,6 +586,16 @@ class ContentSeeder extends Seeder
                     'language_id' => $this->viId,
                     'question' => $faqRow['q'],
                     'answer' => $faqRow['a'],
+                ]);
+            }
+
+            $enFaq = $faqsEn[$sort] ?? null;
+            if ($this->enId && is_array($enFaq)) {
+                FaqTranslation::query()->create([
+                    'faq_id' => $faq->id,
+                    'language_id' => $this->enId,
+                    'question' => $enFaq['q'] ?? $faqRow['q'],
+                    'answer' => $enFaq['a'] ?? $faqRow['a'],
                 ]);
             }
         }

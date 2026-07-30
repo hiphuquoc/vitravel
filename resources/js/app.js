@@ -130,6 +130,191 @@ Alpine.data('stepper', (initial = 0, min = 0, max = 30) => ({
 }));
 
 /**
+ * Custom select form — pattern adminCustomSelect (liendoan), single + search.
+ * opts: { value, label, options: [{value,label}], placeholder?, searchable?, required? }
+ */
+Alpine.data('formSelect', (opts = {}) => ({
+    open: false,
+    value: opts.value ?? '',
+    label: opts.label ?? '',
+    placeholder: opts.placeholder ?? '- Lựa chọn -',
+    options: Array.isArray(opts.options) ? opts.options : [],
+    searchable: opts.searchable !== false,
+    required: Boolean(opts.required),
+    query: '',
+    highlight: -1,
+    filtered: [],
+
+    init() {
+        this.filtered = this.options.slice();
+        this.syncValidity();
+        this.$watch('value', () => this.syncValidity());
+    },
+
+    get hasValue() {
+        return this.options.some((o) => String(o.value) === String(this.value));
+    },
+
+    get displayLabel() {
+        if (this.hasValue && this.label) return this.label;
+        if (this.label && this.label !== this.placeholder) return this.label;
+        return this.placeholder;
+    },
+
+    syncValidity() {
+        const el = this.$refs.hidden;
+        if (! el || ! this.required) return;
+        if (this.value === null || this.value === undefined || String(this.value) === '') {
+            el.setCustomValidity('Vui lòng chọn một mục');
+        } else {
+            el.setCustomValidity('');
+        }
+    },
+
+    toggle() {
+        if (this.open) this.close();
+        else this.openList();
+    },
+
+    onDisplayClick(e) {
+        if (e.target.closest('.vt-select__dropdown')) return;
+        this.toggle();
+    },
+
+    openList() {
+        this.open = true;
+        this.query = '';
+        this.filtered = this.options.slice();
+        const idx = this.filtered.findIndex((o) => String(o.value) === String(this.value));
+        this.highlight = idx >= 0 ? idx : 0;
+        this.$nextTick(() => {
+            if (this.searchable) this.$refs.search?.focus();
+        });
+    },
+
+    close() {
+        this.open = false;
+        this.query = '';
+        this.filtered = this.options.slice();
+        this.highlight = -1;
+    },
+
+    onSearch() {
+        const q = (this.query || '').trim().toLowerCase();
+        this.filtered = ! q
+            ? this.options.slice()
+            : this.options.filter((o) => String(o.label).toLowerCase().includes(q));
+        this.highlight = this.filtered.length ? 0 : -1;
+    },
+
+    move(dir) {
+        if (! this.open) {
+            this.openList();
+            return;
+        }
+        if (! this.filtered.length) return;
+        const len = this.filtered.length;
+        this.highlight = (this.highlight + dir + len) % len;
+        this.$nextTick(() => {
+            const opts = this.$root.querySelectorAll('.vt-select__option');
+            opts[this.highlight]?.scrollIntoView({ block: 'nearest' });
+        });
+    },
+
+    chooseHighlighted() {
+        if (this.highlight < 0 || ! this.filtered[this.highlight]) return;
+        this.select(this.filtered[this.highlight]);
+    },
+
+    select(opt) {
+        this.value = String(opt?.value ?? '');
+        this.label = String(opt?.label ?? '');
+        this.close();
+        this.$dispatch('vt-select-change', {
+            name: this.$refs.hidden?.name,
+            value: this.value,
+        });
+    },
+}));
+
+/**
+ * Hero slider trang chủ — first slide paint ngay (CSS bg), slide sau tải trì hoãn.
+ */
+Alpine.data('heroSlider', (total = 1) => ({
+    active: 0,
+    total: Math.max(1, Number(total) || 1),
+    timer: null,
+    loaded: {},
+
+    init() {
+        this.loaded[0] = true;
+        this.applyBg(0);
+        this.startAutoplay();
+        const prefetch = () => {
+            for (let i = 1; i < this.total; i += 1) this.ensureLoaded(i);
+        };
+        if (typeof window.requestIdleCallback === 'function') {
+            window.requestIdleCallback(prefetch, { timeout: 2800 });
+        } else {
+            setTimeout(prefetch, 1800);
+        }
+    },
+
+    startAutoplay() {
+        if (this.total <= 1) return;
+        this.stopAutoplay();
+        this.timer = setInterval(() => this.goNext(), 6000);
+    },
+
+    stopAutoplay() {
+        clearInterval(this.timer);
+        this.timer = null;
+    },
+
+    goTo(i) {
+        const next = ((i % this.total) + this.total) % this.total;
+        this.ensureLoaded(next);
+        this.active = next;
+        this.stopAutoplay();
+        this.startAutoplay();
+    },
+
+    goPrev() {
+        this.goTo(this.active - 1);
+    },
+
+    goNext() {
+        this.goTo(this.active + 1);
+    },
+
+    ensureLoaded(i) {
+        if (this.loaded[i]) return;
+        this.applyBg(i);
+        this.loaded[i] = true;
+    },
+
+    applyBg(i) {
+        const el = this.$root.querySelector(`[data-hero-slide="${i}"]`);
+        if (! el) return;
+        const media = el.querySelector('.hero-slide__media');
+        if (! media || media.dataset.bgReady === '1') return;
+        const desktop = media.getAttribute('data-bg') || '';
+        const mobile = media.getAttribute('data-bg-mobile') || '';
+        if (! desktop && ! mobile) return;
+        if (desktop) media.style.setProperty('--hero-bg', `url("${desktop}")`);
+        if (mobile) media.style.setProperty('--hero-bg-mobile', `url("${mobile}")`);
+        media.classList.add('hero-slide__media--ready');
+        media.dataset.bgReady = '1';
+        // Warm decode without blocking LCP of slide 0
+        if (i > 0 && desktop && typeof window.Image === 'function') {
+            const img = new Image();
+            img.decoding = 'async';
+            img.src = desktop;
+        }
+    },
+}));
+
+/**
  * Form demo: chặn submit, hiển thị confirmation inline (chưa nối API).
  */
 Alpine.data('demoForm', () => ({

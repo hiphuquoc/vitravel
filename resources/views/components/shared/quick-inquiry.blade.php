@@ -26,17 +26,17 @@
         @else
             <button type="button" class="qi-teaser" @click="openModal()" aria-haspopup="dialog">
                 <span class="qi-teaser__accent" aria-hidden="true"></span>
-                <div class="qi-teaser__copy">
-                    <p class="qi-teaser__eyebrow">Một lời nhắn gửi chúng tôi</p>
-                    <h2 class="qi-teaser__title">{{ $qiTitle }}</h2>
-                    <p class="qi-teaser__lead">{!! $qiBody !!}</p>
-                </div>
                 <span class="qi-teaser__action">
                     <span class="btn-primary shrink-0">
                         <x-icon name="mail" class="size-4" />
                         Viết lời nhắn
                     </span>
                 </span>
+                <div class="qi-teaser__copy">
+                    <p class="qi-teaser__eyebrow">Một lời nhắn gửi chúng tôi</p>
+                    <h2 class="qi-teaser__title">{{ $qiTitle }}</h2>
+                    <p class="qi-teaser__lead">{!! $qiBody !!}</p>
+                </div>
             </button>
         @endif
     </div>

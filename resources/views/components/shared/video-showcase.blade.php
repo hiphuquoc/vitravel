@@ -94,54 +94,56 @@
         </div>
     </div>
 
-    {{-- Fullscreen lightbox --}}
-    <div
-        class="vt-videos-lightbox"
-        x-show="active !== null"
-        x-cloak
-        x-transition.opacity.duration.200ms
-        @keydown.escape.window="close()"
-        @keydown.arrow-left.window="if (active !== null) prev()"
-        @keydown.arrow-right.window="if (active !== null) next()"
-        role="dialog"
-        aria-modal="true"
-        :aria-label="activeItem?.title || 'Xem video'"
-    >
-        <div class="vt-videos-lightbox__backdrop" @click="close()"></div>
-        <div class="vt-videos-lightbox__panel">
-            <button type="button" class="vt-videos-lightbox__close" @click="close()" aria-label="Đóng">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
-                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-            <button type="button" class="vt-videos-lightbox__nav vt-videos-lightbox__nav--prev" @click="prev()" aria-label="Video trước" x-show="items.length > 1">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <button type="button" class="vt-videos-lightbox__nav vt-videos-lightbox__nav--next" @click="next()" aria-label="Video tiếp" x-show="items.length > 1">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
+    {{-- Teleport ra body — tránh bị .vt-videos overflow/isolation clip --}}
+    <template x-teleport="body">
+        <div
+            class="vt-videos-lightbox"
+            x-show="active !== null"
+            x-cloak
+            x-transition.opacity.duration.200ms
+            @keydown.escape.window="close()"
+            @keydown.arrow-left.window="if (active !== null) prev()"
+            @keydown.arrow-right.window="if (active !== null) next()"
+            role="dialog"
+            aria-modal="true"
+            :aria-label="activeItem?.title || 'Xem video'"
+        >
+            <div class="vt-videos-lightbox__backdrop" @click="close()"></div>
+            <div class="vt-videos-lightbox__panel">
+                <button type="button" class="vt-videos-lightbox__close" @click="close()" aria-label="Đóng">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                <button type="button" class="vt-videos-lightbox__nav vt-videos-lightbox__nav--prev" @click="prev()" aria-label="Video trước" x-show="items.length > 1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button type="button" class="vt-videos-lightbox__nav vt-videos-lightbox__nav--next" @click="next()" aria-label="Video tiếp" x-show="items.length > 1">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
 
-            <div class="vt-videos-lightbox__stage">
-                <template x-if="active !== null && activeItem?.embedUrl && activeItem?.provider !== 'file'">
-                    <iframe
-                        class="vt-videos-lightbox__frame"
-                        :src="activeItem.embedUrl"
-                        :title="activeItem.title"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                    ></iframe>
-                </template>
-                <template x-if="active !== null && activeItem?.provider === 'file' && activeItem?.embedUrl">
-                    <video class="vt-videos-lightbox__frame" :src="activeItem.embedUrl" controls autoplay playsinline></video>
-                </template>
-            </div>
+                <div class="vt-videos-lightbox__stage">
+                    <template x-if="active !== null && activeItem?.embedUrl && activeItem?.provider !== 'file'">
+                        <iframe
+                            class="vt-videos-lightbox__frame"
+                            :src="activeItem.embedUrl"
+                            :title="activeItem.title"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen
+                        ></iframe>
+                    </template>
+                    <template x-if="active !== null && activeItem?.provider === 'file' && activeItem?.embedUrl">
+                        <video class="vt-videos-lightbox__frame" :src="activeItem.embedUrl" controls autoplay playsinline></video>
+                    </template>
+                </div>
 
-            <div class="vt-videos-lightbox__info" x-show="activeItem">
-                <p class="vt-videos-lightbox__index" x-text="activeLabel"></p>
-                <h3 class="vt-videos-lightbox__title" x-text="activeItem?.title"></h3>
-                <p class="vt-videos-lightbox__desc" x-show="activeItem?.description" x-text="activeItem?.description"></p>
+                <div class="vt-videos-lightbox__info" x-show="activeItem">
+                    <p class="vt-videos-lightbox__index" x-text="activeLabel"></p>
+                    <h3 class="vt-videos-lightbox__title" x-text="activeItem?.title"></h3>
+                    <p class="vt-videos-lightbox__desc" x-show="activeItem?.description" x-text="activeItem?.description"></p>
+                </div>
             </div>
         </div>
-    </div>
+    </template>
 </section>
 @endif

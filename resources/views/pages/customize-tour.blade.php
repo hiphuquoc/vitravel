@@ -71,15 +71,21 @@
                 @error('accommodation')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
                 <p class="field-label form-section__block">Ngân sách dự kiến (chưa gồm vé máy bay quốc tế)</p>
-                <div class="flex max-w-md gap-3">
-                    <div class="relative flex-1">
-                        <span class="absolute inset-y-0 left-4 flex items-center text-sm font-bold text-muted">₫</span>
-                        <input type="number" name="budget_amount" min="0" step="1000000" value="{{ old('budget_amount') }}" class="field-input pl-9" placeholder="30.000.000" aria-label="Số tiền ngân sách">
+                <div class="form-budget-row">
+                    <div class="form-budget-row__amount">
+                        <span class="form-budget-row__currency" aria-hidden="true">₫</span>
+                        <input type="number" name="budget_amount" min="0" step="1000000" value="{{ old('budget_amount') }}" class="field-input form-budget-row__input" placeholder="30.000.000" aria-label="Số tiền ngân sách">
                     </div>
-                    <select name="budget_unit" class="field-input w-40 appearance-none" aria-label="Đơn vị ngân sách">
-                        <option value="Mỗi người" @selected(old('budget_unit') === 'Mỗi người')>Mỗi người</option>
-                        <option value="Cả nhóm" @selected(old('budget_unit') === 'Cả nhóm')>Cả nhóm</option>
-                    </select>
+                    <x-form.select
+                        name="budget_unit"
+                        :options="[
+                            ['value' => 'Mỗi người', 'label' => 'Mỗi người'],
+                            ['value' => 'Cả nhóm', 'label' => 'Cả nhóm'],
+                        ]"
+                        :selected="old('budget_unit', 'Mỗi người')"
+                        :searchable="false"
+                        class="form-budget-row__unit"
+                    />
                 </div>
             </fieldset>
 
@@ -123,13 +129,16 @@
                         @error('phone')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label for="cz-nationality" class="field-label field-required">Quốc tịch</label>
-                        <select id="cz-nationality" name="nationality" required class="field-input appearance-none">
-                            <option value="">— Chọn quốc tịch —</option>
-                            @foreach (['Việt Nam', 'Pháp', 'Ý', 'Úc', 'Mỹ', 'Anh', 'Đức', 'Khác'] as $n)
-                                <option value="{{ $n }}" @selected(old('nationality') === $n)>{{ $n }}</option>
-                            @endforeach
-                        </select>
+                        <x-form.select
+                            name="nationality"
+                            id="cz-nationality"
+                            label="Quốc tịch"
+                            icon="globe"
+                            placeholder="— Chọn quốc tịch —"
+                            :required="true"
+                            :options="collect(['Việt Nam', 'Pháp', 'Ý', 'Úc', 'Mỹ', 'Anh', 'Đức', 'Khác'])->map(fn ($n) => ['value' => $n, 'label' => $n])->all()"
+                            :selected="old('nationality', '')"
+                        />
                         @error('nationality')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                     </div>
                     <div>

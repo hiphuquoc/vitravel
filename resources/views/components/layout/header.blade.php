@@ -74,8 +74,8 @@
             this.headerHeight = Math.min(Math.max(this.mainHeight + top, 56), 140);
         },
         /**
-         * Đổi trạng thái ghim headerTop + bù scrollY.
-         * Thu/phình spacer ở đầu document làm browser đổi scrollY → nếu không bù sẽ ẩn↔hiện khựng.
+         * Ghim/thu headerTop + bù spacer.
+         * Không ép scrollTo(0) khi ghim — tránh giật / không chạm trần được lúc scroll lên.
          */
         applyPinned(pinned) {
             if (pinned) {
@@ -99,10 +99,24 @@
 
             this._ignoreScroll = true;
             requestAnimationFrame(() => {
-                const nextY = pinned ? 0 : Math.max(this.topHeight + 8, y0 + diff);
-                window.scrollTo({ top: nextY, left: 0, behavior: 'auto' });
-                this.lastScrollY = window.scrollY || 0;
-                this.scrolled = this.lastScrollY > 8;
+                if (pinned) {
+                    // Phình spacer khi đã gần/đúng trần: giữ y≈0, không nhảy ép về 0 giữa gesture
+                    if (y0 <= 2) {
+                        this.lastScrollY = window.scrollY || 0;
+                        this.scrolled = this.lastScrollY > 8;
+                    } else {
+                        const nextY = Math.max(0, y0 + diff);
+                        window.scrollTo({ top: nextY, left: 0, behavior: 'auto' });
+                        this.lastScrollY = window.scrollY || 0;
+                        this.scrolled = this.lastScrollY > 8;
+                    }
+                } else {
+                    // Thu spacer: bù layout + đẩy khỏi vùng ghim lại ngay
+                    const nextY = Math.max(this.topHeight + 12, y0 + diff);
+                    window.scrollTo({ top: nextY, left: 0, behavior: 'auto' });
+                    this.lastScrollY = window.scrollY || 0;
+                    this.scrolled = this.lastScrollY > 8;
+                }
                 requestAnimationFrame(() => {
                     this._ignoreScroll = false;
                     this.lastScrollY = window.scrollY || 0;
@@ -125,13 +139,7 @@
                 return;
             }
 
-            // Đang hiện overlay + scroll lên gần trần → ghim spacer sớm (tránh flash lúc y=0)
-            if (! this.topPinned && this.topVisible && delta <= 0 && y <= this.topHeight + 24) {
-                this.applyPinned(true);
-                return;
-            }
-
-            // Chạm trần → ghim
+            // Chỉ ghim khi chạm trần thật — không pin sớm (gây giật / khó lên đầu trang)
             if (y <= 1) {
                 if (! this.topPinned) {
                     this.applyPinned(true);
@@ -142,9 +150,9 @@
                 return;
             }
 
-            // Đang ghim: scroll xuống → thu
+            // Đang ghim: chỉ thu khi đã scroll xuống rõ ràng khỏi vùng top
             if (this.topPinned) {
-                if (delta > 2 && y > 12) {
+                if (delta > 4 && y > this.topHeight + 20) {
                     this.applyPinned(false);
                     return;
                 }
@@ -152,8 +160,8 @@
                 return;
             }
 
-            // Giữa trang: overlay theo hướng
-            if (Math.abs(delta) < 8) {
+            // Giữa trang: overlay theo hướng (không đổi spacer)
+            if (Math.abs(delta) < 6) {
                 this.lastScrollY = y;
                 return;
             }

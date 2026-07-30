@@ -52,7 +52,7 @@ class TourCategorySeeder extends Seeder
         ];
 
         foreach (SampleData::countries() as $sort => $row) {
-            $country = Country::query()->updateOrCreate(
+            $country = Country::withTrashed()->updateOrCreate(
                 ['code' => $codes[$row['slug']] ?? strtoupper(substr($row['slug'], 0, 2))],
                 [
                     'home_grid_size' => $row['size'],
@@ -60,6 +60,7 @@ class TourCategorySeeder extends Seeder
                     'is_active' => true,
                     'show_in_menu' => true,
                     'show_in_customize_form' => $row['slug'] !== 'tour-ket-hop',
+                    'deleted_at' => null,
                 ],
             );
 

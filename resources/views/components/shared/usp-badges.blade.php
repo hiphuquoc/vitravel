@@ -1,14 +1,16 @@
 @php $usps = view_data()->usps(); @endphp
 
-{{-- 4 cam kết dịch vụ — lặp lại ở Home, About Us --}}
-<div {{ $attributes->merge(['class' => 'grid grid-cols-2 site-gap lg:grid-cols-4']) }}>
+{{-- 4 cam kết — open layout; chip vuông + gradient/viền nhẹ --}}
+<div {{ $attributes->merge(['class' => 'usp-strip']) }}>
     @foreach ($usps as $usp)
-        <div class="usp-item">
-            <span class="usp-item__icon">
-                <x-icon :name="$usp['icon']" />
+        <article class="usp-item">
+            <span class="usp-item__icon" aria-hidden="true">
+                <x-icon :name="$usp['icon']" class="usp-item__glyph !h-11 !w-11 !max-h-none !max-w-none" />
             </span>
-            <h3 class="item-title usp-item__title leading-snug">{{ $usp['title'] }}</h3>
-            <p class="body-text max-w-[18rem]">{{ $usp['desc'] }}</p>
-        </div>
+            <div class="usp-item__body card-inner">
+                <h3 class="item-title usp-item__title">{{ $usp['title'] }}</h3>
+                <p class="body-text usp-item__desc">{{ $usp['desc'] }}</p>
+            </div>
+        </article>
     @endforeach
 </div>

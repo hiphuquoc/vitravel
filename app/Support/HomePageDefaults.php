@@ -69,7 +69,7 @@ class HomePageDefaults
                 'key' => HomeSection::KEY_COMPANY_INTRO,
                 'sort' => 0,
                 'vi' => [
-                    'eyebrow' => 'Chuyên gia du lịch miền Bắc',
+                    'eyebrow' => 'Chuyên gia du lịch Việt',
                     'title' => 'Hành trình chân thật, thiết kế bởi người bản địa',
                     'body' => 'ViTravel là đại lý lữ hành đặt trụ sở tại Hà Nội, với hơn 10 năm đồng hành cùng du khách khám phá miền Bắc Việt Nam — từ vịnh Hạ Long, Sa Pa, Ninh Bình tới cao nguyên đá Hà Giang. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia sinh ra và lớn lên tại chính điểm đến.',
                     'meta_line' => 'Giấy phép lữ hành quốc tế số 01-2234/TCDL-GP-LHQT',
@@ -78,7 +78,7 @@ class HomePageDefaults
                     'image_alt' => 'Ảnh đội ngũ ViTravel tại văn phòng Hà Nội',
                 ],
                 'en' => [
-                    'eyebrow' => 'Northern Vietnam travel experts',
+                    'eyebrow' => 'Vietnam travel experts',
                     'title' => 'Authentic journeys, designed by locals',
                     'body' => 'ViTravel is a Hanoi-based travel agency with over 10 years of guiding guests through Northern Vietnam — from Halong Bay, Sapa and Ninh Binh to the karst highlands of Ha Giang. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience by experts born and raised in the destinations themselves.',
                     'meta_line' => 'International travel license No. 01-2234/TCDL-GP-LHQT',

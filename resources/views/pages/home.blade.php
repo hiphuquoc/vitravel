@@ -68,23 +68,25 @@
         <x-home.destinations :countries="$countries" :section="$destinationsSection" />
     @endunless
 
-    {{-- ── Trust & nội dung dùng chung ── --}}
-    @php
-        $testimonialsSection = view_data()->homeSection('testimonials');
-        $reviewPlatformsSection = view_data()->homeSection('review_platforms');
-        $teamSection = view_data()->homeSection('team');
-        $videosSection = view_data()->homeSection('videos');
-    @endphp
-    @unless ($testimonialsSection['hidden'] ?? false)
-        <x-shared.testimonial-carousel :section="$testimonialsSection" />
-    @endunless
-    @unless ($reviewPlatformsSection['hidden'] ?? false)
-        <x-shared.review-platforms class="pt-0" :section="$reviewPlatformsSection" />
-    @endunless
-    @unless ($teamSection['hidden'] ?? false)
-        <x-shared.team-grid class="pt-0" :section="$teamSection" />
-    @endunless
+    {{-- ── Video trải nghiệm (ngay dưới điểm đến) ── --}}
+    @php $videosSection = view_data()->homeSection('videos'); @endphp
     @unless ($videosSection['hidden'] ?? false)
         <x-shared.video-showcase :section="$videosSection" :home-only="true" :limit="4" />
+    @endunless
+
+    {{-- ── Đội ngũ → đánh giá nền tảng → khách hàng kể lại ── --}}
+    @php
+        $teamSection = view_data()->homeSection('team');
+        $reviewPlatformsSection = view_data()->homeSection('review_platforms');
+        $testimonialsSection = view_data()->homeSection('testimonials');
+    @endphp
+    @unless ($teamSection['hidden'] ?? false)
+        <x-shared.team-grid :section="$teamSection" />
+    @endunless
+    @unless ($reviewPlatformsSection['hidden'] ?? false)
+        <x-shared.review-platforms :section="$reviewPlatformsSection" />
+    @endunless
+    @unless ($testimonialsSection['hidden'] ?? false)
+        <x-shared.testimonial-carousel :section="$testimonialsSection" />
     @endunless
 @endsection

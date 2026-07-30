@@ -8,7 +8,8 @@
 <footer>
     {{-- Tầng 1 — Contact strip nền be (teaser hỏi nhanh chồng lên) --}}
     <section class="footer-contact-strip cv-auto bg-strip" aria-label="Thông tin liên hệ">
-        <div class="container-site section-band grid site-gap-lg lg:grid-cols-[1.2fr_1fr_auto]">
+        <div class="container-site footer-contact-strip__inner">
+            <div class="footer-contact-strip__grid">
             <div>
                 <div class="footer-contact__brand-row">
                     <span class="footer-contact__logo">
@@ -35,7 +36,7 @@
                 </ul>
             </div>
 
-            <div class="grid site-gap sm:grid-cols-3 lg:grid-cols-1">
+            <div class="footer-contact__offices">
                 @foreach ($offices as $office)
                     <div class="footer-office">
                         <x-icon name="map-pin" class="mt-0.5 size-4.5 shrink-0 text-primary-600" />
@@ -54,6 +55,7 @@
                     <x-icon name="qr" class="size-16 text-ink/70" />
                 </div>
                 <p class="footer-contact__qr-copy body-text">Quét mã QR để trò chuyện WhatsApp với tư vấn viên</p>
+            </div>
             </div>
         </div>
     </section>

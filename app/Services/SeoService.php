@@ -77,16 +77,16 @@ class SeoService
         }
 
         $translationPayload = [
-            'title' => $data['title'] ?? null,
-            'description' => $data['description'] ?? null,
-            'seo_title' => $data['seo_title'] ?? ($data['title'] ?? null),
-            'seo_description' => $data['seo_description'] ?? ($data['description'] ?? null),
-            'keywords' => $data['keywords'] ?? null,
+                'title' => $data['title'] ?? null,
+                'description' => $data['description'] ?? null,
+                'seo_title' => $data['seo_title'] ?? ($data['title'] ?? null),
+                'seo_description' => $data['seo_description'] ?? ($data['description'] ?? null),
+                'keywords' => $data['keywords'] ?? null,
             'slug' => $slug,
             'slug_full' => $slugFull,
             'canonical_url' => $data['canonical_url'] ?? null,
             'status' => $data['status'] ?? 'draft',
-            'translation_status' => $data['translation_status'] ?? 'manual',
+                'translation_status' => $data['translation_status'] ?? 'manual',
             'published_at' => $data['published_at'] ?? (($data['status'] ?? '') === 'published' ? now() : null),
         ];
 
