@@ -54,13 +54,15 @@ autourasia-clone-docs/
 - **DB:** `php artisan migrate --seed` — `ContentSeeder` nạp tour/cruise/article/brand từ mock.
 - **Docs DB:** `07-database-architecture.md` + §18 trong `03-data-models.md`.
 
-### Lệnh khởi tạo
+### Lệnh khởi tạo (máy dev)
 
 ```bash
 composer dump-autoload
 php artisan migrate --seed
-npm run build
+npm run build   # Node 20+ — tạo public/build/ (bắt buộc trước khi lên production)
 ```
+
+**Deploy production (không build trên server):** xem [`deploy-production.md`](deploy-production.md).
 
 ### Admin modules (đã có CRUD)
 
