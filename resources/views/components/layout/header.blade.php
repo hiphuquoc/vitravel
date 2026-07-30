@@ -179,10 +179,22 @@
                 requestAnimationFrame(() => this.measureParts());
             });
             window.addEventListener('resize', () => this.measureParts(), { passive: true });
+            this.$watch('mobileOpen', (open) => {
+                document.body.classList.toggle('is-mobileNavOpen', open);
+            });
+        },
+        closeMobileNav() {
+            this.mobileOpen = false;
+        },
+        openMobileNav() {
+            this.mobileOpen = true;
+            this.openMenu = null;
+            this.closeSearch();
         },
         openSearch() {
             this.searchOpen = true;
             this.openMenu = null;
+            this.mobileOpen = false;
             this.topVisible = true;
             document.body.classList.add('is-searchOpen');
             this.$nextTick(() => {
@@ -358,7 +370,7 @@
                 <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
             </a>
 
-            <button type="button" @click="mobileOpen = true"
+            <button type="button" @click="openMobileNav()"
                 class="headerMain__menuBtn lg:hidden"
                 aria-label="Mở menu">
                 <x-icon name="menu" class="headerMain__menuIcon" />
@@ -377,13 +389,26 @@
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
 
         <div class="site-search__panel" x-show="searchOpen"
-            x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0 -translate-y-3"
+            x-transition:enter="transition ease-out duration-250"
+            x-transition:enter-start="opacity-0 max-lg:translate-y-full lg:-translate-y-3"
             x-transition:enter-end="opacity-100 translate-y-0"
-            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 -translate-y-2"
+            x-transition:leave-end="opacity-0 max-lg:translate-y-full lg:-translate-y-2"
             @click.stop>
+            <div class="site-search__sheet-head">
+                <div class="site-search__handle" aria-hidden="true"></div>
+                <div class="site-search__sheet-title-row">
+                    <div>
+                        <h2 class="site-search__sheet-title item-title">Tìm kiếm</h2>
+                        <p class="site-search__sheet-sub">Tour, điểm đến, du thuyền, cẩm nang…</p>
+                    </div>
+                    <button type="button" class="site-search__sheet-close" @click="closeSearch()" aria-label="Đóng tìm kiếm">
+                        <x-icon name="close" class="size-5" />
+                    </button>
+                </div>
+            </div>
+
             <form action="{{ locale_route('search') }}" method="get" class="site-search-bar" role="search"
                 @submit="if (!(q || '').trim()) { $event.preventDefault(); }">
                 <x-icon name="search" class="site-search-bar__icon size-5" />
@@ -465,75 +490,156 @@
         </div>
     </div>
 
-    {{-- Drawer mobile --}}
-    <div x-cloak x-show="mobileOpen" class="fixed inset-0 z-50 lg:hidden" @keydown.escape.window="mobileOpen = false">
-        <div class="absolute inset-0 bg-ink/40" @click="mobileOpen = false" x-transition.opacity></div>
-        <div x-show="mobileOpen" x-transition:enter="transition duration-200" x-transition:enter-start="translate-x-full"
-            x-transition:enter-end="translate-x-0" x-transition:leave="transition duration-150"
-            x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-            class="absolute inset-y-0 right-0 flex w-[320px] max-w-[90vw] flex-col overflow-y-auto bg-white shadow-2xl">
-            <div class="flex items-center justify-between border-b border-line p-4">
-                <span class="item-title text-lg">Menu</span>
-                <button type="button" @click="mobileOpen = false" class="flex size-9 cursor-pointer items-center justify-center rounded-full hover:bg-page" aria-label="Đóng menu">
+    {{-- Menu di động (drawer phải) --}}
+    <div x-cloak x-show="mobileOpen" class="mobile-nav-drawer lg:hidden" role="dialog" aria-modal="true" aria-label="Menu điều hướng"
+        @keydown.escape.window="closeMobileNav()">
+        <div class="mobile-nav-drawer__backdrop" @click="closeMobileNav()" x-show="mobileOpen"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+
+        <div class="mobile-nav-drawer__panel" x-show="mobileOpen"
+            x-transition:enter="transition ease-out duration-250"
+            x-transition:enter-start="translate-x-full"
+            x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="translate-x-0"
+            x-transition:leave-end="translate-x-full">
+            <header class="mobile-nav-drawer__head">
+                <a href="{{ locale_route('home') }}" class="header-wordmark header-wordmark--drawer" @click="closeMobileNav()" aria-label="ViTravel — về trang chủ">
+                    <span class="header-wordmark__mark" aria-hidden="true">
+                        <x-icon name="compass" class="header-wordmark__icon" />
+                    </span>
+                    <span class="header-wordmark__text">
+                        <span class="header-wordmark__name">ViTravel</span>
+                        <span class="header-wordmark__tagline">Hài lòng hơn mong đợi</span>
+                    </span>
+                </a>
+                <button type="button" class="mobile-nav-drawer__close" @click="closeMobileNav()" aria-label="Đóng menu">
                     <x-icon name="close" class="size-5" />
                 </button>
-            </div>
+            </header>
 
-            <div class="border-b border-line p-4">
-                <button type="button" @click="mobileOpen = false; openSearch()"
-                    class="site-search-bar site-search-bar--compact w-full cursor-pointer text-left">
-                    <x-icon name="search" class="site-search-bar__icon size-5" />
-                    <span class="site-search-bar__input text-muted">Tìm tour, điểm đến…</span>
-                </button>
-            </div>
-
-            <nav class="flex-1 p-4" aria-label="Menu di động" x-data="{ sub: null }">
-                <button type="button" @click="sub = sub === 'dest' ? null : 'dest'"
-                    class="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-3 text-base font-semibold hover:bg-page">
-                    Điểm đến <x-icon name="chevron-down" class="size-4 transition" ::class="sub === 'dest' && 'rotate-180'" />
-                </button>
-                <div x-show="sub === 'dest'" x-collapse>
-                    <a href="{{ locale_route('tours.hub') }}" class="block rounded-lg py-2.5 pl-6 text-base font-medium text-ink-soft hover:text-primary-600">Tất cả tour</a>
-                    @foreach ($destinations as $c)
-                        <a href="{{ locale_route('tours.index', $c['slug']) }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Tour {{ $c['name'] }}</a>
-                    @endforeach
+            <nav class="mobile-nav-drawer__body" aria-label="Menu di động" x-data="{ sub: 'dest' }">
+                <div class="mobile-nav-drawer__section">
+                    <button type="button" class="mobile-nav-drawer__trigger"
+                        :aria-expanded="sub === 'dest'"
+                        @click="sub = sub === 'dest' ? null : 'dest'">
+                        <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="map-pin" class="size-4" /></span>
+                        <span class="mobile-nav-drawer__trigger-label">Điểm đến</span>
+                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="sub === 'dest' && 'is-open'" />
+                    </button>
+                    <div class="mobile-nav-drawer__sub" x-show="sub === 'dest'" x-collapse>
+                        <ul class="mobile-nav-drawer__tree">
+                            <li>
+                                <a href="{{ locale_route('tours.hub') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
+                                    <span class="mobile-nav-drawer__tree-link-title item-title">Tất cả tour</span>
+                                    <span class="mobile-nav-drawer__tree-link-meta">Xem toàn bộ hành trình</span>
+                                </a>
+                            </li>
+                            @foreach ($destinations as $c)
+                                <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
+                                    <a href="{{ locale_route('tours.index', $c['slug']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                        <span class="mobile-nav-drawer__tree-link-row">
+                                            <span class="mobile-nav-drawer__tree-link-title">Tour {{ $c['name'] }}</span>
+                                            <x-shared.count-badge :count="$c['tourCount'] ?? 0" />
+                                        </span>
+                                        @if (! empty($c['tagline']))
+                                            <span class="mobile-nav-drawer__tree-link-meta">{{ $c['tagline'] }}</span>
+                                        @endif
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
 
-                <button type="button" @click="sub = sub === 'cruise' ? null : 'cruise'"
-                    class="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-3 text-base font-semibold hover:bg-page">
-                    Du thuyền <x-icon name="chevron-down" class="size-4 transition" ::class="sub === 'cruise' && 'rotate-180'" />
-                </button>
-                <div x-show="sub === 'cruise'" x-collapse>
-                    <a href="{{ locale_route('cruises.hub') }}" class="block rounded-lg py-2.5 pl-6 text-base font-medium text-ink-soft hover:text-primary-600">Tất cả du thuyền</a>
-                    @foreach ($cruiseTypes as $t)
-                        <a href="{{ locale_route('cruises.index', $t['slug']) }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">{{ $t['name'] }}</a>
-                    @endforeach
+                <div class="mobile-nav-drawer__section">
+                    <button type="button" class="mobile-nav-drawer__trigger"
+                        :aria-expanded="sub === 'cruise'"
+                        @click="sub = sub === 'cruise' ? null : 'cruise'">
+                        <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="cruise" class="size-4" /></span>
+                        <span class="mobile-nav-drawer__trigger-label">Du thuyền</span>
+                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="sub === 'cruise' && 'is-open'" />
+                    </button>
+                    <div class="mobile-nav-drawer__sub" x-show="sub === 'cruise'" x-collapse>
+                        <ul class="mobile-nav-drawer__tree">
+                            <li>
+                                <a href="{{ locale_route('cruises.hub') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
+                                    <span class="mobile-nav-drawer__tree-link-title item-title">Tất cả du thuyền</span>
+                                    <span class="mobile-nav-drawer__tree-link-meta">Lịch trình &amp; loại tàu</span>
+                                </a>
+                            </li>
+                            @foreach ($cruiseTypes as $t)
+                                <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
+                                    <a href="{{ locale_route('cruises.index', $t['slug']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                        <span class="mobile-nav-drawer__tree-link-row">
+                                            <span class="mobile-nav-drawer__tree-link-title">{{ $t['name'] }}</span>
+                                            <x-shared.count-badge :count="$t['count'] ?? 0" />
+                                        </span>
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
                 </div>
 
-                <button type="button" @click="sub = sub === 'guide' ? null : 'guide'"
-                    class="flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-3 text-base font-semibold hover:bg-page">
-                    Cẩm nang <x-icon name="chevron-down" class="size-4 transition" ::class="sub === 'guide' && 'rotate-180'" />
-                </button>
-                <div x-show="sub === 'guide'" x-collapse>
-                    <p class="nav-panel-group__title !px-0 !pt-2">Bài viết</p>
-                    <a href="{{ locale_route('guide.index') }}" class="block rounded-lg py-2.5 pl-6 text-base font-medium text-ink-soft hover:text-primary-600">Tất cả bài viết</a>
-                    @foreach ($guideCountries as $c)
-                        <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Cẩm nang {{ $c['name'] }}</a>
-                    @endforeach
-                    <p class="nav-panel-group__title !mt-3 !px-0">Thư viện</p>
-                    <a href="{{ locale_route('videos') }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Video trải nghiệm</a>
-                    <a href="{{ locale_route('gallery') }}" class="block rounded-lg py-2.5 pl-6 text-base text-ink-soft hover:text-primary-600">Thư viện khoảnh khắc</a>
+                <div class="mobile-nav-drawer__section">
+                    <button type="button" class="mobile-nav-drawer__trigger"
+                        :aria-expanded="sub === 'guide'"
+                        @click="sub = sub === 'guide' ? null : 'guide'">
+                        <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="list" class="size-4" /></span>
+                        <span class="mobile-nav-drawer__trigger-label">Cẩm nang</span>
+                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="sub === 'guide' && 'is-open'" />
+                    </button>
+                    <div class="mobile-nav-drawer__sub" x-show="sub === 'guide'" x-collapse>
+                        <p class="mobile-nav-drawer__tree-group-title">Bài viết</p>
+                        <ul class="mobile-nav-drawer__tree">
+                            <li>
+                                <a href="{{ locale_route('guide.index') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">Tất cả bài viết</a>
+                            </li>
+                            @foreach ($guideCountries as $c)
+                                <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
+                                    <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Cẩm nang {{ $c['name'] }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <p class="mobile-nav-drawer__tree-group-title">Thư viện</p>
+                        <ul class="mobile-nav-drawer__tree">
+                            <li>
+                                <a href="{{ locale_route('videos') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Video trải nghiệm</a>
+                            </li>
+                            <li class="mobile-nav-drawer__tree-item--last">
+                                <a href="{{ locale_route('gallery') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Thư viện khoảnh khắc</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
-                <a href="{{ locale_route('about') }}" class="block rounded-lg px-3 py-3 text-base font-semibold hover:bg-page">Về chúng tôi</a>
-                <a href="{{ locale_route('contact') }}" class="block rounded-lg px-3 py-3 text-base font-semibold hover:bg-page">Liên hệ</a>
+                <a href="{{ locale_route('about') }}" class="mobile-nav-drawer__trigger" @click="closeMobileNav()">
+                    <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="users" class="size-4" /></span>
+                    <span class="mobile-nav-drawer__trigger-label">Về chúng tôi</span>
+                    <x-icon name="arrow-right" class="mobile-nav-drawer__chevron size-4" aria-hidden="true" />
+                </a>
+                <a href="{{ locale_route('contact') }}" class="mobile-nav-drawer__trigger" @click="closeMobileNav()">
+                    <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="mail" class="size-4" /></span>
+                    <span class="mobile-nav-drawer__trigger-label">Liên hệ</span>
+                    <x-icon name="arrow-right" class="mobile-nav-drawer__chevron size-4" aria-hidden="true" />
+                </a>
             </nav>
 
-            <div class="space-y-3 border-t border-line p-4">
-                <a href="{{ locale_route('customize') }}" class="btn-primary w-full">
+            <footer class="mobile-nav-drawer__foot">
+                <a href="tel:{{ $hotlineTel }}" class="mobile-nav-drawer__hotline">
+                    <span class="mobile-nav-drawer__hotline-icon" aria-hidden="true"><x-icon name="phone" class="size-4" /></span>
+                    <span class="min-w-0">
+                        <span class="mobile-nav-drawer__hotline-label">{{ $hotlineLabel }}</span>
+                        <span class="mobile-nav-drawer__hotline-number">{{ $hotlineDisplay }}</span>
+                    </span>
+                </a>
+                <a href="{{ locale_route('customize') }}" class="btn-primary mobile-nav-drawer__cta" @click="closeMobileNav()">
                     <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
                 </a>
-            </div>
+            </footer>
         </div>
     </div>
 </div>

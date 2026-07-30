@@ -59,10 +59,8 @@ autourasia-clone-docs/
 ```bash
 composer dump-autoload
 php artisan migrate --seed
-npm run build   # Node 20+ — tạo public/build/ (bắt buộc trước khi lên production)
+npm run build   # Node 20+ — commit public/build/ cùng repo rồi deploy
 ```
-
-**Deploy production (không build trên server):** xem [`deploy-production.md`](deploy-production.md).
 
 ### Admin modules (đã có CRUD)
 
