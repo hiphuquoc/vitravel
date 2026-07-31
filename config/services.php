@@ -36,15 +36,23 @@ return [
     ],
 
     /*
-    | Google Cloud Storage (pattern baseos.dev — credentials via file path, không hard-code key)
+    |--------------------------------------------------------------------------
+    | Google Cloud Storage — chuẩn đa dự án
+    |--------------------------------------------------------------------------
+    | Hằng số .env (bắt buộc khi MEDIA_DISK=gcs):
+    |   GCS_PROJECT_ID, GCS_BUCKET, GCS_KEY_FILE, GCS_PUBLIC_URL
+    | Key file: đường dẫn relative base_path hoặc absolute.
+    | MediaService đọc public_url để build URL ảnh/video.
+    | Fallback GOOGLE_CLOUD_* chỉ migrate dự án cũ.
     */
     'gcs' => [
         'project_id' => env('GCS_PROJECT_ID', env('GOOGLE_CLOUD_PROJECT_ID')),
         'bucket' => env('GCS_BUCKET', env('GOOGLE_CLOUD_STORAGE_BUCKET')),
         'key_file' => ($path = env('GCS_KEY_FILE', env('GOOGLE_CLOUD_KEY_FILE')))
-            ? (str_starts_with($path, '/') ? $path : base_path($path))
+            ? (str_starts_with($path, '/') || preg_match('#^[A-Za-z]:[\\\\/]#', $path) ? $path : base_path($path))
             : null,
-        'public_url' => env('GCS_PUBLIC_URL'),
+        'public_url' => env('GCS_PUBLIC_URL', env('GCS_PUBLIC_BASE_URL', env('GOOGLE_CLOUD_URL'))),
+        'path_prefix' => env('GCS_PATH_PREFIX', env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', '')),
     ],
 
 ];

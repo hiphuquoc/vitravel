@@ -6,9 +6,10 @@ return [
     | Default media storage disk
     |--------------------------------------------------------------------------
     | public — local storage/app/public (dev)
-    | gcs    — Google Cloud Storage (production, cùng pattern baseos.dev)
+    | gcs    — Google Cloud Storage (MEDIA_DISK=gcs + block GCS_* trong .env)
+    | Xem docs/gcs-standard.md
     */
-    'disk' => env('MEDIA_DISK', env('FILESYSTEM_DISK', 'public') === 'gcs' ? 'gcs' : 'public'),
+    'disk' => env('MEDIA_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------

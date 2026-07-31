@@ -60,15 +60,21 @@ return [
             'report' => false,
         ],
 
+        /*
+        | Google Cloud Storage — chuẩn đa dự án (ViTravel)
+        | .env: GCS_PROJECT_ID, GCS_BUCKET, GCS_KEY_FILE, GCS_PUBLIC_URL
+        | Key JSON: thường storage/app/gcs-credentials.json (relative base_path)
+        | Fallback GOOGLE_CLOUD_* chỉ để migrate dự án cũ — đừng thêm mới.
+        */
         'gcs' => [
             'driver' => 'gcs',
-            'key_file_path' => ($path = env('GCS_KEY_FILE', env('GOOGLE_CLOUD_KEY_FILE')))
-                ? (str_starts_with($path, '/') ? $path : base_path($path))
-                : null,
             'project_id' => env('GCS_PROJECT_ID', env('GOOGLE_CLOUD_PROJECT_ID')),
+            'key_file_path' => ($path = env('GCS_KEY_FILE', env('GOOGLE_CLOUD_KEY_FILE')))
+                ? (str_starts_with($path, '/') || preg_match('#^[A-Za-z]:[\\\\/]#', $path) ? $path : base_path($path))
+                : null,
             'bucket' => env('GCS_BUCKET', env('GOOGLE_CLOUD_STORAGE_BUCKET')),
-            'path_prefix' => env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', ''),
-            'storage_api_uri' => env('GOOGLE_CLOUD_STORAGE_API_URI'),
+            'path_prefix' => env('GCS_PATH_PREFIX', env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', '')),
+            'storage_api_uri' => env('GCS_PUBLIC_URL', env('GCS_STORAGE_API_URI', env('GOOGLE_CLOUD_STORAGE_API_URI'))),
             'visibility' => 'public',
             'visibility_handler' => \League\Flysystem\GoogleCloudStorage\UniformBucketLevelAccessVisibility::class,
             'metadata' => ['cacheControl' => 'public,max-age=86400'],

@@ -56,7 +56,8 @@ autourasia-clone-docs/
 
 ### Lệnh khởi tạo (máy dev)
 
-Sau khi clone repo, đảm bảo có file **`project/seed.php`** (nội dung demo một file — xem `project/README.md`).
+- **DB / seed:** `PROJECT_SEED` (`.env`) → `project/seed_{name}.php`. Schema & quy tắc AI: `project/README.md`, `.cursor/rules/project-seed.mdc`, `AGENTS.md`. Không hardcode demo trong seeder.
+- **GCS (chuẩn đa dự án):** `docs/gcs-standard.md` — `GCS_PROJECT_ID` / `GCS_BUCKET` / `GCS_KEY_FILE` / `GCS_PUBLIC_URL` + `MEDIA_DISK=gcs`.
 
 ```bash
 composer dump-autoload

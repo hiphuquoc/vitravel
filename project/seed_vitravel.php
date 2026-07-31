@@ -2,12 +2,11 @@
 
 /**
  * ============================================================================
- * CẤU HÌNH DỮ LIỆU DỰ ÁN — sửa file này khi clone sang dự án mới
+ * DỮ LIỆU ViTravel — được load qua PROJECT_SEED=vitravel
  * ============================================================================
  *
- * 1) Sửa brand / quốc gia-đảo / tour / bài viết / team …
- * 2) (Tuỳ chọn) .env + config/company.php
- * 3) php artisan migrate --seed
+ * Entry khuyến nghị: project/seed_vitravel.php (require file này hoặc tự chứa data).
+ * Schema: project/README.md | Config: .env PROJECT_SEED + config/project.php
  *
  * @return array<string, mixed>
  */
