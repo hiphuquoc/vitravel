@@ -105,19 +105,47 @@ class HomePageDefaults
                 'key' => HomeSection::KEY_FEATURED_CRUISES,
                 'sort' => 2,
                 'vi' => [
-                    'eyebrow' => 'Trên mặt nước',
-                    'title' => 'Những chuyến du thuyền đáng trải nghiệm',
-                    'subtitle' => 'Ba hành trình trên vịnh và sông nước được khách hàng đánh giá cao nhất.',
+                    'eyebrow' => 'Hành trình biển',
+                    'title' => 'Trải nghiệm trên mặt nước đáng nhớ',
+                    'subtitle' => 'Những hải trình được yêu thích nhất — nơi việc di chuyển trở thành một phần của trải nghiệm, mở ra góc nhìn trọn vẹn về biển đảo.',
                 ],
                 'en' => [
-                    'eyebrow' => 'On the water',
-                    'title' => 'Cruises worth experiencing',
-                    'subtitle' => 'Three bay and river journeys our guests rate highest.',
+                    'eyebrow' => 'Sea journeys',
+                    'title' => 'Memorable experiences on the water',
+                    'subtitle' => 'Our most loved voyages — where getting there becomes part of the experience, opening a fuller view of islands and sea.',
+                ],
+            ],
+            [
+                'key' => HomeSection::KEY_FEATURED_TRAINS,
+                'sort' => 3,
+                'vi' => [
+                    'eyebrow' => 'Tàu cao tốc',
+                    'title' => 'Di chuyển nhanh, đặt vé linh hoạt',
+                    'subtitle' => 'Chọn hạng ghế hoặc giường nằm theo từng tuyến. Chủ động thời gian, dễ dàng tích hợp vào lịch trình riêng của bạn.',
+                ],
+                'en' => [
+                    'eyebrow' => 'High-speed trains',
+                    'title' => 'Travel fast, book with flexibility',
+                    'subtitle' => 'Choose seat or sleeper by route. Stay in control of your schedule and fit tickets into your own itinerary.',
+                ],
+            ],
+            [
+                'key' => HomeSection::KEY_SUPPORT_SERVICES,
+                'sort' => 4,
+                'vi' => [
+                    'eyebrow' => 'Dịch vụ bổ trợ',
+                    'title' => 'Chỉ chọn những gì bạn cần',
+                    'subtitle' => 'Lưu trú, vui chơi và các dịch vụ hỗ trợ — linh hoạt đặt riêng theo kế hoạch, tối ưu trải nghiệm du lịch trọn vẹn hơn.',
+                ],
+                'en' => [
+                    'eyebrow' => 'Add-on services',
+                    'title' => 'Choose only what you need',
+                    'subtitle' => 'Stays, activities, and support services — book à la carte around your plan for a more complete trip.',
                 ],
             ],
             [
                 'key' => HomeSection::KEY_DESTINATIONS,
-                'sort' => 3,
+                'sort' => 5,
                 'vi' => [
                     'eyebrow' => 'Đông Nam Á',
                     'title' => 'Những điểm đến được yêu thích nhất',
@@ -131,7 +159,7 @@ class HomePageDefaults
             ],
             [
                 'key' => HomeSection::KEY_TESTIMONIALS,
-                'sort' => 4,
+                'sort' => 6,
                 'vi' => [
                     'eyebrow' => 'Khách hàng kể lại',
                     'title' => 'Trải nghiệm chân thật từ khách hàng',
@@ -149,13 +177,13 @@ class HomePageDefaults
             ],
             [
                 'key' => HomeSection::KEY_REVIEW_PLATFORMS,
-                'sort' => 5,
+                'sort' => 7,
                 'vi' => ['title' => 'ViTravel được đánh giá cao trên'],
                 'en' => ['title' => 'ViTravel is highly rated on'],
             ],
             [
                 'key' => HomeSection::KEY_TEAM,
-                'sort' => 6,
+                'sort' => 8,
                 'vi' => [
                     'eyebrow' => 'Con người ViTravel',
                     'title' => 'Đội ngũ tận tâm của chúng tôi',
@@ -173,7 +201,7 @@ class HomePageDefaults
             ],
             [
                 'key' => HomeSection::KEY_VIDEOS,
-                'sort' => 7,
+                'sort' => 9,
                 'vi' => [
                     'eyebrow' => 'Trải nghiệm thật',
                     'title' => 'Đông Nam Á qua từng thước phim đẹp',
@@ -191,7 +219,7 @@ class HomePageDefaults
             ],
             [
                 'key' => HomeSection::KEY_QUICK_INQUIRY,
-                'sort' => 8,
+                'sort' => 10,
                 'vi' => [
                     'title' => 'Hỏi nhanh về tour',
                     'body' => 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong>24 giờ làm việc</strong>, hoàn toàn miễn phí.',

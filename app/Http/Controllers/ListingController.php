@@ -50,6 +50,34 @@ class ListingController extends Controller
         );
     }
 
+    public function featuredServices(Request $request): JsonResponse
+    {
+        $cluster = (string) $request->input('cluster', 'train');
+        if ($cluster === '' || ! config("services_catalog.clusters.{$cluster}")) {
+            return response()->json(['count' => 0, 'html' => ''], 404);
+        }
+
+        $limit = max(1, min(12, (int) $request->input('limit', 3)));
+
+        return $this->cardsResponse(
+            $this->data->featuredServices($cluster, $limit),
+            'service',
+            'compact',
+        );
+    }
+
+    public function services(Request $request): JsonResponse
+    {
+        $cluster = (string) $request->input('cluster', '');
+        if ($cluster === '' || ! config("services_catalog.clusters.{$cluster}")) {
+            return response()->json(['count' => 0, 'html' => ''], 404);
+        }
+
+        $services = $this->filterServices($this->data->services($cluster), $request);
+
+        return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'));
+    }
+
     public function related(Request $request): JsonResponse
     {
         $kind = $request->input('kind', 'tour') === 'cruise' ? 'cruise' : 'tour';
@@ -170,6 +198,31 @@ class ListingController extends Controller
         }
 
         return $cruises;
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $services
+     * @return array<int, array<string, mixed>>
+     */
+    protected function filterServices(array $services, Request $request): array
+    {
+        if ($request->exists('category')) {
+            $raw = $request->input('category');
+            $categories = is_array($raw)
+                ? array_values(array_filter(array_map('strval', $raw)))
+                : array_values(array_filter([(string) $raw]));
+
+            if ($categories === []) {
+                return [];
+            }
+
+            $services = array_values(array_filter(
+                $services,
+                fn (array $s) => in_array((string) ($s['categorySlug'] ?? ''), $categories, true)
+            ));
+        }
+
+        return $services;
     }
 
     /**

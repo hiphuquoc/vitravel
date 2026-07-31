@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 /**
- * Hub cấp 1 (tours_hub | cruises_hub | guide_hub) — parent null, level 1.
+ * Hub cấp 1 (tours/cruises/guide + 5 cụm dịch vụ) — parent null, level 1.
  */
 class ListingHubController extends Controller
 {
@@ -30,7 +30,17 @@ class ListingHubController extends Controller
         $page = StaticPage::query()
             ->with(['translations', 'banner', 'seoEntry.translations'])
             ->where('template', $cfg['template'])
-            ->firstOrFail();
+            ->first();
+
+        if (! $page) {
+            $page = StaticPage::query()->create([
+                'template' => $cfg['template'],
+                'status' => 'published',
+                'published_at' => now(),
+            ]);
+            $this->seoService()->ensureHub($hubKey, $locale);
+            $page->load(['translations', 'banner', 'seoEntry.translations']);
+        }
 
         $seoTranslation = $page->seoEntry?->translation($locale) ?? $hubSeo->translation($locale);
         $viewUrl = $seoTranslation?->slug_full
@@ -122,6 +132,8 @@ class ListingHubController extends Controller
                 'cruises_hub' => $this->seoService()->attachCruiseTypesToCruisesHub($locale),
                 'tours_hub' => $this->seoService()->attachCountriesToToursHub($locale),
                 'guide_hub' => $this->seoService()->attachBlogCategoriesToGuideHub($locale),
+                'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+                    => $this->seoService()->rebuildServicesSeoTree($locale),
                 default => null,
             };
         });

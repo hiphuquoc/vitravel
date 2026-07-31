@@ -83,6 +83,19 @@ File seed là **single source** cho seed + fallback UI (`ProjectSeed` → `Sampl
 - `tours` → `package_tour`
 - `cruises` + `cruise_types` → `package_cruise` (đổi nghĩa dịch vụ: giữ key hoặc bảo AI đổi seeder/`config/seo.php`)
 
+### 4b. Catalogue dịch vụ (5 cụm)
+
+File **`project/seed_services.php`** — merge cuối `seed_vitravel.php` (`return array_merge($__vitravelSeed, require …)`).
+
+| Key | Shape (tóm tắt) |
+|-----|-----------------|
+| `service_clusters` | `[{ code, nav_label, label, icon, hub_key, sort }]` — 5 cụm: `train`, `flight`, `stay`, `experience`, `other` |
+| `service_categories` | `[{ cluster, slug, name, sort, intro? }]` — danh mục con dưới hub |
+| `services` | `[{ code, cluster, category_slug, country_slug?, title, slug, price_from, currency, rating, highlights[], inclusions[], exclusions[], notes[], attrs{}, options[], faqs[], en? }]` |
+| `service_listing_faqs` | `[{ q, a }]` — FAQ chung hub/listing dịch vụ |
+
+Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 experience, 7 other). Config runtime: `config/services_catalog.php`.
+
 ### 5. Blog
 
 - `blog_categories`, `popular_keywords`, `articles` (`tags[]` ∈ keys của `content_tag_map`)
@@ -99,6 +112,7 @@ File seed là **single source** cho seed + fallback UI (`ProjectSeed` → `Sampl
 |-----|--------|-----|
 | countries / tours | ContentSeeder | country / package_tour |
 | cruise_types / cruises | CruiseType + Content | cruise_type / package_cruise |
+| service_categories / services | **ServiceCatalogSeeder** | `service_category` / `service` (+ 5 hub types) |
 | tour_categories | TourCategorySeeder | tour_category |
 | (cuối) | **SeoHierarchySeeder** | rebuild cây |
 

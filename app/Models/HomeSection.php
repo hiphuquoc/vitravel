@@ -15,6 +15,10 @@ class HomeSection extends Model
 
     public const KEY_FEATURED_CRUISES = 'featured_cruises';
 
+    public const KEY_FEATURED_TRAINS = 'featured_trains';
+
+    public const KEY_SUPPORT_SERVICES = 'support_services';
+
     public const KEY_DESTINATIONS = 'destinations';
 
     public const KEY_TESTIMONIALS = 'testimonials';
@@ -34,6 +38,8 @@ class HomeSection extends Model
             self::KEY_COMPANY_INTRO => 'Giới thiệu công ty',
             self::KEY_FEATURED_TOURS => 'Tour nổi bật',
             self::KEY_FEATURED_CRUISES => 'Du thuyền nổi bật',
+            self::KEY_FEATURED_TRAINS => 'Vé tàu cao tốc',
+            self::KEY_SUPPORT_SERVICES => 'Dịch vụ bổ trợ',
             self::KEY_DESTINATIONS => 'Điểm đến',
             self::KEY_TESTIMONIALS => 'Cảm nhận khách hàng',
             self::KEY_REVIEW_PLATFORMS => 'Nền tảng đánh giá',
@@ -56,7 +62,12 @@ class HomeSection extends Model
     {
         return match ($key) {
             self::KEY_COMPANY_INTRO => ['eyebrow', 'title', 'body', 'meta_line', 'cta_label', 'cta_url', 'image', 'image_alt'],
-            self::KEY_FEATURED_TOURS, self::KEY_FEATURED_CRUISES, self::KEY_TESTIMONIALS, self::KEY_TEAM => ['eyebrow', 'title', 'subtitle', 'cta_label', 'cta_url'],
+            self::KEY_FEATURED_TOURS,
+            self::KEY_FEATURED_CRUISES,
+            self::KEY_FEATURED_TRAINS,
+            self::KEY_SUPPORT_SERVICES,
+            self::KEY_TESTIMONIALS,
+            self::KEY_TEAM => ['eyebrow', 'title', 'subtitle', 'cta_label', 'cta_url'],
             self::KEY_DESTINATIONS => ['eyebrow', 'title', 'subtitle'],
             self::KEY_REVIEW_PLATFORMS => ['title'],
             self::KEY_VIDEOS => ['eyebrow', 'title', 'subtitle', 'cta_label', 'cta_url'],

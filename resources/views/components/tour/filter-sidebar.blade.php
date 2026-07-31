@@ -3,8 +3,14 @@
     'styles' => [],
     'countries' => [],
     'types' => [],
+    'categories' => [],
     'showCountryFilter' => false,
     'showTypeFilter' => false,
+    'showCategoryFilter' => false,
+    'showDurationFilter' => true,
+    'showStyleFilter' => true,
+    'categoryLegend' => 'Danh mục',
+    'typeLegend' => 'Loại du thuyền',
 ])
 
 {{-- FAB mobile: mở drawer bộ lọc — cố định bottom-left, đối xứng site-fab --}}
@@ -65,7 +71,7 @@
 
     @if ($showTypeFilter && count($types))
         <fieldset class="filter-sidebar__fieldset">
-            <legend class="filter-legend">Loại du thuyền</legend>
+            <legend class="filter-legend">{{ $typeLegend }}</legend>
             <div class="filter-sidebar__options">
                 @foreach ($types as $cruiseType)
                     @php $slug = $cruiseType['slug'] ?? ''; @endphp
@@ -95,6 +101,40 @@
         </fieldset>
     @endif
 
+    @if ($showCategoryFilter && count($categories))
+        <fieldset class="filter-sidebar__fieldset">
+            <legend class="filter-legend">{{ $categoryLegend }}</legend>
+            <div class="filter-sidebar__options">
+                @foreach ($categories as $cat)
+                    @php
+                        $slug = $cat['slug'] ?? '';
+                        $count = (int) ($cat['count'] ?? 0);
+                    @endphp
+                    @if ($slug === '' || $count <= 0)
+                        @continue
+                    @endif
+                    <label class="vt-check">
+                        <input type="checkbox"
+                            class="vt-check__input"
+                            value="{{ $slug }}"
+                            :checked="isChecked('category', @js($slug))"
+                            @change="toggleFilter('category', @js($slug))">
+                        <span class="vt-check__box" aria-hidden="true">
+                            <svg class="vt-check__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <span class="vt-check__text">
+                            {{ $cat['name'] ?? $slug }}
+                            <span class="opacity-60">({{ $count }})</span>
+                        </span>
+                    </label>
+                @endforeach
+            </div>
+        </fieldset>
+    @endif
+
+    @if ($showDurationFilter && count($durations))
     <fieldset class="filter-sidebar__fieldset">
         <legend class="filter-legend">Thời lượng</legend>
         <div class="filter-sidebar__options">
@@ -115,7 +155,9 @@
             @endforeach
         </div>
     </fieldset>
+    @endif
 
+    @if ($showStyleFilter && count($styles))
     <fieldset class="filter-sidebar__fieldset">
         <legend class="filter-legend">Phong cách du lịch</legend>
         <div class="filter-sidebar__options">
@@ -136,4 +178,5 @@
             @endforeach
         </div>
     </fieldset>
+    @endif
 </div>

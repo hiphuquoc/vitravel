@@ -69,12 +69,18 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/delete', [CountryController::class, 'delete'])->name('countries.delete');
         });
 
-        /* ===== Listing hubs (edit từ cây danh mục — tours / cruises / guide) ===== */
+        /* ===== Listing hubs (tours / cruises / guide / 5 cụm dịch vụ) ===== */
         Route::get('/san-pham/hub/{hubKey}', [ListingHubController::class, 'edit'])
-            ->whereIn('hubKey', ['tours_hub', 'cruises_hub', 'guide_hub'])
+            ->whereIn('hubKey', [
+                'tours_hub', 'cruises_hub', 'guide_hub',
+                'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub',
+            ])
             ->name('listingHub.edit');
         Route::post('/san-pham/hub/{hubKey}/save', [ListingHubController::class, 'save'])
-            ->whereIn('hubKey', ['tours_hub', 'cruises_hub', 'guide_hub'])
+            ->whereIn('hubKey', [
+                'tours_hub', 'cruises_hub', 'guide_hub',
+                'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub',
+            ])
             ->name('listingHub.save');
 
         /* ===== Cruise types ===== */

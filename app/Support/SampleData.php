@@ -85,6 +85,16 @@ class SampleData
         return array_slice(static::cruises(), 0, $limit);
     }
 
+    /** @return list<array<string, mixed>> */
+    public static function featuredServices(string $cluster, int $limit = 3): array
+    {
+        $all = static::services($cluster);
+        $featured = array_values(array_filter($all, fn ($s) => $s['isFeatured'] ?? false));
+        $pool = $featured !== [] ? $featured : $all;
+
+        return array_slice($pool, 0, max(1, min(12, $limit)));
+    }
+
     public static function toursByCountry(string $countrySlug): array
     {
         return array_values(array_filter(static::tours(), function ($t) use ($countrySlug) {
@@ -326,5 +336,160 @@ class SampleData
     public static function listingFaqs(): array
     {
         return ProjectSeed::get('listing_faqs', []);
+    }
+
+    /** @return list<array<string, mixed>> */
+    public static function serviceCategories(?string $cluster = null): array
+    {
+        $rows = ProjectSeed::get('service_categories', []);
+        if (! is_array($rows)) {
+            return [];
+        }
+        if ($cluster) {
+            $rows = array_values(array_filter($rows, fn ($r) => ($r['cluster'] ?? '') === $cluster));
+        }
+
+        return array_map(fn ($r) => [
+            'slug' => $r['slug'] ?? '',
+            'name' => $r['name'] ?? '',
+            'intro' => $r['intro'] ?? '',
+            'cluster' => $r['cluster'] ?? '',
+            'count' => count(array_filter(
+                ProjectSeed::get('services', []),
+                fn ($s) => ($s['category_slug'] ?? '') === ($r['slug'] ?? '') && ($s['cluster'] ?? '') === ($r['cluster'] ?? '')
+            )),
+            'imageHero' => null,
+            'imageSrcset' => null,
+        ], $rows);
+    }
+
+    public static function serviceCategory(string $cluster, string $slug): ?array
+    {
+        return Arr::first(static::serviceCategories($cluster), fn ($c) => $c['slug'] === $slug);
+    }
+
+    /** @return list<array<string, mixed>> */
+    public static function services(?string $cluster = null): array
+    {
+        $rows = ProjectSeed::get('services', []);
+        if (! is_array($rows)) {
+            return [];
+        }
+        if ($cluster) {
+            $rows = array_values(array_filter($rows, fn ($r) => ($r['cluster'] ?? '') === $cluster));
+        }
+
+        return array_map(function (array $row) {
+            $price = isset($row['price_from']) ? (float) $row['price_from'] : null;
+            $cfg = config('services_catalog.clusters.'.($row['cluster'] ?? ''), []);
+
+            return [
+                'slug' => $row['slug'] ?? '',
+                'code' => $row['code'] ?? '',
+                'title' => $row['title'] ?? '',
+                'cluster' => $row['cluster'] ?? '',
+                'clusterLabel' => $cfg['label'] ?? ($row['cluster'] ?? ''),
+                'clusterIcon' => $cfg['icon'] ?? 'sparkles',
+                'categorySlug' => $row['category_slug'] ?? '',
+                'categoryName' => '',
+                'countrySlug' => $row['country_slug'] ?? 'viet-nam',
+                'location' => $row['location_label'] ?? '',
+                'places' => array_values(array_filter([$row['location_label'] ?? null])),
+                'start' => $row['attrs']['from'] ?? '',
+                'end' => $row['attrs']['to'] ?? '',
+                'duration' => ! empty($row['attrs']['duration_hours'])
+                    ? ((int) $row['attrs']['duration_hours']).' giờ'
+                    : ($row['attrs']['flight_time'] ?? ''),
+                'priceFrom' => $price,
+                'currency' => $row['currency'] ?? 'VND',
+                'priceFormatted' => $price !== null && $price > 0
+                    ? self::formatMoney($price, $row['currency'] ?? 'VND')
+                    : ($price !== null ? 'Liên hệ' : null),
+                'rating' => (float) ($row['rating'] ?? 0),
+                'reviewCount' => (int) ($row['review_count'] ?? 0),
+                'starRating' => $row['star_rating'] ?? null,
+                'badge' => $row['discount_badge'] ?? null,
+                'isFeatured' => (bool) ($row['is_featured'] ?? false),
+                'image' => null,
+                'imageSrcset' => null,
+                'imageDetail' => null,
+                'summary' => $row['summary'] ?? '',
+                'highlightsIntro' => $row['summary'] ?? '',
+                'highlights' => $row['highlights'] ?? [],
+                'inclusions' => $row['inclusions'] ?? [],
+                'exclusions' => $row['exclusions'] ?? [],
+                'notes' => $row['notes'] ?? [],
+                'attrs' => $row['attrs'] ?? [],
+                'options' => array_map(fn ($o) => [
+                    'code' => $o['code'] ?? null,
+                    'name' => $o['name'] ?? '',
+                    'description' => $o['description'] ?? null,
+                    'priceFrom' => isset($o['price_from']) ? (float) $o['price_from'] : null,
+                    'priceFormatted' => isset($o['price_from']) && (float) $o['price_from'] > 0
+                        ? self::formatMoney((float) $o['price_from'], $row['currency'] ?? 'VND')
+                        : null,
+                    'capacity' => $o['capacity'] ?? null,
+                    'amenities' => $o['amenities'] ?? [],
+                ], $row['options'] ?? []),
+                'faqs' => $row['faqs'] ?? [],
+                'quote' => self::serviceQuoteFromRow($row),
+                'styles' => [],
+                'gallery' => [],
+                'galleryCount' => 0,
+            ];
+        }, $rows);
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @return array{text: string, author: string}
+     */
+    protected static function serviceQuoteFromRow(array $row): array
+    {
+        $text = trim((string) ($row['quote']['text'] ?? ''));
+        $author = trim((string) ($row['quote']['author'] ?? ''));
+        if ($text !== '') {
+            return ['text' => $text, 'author' => $author];
+        }
+
+        $pool = match ($row['cluster'] ?? '') {
+            'train' => [
+                ['text' => 'Đặt vé tàu qua ViTravel rất nhanh, e-ticket rõ ràng và hỗ trợ đổi ngày linh hoạt.', 'author' => 'Anh Tuấn'],
+                ['text' => 'Ghế mềm êm, lên tàu đúng hướng dẫn — tiết kiệm được một đêm khách sạn so với bay.', 'author' => 'Chị Hương'],
+                ['text' => 'Nhân viên tư vấn rõ lịch SE và giao vé tận nơi đúng hẹn.', 'author' => 'Anh Đức'],
+            ],
+            'flight' => [
+                ['text' => 'Giá vé máy bay minh bạch, xác nhận nhanh và hỗ trợ chọn giờ bay hợp lịch trình.', 'author' => 'Chị Mai'],
+                ['text' => 'Đặt combo bay + tour rất tiện, không phải tự so sánh nhiều hãng.', 'author' => 'Anh Khoa'],
+                ['text' => 'Đổi lịch bay được hỗ trợ kịp thời trước ngày khởi hành.', 'author' => 'Chị Lan'],
+            ],
+            'stay' => [
+                ['text' => 'Resort đúng như mô tả, phòng sạch và view đẹp — book qua ViTravel được giá tốt.', 'author' => 'Gia đình Anh Nam'],
+                ['text' => 'Check-in suôn sẻ, đội ngũ tư vấn chọn hạng phòng rất hợp nhu cầu.', 'author' => 'Chị Trang'],
+                ['text' => 'Vị trí thuận tiện, bữa sáng ổn và nhân viên khách sạn nhiệt tình.', 'author' => 'Anh Minh'],
+            ],
+            'experience' => [
+                ['text' => 'Vé vào cửa nhận nhanh bằng QR, không xếp hàng lâu như mua tại chỗ.', 'author' => 'Chị Hà'],
+                ['text' => 'Trải nghiệm đáng tiền, hướng dẫn rõ ràng trước giờ tham quan.', 'author' => 'Anh Phong'],
+                ['text' => 'Đặt trước rất tiện, đặc biệt vào cuối tuần đông khách.', 'author' => 'Chị My'],
+            ],
+            default => [
+                ['text' => 'Dịch vụ đúng cam kết, hỗ trợ nhanh và giá rõ ràng từ đầu.', 'author' => 'Anh Long'],
+                ['text' => 'Đặt qua ViTravel tiện hơn tự tìm — có người đồng hành khi cần hỗ trợ.', 'author' => 'Chị Ngọc'],
+                ['text' => 'Phản hồi nhanh, điều chỉnh theo nhu cầu đoàn rất linh hoạt.', 'author' => 'Anh Việt'],
+            ],
+        };
+
+        $index = abs(crc32((string) ($row['code'] ?? $row['slug'] ?? 'svc'))) % count($pool);
+
+        return $pool[$index];
+    }
+
+    public static function service(string $slug, ?string $cluster = null): ?array
+    {
+        return Arr::first(
+            static::services($cluster),
+            fn ($s) => ($s['slug'] ?? '') === $slug || ($s['code'] ?? '') === $slug
+        );
     }
 }

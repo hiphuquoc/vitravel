@@ -62,6 +62,69 @@
         </section>
     @endunless
 
+    {{-- ── Vé tàu cao tốc nổi bật (cùng pattern tour/du thuyền) ── --}}
+    @php $trainsSection = view_data()->homeSection('featured_trains'); @endphp
+    @unless ($trainsSection['hidden'] ?? false)
+        <section class="cv-auto section-band" aria-label="{{ $trainsSection['title'] ?? 'Vé tàu cao tốc' }}">
+            <div class="container-site">
+                <x-shared.section-heading
+                    :eyebrow="$trainsSection['eyebrow'] ?? null"
+                    :title="$trainsSection['title'] ?? ''"
+                    :subtitle="$trainsSection['subtitle'] ?? null"
+                />
+                <div x-data="listingGrid(@js([
+                    'endpoint' => route('api.listings.featured-services'),
+                    'params' => ['cluster' => 'train', 'limit' => 3],
+                ]))">
+                    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
+                    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
+                        <x-tour.listing-skeleton :count="3" variant="compact" />
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endunless
+
+    {{-- ── Dịch vụ bổ trợ: lưu trú / vui chơi / hỗ trợ ── --}}
+    @php
+        $supportSection = view_data()->homeSection('support_services');
+        $homeSoloClusters = collect(view_data()->serviceClusters())
+            ->filter(fn ($c) => in_array($c['code'] ?? '', ['stay', 'experience', 'other'], true))
+            ->values()
+            ->all();
+        $soloBlurbs = [
+            'stay' => 'Resort và khách sạn chọn lọc theo điểm đến.',
+            'experience' => 'Vé công viên, cáp treo và hoạt động trong ngày.',
+            'other' => 'Thuê xe, spa và hướng dẫn viên riêng.',
+        ];
+    @endphp
+    @unless ($supportSection['hidden'] ?? false)
+        @if (count($homeSoloClusters) > 0)
+            <section class="container-site section-band" aria-label="{{ $supportSection['title'] ?? 'Dịch vụ bổ trợ' }}">
+                <x-shared.section-heading
+                    :eyebrow="$supportSection['eyebrow'] ?? null"
+                    :title="$supportSection['title'] ?? ''"
+                    :subtitle="$supportSection['subtitle'] ?? null"
+                />
+                <div class="home-svc-solo">
+                    @foreach ($homeSoloClusters as $sc)
+                        @php $code = $sc['code'] ?? ''; @endphp
+                        <a href="{{ locale_route('services.hub', ['cluster' => $code]) }}" class="home-svc-solo__link">
+                            <span class="home-svc-solo__icon" aria-hidden="true">
+                                <x-icon :name="$sc['icon'] ?? 'sparkles'" class="home-svc-solo__glyph" />
+                            </span>
+                            <span class="home-svc-solo__text">
+                                <span class="item-title home-svc-solo__label">{{ $sc['label'] ?? $sc['nav_label'] }}</span>
+                                <span class="body-text home-svc-solo__desc">{{ $soloBlurbs[$code] ?? '' }}</span>
+                            </span>
+                            <x-icon name="chevron-right" class="home-svc-solo__chevron" />
+                        </a>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+    @endunless
+
     {{-- ── Điểm đến yêu thích: hero cinemascape + strip mosaic ── --}}
     @php $destinationsSection = view_data()->homeSection('destinations'); @endphp
     @unless ($destinationsSection['hidden'] ?? false)

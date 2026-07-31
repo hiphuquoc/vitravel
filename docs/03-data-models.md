@@ -106,6 +106,54 @@ CabinType:
 - name / capacity / priceFrom / amenities[]
 ```
 
+## 5a. `ServiceCategory` / `Service` / `ServiceOption` (catalogue dịch vụ — 5 cụm)
+
+Tách khỏi bảng `packages` (tour/cruise). **5 cụm** (`cluster` code): `train` | `flight` | `stay` | `experience` | `other` — map hub SEO qua `config/services_catalog.php`.
+
+### `ServiceCategory`
+```
+- id
+- cluster            enum        // train | flight | stay | experience | other
+- slug               string
+- name               string
+- intro              richText    // SEO intro trang danh mục
+- sort / is_active
+- seo                SEOFields   // type service_category, parent = hub cụm
+```
+
+### `Service`
+```
+- id
+- cluster            enum
+- category           ref(ServiceCategory)
+- country            ref(Country)?   // optional — lưu trú / tour kết hợp
+- code               string          // mã nội bộ
+- title / slug       string          // qua service_translations
+- location_label     string?
+- summary            richText
+- highlights         string[]
+- inclusions / exclusions / notes   string[]
+- price_from / currency             display-only (lead-gen)
+- rating / review_count / star_rating?
+- is_featured / is_hot_deal / discount_badge
+- attrs              json            // cluster-specific: from/to, train_number, check_in, venue…
+- options            ref(ServiceOption)[]
+- faqs               FAQItem[]
+- relatedServiceIds  ref(Service)[]  // optional
+- seo                SEOFields       // type service
+```
+
+### `ServiceOption` (biến thể giá — ghế tàu, loại phòng, combo vé…)
+```
+- id
+- service            ref(Service)
+- code / name
+- price_from / currency
+- sort
+```
+
+**Public:** hub → category listing → detail; named routes `services.hub`, `services.index`, `services.show`. **Admin CRUD chưa triển khai** — dữ liệu qua `ServiceCatalogSeeder` + `project/seed_services.php`.
+
 ## 6. `Review` (đánh giá tổng hợp — dùng cho Tour Detail, Listing quote, và trang Reviews tổng hợp)
 ```
 - id
@@ -367,6 +415,10 @@ Tour   1—n travelStyles (enum, không phải ref)
 Tour   1—n ItineraryDay (embedded)
 Tour   1—n Review, FAQItem (embedded)
 Tour   n—n Tour (relatedTours)
+ServiceCategory n—1 cluster (enum)
+Service n—1 ServiceCategory, n—1 Country (optional)
+Service 1—n ServiceOption
+Service 1—n FAQItem (embedded/morph)
 Article n—1 BlogCategory
 Article n—n ContentTypeTag, PopularKeywordTag
 Article n—n Tour (relatedTours — cầu nối content→product QUAN TRỌNG NHẤT hệ thống)
@@ -399,6 +451,9 @@ Article 1—n Comment
 | Destination | `destinations` + `destination_translations` | |
 | TourCategory | `tour_categories` + `tour_category_translations` | FAQ qua morph `faqs` |
 | Tour / Cruise | **`packages`** (`type=tour\|cruise`) + `package_translations` | Gộp 1 bảng sản phẩm |
+| ServiceCategory | `service_categories` | `name`, `intro` on main table (no `*_translations` yet) |
+| Service | `services` + `service_translations` | `attrs` JSON theo cụm |
+| ServiceOption | `service_options` + `service_option_translations` | Biến thể giá |
 | ItineraryDay | `package_itinerary_days` + translations | |
 | CabinType | `package_cabin_types` + translations | Chỉ cruise |
 | travelStyles[] | `travel_styles` + pivot `package_travel_style` | 11 style seed sẵn |
@@ -425,5 +480,18 @@ Article 1—n Comment
 | Media | `media` + `media_attachments` | cover/gallery/map/collage |
 
 **Migrate:** `php artisan migrate --seed`  
-**Seeders:** `LanguageSeeder` (vi/en), `TaxonomySeeder` (11 travel styles, content tags, review platforms).
+**Seeders:** `LanguageSeeder` (vi/en), `TaxonomySeeder` (11 travel styles, content tags, review platforms), **`ServiceCatalogSeeder`** (trước `TourCategorySeeder` — đọc `service_categories` + `services` từ ProjectSeed).
 
+---
+
+## 19. Catalogue dịch vụ — triển khai (2026-07-31)
+
+| Thành phần | Chi tiết |
+|---|---|
+| Bảng | `service_categories`, `services`, `service_translations`, `service_options`, `service_option_translations` |
+| Config | `config/services_catalog.php` (clusters + `hub_to_cluster`); hubs + types trong `config/seo.php` |
+| SEO types | `trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`, `service_category`, `service` |
+| Seed keys | `service_clusters`, `service_categories`, `services`, `service_listing_faqs` — file `project/seed_services.php` merge vào `seed_vitravel.php` |
+| Seeder | `ServiceCatalogSeeder` (sau `ContentSeeder`, trước `TourCategorySeeder`; `SeoHierarchySeeder` cuối) |
+| Public | `ServiceController`, `RoutingController` dispatch; views `pages/services/*`, `components/service/*` |
+| Admin | **Chưa có** — roadmap CRUD catalogue dịch vụ |

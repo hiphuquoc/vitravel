@@ -9,7 +9,7 @@ All bootstrap/demo content goes through **`PROJECT_SEED`** → `project/seed_{na
 - Loader: `App\Support\ProjectSeed`
 - UI fallback: `App\Support\SampleData` (thin; no large hardcoded catalogs)
 
-**Do not** hardcode catalog/marketing data in seeders or revive fat arrays in `SampleData` when adding features. Extend the active seed file and wire seeders to `ProjectSeed::get()`.
+**Do not** hardcode catalog/marketing data in seeders or revive fat arrays in `SampleData` when adding features. Extend the active seed file and wire seeders to `ProjectSeed::get()`. **Services catalogue:** data in `project/seed_services.php` (merged into `seed_vitravel.php`); seeder `ServiceCatalogSeeder`.
 
 Cursor rule (always on): `.cursor/rules/project-seed.mdc`
 

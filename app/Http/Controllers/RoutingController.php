@@ -74,8 +74,60 @@ class RoutingController extends Controller
             'static_page' => $this->dispatchStaticPage($ref),
             'team_hub' => app(PageController::class)->team(),
             'team_member' => $this->dispatchTeamMember($ref),
+            'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+                => $this->dispatchServiceHub($type),
+            'service_category' => $this->dispatchServiceCategory($entry, $ref, $locale, $seoTrans?->slug),
+            'service' => $this->dispatchService($entry, $ref, $locale, $seoTrans?->slug),
             default => abort(404),
         };
+    }
+
+    protected function dispatchServiceHub(string $seoType): Response
+    {
+        $cluster = config("services_catalog.hub_to_cluster.{$seoType}");
+        if (! $cluster) {
+            abort(404);
+        }
+
+        return app(ServiceController::class)->hub($cluster);
+    }
+
+    protected function dispatchServiceCategory(SeoEntry $entry, mixed $ref, string $locale, ?string $fallbackSlug): Response
+    {
+        $cat = $ref instanceof \App\Models\ServiceCategory ? $ref : null;
+        $slug = $cat?->slug ?: ($fallbackSlug ?: abort(404));
+        $cluster = $cat?->cluster
+            ?? config('services_catalog.hub_to_cluster.'.$entry->parent?->type)
+            ?? abort(404);
+
+        return app(ServiceController::class)->index($cluster, $slug);
+    }
+
+    protected function dispatchService(SeoEntry $entry, mixed $ref, string $locale, ?string $serviceSlug): Response
+    {
+        $service = $ref instanceof \App\Models\Service ? $ref : null;
+        $slug = $serviceSlug
+            ?: $service?->seoEntry?->translation($locale)?->slug
+            ?: abort(404);
+
+        $cluster = $service?->cluster;
+        $categorySlug = $service?->category?->slug
+            ?? $entry->parent?->translation($locale)?->slug
+            ?? null;
+
+        if (! $cluster) {
+            $parentType = $entry->parent?->type;
+            $cluster = config("services_catalog.hub_to_cluster.{$parentType}")
+                ?? ($entry->parent?->reference instanceof \App\Models\ServiceCategory
+                    ? $entry->parent->reference->cluster
+                    : null);
+        }
+
+        if (! $cluster || ! $categorySlug) {
+            abort(404);
+        }
+
+        return app(ServiceController::class)->show($cluster, $categorySlug, $slug);
     }
 
     /**

@@ -20,6 +20,12 @@
     $hotlineDisplay = $companyContact['phone'] ?? '+84 24 3999 8888';
     $hotlineTel = preg_replace('/[^\d+]/', '', $hotlineDisplay) ?: $hotlineDisplay;
     $hotlineLabel = $companyContact['hotline_label'] ?? 'Hotline';
+    $serviceClusters = view_data()->serviceClusters();
+    $serviceCatsByCluster = [];
+    foreach ($serviceClusters as $sc) {
+        $serviceCatsByCluster[$sc['code']] = view_data()->serviceCategories($sc['code']);
+    }
+    $flightHub = collect($serviceClusters)->firstWhere('code', 'flight');
 @endphp
 
 <div
@@ -27,7 +33,9 @@
     x-data="{
         mobileOpen: false,
         openMenu: null,
+        moreOpen: false,
         searchOpen: false,
+        mobileSub: null,
         scrolled: false,
         topVisible: true,
         topPinned: true,
@@ -137,7 +145,7 @@
             const delta = y - this.lastScrollY;
             this.scrolled = y > 8;
 
-            if (this.searchOpen || this.openMenu || this.mobileOpen) {
+            if (this.searchOpen || this.openMenu || this.moreOpen || this.mobileOpen) {
                 this.topVisible = true;
                 this.lastScrollY = y;
                 return;
@@ -185,15 +193,29 @@
         },
         closeMobileNav() {
             this.mobileOpen = false;
+            this.mobileSub = null;
         },
         openMobileNav() {
             this.mobileOpen = true;
+            this.mobileSub = null;
             this.openMenu = null;
+            this.moreOpen = false;
             this.closeSearch();
+        },
+        toggleMobileSub(key) {
+            this.mobileSub = this.mobileSub === key ? null : key;
+            if (! this.mobileSub) {
+                return;
+            }
+            this.$nextTick(() => {
+                const el = this.$refs['sec-' + key];
+                el?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            });
         },
         openSearch() {
             this.searchOpen = true;
             this.openMenu = null;
+            this.moreOpen = false;
             this.mobileOpen = false;
             this.topVisible = true;
             document.body.classList.add('is-searchOpen');
@@ -209,6 +231,15 @@
         },
         toggleSearch() {
             this.searchOpen ? this.closeSearch() : this.openSearch();
+        },
+        toggleMore() {
+            this.moreOpen = ! this.moreOpen;
+            if (this.moreOpen) {
+                this.openMenu = null;
+            }
+        },
+        closeMore() {
+            this.moreOpen = false;
         },
     }"
     @scroll.window.passive="onScroll()"
@@ -269,11 +300,11 @@
 
         {{-- Nav desktop --}}
         <nav class="ml-6 hidden flex-1 items-center gap-0.5 lg:flex" aria-label="Điều hướng chính">
-            <div class="relative" @mouseenter="openMenu = 'dest'" @mouseleave="openMenu = null">
+            <div class="relative" @mouseenter="openMenu = 'dest'; moreOpen = false" @mouseleave="openMenu = null">
                 <button type="button"
-                    class="nav-link flex cursor-pointer items-center gap-1"
-                    :aria-expanded="openMenu === 'dest'" @click="openMenu = openMenu === 'dest' ? null : 'dest'">
-                    Điểm đến <x-icon name="chevron-down" class="size-3.5" />
+                    class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
+                    :aria-expanded="openMenu === 'dest'" @click="openMenu = openMenu === 'dest' ? null : 'dest'; moreOpen = false">
+                    Tour <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'dest'" x-transition.opacity.duration.150ms
                     class="absolute top-full left-0 z-50 w-[580px] pt-2">
@@ -302,10 +333,10 @@
                 </div>
             </div>
 
-            <div class="relative" @mouseenter="openMenu = 'cruise'" @mouseleave="openMenu = null">
+            <div class="relative" @mouseenter="openMenu = 'cruise'; moreOpen = false" @mouseleave="openMenu = null">
                 <button type="button"
-                    class="nav-link flex cursor-pointer items-center gap-1"
-                    :aria-expanded="openMenu === 'cruise'" @click="openMenu = openMenu === 'cruise' ? null : 'cruise'">
+                    class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
+                    :aria-expanded="openMenu === 'cruise'" @click="openMenu = openMenu === 'cruise' ? null : 'cruise'; moreOpen = false">
                     Du thuyền <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'cruise'" x-transition.opacity.duration.150ms
@@ -332,37 +363,97 @@
                 </div>
             </div>
 
-            <div class="relative" @mouseenter="openMenu = 'guide'" @mouseleave="openMenu = null">
-                <button type="button"
-                    class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
-                    :aria-expanded="openMenu === 'guide'" @click="openMenu = openMenu === 'guide' ? null : 'guide'">
-                    Cẩm nang <x-icon name="chevron-down" class="size-3.5" />
-                </button>
-                <div x-cloak x-show="openMenu === 'guide'" x-transition.opacity.duration.150ms
-                    class="absolute top-full left-0 z-50 w-80 pt-2">
-                    <div class="rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
-                    <div class="nav-panel-group">
-                        <p class="nav-panel-group__title">Bài viết</p>
-                        <a href="{{ locale_route('guide.index') }}" class="nav-panel-link">
-                            Tất cả bài viết
-                        </a>
-                        @foreach ($guideCountries as $c)
-                            <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="nav-panel-link">
-                                Cẩm nang {{ $c['name'] }}
+            @foreach ($serviceClusters as $sc)
+                @if (($sc['code'] ?? '') === 'flight')
+                    @continue
+                @endif
+                @php
+                    $svcKey = 'svc-' . $sc['code'];
+                    $svcCats = $serviceCatsByCluster[$sc['code']] ?? [];
+                @endphp
+                <div class="relative" @mouseenter="openMenu = '{{ $svcKey }}'; moreOpen = false" @mouseleave="openMenu = null">
+                    <button type="button"
+                        class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
+                        :aria-expanded="openMenu === '{{ $svcKey }}'"
+                        @click="openMenu = openMenu === '{{ $svcKey }}' ? null : '{{ $svcKey }}'; moreOpen = false">
+                        {{ $sc['nav_label'] }} <x-icon name="chevron-down" class="size-3.5" />
+                    </button>
+                    <div x-cloak x-show="openMenu === '{{ $svcKey }}'" x-transition.opacity.duration.150ms
+                        class="absolute top-full left-0 z-50 w-72 pt-2">
+                        <div class="rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
+                            <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="nav-panel-row group mb-1 border-b border-line pb-2">
+                                <span class="nav-panel-item-row">
+                                    <span class="nav-panel-lead-mark" aria-hidden="true"></span>
+                                    <span class="nav-panel-item">Tất cả {{ strtolower($sc['nav_label']) }}</span>
+                                </span>
+                                <span class="nav-panel-meta">{{ $sc['label'] ?? '' }}</span>
                             </a>
-                        @endforeach
+                            <div class="nav-panel-group">
+                                @if (($sc['code'] ?? '') === 'other' && $flightHub)
+                                    <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="nav-panel-link">
+                                        <span class="nav-panel-item-row">
+                                            <span>Vé máy bay</span>
+                                        </span>
+                                    </a>
+                                @endif
+                                @foreach ($svcCats as $cat)
+                                    <a href="{{ locale_route('services.index', ['cluster' => $sc['code'], 'category' => $cat['slug']]) }}" class="nav-panel-link">
+                                        <span class="nav-panel-item-row">
+                                            <span>{{ $cat['name'] }}</span>
+                                            @if (($cat['count'] ?? 0) > 0)
+                                                <x-shared.count-badge :count="$cat['count']" />
+                                            @endif
+                                        </span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
-                    <div class="nav-panel-group">
-                        <p class="nav-panel-group__title">Thư viện</p>
-                        <a href="{{ locale_route('videos') }}" class="nav-panel-link">Video trải nghiệm</a>
-                        <a href="{{ locale_route('gallery') }}" class="nav-panel-link">Thư viện khoảnh khắc</a>
-                    </div>
+                </div>
+            @endforeach
+
+            <div class="relative" @mouseleave="moreOpen = false" @click.outside="closeMore()">
+                <button type="button"
+                    class="header-more-btn"
+                    :aria-expanded="moreOpen"
+                    aria-label="Thêm: Về chúng tôi và cẩm nang"
+                    aria-controls="header-more-panel"
+                    @click="toggleMore()">
+                    <x-icon name="list" class="header-more-btn__glyph" />
+                </button>
+                <div x-cloak x-show="moreOpen" x-transition.opacity.duration.150ms
+                    id="header-more-panel"
+                    class="header-more-panel absolute top-full right-0 z-50 pt-2"
+                    role="region"
+                    aria-label="Về chúng tôi và cẩm nang">
+                    <div class="header-more-panel__card">
+                        <div class="header-more-panel__scroll vt-scrollbar">
+                            <div class="nav-panel-group">
+                                <p class="nav-panel-group__title">Về ViTravel</p>
+                                <a href="{{ locale_route('about') }}" class="nav-panel-link">Về chúng tôi</a>
+                                <a href="{{ locale_route('contact') }}" class="nav-panel-link">Liên hệ</a>
+                                @if (Route::has('team'))
+                                    <a href="{{ locale_route('team') }}" class="nav-panel-link">Đội ngũ</a>
+                                @endif
+                                @if (Route::has('reviews'))
+                                    <a href="{{ locale_route('reviews') }}" class="nav-panel-link">Cảm nhận khách hàng</a>
+                                @endif
+                            </div>
+                            <div class="nav-panel-group">
+                                <p class="nav-panel-group__title">Cẩm nang</p>
+                                <a href="{{ locale_route('guide.index') }}" class="nav-panel-link">Tất cả bài viết</a>
+                                @foreach ($guideCountries as $c)
+                                    <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="nav-panel-link">
+                                        Cẩm nang {{ $c['name'] }}
+                                    </a>
+                                @endforeach
+                                <a href="{{ locale_route('videos') }}" class="nav-panel-link">Video trải nghiệm</a>
+                                <a href="{{ locale_route('gallery') }}" class="nav-panel-link">Thư viện khoảnh khắc</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <a href="{{ locale_route('about') }}" class="nav-link">Về chúng tôi</a>
-            <a href="{{ locale_route('contact') }}" class="nav-link">Liên hệ</a>
         </nav>
 
         <div class="ml-auto flex items-center gap-2">
@@ -520,16 +611,16 @@
                 </button>
             </header>
 
-            <nav class="mobile-nav-drawer__body" aria-label="Menu di động" x-data="{ sub: 'dest' }">
-                <div class="mobile-nav-drawer__section">
+            <nav class="mobile-nav-drawer__body vt-scrollbar" aria-label="Menu di động">
+                <div class="mobile-nav-drawer__section" x-ref="sec-dest">
                     <button type="button" class="mobile-nav-drawer__trigger"
-                        :aria-expanded="sub === 'dest'"
-                        @click="sub = sub === 'dest' ? null : 'dest'">
+                        :aria-expanded="mobileSub === 'dest'"
+                        @click="toggleMobileSub('dest')">
                         <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="map-pin" class="size-4" /></span>
-                        <span class="mobile-nav-drawer__trigger-label">Điểm đến</span>
-                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="sub === 'dest' && 'is-open'" />
+                        <span class="mobile-nav-drawer__trigger-label">Tour</span>
+                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'dest' && 'is-open'" />
                     </button>
-                    <div class="mobile-nav-drawer__sub" x-show="sub === 'dest'" x-collapse>
+                    <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'dest'" x-collapse>
                         <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('tours.hub') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
@@ -554,15 +645,15 @@
                     </div>
                 </div>
 
-                <div class="mobile-nav-drawer__section">
+                <div class="mobile-nav-drawer__section" x-ref="sec-cruise">
                     <button type="button" class="mobile-nav-drawer__trigger"
-                        :aria-expanded="sub === 'cruise'"
-                        @click="sub = sub === 'cruise' ? null : 'cruise'">
+                        :aria-expanded="mobileSub === 'cruise'"
+                        @click="toggleMobileSub('cruise')">
                         <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="cruise" class="size-4" /></span>
                         <span class="mobile-nav-drawer__trigger-label">Du thuyền</span>
-                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="sub === 'cruise' && 'is-open'" />
+                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'cruise' && 'is-open'" />
                     </button>
-                    <div class="mobile-nav-drawer__sub" x-show="sub === 'cruise'" x-collapse>
+                    <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'cruise'" x-collapse>
                         <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('cruises.hub') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
@@ -584,28 +675,94 @@
                     </div>
                 </div>
 
-                <div class="mobile-nav-drawer__section">
+                @foreach ($serviceClusters as $sc)
+                    @if (($sc['code'] ?? '') === 'flight')
+                        @continue
+                    @endif
+                    @php
+                        $svcMobileKey = 'svc-' . $sc['code'];
+                        $svcCats = $serviceCatsByCluster[$sc['code']] ?? [];
+                    @endphp
+                    <div class="mobile-nav-drawer__section" x-ref="sec-{{ $svcMobileKey }}">
+                        <button type="button" class="mobile-nav-drawer__trigger"
+                            :aria-expanded="mobileSub === '{{ $svcMobileKey }}'"
+                            @click="toggleMobileSub('{{ $svcMobileKey }}')">
+                            <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true">
+                                <x-icon :name="$sc['icon'] ?? 'briefcase'" class="size-4" />
+                            </span>
+                            <span class="mobile-nav-drawer__trigger-label">{{ $sc['nav_label'] }}</span>
+                            <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === '{{ $svcMobileKey }}' && 'is-open'" />
+                        </button>
+                        <div class="mobile-nav-drawer__sub" x-show="mobileSub === '{{ $svcMobileKey }}'" x-collapse>
+                            <ul class="mobile-nav-drawer__tree">
+                                <li>
+                                    <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
+                                        <span class="mobile-nav-drawer__tree-link-title item-title">Tất cả {{ strtolower($sc['nav_label']) }}</span>
+                                        <span class="mobile-nav-drawer__tree-link-meta">{{ $sc['label'] ?? '' }}</span>
+                                    </a>
+                                </li>
+                                @if (($sc['code'] ?? '') === 'other' && $flightHub)
+                                    <li>
+                                        <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                            <span class="mobile-nav-drawer__tree-link-title">Vé máy bay</span>
+                                        </a>
+                                    </li>
+                                @endif
+                                @foreach ($svcCats as $cat)
+                                    <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
+                                        <a href="{{ locale_route('services.index', ['cluster' => $sc['code'], 'category' => $cat['slug']]) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                            <span class="mobile-nav-drawer__tree-link-row">
+                                                <span class="mobile-nav-drawer__tree-link-title">{{ $cat['name'] }}</span>
+                                                @if (($cat['count'] ?? 0) > 0)
+                                                    <x-shared.count-badge :count="$cat['count']" />
+                                                @endif
+                                            </span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endforeach
+
+                <div class="mobile-nav-drawer__section" x-ref="sec-info">
                     <button type="button" class="mobile-nav-drawer__trigger"
-                        :aria-expanded="sub === 'guide'"
-                        @click="sub = sub === 'guide' ? null : 'guide'">
-                        <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="list" class="size-4" /></span>
-                        <span class="mobile-nav-drawer__trigger-label">Cẩm nang</span>
-                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="sub === 'guide' && 'is-open'" />
+                        :aria-expanded="mobileSub === 'info'"
+                        @click="toggleMobileSub('info')">
+                        <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="list" class="size-5" /></span>
+                        <span class="mobile-nav-drawer__trigger-label">Về chúng tôi &amp; cẩm nang</span>
+                        <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'info' && 'is-open'" />
                     </button>
-                    <div class="mobile-nav-drawer__sub" x-show="sub === 'guide'" x-collapse>
-                        <p class="mobile-nav-drawer__tree-group-title">Bài viết</p>
+                    <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'info'" x-collapse>
+                        <p class="mobile-nav-drawer__tree-group-title">Về ViTravel</p>
+                        <ul class="mobile-nav-drawer__tree">
+                            <li>
+                                <a href="{{ locale_route('about') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">Về chúng tôi</a>
+                            </li>
+                            <li>
+                                <a href="{{ locale_route('contact') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Liên hệ</a>
+                            </li>
+                            @if (Route::has('team'))
+                                <li>
+                                    <a href="{{ locale_route('team') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Đội ngũ</a>
+                                </li>
+                            @endif
+                            @if (Route::has('reviews'))
+                                <li class="mobile-nav-drawer__tree-item--last">
+                                    <a href="{{ locale_route('reviews') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Cảm nhận khách hàng</a>
+                                </li>
+                            @endif
+                        </ul>
+                        <p class="mobile-nav-drawer__tree-group-title">Cẩm nang</p>
                         <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('guide.index') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">Tất cả bài viết</a>
                             </li>
                             @foreach ($guideCountries as $c)
-                                <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
+                                <li>
                                     <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Cẩm nang {{ $c['name'] }}</a>
                                 </li>
                             @endforeach
-                        </ul>
-                        <p class="mobile-nav-drawer__tree-group-title">Thư viện</p>
-                        <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('videos') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Video trải nghiệm</a>
                             </li>
@@ -615,17 +772,6 @@
                         </ul>
                     </div>
                 </div>
-
-                <a href="{{ locale_route('about') }}" class="mobile-nav-drawer__trigger" @click="closeMobileNav()">
-                    <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="users" class="size-4" /></span>
-                    <span class="mobile-nav-drawer__trigger-label">Về chúng tôi</span>
-                    <x-icon name="arrow-right" class="mobile-nav-drawer__chevron size-4" aria-hidden="true" />
-                </a>
-                <a href="{{ locale_route('contact') }}" class="mobile-nav-drawer__trigger" @click="closeMobileNav()">
-                    <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="mail" class="size-4" /></span>
-                    <span class="mobile-nav-drawer__trigger-label">Liên hệ</span>
-                    <x-icon name="arrow-right" class="mobile-nav-drawer__chevron size-4" aria-hidden="true" />
-                </a>
             </nav>
 
             <footer class="mobile-nav-drawer__foot">

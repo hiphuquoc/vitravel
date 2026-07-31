@@ -501,7 +501,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
         if (this.syncUrl) {
             const url = new URL(window.location.href);
             [...url.searchParams.keys()].forEach((k) => {
-                if (/^(country|duration|style|type|q)(\[\])?$/.test(k)) {
+                if (/^(country|duration|style|type|category|q)(\[\])?$/.test(k)) {
                     url.searchParams.delete(k);
                 }
             });

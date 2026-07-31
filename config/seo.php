@@ -12,7 +12,7 @@ return [
         'title_suffix' => env('SEO_TITLE_SUFFIX', env('COMPANY_NAME', 'ViTravel')),
         'default_description' => env(
             'SEO_DEFAULT_DESCRIPTION',
-            'ViTravel — đại lý du lịch bản địa thiết kế tour trọn gói, du thuyền và hành trình riêng tại Việt Nam, Campuchia, Lào, Thái Lan và Bali.'
+            'ViTravel — đại lý du lịch bản địa: tour trọn gói, du thuyền, vé tàu, máy bay, khách sạn/resort, vui chơi và dịch vụ hỗ trợ tại Việt Nam & Đông Nam Á.'
         ),
         'default_og_image' => env('SEO_DEFAULT_OG_IMAGE', env('COMPANY_LOGO', null)),
         'twitter_site' => env('SEO_TWITTER_SITE', null),
@@ -115,6 +115,53 @@ return [
             'parent_type' => 'team_hub',
             'parent_relation' => null,
         ],
+
+        // ── Dịch vụ mở rộng (5 cụm) ──────────────────────────────────────
+        'trains_hub' => [
+            'label' => 'Hub Vé tàu',
+            'hub' => true,
+            'default_slug' => 've-tau-cao-toc',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
+        'flights_hub' => [
+            'label' => 'Hub Vé máy bay',
+            'hub' => true,
+            'default_slug' => 've-may-bay',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
+        'stays_hub' => [
+            'label' => 'Hub Lưu trú',
+            'hub' => true,
+            'default_slug' => 'luu-tru',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
+        'experiences_hub' => [
+            'label' => 'Hub Vui chơi',
+            'hub' => true,
+            'default_slug' => 've-vui-choi',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
+        'extras_hub' => [
+            'label' => 'Hub Dịch vụ khác',
+            'hub' => true,
+            'default_slug' => 'dich-vu-khac',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
+        'service_category' => [
+            'label' => 'Danh mục dịch vụ',
+            'parent_type' => ['trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'],
+            'parent_relation' => null,
+        ],
+        'service' => [
+            'label' => 'Dịch vụ / sản phẩm',
+            'parent_type' => ['service_category', 'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'],
+            'parent_relation' => 'category',
+        ],
     ],
 
     /*
@@ -158,6 +205,52 @@ return [
             'default_subtitle' => 'Những người bản địa yêu nghề, trực tiếp thiết kế và chăm chút từng hành trình.',
             'default_seo_title' => 'Đội ngũ ViTravel — Chuyên gia bản địa',
             'default_seo_description' => 'Gặp gỡ đội ngũ chuyên gia bản địa của ViTravel — những người trực tiếp thiết kế và đồng hành cùng hành trình của bạn.',
+        ],
+
+        'trains_hub' => [
+            'template' => 'trains_hub',
+            'seo_type' => 'trains_hub',
+            'default_slug' => 've-tau-cao-toc',
+            'default_title' => 'Vé tàu cao tốc',
+            'default_subtitle' => 'Đặt vé tàu SE, giường nằm và ghế mềm — hỗ trợ đổi ngày, giao vé tận nơi.',
+            'default_seo_title' => 'Vé tàu cao tốc Việt Nam — ViTravel',
+            'default_seo_description' => 'Đặt vé tàu Hà Nội — Đà Nẵng — Sài Gòn qua ViTravel. Ghế mềm, giường nằm, hỗ trợ 24/7.',
+        ],
+        'flights_hub' => [
+            'template' => 'flights_hub',
+            'seo_type' => 'flights_hub',
+            'default_slug' => 've-may-bay',
+            'default_title' => 'Vé máy bay',
+            'default_subtitle' => 'Vé nội địa, quốc tế châu Á và thuê máy bay riêng — báo giá nhanh trong 24 giờ.',
+            'default_seo_title' => 'Vé máy bay nội địa & quốc tế — ViTravel',
+            'default_seo_description' => 'Đặt vé máy bay nội địa, châu Á và charter riêng qua chuyên gia bản địa ViTravel.',
+        ],
+        'stays_hub' => [
+            'template' => 'stays_hub',
+            'seo_type' => 'stays_hub',
+            'default_slug' => 'luu-tru',
+            'default_title' => 'Khách sạn & Resort',
+            'default_subtitle' => 'Tuyển chọn resort và khách sạn 5 sao nổi bật — Phú Quốc, Đà Nẵng, Nha Trang, Hạ Long.',
+            'default_seo_title' => 'Khách sạn & Resort cao cấp Việt Nam — ViTravel',
+            'default_seo_description' => 'Đặt phòng resort 5 sao Phú Quốc, Đà Nẵng, Nha Trang, Hạ Long qua ViTravel — giá tốt, hỗ trợ tận nơi.',
+        ],
+        'experiences_hub' => [
+            'template' => 'experiences_hub',
+            'seo_type' => 'experiences_hub',
+            'default_slug' => 've-vui-choi',
+            'default_title' => 'Vé vui chơi & trải nghiệm',
+            'default_subtitle' => 'Vinpearl, cáp treo, dù lượn, kayak và thể thao biển — combo tiết kiệm.',
+            'default_seo_title' => 'Vé vui chơi & trải nghiệm Việt Nam — ViTravel',
+            'default_seo_description' => 'Vé Vinpearl, Fansipan, Bà Nà, dù lượn, kayak Hạ Long và thể thao biển qua ViTravel.',
+        ],
+        'extras_hub' => [
+            'template' => 'extras_hub',
+            'seo_type' => 'extras_hub',
+            'default_slug' => 'dich-vu-khac',
+            'default_title' => 'Dịch vụ khác',
+            'default_subtitle' => 'Thuê xe, spa, massage, gửi hành lý, hướng dẫn viên riêng, y tế và hỗ trợ khẩn cấp 24/7.',
+            'default_seo_title' => 'Dịch vụ hỗ trợ du lịch — ViTravel',
+            'default_seo_description' => 'Thuê xe, spa, HDV riêng, y tế và hotline khẩn cấp 24/7 — đồng hành trọn hành trình với ViTravel.',
         ],
     ],
 ];

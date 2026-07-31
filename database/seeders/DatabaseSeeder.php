@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             TaxonomySeeder::class,
             CruiseTypeSeeder::class,
             ContentSeeder::class,
+            ServiceCatalogSeeder::class,
             TourCategorySeeder::class,
             HomeSlideSeeder::class,
             HomeSectionSeeder::class,

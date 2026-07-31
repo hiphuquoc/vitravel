@@ -11,6 +11,8 @@ use App\Models\Package;
 use App\Models\SeoEntry;
 use App\Models\SeoEntryTranslation;
 use App\Models\SeoRedirect;
+use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Models\TourCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -473,8 +475,69 @@ class SeoService
                     $params['country'] ?? null,
                     $params['slug'] ?? null,
                 ),
+            'services.hub' => $this->serviceClusterHubPath($params['cluster'] ?? null, $locale),
+            'services.index' => $this->serviceCategorySlugFullPath(
+                $params['cluster'] ?? null,
+                $params['category'] ?? null,
+                $locale
+            ),
+            'services.show' => $this->serviceSlugFullPath($params['slug'] ?? null, $locale)
+                ?? $this->composeSlugPath(
+                    $this->serviceClusterHubPath($params['cluster'] ?? null, $locale),
+                    $params['category'] ?? null,
+                    $params['slug'] ?? null,
+                ),
             default => null,
         };
+    }
+
+    protected function serviceClusterHubPath(?string $cluster, string $locale): ?string
+    {
+        if (! filled($cluster)) {
+            return null;
+        }
+        $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
+        if (! $hubKey) {
+            return null;
+        }
+
+        return $this->hubSlugFullPath($hubKey, $locale);
+    }
+
+    protected function serviceCategorySlugFullPath(?string $cluster, ?string $categorySlug, string $locale): ?string
+    {
+        if (! filled($cluster) || ! filled($categorySlug)) {
+            return null;
+        }
+
+        $cat = ServiceCategory::query()
+            ->with(['seoEntry.translations'])
+            ->where('cluster', $cluster)
+            ->where('slug', $categorySlug)
+            ->first();
+
+        $full = $cat?->seoEntry?->translation($locale)?->slug_full;
+        if ($full) {
+            return $this->normalizeSlugFull($full);
+        }
+
+        $hub = $this->serviceClusterHubPath($cluster, $locale);
+        if (! $hub) {
+            return null;
+        }
+
+        return $this->normalizeSlugFull(rtrim($hub, '/').'/'.$categorySlug);
+    }
+
+    protected function serviceSlugFullPath(?string $slug, string $locale): ?string
+    {
+        if (! filled($slug)) {
+            return null;
+        }
+
+        $full = $this->seoSlugFullByTypeAndSlug('service', $slug, $locale);
+
+        return $full ? $this->normalizeSlugFull($full) : null;
     }
 
     protected function composeSlugPath(string $hub, ?string ...$segments): ?string
@@ -867,9 +930,68 @@ class SeoService
             $this->rebuildToursSeoTree($locale);
             $this->rebuildCruisesSeoTree($locale);
             $this->rebuildGuideSeoTree($locale);
+            $this->rebuildServicesSeoTree($locale);
         }
 
         $this->purgeBadRedirects();
+    }
+
+    /**
+     * Rebuild SEO tree cho 5 cụm dịch vụ: hub → service_category → service.
+     */
+    public function rebuildServicesSeoTree(string $locale = 'vi'): void
+    {
+        foreach (config('services_catalog.clusters', []) as $cluster => $cfg) {
+            $hubKey = $cfg['hub_key'] ?? null;
+            if (! $hubKey) {
+                continue;
+            }
+
+            $hub = $this->ensureHub($hubKey, $locale);
+
+            ServiceCategory::query()
+                ->forCluster($cluster)
+                ->with(['seoEntry.translations'])
+                ->each(function (ServiceCategory $cat) use ($hub, $locale) {
+                    $this->ensureSeoFor($cat, 'service_category', $locale, [
+                        'slug' => $cat->slug,
+                        'title' => $cat->name,
+                        'seo_title' => $cat->name,
+                        'description' => $cat->intro,
+                        'status' => 'published',
+                        'parent_id' => $hub->id,
+                        'reclaim_slug_full' => true,
+                    ]);
+                });
+
+            Service::query()
+                ->published()
+                ->forCluster($cluster)
+                ->with(['category.seoEntry', 'seoEntry.translations', 'translations'])
+                ->each(function (Service $service) use ($hub, $locale) {
+                    $parentId = $service->category?->seoEntry?->id ?: $hub->id;
+                    $pkgTrans = $service->translation($locale) ?? $service->translation();
+                    $seoTrans = $service->seoEntry?->translation($locale);
+                    $title = $seoTrans?->title ?: ($pkgTrans?->title ?? null);
+                    $slug = $seoTrans?->slug ?: (filled($title) ? Str::slug((string) $title) : null);
+                    if (! filled($slug)) {
+                        return;
+                    }
+
+                    $this->syncSeo($service, $locale, [
+                        'slug' => $slug,
+                        'title' => $title,
+                        'seo_title' => $seoTrans?->seo_title ?: $title,
+                        'description' => $seoTrans?->seo_description ?: ($pkgTrans?->summary ?? null),
+                        'seo_description' => $seoTrans?->seo_description ?: ($pkgTrans?->summary ?? null),
+                        'status' => $seoTrans?->status ?: 'published',
+                        'parent_id' => $parentId,
+                        'rating_aggregate_star' => $service->rating,
+                        'rating_aggregate_count' => $service->review_count,
+                        'reclaim_slug_full' => true,
+                    ], 'service');
+                });
+        }
     }
 
     public function rebuildToursSeoTree(string $locale = 'vi'): void

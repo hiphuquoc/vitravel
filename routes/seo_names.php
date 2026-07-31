@@ -19,4 +19,8 @@ Route::prefix('__seo')->group(function () {
     Route::get('/guide', fn () => abort(404))->name('guide.index');
     Route::get('/guide/{country}', fn () => abort(404))->name('guide.country');
     Route::get('/guide/{country}/{slug}', fn () => abort(404))->name('guide.show');
+
+    Route::get('/services/{cluster}/hub', fn () => abort(404))->name('services.hub');
+    Route::get('/services/{cluster}/{category}', fn () => abort(404))->name('services.index');
+    Route::get('/services/{cluster}/{category}/{slug}', fn () => abort(404))->name('services.show');
 });

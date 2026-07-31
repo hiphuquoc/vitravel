@@ -118,6 +118,51 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 
 ---
 
+## D2. Catalogue dịch vụ (5 cụm) — Hub / Listing / Detail
+
+**Triển khai ViTravel (2026-07):** vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác. **Lead-gen** — giá “từ” + CTA báo giá / WhatsApp / liên hệ; **không checkout**. Named routes: `services.hub`, `services.index`, `services.show`.
+
+### D2.1 Hub cụm — `/ve-tau-cao-toc`, `/ve-may-bay`, `/luu-tru`, `/ve-vui-choi`, `/dich-vu-khac`
+
+**Mục đích:** Landing SEO cụm + điều hướng nhanh tới danh mục con.
+
+**Thành phần:**
+1. `x-layout.page-header` — banner, H1, subtitle, breadcrumb (1 cấp hub)
+2. Hàng **pill danh mục** (`btn-chip`) — mỗi `service_category` + count badge
+3. Danh sách dịch vụ nổi bật / toàn cụm — card ngang `x-service.card` (reuse typography tour listing)
+4. Khối FAQ chung (`service_listing_faqs` từ seed)
+5. Quick Inquiry + footer (dùng chung)
+
+**Dữ liệu:** hub copy từ `config/seo.php` + StaticPage template; `services[]` filter theo `cluster`.
+
+### D2.2 Danh mục dịch vụ — `/{hub}/{category}`
+
+**Pattern:** reuse **`.listing-layout`** (sidebar trái ~280px + list phải) như tour listing.
+
+**Thành phần:**
+1. Page header — breadcrumb: Hub → Tên danh mục
+2. Sidebar: danh sách category cùng cụm (active state)
+3. List card ngang `x-service.card` — rating, badge, location, highlights rút gọn, giá “từ”, CTA
+4. SEO intro category (`intro` từ translation) + FAQ listing (nếu có)
+5. Quick Inquiry + footer
+
+### D2.3 Chi tiết dịch vụ — `/{hub}/{category}/{slug}`
+
+**Pattern:** reuse **`.detail-layout`** + sidebar booking (tương tự tour detail).
+
+**Thành phần (`x-service.detail`):**
+1. Page header + gallery/placeholder theo cụm icon
+2. Tóm tắt, điểm nhấn (bullet ✓), thuộc tính theo cụm (`attrs`: điểm đi/đến, hạng ghế, check-in, địa điểm…)
+3. Bảng **ServiceOption** (biến thể giá) khi có
+4. Inclusion / exclusion / notes
+5. **Sticky sidebar:** giá “từ”, rating, CTA Liên hệ / WhatsApp / Yêu cầu báo giá (không “Add to cart”)
+6. FAQ riêng dịch vụ + dịch vụ liên quan (`related`)
+7. Quick Inquiry + footer
+
+**Ghi chú:** Admin CRUD dịch vụ **chưa có** — nội dung từ seed; roadmap CMS sau.
+
+---
+
 ## E. Travel Guide / Blog
 
 Đây là mục được nâng cấp nhiều nhất so với bản khảo sát trước — hệ thống blog thực tế có chiều sâu content-hub rõ rệt.

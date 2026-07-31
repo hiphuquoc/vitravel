@@ -50,9 +50,11 @@ autourasia-clone-docs/
 
 - **UI public:** Laravel 13 + Blade, dữ liệu qua `ViewDataService` (DB + fallback `SampleData`).
 - **Backend:** Controllers, FormRequests, Services (`SeoService`, `MediaService`, `ViewDataService`), lead POST endpoints.
+- **Dịch vụ (5 cụm — public):** vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác — hub/listing/chi tiết qua `ServiceController` + `RoutingController` (SEO types `trains_hub` … `service`). Seed: `project/seed_services.php` merge vào `seed_vitravel.php` (`service_clusters`, `service_categories`, `services`, `service_listing_faqs`). Config: `config/services_catalog.php`, hubs trong `config/seo.php`. **Chưa có admin CRUD dịch vụ** (roadmap).
+- **Header:** `headerMain` hiển thị **Điểm đến**, **Du thuyền** và **5 cụm dịch vụ** (mega menu); **Cẩm nang**, **Về chúng tôi**, **Liên hệ** (và mục phụ) chuyển vào drawer icon **Thêm** (`.header-more-btn` / `.header-more-panel`).
 - **Admin:** `/he-thong` — pattern liendoan.dev (sidebar, CRUD list/view/save/delete). Đăng nhập: `admin@vitravel.dev` / `vitravel@admin2026`.
-- **DB:** `php artisan migrate --seed` — demo content trong **`project/seed.php`** (`project/README.md`). Pipeline: taxonomy → cruise types → content → tour categories → home/reviews → **SeoHierarchySeeder cuối** (rebuild slug_full hub→con + `purgeBadRedirects`). Nếu chỉ thiếu URL tour: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects` (hoặc `--purge-all`).
-- **Docs DB:** `07-database-architecture.md` + §18 trong `03-data-models.md`.
+- **DB:** `php artisan migrate --seed` — demo content trong **`project/seed_vitravel.php`** (+ merge `seed_services.php`; xem `project/README.md`). Pipeline: taxonomy → cruise types → content → **ServiceCatalogSeeder** → tour categories → home/reviews → **SeoHierarchySeeder cuối** (rebuild slug_full hub→con + `purgeBadRedirects`). Nếu chỉ thiếu URL tour/dịch vụ: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects` (hoặc `--purge-all`).
+- **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md`.
 
 ### Lệnh khởi tạo (máy dev)
 
@@ -83,6 +85,8 @@ npm run build   # Node 20+ — commit public/build/ cùng repo rồi deploy
 | Bình luận | `/he-thong/binh-luan` |
 
 Các module brand còn lại (gallery placeholder, video, cảm nhận…) theo cùng pattern CRUD.
+
+**Roadmap (chưa có admin):** catalogue dịch vụ (`services`, `service_categories`) — hiện chỉ seed + public UI.
 
 ## Điểm khác biệt quan trọng so với bản khảo sát ban đầu (chỉ dựa trên text)
 

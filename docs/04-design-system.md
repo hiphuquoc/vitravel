@@ -152,6 +152,10 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 | `.filter-sidebar__*` | Drawer filter mobile + panel desktop |
 | `.sort-dropdown__*` | Dropdown sắp xếp danh mục |
 | `.faq-list` / `.faq-item__*` | FAQ accordion (dùng chung) |
+| **Service catalogue** | |
+| `.header-more-btn` / `.header-more-panel` | Drawer nav phụ (Cẩm nang, About, Contact…) |
+| `x-service.card` | Card ngang listing dịch vụ — reuse `.tour-card-*`, `.card-body` |
+| `x-service.detail` | Detail dịch vụ — reuse `.detail-layout`, `.detail-sidebar__*` |
 | `.tour-card-duration` | Chip thời lượng góc ảnh — font/padding khớp `.tour-card-badge` |
 | `.tour-card-price` / `__label` / `__value` | Label `fs-meta`; giá Fraunces `accent-500` |
 | **Detail tour/cruise** | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
@@ -319,6 +323,7 @@ Rule đặt **unlayered** (sau định nghĩa `.vt-dest` / `.vt-videos`), specif
 **Footer main:** `.footer-nav__link`, `.footer-seo`, `.footer-copyright` (`--fs-meta`), `.footer-social__link`, `.footer-badge` (`--fs-kicker`).
 
 **Header:** `.header-wordmark__tagline` — **ẩn** `@media (max-width: 567px)`.
+**Header more drawer:** `.header-more-btn` (icon list, `aria-label="Thêm mục"`) mở `.header-more-panel` — chứa Cẩm nang, Video, Gallery, Về chúng tôi, Liên hệ…; đóng khi hover rời / click outside. Nav chính `headerMain` giữ Điểm đến, Du thuyền, **5 cụm dịch vụ** (mega menu `.nav-panel-*`).
 
 ### 3.9 Hero slider (responsive)
 
@@ -466,6 +471,7 @@ Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển kh
 | Home | `home.blade.php` | Đã token từ các component dùng chung |
 | About | `about.blade.php` | §3.11 |
 | Danh mục tour/cruise | `tours/index`, `cruises/index` | §3.13 |
+| Hub / listing / detail dịch vụ | `pages/services/hub`, `index`, `show` + `x-service.*` | `.listing-layout` / `.detail-layout` |
 
 Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạng thái gửi form thành công), `.listing-empty`.
 
@@ -473,12 +479,14 @@ Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạ
 
 | Component | Mô tả | Dùng ở trang |
 |---|---|---|
-| `Header` (mega menu) | Logo, nav DESTINAZIONI/CROCIERE/COSE DA FARE + CHI SIAMO/CONTATTACI, search icon, CTA button, language flags | Toàn site |
+| `Header` (mega menu) | Logo, nav Điểm đến/Du thuyền/**5 cụm dịch vụ**, drawer Thêm (Cẩm nang/About/Contact), CTA Tour riêng | Toàn site |
 | `HeroWithQuickPills` | Ảnh nền hero + hàng pill chọn nhanh danh mục tour đặt sát mép trên | Home |
 | `HeroSearchBox` | Card trắng nổi đè lên hero: dropdown Destinazione + Durata + nút Cerca | Home |
 | `USPBadgeGroup` | 4 badge icon+text ngang hàng | Home, About Us |
 | `PageHeaderCard` | **Card breadcrumb + H1 đè lên banner** — component dùng chung cho mọi trang danh mục/tĩnh | Tour Listing, Blog Listing, About Us... |
 | `TourCard` (variant `listing`) | Ảnh trái + nội dung phải: badge rating tròn, badge duration, quote review, địa danh, accordion "Attrazioni principali", CTA | Tour Listing |
+| `ServiceCard` (`x-service.card`) | Cùng layout card ngang listing; icon/attrs theo cụm dịch vụ | Service hub/listing |
+| `ServiceDetail` (`x-service.detail`) | Detail + sidebar CTA báo giá (không cart) | Service detail |
 | `TourCard` (variant `home-compact`) | Ảnh trên + nội dung dưới, gọn hơn, chỉ 3 hiển thị | Home |
 | `FilterSidebar` (variant Tour) | Checkbox "Durate" + "Stile di viaggio" + nút Annulla/Applica | Tour/Cruise Listing |
 | `BentoDestinationGrid` | Grid không đều (1 ô lớn + nhiều ô nhỏ), overlay tên quốc gia | Home |

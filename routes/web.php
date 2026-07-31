@@ -67,8 +67,10 @@ Route::match(['get', 'post'], '/currency/switch', [CurrencyController::class, 's
 Route::prefix('api/listings')->name('api.listings.')->group(function () {
     Route::get('/tours', [ListingController::class, 'tours'])->name('tours');
     Route::get('/cruises', [ListingController::class, 'cruises'])->name('cruises');
+    Route::get('/services', [ListingController::class, 'services'])->name('services');
     Route::get('/featured-tours', [ListingController::class, 'featuredTours'])->name('featured-tours');
     Route::get('/featured-cruises', [ListingController::class, 'featuredCruises'])->name('featured-cruises');
+    Route::get('/featured-services', [ListingController::class, 'featuredServices'])->name('featured-services');
     Route::get('/related', [ListingController::class, 'related'])->name('related');
 });
 

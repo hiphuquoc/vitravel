@@ -1,6 +1,6 @@
 # ViTravel — Kiến trúc cơ sở dữ liệu
 
-> **Ngày:** 2026-07-27  
+> **Ngày:** 2026-07-31 (cập nhật catalogue dịch vụ 5 cụm)  
 > **Stack:** Laravel 13 · MySQL/MariaDB (utf8mb4) · Eloquent  
 > **Tham chiếu:** `docs/03-data-models.md` (product schema) · Hitour.dev V3.1 (`system.md` §4.3 — Translation Table + SEO hub)  
 > **Phạm vi:** Toàn bộ entity phục vụ UI hiện tại (Blade + `SampleData`) và roadmap lead-gen agency. **Không** gồm booking/payment/cart (ngoài V1).
@@ -32,7 +32,7 @@
 
 | Hitour (OTA) | ViTravel (Agency / lead-gen) |
 |---|---|
-| `tour_info`, ship, hotel, combo, booking | `packages` (tour \| cruise), blog, brand, **3 lead forms** |
+| `tour_info`, ship, hotel, combo, booking | `packages` (tour \| cruise), **catalogue dịch vụ** (`services`), blog, brand, **3 lead forms** |
 | Blade file content theo slug | Rich text / HTML trong DB |
 | Bảng `seo` legacy + migrate dần | `seo_entries` greenfield sạch |
 | Commerce / giá động / booking qty | `price_from` display-only; CTA → inquiry |
@@ -58,6 +58,12 @@ UI có 2 route (`/tours/...`, `/cruises/...`) nhưng layout chi tiết gần nh�
        │                   ├── package_translations
        │                   ├── package_itinerary_days (+ translations)
        │                   └── package_cabin_types (+ translations) [cruise]
+       │
+       │            ┌──────────────────┐
+       │            │ service_categories│◄── cluster: train|flight|stay|experience|other
+       │            └────────┬─────────┘
+       │                     └── services (+ service_translations, options, attrs JSON)
+       │                           └── service_options (+ service_option_translations)
        │
        ├── countries / destinations (+ translations)
        ├── taxonomies: travel_styles, tour_categories, blog_categories,
@@ -109,6 +115,23 @@ Cột quan trọng (locale-independent):
 Translation: `title`, `start/end_location`, `places_to_visit` (JSON), `featured_quote_*`, highlights, inclusions/exclusions/notes (JSON), body fields.
 
 Itinerary: `day_number`, meals, `transport_icons` (JSON), overnight, content (translated).
+
+### 4.3a. Catalogue dịch vụ (`services`)
+
+Tách entity khỏi `packages` — phục vụ 5 hub SEO độc lập (vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác).
+
+| Bảng | Vai trò |
+|---|---|
+| `service_categories` | Danh mục con trong cụm (`cluster`, `slug`, `name`, `intro`, sort); SEO type `service_category`, parent = hub cụm |
+| `services` | Sản phẩm dịch vụ: `cluster`, `service_category_id`, `country_id?`, `code`, giá display, rating, `attrs` (JSON), flags featured/hot |
+| `service_translations` | `title`, `location_label`, `summary`, highlights/inclusions/exclusions/notes (JSON), `content` |
+| `service_options` + `service_option_translations` | Biến thể giá (ghế tàu, loại phòng, combo…) |
+
+Config: `config/services_catalog.php` (`clusters`, `hub_to_cluster`); hub copy/SEO defaults trong `config/seo.php` → `hubs`.
+
+Seed: `project/seed_services.php` (merge `seed_vitravel.php`) — keys `service_clusters`, `service_categories`, `services`, `service_listing_faqs`. Seeder: **`ServiceCatalogSeeder`** (sau `ContentSeeder`, trước `TourCategorySeeder`).
+
+**Admin CRUD dịch vụ:** chưa triển khai (roadmap).
 
 ### 4.4. Content hub
 
@@ -184,6 +207,11 @@ Hubs cấp 1 (`parent_id = null`, `level = 1`) từ `config('seo.hubs')`:
 | `tours_hub` | `/tours` | `tours_hub` | `country` → `package_tour` / `tour_category` |
 | `cruises_hub` | `/cruises` | `cruises_hub` | `cruise_type` → `package_cruise` |
 | `guide_hub` | `/cam-nang-du-lich` | `guide_hub` | `blog_category` → `article` |
+| `trains_hub` | `/ve-tau-cao-toc` | `trains_hub` | `service_category` → `service` |
+| `flights_hub` | `/ve-may-bay` | `flights_hub` | `service_category` → `service` |
+| `stays_hub` | `/luu-tru` | `stays_hub` | `service_category` → `service` |
+| `experiences_hub` | `/ve-vui-choi` | `experiences_hub` | `service_category` → `service` |
+| `extras_hub` | `/dich-vu-khac` | `extras_hub` | `service_category` → `service` |
 
 Ví dụ cây:
 
@@ -198,6 +226,9 @@ Ví dụ cây:
 | Hub guide | `/cam-nang-du-lich` | `guide_hub` | null |
 | Chuyên mục | `/cam-nang-du-lich/{cat}` | `blog_category` | hub / category |
 | Bài viết | `…/{cat}/{slug}` | `article` | blog_category |
+| Hub vé tàu | `/ve-tau-cao-toc` | `trains_hub` | null |
+| Danh mục dịch vụ | `/ve-tau-cao-toc/ha-noi-da-nang` | `service_category` | trains_hub |
+| Dịch vụ | `/ve-tau-cao-toc/ha-noi-da-nang/{slug}` | `service` | service_category |
 
 Luồng admin:
 
@@ -208,7 +239,7 @@ Luồng admin:
 5. Lưu `seo_entry_translations.slug_full`
 6. Đổi slug/parent cha → `cascadeSlugFullChildren` cập nhật mọi con cùng locale + `redirect_info` 301 (`createRedirect301`, prefix locale nếu không default)
 
-**Public routing (Hitour catch-all):** `Route::fallback(RoutingController)` → `SeoService::findBySlugFull` → dispatch theo `seo_entries.type`. Default locale unprefixed; khác: `/{locale}/…`. `locale_route()` resolve `tours.*` / `cruises.*` / `guide.*` qua slug_full hiện tại — **không** còn hardcoded `/cruises|/tours|/cam-nang-du-lich` trên public GET.
+**Public routing (Hitour catch-all):** `Route::fallback(RoutingController)` → `SeoService::findBySlugFull` → dispatch theo `seo_entries.type` (gồm `trains_hub` … `service`). Default locale unprefixed; khác: `/{locale}/…`. `locale_route()` resolve `tours.*` / `cruises.*` / `guide.*` / **`services.*`** qua slug_full hiện tại — **không** hardcoded path trên public GET.
 
 Bảng `redirect_info` (`url_old`, `url_new`) + middleware `CheckRedirect` (sau DetectLocale / DetectCurrency).
 
@@ -225,11 +256,13 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | Bento destinations | `countries.home_grid_size` |
 | Tour listing + filter | `packages` + `travel_styles` + duration buckets (query) |
 | Tour/Cruise detail | `packages` + itinerary + cabin + faqs + reviews |
+| Service hub / listing / detail | `services` + `service_categories` + options + faqs; hub StaticPage template |
 | Blog listing/detail | `articles` + blog taxonomies + comments |
 | About | `company_profiles`, values, reasons, reference_persons, team |
 | Reviews page | `reviews` (company + package) |
 | Gallery / Video | `experience_albums`, `experience_videos` |
 | Customize / Contact / Quick inquiry | 3 bảng lead |
+| Header nav dịch vụ | `service_categories` (group by `cluster`) + `config/services_catalog.php` |
 | Header VI/EN | `languages` + seo translations |
 
 ---
@@ -237,7 +270,7 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 ## 7. Lộ trình dùng schema
 
 1. **Migrate** toàn bộ file `database/migrations/2026_07_27_*`
-2. **Seed** `LanguageSeeder` + `TaxonomySeeder` (11 travel styles, cruise types constants)
+2. **Seed** `LanguageSeeder` + `TaxonomySeeder` + `ContentSeeder` + **`ServiceCatalogSeeder`**
 3. **(Tiếp theo)** Seeder nội dung từ `SampleData` → thay mock trong controllers
 4. **(Tiếp theo)** API/Form submit → 3 lead tables + comments pending
 5. **(Tiếp theo)** Admin CMS đọc/ghi qua Eloquent + SEO hub
@@ -257,7 +290,10 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | `database/seeders/TaxonomySeeder.php` | travel styles & tags khung |
 | `database/seeders/CruiseTypeSeeder.php` | loại du thuyền (trước ContentSeeder) |
 | `database/seeders/ContentSeeder.php` | countries / packages / articles + SEO parent_id |
+| `database/seeders/ServiceCatalogSeeder.php` | **5 cụm dịch vụ** — categories + services + SEO parent |
 | `database/seeders/TourCategorySeeder.php` | danh mục tour theo quốc gia |
+| `config/services_catalog.php` | Cluster codes, hub_key map, nav labels |
+| `project/seed_services.php` | Seed data dịch vụ (merge `seed_vitravel.php`) |
 | `database/seeders/SeoHierarchySeeder.php` | **bước cuối** — `SeoService::rebuildPublicSeoTree` (slug_full hub→con) |
 
 ---
@@ -265,7 +301,8 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 ## 9. Quyết định đã chốt
 
 1. Một bảng `packages` cho tour + cruise (DRY, vẫn phục vụ 2 URL group).
-2. SEO hub bắt buộc cho mọi entity có URL public.
-3. Ba bảng lead tách — khớp form thật & analytics.
-4. FAQ / gallery polymorphic — tránh nhân bảng FAQ cho từng entity.
-5. Không implement booking tables trong V1.
+2. **Catalogue dịch vụ tách bảng `services`** — 5 hub SEO, không gộp vào `packages`.
+3. SEO hub bắt buộc cho mọi entity có URL public.
+4. Ba bảng lead tách — khớp form thật & analytics.
+5. FAQ / gallery polymorphic — tránh nhân bảng FAQ cho từng entity.
+6. Không implement booking tables trong V1.

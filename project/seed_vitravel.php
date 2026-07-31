@@ -11,7 +11,7 @@
  * @return array<string, mixed>
  */
 
-return array (
+$__vitravelSeed = array (
   'meta' => 
   array (
     'schema' => 1,
@@ -3813,9 +3813,9 @@ return array (
       'vi' => 
       array (
         'key' => 'featured_cruises',
-        'eyebrow' => 'Trên mặt nước',
-        'title' => 'Những chuyến du thuyền đáng trải nghiệm',
-        'subtitle' => 'Ba hành trình trên vịnh và sông nước được khách hàng đánh giá cao nhất.',
+        'eyebrow' => 'Hành trình biển',
+        'title' => 'Trải nghiệm trên mặt nước đáng nhớ',
+        'subtitle' => 'Những hải trình được yêu thích nhất — nơi việc di chuyển trở thành một phần của trải nghiệm, mở ra góc nhìn trọn vẹn về biển đảo.',
         'body' => NULL,
         'metaLine' => NULL,
         'ctaLabel' => NULL,
@@ -3826,9 +3826,67 @@ return array (
       'en' => 
       array (
         'key' => 'featured_cruises',
-        'eyebrow' => 'On the water',
-        'title' => 'Cruises worth experiencing',
-        'subtitle' => 'Three bay and river journeys our guests rate highest.',
+        'eyebrow' => 'Sea journeys',
+        'title' => 'Memorable experiences on the water',
+        'subtitle' => 'Our most loved voyages — where getting there becomes part of the experience, opening a fuller view of islands and sea.',
+        'body' => NULL,
+        'metaLine' => NULL,
+        'ctaLabel' => NULL,
+        'ctaUrl' => NULL,
+        'image' => NULL,
+        'imageAlt' => NULL,
+      ),
+    ),
+    'featured_trains' => 
+    array (
+      'vi' => 
+      array (
+        'key' => 'featured_trains',
+        'eyebrow' => 'Tàu cao tốc',
+        'title' => 'Di chuyển nhanh, đặt vé linh hoạt',
+        'subtitle' => 'Chọn hạng ghế hoặc giường nằm theo từng tuyến. Chủ động thời gian, dễ dàng tích hợp vào lịch trình riêng của bạn.',
+        'body' => NULL,
+        'metaLine' => NULL,
+        'ctaLabel' => NULL,
+        'ctaUrl' => NULL,
+        'image' => NULL,
+        'imageAlt' => NULL,
+      ),
+      'en' => 
+      array (
+        'key' => 'featured_trains',
+        'eyebrow' => 'High-speed trains',
+        'title' => 'Travel fast, book with flexibility',
+        'subtitle' => 'Choose seat or sleeper by route. Stay in control of your schedule and fit tickets into your own itinerary.',
+        'body' => NULL,
+        'metaLine' => NULL,
+        'ctaLabel' => NULL,
+        'ctaUrl' => NULL,
+        'image' => NULL,
+        'imageAlt' => NULL,
+      ),
+    ),
+    'support_services' => 
+    array (
+      'vi' => 
+      array (
+        'key' => 'support_services',
+        'eyebrow' => 'Dịch vụ bổ trợ',
+        'title' => 'Chỉ chọn những gì bạn cần',
+        'subtitle' => 'Lưu trú, vui chơi và các dịch vụ hỗ trợ — linh hoạt đặt riêng theo kế hoạch, tối ưu trải nghiệm du lịch trọn vẹn hơn.',
+        'body' => NULL,
+        'metaLine' => NULL,
+        'ctaLabel' => NULL,
+        'ctaUrl' => NULL,
+        'image' => NULL,
+        'imageAlt' => NULL,
+      ),
+      'en' => 
+      array (
+        'key' => 'support_services',
+        'eyebrow' => 'Add-on services',
+        'title' => 'Choose only what you need',
+        'subtitle' => 'Stays, activities, and support services — book à la carte around your plan for a more complete trip.',
         'body' => NULL,
         'metaLine' => NULL,
         'ctaLabel' => NULL,
@@ -4948,3 +5006,5 @@ return array (
     'small-group' => 'Nhóm nhỏ',
   ),
 );
+
+return array_merge($__vitravelSeed, require __DIR__.'/seed_services.php');

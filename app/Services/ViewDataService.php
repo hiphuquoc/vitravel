@@ -27,10 +27,14 @@ use App\Models\ReferencePerson;
 use App\Models\Review;
 use App\Models\ReviewPlatform;
 use App\Models\SeoEntryTranslation;
+use App\Models\Service;
+use App\Models\ServiceCategory;
+use App\Models\ServiceTranslation;
 use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Models\TravelStyle;
 use App\Models\Usp;
+use App\Support\ProjectSeed;
 use App\Support\SampleData;
 
 class ViewDataService
@@ -243,6 +247,56 @@ class ViewDataService
         }
 
         return SampleData::featuredCruises($limit);
+    }
+
+    /**
+     * Dịch vụ nổi bật theo cụm (home / merchandising) — ưu tiên is_featured, fallback sort.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function featuredServices(string $cluster, int $limit = 3): array
+    {
+        $limit = max(1, min(12, $limit));
+
+        if (! config("services_catalog.clusters.{$cluster}")) {
+            return [];
+        }
+
+        $query = Service::query()
+            ->published()
+            ->forCluster($cluster)
+            ->with([
+                'translations', 'category', 'country.translations',
+                'seoEntry.translations', 'options.translations', 'faqs.translations',
+                'mediaAttachments.media',
+            ]);
+
+        if (! Service::query()->published()->forCluster($cluster)->exists()) {
+            return SampleData::featuredServices($cluster, $limit);
+        }
+
+        $featured = (clone $query)
+            ->featured()
+            ->orderBy('sort')
+            ->orderByDesc('id')
+            ->limit($limit)
+            ->get();
+
+        if ($featured->count() < $limit) {
+            $exclude = $featured->pluck('id')->all();
+            $fill = (clone $query)
+                ->when($exclude !== [], fn ($q) => $q->whereNotIn('id', $exclude))
+                ->orderBy('sort')
+                ->orderByDesc('id')
+                ->limit($limit - $featured->count())
+                ->get();
+            $featured = $featured->concat($fill);
+        }
+
+        return $featured
+            ->map(fn (Service $s) => $this->mapService($s))
+            ->values()
+            ->all();
     }
 
     public function toursByCountry(string $countrySlug): array
@@ -1006,6 +1060,326 @@ class ViewDataService
     public function guideHub(): array
     {
         return $this->listingHub('guide_hub');
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function serviceClusters(): array
+    {
+        $seed = ProjectSeed::get('service_clusters', []);
+        if (is_array($seed) && $seed !== []) {
+            return array_values($seed);
+        }
+
+        $out = [];
+        foreach (config('services_catalog.clusters', []) as $code => $cfg) {
+            $out[] = [
+                'code' => $code,
+                'nav_label' => $cfg['nav_label'] ?? $code,
+                'label' => $cfg['label'] ?? $code,
+                'icon' => $cfg['icon'] ?? 'sparkles',
+                'hub_key' => $cfg['hub_key'] ?? null,
+                'sort' => $cfg['sort'] ?? 0,
+            ];
+        }
+
+        usort($out, fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
+
+        return $out;
+    }
+
+    public function serviceCluster(string $code): ?array
+    {
+        return collect($this->serviceClusters())->firstWhere('code', $code);
+    }
+
+    public function serviceHub(string $cluster): array
+    {
+        $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
+        if (! $hubKey) {
+            abort(404);
+        }
+
+        $hub = $this->listingHub($hubKey);
+        $cfg = config("services_catalog.clusters.{$cluster}", []);
+
+        return array_merge($hub, [
+            'cluster' => $cluster,
+            'navLabel' => $cfg['nav_label'] ?? ($hub['title'] ?? ''),
+            'icon' => $cfg['icon'] ?? 'sparkles',
+            'unitLabel' => $cfg['unit_label'] ?? 'dịch vụ',
+        ]);
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function serviceCategories(?string $cluster = null): array
+    {
+        $query = ServiceCategory::query()->active()->with('banner');
+        if ($cluster) {
+            $query->forCluster($cluster);
+        }
+
+        $rows = $query->withCount(['services' => fn ($q) => $q->published()])->get();
+        if ($rows->isEmpty()) {
+            return SampleData::serviceCategories($cluster);
+        }
+
+        return $rows->map(fn (ServiceCategory $cat) => $this->mapServiceCategory($cat))->values()->all();
+    }
+
+    public function serviceCategory(string $cluster, string $slug): ?array
+    {
+        $cat = ServiceCategory::query()
+            ->active()
+            ->forCluster($cluster)
+            ->where('slug', $slug)
+            ->with(['banner'])
+            ->withCount(['services' => fn ($q) => $q->published()])
+            ->first();
+
+        if ($cat) {
+            return $this->mapServiceCategory($cat);
+        }
+
+        return SampleData::serviceCategory($cluster, $slug);
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function services(?string $cluster = null): array
+    {
+        $query = Service::query()
+            ->published()
+            ->with([
+                'translations', 'category', 'country.translations',
+                'seoEntry.translations', 'options.translations', 'faqs.translations',
+                'mediaAttachments.media',
+            ])
+            ->orderBy('sort')
+            ->orderByDesc('id');
+
+        if ($cluster) {
+            $query->forCluster($cluster);
+        }
+
+        if (! Service::query()->published()->when($cluster, fn ($q) => $q->forCluster($cluster))->exists()) {
+            return SampleData::services($cluster);
+        }
+
+        return $query->get()->map(fn (Service $s) => $this->mapService($s))->values()->all();
+    }
+
+    public function service(string $slug, ?string $cluster = null): ?array
+    {
+        $query = Service::query()
+            ->published()
+            ->with([
+                'translations', 'category', 'country.translations',
+                'seoEntry.translations', 'options.translations', 'faqs.translations',
+                'mediaAttachments.media',
+            ]);
+
+        if ($cluster) {
+            $query->forCluster($cluster);
+        }
+
+        $service = $query->get()->first(function (Service $s) use ($slug) {
+            $seoSlug = $s->seoEntry?->translation($this->locale())?->slug;
+
+            return $seoSlug === $slug || $s->code === $slug;
+        });
+
+        if ($service) {
+            return $this->mapService($service);
+        }
+
+        return SampleData::service($slug, $cluster);
+    }
+
+    /** @return list<array{q: string, a: string}> */
+    public function serviceListingFaqs(): array
+    {
+        $faqs = ProjectSeed::get('service_listing_faqs', []);
+        if (is_array($faqs) && $faqs !== []) {
+            return array_values(array_map(fn ($f) => [
+                'q' => $f['q'] ?? $f['question'] ?? '',
+                'a' => $f['a'] ?? $f['answer'] ?? '',
+            ], $faqs));
+        }
+
+        return $this->listingFaqs();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function mapServiceCategory(ServiceCategory $cat): array
+    {
+        return [
+            'slug' => $cat->slug,
+            'name' => $cat->name,
+            'intro' => $cat->intro,
+            'cluster' => $cat->cluster,
+            'count' => (int) ($cat->services_count ?? $cat->services()->published()->count()),
+            'imageHero' => $cat->bannerUrl('lg') ?: $cat->bannerUrl('card'),
+            'imageSrcset' => $cat->bannerSrcset(),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function mapService(Service $service): array
+    {
+        $translation = $service->translation($this->locale());
+        $seoTranslation = $service->seoEntry?->translation($this->locale());
+        $category = $service->category;
+        $cfg = config("services_catalog.clusters.{$service->cluster}", []);
+
+        $highlights = $translation?->highlights ?? [];
+        if (is_string($highlights)) {
+            $decoded = json_decode($highlights, true);
+            $highlights = is_array($decoded) ? $decoded : [];
+        }
+
+        $priceFrom = $service->price_from !== null ? (float) $service->price_from : null;
+        $priceLabel = null;
+        if ($priceFrom !== null && $priceFrom > 0) {
+            $priceLabel = $this->formatMoney($priceFrom, $service->currency ?? 'VND');
+        } elseif ($priceFrom !== null && $priceFrom <= 0) {
+            $priceLabel = 'Liên hệ';
+        }
+
+        return [
+            'slug' => $seoTranslation?->slug ?? ($service->code ?? ''),
+            'code' => $service->code,
+            'title' => $translation?->title ?? '',
+            'cluster' => $service->cluster,
+            'clusterLabel' => $cfg['label'] ?? $service->cluster,
+            'clusterIcon' => $cfg['icon'] ?? 'sparkles',
+            'categorySlug' => $category?->slug ?? '',
+            'categoryName' => $category?->name ?? '',
+            'countrySlug' => $service->country?->translation($this->locale())?->slug ?? '',
+            'location' => $translation?->location_label ?? '',
+            'places' => array_values(array_filter([$translation?->location_label])),
+            'start' => is_array($service->attrs) ? ($service->attrs['from'] ?? '') : '',
+            'end' => is_array($service->attrs) ? ($service->attrs['to'] ?? '') : '',
+            'duration' => $this->serviceDurationLabel($service),
+            'priceFrom' => $priceFrom,
+            'currency' => $service->currency ?? 'VND',
+            'priceFormatted' => $priceLabel,
+            'rating' => (float) $service->rating,
+            'reviewCount' => (int) $service->review_count,
+            'starRating' => $service->star_rating,
+            'badge' => $service->discount_badge,
+            'isFeatured' => (bool) $service->is_featured,
+            'isHotDeal' => (bool) $service->is_hot_deal,
+            'image' => $service->coverUrl('card'),
+            'imageSrcset' => $service->coverSrcset(),
+            'imageDetail' => $service->coverUrl('lg'),
+            'imageDetailSrcset' => $service->coverSrcset(),
+            'summary' => $translation?->summary ?? '',
+            'highlightsIntro' => $translation?->summary ?? '',
+            'highlights' => is_array($highlights) ? $highlights : [],
+            'inclusions' => $translation?->inclusions ?? [],
+            'exclusions' => $translation?->exclusions ?? [],
+            'notes' => $translation?->notes ?? [],
+            'content' => $translation?->content ?? '',
+            'attrs' => is_array($service->attrs) ? $service->attrs : [],
+            'options' => $service->options->map(fn ($opt) => [
+                'code' => $opt->code,
+                'name' => $opt->name,
+                'description' => $opt->description,
+                'priceFrom' => $opt->price_from !== null ? (float) $opt->price_from : null,
+                'priceFormatted' => $opt->price_from !== null && (float) $opt->price_from > 0
+                    ? $this->formatMoney((float) $opt->price_from, $service->currency ?? 'VND')
+                    : null,
+                'capacity' => $opt->capacity,
+                'amenities' => $opt->amenities ?? [],
+            ])->values()->all(),
+            'faqs' => $service->faqs->where('is_active', true)->map(fn (Faq $faq) => [
+                'q' => $faq->question,
+                'a' => $faq->answer,
+            ])->values()->all(),
+            'quote' => $this->serviceQuote($service, $translation),
+            'styles' => [],
+            'gallery' => [],
+            'galleryCount' => 0,
+        ];
+    }
+
+    /**
+     * @return array{text: string, author: string}
+     */
+    protected function serviceQuote(Service $service, ?ServiceTranslation $translation): array
+    {
+        $text = trim((string) ($translation?->featured_quote_text ?? ''));
+        $author = trim((string) ($translation?->featured_quote_author ?? ''));
+
+        if ($text === '') {
+            $fallback = $this->fallbackServiceQuote($service);
+            $text = $fallback['text'];
+            $author = $author !== '' ? $author : $fallback['author'];
+        }
+
+        return [
+            'text' => $text,
+            'author' => $author,
+        ];
+    }
+
+    /**
+     * Quote dự phòng theo cụm — dùng khi seed/CMS chưa có featured quote.
+     *
+     * @return array{text: string, author: string}
+     */
+    protected function fallbackServiceQuote(Service $service): array
+    {
+        $pool = match ($service->cluster) {
+            'train' => [
+                ['text' => 'Đặt vé tàu qua ViTravel rất nhanh, e-ticket rõ ràng và hỗ trợ đổi ngày linh hoạt.', 'author' => 'Anh Tuấn'],
+                ['text' => 'Ghế mềm êm, lên tàu đúng hướng dẫn — tiết kiệm được một đêm khách sạn so với bay.', 'author' => 'Chị Hương'],
+                ['text' => 'Nhân viên tư vấn rõ lịch SE và giao vé tận nơi đúng hẹn.', 'author' => 'Anh Đức'],
+            ],
+            'flight' => [
+                ['text' => 'Giá vé máy bay minh bạch, xác nhận nhanh và hỗ trợ chọn giờ bay hợp lịch trình.', 'author' => 'Chị Mai'],
+                ['text' => 'Đặt combo bay + tour rất tiện, không phải tự so sánh nhiều hãng.', 'author' => 'Anh Khoa'],
+                ['text' => 'Đổi lịch bay được hỗ trợ kịp thời trước ngày khởi hành.', 'author' => 'Chị Lan'],
+            ],
+            'stay' => [
+                ['text' => 'Resort đúng như mô tả, phòng sạch và view đẹp — book qua ViTravel được giá tốt.', 'author' => 'Gia đình Anh Nam'],
+                ['text' => 'Check-in suôn sẻ, đội ngũ tư vấn chọn hạng phòng rất hợp nhu cầu.', 'author' => 'Chị Trang'],
+                ['text' => 'Vị trí thuận tiện, bữa sáng ổn và nhân viên khách sạn nhiệt tình.', 'author' => 'Anh Minh'],
+            ],
+            'experience' => [
+                ['text' => 'Vé vào cửa nhận nhanh bằng QR, không xếp hàng lâu như mua tại chỗ.', 'author' => 'Chị Hà'],
+                ['text' => 'Trải nghiệm đáng tiền, hướng dẫn rõ ràng trước giờ tham quan.', 'author' => 'Anh Phong'],
+                ['text' => 'Đặt trước rất tiện, đặc biệt vào cuối tuần đông khách.', 'author' => 'Chị My'],
+            ],
+            default => [
+                ['text' => 'Dịch vụ đúng cam kết, hỗ trợ nhanh và giá rõ ràng từ đầu.', 'author' => 'Anh Long'],
+                ['text' => 'Đặt qua ViTravel tiện hơn tự tìm — có người đồng hành khi cần hỗ trợ.', 'author' => 'Chị Ngọc'],
+                ['text' => 'Phản hồi nhanh, điều chỉnh theo nhu cầu đoàn rất linh hoạt.', 'author' => 'Anh Việt'],
+            ],
+        };
+
+        $index = abs(crc32((string) ($service->code ?: $service->id))) % count($pool);
+
+        return $pool[$index];
+    }
+
+    protected function serviceDurationLabel(Service $service): string
+    {
+        $attrs = is_array($service->attrs) ? $service->attrs : [];
+        if (! empty($attrs['duration_hours'])) {
+            return ((int) $attrs['duration_hours']).' giờ';
+        }
+        if (! empty($attrs['flight_time'])) {
+            return (string) $attrs['flight_time'];
+        }
+        if ($service->cluster === 'stay') {
+            return 'Theo đêm';
+        }
+
+        return '';
     }
 
     /**

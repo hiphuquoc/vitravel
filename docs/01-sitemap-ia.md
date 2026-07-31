@@ -4,7 +4,29 @@ Dựa trên khảo sát cấu trúc URL/menu của autourasia.com và đối chi
 
 ## 1. Menu chính (Header Navigation)
 
-Header thực tế (ảnh `image_clone/trang-chu.png`, `lien-he-contact.png`) gọn hơn giả định ban đầu:
+### 1.0 ViTravel — triển khai thực tế (`headerMain`, 2026-07)
+
+Header public ViTravel **khác** bản autourasia.it khảo sát: nav chính gọn, ưu tiên sản phẩm + dịch vụ.
+
+```
+Trang chủ (logo)
+Điểm đến ▾          → mega menu quốc gia tour (/tours/…)
+Du thuyền ▾           → mega menu loại cruise (/cruises/…)
+Tàu ▾                 → cụm train   (hub /ve-tau-cao-toc)
+Máy bay ▾             → cụm flight  (hub /ve-may-bay)
+Lưu trú ▾             → cụm stay    (hub /luu-tru)
+Vui chơi ▾            → cụm experience (hub /ve-vui-choi)
+Dịch vụ ▾             → cụm other   (hub /dich-vu-khac)
+☰ (icon list)         → drawer "Thêm": Cẩm nang (+ quốc gia), Video, Gallery,
+                        Về chúng tôi, Liên hệ, Đội ngũ, Cảm nhận KH
+[Tour riêng]          → CTA header (customize tour)
+```
+
+Mỗi cụm dịch vụ: link hub + danh sách `service_category` con (count badge). Cẩm nang / About / Contact **không** còn trên hàng nav chính — gom vào `.header-more-btn` + `.header-more-panel`. Mobile: cùng cấu trúc trong drawer.
+
+Config nav: `config/services_catalog.php` (`clusters`, `hub_to_cluster`); label hiển thị từ seed `service_clusters`.
+
+**Tham khảo autourasia.it (khảo sát gốc):**
 
 ```
 HOME
@@ -111,6 +133,22 @@ Theo ảnh `ve-chung-toi-about.png`, **CHI SIAMO là 1 trang dài duy nhất** g
 | Form yêu cầu báo giá theo tour | `/tour/{slug}/inquiry.html` | `/tours/{country}/{slug}/inquiry` |
 | Đội ngũ (list) | — | `/doi-ngu` (named route + SEO hub `team_hub`) |
 | Hồ sơ thành viên | — | `/doi-ngu/{slug}` (SEO type `team_member`, catch-all) |
+| **Hub dịch vụ (5 cụm)** | — | `/ve-tau-cao-toc`, `/ve-may-bay`, `/luu-tru`, `/ve-vui-choi`, `/dich-vu-khac` (SEO types `trains_hub` … `extras_hub`; slug từ `config/seo.php`) |
+| Danh mục dịch vụ | — | `/{hub-slug}/{category-slug}` (SEO type `service_category`, parent = hub cụm) |
+| Chi tiết dịch vụ | — | `/{hub-slug}/{category-slug}/{service-slug}` (SEO type `service`) |
+| Named routes dịch vụ | — | `services.hub`, `services.index`, `services.show` — resolve qua `locale_route()` + `slug_full` |
+
+**ViTravel — cây URL dịch vụ (ví dụ):**
+
+| Cụm | Hub | Category | Service |
+|---|---|---|---|
+| train | `/ve-tau-cao-toc` | `/ve-tau-cao-toc/ha-noi-da-nang` | `/ve-tau-cao-toc/ha-noi-da-nang/tau-se1-…` |
+| flight | `/ve-may-bay` | `/ve-may-bay/noi-dia` | `/ve-may-bay/noi-dia/…` |
+| stay | `/luu-tru` | `/luu-tru/phu-quoc` | `/luu-tru/phu-quoc/…` |
+| experience | `/ve-vui-choi` | `/ve-vui-choi/vinpearl` | `/ve-vui-choi/vinpearl/…` |
+| other | `/dich-vu-khac` | `/dich-vu-khac/thue-xe` | `/dich-vu-khac/thue-xe/…` |
+
+Seed demo: **5 cụm**, **22 danh mục**, **32 dịch vụ** (4 tàu, 4 máy bay, 8 lưu trú, 9 vui chơi, 7 khác). Public routing: `RoutingController` dispatch theo `seo_entries.type`.
 
 Ghi chú: site gốc dùng ID số (`c503`, `t589`, `b397`) do CMS cũ generate — khi clone **không cần giữ ID**, nên dùng slug sạch để thân thiện & dễ maintain hơn.
 
@@ -122,6 +160,7 @@ Home / Tour                          → /tours
 Home / Tour / Tour {Country}         → /tours/{country}
 Home / Tour / Tour {Country} / {Tour name}
 Home / Cose da fare / Cose da vedere in {Country} / {Article title}
+Home / {Hub dịch vụ} / {Danh mục} / {Tên dịch vụ}
 ```
 
 JSON-LD `BreadcrumbList` emit từ `x-layout.breadcrumb` → `SchemaService::breadcrumbList`. Layer SEO admin có thể build bằng `SeoService::breadcrumbsForEntry` (đi ngược `parent_id`).

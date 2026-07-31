@@ -9,6 +9,8 @@ use App\Models\Country;
 use App\Models\Destination;
 use App\Models\Package;
 use App\Models\Review;
+use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Models\TourCategory;
@@ -45,6 +47,8 @@ class AppServiceProvider extends ServiceProvider
             'review' => Review::class,
             'cruise_type' => \App\Models\CruiseType::class,
             'team_member' => TeamMember::class,
+            'service_category' => ServiceCategory::class,
+            'service' => Service::class,
         ]);
     }
 }

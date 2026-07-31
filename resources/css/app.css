@@ -1411,6 +1411,104 @@
         gap: 0.625rem;
     }
 
+    /* Nút «Thêm» — icon-only vuông, border nhẹ (header hẹp) */
+    .header-more-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        padding: 0;
+        border-radius: 0.55rem;
+        border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 88%, var(--color-primary-300, #b5cb86));
+        background: color-mix(in srgb, #fff 82%, var(--color-primary-50, #f5f8ec));
+        color: var(--color-ink-soft, #514f45);
+        box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.65);
+        cursor: pointer;
+        transition:
+            color 0.15s ease,
+            border-color 0.15s ease,
+            background-color 0.15s ease,
+            box-shadow 0.15s ease;
+    }
+
+    .header-more-btn:hover {
+        color: var(--color-primary-700, #455f2c);
+        border-color: var(--color-primary-300, #b5cb86);
+        background: #fff;
+        box-shadow:
+            inset 0 0 0 1px rgb(255 255 255 / 0.9),
+            0 0 0 3px rgb(107 143 63 / 0.08);
+    }
+
+    .header-more-btn[aria-expanded='true'] {
+        color: var(--color-primary-700, #455f2c);
+        border-color: var(--color-primary-400, #91b35a);
+        background: #fff;
+        box-shadow:
+            inset 0 0 0 1px rgb(255 255 255 / 0.95),
+            0 0 0 3px rgb(107 143 63 / 0.12);
+    }
+
+    .header-more-btn__glyph {
+        width: 1.2rem;
+        height: 1.2rem;
+    }
+
+    /* Panel «Thêm» — giới hạn theo viewport, cuộn nội dung dài */
+    .header-more-panel {
+        width: min(22rem, calc(100vw - 1.5rem));
+        min-width: 18rem;
+    }
+
+    .header-more-panel__card {
+        display: flex;
+        flex-direction: column;
+        max-height: min(70vh, calc(100dvh - var(--site-header-offset, 7rem) - 1.25rem));
+        overflow: hidden;
+        border-radius: 1rem;
+        border: 1px solid var(--color-line, #ddd9c2);
+        background: #fff;
+        box-shadow: var(--shadow-card-hover, 0 16px 40px rgb(39 43 35 / 0.14));
+    }
+
+    .header-more-panel__scroll {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        padding: 0.85rem 0.75rem 0.95rem;
+    }
+
+    @media (max-height: 640px) {
+        .header-more-panel__card {
+            max-height: min(78vh, calc(100dvh - var(--site-header-offset, 6rem) - 0.75rem));
+        }
+
+        .header-more-panel__scroll {
+            padding-block: 0.65rem 0.75rem;
+        }
+
+        .header-more-panel__scroll .nav-panel-link {
+            padding-block: 0.45rem;
+        }
+    }
+
+    @media (max-width: 567px) {
+        .header-more-btn {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.5rem;
+        }
+
+        .header-more-btn__glyph {
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+    }
+
     /* Breadcrumb — gọn, nhã; không pill đệm cao */
     .breadcrumb {
         font-size: var(--fs-meta);
@@ -3869,6 +3967,99 @@
         }
     }
 
+    /* Home — hub dịch vụ lẻ (lưu trú / vui chơi / khác) */
+    .home-svc-solo {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-gap);
+    }
+
+    @media (min-width: 769px) {
+        .home-svc-solo {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+    }
+
+    .home-svc-solo__link {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-gap);
+        min-height: var(--space-hit, 2.75rem);
+        padding: var(--space-card);
+        text-decoration: none;
+        color: inherit;
+        border-radius: 16px;
+        border: 1px solid var(--color-line, #ddd9c2);
+        background: #fff;
+        box-shadow: var(--shadow-card);
+        transition:
+            border-color 160ms ease,
+            box-shadow 160ms ease;
+    }
+
+    .home-svc-solo__link:hover {
+        border-color: color-mix(in srgb, var(--color-primary-300, #b5cb86) 55%, var(--color-line, #ddd9c2));
+        box-shadow: var(--shadow-card-hover);
+    }
+
+    .home-svc-solo__link:focus-visible {
+        outline: 2px solid var(--color-primary-500, #6b8f3f);
+        outline-offset: 3px;
+    }
+
+    .home-svc-solo__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 12px;
+        color: var(--color-primary-700, #455f2c);
+        background: var(--color-primary-100, #e9efd6);
+    }
+
+    .home-svc-solo__glyph {
+        width: 1.4rem;
+        height: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .home-svc-solo__text {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        min-width: 0;
+        flex: 1;
+        gap: var(--space-card-stack);
+    }
+
+    .home-svc-solo__label,
+    .home-svc-solo__desc {
+        margin: 0;
+    }
+
+    .home-svc-solo__chevron {
+        width: 1rem;
+        height: 1rem;
+        flex-shrink: 0;
+        margin-top: 0.45rem;
+        color: var(--color-primary-600, #567834);
+        opacity: 0.75;
+    }
+
+    @media (max-width: 567px) {
+        .home-svc-solo__link {
+            gap: var(--space-gap-sm);
+        }
+
+        .home-svc-solo__icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 10px;
+        }
+    }
+
     /* Pill tag */
     .pill {
         @apply inline-flex items-center border border-line bg-white px-3 py-1 text-xs font-medium text-ink-soft transition hover:border-primary-300 hover:text-primary-600;
@@ -5895,9 +6086,11 @@ body.is-searchOpen {
     flex-direction: column;
     width: min(22.5rem, calc(100vw - 1.25rem));
     max-width: 100%;
+    max-height: 100dvh;
     overflow: hidden;
     background: #fff;
     box-shadow: -12px 0 40px rgb(39 43 35 / 0.18);
+    padding-top: env(safe-area-inset-top, 0px);
 }
 .mobile-nav-drawer__head {
     display: flex;
@@ -5926,8 +6119,8 @@ body.is-searchOpen {
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 999px;
     border: 1px solid var(--color-line, #ddd9c2);
     background: #fff;
@@ -5945,14 +6138,24 @@ body.is-searchOpen {
     min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
+    overscroll-behavior: contain;
     -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
     padding: 0.35rem var(--space-card, 1rem) 0.5rem;
+}
+.mobile-nav-drawer__section {
+    scroll-margin-top: 0.5rem;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 75%, transparent);
+}
+.mobile-nav-drawer__section:last-child {
+    border-bottom: 0;
 }
 .mobile-nav-drawer__trigger {
     display: flex;
     width: 100%;
     align-items: center;
-    gap: 0.65rem;
+    gap: 0.7rem;
+    min-height: 3rem;
     padding: 0.85rem 0.35rem;
     border: 0;
     background: transparent;
@@ -5970,16 +6173,23 @@ a.mobile-nav-drawer__trigger {
 .mobile-nav-drawer__trigger:hover {
     color: var(--color-primary-700, #455f2c);
 }
+.mobile-nav-drawer__trigger[aria-expanded='true'] {
+    color: var(--color-primary-700, #455f2c);
+}
 .mobile-nav-drawer__trigger-icon {
     display: inline-flex;
-    width: 2.125rem;
-    height: 2.125rem;
+    width: 2.35rem;
+    height: 2.35rem;
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
     background: var(--color-primary-50, #f5f8ec);
     color: var(--color-primary-600, #567834);
+}
+.mobile-nav-drawer__trigger[aria-expanded='true'] .mobile-nav-drawer__trigger-icon {
+    background: var(--color-primary-600, #567834);
+    color: #fff;
 }
 .mobile-nav-drawer__trigger-label {
     flex: 1;
@@ -5994,7 +6204,7 @@ a.mobile-nav-drawer__trigger {
     transform: rotate(180deg);
 }
 .mobile-nav-drawer__sub {
-    padding: 0.15rem 0 0.5rem 0.15rem;
+    padding: 0.15rem 0 0.65rem 0.15rem;
 }
 /* Cây thư mục — gạch đứt dọc + nhánh ngang */
 .mobile-nav-drawer__tree {
@@ -6087,6 +6297,50 @@ a.mobile-nav-drawer__trigger {
     padding: 0.85rem var(--space-card, 1rem) calc(0.85rem + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid var(--color-line, #ddd9c2);
     background: var(--color-page-soft, #f8f6ec);
+}
+
+@media (max-height: 640px) {
+    .mobile-nav-drawer__head {
+        padding-block: 0.7rem 0.6rem;
+    }
+
+    .mobile-nav-drawer__trigger {
+        min-height: 2.65rem;
+        padding-block: 0.65rem;
+    }
+
+    .mobile-nav-drawer__trigger-icon {
+        width: 2.1rem;
+        height: 2.1rem;
+    }
+
+    .mobile-nav-drawer__sub {
+        padding-bottom: 0.4rem;
+    }
+
+    .mobile-nav-drawer__tree-link {
+        padding-block: 0.35rem;
+    }
+
+    .mobile-nav-drawer__foot {
+        gap: 0.5rem;
+        padding-top: 0.65rem;
+        padding-bottom: calc(0.65rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    .mobile-nav-drawer__cta {
+        min-height: 2.65rem;
+    }
+}
+
+@media (max-height: 520px) {
+    .mobile-nav-drawer__panel {
+        width: min(100vw, 22.5rem);
+    }
+
+    .mobile-nav-drawer__head .header-wordmark__tagline {
+        display: none;
+    }
 }
 .mobile-nav-drawer__hotline {
     display: flex;
@@ -8341,8 +8595,39 @@ body.is-mobileNavOpen {
 }
 
 /*
- * vt-select scrollbar — UNLAYERED (ưu tiên hơn @layer components).
+ * vt-scrollbar — thanh cuộn thương hiệu mảnh (dùng chung).
  * WebKit/Blink cần width tường minh; Firefox dùng scrollbar-width.
+ */
+.vt-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-primary-400, #93b25e) 50%, #bdb8a4) transparent;
+}
+
+.vt-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.vt-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    margin-block: 6px;
+}
+
+.vt-scrollbar::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--color-primary-400, #93b25e) 42%, #b8b39f);
+    border-radius: 999px;
+}
+
+.vt-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 65%, #9e9988);
+}
+
+.vt-scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+/*
+ * vt-select scrollbar — kế thừa .vt-scrollbar + giữ selector cũ.
  */
 .vt-select .vt-select__options {
     scrollbar-width: thin;
