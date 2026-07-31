@@ -11,7 +11,7 @@ use App\Models\Package;
 use App\Models\TourCategory;
 use App\Models\TourCategoryTranslation;
 use App\Services\SeoService;
-use App\Support\SampleData;
+use App\Support\ProjectSeed;
 use Illuminate\Database\Seeder;
 
 class TourCategorySeeder extends Seeder
@@ -42,16 +42,9 @@ class TourCategorySeeder extends Seeder
 
     protected function ensureCountryTranslations(): void
     {
-        $codes = [
-            'viet-nam' => 'VN',
-            'campuchia' => 'KH',
-            'bali' => 'ID',
-            'thai-lan' => 'TH',
-            'lao' => 'LA',
-            'tour-ket-hop' => 'COMBO',
-        ];
+        $codes = ProjectSeed::countryCodes();
 
-        foreach (SampleData::countries() as $sort => $row) {
+        foreach (ProjectSeed::get('countries', []) as $sort => $row) {
             $country = Country::withTrashed()->updateOrCreate(
                 ['code' => $codes[$row['slug']] ?? strtoupper(substr($row['slug'], 0, 2))],
                 [
@@ -66,7 +59,7 @@ class TourCategorySeeder extends Seeder
 
             $this->countryIds[$row['slug']] = $country->id;
 
-            $labels = SampleData::countryTranslations()[$row['slug']] ?? null;
+            $labels = ProjectSeed::get('country_translations', [])[$row['slug']] ?? null;
 
             if ($this->viId) {
                 CountryTranslation::query()->updateOrCreate(
@@ -94,6 +87,9 @@ class TourCategorySeeder extends Seeder
 
     protected function ensureCountrySeo(): void
     {
+        $toursHub = $this->seo->ensureToursHub('vi');
+        $toursHubEn = $this->enId ? $this->seo->ensureToursHub('en') : null;
+
         foreach ($this->countryIds as $slug => $countryId) {
             $country = Country::query()->with('translations')->find($countryId);
             if (! $country) {
@@ -106,6 +102,8 @@ class TourCategorySeeder extends Seeder
                     continue;
                 }
 
+                $hubId = $locale === 'en' && $toursHubEn ? $toursHubEn->id : $toursHub->id;
+
                 $this->seo->ensureSeoFor($country, 'country', $locale, [
                     'slug' => $slug,
                     'title' => $translation->name,
@@ -114,6 +112,7 @@ class TourCategorySeeder extends Seeder
                     'seo_description' => $translation->tagline,
                     'status' => 'published',
                     'country_code' => $country->code,
+                    'parent_id' => $hubId,
                 ]);
             }
         }
@@ -121,7 +120,7 @@ class TourCategorySeeder extends Seeder
 
     protected function seedTourCategories(): void
     {
-        foreach (SampleData::tourCategories() as $row) {
+        foreach (ProjectSeed::get('tour_categories', []) as $row) {
             $countryId = $this->countryIds[$row['countrySlug']] ?? null;
             if (! $countryId) {
                 continue;
@@ -193,7 +192,7 @@ class TourCategorySeeder extends Seeder
 
     protected function linkPackagesToCategories(): void
     {
-        foreach (SampleData::tourCategories() as $row) {
+        foreach (ProjectSeed::get('tour_categories', []) as $row) {
             $categoryId = $this->categoryIds[$row['slug']] ?? null;
             if (! $categoryId) {
                 continue;

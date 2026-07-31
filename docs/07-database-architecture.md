@@ -255,6 +255,10 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | `app/Models/Concerns/HasSeo.php` | Trait SEO hub |
 | `database/seeders/LanguageSeeder.php` | vi / en |
 | `database/seeders/TaxonomySeeder.php` | travel styles & tags khung |
+| `database/seeders/CruiseTypeSeeder.php` | loại du thuyền (trước ContentSeeder) |
+| `database/seeders/ContentSeeder.php` | countries / packages / articles + SEO parent_id |
+| `database/seeders/TourCategorySeeder.php` | danh mục tour theo quốc gia |
+| `database/seeders/SeoHierarchySeeder.php` | **bước cuối** — `SeoService::rebuildPublicSeoTree` (slug_full hub→con) |
 
 ---
 

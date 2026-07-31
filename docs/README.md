@@ -51,10 +51,12 @@ autourasia-clone-docs/
 - **UI public:** Laravel 13 + Blade, dữ liệu qua `ViewDataService` (DB + fallback `SampleData`).
 - **Backend:** Controllers, FormRequests, Services (`SeoService`, `MediaService`, `ViewDataService`), lead POST endpoints.
 - **Admin:** `/he-thong` — pattern liendoan.dev (sidebar, CRUD list/view/save/delete). Đăng nhập: `admin@vitravel.dev` / `vitravel@admin2026`.
-- **DB:** `php artisan migrate --seed` — `ContentSeeder` nạp tour/cruise/article/brand từ mock.
+- **DB:** `php artisan migrate --seed` — demo content trong **`project/seed.php`** (`project/README.md`). Pipeline: taxonomy → cruise types → content → tour categories → home/reviews → **SeoHierarchySeeder cuối** (rebuild slug_full hub→con + `purgeBadRedirects`). Nếu chỉ thiếu URL tour: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects` (hoặc `--purge-all`).
 - **Docs DB:** `07-database-architecture.md` + §18 trong `03-data-models.md`.
 
 ### Lệnh khởi tạo (máy dev)
+
+Sau khi clone repo, đảm bảo có file **`project/seed.php`** (nội dung demo một file — xem `project/README.md`).
 
 ```bash
 composer dump-autoload

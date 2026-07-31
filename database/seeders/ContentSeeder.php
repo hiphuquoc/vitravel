@@ -13,8 +13,10 @@ use App\Models\CompanyValueTranslation;
 use App\Models\ContentTypeTag;
 use App\Models\Country;
 use App\Models\CountryTranslation;
+use App\Models\CruiseType;
 use App\Models\Faq;
 use App\Models\FaqTranslation;
+use App\Models\KeywordTag;
 use App\Models\KeywordTagTranslation;
 use App\Models\Language;
 use App\Models\Office;
@@ -35,6 +37,7 @@ use App\Models\TeamMember;
 use App\Models\TeamMemberTranslation;
 use App\Models\TravelStyle;
 use App\Services\SeoService;
+use App\Support\ProjectSeed;
 use App\Support\SampleData;
 use Illuminate\Database\Seeder;
 
@@ -52,21 +55,16 @@ class ContentSeeder extends Seeder
     /** @var array<string, int> */
     protected array $blogCategoryIds = [];
 
-    /** @var array<string, string> */
-    protected array $contentTagMap = [
-        'Ăn gì, uống gì?' => 'where-to-eat',
-        'Ngủ ở đâu?' => 'where-to-stay',
-        'Chơi gì, xem gì?' => 'what-to-do',
-        'Mẹo du lịch' => 'travel-tips',
-        'Chuyến đi thế nào?' => 'trip-report',
-        'Chọn tour nào?' => 'which-tour',
-    ];
+    /** @var array<string, string> label (trong bài viết) => content_type_tags.code */
+    protected array $contentTagMap = [];
 
     public function run(): void
     {
         $this->seo = app(SeoService::class);
         $this->viId = Language::idByCode('vi');
         $this->enId = Language::idByCode('en');
+        $map = ProjectSeed::get('content_tag_map', []);
+        $this->contentTagMap = is_array($map) ? $map : [];
 
         $this->seedCountries();
         $this->seedBlogCategories();
@@ -83,16 +81,11 @@ class ContentSeeder extends Seeder
 
     protected function seedCountries(): void
     {
-        $codes = [
-            'viet-nam' => 'VN',
-            'campuchia' => 'KH',
-            'bali' => 'ID',
-            'thai-lan' => 'TH',
-            'lao' => 'LA',
-            'tour-ket-hop' => 'COMBO',
-        ];
+        $codes = ProjectSeed::countryCodes();
 
-        foreach (SampleData::countries() as $sort => $row) {
+        $toursHub = $this->seo->ensureToursHub('vi');
+
+        foreach (ProjectSeed::get('countries', []) as $sort => $row) {
             $country = Country::withTrashed()->updateOrCreate(
                 ['code' => $codes[$row['slug']] ?? strtoupper(substr($row['slug'], 0, 2))],
                 [
@@ -120,17 +113,20 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($country, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull('country', 'vi', $row['slug']),
                 'title' => $row['name'],
                 'description' => $row['tagline'],
                 'status' => 'published',
+                'parent_id' => $toursHub->id,
+                'country_code' => $country->code,
             ]);
         }
     }
 
     protected function seedBlogCategories(): void
     {
-        foreach (SampleData::blogCategories() as $sort => $row) {
+        $guideHub = $this->seo->ensureGuideHub('vi');
+
+        foreach (ProjectSeed::get('blog_categories', []) as $sort => $row) {
             $countryId = $this->countryIds[$row['countrySlug']] ?? null;
             if (! $countryId) {
                 continue;
@@ -159,18 +155,16 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($category, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull('blog_category', 'vi', $row['slug'], null, [
-                    'country_code' => $row['countrySlug'],
-                ]),
                 'title' => $row['name'],
                 'status' => 'published',
+                'parent_id' => $guideHub->id,
             ]);
         }
     }
 
     protected function seedKeywordTags(): void
     {
-        foreach (SampleData::popularKeywords() as $weight => $label) {
+        foreach (ProjectSeed::get('popular_keywords', []) as $weight => $label) {
             $slug = \Illuminate\Support\Str::slug($label);
 
             $translation = KeywordTagTranslation::query()
@@ -346,39 +340,101 @@ class ContentSeeder extends Seeder
             $this->syncFaqs($package, $row['faqs'] ?? [], is_array($en) ? ($en['faqs'] ?? []) : []);
 
             $seoType = $isCruise ? 'package_cruise' : 'package_tour';
-            $typeSegment = $isCruise ? ($row['typeSlug'] ?? 'du-thuyen-ha-long') : $row['countrySlug'];
+            $parentId = $this->resolvePackageSeoParentId($package, $isCruise, $row);
 
             $this->seo->syncSeo($package, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->buildSlugFull($seoType, 'vi', $row['slug'], null, [
-                    'country_code' => $typeSegment,
-                ]),
                 'title' => $row['title'],
                 'description' => $row['highlightsIntro'] ?? $row['title'],
                 'rating_aggregate_star' => $row['rating'],
                 'rating_aggregate_count' => $row['reviewCount'],
                 'status' => 'published',
-            ]);
+                'parent_id' => $parentId,
+            ], $seoType);
 
             if (is_array($en)) {
                 $this->seo->syncSeo($package, 'en', [
                     'slug' => $row['slug'],
-                    'slug_full' => $this->seo->buildSlugFull($seoType, 'en', $row['slug'], null, [
-                        'country_code' => $typeSegment,
-                    ]),
                     'title' => $en['title'] ?? $row['title'],
                     'description' => $en['highlightsIntro'] ?? ($row['highlightsIntro'] ?? $row['title']),
                     'rating_aggregate_star' => $row['rating'],
                     'rating_aggregate_count' => $row['reviewCount'],
                     'status' => 'published',
-                ]);
+                    'parent_id' => $parentId,
+                ], $seoType);
             }
         }
     }
 
+    /**
+     * Parent SEO: tour → country dưới tours hub; cruise → cruise_type dưới cruises hub.
+     *
+     * @param  array<string, mixed>  $row
+     */
+    protected function resolvePackageSeoParentId(Package $package, bool $isCruise, array $row): ?int
+    {
+        if ($isCruise) {
+            $typeSlug = $row['typeSlug'] ?? $package->cruise_type;
+            if (! filled($typeSlug)) {
+                return null;
+            }
+
+            $cruiseType = CruiseType::query()->where('slug', $typeSlug)->first();
+            if (! $cruiseType) {
+                return null;
+            }
+
+            $hub = $this->seo->ensureCruisesHub('vi');
+            $seo = $this->seo->ensureSeoFor($cruiseType, 'cruise_type', 'vi', [
+                'slug' => $cruiseType->slug,
+                'title' => $cruiseType->name,
+                'seo_title' => $cruiseType->name,
+                'status' => 'published',
+                'parent_id' => $hub->id,
+            ]);
+
+            if ($this->enId) {
+                $hubEn = $this->seo->ensureCruisesHub('en');
+                $this->seo->ensureSeoFor($cruiseType, 'cruise_type', 'en', [
+                    'slug' => $cruiseType->slug,
+                    'title' => $cruiseType->name,
+                    'seo_title' => $cruiseType->name,
+                    'status' => 'published',
+                    'parent_id' => $hubEn->id,
+                ]);
+            }
+
+            return $seo->id;
+        }
+
+        $country = $package->country ?? Country::query()->find($package->country_id);
+        if (! $country) {
+            return null;
+        }
+
+        $hub = $this->seo->ensureToursHub('vi');
+        $countrySlug = $country->translation('vi')?->slug
+            ?? $country->translation()?->slug
+            ?? ($row['countrySlug'] ?? null);
+        if (! filled($countrySlug)) {
+            return $country->seoEntry?->id;
+        }
+
+        $seo = $this->seo->ensureSeoFor($country, 'country', 'vi', [
+            'slug' => $countrySlug,
+            'title' => $country->translation('vi')?->name ?? $countrySlug,
+            'seo_title' => $country->translation('vi')?->name ?? $countrySlug,
+            'status' => 'published',
+            'parent_id' => $hub->id,
+            'country_code' => $country->code,
+        ]);
+
+        return $seo->id;
+    }
+
     protected function seedArticles(): void
     {
-        foreach (SampleData::articles() as $row) {
+        foreach (ProjectSeed::get('articles', []) as $row) {
             $countryId = $this->countryIds[$row['countrySlug']] ?? null;
             $categoryId = $this->blogCategoryIds[$row['categorySlug']] ?? null;
 
@@ -424,9 +480,6 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($article, 'vi', [
                 'slug' => $row['slug'],
-                'slug_full' => $this->seo->normalizeSlugFull(
-                    rtrim($this->seo->hubSlugFullPath('guide_hub', 'vi'), '/').'/'.$row['countrySlug'].'/'.$row['slug']
-                ),
                 'title' => $row['title'],
                 'description' => $row['excerpt'],
                 'rating_aggregate_star' => $row['rating'],
@@ -446,7 +499,7 @@ class ContentSeeder extends Seeder
             $this->seo->ensureHub('team_hub', 'en');
         }
 
-        foreach (SampleData::team() as $sort => $row) {
+        foreach (ProjectSeed::get('team', []) as $sort => $row) {
             $member = TeamMember::query()->updateOrCreate(
                 ['sort' => $sort],
                 [
@@ -566,7 +619,7 @@ class ContentSeeder extends Seeder
 
     protected function seedOffices(): void
     {
-        foreach (SampleData::offices() as $sort => $row) {
+        foreach (ProjectSeed::get('offices', []) as $sort => $row) {
             $office = Office::query()->updateOrCreate(
                 ['sort' => $sort],
                 [
@@ -594,7 +647,7 @@ class ContentSeeder extends Seeder
     {
         $flags = ['Việt Nam' => 'VN', 'Úc' => 'AU', 'Pháp' => 'FR', 'Ý' => 'IT'];
 
-        foreach (SampleData::testimonials() as $sort => $row) {
+        foreach (ProjectSeed::get('testimonials', []) as $sort => $row) {
             Review::query()->updateOrCreate(
                 [
                     'author_name' => $row['name'],
@@ -620,7 +673,7 @@ class ContentSeeder extends Seeder
 
     protected function seedBrandContent(): void
     {
-        foreach (SampleData::valueDefinitions() as $sort => $row) {
+        foreach (ProjectSeed::get('value_definitions', []) as $sort => $row) {
             $value = CompanyValue::query()->updateOrCreate(['sort' => $sort], ['is_active' => true]);
             if ($this->viId) {
                 CompanyValueTranslation::query()->updateOrCreate(
@@ -636,7 +689,7 @@ class ContentSeeder extends Seeder
             }
         }
 
-        foreach (SampleData::reasonDefinitions() as $sort => $row) {
+        foreach (ProjectSeed::get('reason_definitions', []) as $sort => $row) {
             $reason = ReasonToChooseUs::query()->updateOrCreate(['sort' => $sort], ['is_active' => true]);
             if ($this->viId) {
                 ReasonToChooseUsTranslation::query()->updateOrCreate(
@@ -652,7 +705,7 @@ class ContentSeeder extends Seeder
             }
         }
 
-        foreach (SampleData::referencePersons() as $sort => $row) {
+        foreach (ProjectSeed::get('reference_persons', []) as $sort => $row) {
             ReferencePerson::query()->updateOrCreate(
                 ['email' => $row['email']],
                 [
@@ -675,12 +728,9 @@ class ContentSeeder extends Seeder
             $profile->save();
         }
 
-        $previousLocale = app()->getLocale();
-        app()->setLocale('vi');
-        $aboutVi = SampleData::aboutPage();
-        app()->setLocale('en');
-        $aboutEn = SampleData::aboutPage();
-        app()->setLocale($previousLocale);
+        $aboutPages = ProjectSeed::get('about_page', []);
+        $aboutVi = $aboutPages['vi'] ?? [];
+        $aboutEn = $aboutPages['en'] ?? [];
 
         $mapAbout = static function (array $about): array {
             return [
@@ -736,7 +786,7 @@ class ContentSeeder extends Seeder
         }
 
         $page->faqs()->delete();
-        $this->syncFaqs($page, SampleData::listingFaqs());
+        $this->syncFaqs($page, ProjectSeed::get('listing_faqs', []));
     }
 
     /**

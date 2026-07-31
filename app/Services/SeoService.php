@@ -11,6 +11,7 @@ use App\Models\Package;
 use App\Models\SeoEntry;
 use App\Models\SeoEntryTranslation;
 use App\Models\SeoRedirect;
+use App\Models\TourCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -51,7 +52,12 @@ class SeoService
             ->where('language_id', $languageId)
             ->first();
 
-        $this->assertSlugFullUnique($languageId, $slugFull, $existingTranslation?->id);
+        $this->assertSlugFullUnique(
+            $languageId,
+            $slugFull,
+            $existingTranslation?->id,
+            (bool) ($data['reclaim_slug_full'] ?? false),
+        );
 
         $oldSlugFull = $existingTranslation?->slug_full;
 
@@ -142,8 +148,12 @@ class SeoService
     /**
      * @throws ValidationException
      */
-    public function assertSlugFullUnique(int $languageId, string $slugFull, ?int $ignoreTranslationId = null): void
-    {
+    public function assertSlugFullUnique(
+        int $languageId,
+        string $slugFull,
+        ?int $ignoreTranslationId = null,
+        bool $reclaim = false,
+    ): void {
         $normalized = $this->normalizeSlugFull($slugFull);
         $withoutSlash = ltrim($normalized, '/');
 
@@ -158,19 +168,36 @@ class SeoService
             $query->where('id', '!=', $ignoreTranslationId);
         }
 
-        if ($query->exists()) {
-            throw ValidationException::withMessages([
-                'seo_slug' => 'Đường dẫn đầy đủ (slug_full) đã tồn tại cho ngôn ngữ này.',
-            ]);
+        $conflicts = $query->get();
+        if ($conflicts->isEmpty()) {
+            return;
         }
+
+        // Seed/rebuild: nhường đường dẫn — chỉ park slug_full, KHÔNG tạo 301
+        // (createRedirect301 lúc reclaim dễ sinh vòng A↔B / self-redirect).
+        if ($reclaim) {
+            foreach ($conflicts as $conflict) {
+                $parked = $this->normalizeSlugFull(
+                    '/__orphaned-'.$conflict->id.'/'.ltrim((string) $conflict->slug_full, '/')
+                );
+                $conflict->forceFill(['slug_full' => $parked])->save();
+            }
+
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'seo_slug' => 'Đường dẫn đầy đủ (slug_full) đã tồn tại cho ngôn ngữ này.',
+        ]);
     }
 
     /**
      * Hitour SeoTranslation style: locale prefix nếu không phải default; upsert + chain-update.
+     * Không tạo self-redirect / vòng 2 chiều (tránh ERR_TOO_MANY_REDIRECTS).
      */
     public function createRedirect301(?string $old, ?string $new, int $languageId): void
     {
-        if (empty($old) || empty($new) || $old === $new) {
+        if (empty($old) || empty($new)) {
             return;
         }
 
@@ -182,8 +209,15 @@ class SeoService
             $lang = Language::query()->find($languageId);
             $prefix = ($lang && ! $lang->is_default) ? '/'.$lang->code : '';
 
-            $urlOld = $prefix.'/'.ltrim($old, '/');
-            $urlNew = $prefix.'/'.ltrim($new, '/');
+            $urlOld = $this->normalizeRedirectPath($prefix.'/'.ltrim($old, '/'));
+            $urlNew = $this->normalizeRedirectPath($prefix.'/'.ltrim($new, '/'));
+
+            if ($urlOld === '' || $urlNew === '' || $urlOld === $urlNew) {
+                return;
+            }
+
+            // Không giữ chiều ngược (B→A) khi đang ghi A→B
+            SeoRedirect::query()->where('url_old', $urlNew)->where('url_new', $urlOld)->delete();
 
             $exists = SeoRedirect::query()->where('url_old', $urlOld)->exists();
             if (! $exists) {
@@ -195,7 +229,14 @@ class SeoService
                 SeoRedirect::query()->where('url_old', $urlOld)->update(['url_new' => $urlNew]);
             }
 
-            SeoRedirect::query()->where('url_new', $urlOld)->update(['url_new' => $urlNew]);
+            // Chain: mọi redirect đang trỏ vào old → trỏ tới new (trừ self)
+            SeoRedirect::query()
+                ->where('url_new', $urlOld)
+                ->where('url_old', '!=', $urlNew)
+                ->update(['url_new' => $urlNew]);
+
+            // Dọn self-redirect do chain
+            SeoRedirect::query()->whereColumn('url_old', 'url_new')->delete();
         } catch (\Throwable $e) {
             Log::warning('SeoService::createRedirect301 failed: '.$e->getMessage(), [
                 'slug_old' => $old,
@@ -203,6 +244,59 @@ class SeoService
                 'language_id' => $languageId,
             ]);
         }
+    }
+
+    protected function normalizeRedirectPath(string $path): string
+    {
+        $path = '/'.trim(str_replace('//', '/', $path), '/');
+
+        return $path === '/' ? '' : $path;
+    }
+
+    /**
+     * Xóa redirect hỏng: self-loop, vòng 2 chiều, đích rỗng.
+     *
+     * @return int số dòng đã xóa
+     */
+    public function purgeBadRedirects(): int
+    {
+        if (! Schema::hasTable('redirect_info')) {
+            return 0;
+        }
+
+        $deleted = 0;
+
+        $deleted += SeoRedirect::query()
+            ->where(function ($q) {
+                $q->whereNull('url_new')
+                    ->orWhere('url_new', '')
+                    ->orWhereNull('url_old')
+                    ->orWhere('url_old', '');
+            })
+            ->delete();
+
+        $deleted += SeoRedirect::query()->whereColumn('url_old', 'url_new')->delete();
+
+        // Vòng 2 chiều A↔B
+        $pairs = SeoRedirect::query()->get(['id', 'url_old', 'url_new']);
+        $removeIds = [];
+        $byOld = [];
+        foreach ($pairs as $row) {
+            $byOld[$row->url_old] = $row;
+        }
+        foreach ($pairs as $row) {
+            $bounce = $byOld[$row->url_new] ?? null;
+            if ($bounce && $bounce->url_new === $row->url_old) {
+                $removeIds[] = $row->id;
+                $removeIds[] = $bounce->id;
+            }
+        }
+        $removeIds = array_values(array_unique($removeIds));
+        if ($removeIds !== []) {
+            $deleted += SeoRedirect::query()->whereIn('id', $removeIds)->delete();
+        }
+
+        return $deleted;
     }
 
     public function resolveParentEntry(Model $model, ?string $seoType, mixed $parentId = null): ?SeoEntry
@@ -612,7 +706,26 @@ class SeoService
                 && (int) ($existing->parent_id ?? 0) !== (int) ($desiredParentId ?? 0);
             $missingSlugFull = ! $trans || ! filled($trans->slug_full);
 
-            if ($missingSlugFull || $parentChanged) {
+            $slugMismatch = false;
+            if ($trans && filled($trans->slug) && ($parentChanged || $parentIdProvided || filled($existing->parent_id))) {
+                $parentForExpected = null;
+                if ($parentIdProvided) {
+                    $parentForExpected = $desiredParentId
+                        ? SeoEntry::query()->with('translations')->find($desiredParentId)
+                        : null;
+                } elseif ($existing->parent_id) {
+                    $parentForExpected = SeoEntry::query()->with('translations')->find($existing->parent_id);
+                }
+                $expectedFull = $this->buildSlugFull(
+                    $seoType,
+                    $locale,
+                    (string) ($data['slug'] ?? $trans->slug),
+                    $parentForExpected,
+                );
+                $slugMismatch = $this->normalizeSlugFull((string) $trans->slug_full) !== $expectedFull;
+            }
+
+            if ($missingSlugFull || $parentChanged || $slugMismatch) {
                 return $this->syncSeo($model, $locale, array_merge([
                     'slug' => $trans?->slug ?? ($data['slug'] ?? Str::slug((string) ($data['title'] ?? 'page'))),
                     'title' => $trans?->title ?? ($data['title'] ?? null),
@@ -730,5 +843,236 @@ class SeoService
     public function attachBlogCategoriesToGuideHub(string $locale = 'vi'): SeoEntry
     {
         return $this->attachChildrenToHub('blog_category', 'guide_hub', $locale);
+    }
+
+    /**
+     * Đồng bộ toàn bộ cây SEO public (idempotent).
+     * Hub → country / cruise_type / blog_category → package / tour_category / article.
+     * Chạy sau seed content hoặc khi thêm listing mới để tránh 404 do slug_full lệch cha/con.
+     *
+     * @param  list<string>|null  $locales  null = mọi ngôn ngữ active
+     */
+    public function rebuildPublicSeoTree(?array $locales = null): void
+    {
+        $codes = $locales ?? Language::query()
+            ->where('is_active', true)
+            ->orderBy('sort')
+            ->pluck('code')
+            ->all();
+
+        foreach ($codes as $locale) {
+            if (! Language::idByCode($locale)) {
+                continue;
+            }
+            $this->rebuildToursSeoTree($locale);
+            $this->rebuildCruisesSeoTree($locale);
+            $this->rebuildGuideSeoTree($locale);
+        }
+
+        $this->purgeBadRedirects();
+    }
+
+    public function rebuildToursSeoTree(string $locale = 'vi'): void
+    {
+        $hub = $this->ensureToursHub($locale);
+
+        Country::query()
+            ->with(['translations', 'seoEntry.translations'])
+            ->each(function (Country $country) use ($hub, $locale) {
+                $trans = $country->translation($locale);
+                if (! filled($trans?->slug)) {
+                    return;
+                }
+
+                $this->ensureSeoFor($country, 'country', $locale, [
+                    'slug' => $trans->slug,
+                    'title' => $trans->name,
+                    'seo_title' => $trans->name,
+                    'description' => $trans->tagline,
+                    'seo_description' => $trans->tagline,
+                    'status' => 'published',
+                    'parent_id' => $hub->id,
+                    'country_code' => $country->code,
+                    'reclaim_slug_full' => true,
+                ]);
+            });
+
+        $this->attachCountriesToToursHub($locale);
+
+        Package::query()
+            ->tours()
+            ->with(['country.seoEntry.translations', 'seoEntry.translations', 'translations'])
+            ->each(function (Package $package) use ($locale) {
+                $country = $package->country;
+                // Luôn lấy SEO country mới nhất (sau attach hub)
+                $country?->load('seoEntry.translations');
+                $parentId = $country?->seoEntry?->id;
+                if (! $parentId) {
+                    return;
+                }
+
+                $pkgTrans = $package->translation($locale) ?? $package->translation();
+                $seoTrans = $package->seoEntry?->translation($locale);
+                $title = $seoTrans?->title ?: ($pkgTrans?->title ?? null);
+                $slug = $seoTrans?->slug ?: (filled($title) ? Str::slug((string) $title) : null);
+                if (! filled($slug)) {
+                    return;
+                }
+
+                $this->syncSeo($package, $locale, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'seo_title' => $seoTrans?->seo_title ?: $title,
+                    'description' => $seoTrans?->seo_description,
+                    'seo_description' => $seoTrans?->seo_description,
+                    'status' => $seoTrans?->status ?: 'published',
+                    'parent_id' => $parentId,
+                    'rating_aggregate_star' => $package->rating,
+                    'rating_aggregate_count' => $package->review_count,
+                    'reclaim_slug_full' => true,
+                ], 'package_tour');
+            });
+
+        if (class_exists(TourCategory::class)) {
+            TourCategory::query()
+                ->with(['country.seoEntry', 'translations', 'seoEntry.translations'])
+                ->each(function (TourCategory $category) use ($locale) {
+                    $country = $category->country;
+                    $country?->load('seoEntry.translations');
+                    $parentId = $country?->seoEntry?->id;
+                    if (! $parentId) {
+                        return;
+                    }
+
+                    $catTrans = $category->translation($locale) ?? $category->translation();
+                    $seoTrans = $category->seoEntry?->translation($locale);
+                    $slug = $seoTrans?->slug ?: ($catTrans?->slug ?? null);
+                    $title = $seoTrans?->title ?: ($catTrans?->name ?? null);
+                    if (! filled($slug)) {
+                        return;
+                    }
+
+                    $this->syncSeo($category, $locale, [
+                        'slug' => $slug,
+                        'title' => $title,
+                        'seo_title' => $seoTrans?->seo_title ?: $title,
+                        'description' => $seoTrans?->seo_description ?: ($catTrans?->description ?? null),
+                        'seo_description' => $seoTrans?->seo_description ?: ($catTrans?->description ?? null),
+                        'status' => $seoTrans?->status ?: 'published',
+                        'parent_id' => $parentId,
+                        'country_code' => $country?->code,
+                        'reclaim_slug_full' => true,
+                    ], 'tour_category');
+                });
+        }
+    }
+
+    public function rebuildCruisesSeoTree(string $locale = 'vi'): void
+    {
+        $hub = $this->ensureCruisesHub($locale);
+
+        CruiseType::query()
+            ->with(['seoEntry.translations'])
+            ->each(function (CruiseType $type) use ($hub, $locale) {
+                $this->ensureSeoFor($type, 'cruise_type', $locale, [
+                    'slug' => $type->slug,
+                    'title' => $type->name,
+                    'seo_title' => $type->name,
+                    'status' => 'published',
+                    'parent_id' => $hub->id,
+                    'reclaim_slug_full' => true,
+                ]);
+            });
+
+        $this->attachCruiseTypesToCruisesHub($locale);
+
+        Package::query()
+            ->cruises()
+            ->with(['cruiseType.seoEntry', 'seoEntry.translations', 'translations'])
+            ->each(function (Package $package) use ($locale) {
+                $cruiseType = $package->cruiseType;
+                $cruiseType?->load('seoEntry.translations');
+                $parentId = $cruiseType?->seoEntry?->id;
+                if (! $parentId) {
+                    return;
+                }
+
+                $pkgTrans = $package->translation($locale) ?? $package->translation();
+                $seoTrans = $package->seoEntry?->translation($locale);
+                $title = $seoTrans?->title ?: ($pkgTrans?->title ?? null);
+                $slug = $seoTrans?->slug ?: (filled($title) ? Str::slug((string) $title) : null);
+                if (! filled($slug)) {
+                    return;
+                }
+
+                $this->syncSeo($package, $locale, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'seo_title' => $seoTrans?->seo_title ?: $title,
+                    'description' => $seoTrans?->seo_description,
+                    'seo_description' => $seoTrans?->seo_description,
+                    'status' => $seoTrans?->status ?: 'published',
+                    'parent_id' => $parentId,
+                    'rating_aggregate_star' => $package->rating,
+                    'rating_aggregate_count' => $package->review_count,
+                    'reclaim_slug_full' => true,
+                ], 'package_cruise');
+            });
+    }
+
+    public function rebuildGuideSeoTree(string $locale = 'vi'): void
+    {
+        $hub = $this->ensureGuideHub($locale);
+
+        BlogCategory::query()
+            ->with(['translations', 'seoEntry.translations'])
+            ->each(function (BlogCategory $cat) use ($hub, $locale) {
+                $trans = $cat->translation($locale) ?? $cat->translation();
+                $slug = $trans?->slug ?: Str::slug((string) ($trans?->name ?? 'category-'.$cat->id));
+                $title = $trans?->name ?? $slug;
+
+                $this->ensureSeoFor($cat, 'blog_category', $locale, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'seo_title' => $title,
+                    'status' => 'published',
+                    'parent_id' => $hub->id,
+                    'reclaim_slug_full' => true,
+                ]);
+            });
+
+        $this->attachBlogCategoriesToGuideHub($locale);
+
+        Article::query()
+            ->with(['blogCategory.seoEntry', 'seoEntry.translations', 'translations'])
+            ->each(function (Article $article) use ($locale) {
+                $category = $article->blogCategory;
+                $category?->load('seoEntry.translations');
+                $parentId = $category?->seoEntry?->id;
+                if (! $parentId) {
+                    return;
+                }
+
+                $artTrans = $article->translation($locale) ?? $article->translation();
+                $seoTrans = $article->seoEntry?->translation($locale);
+                $title = $seoTrans?->title ?: ($artTrans?->title ?? null);
+                $slug = $seoTrans?->slug ?: (filled($title) ? Str::slug((string) $title) : null);
+                if (! filled($slug)) {
+                    return;
+                }
+
+                $this->syncSeo($article, $locale, [
+                    'slug' => $slug,
+                    'title' => $title,
+                    'seo_title' => $seoTrans?->seo_title ?: $title,
+                    'description' => $seoTrans?->seo_description ?: ($artTrans?->excerpt ?? null),
+                    'seo_description' => $seoTrans?->seo_description ?: ($artTrans?->excerpt ?? null),
+                    'status' => $seoTrans?->status ?: 'published',
+                    'parent_id' => $parentId,
+                    'rating_aggregate_star' => $article->rating,
+                    'rating_aggregate_count' => $article->rating_count,
+                    'reclaim_slug_full' => true,
+                ], 'article');
+            });
     }
 }
