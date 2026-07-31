@@ -31,16 +31,8 @@ MEDIA_UPLOAD_FOLDER={project}/images
 ## File credentials
 
 - Đặt tại: `{project}/storage/app/gcs-credentials.json`
-- **Commit & push** file này để các môi trường / clone nhận cùng credentials qua git (`git pull`)
-- `storage/app/.gitignore` phải có exception `!gcs-credentials.json` (vì thư mục `storage/app` mặc định ignore `*`)
-- Root `.gitignore`: **không** liệt kê `/storage/app/gcs-credentials.json`
-- Nếu root ignore cả `/storage` (một số dự án cũ): thêm un-ignore:
-  ```
-  !/storage/
-  !/storage/app/
-  !/storage/app/gcs-credentials.json
-  ```
-- **Không** hardcode `private_key` trong `config/filesystems.php`
+- **Không** commit file này; **không** hardcode `private_key` trong `config/filesystems.php`
+- `.gitignore` phải ignore `storage/app/gcs-credentials.json` (và `credentials.json` cũ nếu còn)
 
 ## Wire trong Laravel (ViTravel)
 
