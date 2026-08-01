@@ -30,6 +30,8 @@ return [
     'company' => env('MEDIA_COMPANY_FOLDER', 'vitravel/company'),
     'reviews' => env('MEDIA_REVIEWS_FOLDER', 'vitravel/reviews'),
     'tour_categories' => env('MEDIA_TOUR_CATEGORIES_FOLDER', 'vitravel/tour-categories'),
+    'service_categories' => env('MEDIA_SERVICE_CATEGORIES_FOLDER', 'vitravel/service-categories'),
+    'services' => env('MEDIA_SERVICES_FOLDER', 'vitravel/services'),
     'videos' => env('MEDIA_VIDEOS_FOLDER', 'vitravel/videos'),
     'video_files' => env('MEDIA_VIDEO_FILES_FOLDER', 'vitravel/video-files'),
 

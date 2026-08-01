@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\ReasonToChooseUsController;
 use App\Http\Controllers\Admin\ReferencePersonController;
 use App\Http\Controllers\Admin\ReviewPlatformController;
 use App\Http\Controllers\Admin\TeamMemberController;
+use App\Http\Controllers\Admin\ServiceCategoryController;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\TourCategoryController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
@@ -99,6 +101,24 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/view', [TourCategoryController::class, 'view'])->name('tourCategories.view');
             Route::post('/createAndUpdate', [TourCategoryController::class, 'createAndUpdate'])->name('tourCategories.save');
             Route::get('/delete', [TourCategoryController::class, 'delete'])->name('tourCategories.delete');
+        });
+
+        /* ===== Service categories (train/flight/stay/experience/other) ===== */
+        Route::prefix('san-pham/danh-muc-dich-vu')->group(function () {
+            Route::get('/', [ServiceCategoryController::class, 'list'])->name('serviceCategories.list');
+            Route::get('/list', [ServiceCategoryController::class, 'list']);
+            Route::get('/view', [ServiceCategoryController::class, 'view'])->name('serviceCategories.view');
+            Route::post('/createAndUpdate', [ServiceCategoryController::class, 'createAndUpdate'])->name('serviceCategories.save');
+            Route::get('/delete', [ServiceCategoryController::class, 'delete'])->name('serviceCategories.delete');
+        });
+
+        /* ===== Service products ===== */
+        Route::prefix('san-pham/dich-vu')->group(function () {
+            Route::get('/', [ServiceController::class, 'list'])->name('services.list');
+            Route::get('/list', [ServiceController::class, 'list']);
+            Route::get('/view', [ServiceController::class, 'view'])->name('services.view');
+            Route::post('/createAndUpdate', [ServiceController::class, 'createAndUpdate'])->name('services.save');
+            Route::get('/delete', [ServiceController::class, 'delete'])->name('services.delete');
         });
 
         /* ===== Blog categories ===== */

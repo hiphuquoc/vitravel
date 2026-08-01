@@ -59,6 +59,7 @@ class ListingHubController extends Controller
             'seoEntry' => $page->seoEntry ?? $hubSeo,
             'title' => $cfg['label'] ?? ($cfg['default_title'] ?? 'Hub'),
             'backRoute' => $cfg['back_route'] ?? 'admin.dashboard',
+            'backParams' => $cfg['back_params'] ?? [],
             'viewUrl' => $viewUrl,
         ]);
     }
@@ -151,16 +152,21 @@ class ListingHubController extends Controller
         $cfg = config("seo.hubs.{$hubKey}");
         abort_unless(is_array($cfg), 404);
 
+        $cluster = config("services_catalog.hub_to_cluster.{$hubKey}");
+
         $back = match ($hubKey) {
             'tours_hub' => 'admin.countries.list',
             'cruises_hub' => 'admin.cruiseTypes.list',
             'guide_hub' => 'admin.blogCategories.list',
+            'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+                => 'admin.serviceCategories.list',
             default => 'admin.dashboard',
         };
 
         return array_merge($cfg, [
             'label' => config("seo.types.{$cfg['seo_type']}.label", $cfg['default_title']),
             'back_route' => $back,
+            'back_params' => $cluster ? ['cluster' => $cluster] : [],
         ]);
     }
 }

@@ -28,8 +28,8 @@ class Service extends Model
 
     /** @var list<string> */
     protected array $translatable = [
-        'title', 'location_label', 'summary', 'highlights',
-        'inclusions', 'exclusions', 'notes', 'content',
+        'title', 'location_label', 'summary', 'featured_quote_text', 'featured_quote_author',
+        'highlights', 'inclusions', 'exclusions', 'notes', 'content',
     ];
 
     protected $fillable = [
