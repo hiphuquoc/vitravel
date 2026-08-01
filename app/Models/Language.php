@@ -97,6 +97,41 @@ class Language extends Model
         });
     }
 
+    /** Ưu tiên lấy tạm nội dung EN khi locale chưa được seed. */
+    public static function contentFallbackCode(): string
+    {
+        return (string) config('language.content_fallback_code', 'en');
+    }
+
+    /**
+     * Chuỗi locale để resolve nội dung/SEO: current → content fallback (en) → default (vi).
+     *
+     * @return list<string>
+     */
+    public static function contentLocaleChain(?string $locale = null): array
+    {
+        $locale = $locale ?: app()->getLocale();
+        $chain = [$locale, self::contentFallbackCode(), self::defaultCode()];
+
+        return array_values(array_unique(array_filter($chain)));
+    }
+
+    /**
+     * @return list<int>
+     */
+    public static function contentLanguageIdChain(?string $locale = null): array
+    {
+        $ids = [];
+        foreach (self::contentLocaleChain($locale) as $code) {
+            $id = self::idByCode($code);
+            if ($id) {
+                $ids[] = $id;
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
     /** @return Collection<int, self> */
     public static function active(): Collection
     {

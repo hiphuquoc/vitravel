@@ -25,7 +25,10 @@
     foreach ($serviceClusters as $sc) {
         $serviceCatsByCluster[$sc['code']] = view_data()->serviceCategories($sc['code']);
     }
+    $trainHub = collect($serviceClusters)->firstWhere('code', 'train');
     $flightHub = collect($serviceClusters)->firstWhere('code', 'flight');
+    $trainServiceCount = view_data()->serviceCount('train');
+    $flightServiceCount = view_data()->serviceCount('flight');
 @endphp
 
 <div
@@ -298,13 +301,13 @@
             </span>
         </a>
 
-        {{-- Nav desktop --}}
-        <nav class="ml-6 hidden flex-1 items-center gap-0.5 lg:flex" aria-label="Điều hướng chính">
+        {{-- Nav desktop — căn giữa giữa logo và CTA --}}
+        <nav class="headerMain__nav" aria-label="Điều hướng chính">
             <div class="relative" @mouseenter="openMenu = 'dest'; moreOpen = false" @mouseleave="openMenu = null">
                 <button type="button"
                     class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
                     :aria-expanded="openMenu === 'dest'" @click="openMenu = openMenu === 'dest' ? null : 'dest'; moreOpen = false">
-                    Tour <x-icon name="chevron-down" class="size-3.5" />
+                    Tour trọn gói <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'dest'" x-transition.opacity.duration.150ms
                     class="absolute top-full left-0 z-50 w-[580px] pt-2">
@@ -364,7 +367,7 @@
             </div>
 
             @foreach ($serviceClusters as $sc)
-                @if (($sc['code'] ?? '') === 'flight')
+                @if (in_array($sc['code'] ?? '', ['train', 'flight'], true))
                     @continue
                 @endif
                 @php
@@ -389,12 +392,23 @@
                                 <span class="nav-panel-meta">{{ $sc['label'] ?? '' }}</span>
                             </a>
                             <div class="nav-panel-group">
-                                @if (($sc['code'] ?? '') === 'other' && $flightHub)
-                                    <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="nav-panel-link">
-                                        <span class="nav-panel-item-row">
-                                            <span>Vé máy bay</span>
-                                        </span>
-                                    </a>
+                                @if (($sc['code'] ?? '') === 'other')
+                                    @if ($trainHub)
+                                        <a href="{{ locale_route('services.hub', ['cluster' => 'train']) }}" class="nav-panel-link">
+                                            <span class="nav-panel-item-row">
+                                                <span>Vé tàu hỏa</span>
+                                                <x-shared.count-badge :count="$trainServiceCount" />
+                                            </span>
+                                        </a>
+                                    @endif
+                                    @if ($flightHub)
+                                        <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="nav-panel-link">
+                                            <span class="nav-panel-item-row">
+                                                <span>Vé máy bay</span>
+                                                <x-shared.count-badge :count="$flightServiceCount" />
+                                            </span>
+                                        </a>
+                                    @endif
                                 @endif
                                 @foreach ($svcCats as $cat)
                                     <a href="{{ locale_route('services.index', ['cluster' => $sc['code'], 'category' => $cat['slug']]) }}" class="nav-panel-link">
@@ -447,8 +461,11 @@
                                         Cẩm nang {{ $c['name'] }}
                                     </a>
                                 @endforeach
-                                <a href="{{ locale_route('videos') }}" class="nav-panel-link">Video trải nghiệm</a>
-                                <a href="{{ locale_route('gallery') }}" class="nav-panel-link">Thư viện khoảnh khắc</a>
+                            </div>
+                            <div class="nav-panel-group">
+                                <p class="nav-panel-group__title">Thư viện</p>
+                                <a href="{{ locale_route('videos') }}" class="nav-panel-link">Video</a>
+                                <a href="{{ locale_route('gallery') }}" class="nav-panel-link">Ảnh</a>
                             </div>
                         </div>
                     </div>
@@ -456,7 +473,7 @@
             </div>
         </nav>
 
-        <div class="ml-auto flex items-center gap-2">
+        <div class="headerMain__actions">
             <a href="{{ locale_route('customize') }}" class="btn-primary-sm hidden whitespace-nowrap sm:inline-flex">
                 <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
             </a>
@@ -617,7 +634,7 @@
                         :aria-expanded="mobileSub === 'dest'"
                         @click="toggleMobileSub('dest')">
                         <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="map-pin" class="size-4" /></span>
-                        <span class="mobile-nav-drawer__trigger-label">Tour</span>
+                        <span class="mobile-nav-drawer__trigger-label">Tour trọn gói</span>
                         <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'dest' && 'is-open'" />
                     </button>
                     <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'dest'" x-collapse>
@@ -676,7 +693,7 @@
                 </div>
 
                 @foreach ($serviceClusters as $sc)
-                    @if (($sc['code'] ?? '') === 'flight')
+                    @if (in_array($sc['code'] ?? '', ['train', 'flight'], true))
                         @continue
                     @endif
                     @php
@@ -701,12 +718,27 @@
                                         <span class="mobile-nav-drawer__tree-link-meta">{{ $sc['label'] ?? '' }}</span>
                                     </a>
                                 </li>
-                                @if (($sc['code'] ?? '') === 'other' && $flightHub)
-                                    <li>
-                                        <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
-                                            <span class="mobile-nav-drawer__tree-link-title">Vé máy bay</span>
-                                        </a>
-                                    </li>
+                                @if (($sc['code'] ?? '') === 'other')
+                                    @if ($trainHub)
+                                        <li>
+                                            <a href="{{ locale_route('services.hub', ['cluster' => 'train']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                                <span class="mobile-nav-drawer__tree-link-row">
+                                                    <span class="mobile-nav-drawer__tree-link-title">Vé tàu hỏa</span>
+                                                    <x-shared.count-badge :count="$trainServiceCount" />
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($flightHub)
+                                        <li>
+                                            <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                                <span class="mobile-nav-drawer__tree-link-row">
+                                                    <span class="mobile-nav-drawer__tree-link-title">Vé máy bay</span>
+                                                    <x-shared.count-badge :count="$flightServiceCount" />
+                                                </span>
+                                            </a>
+                                        </li>
+                                    @endif
                                 @endif
                                 @foreach ($svcCats as $cat)
                                     <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
@@ -759,15 +791,18 @@
                                 <a href="{{ locale_route('guide.index') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">Tất cả bài viết</a>
                             </li>
                             @foreach ($guideCountries as $c)
-                                <li>
+                                <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
                                     <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Cẩm nang {{ $c['name'] }}</a>
                                 </li>
                             @endforeach
+                        </ul>
+                        <p class="mobile-nav-drawer__tree-group-title">Thư viện</p>
+                        <ul class="mobile-nav-drawer__tree">
                             <li>
-                                <a href="{{ locale_route('videos') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Video trải nghiệm</a>
+                                <a href="{{ locale_route('videos') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Video</a>
                             </li>
                             <li class="mobile-nav-drawer__tree-item--last">
-                                <a href="{{ locale_route('gallery') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Thư viện khoảnh khắc</a>
+                                <a href="{{ locale_route('gallery') }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">Ảnh</a>
                             </li>
                         </ul>
                     </div>

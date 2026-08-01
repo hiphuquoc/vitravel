@@ -1,18 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Liên hệ ViTravel — chúng tôi luôn sẵn sàng lắng nghe')
-@section('meta_description', 'Liên hệ đội ngũ ViTravel qua email, điện thoại, WhatsApp hoặc gửi lời nhắn trực tiếp — phản hồi trong vòng 24 giờ làm việc.')
+@section('title', ($chrome['seo_title'] ?? 'Liên hệ ViTravel'))
+@section('meta_description', ($chrome['seo_description'] ?? 'Liên hệ đội ngũ ViTravel.'))
 @section('hide-inquiry', '1')
 
 @section('content')
     <div class="container-site contact-page">
-        <x-layout.breadcrumb :items="[['label' => 'Liên hệ']]" class="breadcrumb--page" />
+        <x-layout.breadcrumb :items="[['label' => $chrome['page_title'] ?? 'Liên hệ']]" class="breadcrumb--page" />
 
         <div class="site-mt max-w-2xl">
-            <h1 class="contact-intro__title">ViTravel</h1>
+            @if (! empty($chrome['eyebrow']))
+                <p class="section-eyebrow">{{ $chrome['eyebrow'] }}</p>
+            @endif
+            <h1 class="contact-intro__title">{{ $chrome['section_title'] ?? 'ViTravel' }}</h1>
             <p class="body-text site-mt">
-                Bạn muốn giữ liên lạc với chúng tôi? Dưới đây là tất cả các cách để tìm thấy ViTravel —
-                dù bạn cần tư vấn hành trình, hỗ trợ trong chuyến đi hay chỉ đơn giản muốn trò chuyện về Đông Nam Á.
+                {{ $chrome['section_subtitle'] ?? $chrome['page_subtitle'] ?? '' }}
             </p>
             <ul class="contact-channels">
                 <li class="contact-channels__item">
@@ -21,7 +23,7 @@
                 </li>
                 <li class="contact-channels__item">
                     <x-icon name="phone" class="size-4.5 text-primary-600" />
-                    <span><span class="font-semibold">Điện thoại & WhatsApp:</span> +84 24 3999 8888 · +84 912 345 678</span>
+                    <span><span class="font-semibold">{{ app()->getLocale() === 'vi' ? 'Điện thoại & WhatsApp:' : 'Phone & WhatsApp:' }}</span> +84 24 3999 8888 · +84 912 345 678</span>
                 </li>
             </ul>
         </div>

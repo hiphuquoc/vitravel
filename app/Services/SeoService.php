@@ -390,42 +390,49 @@ class SeoService
      */
     public function findBySlugFull(string $path, string $locale, bool $publishedOnly = true): ?SeoEntry
     {
-        $languageId = Language::idByCode($locale);
-        if (! $languageId) {
-            return null;
-        }
-
         $normalized = $this->normalizeSlugFull($path);
         $withoutSlash = ltrim($normalized, '/');
         if ($withoutSlash === '') {
             return null;
         }
 
-        $query = SeoEntryTranslation::query()
-            ->where('language_id', $languageId)
-            ->where(function ($q) use ($normalized, $withoutSlash) {
-                $q->where('slug_full', $normalized)
-                    ->orWhere('slug_full', $withoutSlash);
-            });
+        foreach (Language::contentLocaleChain($locale) as $code) {
+            $languageId = Language::idByCode($code);
+            if (! $languageId) {
+                continue;
+            }
 
-        if ($publishedOnly) {
-            $query->where('status', 'published');
-        }
+            $query = SeoEntryTranslation::query()
+                ->where('language_id', $languageId)
+                ->where(function ($q) use ($normalized, $withoutSlash) {
+                    $q->where('slug_full', $normalized)
+                        ->orWhere('slug_full', $withoutSlash);
+                });
 
-        $trans = $query->first();
-        if (! $trans) {
-            return null;
-        }
+            if ($publishedOnly) {
+                $query->where('status', 'published');
+            }
 
-        $entry = SeoEntry::query()
-            ->with(['reference', 'parent.translations', 'translations'])
-            ->find($trans->seo_entry_id);
+            $trans = $query->first();
+            if (! $trans) {
+                continue;
+            }
 
-        if ($entry) {
+            $entry = SeoEntry::query()
+                ->with(['reference', 'parent.translations', 'translations'])
+                ->find($trans->seo_entry_id);
+
+            if (! $entry) {
+                // Bản dịch mồ côi / thiếu entry — thử locale tiếp theo (thường là EN).
+                continue;
+            }
+
             $entry->setRelation('translation', $trans);
+
+            return $entry;
         }
 
-        return $entry;
+        return null;
     }
 
     public function hubPublicUrl(string $hubKey, ?string $locale = null): string
@@ -644,13 +651,13 @@ class SeoService
     /** Tra slug leaf trên seo_entry_translations theo type (slug không nằm trên bảng entity_translations). */
     protected function seoSlugFullByTypeAndSlug(string $seoType, string $slug, string $locale): ?string
     {
-        $languageId = Language::idByCode($locale);
-        if (! $languageId) {
+        $ids = Language::contentLanguageIdChain($locale);
+        if ($ids === []) {
             return null;
         }
 
         $trans = SeoEntryTranslation::query()
-            ->where('language_id', $languageId)
+            ->whereIn('language_id', $ids)
             ->where('slug', $slug)
             ->whereHas('seoEntry', function ($q) use ($seoType) {
                 $q->where('type', $seoType)
@@ -662,9 +669,12 @@ class SeoService
                             });
                     });
             })
-            ->first();
+            ->get();
 
-        return $trans?->slug_full ? $this->normalizeSlugFull($trans->slug_full) : null;
+        // Ưu tiên theo chuỗi locale (current → en → vi)
+        $picked = \App\Support\LocaleContent::firstTranslation($trans, $locale);
+
+        return $picked?->slug_full ? $this->normalizeSlugFull($picked->slug_full) : null;
     }
 
     /**

@@ -54,7 +54,11 @@
     @endphp
     <section class="cv-auto section-band" aria-label="{{ $valuesTitle }}">
         <div class="container-site">
-            <x-shared.section-heading :title="$valuesTitle" />
+            <x-shared.section-heading
+                :eyebrow="$valuesSection['eyebrow'] ?? null"
+                :title="$valuesTitle"
+                :subtitle="$valuesSection['subtitle'] ?? null"
+            />
             <div class="values-diagram">
                 <div class="values-diagram__side values-diagram__side--left">
                     @foreach (array_slice($values, 0, 2) as $v)
@@ -198,6 +202,7 @@
     <section class="cv-auto section-band" aria-label="{{ $refSection['title'] ?? 'Người đại diện tại nước ngoài' }}">
         <div class="container-site">
             <x-shared.section-heading
+                :eyebrow="$refSection['eyebrow'] ?? null"
                 :title="$refSection['title'] ?? ''"
                 :subtitle="$refSection['subtitle'] ?? null"
             />

@@ -21,7 +21,7 @@
         $schemaItems = collect($services)->map(fn ($s) => [
             'name' => $s['title'],
             'url' => locale_route('services.show', [
-                'cluster' => $cluster,
+                'cluster' => $s['cluster'] ?? $cluster,
                 'category' => $s['categorySlug'],
                 'slug' => $s['slug'],
             ]),

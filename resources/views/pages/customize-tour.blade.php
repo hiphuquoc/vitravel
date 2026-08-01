@@ -1,13 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Thiết kế tour riêng — nhận lịch trình & báo giá trong 24 giờ | ViTravel')
-@section('meta_description', 'Cho chúng tôi biết mong muốn của bạn — chuyên gia bản địa ViTravel sẽ thiết kế lịch trình riêng và gửi báo giá chi tiết trong vòng 24 giờ làm việc, hoàn toàn miễn phí.')
+@section('title', ($chrome['seo_title'] ?? 'Thiết kế tour riêng — ViTravel'))
+@section('meta_description', ($chrome['seo_description'] ?? 'Thiết kế lịch trình riêng với ViTravel.'))
 @section('hide-inquiry', '1')
 
 @section('content')
-    <x-layout.page-header title="Thiết kế tour riêng"
-        subtitle="Kể cho chúng tôi nghe chuyến đi trong mơ của bạn — phần còn lại để chuyên gia lo"
-        :breadcrumbs="[['label' => 'Thiết kế tour riêng']]" banner-label="Ảnh banner: hành trình theo yêu cầu" />
+    <x-layout.page-header
+        :title="$chrome['page_title'] ?? 'Thiết kế tour riêng'"
+        :subtitle="$chrome['page_subtitle'] ?? null"
+        :breadcrumbs="[['label' => $chrome['page_title'] ?? 'Thiết kế tour riêng']]"
+        :banner-label="$chrome['banner_label'] ?? null"
+    />
 
     @if (session('success') === 'custom_tour')
         <div class="container-site max-w-4xl section-band">

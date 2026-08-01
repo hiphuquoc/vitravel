@@ -3612,10 +3612,10 @@ $__vitravelSeed = array (
   array (
     'vi' => 
     array (
-      'seo_title' => 'Về chúng tôi — ViTravel, đại lý du lịch bản địa Đông Nam Á',
-      'seo_description' => 'Câu chuyện, sứ mệnh và đội ngũ ViTravel — đại lý lữ hành quốc tế bản địa với hơn 10 năm thiết kế hành trình riêng tại Việt Nam và Đông Nam Á.',
+      'seo_title' => 'Về chúng tôi — ViTravel, kết nối du khách quốc tế với Việt Nam & Đông Nam Á',
+      'seo_description' => 'Câu chuyện, sứ mệnh và đội ngũ ViTravel — thiết kế hành trình riêng tại Việt Nam và các điểm đến Đông Nam Á cho du khách quốc tế.',
       'page_title' => 'Về chúng tôi',
-      'page_subtitle' => 'Hành trình chân thật, được thiết kế bởi những người bản địa yêu nghề',
+      'page_subtitle' => 'Hành trình chân thật tại Việt Nam & Đông Nam Á — thiết kế bởi người bản địa yêu nghề',
       'banner' => 
       array (
         'src' => NULL,
@@ -3625,14 +3625,14 @@ $__vitravelSeed = array (
       'mission' => 
       array (
         'title' => 'Sứ mệnh của chúng tôi',
-        'text' => 'Mang đến những hành trình chân thật giúp du khách chạm vào đời sống, văn hoá và con người bản địa — đồng thời tạo sinh kế bền vững cho cộng đồng tại mỗi điểm đến chúng tôi đi qua.',
+        'text' => 'Mang đến những hành trình chân thật giúp du khách quốc tế chạm vào đời sống, văn hoá và thiên nhiên Việt Nam cùng Đông Nam Á — đồng thời tạo sinh kế bền vững cho cộng đồng tại mỗi điểm đến chúng tôi đi qua.',
         'image' => NULL,
         'imageSrcset' => NULL,
       ),
       'vision' => 
       array (
         'title' => 'Tầm nhìn của chúng tôi',
-        'text' => 'Trở thành đại lý du lịch bản địa được tin cậy nhất Đông Nam Á — nơi mỗi du khách rời đi với cảm giác "hài lòng hơn cả mong đợi" và một phần trái tim ở lại với điểm đến.',
+        'text' => 'Trở thành cầu nối tin cậy giữa du khách quốc tế với Việt Nam và Đông Nam Á — nơi mỗi người rời đi với cảm giác "hài lòng hơn cả mong đợi" và mang theo một phần trái tim của vùng đất đã đi qua.',
         'image' => NULL,
         'imageSrcset' => NULL,
       ),
@@ -3648,11 +3648,15 @@ $__vitravelSeed = array (
       'values_section' => 
       array (
         'title' => 'Cam kết với giá trị cốt lõi',
-        'hub_label' => 'Cam kết với giá trị cốt lõi',
+        'hub_label' => 'Giá trị cốt lõi',
+        'eyebrow' => 'Điều chúng tôi tin',
+        'subtitle' => 'Bốn giá trị dẫn dắt mọi lịch trình chúng tôi thiết kế tại Việt Nam và Đông Nam Á.',
       ),
       'reasons_section' => 
       array (
         'title' => 'Vì sao chọn ViTravel?',
+        'eyebrow' => 'Lý do đồng hành',
+        'subtitle' => 'Am hiểu điểm đến, minh bạch và luôn có người bản địa bên bạn.',
         'cta_label' => 'Bắt đầu hành trình của bạn',
         'cta_url' => NULL,
         'image' => NULL,
@@ -3661,15 +3665,16 @@ $__vitravelSeed = array (
       'reference_section' => 
       array (
         'title' => 'Người đại diện của chúng tôi tại nước ngoài',
+        'eyebrow' => 'Mạng lưới toàn cầu',
         'subtitle' => 'Bạn có thể trao đổi trực tiếp bằng ngôn ngữ của mình với đại diện ViTravel tại châu Âu và châu Úc.',
       ),
     ),
     'en' => 
     array (
-      'seo_title' => 'About us — ViTravel, Southeast Asia local travel agency',
-      'seo_description' => 'Our story, mission and team at ViTravel — an international local travel agency with over 10 years designing private journeys in Vietnam and Southeast Asia.',
+      'seo_title' => 'About us — ViTravel, connecting international travellers with Vietnam & Southeast Asia',
+      'seo_description' => 'Our story, mission and team at ViTravel — designing private journeys across Vietnam and Southeast Asia for international guests.',
       'page_title' => 'About us',
-      'page_subtitle' => 'Authentic journeys designed by locals who love what they do',
+      'page_subtitle' => 'Authentic journeys in Vietnam & Southeast Asia — designed by locals who love their craft',
       'banner' => 
       array (
         'src' => NULL,
@@ -3679,14 +3684,14 @@ $__vitravelSeed = array (
       'mission' => 
       array (
         'title' => 'Our mission',
-        'text' => 'To deliver authentic journeys that let travellers touch local life, culture and people — while creating sustainable livelihoods for communities along every route we travel.',
+        'text' => 'To deliver authentic journeys that let international travellers touch local life, culture and nature across Vietnam and Southeast Asia — while creating sustainable livelihoods for communities along every route we travel.',
         'image' => NULL,
         'imageSrcset' => NULL,
       ),
       'vision' => 
       array (
         'title' => 'Our vision',
-        'text' => 'To become the most trusted local travel agency in Southeast Asia — where every guest leaves feeling “more than satisfied” and leaves a piece of their heart at the destination.',
+        'text' => 'To become the trusted bridge between international guests and Vietnam & Southeast Asia — where every traveller leaves feeling “more than satisfied” and carries a piece of the places they visited.',
         'image' => NULL,
         'imageSrcset' => NULL,
       ),
@@ -3701,12 +3706,16 @@ $__vitravelSeed = array (
       ),
       'values_section' => 
       array (
-        'title' => 'Commitment to core values',
-        'hub_label' => 'Commitment to core values',
+        'title' => 'Commitment to our core values',
+        'hub_label' => 'Core values',
+        'eyebrow' => 'What we believe',
+        'subtitle' => 'Four values that guide every itinerary we design across Vietnam and Southeast Asia.',
       ),
       'reasons_section' => 
       array (
         'title' => 'Why choose ViTravel?',
+        'eyebrow' => 'Why travel with us',
+        'subtitle' => 'Deep destination knowledge, clear pricing, and local people by your side.',
         'cta_label' => 'Start your journey',
         'cta_url' => NULL,
         'image' => NULL,
@@ -3715,7 +3724,8 @@ $__vitravelSeed = array (
       'reference_section' => 
       array (
         'title' => 'Our representatives abroad',
-        'subtitle' => 'You can speak directly in your own language with ViTravel representatives in Europe and Australia.',
+        'eyebrow' => 'A global network',
+        'subtitle' => 'Speak directly in your own language with ViTravel representatives in Europe and Australia.',
       ),
     ),
   ),
@@ -3758,12 +3768,12 @@ $__vitravelSeed = array (
         'eyebrow' => 'Chuyên gia du lịch Việt',
         'title' => 'Hành trình chân thật, thiết kế bởi người bản địa',
         'subtitle' => NULL,
-        'body' => 'ViTravel là đại lý lữ hành đặt trụ sở tại Hà Nội, với hơn 10 năm đồng hành cùng du khách khám phá miền Bắc Việt Nam — từ vịnh Hạ Long, Sa Pa, Ninh Bình tới cao nguyên đá Hà Giang. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia sinh ra và lớn lên tại chính điểm đến.',
+        'body' => 'ViTravel là đại lý lữ hành đặt trụ sở tại Việt Nam, kết nối du khách quốc tế với Việt Nam và Đông Nam Á. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia bản địa tại từng điểm đến.',
         'metaLine' => 'Giấy phép lữ hành quốc tế số 01-2234/TCDL-GP-LHQT',
         'ctaLabel' => 'Tìm hiểu về chúng tôi',
         'ctaUrl' => 'https://vitravel.dev/ve-chung-toi',
         'image' => NULL,
-        'imageAlt' => 'Ảnh đội ngũ ViTravel tại văn phòng Hà Nội',
+        'imageAlt' => 'Ảnh đội ngũ ViTravel tại văn phòng',
       ),
       'en' => 
       array (
@@ -3771,12 +3781,12 @@ $__vitravelSeed = array (
         'eyebrow' => 'Vietnam travel experts',
         'title' => 'Authentic journeys, designed by locals',
         'subtitle' => NULL,
-        'body' => 'ViTravel is a Hanoi-based travel agency with over 10 years of guiding guests through Northern Vietnam — from Halong Bay, Sapa and Ninh Binh to the karst highlands of Ha Giang. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience.',
+        'body' => 'ViTravel is a Vietnam-based travel agency connecting international guests with Vietnam and Southeast Asia. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience.',
         'metaLine' => 'International travel license No. 01-2234/TCDL-GP-LHQT',
         'ctaLabel' => 'Learn about us',
         'ctaUrl' => 'https://vitravel.dev/ve-chung-toi',
         'image' => NULL,
-        'imageAlt' => 'ViTravel team at our Hanoi office',
+        'imageAlt' => 'ViTravel team at our office',
       ),
     ),
     'featured_tours' => 
@@ -3842,7 +3852,7 @@ $__vitravelSeed = array (
       'vi' => 
       array (
         'key' => 'featured_trains',
-        'eyebrow' => 'Tàu cao tốc',
+        'eyebrow' => 'Vé tàu hỏa',
         'title' => 'Di chuyển nhanh, đặt vé linh hoạt',
         'subtitle' => 'Chọn hạng ghế hoặc giường nằm theo từng tuyến. Chủ động thời gian, dễ dàng tích hợp vào lịch trình riêng của bạn.',
         'body' => NULL,
@@ -3855,7 +3865,7 @@ $__vitravelSeed = array (
       'en' => 
       array (
         'key' => 'featured_trains',
-        'eyebrow' => 'High-speed trains',
+        'eyebrow' => 'Train tickets',
         'title' => 'Travel fast, book with flexibility',
         'subtitle' => 'Choose seat or sleeper by route. Stay in control of your schedule and fit tickets into your own itinerary.',
         'body' => NULL,
@@ -3900,9 +3910,9 @@ $__vitravelSeed = array (
       'vi' => 
       array (
         'key' => 'destinations',
-        'eyebrow' => 'Đông Nam Á',
+        'eyebrow' => 'Điểm đến Đông Nam Á',
         'title' => 'Những điểm đến được yêu thích nhất',
-        'subtitle' => 'Mỗi điểm đến một sắc màu — chọn nơi bạn muốn lắng nghe câu chuyện bản địa.',
+        'subtitle' => 'Từ Việt Nam tới Campuchia, Thái Lan, Lào và Bali — chọn nơi bạn muốn lắng nghe câu chuyện bản địa.',
         'body' => NULL,
         'metaLine' => NULL,
         'ctaLabel' => NULL,
@@ -3913,9 +3923,9 @@ $__vitravelSeed = array (
       'en' => 
       array (
         'key' => 'destinations',
-        'eyebrow' => 'Southeast Asia',
+        'eyebrow' => 'Southeast Asia destinations',
         'title' => 'Our most loved destinations',
-        'subtitle' => 'Each place has its own colour — choose where you want to hear local stories.',
+        'subtitle' => 'From Vietnam to Cambodia, Thailand, Laos and Bali — choose where you want to hear local stories.',
         'body' => NULL,
         'metaLine' => NULL,
         'ctaLabel' => NULL,
@@ -4017,8 +4027,8 @@ $__vitravelSeed = array (
       array (
         'key' => 'videos',
         'eyebrow' => 'Trải nghiệm thật',
-        'title' => 'Đông Nam Á qua từng thước phim đẹp',
-        'subtitle' => 'Những video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
+        'title' => 'Hành trình qua từng thước phim đẹp',
+        'subtitle' => 'Video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
         'body' => NULL,
         'metaLine' => NULL,
         'ctaLabel' => 'Xem tất cả video',
@@ -4030,7 +4040,7 @@ $__vitravelSeed = array (
       array (
         'key' => 'videos',
         'eyebrow' => 'Real experiences',
-        'title' => 'Southeast Asia in unforgettable frames',
+        'title' => 'Journeys in unforgettable frames',
         'subtitle' => 'Authentic films from guests and our local team — tap any moment to watch full screen.',
         'body' => NULL,
         'metaLine' => NULL,

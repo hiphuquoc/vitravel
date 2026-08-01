@@ -26,6 +26,20 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ViewDataService::class);
         $this->app->singleton(CurrencyManager::class);
+
+        // Avoid touch() Utime failures when PHP-FPM is not owner of compiled views (WSL).
+        $this->app->singleton('blade.compiler', function ($app) {
+            return tap(new \App\View\Compilers\SafeBladeCompiler(
+                $app['files'],
+                $app['config']['view.compiled'],
+                $app['config']->get('view.relative_hash', false) ? $app->basePath() : '',
+                $app['config']->get('view.cache', true),
+                $app['config']->get('view.compiled_extension', 'php'),
+                $app['config']->get('view.check_cache_timestamps', true),
+            ), function ($blade) {
+                $blade->component('dynamic-component', \Illuminate\View\DynamicComponent::class);
+            });
+        });
     }
 
     public function boot(): void

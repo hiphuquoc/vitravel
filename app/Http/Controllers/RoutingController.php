@@ -39,6 +39,17 @@ class RoutingController extends Controller
             return $fallback;
         }
 
+        // Tour / cruise listing khi locale chưa có SEO — resolve theo slug + nội dung EN/VI
+        $tourFallback = $this->dispatchTourPathFallback($segments, $locale);
+        if ($tourFallback !== null) {
+            return $tourFallback;
+        }
+
+        $cruiseFallback = $this->dispatchCruisePathFallback($segments, $locale);
+        if ($cruiseFallback !== null) {
+            return $cruiseFallback;
+        }
+
         abort(404);
     }
 
@@ -131,6 +142,90 @@ class RoutingController extends Controller
     }
 
     /**
+     * Soft-route listing tour theo country khi locale chưa có SEO row.
+     *
+     * @param  list<string>  $segments
+     */
+    protected function dispatchTourPathFallback(array $segments, string $locale): ?Response
+    {
+        if ($segments === []) {
+            return null;
+        }
+
+        $seo = app(SeoService::class);
+        $hubFull = '';
+        foreach (\App\Models\Language::contentLocaleChain($locale) as $code) {
+            $hubFull = trim($seo->hubSlugFullPath('tours_hub', $code), '/');
+            if ($hubFull !== '') {
+                break;
+            }
+        }
+
+        if ($hubFull === '') {
+            $hubFull = 'tours';
+        }
+
+        $hubSegments = explode('/', $hubFull);
+        $hubCount = count($hubSegments);
+        if ($hubCount === 0 || array_slice($segments, 0, $hubCount) !== $hubSegments) {
+            return null;
+        }
+
+        $rest = array_slice($segments, $hubCount);
+        if ($rest === []) {
+            return app(TourController::class)->hub();
+        }
+
+        if (count($rest) === 1) {
+            return app(TourController::class)->index($rest[0]);
+        }
+
+        return app(TourController::class)->show($rest[0], $rest[1]);
+    }
+
+    /**
+     * Soft-route listing cruise khi locale chưa có SEO row.
+     *
+     * @param  list<string>  $segments
+     */
+    protected function dispatchCruisePathFallback(array $segments, string $locale): ?Response
+    {
+        if ($segments === []) {
+            return null;
+        }
+
+        $seo = app(SeoService::class);
+        $hubFull = '';
+        foreach (\App\Models\Language::contentLocaleChain($locale) as $code) {
+            $hubFull = trim($seo->hubSlugFullPath('cruises_hub', $code), '/');
+            if ($hubFull !== '') {
+                break;
+            }
+        }
+
+        if ($hubFull === '') {
+            $hubFull = 'cruises';
+        }
+
+        $hubSegments = explode('/', $hubFull);
+        $hubCount = count($hubSegments);
+        if ($hubCount === 0 || array_slice($segments, 0, $hubCount) !== $hubSegments) {
+            return null;
+        }
+
+        $rest = array_slice($segments, $hubCount);
+        if ($rest === []) {
+            return app(CruiseController::class)->hub();
+        }
+
+        if (count($rest) === 1) {
+            return app(CruiseController::class)->index($rest[0]);
+        }
+
+        return app(CruiseController::class)->show($rest[0], $rest[1]);
+    }
+
+    /**
      * Soft-route cẩm nang khi chưa có seo_entry (vd /cam-nang-du-lich/viet-nam)
      * hoặc URL lệch segment giữa (category vs country) nhưng đúng slug bài.
      *
@@ -139,7 +234,13 @@ class RoutingController extends Controller
     protected function dispatchGuidePathFallback(array $segments, string $locale): ?Response
     {
         $seo = app(SeoService::class);
-        $hubFull = trim($seo->hubSlugFullPath('guide_hub', $locale), '/');
+        $hubFull = '';
+        foreach (\App\Models\Language::contentLocaleChain($locale) as $code) {
+            $hubFull = trim($seo->hubSlugFullPath('guide_hub', $code), '/');
+            if ($hubFull !== '') {
+                break;
+            }
+        }
         if ($hubFull === '') {
             return null;
         }
@@ -165,11 +266,12 @@ class RoutingController extends Controller
             $middle = (string) $rest[count($rest) - 2];
 
             // Bài viết: tìm theo leaf slug (bỏ qua lệch country vs category ở giữa)
-            $article = Article::query()
-                ->whereHas('seoEntry.translations', function ($q) use ($articleSlug, $locale) {
+            $ids = \App\Models\Language::contentLanguageIdChain($locale);
+            $article = $ids === [] ? null : Article::query()
+                ->whereHas('seoEntry.translations', function ($q) use ($articleSlug, $ids) {
                     $q->where('slug', $articleSlug)
                         ->where('status', 'published')
-                        ->where('language_id', \App\Models\Language::idByCode($locale));
+                        ->whereIn('language_id', $ids);
                 })
                 ->first();
 

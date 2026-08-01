@@ -49,6 +49,12 @@ class ViewDataService
         return Language::idByCode($this->locale());
     }
 
+    /** @return list<int> */
+    protected function languageIdChain(): array
+    {
+        return Language::contentLanguageIdChain($this->locale());
+    }
+
     public function homeCountries(): array
     {
         $featured = HomeFeaturedCountry::query()
@@ -91,10 +97,15 @@ class ViewDataService
             return SampleData::country($slug);
         }
 
+        $ids = $this->languageIdChain();
+        if ($ids === []) {
+            return null;
+        }
+
         $country = Country::query()
             ->active()
             ->with(['translations', 'banner', 'listingBanner'])
-            ->whereHas('translations', fn ($q) => $q->where('language_id', $this->languageId())->where('slug', $slug))
+            ->whereHas('translations', fn ($q) => $q->whereIn('language_id', $ids)->where('slug', $slug))
             ->first();
 
         return $country ? $this->mapCountry($country) : null;
@@ -470,9 +481,14 @@ class ViewDataService
             ));
         }
 
+        $ids = $this->languageIdChain();
+        if ($ids === []) {
+            return [];
+        }
+
         $category = BlogCategory::query()
             ->where('is_active', true)
-            ->whereHas('translations', fn ($q) => $q->where('language_id', $this->languageId())->where('slug', $categorySlug))
+            ->whereHas('translations', fn ($q) => $q->whereIn('language_id', $ids)->where('slug', $categorySlug))
             ->first();
 
         if (! $category) {
@@ -989,6 +1005,8 @@ class ViewDataService
             'values_section' => [
                 'title' => $nested($profile->values_section_title, 'values_section', 'title'),
                 'hub_label' => $nested($profile->values_hub_label, 'values_section', 'hub_label'),
+                'eyebrow' => (string) ($fallback['values_section']['eyebrow'] ?? ''),
+                'subtitle' => (string) ($fallback['values_section']['subtitle'] ?? ''),
             ],
             'reasons_section' => [
                 'title' => $nested($profile->reasons_section_title, 'reasons_section', 'title'),
@@ -998,12 +1016,21 @@ class ViewDataService
                     : null,
                 'image' => $profile->mediaUrl('reasonsImage', 'lg'),
                 'imageSrcset' => $profile->mediaSrcset('reasonsImage'),
+                'eyebrow' => (string) ($fallback['reasons_section']['eyebrow'] ?? ''),
+                'subtitle' => (string) ($fallback['reasons_section']['subtitle'] ?? ''),
             ],
             'reference_section' => [
                 'title' => $nested($profile->reference_section_title, 'reference_section', 'title'),
                 'subtitle' => $nested($profile->reference_section_subtitle, 'reference_section', 'subtitle'),
+                'eyebrow' => (string) ($fallback['reference_section']['eyebrow'] ?? ''),
             ],
         ];
+    }
+
+    /** @return array<string, mixed> */
+    public function pageChrome(string $key): array
+    {
+        return SampleData::pageChrome($key);
     }
 
     public function reviewPlatforms(): array
@@ -1092,6 +1119,26 @@ class ViewDataService
         return collect($this->serviceClusters())->firstWhere('code', $code);
     }
 
+    /** Số dịch vụ published theo cluster (cho badge menu). */
+    public function serviceCount(?string $cluster = null): int
+    {
+        $query = Service::query()->published();
+        if ($cluster) {
+            $query->forCluster($cluster);
+        }
+
+        $count = $query->count();
+        if ($count > 0) {
+            return $count;
+        }
+
+        if (! Service::query()->exists()) {
+            return count(SampleData::services($cluster));
+        }
+
+        return 0;
+    }
+
     public function serviceHub(string $cluster): array
     {
         $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
@@ -1124,6 +1171,60 @@ class ViewDataService
         }
 
         return $rows->map(fn (ServiceCategory $cat) => $this->mapServiceCategory($cat))->values()->all();
+    }
+
+    /**
+     * Danh mục hiển thị trên hub — trang "Tất cả dịch vụ" (other) kèm Vé tàu / Vé máy bay.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function serviceCategoriesForHub(string $cluster): array
+    {
+        $categories = $this->serviceCategories($cluster);
+        if ($cluster !== 'other') {
+            return $categories;
+        }
+
+        $linked = [];
+        foreach ([
+            'train' => 'Vé tàu hỏa',
+            'flight' => 'Vé máy bay',
+        ] as $code => $name) {
+            $count = $this->serviceCount($code);
+            if ($count < 1) {
+                continue;
+            }
+            $linked[] = [
+                'slug' => '_cluster_'.$code,
+                'name' => $name,
+                'intro' => '',
+                'cluster' => $code,
+                'count' => $count,
+                'imageHero' => null,
+                'imageSrcset' => null,
+                'isClusterGroup' => true,
+            ];
+        }
+
+        return array_values(array_merge($linked, $categories));
+    }
+
+    /**
+     * Dịch vụ trên hub — trang other gộp thêm train + flight.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function servicesForHub(string $cluster): array
+    {
+        if ($cluster !== 'other') {
+            return $this->services($cluster);
+        }
+
+        return array_values(array_merge(
+            $this->services('train'),
+            $this->services('flight'),
+            $this->services('other'),
+        ));
     }
 
     public function serviceCategory(string $cluster, string $slug): ?array
@@ -1460,21 +1561,101 @@ class ViewDataService
     public function galleryAlbums(): array
     {
         if (! ExperienceAlbum::query()->where('status', 'published')->exists()) {
-            return SampleData::galleryAlbums();
+            return array_map(function (array $album) {
+                $title = (string) ($album['title'] ?? '');
+
+                return [
+                    'title' => $title,
+                    'description' => $album['description'] ?? null,
+                    'photos' => (int) ($album['photos'] ?? 0),
+                    'date' => $album['date'] ?? '',
+                    'image' => $album['image'] ?? null,
+                    'imageSrcset' => $album['imageSrcset'] ?? null,
+                    'tag' => $album['tag'] ?? null,
+                    'slides' => [[
+                        'type' => 'image',
+                        'src' => $album['image'] ?? null,
+                        'srcset' => $album['imageSrcset'] ?? null,
+                        'title' => $title,
+                        'description' => $album['description'] ?? null,
+                        'caption' => $album['date'] ?? null,
+                    ]],
+                ];
+            }, SampleData::galleryAlbums());
         }
 
         return ExperienceAlbum::query()
             ->where('status', 'published')
             ->orderBy('sort')
-            ->with('translations')
+            ->with(['translations', 'cover', 'photos.media', 'country.translations'])
             ->get()
-            ->map(fn (ExperienceAlbum $album) => [
-                'title' => $album->title,
-                'photos' => $album->photo_count,
-                'date' => optional($album->trip_date)?->format('m/Y') ?? '',
-            ])
+            ->map(fn (ExperienceAlbum $album) => $this->mapGalleryAlbum($album))
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function mapGalleryAlbum(ExperienceAlbum $album): array
+    {
+        $title = (string) ($album->title ?? '');
+        $description = $album->description;
+        $coverUrl = $album->cover ? media_url($album->cover, 'card') : null;
+        $coverSrcset = $album->cover ? media_srcset($album->cover) : null;
+
+        $slides = $album->photos
+            ->map(function ($photo) use ($title) {
+                $media = $photo->media;
+                if (! $media) {
+                    return null;
+                }
+
+                return [
+                    'type' => 'image',
+                    'src' => media_url($media, 'lg') ?: media_url($media, 'full') ?: media_url($media, 'card'),
+                    'srcset' => media_srcset($media),
+                    'title' => $title,
+                    'description' => $photo->caption,
+                    'caption' => $photo->caption,
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        if ($slides === [] && $coverUrl) {
+            $slides[] = [
+                'type' => 'image',
+                'src' => media_url($album->cover, 'lg') ?: media_url($album->cover, 'full') ?: $coverUrl,
+                'srcset' => $coverSrcset,
+                'title' => $title,
+                'description' => $description,
+                'caption' => optional($album->trip_date)?->format('m/Y'),
+            ];
+        }
+
+        if ($slides === []) {
+            $slides[] = [
+                'type' => 'image',
+                'src' => null,
+                'srcset' => null,
+                'title' => $title,
+                'description' => $description,
+                'caption' => optional($album->trip_date)?->format('m/Y'),
+            ];
+        }
+
+        return [
+            'title' => $title,
+            'description' => $description,
+            'photos' => (int) ($album->photo_count ?: count($slides)),
+            'date' => optional($album->trip_date)?->format('m/Y') ?? '',
+            'image' => $coverUrl,
+            'imageSrcset' => $coverSrcset,
+            'tag' => $album->country?->translation($this->locale())?->name,
+            'slides' => $slides,
+        ];
     }
 
     public function videos(bool $homeOnly = false, int $limit = 24): array
@@ -1501,11 +1682,12 @@ class ViewDataService
     }
 
     /**
-     * @return array{title: string, description: ?string, date: string, duration: ?string, tag: ?string, image: ?string, imageSrcset: ?string, embedUrl: ?string, provider: ?string, youtubeId: ?string}
+     * @return array{title: string, description: ?string, date: string, duration: ?string, tag: ?string, image: ?string, imageSrcset: ?string, embedUrl: ?string, provider: ?string, youtubeId: ?string, type: string}
      */
     protected function mapVideo(ExperienceVideo $video): array
     {
         return [
+            'type' => 'video',
             'title' => $video->title,
             'description' => $video->description,
             'date' => optional($video->published_at)?->format('d/m/Y') ?? '',
@@ -1567,26 +1749,41 @@ class ViewDataService
 
     protected function findCountryBySlug(string $slug): ?Country
     {
+        $ids = $this->languageIdChain();
+        if ($ids === []) {
+            return null;
+        }
+
         return Country::query()
             ->with('translations')
-            ->whereHas('translations', fn ($q) => $q->where('language_id', $this->languageId())->where('slug', $slug))
+            ->whereHas('translations', fn ($q) => $q->whereIn('language_id', $ids)->where('slug', $slug))
             ->first();
     }
 
     protected function findPackageBySlug(string $slug, string $type): ?Package
     {
+        $ids = $this->languageIdChain();
+        if ($ids === []) {
+            return null;
+        }
+
         return $this->packageQuery($type)
             ->whereHas('seoEntry.translations', fn ($q) => $q
-                ->where('language_id', $this->languageId())
+                ->whereIn('language_id', $ids)
                 ->where('slug', $slug))
             ->first();
     }
 
     protected function findArticleBySlug(string $slug): ?Article
     {
+        $ids = $this->languageIdChain();
+        if ($ids === []) {
+            return null;
+        }
+
         return $this->articleQuery()
             ->whereHas('seoEntry.translations', fn ($q) => $q
-                ->where('language_id', $this->languageId())
+                ->whereIn('language_id', $ids)
                 ->where('slug', $slug))
             ->first();
     }

@@ -326,37 +326,59 @@ Alpine.data('demoForm', () => ({
 }));
 
 /**
- * Fullscreen video gallery lightbox (home + /video-trai-nghiem).
+ * Lightbox xem full media (video / ảnh) — dùng chung home showcase + trang thư viện.
  */
-Alpine.data('videoGallery', (items = []) => ({
+const mediaLightboxFactory = (items = []) => ({
     items,
+    playlist: [],
     active: null,
     get activeItem() {
-        return this.active === null ? null : this.items[this.active] ?? null;
+        return this.active === null ? null : this.playlist[this.active] ?? null;
     },
     get activeLabel() {
-        if (this.active === null) return '';
+        if (this.active === null || ! this.playlist.length) return '';
         const n = String(this.active + 1).padStart(2, '0');
-        const total = String(this.items.length).padStart(2, '0');
+        const total = String(this.playlist.length).padStart(2, '0');
+
         return `${n} / ${total}`;
     },
     open(index) {
-        this.active = index;
+        const item = this.items[index];
+        if (! item) {
+            return;
+        }
+
+        if (Array.isArray(item.slides) && item.slides.length > 0) {
+            this.playlist = item.slides;
+            this.active = 0;
+        } else {
+            this.playlist = this.items;
+            this.active = index;
+        }
+
         document.documentElement.style.overflow = 'hidden';
     },
     close() {
         this.active = null;
+        this.playlist = [];
         document.documentElement.style.overflow = '';
     },
     prev() {
-        if (! this.items.length) return;
-        this.active = (this.active - 1 + this.items.length) % this.items.length;
+        if (! this.playlist.length) {
+            return;
+        }
+        this.active = (this.active - 1 + this.playlist.length) % this.playlist.length;
     },
     next() {
-        if (! this.items.length) return;
-        this.active = (this.active + 1) % this.items.length;
+        if (! this.playlist.length) {
+            return;
+        }
+        this.active = (this.active + 1) % this.playlist.length;
     },
-}));
+});
+
+Alpine.data('mediaLightbox', mediaLightboxFactory);
+Alpine.data('videoGallery', mediaLightboxFactory);
 
 /**
  * Điểm đến yêu thích — reveal khi section vào viewport.

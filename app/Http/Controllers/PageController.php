@@ -20,6 +20,7 @@ class PageController extends Controller
             'values' => $this->data->values(),
             'reasons' => $this->data->reasons(),
             'referencePersons' => $this->data->referencePersons(),
+            'chrome' => $this->data->pageChrome('about'),
         ])->render());
     }
 
@@ -27,18 +28,22 @@ class PageController extends Controller
     {
         return $this->cachedHtmlResponse(fn () => view('pages.contact', [
             'offices' => $this->data->offices(),
+            'chrome' => $this->data->pageChrome('contact'),
         ])->render());
     }
 
     public function customize()
     {
-        return $this->cachedHtmlResponse(fn () => view('pages.customize-tour')->render());
+        return $this->cachedHtmlResponse(fn () => view('pages.customize-tour', [
+            'chrome' => $this->data->pageChrome('customize'),
+        ])->render());
     }
 
     public function team()
     {
         return $this->cachedHtmlResponse(fn () => view('pages.team', [
             'team' => $this->data->team(),
+            'chrome' => $this->data->pageChrome('team'),
         ])->render());
     }
 
@@ -57,6 +62,7 @@ class PageController extends Controller
     {
         return $this->cachedHtmlResponse(fn () => view('pages.reviews', [
             'testimonials' => $this->data->testimonials(),
+            'chrome' => $this->data->pageChrome('reviews'),
         ])->render());
     }
 
@@ -64,6 +70,7 @@ class PageController extends Controller
     {
         return $this->cachedHtmlResponse(fn () => view('pages.gallery', [
             'albums' => $this->data->galleryAlbums(),
+            'chrome' => $this->data->pageChrome('gallery'),
         ])->render());
     }
 
@@ -71,6 +78,7 @@ class PageController extends Controller
     {
         return $this->cachedHtmlResponse(fn () => view('pages.videos', [
             'videos' => $this->data->videos(),
+            'chrome' => $this->data->pageChrome('videos'),
         ])->render());
     }
 }

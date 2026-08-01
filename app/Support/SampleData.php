@@ -254,30 +254,39 @@ class SampleData
     /** @return array<string, mixed> */
     public static function aboutPage(): array
     {
-        $locale = app()->getLocale() === 'en' ? 'en' : 'vi';
         $pages = ProjectSeed::get('about_page', []);
 
-        return $pages[$locale] ?? $pages['vi'] ?? [];
+        return LocaleContent::pick($pages, null, $pages['vi'] ?? []);
+    }
+
+    public static function pageChrome(string $key): array
+    {
+        return PageChromeDefaults::get($key);
     }
 
     public static function heroPills(): array
     {
-        $locale = app()->getLocale();
-        $code = $locale === 'en' ? 'en' : 'vi';
+        return array_map(static function (array $row): array {
+            $labelRow = LocaleContent::pick([
+                'vi' => $row['vi'] ?? null,
+                'en' => $row['en'] ?? null,
+            ], null, $row['vi'] ?? []);
 
-        return array_map(static fn (array $row) => [
-            'label' => $row[$code]['label'] ?? $row['vi']['label'],
-            'url' => $row['url'],
-        ], ProjectSeed::get('hero_pills', []));
+            return [
+                'label' => is_array($labelRow) ? ($labelRow['label'] ?? '') : '',
+                'url' => $row['url'],
+            ];
+        }, ProjectSeed::get('hero_pills', []));
     }
 
     /** @return list<array<string, mixed>> */
     public static function homeSlides(): array
     {
-        $locale = app()->getLocale() === 'en' ? 'en' : 'vi';
-
-        return array_map(static function (array $row) use ($locale): array {
-            $t = $row[$locale] ?? $row['vi'];
+        return array_map(static function (array $row): array {
+            $t = LocaleContent::pick([
+                'vi' => $row['vi'] ?? null,
+                'en' => $row['en'] ?? null,
+            ], null, $row['vi'] ?? []);
 
             return [
                 'image' => null,
@@ -296,11 +305,11 @@ class SampleData
     /** @return array<string, array<string, mixed>> */
     public static function homeSections(): array
     {
-        $locale = app()->getLocale();
         $sections = [];
 
         foreach (ProjectSeed::get('home_sections', []) as $key => $byLocale) {
-            $sections[$key] = $byLocale[$locale] ?? $byLocale['vi'];
+            $picked = LocaleContent::pick($byLocale, null, $byLocale['vi'] ?? []);
+            $sections[$key] = is_array($picked) ? $picked : [];
         }
 
         return $sections;

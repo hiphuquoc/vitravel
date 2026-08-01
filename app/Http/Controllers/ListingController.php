@@ -73,7 +73,7 @@ class ListingController extends Controller
             return response()->json(['count' => 0, 'html' => ''], 404);
         }
 
-        $services = $this->filterServices($this->data->services($cluster), $request);
+        $services = $this->filterServices($this->data->servicesForHub($cluster), $request);
 
         return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'));
     }
@@ -218,7 +218,20 @@ class ListingController extends Controller
 
             $services = array_values(array_filter(
                 $services,
-                fn (array $s) => in_array((string) ($s['categorySlug'] ?? ''), $categories, true)
+                function (array $s) use ($categories) {
+                    $slug = (string) ($s['categorySlug'] ?? '');
+                    if ($slug !== '' && in_array($slug, $categories, true)) {
+                        return true;
+                    }
+
+                    // Hub "Tất cả dịch vụ": nhóm theo cluster tàu / máy bay
+                    $cluster = (string) ($s['cluster'] ?? '');
+                    if ($cluster !== '' && in_array('_cluster_'.$cluster, $categories, true)) {
+                        return true;
+                    }
+
+                    return false;
+                }
             ));
         }
 

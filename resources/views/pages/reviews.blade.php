@@ -1,23 +1,35 @@
 @extends('layouts.app')
 
-@section('title', 'Cảm nhận khách hàng — ViTravel')
-@section('meta_description', 'Hơn 5.000 du khách đã đồng hành cùng ViTravel — đọc cảm nhận thật của họ về từng hành trình.')
+@section('title', ($chrome['seo_title'] ?? 'Cảm nhận khách hàng — ViTravel'))
+@section('meta_description', ($chrome['seo_description'] ?? 'Cảm nhận thật từ khách hàng ViTravel.'))
 
 @section('content')
-    <x-layout.page-header title="Cảm nhận khách hàng"
-        subtitle="Những trải nghiệm chân thật — không chỉnh sửa, không kịch bản"
-        :breadcrumbs="[['label' => 'Cảm nhận khách hàng']]" banner-label="Ảnh banner: khách hàng ViTravel" />
+    <x-layout.page-header
+        :title="$chrome['page_title'] ?? 'Cảm nhận khách hàng'"
+        :subtitle="$chrome['page_subtitle'] ?? null"
+        :breadcrumbs="[['label' => $chrome['page_title'] ?? 'Cảm nhận khách hàng']]"
+        :banner-label="$chrome['banner_label'] ?? null"
+    />
 
-    <section class="container-site section-band" aria-label="Tất cả cảm nhận">
+    <section class="container-site section-band" aria-label="{{ $chrome['section_title'] ?? $chrome['page_title'] ?? 'Cảm nhận' }}">
+        <x-shared.section-heading
+            :eyebrow="$chrome['eyebrow'] ?? null"
+            :title="$chrome['section_title'] ?? ($chrome['page_title'] ?? '')"
+            :subtitle="$chrome['section_subtitle'] ?? null"
+        />
         @php
             $avg = count($testimonials)
                 ? round(array_sum(array_column($testimonials, 'rating')) / count($testimonials), 1)
                 : 5.0;
+            $isVi = app()->getLocale() === 'vi';
         @endphp
         <div class="reviews-summary">
             <p class="reviews-summary__score">{{ number_format($avg, 1) }}</p>
             <x-shared.stars :rating="$avg" aria-label="{{ $avg }} trên 5 sao" />
-            <p class="reviews-summary__meta">{{ count($testimonials) }} cảm nhận từ khách hàng ViTravel</p>
+            <p class="reviews-summary__meta">
+                {{ count($testimonials) }}
+                {{ $isVi ? 'cảm nhận từ khách hàng ViTravel' : 'reviews from ViTravel guests' }}
+            </p>
         </div>
 
         <div class="columns-1 site-gap space-y-[var(--space-gap)] sm:columns-2 lg:columns-3">
@@ -37,7 +49,7 @@
                         @endif
                         <div>
                             <p class="text-base font-bold">{{ $t['name'] }}</p>
-                            <p class="text-sm text-muted">{{ $t['flag'] }} {{ $t['country'] }}@if (! empty($t['trip'])) · {{ $t['trip'] }}@endif</p>
+                            <p class="text-sm text-muted">{{ $t['flag'] ?? '' }} {{ $t['country'] ?? '' }}@if (! empty($t['trip'])) · {{ $t['trip'] }}@endif</p>
                         </div>
                     </div>
                     <x-shared.rating :rating="$t['rating']" class="site-mt" />
@@ -77,7 +89,7 @@
                 </article>
             @empty
                 <div class="card listing-empty col-span-full">
-                    <p class="font-semibold">Chưa có cảm nhận nào được xuất bản.</p>
+                    <p class="font-semibold">{{ $isVi ? 'Chưa có cảm nhận nào được xuất bản.' : 'No published reviews yet.' }}</p>
                 </div>
             @endforelse
         </div>

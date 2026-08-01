@@ -16,8 +16,8 @@ class ServiceController extends Controller
         return $this->cachedHtmlResponse(function () use ($cluster) {
             $this->assertCluster($cluster);
             $hub = $this->data->serviceHub($cluster);
-            $categories = $this->data->serviceCategories($cluster);
-            $services = $this->data->services($cluster);
+            $categories = $this->data->serviceCategoriesForHub($cluster);
+            $services = $this->data->servicesForHub($cluster);
 
             return view('pages.services.hub', [
                 'cluster' => $cluster,

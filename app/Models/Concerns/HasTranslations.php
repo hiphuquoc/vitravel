@@ -3,6 +3,7 @@
 namespace App\Models\Concerns;
 
 use App\Models\Language;
+use App\Support\LocaleContent;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasTranslations
@@ -17,24 +18,19 @@ trait HasTranslations
     public function translation(?string $locale = null): mixed
     {
         $locale = $locale ?: app()->getLocale();
-        $langId = Language::idByCode($locale);
 
-        $match = $this->relationLoaded('translations')
-            ? $this->translations->firstWhere('language_id', $langId)
-            : $this->translations()->where('language_id', $langId)->first();
-
-        if ($match) {
-            return $match;
+        if ($this->relationLoaded('translations')) {
+            return LocaleContent::firstTranslation($this->translations, $locale);
         }
 
-        $defaultId = Language::defaultId();
-        if ($defaultId && $defaultId !== $langId) {
-            return $this->relationLoaded('translations')
-                ? $this->translations->firstWhere('language_id', $defaultId)
-                : $this->translations()->where('language_id', $defaultId)->first();
+        $ids = Language::contentLanguageIdChain($locale);
+        if ($ids === []) {
+            return null;
         }
 
-        return null;
+        $rows = $this->translations()->whereIn('language_id', $ids)->get();
+
+        return LocaleContent::firstTranslation($rows, $locale);
     }
 
     public function getAttribute($key): mixed

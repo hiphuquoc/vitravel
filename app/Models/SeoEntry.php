@@ -57,23 +57,18 @@ class SeoEntry extends Model
     public function translation(?string $locale = null): ?SeoEntryTranslation
     {
         $locale = $locale ?: app()->getLocale();
-        $langId = Language::idByCode($locale);
 
-        $match = $this->relationLoaded('translations')
-            ? $this->translations->firstWhere('language_id', $langId)
-            : $this->translations()->where('language_id', $langId)->first();
-
-        if ($match) {
-            return $match;
+        if ($this->relationLoaded('translations')) {
+            return \App\Support\LocaleContent::firstTranslation($this->translations, $locale);
         }
 
-        $defaultId = Language::defaultId();
-        if ($defaultId && $defaultId !== $langId) {
-            return $this->relationLoaded('translations')
-                ? $this->translations->firstWhere('language_id', $defaultId)
-                : $this->translations()->where('language_id', $defaultId)->first();
+        $ids = Language::contentLanguageIdChain($locale);
+        if ($ids === []) {
+            return null;
         }
 
-        return null;
+        $rows = $this->translations()->whereIn('language_id', $ids)->get();
+
+        return \App\Support\LocaleContent::firstTranslation($rows, $locale);
     }
 }

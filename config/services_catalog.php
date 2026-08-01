@@ -8,7 +8,7 @@ return [
     'clusters' => [
         'train' => [
             'hub_key' => 'trains_hub',
-            'label' => 'Vé tàu cao tốc',
+            'label' => 'Vé tàu hỏa',
             'nav_label' => 'Tàu',
             'icon' => 'train',
             'unit_label' => 'vé tàu',

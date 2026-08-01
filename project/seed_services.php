@@ -7,7 +7,7 @@
  */
 return [
     'service_clusters' => [
-        ['code' => 'train', 'nav_label' => 'Tàu', 'label' => 'Vé tàu cao tốc', 'icon' => 'train', 'hub_key' => 'trains_hub', 'sort' => 1],
+        ['code' => 'train', 'nav_label' => 'Tàu', 'label' => 'Vé tàu hỏa', 'icon' => 'train', 'hub_key' => 'trains_hub', 'sort' => 1],
         ['code' => 'flight', 'nav_label' => 'Máy bay', 'label' => 'Vé máy bay', 'icon' => 'plane', 'hub_key' => 'flights_hub', 'sort' => 2],
         ['code' => 'stay', 'nav_label' => 'Lưu trú', 'label' => 'Khách sạn & Resort', 'icon' => 'building', 'hub_key' => 'stays_hub', 'sort' => 3],
         ['code' => 'experience', 'nav_label' => 'Vui chơi', 'label' => 'Vé vui chơi & trải nghiệm', 'icon' => 'sparkles', 'hub_key' => 'experiences_hub', 'sort' => 4],

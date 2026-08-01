@@ -71,20 +71,20 @@ class HomePageDefaults
                 'vi' => [
                     'eyebrow' => 'Chuyên gia du lịch Việt',
                     'title' => 'Hành trình chân thật, thiết kế bởi người bản địa',
-                    'body' => 'ViTravel là đại lý lữ hành đặt trụ sở tại Hà Nội, với hơn 10 năm đồng hành cùng du khách khám phá miền Bắc Việt Nam — từ vịnh Hạ Long, Sa Pa, Ninh Bình tới cao nguyên đá Hà Giang. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia sinh ra và lớn lên tại chính điểm đến.',
+                    'body' => 'ViTravel là đại lý lữ hành đặt trụ sở tại Việt Nam, kết nối du khách quốc tế với Việt Nam và Đông Nam Á. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia bản địa tại từng điểm đến.',
                     'meta_line' => 'Giấy phép lữ hành quốc tế số 01-2234/TCDL-GP-LHQT',
                     'cta_label' => 'Tìm hiểu về chúng tôi',
                     'cta_url' => '/ve-chung-toi',
-                    'image_alt' => 'Ảnh đội ngũ ViTravel tại văn phòng Hà Nội',
+                    'image_alt' => 'Ảnh đội ngũ ViTravel tại văn phòng',
                 ],
                 'en' => [
                     'eyebrow' => 'Vietnam travel experts',
                     'title' => 'Authentic journeys, designed by locals',
-                    'body' => 'ViTravel is a Hanoi-based travel agency with over 10 years of guiding guests through Northern Vietnam — from Halong Bay, Sapa and Ninh Binh to the karst highlands of Ha Giang. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience by experts born and raised in the destinations themselves.',
+                    'body' => 'ViTravel is a Vietnam-based travel agency connecting international guests with Vietnam and Southeast Asia. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience by local experts in each destination.',
                     'meta_line' => 'International travel license No. 01-2234/TCDL-GP-LHQT',
                     'cta_label' => 'Learn about us',
                     'cta_url' => '/ve-chung-toi',
-                    'image_alt' => 'ViTravel team at our Hanoi office',
+                    'image_alt' => 'ViTravel team at our office',
                 ],
             ],
             [
@@ -119,12 +119,12 @@ class HomePageDefaults
                 'key' => HomeSection::KEY_FEATURED_TRAINS,
                 'sort' => 3,
                 'vi' => [
-                    'eyebrow' => 'Tàu cao tốc',
+                    'eyebrow' => 'Vé tàu hỏa',
                     'title' => 'Di chuyển nhanh, đặt vé linh hoạt',
                     'subtitle' => 'Chọn hạng ghế hoặc giường nằm theo từng tuyến. Chủ động thời gian, dễ dàng tích hợp vào lịch trình riêng của bạn.',
                 ],
                 'en' => [
-                    'eyebrow' => 'High-speed trains',
+                    'eyebrow' => 'Train tickets',
                     'title' => 'Travel fast, book with flexibility',
                     'subtitle' => 'Choose seat or sleeper by route. Stay in control of your schedule and fit tickets into your own itinerary.',
                 ],
@@ -147,14 +147,14 @@ class HomePageDefaults
                 'key' => HomeSection::KEY_DESTINATIONS,
                 'sort' => 5,
                 'vi' => [
-                    'eyebrow' => 'Đông Nam Á',
+                    'eyebrow' => 'Điểm đến Đông Nam Á',
                     'title' => 'Những điểm đến được yêu thích nhất',
-                    'subtitle' => 'Mỗi điểm đến một sắc màu — chọn nơi bạn muốn lắng nghe câu chuyện bản địa.',
+                    'subtitle' => 'Từ Việt Nam tới Campuchia, Thái Lan, Lào và Bali — chọn nơi bạn muốn lắng nghe câu chuyện bản địa.',
                 ],
                 'en' => [
-                    'eyebrow' => 'Southeast Asia',
+                    'eyebrow' => 'Southeast Asia destinations',
                     'title' => 'Our most loved destinations',
-                    'subtitle' => 'Each place has its own colour — choose where you want to hear local stories.',
+                    'subtitle' => 'From Vietnam to Cambodia, Thailand, Laos and Bali — choose where you want to hear local stories.',
                 ],
             ],
             [
@@ -163,14 +163,14 @@ class HomePageDefaults
                 'vi' => [
                     'eyebrow' => 'Khách hàng kể lại',
                     'title' => 'Trải nghiệm chân thật từ khách hàng',
-                    'subtitle' => 'Hơn 5.000 du khách đã đồng hành cùng chúng tôi — đây là những gì họ kể lại.',
+                    'subtitle' => 'Hàng nghìn du khách quốc tế đã khám phá Việt Nam & Đông Nam Á cùng chúng tôi — đây là những gì họ gửi lại.',
                     'cta_label' => 'Xem tất cả cảm nhận',
                     'cta_url' => '/cam-nhan-khach-hang',
                 ],
                 'en' => [
                     'eyebrow' => 'Guest stories',
                     'title' => 'Real experiences from our travellers',
-                    'subtitle' => 'Over 5,000 guests have travelled with us — here is what they say.',
+                    'subtitle' => 'Thousands of international guests have explored Vietnam & Southeast Asia with us — here is what they say.',
                     'cta_label' => 'Read all reviews',
                     'cta_url' => '/cam-nhan-khach-hang',
                 ],
@@ -178,8 +178,16 @@ class HomePageDefaults
             [
                 'key' => HomeSection::KEY_REVIEW_PLATFORMS,
                 'sort' => 7,
-                'vi' => ['title' => 'ViTravel được đánh giá cao trên'],
-                'en' => ['title' => 'ViTravel is highly rated on'],
+                'vi' => [
+                    'eyebrow' => 'Được tin tưởng',
+                    'title' => 'ViTravel được đánh giá cao trên',
+                    'subtitle' => 'Xếp hạng xuất sắc từ cộng đồng du khách quốc tế trên các nền tảng uy tín.',
+                ],
+                'en' => [
+                    'eyebrow' => 'Trusted widely',
+                    'title' => 'ViTravel is highly rated on',
+                    'subtitle' => 'Excellent scores from international travellers on the platforms that matter.',
+                ],
             ],
             [
                 'key' => HomeSection::KEY_TEAM,
@@ -187,14 +195,14 @@ class HomePageDefaults
                 'vi' => [
                     'eyebrow' => 'Con người ViTravel',
                     'title' => 'Đội ngũ tận tâm của chúng tôi',
-                    'subtitle' => 'Những con người bản địa hiểu điểm đến hơn bất kỳ ai — đồng hành từ lúc lên ý tưởng tới khi về nhà.',
+                    'subtitle' => 'Chuyên gia bản địa am hiểu từng điểm đến — đồng hành từ lúc lên ý tưởng tới khi về nhà.',
                     'cta_label' => 'Gặp gỡ cả đội ngũ',
                     'cta_url' => '/doi-ngu',
                 ],
                 'en' => [
                     'eyebrow' => 'The ViTravel team',
                     'title' => 'Our dedicated local experts',
-                    'subtitle' => 'People who know the destinations better than anyone — with you from the first idea until you are home.',
+                    'subtitle' => 'People who know each destination better than anyone — with you from the first idea until you are home.',
                     'cta_label' => 'Meet the full team',
                     'cta_url' => '/doi-ngu',
                 ],
@@ -204,14 +212,14 @@ class HomePageDefaults
                 'sort' => 9,
                 'vi' => [
                     'eyebrow' => 'Trải nghiệm thật',
-                    'title' => 'Đông Nam Á qua từng thước phim đẹp',
-                    'subtitle' => 'Những video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
+                    'title' => 'Hành trình qua từng thước phim đẹp',
+                    'subtitle' => 'Video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
                     'cta_label' => 'Xem tất cả video',
                     'cta_url' => '/video-trai-nghiem',
                 ],
                 'en' => [
                     'eyebrow' => 'Real experiences',
-                    'title' => 'Southeast Asia in unforgettable frames',
+                    'title' => 'Journeys in unforgettable frames',
                     'subtitle' => 'Authentic films from guests and our local team — tap any moment to watch full screen.',
                     'cta_label' => 'View all videos',
                     'cta_url' => '/video-trai-nghiem',
@@ -221,12 +229,14 @@ class HomePageDefaults
                 'key' => HomeSection::KEY_QUICK_INQUIRY,
                 'sort' => 10,
                 'vi' => [
-                    'title' => 'Hỏi nhanh về tour',
-                    'body' => 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong>24 giờ làm việc</strong>, hoàn toàn miễn phí.',
+                    'eyebrow' => 'Tư vấn miễn phí',
+                    'title' => 'Hỏi nhanh về hành trình của bạn',
+                    'body' => 'Bạn muốn khám phá Việt Nam, kết hợp Campuchia hay Thái Lan — mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa sẽ phản hồi trong vòng <strong>24 giờ làm việc</strong>, hoàn toàn miễn phí.',
                 ],
                 'en' => [
-                    'title' => 'Quick tour inquiry',
-                    'body' => 'Not sure where to go, which season, or your budget? Leave a note — our local experts will reply within <strong>1 business day</strong>, free of charge.',
+                    'eyebrow' => 'Free advice',
+                    'title' => 'Quick inquiry about your trip',
+                    'body' => 'Exploring Vietnam, combining Cambodia or Thailand — which season, what budget? Leave a note — our local experts will reply within <strong>1 business day</strong>, free of charge.',
                 ],
             ],
         ];

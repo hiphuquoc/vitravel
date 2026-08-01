@@ -19,6 +19,12 @@ return [
 
     'fallback_code' => env('APP_FALLBACK_LOCALE', 'vi'),
 
+    /*
+     * Khi locale hiện tại chưa có bản dịch nội dung (zh-cn, ja, …),
+     * ưu tiên lấy tạm bản EN trước, rồi mới tới ngôn ngữ mặc định (vi).
+     */
+    'content_fallback_code' => env('APP_CONTENT_FALLBACK_LOCALE', 'en'),
+
     /* nếu true: khi locale không phải default, mọi link tự thêm prefix /{locale}/ */
     'use_subfolder_for_default' => false,
 
