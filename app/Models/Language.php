@@ -104,6 +104,28 @@ class Language extends Model
     }
 
     /**
+     * Options cho admin console language switcher.
+     *
+     * @return list<array{code: string, name: string, name_native: string, is_default: bool}>
+     */
+    public static function adminOptions(): array
+    {
+        return collect(config('language.list', []))
+            ->filter(fn ($l) => is_array($l) && ($l['is_active'] ?? true))
+            ->sortBy(fn ($l) => $l['sort'] ?? 99)
+            ->values()
+            ->map(fn (array $l) => [
+                'code' => (string) ($l['code'] ?? ''),
+                'name' => (string) ($l['name'] ?? ($l['name_native'] ?? '')),
+                'name_native' => (string) ($l['name_native'] ?? ($l['name'] ?? '')),
+                'is_default' => (bool) ($l['is_default'] ?? false),
+            ])
+            ->filter(fn (array $l) => $l['code'] !== '')
+            ->values()
+            ->all();
+    }
+
+    /**
      * Chuỗi locale để resolve nội dung/SEO: current → content fallback (en) → default (vi).
      *
      * @return list<string>

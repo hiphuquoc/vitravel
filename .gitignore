@@ -14,6 +14,9 @@
 /.zed
 /auth.json
 /node_modules
+/admin/node_modules
+/admin/.next
+/admin/.env.local
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage

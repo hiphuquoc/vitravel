@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Support\ProjectSeed;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,11 +30,12 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $admin = ProjectSeed::meta()['admin'] ?? [];
+        // Plain password — User::$casts['password' => 'hashed'] sẽ hash 1 lần (không Hash::make trước).
         User::query()->updateOrCreate(
             ['email' => $admin['email'] ?? 'admin@vitravel.dev'],
             [
                 'name' => $admin['name'] ?? 'Admin',
-                'password' => Hash::make($admin['password'] ?? 'password'),
+                'password' => $admin['password'] ?? '111111',
                 'role' => 'admin',
                 'is_active' => true,
             ]

@@ -655,4 +655,163 @@ class MediaService
 
         return $size ? [(int) $size[0], (int) $size[1]] : [null, null];
     }
+
+    /**
+     * Payload gọn cho Admin API (preview + id để gắn khi lưu entity).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function adminMediaPayload(?Media $media, string $variant = 'card'): ?array
+    {
+        if (! $media) {
+            return null;
+        }
+
+        return [
+            'id' => $media->id,
+            'url' => $this->publicUrl($media, $variant),
+            'url_thumb' => $this->publicUrl($media, 'thumb'),
+            'url_lg' => $this->publicUrl($media, 'lg'),
+            'filename' => $media->filename,
+            'mime_type' => $media->mime_type,
+            'size_bytes' => $media->size_bytes,
+            'width' => $media->width,
+            'height' => $media->height,
+            'alt' => $media->alt,
+        ];
+    }
+
+    /** Gắn / thay / xóa cover (media_attachments role=cover) theo media_id đã upload. */
+    public function syncCoverMediaId(Model $model, ?int $mediaId, bool $remove = false): void
+    {
+        if (! method_exists($model, 'mediaAttachments')) {
+            return;
+        }
+
+        $existing = $model->mediaAttachments()
+            ->where('role', 'cover')
+            ->with('media')
+            ->first();
+
+        if ($remove) {
+            if ($existing) {
+                $this->deleteMedia($existing->media);
+                $existing->delete();
+            }
+
+            return;
+        }
+
+        if (! $mediaId) {
+            return;
+        }
+
+        if ($existing && (int) $existing->media_id === $mediaId) {
+            return;
+        }
+
+        if ($existing) {
+            $this->deleteMedia($existing->media);
+            $existing->delete();
+        }
+
+        $media = Media::query()->find($mediaId);
+        if (! $media) {
+            return;
+        }
+
+        $model->mediaAttachments()->create([
+            'media_id' => $media->id,
+            'role' => 'cover',
+            'sort' => 0,
+        ]);
+    }
+
+    /** Gắn / thay / xóa ảnh trên cột FK (banner_media_id, …). */
+    public function syncDirectMediaId(Model $model, string $column, ?int $mediaId, bool $remove = false): void
+    {
+        $currentId = $model->{$column} ?? null;
+        $current = $currentId ? Media::query()->find($currentId) : null;
+
+        if ($remove) {
+            if ($current) {
+                $this->deleteMedia($current);
+            }
+            $model->{$column} = null;
+            $model->save();
+
+            return;
+        }
+
+        if (! $mediaId) {
+            return;
+        }
+
+        if ($current && (int) $current->id === $mediaId) {
+            return;
+        }
+
+        if ($current) {
+            $this->deleteMedia($current);
+        }
+
+        if (! Media::query()->whereKey($mediaId)->exists()) {
+            return;
+        }
+
+        $model->{$column} = $mediaId;
+        $model->save();
+    }
+
+    /** Giới hạn upload thực tế (KB) = min(config, PHP upload_max_filesize). */
+    public function effectiveUploadMaxKb(): int
+    {
+        $configKb = (int) config('media.max_upload_kb', 5120);
+        $phpKb = $this->phpIniSizeToKb((string) ini_get('upload_max_filesize'));
+
+        return max(100, min($configKb, $phpKb > 0 ? $phpKb : $configKb));
+    }
+
+    protected function phpIniSizeToKb(string $value): int
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (float) $value;
+
+        return (int) match ($unit) {
+            'g' => $number * 1024 * 1024,
+            'm' => $number * 1024,
+            'k' => $number,
+            default => ((float) $value) / 1024,
+        };
+    }
+
+    /**
+     * Folder whitelist cho Admin upload (key → path config/media.php).
+     *
+     * @return array<string, string>
+     */
+    public function adminFolderMap(): array
+    {
+        return [
+            'packages' => (string) config('media.packages'),
+            'tour_categories' => (string) config('media.tour_categories'),
+            'cruise_types' => (string) config('media.cruise_types'),
+            'countries' => (string) config('media.countries'),
+            'service_categories' => (string) config('media.service_categories'),
+            'services' => (string) config('media.services'),
+            'home_slider' => (string) config('media.home_slider', 'vitravel/home-slider'),
+            'home_sections' => (string) config('media.home_sections', 'vitravel/home-sections'),
+            'articles' => (string) config('media.articles'),
+            'team' => (string) config('media.team'),
+            'reviews' => (string) config('media.reviews'),
+            'videos' => (string) config('media.videos', config('media.folder', 'vitravel/images')),
+            'company' => (string) config('media.company', config('media.folder', 'vitravel/images')),
+            'default' => (string) config('media.folder', 'vitravel/images'),
+        ];
+    }
 }

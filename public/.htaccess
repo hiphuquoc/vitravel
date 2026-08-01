@@ -11,11 +11,15 @@
 
     # Handle X-XSRF-Token Header
     RewriteCond %{HTTP:x-xsrf-token} .
-    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+    RewriteRule .* - [E=HTTP_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Next.js Admin Console — normalize /he-thong → /he-thong/
+    RewriteRule ^he-thong$ /he-thong/ [R=301,L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteCond %{REQUEST_URI} !^/he-thong/
     RewriteRule ^ %1 [L,R=301]
 
     # Send Requests To Front Controller...

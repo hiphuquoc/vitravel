@@ -21,7 +21,7 @@ $__vitravelSeed = array (
     array (
       'email' => 'admin@vitravel.dev',
       'name' => 'Admin ViTravel',
-      'password' => 'vitravel@admin2026',
+      'password' => '111111',
     ),
     'country_codes' => 
     array (

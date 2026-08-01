@@ -1,0 +1,183 @@
+'use client';
+
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Save } from 'lucide-react';
+import toast from '@/lib/toast';
+import { listingHubsApi } from '@/lib/services';
+import { useEditLocale } from '@/hooks/useEditLocale';
+import { Button } from '@/components/ui/Button';
+import { Input, Textarea } from '@/components/ui/Field';
+import { PageHeader } from '@/components/ui/Page';
+import { FormSection } from '@/components/ui/FormSection';
+import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
+import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { ViewPublicButton } from '@/components/ui/ViewPublicButton';
+import { HeadActions } from '@/components/ui/HeadActions';
+import { publicPageUrl } from '@/lib/publicUrl';
+import type { LocaleOption } from '@/lib/locale';
+
+type FormState = {
+  title: string;
+  body: string;
+  seo_slug: string;
+  seo_title: string;
+  seo_description: string;
+  seo_keywords: string;
+  rating_aggregate_star: string;
+  rating_aggregate_count: string;
+  banner: ImageFieldState;
+};
+
+const empty: FormState = {
+  title: '',
+  body: '',
+  seo_slug: '',
+  seo_title: '',
+  seo_description: '',
+  seo_keywords: '',
+  rating_aggregate_star: '',
+  rating_aggregate_count: '',
+  banner: emptyImageField(),
+};
+
+export default function ListingHubPage() {
+  const params = useParams<{ hubKey: string }>();
+  const hubKey = params.hubKey;
+  const qc = useQueryClient();
+  const { locale, setLocale } = useEditLocale();
+  const [form, setForm] = useState<FormState>(empty);
+  const snapshotRef = useRef(JSON.stringify(empty));
+  const isDirty = useMemo(() => JSON.stringify(form) !== snapshotRef.current, [form]);
+
+  const query = useQuery({
+    queryKey: ['listing-hub', hubKey, locale],
+    queryFn: () => listingHubsApi.get(hubKey, locale),
+    enabled: !!hubKey,
+  });
+
+  useEffect(() => {
+    if (!query.data) return;
+    const d = query.data as Record<string, unknown>;
+    const next: FormState = {
+      title: String(d.title || ''),
+      body: String(d.body || ''),
+      seo_slug: String(d.seo_slug || ''),
+      seo_title: String(d.seo_title || ''),
+      seo_description: String(d.seo_description || ''),
+      seo_keywords: String(d.seo_keywords || ''),
+      rating_aggregate_star:
+        d.rating_aggregate_star != null ? String(d.rating_aggregate_star) : '',
+      rating_aggregate_count:
+        d.rating_aggregate_count != null ? String(d.rating_aggregate_count) : '',
+      banner: emptyImageField(d.banner as never),
+    };
+    setForm(next);
+    snapshotRef.current = JSON.stringify(next);
+  }, [query.data]);
+
+  const save = useMutation({
+    mutationFn: () =>
+      listingHubsApi.update(hubKey, {
+        ...form,
+        rating_aggregate_star: form.rating_aggregate_star
+          ? Number(form.rating_aggregate_star)
+          : null,
+        rating_aggregate_count: form.rating_aggregate_count
+          ? Number(form.rating_aggregate_count)
+          : null,
+        banner_media_id: form.banner.media?.id ?? null,
+        remove_banner: form.banner.remove,
+        locale,
+      }),
+    onSuccess: async () => {
+      toast.success('Đã lưu hub');
+      await qc.invalidateQueries({ queryKey: ['listing-hub', hubKey] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  const languages = ((query.data as { languages?: LocaleOption[] } | undefined)?.languages) ?? [];
+  const label = String((query.data as { label?: string } | undefined)?.label || hubKey);
+  const defaultLocale = String(
+    (query.data as { default_locale?: string } | undefined)?.default_locale || 'vi',
+  );
+
+  return (
+    <div>
+      <PageHeader
+        eyebrow="Cài đặt"
+        title={label}
+        description={`Listing hub SEO: ${hubKey}`}
+        actions={
+          <HeadActions
+            primary={
+              <ViewPublicButton
+                href={publicPageUrl(
+                  (query.data as { slug_full?: string } | undefined)?.slug_full,
+                  locale,
+                  defaultLocale,
+                )}
+              />
+            }
+          />
+        }
+      />
+      <LocaleSwitcher
+        languages={languages}
+        value={locale}
+        onChange={(c) => setLocale(c, { confirmIfDirty: true, isDirty })}
+      />
+      <form
+        onSubmit={(e: FormEvent) => {
+          e.preventDefault();
+          save.mutate();
+        }}
+        className="ui-form-layout"
+      >
+        <div className="ui-form-layout__main ui-form-stack">
+          <FormSection title="Nội dung hub">
+            <Input
+              label="Title"
+              value={form.title}
+              onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+            />
+            <Textarea
+              label="Body"
+              value={form.body}
+              onChange={(e) => setForm((p) => ({ ...p, body: e.target.value }))}
+            />
+            <Input
+              label="SEO slug"
+              value={form.seo_slug}
+              onChange={(e) => setForm((p) => ({ ...p, seo_slug: e.target.value }))}
+            />
+            <Input
+              label="SEO title"
+              value={form.seo_title}
+              onChange={(e) => setForm((p) => ({ ...p, seo_title: e.target.value }))}
+            />
+            <Textarea
+              label="SEO description"
+              value={form.seo_description}
+              onChange={(e) => setForm((p) => ({ ...p, seo_description: e.target.value }))}
+            />
+            <ImageField
+              label="Banner"
+              folder="countries"
+              value={form.banner}
+              onChange={(v) => setForm((p) => ({ ...p, banner: v }))}
+            />
+          </FormSection>
+        </div>
+        <div className="ui-form-layout__side">
+          <Button type="submit" disabled={save.isPending}>
+            <Save size={16} />
+            Lưu
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+}

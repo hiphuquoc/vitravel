@@ -45,6 +45,8 @@ autourasia-clone-docs/
 | `06-tham-chieu-hinh-anh.md` | Bảng ánh xạ ảnh ↔ trang, danh sách UI bổ sung từ ảnh |
 | `07-database-architecture.md` | **Kiến trúc CSDL thực thi** — SEO hub, i18n, packages, leads (tham chiếu Hitour) |
 | `09-seo-technical.md` | Meta / JSON-LD: Organization, WebSite, Breadcrumb, FAQ, TouristTrip, Article |
+| `10-admin-console-api.md` | **Admin Console API v1** — auth + Tour modules cho Next.js `admin/` |
+| `gcs-standard.md` | Chuẩn GCS đa dự án |
 
 ## Trạng thái triển khai (2026-07)
 
@@ -52,7 +54,7 @@ autourasia-clone-docs/
 - **Backend:** Controllers, FormRequests, Services (`SeoService`, `MediaService`, `ViewDataService`), lead POST endpoints.
 - **Dịch vụ (5 cụm — public):** vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác — hub/listing/chi tiết qua `ServiceController` + `RoutingController` (SEO types `trains_hub` … `service`). Seed: `project/seed_services.php` merge vào `seed_vitravel.php` (`service_clusters`, `service_categories`, `services`, `service_listing_faqs`). Config: `config/services_catalog.php`, hubs trong `config/seo.php`. **Chưa có admin CRUD dịch vụ** (roadmap).
 - **Header:** `headerMain` hiển thị **Điểm đến**, **Du thuyền** và **5 cụm dịch vụ** (mega menu); **Cẩm nang**, **Về chúng tôi**, **Liên hệ** (và mục phụ) chuyển vào drawer icon **Thêm** (`.header-more-btn` / `.header-more-panel`).
-- **Admin:** `/he-thong` — pattern liendoan.dev (sidebar, CRUD list/view/save/delete). Đăng nhập: `admin@vitravel.dev` / `vitravel@admin2026`.
+- **Admin:** **`/he-thong/`** — Next.js Admin Console (`admin/`). Live HMR: `ADMIN_DEV_URL` + `cd admin && npm run dev` → `:3100`. Build static: `cd admin && npm run build` → `public/he-thong`. API: `/api/v1/admin/*` (`admin_api_tokens`). Đăng nhập: `admin@vitravel.dev` / `111111`. Chi tiết UI/token: `admin/README.md`. Blade admin cũ đã ngưng.
 - **DB:** `php artisan migrate --seed` — demo content trong **`project/seed_vitravel.php`** (+ merge `seed_services.php`; xem `project/README.md`). Pipeline: taxonomy → cruise types → content → **ServiceCatalogSeeder** → tour categories → home/reviews → **SeoHierarchySeeder cuối** (rebuild slug_full hub→con + `purgeBadRedirects`). Nếu chỉ thiếu URL tour/dịch vụ: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects` (hoặc `--purge-all`).
 - **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md`.
 
@@ -69,20 +71,14 @@ npm run build   # Node 20+ — commit public/build/ cùng repo rồi deploy
 
 ### Admin modules (đã có CRUD)
 
-| Module | Route admin |
+| Module | Route admin (phase 1) |
 |---|---|
-| Dashboard | `/he-thong/dashboard` |
-| Gói Tour / Cruise | `/he-thong/san-pham/tour`, `/he-thong/san-pham/cruise` |
-| Quốc gia | `/he-thong/san-pham/quoc-gia` |
-| Bài viết | `/he-thong/bai-viet` |
-| Đội ngũ | `/he-thong/doi-ngu` |
-| Văn phòng | `/he-thong/van-phong` |
-| Công ty (About CMS) | `/he-thong/cong-ty` |
-| Giá trị cốt lõi | `/he-thong/gia-tri` |
-| Lý do chọn | `/he-thong/ly-do-chon` |
-| Đại diện NN | `/he-thong/dai-dien` |
-| Leads (3 loại) | `/he-thong/yeu-cau-nhanh`, `/he-thong/tour-rieng`, `/he-thong/lien-he` |
-| Bình luận | `/he-thong/binh-luan` |
+| Dashboard | `/he-thong/` |
+| Gói Tour | `/he-thong/tours/packages/` |
+| Danh mục Tour | `/he-thong/tours/categories/` |
+| Chủ đề Tour | `/he-thong/tours/themes/` |
+
+> Bảng Blade cũ (`/he-thong/san-pham/…`) đã retire. Roadmap mở rộng module trên console Next.js.
 
 Các module brand còn lại (gallery placeholder, video, cảm nhận…) theo cùng pattern CRUD.
 

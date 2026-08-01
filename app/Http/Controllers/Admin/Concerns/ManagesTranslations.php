@@ -96,4 +96,28 @@ trait ManagesTranslations
     {
         return $type === 'cruise' ? 'package_cruise' : 'package_tour';
     }
+
+    /**
+     * Locale codes đã có bản dịch nội dung (title/name không rỗng).
+     *
+     * @return list<string>
+     */
+    protected function translatedLocaleCodes(Model $model, string $labelField = 'title'): array
+    {
+        $model->loadMissing(['translations.language']);
+
+        $codes = [];
+        foreach ($model->translations as $row) {
+            $code = $row->language?->code;
+            if (! $code) {
+                continue;
+            }
+            $label = $row->{$labelField} ?? null;
+            if (is_string($label) && trim($label) !== '') {
+                $codes[] = (string) $code;
+            }
+        }
+
+        return array_values(array_unique($codes));
+    }
 }

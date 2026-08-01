@@ -14,6 +14,7 @@ use App\Models\ServiceCategory;
 use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Models\TourCategory;
+use App\Models\User;
 use App\Services\CurrencyManager;
 use App\Services\ViewDataService;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -50,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Relation::enforceMorphMap([
+            'user' => User::class,
             'package' => Package::class,
             'article' => Article::class,
             'country' => Country::class,
