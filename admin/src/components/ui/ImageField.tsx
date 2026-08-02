@@ -14,7 +14,9 @@ export type ImageFieldState = {
 };
 
 type ImageFieldProps = {
-  /** a11y name for the control (not rendered visually) */
+  /** Label hiển thị trên dropzone (khi nhiều ảnh trong cùng card). */
+  label?: string;
+  /** a11y name for the control */
   ariaLabel?: string;
   folder: MediaFolder;
   aspectRatio?: string;
@@ -25,7 +27,8 @@ type ImageFieldProps = {
 };
 
 export function ImageField({
-  ariaLabel = 'Ảnh',
+  label,
+  ariaLabel,
   folder,
   aspectRatio = '3 / 2',
   variant = 'card',
@@ -33,6 +36,7 @@ export function ImageField({
   onChange,
   className,
 }: ImageFieldProps) {
+  const a11y = ariaLabel || label || 'Ảnh';
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -128,6 +132,7 @@ export function ImageField({
 
   return (
     <div className={clsx('ui-image-field', className)}>
+      {label ? <div className="ui-image-field__label">{label}</div> : null}
       <div
         className={clsx(
           'ui-image-field__area',
@@ -159,14 +164,14 @@ export function ImageField({
           type="file"
           accept="image/jpeg,image/png,image/webp,image/gif"
           className="ui-image-field__input"
-          aria-label={ariaLabel}
+          aria-label={a11y}
           onChange={onInputChange}
         />
 
         {hasImage ? (
           <div className="ui-image-field__preview" style={{ aspectRatio }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={displayUrl!} alt={value.media?.alt || ariaLabel} />
+            <img src={displayUrl!} alt={value.media?.alt || a11y} />
             {uploading ? (
               <div className="ui-image-field__progress">
                 <div className="ui-image-field__progress-bar" style={{ width: `${progress}%` }} />
@@ -198,16 +203,16 @@ export function ImageField({
             style={{ aspectRatio }}
             onClick={openPicker}
             disabled={uploading}
-            aria-label={ariaLabel}
+            aria-label={a11y}
           >
             <span className="ui-image-field__drop-icon" aria-hidden>
-              {uploading ? <Loader2 size={28} className="ui-spin" /> : <ImagePlus size={28} />}
+              {uploading ? <Loader2 size={18} className="ui-spin" /> : <ImagePlus size={18} />}
             </span>
             <span className="ui-image-field__drop-title">
-              {uploading ? `Đang tải… ${progress}%` : 'Kéo thả ảnh vào đây'}
+              {uploading ? `Đang tải… ${progress}%` : 'Kéo thả hoặc chọn ảnh'}
             </span>
             <span className="ui-image-field__drop-sub">
-              {uploading ? 'Máy chủ đang nén WebP + variants' : 'hoặc click để chọn file'}
+              {uploading ? 'Đang tối ưu WebP…' : 'JPG, PNG, WebP'}
             </span>
           </button>
         )}

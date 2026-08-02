@@ -26,7 +26,7 @@ class CruiseTypeController extends Controller
         $hubSeo->load(['translations', 'reference']);
 
         $types = CruiseType::query()
-            ->with(['banner', 'seoEntry.translations', 'seoEntry.parent.translations'])
+            ->with(['banner', 'cover', 'seoEntry.translations', 'seoEntry.parent.translations'])
             ->orderBy('sort')
             ->orderBy('id')
             ->get();
@@ -46,7 +46,7 @@ class CruiseTypeController extends Controller
 
         $id = $request->integer('id');
         $type = $id > 0
-            ? CruiseType::query()->with(['banner', 'seoEntry.translations', 'seoEntry.parent'])->findOrFail($id)
+            ? CruiseType::query()->with(['banner', 'cover', 'seoEntry.translations', 'seoEntry.parent'])->findOrFail($id)
             : null;
 
         $seoTranslation = $type?->seoEntry?->translation($locale);
@@ -72,6 +72,7 @@ class CruiseTypeController extends Controller
         }
 
         $this->assertUploadedFileOk($request);
+        $this->assertUploadedFileOk($request, 'cover');
 
         $request->merge([
             'slug' => Str::slug((string) $request->input('slug', '')),
@@ -99,6 +100,7 @@ class CruiseTypeController extends Controller
             'rating_aggregate_count' => 'nullable|integer|min:0',
             'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
             ...$this->coverImageRules(),
+            ...$this->coverImageRules('cover', 'remove_cover'),
         ]);
 
         $type = DB::transaction(function () use ($request, $validated) {
@@ -140,6 +142,14 @@ class CruiseTypeController extends Controller
             );
 
             $this->syncDirectCover($type, 'banner_media_id', $request, config('media.cruise_types'));
+            $this->syncDirectCover(
+                $type,
+                'cover_media_id',
+                $request,
+                config('media.cruise_types'),
+                'cover',
+                'remove_cover',
+            );
 
             return $type;
         });

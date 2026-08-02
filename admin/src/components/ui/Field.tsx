@@ -1,25 +1,46 @@
 'use client';
 
 import clsx from 'clsx';
-import type { InputHTMLAttributes, TextareaHTMLAttributes } from 'react';
+import type { InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from 'react';
 import { Field } from '@/components/ui/FieldShell';
 
 export { Field } from '@/components/ui/FieldShell';
 export { Select } from '@/components/ui/Select';
 export type { SelectOption } from '@/components/ui/Select';
 export { MultiSelect } from '@/components/ui/MultiSelect';
+import { FieldTip } from '@/components/ui/FieldTip';
+
+export { FieldTip };
 
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   hint?: string;
   error?: string;
+  /** Prefix trong box (vd. chip URL cha). */
+  leading?: ReactNode;
 };
 
-export function Input({ label, hint, error, className, id, required, ...rest }: InputProps) {
+export function Input({
+  label,
+  hint,
+  error,
+  className,
+  id,
+  required,
+  leading,
+  ...rest
+}: InputProps) {
   const inputId = id || (typeof rest.name === 'string' ? rest.name : undefined);
   return (
     <Field label={label} hint={hint} error={error} htmlFor={inputId} required={required}>
-      <div className={clsx('ui-field__box', error && 'ui-field__box--error')}>
+      <div
+        className={clsx(
+          'ui-field__box',
+          leading && 'ui-field__box--with-leading',
+          error && 'ui-field__box--error',
+        )}
+      >
+        {leading ? <div className="ui-field__leading">{leading}</div> : null}
         <input
           id={inputId}
           className={clsx('ui-field__control', className)}
@@ -31,7 +52,7 @@ export function Input({ label, hint, error, className, id, required, ...rest }: 
   );
 }
 
-type MoneyInputProps = Omit<InputProps, 'type' | 'value' | 'onChange'> & {
+type MoneyInputProps = Omit<InputProps, 'type' | 'value' | 'onChange' | 'leading'> & {
   value: string;
   onValueChange: (rawDigits: string) => void;
 };
@@ -96,19 +117,27 @@ type SwitchProps = {
   checked: boolean;
   onChange: (checked: boolean) => void;
   name?: string;
+  hint?: string;
 };
 
-export function Switch({ label, checked, onChange, name }: SwitchProps) {
+export function Switch({ label, checked, onChange, name, hint }: SwitchProps) {
   return (
-    <label className="ui-switch">
-      <input
-        type="checkbox"
-        name={name}
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
-      <span className="ui-switch__track" />
-      <span className="ui-switch__label">{label}</span>
-    </label>
+    <div className="ui-switch-wrap">
+      <label className="ui-switch">
+        <input
+          type="checkbox"
+          name={name}
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+        />
+        <span className="ui-switch__track" />
+        <span className="ui-switch__label">{label}</span>
+      </label>
+      {hint ? (
+        <span className="ui-switch__tip">
+          <FieldTip>{hint}</FieldTip>
+        </span>
+      ) : null}
+    </div>
   );
 }

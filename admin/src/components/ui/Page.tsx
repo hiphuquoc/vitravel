@@ -4,11 +4,38 @@ import type { ReactNode } from 'react';
 export function Badge({
   children,
   tone = 'neutral',
+  onClick,
+  disabled,
+  title,
 }: {
   children: ReactNode;
   tone?: 'success' | 'warning' | 'danger' | 'neutral' | 'primary';
+  /** Khi có — badge thành nút bật/tắt trạng thái. */
+  onClick?: () => void;
+  disabled?: boolean;
+  title?: string;
 }) {
-  return <span className={clsx('ui-badge', `ui-badge--${tone}`)}>{children}</span>;
+  const className = clsx('ui-badge', `ui-badge--${tone}`, onClick && 'ui-badge--toggle');
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        className={className}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onClick();
+        }}
+        disabled={disabled}
+        title={title}
+      >
+        {children}
+      </button>
+    );
+  }
+
+  return <span className={className}>{children}</span>;
 }
 
 export function PageHeader({

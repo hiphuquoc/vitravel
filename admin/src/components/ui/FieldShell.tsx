@@ -2,6 +2,7 @@
 
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
+import { FieldTip } from '@/components/ui/FieldTip';
 
 type FieldShellProps = {
   label?: string;
@@ -41,14 +42,18 @@ export function Field({
 }: FieldShellProps) {
   return (
     <div className={clsx('ui-field', error && 'ui-field--invalid', className)}>
-      {label ? (
-        <label className="ui-field__label" htmlFor={htmlFor}>
-          {renderLabel(label, required)}
-        </label>
+      {label || hint ? (
+        <div className="ui-field__label">
+          {label ? (
+            <label className="ui-field__label-text" htmlFor={htmlFor}>
+              {renderLabel(label, required)}
+            </label>
+          ) : null}
+          {hint ? <FieldTip>{hint}</FieldTip> : null}
+        </div>
       ) : null}
       {children}
       {error ? <span className="ui-field__error">{error}</span> : null}
-      {!error && hint ? <span className="ui-field__hint">{hint}</span> : null}
     </div>
   );
 }

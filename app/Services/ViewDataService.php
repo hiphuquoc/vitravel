@@ -377,7 +377,7 @@ class ViewDataService
      */
     protected function mapCruiseType(CruiseType $type): array
     {
-        $cardImage = $type->bannerUrl('card');
+        $cardImage = $type->coverUrl('card') ?: $type->bannerUrl('card');
         $heroImage = $type->bannerUrl('lg') ?: $type->bannerUrl('full') ?: $cardImage;
 
         return [
@@ -386,7 +386,7 @@ class ViewDataService
             'count' => Package::query()->published()->cruises()->where('cruise_type', $type->slug)->count(),
             'image' => $cardImage,
             'imageHero' => $heroImage,
-            'imageSrcset' => $type->bannerSrcset(),
+            'imageSrcset' => $type->coverSrcset() ?: $type->bannerSrcset(),
         ];
     }
 
@@ -1314,14 +1314,17 @@ class ViewDataService
      */
     protected function mapServiceCategory(ServiceCategory $cat): array
     {
+        $cardImage = $cat->coverUrl('card') ?: $cat->bannerUrl('card');
+
         return [
             'slug' => $cat->slug,
             'name' => $cat->name,
             'intro' => $cat->intro,
             'cluster' => $cat->cluster,
             'count' => (int) ($cat->services_count ?? $cat->services()->published()->count()),
-            'imageHero' => $cat->bannerUrl('lg') ?: $cat->bannerUrl('card'),
-            'imageSrcset' => $cat->bannerSrcset(),
+            'image' => $cardImage,
+            'imageHero' => $cat->bannerUrl('lg') ?: $cat->bannerUrl('full') ?: $cardImage,
+            'imageSrcset' => $cat->coverSrcset() ?: $cat->bannerSrcset(),
         ];
     }
 
@@ -1497,6 +1500,8 @@ class ViewDataService
                 'subtitle' => '',
                 'listingBanner' => null,
                 'listingBannerSrcset' => null,
+                'cover' => null,
+                'coverSrcset' => null,
                 'seoTitle' => null,
                 'seoDescription' => null,
             ];
@@ -1505,7 +1510,7 @@ class ViewDataService
         $this->seoService()->ensureHub($hubKey, $this->locale());
 
         $page = \App\Models\StaticPage::query()
-            ->with(['translations', 'banner', 'seoEntry.translations'])
+            ->with(['translations', 'banner', 'cover', 'seoEntry.translations'])
             ->where('template', $cfg['template'])
             ->first();
 
@@ -1515,6 +1520,8 @@ class ViewDataService
                 'subtitle' => $cfg['default_subtitle'] ?? '',
                 'listingBanner' => null,
                 'listingBannerSrcset' => null,
+                'cover' => null,
+                'coverSrcset' => null,
                 'seoTitle' => $cfg['default_seo_title'] ?? null,
                 'seoDescription' => $cfg['default_seo_description'] ?? null,
             ];
@@ -1530,6 +1537,8 @@ class ViewDataService
             'subtitle' => trim(html_entity_decode(strip_tags((string) $subtitleRaw), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
             'listingBanner' => $banner,
             'listingBannerSrcset' => $page->bannerSrcset(),
+            'cover' => $page->coverUrl('card') ?: $page->coverUrl(),
+            'coverSrcset' => $page->coverSrcset(),
             'seoTitle' => $seoTrans?->seo_title ?? ($cfg['default_seo_title'] ?? null),
             'seoDescription' => $seoTrans?->seo_description ?? ($cfg['default_seo_description'] ?? null),
         ];

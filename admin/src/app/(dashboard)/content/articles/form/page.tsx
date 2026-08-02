@@ -3,16 +3,18 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import toast from '@/lib/toast';
 import { articlesApi } from '@/lib/services';
 import { useEditLocale } from '@/hooks/useEditLocale';
-import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormSection } from '@/components/ui/FormSection';
+import { SeoBox, type SeoParentOption } from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 import type { LocaleOption } from '@/lib/locale';
 
@@ -27,6 +29,7 @@ type FormState = {
   seo_slug: string;
   seo_title: string;
   seo_description: string;
+  seo_parent_id: string;
   cover: ImageFieldState;
 };
 
@@ -41,6 +44,7 @@ const empty: FormState = {
   seo_slug: '',
   seo_title: '',
   seo_description: '',
+  seo_parent_id: '',
   cover: emptyImageField(),
 };
 
@@ -80,6 +84,7 @@ function FormInner() {
       seo_slug: String(seo?.slug || ''),
       seo_title: String(seo?.title || ''),
       seo_description: String(seo?.description || ''),
+      seo_parent_id: seo?.parent_id ? String(seo.parent_id) : '',
       cover: emptyImageField(d.cover as never),
     };
     setForm(next);
@@ -92,6 +97,7 @@ function FormInner() {
         ...form,
         blog_category_id: form.blog_category_id ? Number(form.blog_category_id) : null,
         country_id: form.country_id ? Number(form.country_id) : null,
+        seo_parent_id: form.seo_parent_id ? Number(form.seo_parent_id) : null,
         cover_media_id: form.cover.media?.id ?? null,
         remove_cover: form.cover.remove,
         locale,
@@ -110,9 +116,10 @@ function FormInner() {
     setForm((p) => ({ ...p, [k]: v }));
   const meta = metaQuery.data as {
     languages?: LocaleOption[];
-    categories?: { id: number; name: string | null }[];
+    categories?: { id: number; name: string | null; seo_id?: number }[];
     countries?: { id: number; name: string | null }[];
     statuses?: { value: string; label: string }[];
+    seo_parents?: SeoParentOption[];
   };
 
   return (
@@ -151,12 +158,30 @@ function FormInner() {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
+          <SeoBox
+            value={{
+              seo_title: form.seo_title,
+              seo_slug: form.seo_slug,
+              seo_description: form.seo_description,
+              seo_parent_id: form.seo_parent_id,
+            }}
+            onChange={(key, v) => setForm((prev) => ({ ...prev, [key]: v }))}
+            parents={(meta?.seo_parents as SeoParentOption[] | undefined) ?? []}
+            showRating={false}
+            description="Chọn chuyên mục blog làm trang cha → URL phân tầng."
+          />
           <FormSection title="Bài viết">
             <Input label="Tiêu đề" value={form.title} onChange={(e) => set('title', e.target.value)} />
             <Select
               label="Chuyên mục"
               value={form.blog_category_id}
-              onChange={(v) => set('blog_category_id', v)}
+              onChange={(v) => {
+                set('blog_category_id', v);
+                const cat = (meta?.categories as { id: number; seo_id?: number }[] | undefined)?.find(
+                  (c) => String(c.id) === String(v),
+                );
+                if (cat?.seo_id) set('seo_parent_id', String(cat.seo_id));
+              }}
               placeholder="—"
               options={(meta?.categories ?? []).map((c) => ({
                 value: String(c.id),
@@ -184,25 +209,27 @@ function FormInner() {
               value={form.content}
               onChange={(e) => set('content', e.target.value)}
             />
-            <Input
-              label="SEO slug"
-              value={form.seo_slug}
-              onChange={(e) => set('seo_slug', e.target.value)}
-            />
+          </FormSection>
+
+          <FormFooter
+            cancelHref="/content/articles/"
+            submitLabel="Lưu bài viết"
+            loading={save.isPending}
+          />
+        </div>
+
+        <FormMediaAside>
+          <FormThumbCard>
             <ImageField
-              label="Cover"
+              ariaLabel="Ảnh đại diện bài viết"
               folder="articles"
+              aspectRatio="3 / 2"
+              variant="card"
               value={form.cover}
               onChange={(v) => set('cover', v)}
             />
-          </FormSection>
-        </div>
-        <div className="ui-form-layout__side">
-          <Button type="submit" disabled={save.isPending}>
-            <Save size={16} />
-            Lưu
-          </Button>
-        </div>
+          </FormThumbCard>
+        </FormMediaAside>
       </form>
     </div>
   );

@@ -1,7 +1,6 @@
 'use client';
 
 import { countriesApi } from '@/lib/services';
-import { Badge } from '@/components/ui/Page';
 import { ResourceListPage } from '@/components/admin/ResourceListPage';
 
 export default function DestinationsPage() {
@@ -23,11 +22,10 @@ export default function DestinationsPage() {
         const b = r.banner as { url_thumb?: string; url?: string } | null | undefined;
         return b?.url_thumb || b?.url || null;
       }}
-      badgeOf={(r) => (
-        <Badge tone={r.is_active ? 'success' : 'neutral'}>
-          {r.is_active ? 'Đang bật' : 'Tắt'}
-        </Badge>
-      )}
+      activeToggle={{
+        of: (r) => !!r.is_active,
+        onChange: (r, next) => countriesApi.setActive(r.id, next),
+      }}
     />
   );
 }

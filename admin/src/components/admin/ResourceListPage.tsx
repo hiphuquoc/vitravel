@@ -13,6 +13,7 @@ import { HeadActions, HeadCta } from '@/components/ui/HeadActions';
 import {
   DEFAULT_LIST_PER_PAGE,
   EntityActions,
+  EntityFact,
   EntityList,
   EntityMain,
   EntityPagination,
@@ -40,9 +41,19 @@ type Props = {
   titleOf: (row: Row) => string;
   slugOf?: (row: Row) => string | null | undefined;
   badgeOf?: (row: Row) => ReactNode;
+  factsOf?: (row: Row) => ReactNode;
   thumbOf?: (row: Row) => string | null | undefined;
+  /** Hiện EntityFact Sort (mặc định bật khi row có sort). */
+  showSort?: boolean;
+  /** Badge «Đang bật» có thể bấm để đổi trạng thái. */
+  activeToggle?: {
+    of: (row: Row) => boolean;
+    onChange: (row: Row, next: boolean) => Promise<unknown>;
+  };
   statusOptions?: { value: string; label: string }[];
   statusKey?: string;
+  /** Query cố định gửi kèm list (vd. cluster). */
+  extraQuery?: Record<string, string | number | boolean | undefined>;
 };
 
 export function ResourceListPage({
@@ -60,9 +71,13 @@ export function ResourceListPage({
   titleOf,
   slugOf,
   badgeOf,
+  factsOf,
   thumbOf,
+  showSort = true,
+  activeToggle,
   statusOptions,
   statusKey = 'status',
+  extraQuery,
 }: Props) {
   const qc = useQueryClient();
   const [search, setSearch] = useState('');
@@ -71,8 +86,8 @@ export function ResourceListPage({
   const [perPage, setPerPage] = useState(DEFAULT_LIST_PER_PAGE);
 
   const key = useMemo(
-    () => [queryKey, { search, status, page, perPage }],
-    [queryKey, search, status, page, perPage],
+    () => [queryKey, { search, status, page, perPage, extraQuery }],
+    [queryKey, search, status, page, perPage, extraQuery],
   );
 
   const listQuery = useQuery({
@@ -83,6 +98,7 @@ export function ResourceListPage({
         [statusKey]: status || undefined,
         page,
         per_page: perPage,
+        ...extraQuery,
       }),
   });
 
@@ -90,6 +106,16 @@ export function ResourceListPage({
     mutationFn: (id: number) => (removeFn ? removeFn(id) : Promise.resolve()),
     onSuccess: async () => {
       toast.success('Đã xóa');
+      await qc.invalidateQueries({ queryKey: [queryKey] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  const toggleActive = useMutation({
+    mutationFn: ({ row, next }: { row: Row; next: boolean }) =>
+      activeToggle ? activeToggle.onChange(row, next) : Promise.resolve(),
+    onSuccess: async () => {
+      toast.success('Đã cập nhật trạng thái');
       await qc.invalidateQueries({ queryKey: [queryKey] });
     },
     onError: (err: Error) => toast.error(err.message),
@@ -180,17 +206,51 @@ export function ResourceListPage({
         }
       >
         {items.map((row) => {
-          const thumb = thumbOf?.(row);
+          const hasThumbSlot = typeof thumbOf === 'function';
+          const thumb = hasThumbSlot ? thumbOf(row) : null;
+          const extraFacts = factsOf?.(row);
+          const sortFact =
+            showSort && row.sort != null ? (
+              <EntityFact label="Sort">{String(row.sort)}</EntityFact>
+            ) : null;
+          const facts =
+            extraFacts || sortFact ? (
+              <>
+                {extraFacts}
+                {sortFact}
+              </>
+            ) : undefined;
+
           return (
-            <EntityRow key={row.id} media={!!thumb}>
-              {thumb ? (
+            <EntityRow key={row.id} media={hasThumbSlot}>
+              {hasThumbSlot ? (
                 <EntityThumb src={thumb} alt={titleOf(row)} href={editHref(row.id)} />
               ) : null}
               <EntityMain
                 title={titleOf(row)}
                 href={editHref(row.id)}
                 slug={slugOf?.(row) || undefined}
-                badges={badgeOf?.(row)}
+                badges={
+                  <>
+                    {badgeOf?.(row)}
+                    {activeToggle ? (
+                      <Badge
+                        tone={activeToggle.of(row) ? 'success' : 'neutral'}
+                        disabled={toggleActive.isPending}
+                        title={activeToggle.of(row) ? 'Bấm để tắt' : 'Bấm để bật'}
+                        onClick={() =>
+                          toggleActive.mutate({
+                            row,
+                            next: !activeToggle.of(row),
+                          })
+                        }
+                      >
+                        {activeToggle.of(row) ? 'Đang bật' : 'Tắt'}
+                      </Badge>
+                    ) : null}
+                  </>
+                }
+                facts={facts}
               />
               <EntityActions
                 editHref={editHref(row.id)}

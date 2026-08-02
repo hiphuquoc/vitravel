@@ -91,6 +91,15 @@
     flex: 1;
     overflow: auto;
     padding: var(--admin-space-2) var(--admin-space-3) var(--admin-space-6);
+    /* Ẩn scrollbar nhưng vẫn cuộn được */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
   }
 
   &__group {

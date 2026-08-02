@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { AuthProvider } from '@/lib/auth-context';
 import { ThemeProvider } from '@/lib/theme-context';
 import { AppToaster } from '@/components/ui/Toast';
+import { NavigationProgress } from '@/components/ui/NavigationProgress';
 
 export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(
@@ -27,8 +28,10 @@ export function Providers({ children }: { children: ReactNode }) {
     <QueryClientProvider client={client}>
       <ThemeProvider>
         <AuthProvider>
-          {children}
-          <AppToaster />
+          <NavigationProgress>
+            {children}
+            <AppToaster />
+          </NavigationProgress>
         </AuthProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />

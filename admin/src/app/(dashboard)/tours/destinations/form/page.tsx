@@ -3,16 +3,23 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Globe2 } from 'lucide-react';
 import toast from '@/lib/toast';
 import { countriesApi } from '@/lib/services';
 import { useEditLocale } from '@/hooks/useEditLocale';
-import { Button } from '@/components/ui/Button';
 import { Input, Select, Switch, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
-import { FormSection } from '@/components/ui/FormSection';
+import { FormCluster, FormSection } from '@/components/ui/FormSection';
+import {
+  ACTIVE_STATUS_OPTIONS,
+  SeoBox,
+  activeStatusValue,
+  parseActiveStatus,
+} from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard, FormBannerCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 import { ViewPublicButton } from '@/components/ui/ViewPublicButton';
 import { publicPageUrl } from '@/lib/publicUrl';
@@ -20,7 +27,6 @@ import { publicPageUrl } from '@/lib/publicUrl';
 type FormState = {
   code: string;
   name: string;
-  slug: string;
   tagline: string;
   intro_text: string;
   long_form_content: string;
@@ -43,7 +49,6 @@ type FormState = {
 const empty: FormState = {
   code: '',
   name: '',
-  slug: '',
   tagline: '',
   intro_text: '',
   long_form_content: '',
@@ -100,7 +105,6 @@ function FormInner() {
     const next: FormState = {
       code: d.code || '',
       name: d.name || '',
-      slug: d.slug || '',
       tagline: d.tagline || '',
       intro_text: d.intro_text || '',
       long_form_content: d.long_form_content || '',
@@ -109,11 +113,15 @@ function FormInner() {
       is_active: !!d.is_active,
       show_in_menu: !!d.show_in_menu,
       show_in_customize_form: !!d.show_in_customize_form,
-      seo_slug: d.seo?.slug || '',
+      seo_slug: d.seo?.slug || d.slug || '',
       seo_title: d.seo?.title || '',
       seo_description: d.seo?.description || '',
       seo_keywords: d.seo?.keywords || '',
-      seo_parent_id: d.seo?.parent_id ? String(d.seo.parent_id) : '',
+      seo_parent_id: d.seo?.parent_id
+        ? String(d.seo.parent_id)
+        : metaQuery.data?.hub_seo_id
+          ? String(metaQuery.data.hub_seo_id)
+          : '',
       rating_aggregate_star:
         d.seo?.rating_aggregate_star != null ? String(d.seo.rating_aggregate_star) : '',
       rating_aggregate_count:
@@ -123,14 +131,20 @@ function FormInner() {
     };
     setForm(next);
     snapshotRef.current = JSON.stringify(next);
-  }, [detailQuery.data, locale]);
+  }, [detailQuery.data, locale, metaQuery.data?.hub_seo_id]);
+
+  useEffect(() => {
+    if (!isNew || form.seo_parent_id || !metaQuery.data?.hub_seo_id) return;
+    setForm((prev) => ({ ...prev, seo_parent_id: String(metaQuery.data!.hub_seo_id) }));
+  }, [isNew, form.seo_parent_id, metaQuery.data?.hub_seo_id]);
 
   const save = useMutation({
     mutationFn: async () => {
+      const slug = form.seo_slug || slugify(form.name);
       const payload = {
         code: form.code,
         name: form.name,
-        slug: form.slug || slugify(form.name),
+        slug,
         tagline: form.tagline || null,
         intro_text: form.intro_text || null,
         long_form_content: form.long_form_content || null,
@@ -139,7 +153,7 @@ function FormInner() {
         is_active: form.is_active,
         show_in_menu: form.show_in_menu,
         show_in_customize_form: form.show_in_customize_form,
-        seo_slug: form.seo_slug || form.slug || slugify(form.name),
+        seo_slug: slug,
         seo_title: form.seo_title || form.name,
         seo_description: form.seo_description || null,
         seo_keywords: form.seo_keywords || null,
@@ -172,9 +186,10 @@ function FormInner() {
   return (
     <div>
       <PageHeader
-        eyebrow="Sản phẩm"
-        title={isNew ? 'Thêm điểm đến' : 'Chỉnh sửa điểm đến'}
+        eyebrow="Tour"
+        title={isNew ? 'Thêm danh mục' : 'Chỉnh sửa danh mục'}
         id={isNew ? null : id}
+        description={isNew ? 'Quốc gia / điểm đến — SEO parent cho gói tour.' : undefined}
         actions={
           <HeadActions
             primary={
@@ -211,119 +226,127 @@ function FormInner() {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
-          <FormSection title="Thông tin">
-            <Input label="Mã" value={form.code} onChange={(e) => set('code', e.target.value)} />
-            <Input
-              label="Tên"
-              value={form.name}
-              onChange={(e) => {
-                set('name', e.target.value);
-                if (isNew) {
-                  set('slug', slugify(e.target.value));
-                  set('seo_slug', slugify(e.target.value));
-                }
-              }}
-            />
-            <Input label="Slug" value={form.slug} onChange={(e) => set('slug', e.target.value)} />
-            <Input
-              label="Tagline"
-              value={form.tagline}
-              onChange={(e) => set('tagline', e.target.value)}
-            />
-            <Textarea
-              label="Intro"
-              value={form.intro_text}
-              onChange={(e) => set('intro_text', e.target.value)}
-            />
-            <Textarea
-              label="Nội dung dài"
-              value={form.long_form_content}
-              onChange={(e) => set('long_form_content', e.target.value)}
-            />
-            <Input
-              label="Sort"
-              type="number"
-              value={form.sort}
-              onChange={(e) => set('sort', e.target.value)}
-            />
-            <Select
-              label="Home grid"
-              value={form.home_grid_size}
-              onChange={(v) => set('home_grid_size', v)}
-              options={(metaQuery.data?.home_grid_sizes ?? []).map((o) => ({
-                value: o.value,
-                label: o.label,
-              }))}
-            />
-            <Switch
-              label="Active"
-              checked={form.is_active}
-              onChange={(v) => set('is_active', v)}
-            />
-            <Switch
-              label="Hiện menu"
-              checked={form.show_in_menu}
-              onChange={(v) => set('show_in_menu', v)}
-            />
-            <Switch
-              label="Form customize"
-              checked={form.show_in_customize_form}
-              onChange={(v) => set('show_in_customize_form', v)}
-            />
+          <SeoBox
+            value={{
+              seo_title: form.seo_title,
+              seo_slug: form.seo_slug,
+              seo_description: form.seo_description,
+              seo_keywords: form.seo_keywords,
+              seo_parent_id: form.seo_parent_id,
+              rating_aggregate_star: form.rating_aggregate_star,
+              rating_aggregate_count: form.rating_aggregate_count,
+            }}
+            onChange={(key, v) => setForm((prev) => ({ ...prev, [key]: v }))}
+            parents={metaQuery.data?.seo_parents ?? []}
+            showKeywords
+            description="Chọn Hub Tour làm trang cha → URL = /tours/{slug}."
+          />
+
+          <FormSection
+            icon={Globe2}
+            title="Thông tin danh mục"
+            description="Quốc gia / điểm đến — SEO parent cho gói tour."
+          >
+            <FormCluster title="Định danh">
+              <Input label="Mã" value={form.code} onChange={(e) => set('code', e.target.value)} />
+              <Input
+                label="Tên"
+                value={form.name}
+                onChange={(e) => {
+                  set('name', e.target.value);
+                  if (isNew) {
+                    set('seo_slug', slugify(e.target.value));
+                    if (!form.seo_title) set('seo_title', e.target.value);
+                  }
+                }}
+              />
+              <Input
+                label="Tagline"
+                value={form.tagline}
+                onChange={(e) => set('tagline', e.target.value)}
+              />
+              <Input
+                label="Thứ tự"
+                type="number"
+                value={form.sort}
+                onChange={(e) => set('sort', e.target.value)}
+              />
+            </FormCluster>
+
+            <FormCluster title="Hiển thị">
+              <Select
+                label="Home grid"
+                value={form.home_grid_size}
+                onChange={(v) => set('home_grid_size', v)}
+                options={(metaQuery.data?.home_grid_sizes ?? []).map((o) => ({
+                  value: o.value,
+                  label: o.label,
+                }))}
+              />
+              <Select
+                label="Trạng thái"
+                value={activeStatusValue(form.is_active)}
+                onChange={(v) => set('is_active', parseActiveStatus(v))}
+                options={[...ACTIVE_STATUS_OPTIONS]}
+              />
+            </FormCluster>
+
+            <div className="ui-form-flags">
+              <Switch
+                label="Hiện menu"
+                checked={form.show_in_menu}
+                onChange={(v) => set('show_in_menu', v)}
+              />
+              <Switch
+                label="Form customize"
+                checked={form.show_in_customize_form}
+                onChange={(v) => set('show_in_customize_form', v)}
+              />
+            </div>
+
+            <FormCluster cols={1}>
+              <Textarea
+                label="Intro"
+                value={form.intro_text}
+                onChange={(e) => set('intro_text', e.target.value)}
+              />
+              <Textarea
+                label="Nội dung dài"
+                value={form.long_form_content}
+                onChange={(e) => set('long_form_content', e.target.value)}
+              />
+            </FormCluster>
           </FormSection>
-          <FormSection title="SEO">
-            <Input
-              label="SEO slug"
-              value={form.seo_slug}
-              onChange={(e) => set('seo_slug', e.target.value)}
-            />
-            <Input
-              label="SEO title"
-              value={form.seo_title}
-              onChange={(e) => set('seo_title', e.target.value)}
-            />
-            <Textarea
-              label="SEO description"
-              value={form.seo_description}
-              onChange={(e) => set('seo_description', e.target.value)}
-            />
-            <Input
-              label="Keywords"
-              value={form.seo_keywords}
-              onChange={(e) => set('seo_keywords', e.target.value)}
-            />
-            <Select
-              label="SEO parent"
-              value={form.seo_parent_id}
-              onChange={(v) => set('seo_parent_id', v)}
-              placeholder="Hub mặc định"
-              options={(metaQuery.data?.seo_parents ?? []).map((p) => ({
-                value: String(p.id),
-                label: p.label,
-              }))}
-            />
-          </FormSection>
-          <FormSection title="Media">
+
+          <FormFooter
+            cancelHref="/tours/destinations/"
+            submitLabel="Lưu danh mục"
+            loading={save.isPending}
+          />
+        </div>
+
+        <FormMediaAside>
+          <FormThumbCard>
             <ImageField
-              label="Banner"
+              ariaLabel="Ảnh đại diện"
               folder="countries"
+              aspectRatio="3 / 2"
+              variant="card"
               value={form.banner}
               onChange={(v) => set('banner', v)}
             />
+          </FormThumbCard>
+          <FormBannerCard description="Hero /tours/{slug}">
             <ImageField
-              label="Listing banner"
+              ariaLabel="Banner listing"
               folder="countries"
+              aspectRatio="21 / 9"
+              variant="lg"
               value={form.listing_banner}
               onChange={(v) => set('listing_banner', v)}
             />
-          </FormSection>
-        </div>
-        <div className="ui-form-layout__side">
-          <Button type="submit" disabled={save.isPending}>
-            <Save size={16} />
-            {save.isPending ? 'Đang lưu…' : 'Lưu'}
-          </Button>
-        </div>
+          </FormBannerCard>
+        </FormMediaAside>
       </form>
     </div>
   );

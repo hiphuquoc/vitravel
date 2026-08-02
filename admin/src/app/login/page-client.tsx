@@ -1,17 +1,18 @@
 'use client';
 
 import { FormEvent, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '@/lib/auth-context';
 import { ApiClientError } from '@/lib/api';
+import { useAppRouter } from '@/hooks/useAppRouter';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Field';
 
 export default function LoginPage() {
   const { login, user, ready } = useAuth();
-  const router = useRouter();
+  const router = useAppRouter();
   const search = useSearchParams();
   const rawNext = search.get('next') || '/';
   const base = process.env.NEXT_PUBLIC_BASE_PATH || '/he-thong';

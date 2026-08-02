@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Input, Switch, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormSection } from '@/components/ui/FormSection';
+import { SeoBox, type SeoParentOption } from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 import type { LocaleOption } from '@/lib/locale';
@@ -40,6 +41,10 @@ type Props = {
   mapDetail?: (d: Record<string, unknown>) => Record<string, unknown>;
   mapPayload?: (form: Record<string, unknown>, locale: string) => Record<string, unknown>;
   withLocale?: boolean;
+  /** Hiện SeoBox dùng chung phía trên Thông tin. */
+  seoParents?: SeoParentOption[] | ((form: Record<string, unknown>) => SeoParentOption[]);
+  seoShowKeywords?: boolean;
+  seoShowRating?: boolean;
 };
 
 function Inner(props: Props) {
@@ -141,6 +146,27 @@ function Inner(props: Props) {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
+          {props.seoParents ? (
+            <SeoBox
+              value={{
+                seo_title: String(form.seo_title ?? ''),
+                seo_slug: String(form.seo_slug ?? ''),
+                seo_description: String(form.seo_description ?? ''),
+                seo_keywords: String(form.seo_keywords ?? ''),
+                seo_parent_id: String(form.seo_parent_id ?? ''),
+                rating_aggregate_star: String(form.rating_aggregate_star ?? ''),
+                rating_aggregate_count: String(form.rating_aggregate_count ?? ''),
+              }}
+              onChange={(key, v) => setForm((prev) => ({ ...prev, [key]: v }))}
+              parents={
+                typeof props.seoParents === 'function'
+                  ? props.seoParents(form)
+                  : props.seoParents
+              }
+              showKeywords={props.seoShowKeywords}
+              showRating={props.seoShowRating ?? false}
+            />
+          ) : null}
           <FormSection title="Thông tin">
             {props.fields.map((field) => {
               if (field.type === 'custom') {

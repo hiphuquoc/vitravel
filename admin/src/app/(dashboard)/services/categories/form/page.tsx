@@ -3,22 +3,28 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import toast from '@/lib/toast';
 import { serviceCategoriesApi } from '@/lib/services';
 import { useEditLocale } from '@/hooks/useEditLocale';
-import { Button } from '@/components/ui/Button';
-import { Input, Select, Switch, Textarea } from '@/components/ui/Field';
+import { Input, Select, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormSection } from '@/components/ui/FormSection';
+import {
+  ACTIVE_STATUS_OPTIONS,
+  SeoBox,
+  activeStatusValue,
+  parseActiveStatus,
+} from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard, FormBannerCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 
 type FormState = {
   cluster: string;
   name: string;
-  slug: string;
   intro: string;
   sort: string;
   is_active: boolean;
@@ -27,13 +33,13 @@ type FormState = {
   seo_description: string;
   seo_keywords: string;
   seo_parent_id: string;
+  cover: ImageFieldState;
   banner: ImageFieldState;
 };
 
 const empty: FormState = {
-  cluster: 'experiences',
+  cluster: 'experience',
   name: '',
-  slug: '',
   intro: '',
   sort: '0',
   is_active: true,
@@ -42,6 +48,7 @@ const empty: FormState = {
   seo_description: '',
   seo_keywords: '',
   seo_parent_id: '',
+  cover: emptyImageField(),
   banner: emptyImageField(),
 };
 
@@ -58,12 +65,13 @@ function slugify(v: string) {
 function FormInner() {
   const search = useSearchParams();
   const id = search.get('id') ? Number(search.get('id')) : null;
+  const clusterFromUrl = search.get('cluster') || 'experience';
   const isNew = !id;
   const router = useRouter();
   const qc = useQueryClient();
   const { locale, setLocale } = useEditLocale();
-  const [form, setForm] = useState<FormState>(empty);
-  const snapshotRef = useRef(JSON.stringify(empty));
+  const [form, setForm] = useState<FormState>({ ...empty, cluster: clusterFromUrl });
+  const snapshotRef = useRef(JSON.stringify({ ...empty, cluster: clusterFromUrl }));
   const isDirty = useMemo(() => JSON.stringify(form) !== snapshotRef.current, [form]);
 
   const metaQuery = useQuery({
@@ -80,39 +88,42 @@ function FormInner() {
     if (!detailQuery.data) return;
     const d = detailQuery.data;
     const next: FormState = {
-      cluster: d.cluster || 'experiences',
+      cluster: d.cluster || clusterFromUrl,
       name: d.name || '',
-      slug: d.slug || '',
       intro: d.intro || '',
       sort: String(d.sort || 0),
       is_active: !!d.is_active,
-      seo_slug: d.seo?.slug || '',
+      seo_slug: d.seo?.slug || d.slug || '',
       seo_title: d.seo?.title || '',
       seo_description: d.seo?.description || '',
       seo_keywords: d.seo?.keywords || '',
       seo_parent_id: d.seo?.parent_id ? String(d.seo.parent_id) : '',
+      cover: emptyImageField((d as { cover?: never }).cover),
       banner: emptyImageField(d.banner),
     };
     setForm(next);
     snapshotRef.current = JSON.stringify(next);
-  }, [detailQuery.data, locale]);
+  }, [detailQuery.data, locale, clusterFromUrl]);
 
   const save = useMutation({
     mutationFn: async () => {
+      const slug = form.seo_slug || slugify(form.name);
       const payload = {
         cluster: form.cluster,
         name: form.name,
-        slug: form.slug || slugify(form.name),
+        slug,
         intro: form.intro || null,
         sort: Number(form.sort) || 0,
         is_active: form.is_active,
-        seo_slug: form.seo_slug || form.slug || slugify(form.name),
+        seo_slug: slug,
         seo_title: form.seo_title || form.name,
         seo_description: form.seo_description || null,
         seo_keywords: form.seo_keywords || null,
         seo_parent_id: form.seo_parent_id ? Number(form.seo_parent_id) : null,
         banner_media_id: form.banner.media?.id ?? null,
         remove_banner: form.banner.remove,
+        cover_media_id: form.cover.media?.id ?? null,
+        remove_cover: form.cover.remove,
         locale,
       };
       return isNew
@@ -121,8 +132,11 @@ function FormInner() {
     },
     onSuccess: async (data) => {
       toast.success(isNew ? 'Đã tạo' : 'Đã lưu');
-      await qc.invalidateQueries({ queryKey: ['service-categories'] });
-      router.replace(`/services/categories/form/?id=${data.id}&locale=${locale}`);
+      await qc.invalidateQueries({ queryKey: [`service-categories-${form.cluster}`] });
+      await qc.invalidateQueries({ queryKey: ['service-category', data.id] });
+      router.replace(
+        `/services/categories/form/?id=${data.id}&locale=${locale}&cluster=${form.cluster}`,
+      );
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -140,7 +154,11 @@ function FormInner() {
           <HeadActions
             secondary={
               <HeadSecondary
-                href="/services/categories/"
+                href={
+                  form.cluster
+                    ? `/services/categories/?cluster=${form.cluster}`
+                    : '/services/categories/'
+                }
                 icon={ArrowLeft}
                 title="Quay lại"
                 subtitle="Danh sách"
@@ -163,6 +181,20 @@ function FormInner() {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
+          <SeoBox
+            value={{
+              seo_title: form.seo_title,
+              seo_slug: form.seo_slug,
+              seo_description: form.seo_description,
+              seo_keywords: form.seo_keywords,
+              seo_parent_id: form.seo_parent_id,
+            }}
+            onChange={(key, v) => setForm((prev) => ({ ...prev, [key]: v }))}
+            parents={metaQuery.data?.seo_parents ?? []}
+            showKeywords
+            showRating={false}
+            description="Chọn hub cụm dịch vụ làm trang cha → URL phân tầng."
+          />
           <FormSection title="Thông tin">
             <Select
               label="Cluster"
@@ -179,12 +211,11 @@ function FormInner() {
               onChange={(e) => {
                 set('name', e.target.value);
                 if (isNew) {
-                  set('slug', slugify(e.target.value));
                   set('seo_slug', slugify(e.target.value));
+                  if (!form.seo_title) set('seo_title', e.target.value);
                 }
               }}
             />
-            <Input label="Slug" value={form.slug} onChange={(e) => set('slug', e.target.value)} />
             <Textarea
               label="Intro"
               value={form.intro}
@@ -196,36 +227,47 @@ function FormInner() {
               value={form.sort}
               onChange={(e) => set('sort', e.target.value)}
             />
-            <Switch label="Active" checked={form.is_active} onChange={(v) => set('is_active', v)} />
-            <Input
-              label="SEO slug"
-              value={form.seo_slug}
-              onChange={(e) => set('seo_slug', e.target.value)}
+            <Select
+              label="Trạng thái"
+              value={activeStatusValue(form.is_active)}
+              onChange={(v) => set('is_active', parseActiveStatus(v))}
+              options={[...ACTIVE_STATUS_OPTIONS]}
             />
-            <Input
-              label="SEO title"
-              value={form.seo_title}
-              onChange={(e) => set('seo_title', e.target.value)}
-            />
-            <Textarea
-              label="SEO description"
-              value={form.seo_description}
-              onChange={(e) => set('seo_description', e.target.value)}
-            />
+          </FormSection>
+
+          <FormFooter
+            cancelHref={
+              form.cluster
+                ? `/services/categories/?cluster=${form.cluster}`
+                : '/services/categories/'
+            }
+            submitLabel="Lưu danh mục"
+            loading={save.isPending}
+          />
+        </div>
+
+        <FormMediaAside>
+          <FormThumbCard>
             <ImageField
-              label="Banner"
+              ariaLabel="Ảnh đại diện danh mục DV"
               folder="service_categories"
+              aspectRatio="3 / 2"
+              variant="card"
+              value={form.cover}
+              onChange={(v) => set('cover', v)}
+            />
+          </FormThumbCard>
+          <FormBannerCard>
+            <ImageField
+              ariaLabel="Banner listing danh mục DV"
+              folder="service_categories"
+              aspectRatio="21 / 9"
+              variant="lg"
               value={form.banner}
               onChange={(v) => set('banner', v)}
             />
-          </FormSection>
-        </div>
-        <div className="ui-form-layout__side">
-          <Button type="submit" disabled={save.isPending}>
-            <Save size={16} />
-            Lưu
-          </Button>
-        </div>
+          </FormBannerCard>
+        </FormMediaAside>
       </form>
     </div>
   );

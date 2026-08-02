@@ -1,19 +1,36 @@
 'use client';
 
+import { Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { serviceCategoriesApi } from '@/lib/services';
 import { Badge } from '@/components/ui/Page';
 import { ResourceListPage } from '@/components/admin/ResourceListPage';
+import { serviceClusterLabel } from '@/lib/nav';
 
-export default function ServiceCategoriesPage() {
+function Inner() {
+  const search = useSearchParams();
+  const cluster = search.get('cluster') || '';
+  const label = serviceClusterLabel(cluster);
+
   return (
     <ResourceListPage
-      eyebrow="Sản phẩm"
-      title="Danh mục dịch vụ"
-      queryKey="service-categories"
-      createHref="/services/categories/form/"
-      editHref={(id) => `/services/categories/form/?id=${id}`}
+      eyebrow={label}
+      title={`Danh mục — ${label}`}
+      description="Nhóm danh mục theo cụm dịch vụ."
+      queryKey={`service-categories-${cluster || 'all'}`}
+      createHref={
+        cluster
+          ? `/services/categories/form/?cluster=${cluster}`
+          : '/services/categories/form/'
+      }
+      editHref={(id) =>
+        cluster
+          ? `/services/categories/form/?id=${id}&cluster=${cluster}`
+          : `/services/categories/form/?id=${id}`
+      }
       createLabel="Thêm danh mục"
       unitLabel="danh mục"
+      extraQuery={cluster ? { cluster } : undefined}
       listFn={(q) => serviceCategoriesApi.list(q)}
       removeFn={(id) => serviceCategoriesApi.remove(id)}
       titleOf={(r) => String(r.name || `#${r.id}`)}
@@ -31,5 +48,13 @@ export default function ServiceCategoriesPage() {
         </>
       )}
     />
+  );
+}
+
+export default function ServiceCategoriesPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: '2rem' }}>Đang tải…</div>}>
+      <Inner />
+    </Suspense>
   );
 }

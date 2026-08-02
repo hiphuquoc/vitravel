@@ -13,9 +13,12 @@ import {
   Map,
   MessageSquare,
   Newspaper,
+  Plane,
   Ship,
   SlidersHorizontal,
+  Sparkles,
   Star,
+  TrainFront,
   Trash2,
   Users,
   Video,
@@ -27,6 +30,8 @@ export type NavItem = {
   href: string;
   icon: LucideIcon;
   match?: string;
+  /** Query bắt buộc để coi là active (vd. cluster=train). */
+  matchQuery?: Record<string, string>;
   soon?: boolean;
 };
 
@@ -36,7 +41,64 @@ export type NavGroup = {
   items: NavItem[];
 };
 
-/** Grouped admin navigation — khớp Blade `config/menu.php`. */
+/** Cụm dịch vụ — khớp `config/services_catalog.php`. */
+export const SERVICE_CLUSTERS = [
+  {
+    key: 'train',
+    title: 'Tàu',
+    label: 'Vé tàu hỏa',
+    hubKey: 'trains_hub',
+    icon: TrainFront,
+  },
+  {
+    key: 'flight',
+    title: 'Máy bay',
+    label: 'Vé máy bay',
+    hubKey: 'flights_hub',
+    icon: Plane,
+  },
+  {
+    key: 'stay',
+    title: 'Lưu trú',
+    label: 'Khách sạn & Resort',
+    hubKey: 'stays_hub',
+    icon: Building2,
+  },
+  {
+    key: 'experience',
+    title: 'Vui chơi',
+    label: 'Vé vui chơi & trải nghiệm',
+    hubKey: 'experiences_hub',
+    icon: Sparkles,
+  },
+  {
+    key: 'other',
+    title: 'Dịch vụ khác',
+    label: 'Dịch vụ khác',
+    hubKey: 'extras_hub',
+    icon: Briefcase,
+  },
+] as const;
+
+/** Hub SEO dùng trong `/settings/hubs/[hubKey]/` (static export). */
+export const LISTING_HUB_KEYS = [
+  'tours_hub',
+  'cruises_hub',
+  'trains_hub',
+  'flights_hub',
+  'stays_hub',
+  'experiences_hub',
+  'extras_hub',
+  'guide_hub',
+] as const;
+
+export type ServiceClusterKey = (typeof SERVICE_CLUSTERS)[number]['key'];
+
+export function serviceClusterLabel(key: string | null | undefined): string {
+  return SERVICE_CLUSTERS.find((c) => c.key === key)?.label || key || 'Dịch vụ';
+}
+
+/** Grouped admin navigation — Tour / Cruise / từng cụm DV tách riêng. */
 export const NAV_GROUPS: NavGroup[] = [
   {
     key: 'overview',
@@ -44,18 +106,16 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [{ label: 'Bảng điều khiển', href: '/', icon: LayoutDashboard }],
   },
   {
-    key: 'products',
-    title: 'Sản phẩm',
+    key: 'tour',
+    title: 'Tour',
     items: [
       { label: 'Gói Tour', href: '/tours/packages/', icon: Map, match: '/tours/packages' },
-      { label: 'Gói Cruise', href: '/cruises/packages/', icon: Ship, match: '/cruises/packages' },
       {
         label: 'Danh mục Tour',
         href: '/tours/destinations/',
         icon: Globe2,
         match: '/tours/destinations',
       },
-      { label: 'Loại du thuyền', href: '/cruises/types/', icon: Anchor, match: '/cruises/types' },
       {
         label: 'Chủ đề Tour',
         href: '/tours/categories/',
@@ -63,31 +123,91 @@ export const NAV_GROUPS: NavGroup[] = [
         match: '/tours/categories',
       },
       {
-        label: 'Danh mục dịch vụ',
-        href: '/services/categories/',
-        icon: FolderKanban,
-        match: '/services/categories',
-      },
-      {
-        label: 'Sản phẩm dịch vụ',
-        href: '/services/products/',
-        icon: Briefcase,
-        match: '/services/products',
+        label: 'Trang hub Tour',
+        href: '/settings/hubs/tours_hub/',
+        icon: Globe2,
+        match: '/settings/hubs/tours_hub',
       },
     ],
   },
   {
+    key: 'cruise',
+    title: 'Cruise',
+    items: [
+      {
+        label: 'Gói Cruise',
+        href: '/cruises/packages/',
+        icon: Ship,
+        match: '/cruises/packages',
+      },
+      {
+        label: 'Loại du thuyền',
+        href: '/cruises/types/',
+        icon: Anchor,
+        match: '/cruises/types',
+      },
+      {
+        label: 'Trang hub Cruise',
+        href: '/settings/hubs/cruises_hub/',
+        icon: Ship,
+        match: '/settings/hubs/cruises_hub',
+      },
+    ],
+  },
+  ...SERVICE_CLUSTERS.map((cluster) => ({
+    key: `svc-${cluster.key}`,
+    title: cluster.title,
+    items: [
+      {
+        label: 'Danh mục',
+        href: `/services/categories/?cluster=${cluster.key}`,
+        icon: FolderKanban,
+        match: '/services/categories',
+        matchQuery: { cluster: cluster.key },
+      },
+      {
+        label: 'Sản phẩm',
+        href: `/services/products/?cluster=${cluster.key}`,
+        icon: cluster.icon,
+        match: '/services/products',
+        matchQuery: { cluster: cluster.key },
+      },
+      {
+        label: 'Trang hub',
+        href: `/settings/hubs/${cluster.hubKey}/`,
+        icon: Globe2,
+        match: `/settings/hubs/${cluster.hubKey}`,
+      },
+    ] as NavItem[],
+  })),
+  {
     key: 'content',
     title: 'Nội dung',
     items: [
-      { label: 'Slider trang chủ', href: '/content/slides/', icon: SlidersHorizontal, match: '/content/slides' },
-      { label: 'Nội dung trang chủ', href: '/content/home/', icon: LayoutDashboard, match: '/content/home' },
+      {
+        label: 'Slider trang chủ',
+        href: '/content/slides/',
+        icon: SlidersHorizontal,
+        match: '/content/slides',
+      },
+      {
+        label: 'Nội dung trang chủ',
+        href: '/content/home/',
+        icon: LayoutDashboard,
+        match: '/content/home',
+      },
       { label: 'Bài viết', href: '/content/articles/', icon: Newspaper, match: '/content/articles' },
       {
         label: 'Chuyên mục Blog',
         href: '/content/blog-categories/',
         icon: FolderTree,
         match: '/content/blog-categories',
+      },
+      {
+        label: 'Trang hub Blog',
+        href: '/settings/hubs/guide_hub/',
+        icon: Newspaper,
+        match: '/settings/hubs/guide_hub',
       },
     ],
   },
@@ -126,7 +246,12 @@ export const NAV_GROUPS: NavGroup[] = [
     key: 'settings',
     title: 'Cài đặt',
     items: [
-      { label: 'Ngôn ngữ', href: '/settings/languages/', icon: Languages, match: '/settings/languages' },
+      {
+        label: 'Ngôn ngữ',
+        href: '/settings/languages/',
+        icon: Languages,
+        match: '/settings/languages',
+      },
       { label: 'Xóa HTML cache', href: '/settings/cache/', icon: Trash2, match: '/settings/cache' },
       {
         label: 'Phong cách du lịch',
@@ -135,12 +260,6 @@ export const NAV_GROUPS: NavGroup[] = [
         match: '/tours/themes',
       },
       { label: 'Thư viện Media', href: '/settings/media/', icon: Image, match: '/settings/media' },
-      {
-        label: 'Hub Tours',
-        href: '/settings/hubs/tours_hub/',
-        icon: Globe2,
-        match: '/settings/hubs',
-      },
     ],
   },
 ];
@@ -150,9 +269,22 @@ function normalizePath(pathname: string): string {
   return pathname.replace(/\/$/, '') || '/';
 }
 
-export function isNavActive(pathname: string, item: NavItem): boolean {
+export function isNavActive(
+  pathname: string,
+  item: NavItem,
+  searchParams?: URLSearchParams | null,
+): boolean {
   const path = normalizePath(pathname);
   if (item.href === '/' || item.href === '') return path === '/';
-  const base = normalizePath(item.match || item.href);
-  return path === base || path.startsWith(`${base}/`);
+  const base = normalizePath(item.match || item.href.split('?')[0] || item.href);
+  if (!(path === base || path.startsWith(`${base}/`))) return false;
+
+  if (item.matchQuery) {
+    if (!searchParams) return false;
+    return Object.entries(item.matchQuery).every(
+      ([key, value]) => searchParams.get(key) === value,
+    );
+  }
+
+  return true;
 }

@@ -98,14 +98,25 @@
                                 'viewUrl' => $viewUrl,
                             ])
                             @include('admin.components.formImageUpload', [
-                                'name' => 'image',
-                                'label' => 'Ảnh banner listing',
-                                'currentImage' => $type?->bannerUrl('lg') ?: $type?->bannerUrl(),
-                                'removeName' => 'remove_image',
-                                'aspectRatio' => '21/9',
-                                'tooltip' => 'Banner first-view trang listing loại du thuyền.',
-                                'hint' => 'JPG, PNG, WebP — tối đa '.config('media.max_upload_kb').'KB. Tự tối ưu WebP + variants.',
+                                'name' => 'cover',
+                                'label' => 'Ảnh đại diện',
+                                'currentImage' => $type?->coverUrl('card') ?: $type?->coverUrl(),
+                                'removeName' => 'remove_cover',
+                                'aspectRatio' => '3/2',
+                                'tooltip' => 'Thumbnail card / chia sẻ — khác banner listing.',
+                                'hint' => 'JPG, PNG, WebP — tối đa '.config('media.max_upload_kb').'KB.',
                             ])
+                            <div style="margin-top:1.25rem;">
+                                @include('admin.components.formImageUpload', [
+                                    'name' => 'image',
+                                    'label' => 'Ảnh banner listing',
+                                    'currentImage' => $type?->bannerUrl('lg') ?: $type?->bannerUrl(),
+                                    'removeName' => 'remove_image',
+                                    'aspectRatio' => '21/9',
+                                    'tooltip' => 'Banner first-view trang listing loại du thuyền.',
+                                    'hint' => 'JPG, PNG, WebP — tối đa '.config('media.max_upload_kb').'KB. Tự tối ưu WebP + variants.',
+                                ])
+                            </div>
                         </div>
                     </div>
                 </div>

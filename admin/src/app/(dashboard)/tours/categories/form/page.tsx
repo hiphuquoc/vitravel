@@ -1,19 +1,25 @@
 'use client';
 
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, FolderTree, Save, Search } from 'lucide-react';
+import { ArrowLeft, FolderTree } from 'lucide-react';
 import toast from '@/lib/toast';
 import { categoriesApi } from '@/lib/services';
 import { useEditLocale } from '@/hooks/useEditLocale';
-import { Button } from '@/components/ui/Button';
-import { Input, Select, Switch, Textarea } from '@/components/ui/Field';
+import { Input, Select, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormCluster, FormSection } from '@/components/ui/FormSection';
+import {
+  ACTIVE_STATUS_OPTIONS,
+  SeoBox,
+  activeStatusValue,
+  parseActiveStatus,
+} from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 import { ViewPublicButton } from '@/components/ui/ViewPublicButton';
 import { publicPageUrl } from '@/lib/publicUrl';
@@ -29,6 +35,7 @@ type FormState = {
   seo_slug: string;
   seo_title: string;
   seo_description: string;
+  seo_parent_id: string;
   rating_aggregate_star: string;
   rating_aggregate_count: string;
   cover: ImageFieldState;
@@ -45,6 +52,7 @@ const empty: FormState = {
   seo_slug: '',
   seo_title: '',
   seo_description: '',
+  seo_parent_id: '',
   rating_aggregate_star: '',
   rating_aggregate_count: '',
   cover: emptyImageField(),
@@ -98,6 +106,7 @@ function CategoryFormInner() {
       seo_slug: d.seo?.slug || d.slug || '',
       seo_title: d.seo?.title || '',
       seo_description: d.seo?.description || '',
+      seo_parent_id: d.seo?.parent_id ? String(d.seo.parent_id) : '',
       rating_aggregate_star:
         d.seo?.rating_aggregate_star != null ? String(d.seo.rating_aggregate_star) : '',
       rating_aggregate_count:
@@ -123,6 +132,7 @@ function CategoryFormInner() {
         seo_slug: form.seo_slug || slugify(form.name),
         seo_title: form.seo_title || form.name,
         seo_description: form.seo_description || null,
+        seo_parent_id: form.seo_parent_id ? Number(form.seo_parent_id) : null,
         rating_aggregate_star: form.rating_aggregate_star
           ? Number(form.rating_aggregate_star)
           : null,
@@ -192,54 +202,26 @@ function CategoryFormInner() {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
-        <FormSection
-          variant="priority"
-          icon={Search}
-          title="SEO"
-          description="Slug full, meta và schema rating."
-        >
-          <FormCluster>
-            <Input
-              label="Slug"
-              value={form.seo_slug}
-              onChange={(e) => {
-                setSlugTouched(true);
-                set('seo_slug', e.target.value);
-              }}
-              required
-            />
-            <Input label="SEO title" value={form.seo_title} onChange={(e) => set('seo_title', e.target.value)} />
-          </FormCluster>
-          <FormCluster cols={1}>
-            <Textarea
-              label="SEO description"
-              value={form.seo_description}
-              onChange={(e) => set('seo_description', e.target.value)}
-            />
-          </FormCluster>
-          <FormCluster title="Schema rating">
-            <Input
-              label="Điểm đánh giá"
-              type="number"
-              step="0.1"
-              min={0}
-              max={5}
-              value={form.rating_aggregate_star}
-              onChange={(e) => set('rating_aggregate_star', e.target.value)}
-            />
-            <Input
-              label="Lượt đánh giá"
-              type="number"
-              min={0}
-              value={form.rating_aggregate_count}
-              onChange={(e) => set('rating_aggregate_count', e.target.value)}
-            />
-          </FormCluster>
-        </FormSection>
+        <SeoBox
+          value={{
+            seo_title: form.seo_title,
+            seo_slug: form.seo_slug,
+            seo_description: form.seo_description,
+            seo_parent_id: form.seo_parent_id,
+            rating_aggregate_star: form.rating_aggregate_star,
+            rating_aggregate_count: form.rating_aggregate_count,
+          }}
+          onChange={(key, v) => {
+            if (key === 'seo_slug') setSlugTouched(true);
+            setForm((prev) => ({ ...prev, [key]: v }));
+          }}
+          parents={metaQuery.data?.seo_parents ?? []}
+          description="Chọn quốc gia (SEO) làm trang cha → URL = {parent}/{slug}."
+        />
 
         <FormSection
           icon={FolderTree}
-          title="Thông tin danh mục"
+          title="Thông tin chủ đề"
           description="Tên, loại và gắn quốc gia (select đơn)."
         >
           <FormCluster title="Định danh">
@@ -269,7 +251,13 @@ function CategoryFormInner() {
             <Select
               label="Quốc gia"
               value={form.country_id}
-              onChange={(v) => set('country_id', v)}
+              onChange={(v) => {
+                set('country_id', v);
+                const parent = (metaQuery.data?.seo_parents ?? []).find(
+                  (p) => String(p.reference_id ?? '') === String(v),
+                );
+                if (parent) set('seo_parent_id', String(parent.id));
+              }}
               placeholder="Không gắn quốc gia"
               searchable
               options={(metaQuery.data?.countries ?? []).map((c) => ({
@@ -278,11 +266,13 @@ function CategoryFormInner() {
               }))}
             />
             <Input label="Thứ tự" type="number" value={form.sort} onChange={(e) => set('sort', e.target.value)} />
+            <Select
+              label="Trạng thái"
+              value={activeStatusValue(form.is_active)}
+              onChange={(v) => set('is_active', parseActiveStatus(v))}
+              options={[...ACTIVE_STATUS_OPTIONS]}
+            />
           </FormCluster>
-
-          <div className="ui-form-flags">
-            <Switch label="Đang hoạt động" checked={form.is_active} onChange={(v) => set('is_active', v)} />
-          </div>
 
           <FormCluster cols={1}>
             <Textarea label="Mô tả" value={form.description} onChange={(e) => set('description', e.target.value)} />
@@ -290,25 +280,15 @@ function CategoryFormInner() {
           </FormCluster>
         </FormSection>
 
-        <div className="ui-form-footer">
-          <Link href="/tours/categories/">
-            <Button type="button" variant="secondary">
-              Hủy
-            </Button>
-          </Link>
-          <Button type="submit" loading={save.isPending}>
-            <Save size={17} />
-            Lưu danh mục
-          </Button>
-        </div>
+        <FormFooter
+          cancelHref="/tours/categories/"
+          submitLabel="Lưu chủ đề"
+          loading={save.isPending}
+        />
         </div>
 
-        <aside className="ui-form-layout__aside">
-          <div className="ui-media-card">
-            <div className="ui-media-card__head">
-              <h3 className="ui-media-card__title">Ảnh đại diện</h3>
-              <p className="ui-media-card__desc">Thumbnail listing danh mục tour.</p>
-            </div>
+        <FormMediaAside>
+          <FormThumbCard>
             <ImageField
               ariaLabel="Ảnh đại diện danh mục"
               folder="tour_categories"
@@ -317,8 +297,8 @@ function CategoryFormInner() {
               value={form.cover}
               onChange={(cover) => set('cover', cover)}
             />
-          </div>
-        </aside>
+          </FormThumbCard>
+        </FormMediaAside>
       </form>
     </div>
   );

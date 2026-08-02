@@ -98,6 +98,28 @@ trait ManagesTranslations
     }
 
     /**
+     * Options chọn trang cha SEO cho admin API / UI.
+     *
+     * @param  Collection<int, \App\Models\SeoEntry>  $parents
+     * @return list<array{id: int, label: string, slug_full: string, reference_id: int|null}>
+     */
+    protected function mapSeoParents(Collection $parents, string $locale): array
+    {
+        return $parents->map(function ($entry) use ($locale) {
+            $t = $entry->translation($locale);
+            $slugFull = (string) ($t?->slug_full ?? '');
+            $title = (string) ($t?->seo_title ?: $t?->title ?: ($slugFull !== '' ? $slugFull : '#'.$entry->id));
+
+            return [
+                'id' => (int) $entry->id,
+                'label' => $slugFull !== '' ? $title.' — '.$slugFull : $title,
+                'slug_full' => $slugFull,
+                'reference_id' => $entry->reference_id !== null ? (int) $entry->reference_id : null,
+            ];
+        })->values()->all();
+    }
+
+    /**
      * Locale codes đã có bản dịch nội dung (title/name không rỗng).
      *
      * @return list<string>

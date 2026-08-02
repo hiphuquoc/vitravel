@@ -28,7 +28,7 @@ class ListingHubController extends Controller
         $hubSeo = $this->seoService()->ensureHub($hubKey, $locale);
 
         $page = StaticPage::query()
-            ->with(['translations', 'banner', 'seoEntry.translations'])
+            ->with(['translations', 'banner', 'cover', 'seoEntry.translations'])
             ->where('template', $cfg['template'])
             ->first();
 
@@ -39,7 +39,7 @@ class ListingHubController extends Controller
                 'published_at' => now(),
             ]);
             $this->seoService()->ensureHub($hubKey, $locale);
-            $page->load(['translations', 'banner', 'seoEntry.translations']);
+            $page->load(['translations', 'banner', 'cover', 'seoEntry.translations']);
         }
 
         $seoTranslation = $page->seoEntry?->translation($locale) ?? $hubSeo->translation($locale);
@@ -69,6 +69,7 @@ class ListingHubController extends Controller
         $cfg = $this->hubConfig($hubKey);
         $locale = $request->string('language', 'vi')->toString();
         $this->assertUploadedFileOk($request);
+        $this->assertUploadedFileOk($request, 'cover');
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -80,6 +81,7 @@ class ListingHubController extends Controller
             'rating_aggregate_count' => 'nullable|integer|min:0',
             'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
             ...$this->coverImageRules(),
+            ...$this->coverImageRules('cover', 'remove_cover'),
         ]);
 
         DB::transaction(function () use ($request, $validated, $locale, $cfg, $hubKey) {
@@ -127,6 +129,14 @@ class ListingHubController extends Controller
             );
 
             $this->syncDirectCover($page, 'banner_media_id', $request, config('media.countries'));
+            $this->syncDirectCover(
+                $page,
+                'cover_media_id',
+                $request,
+                config('media.countries'),
+                'cover',
+                'remove_cover',
+            );
 
             // Safety net: orphans attach to hub after hub slug/parent sync
             match ($hubKey) {

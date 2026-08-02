@@ -14,7 +14,7 @@ class CruiseType extends Model
     use HasSeo, SoftDeletes;
 
     protected $fillable = [
-        'slug', 'name', 'banner_media_id', 'sort', 'is_active',
+        'slug', 'name', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
     ];
 
     protected function casts(): array
@@ -30,14 +30,29 @@ class CruiseType extends Model
         return $this->belongsTo(Media::class, 'banner_media_id');
     }
 
+    public function cover(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'cover_media_id');
+    }
+
     public function bannerUrl(?string $variant = 'card'): ?string
     {
         return app(MediaService::class)->publicUrl($this->banner, $variant);
     }
 
+    public function coverUrl(?string $variant = 'card'): ?string
+    {
+        return app(MediaService::class)->publicUrl($this->cover, $variant);
+    }
+
     public function bannerSrcset(): ?string
     {
         return app(MediaService::class)->srcset($this->banner);
+    }
+
+    public function coverSrcset(): ?string
+    {
+        return app(MediaService::class)->srcset($this->cover);
     }
 
     public function packages(): HasMany

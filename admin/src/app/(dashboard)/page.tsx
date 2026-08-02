@@ -3,10 +3,8 @@
 import Link from 'next/link';
 import {
   Anchor,
-  Briefcase,
   Building2,
   Compass,
-  FolderKanban,
   FolderTree,
   Globe2,
   Image,
@@ -19,6 +17,7 @@ import {
   Users,
 } from 'lucide-react';
 import { PageHeader } from '@/components/ui/Page';
+import { SERVICE_CLUSTERS } from '@/lib/nav';
 
 const cards = [
   { href: '/tours/packages/', title: 'Gói Tour', desc: 'Sản phẩm tour.', icon: Map },
@@ -31,18 +30,12 @@ const cards = [
   },
   { href: '/cruises/types/', title: 'Loại du thuyền', desc: 'Phân nhóm cruise.', icon: Anchor },
   { href: '/tours/categories/', title: 'Chủ đề Tour', desc: 'Nhóm lọc tour.', icon: FolderTree },
-  {
-    href: '/services/categories/',
-    title: 'Danh mục dịch vụ',
-    desc: 'Cluster dịch vụ.',
-    icon: FolderKanban,
-  },
-  {
-    href: '/services/products/',
-    title: 'Sản phẩm dịch vụ',
-    desc: 'Catalog dịch vụ.',
-    icon: Briefcase,
-  },
+  ...SERVICE_CLUSTERS.map((c) => ({
+    href: `/services/products/?cluster=${c.key}`,
+    title: c.label,
+    desc: `Danh mục & sản phẩm ${c.title.toLowerCase()}.`,
+    icon: c.icon,
+  })),
   {
     href: '/content/slides/',
     title: 'Slider trang chủ',

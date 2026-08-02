@@ -2,20 +2,22 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ChevronRight, LogOut, Menu } from 'lucide-react';
 import { Suspense, useState } from 'react';
 import clsx from 'clsx';
 import { useAuth } from '@/lib/auth-context';
 import { NAV_GROUPS, isNavActive } from '@/lib/nav';
 import { ThemeSwitcher } from '@/components/ui/ThemeSwitcher';
+import { PageLoader } from '@/components/ui/PageLoader';
+import { useAppRouter } from '@/hooks/useAppRouter';
 
-function buildCrumbs(pathname: string, hasId: boolean) {
+function buildCrumbs(pathname: string, hasId: boolean, searchParams: URLSearchParams) {
   const crumbs: { label: string; href?: string }[] = [{ label: 'Admin', href: '/' }];
 
   for (const group of NAV_GROUPS) {
     for (const item of group.items) {
-      if (isNavActive(pathname, item)) {
+      if (isNavActive(pathname, item, searchParams)) {
         crumbs.push({ label: group.title });
         crumbs.push({ label: item.label, href: item.href });
         if (pathname.includes('/form')) {
@@ -34,10 +36,10 @@ function ShellInner({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const search = useSearchParams();
-  const router = useRouter();
+  const router = useAppRouter();
   const [open, setOpen] = useState(false);
 
-  const crumbs = buildCrumbs(pathname, !!search.get('id'));
+  const crumbs = buildCrumbs(pathname, !!search.get('id'), search);
   const pageTitle = crumbs[crumbs.length - 1]?.label || 'Admin';
 
   const handleLogout = async () => {
@@ -67,10 +69,10 @@ function ShellInner({ children }: { children: ReactNode }) {
               <div className="sidebar__group-title">{group.title}</div>
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const active = isNavActive(pathname, item);
+                const active = isNavActive(pathname, item, search);
                 return (
                   <Link
-                    key={item.href}
+                    key={`${item.href}-${item.matchQuery ? JSON.stringify(item.matchQuery) : ''}`}
                     href={item.href}
                     className={clsx('sidebar__link', active && 'sidebar__link--active')}
                     onClick={() => setOpen(false)}
@@ -153,7 +155,7 @@ function ShellInner({ children }: { children: ReactNode }) {
 
 export function AdminShell({ children }: { children: ReactNode }) {
   return (
-    <Suspense fallback={<div className="shell" />}>
+    <Suspense fallback={<PageLoader label="Đang tải giao diện…" variant="screen" />}>
       <ShellInner>{children}</ShellInner>
     </Suspense>
   );

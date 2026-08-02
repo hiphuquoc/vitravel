@@ -1,7 +1,6 @@
 'use client';
 
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -11,8 +10,6 @@ import {
   FileText,
   Package,
   Plus,
-  Save,
-  Search,
   Ship,
   Tags,
 } from 'lucide-react';
@@ -30,9 +27,12 @@ import { Button } from '@/components/ui/Button';
 import { Input, MoneyInput, MultiSelect, Select, Switch, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormCluster, FormSection } from '@/components/ui/FormSection';
+import { SeoBox } from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { Repeater } from '@/components/ui/Repeater';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 import { ViewPublicButton } from '@/components/ui/ViewPublicButton';
 import { publicPageUrl } from '@/lib/publicUrl';
@@ -77,6 +77,7 @@ type FormState = {
   seo_slug: string;
   seo_title: string;
   seo_description: string;
+  seo_parent_id: string;
   rating_aggregate_star: string;
   rating_aggregate_count: string;
   is_featured: boolean;
@@ -133,6 +134,7 @@ const empty: FormState = {
   seo_slug: '',
   seo_title: '',
   seo_description: '',
+  seo_parent_id: '',
   rating_aggregate_star: '',
   rating_aggregate_count: '',
   is_featured: false,
@@ -264,6 +266,7 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
       seo_slug: d.seo?.slug || '',
       seo_title: d.seo?.title || '',
       seo_description: d.seo?.description || '',
+      seo_parent_id: d.seo?.parent_id ? String(d.seo.parent_id) : '',
       rating_aggregate_star:
         d.seo?.rating_aggregate_star != null ? String(d.seo.rating_aggregate_star) : '',
       rating_aggregate_count:
@@ -361,6 +364,7 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
         seo_slug: form.seo_slug || null,
         seo_title: form.seo_title || null,
         seo_description: form.seo_description || null,
+        seo_parent_id: form.seo_parent_id ? Number(form.seo_parent_id) : null,
         rating_aggregate_star: form.rating_aggregate_star
           ? Number(form.rating_aggregate_star)
           : null,
@@ -456,52 +460,23 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
 
       <form onSubmit={onSubmit} className="ui-form-layout">
         <div className="ui-form-layout__main ui-form-stack">
-        <FormSection
-          variant="priority"
-          icon={Search}
-          title="SEO"
-          description="Slug, meta và schema rating (sao) hiển thị public."
-        >
-          <FormCluster>
-            <Input
-              label="Slug"
-              value={form.seo_slug}
-              onChange={(e) => set('seo_slug', e.target.value)}
-            />
-            <Input
-              label="SEO title"
-              value={form.seo_title}
-              onChange={(e) => set('seo_title', e.target.value)}
-            />
-          </FormCluster>
-          <FormCluster cols={1}>
-            <Textarea
-              label="SEO description"
-              value={form.seo_description}
-              onChange={(e) => set('seo_description', e.target.value)}
-            />
-          </FormCluster>
-          <FormCluster title="Schema rating">
-            <Input
-              label="Điểm đánh giá"
-              type="number"
-              step="0.1"
-              min={0}
-              max={5}
-              value={form.rating_aggregate_star}
-              onChange={(e) => set('rating_aggregate_star', e.target.value)}
-              hint="AggregateRating — vd: 4.8"
-            />
-            <Input
-              label="Lượt đánh giá"
-              type="number"
-              min={0}
-              value={form.rating_aggregate_count}
-              onChange={(e) => set('rating_aggregate_count', e.target.value)}
-              hint="Số lượng review hiển thị public / schema"
-            />
-          </FormCluster>
-        </FormSection>
+        <SeoBox
+          value={{
+            seo_title: form.seo_title,
+            seo_slug: form.seo_slug,
+            seo_description: form.seo_description,
+            seo_parent_id: form.seo_parent_id,
+            rating_aggregate_star: form.rating_aggregate_star,
+            rating_aggregate_count: form.rating_aggregate_count,
+          }}
+          onChange={(key, v) => setForm((prev) => ({ ...prev, [key]: v }))}
+          parents={metaQuery.data?.seo_parents ?? []}
+          description={
+            isCruise
+              ? 'Chọn trang cha (loại cruise) → URL = {parent}/{slug}.'
+              : 'Chọn trang cha (quốc gia) → URL = {parent}/{slug}.'
+          }
+        />
 
         <FormSection
           icon={isCruise ? Ship : Package}
@@ -527,14 +502,23 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
             <Select
               label="Quốc gia"
               value={form.country_id}
-              onChange={(v) => set('country_id', v)}
+              onChange={(v) => {
+                set('country_id', v);
+                if (!isCruise) {
+                  const parent = (metaQuery.data?.seo_parents ?? []).find(
+                    (p) => String(p.reference_id ?? '') === String(v),
+                  );
+                  if (parent) set('seo_parent_id', String(parent.id));
+                }
+              }}
               placeholder="Chọn quốc gia"
               searchable
               required
               options={(metaQuery.data?.countries ?? []).map((c) => ({
                 value: c.id,
                 label: c.name || `#${c.id}`,
-              }))}
+              }))
+              }
             />
             <Select
               label="Trạng thái"
@@ -553,7 +537,16 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
               <Select
                 label="Loại cruise"
                 value={form.cruise_type}
-                onChange={(v) => set('cruise_type', v)}
+                onChange={(v) => {
+                  set('cruise_type', v);
+                  const ct = (metaQuery.data?.cruise_types ?? []).find((t) => t.slug === v);
+                  if (ct) {
+                    const parent = (metaQuery.data?.seo_parents ?? []).find(
+                      (p) => String(p.reference_id ?? '') === String(ct.id),
+                    );
+                    if (parent) set('seo_parent_id', String(parent.id));
+                  }
+                }}
                 placeholder="Chọn loại"
                 searchable
                 required
@@ -862,28 +855,15 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
           ) : null}
         </FormSection>
 
-        <div className="ui-form-footer">
-          <Link href={copy.listHref}>
-            <Button type="button" variant="secondary">
-              Hủy
-            </Button>
-          </Link>
-          <Button type="submit" loading={save.isPending}>
-            <Save size={17} />
-            {copy.saveLabel}
-          </Button>
-        </div>
+        <FormFooter
+          cancelHref={copy.listHref}
+          submitLabel={copy.saveLabel}
+          loading={save.isPending}
+        />
         </div>
 
-        <aside className="ui-form-layout__aside">
-          <div className="ui-media-card">
-            <div className="ui-media-card__head">
-              <h3 className="ui-media-card__title">Ảnh đại diện</h3>
-              <p className="ui-media-card__desc">
-                Thumbnail card / chi tiết / chia sẻ mạng xã hội. Upload xong hệ thống tối ưu WebP +
-                variants.
-              </p>
-            </div>
+        <FormMediaAside>
+          <FormThumbCard>
             <ImageField
               ariaLabel="Ảnh đại diện"
               folder="packages"
@@ -892,8 +872,8 @@ function PackageFormInner({ kind }: { kind: PackageType }) {
               value={form.cover}
               onChange={(cover) => set('cover', cover)}
             />
-          </div>
-        </aside>
+          </FormThumbCard>
+        </FormMediaAside>
       </form>
     </div>
   );

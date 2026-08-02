@@ -2,35 +2,53 @@
 
 import clsx from 'clsx';
 import {
-  AlertTriangle,
-  Check,
+  AlertCircle,
+  CheckCircle2,
   Info,
   Loader2,
   X,
 } from 'lucide-react';
 import toast, { Toaster, resolveValue, type Toast as HotToast } from 'react-hot-toast';
 
-function iconFor(type: HotToast['type']) {
-  switch (type) {
+type Tone = 'success' | 'error' | 'loading' | 'info';
+
+function toneFor(type: HotToast['type']): Tone {
+  if (type === 'success' || type === 'error' || type === 'loading') return type;
+  return 'info';
+}
+
+function titleFor(tone: Tone): string {
+  switch (tone) {
     case 'success':
-      return <Check size={15} strokeWidth={2.6} />;
+      return 'Thành công';
     case 'error':
-      return <AlertTriangle size={15} strokeWidth={2.4} />;
+      return 'Có lỗi xảy ra';
     case 'loading':
-      return <Loader2 size={15} strokeWidth={2.4} className="ui-toast__spin" />;
+      return 'Đang xử lý';
     default:
-      return <Info size={15} strokeWidth={2.4} />;
+      return 'Thông báo';
   }
 }
 
-function toneFor(type: HotToast['type']) {
-  if (type === 'success' || type === 'error' || type === 'loading') return type;
-  return 'info';
+function iconFor(tone: Tone) {
+  switch (tone) {
+    case 'success':
+      return <CheckCircle2 size={22} strokeWidth={2.2} />;
+    case 'error':
+      return <AlertCircle size={22} strokeWidth={2.2} />;
+    case 'loading':
+      return <Loader2 size={22} strokeWidth={2.2} className="ui-toast__spin" />;
+    default:
+      return <Info size={22} strokeWidth={2.2} />;
+  }
 }
 
 function ToastCard({ t }: { t: HotToast }) {
   const tone = toneFor(t.type);
   const message = resolveValue(t.message, t);
+  const duration = typeof t.duration === 'number' && t.duration > 0 && t.duration < Infinity
+    ? t.duration
+    : null;
 
   return (
     <div
@@ -42,22 +60,33 @@ function ToastCard({ t }: { t: HotToast }) {
       role={tone === 'error' ? 'alert' : 'status'}
       aria-live={tone === 'error' ? 'assertive' : 'polite'}
     >
-      <span className="ui-toast__spine" aria-hidden />
       <span className="ui-toast__icon" aria-hidden>
-        {iconFor(t.type)}
+        {iconFor(tone)}
       </span>
+
       <div className="ui-toast__body">
+        <div className="ui-toast__head">
+          <p className="ui-toast__title">{titleFor(tone)}</p>
+          {t.type !== 'loading' ? (
+            <button
+              type="button"
+              className="ui-toast__close"
+              onClick={() => toast.dismiss(t.id)}
+              aria-label="Đóng thông báo"
+            >
+              <X size={15} strokeWidth={2.5} />
+            </button>
+          ) : null}
+        </div>
         <p className="ui-toast__message">{message}</p>
       </div>
-      {t.type !== 'loading' ? (
-        <button
-          type="button"
-          className="ui-toast__close"
-          onClick={() => toast.dismiss(t.id)}
-          aria-label="Đóng thông báo"
-        >
-          <X size={14} strokeWidth={2.4} />
-        </button>
+
+      {duration ? (
+        <span
+          className="ui-toast__timer"
+          aria-hidden
+          style={{ animationDuration: `${duration}ms` }}
+        />
       ) : null}
     </div>
   );
@@ -67,14 +96,17 @@ function ToastCard({ t }: { t: HotToast }) {
 export function AppToaster() {
   return (
     <Toaster
-      position="top-right"
-      gutter={12}
+      position="top-center"
+      gutter={10}
       containerClassName="ui-toast-viewport"
-      containerStyle={{ top: 18, right: 18 }}
+      containerStyle={{
+        top: 'calc(var(--admin-topbar-h) + 0.75rem)',
+        zIndex: 1200,
+      }}
       toastOptions={{
-        duration: 4000,
-        success: { duration: 3600 },
-        error: { duration: 5200 },
+        duration: 4200,
+        success: { duration: 3800 },
+        error: { duration: 5600 },
         loading: { duration: Infinity },
       }}
     >

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { AdminShell } from '@/components/layout/AdminShell';
+import { PageLoader } from '@/components/ui/PageLoader';
 
 export function RequireAuth({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
@@ -18,11 +19,7 @@ export function RequireAuth({ children }: { children: ReactNode }) {
   }, [ready, user, router, pathname]);
 
   if (!ready) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center', color: '#6f7568' }}>
-        Đang tải console…
-      </div>
-    );
+    return <PageLoader label="Đang tải console…" variant="screen" />;
   }
 
   if (!user) return null;

@@ -3,16 +3,18 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import toast from '@/lib/toast';
 import { servicesApi } from '@/lib/services';
 import { useEditLocale } from '@/hooks/useEditLocale';
-import { Button } from '@/components/ui/Button';
 import { Input, Select, Switch, Textarea } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormSection } from '@/components/ui/FormSection';
+import { SeoBox } from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 
 type FormState = {
@@ -37,11 +39,12 @@ type FormState = {
   seo_slug: string;
   seo_title: string;
   seo_description: string;
+  seo_parent_id: string;
   cover: ImageFieldState;
 };
 
 const empty: FormState = {
-  cluster: 'experiences',
+  cluster: 'experience',
   service_category_id: '',
   country_id: '',
   code: '',
@@ -62,18 +65,20 @@ const empty: FormState = {
   seo_slug: '',
   seo_title: '',
   seo_description: '',
+  seo_parent_id: '',
   cover: emptyImageField(),
 };
 
 function FormInner() {
   const search = useSearchParams();
   const id = search.get('id') ? Number(search.get('id')) : null;
+  const clusterFromUrl = search.get('cluster') || 'experience';
   const isNew = !id;
   const router = useRouter();
   const qc = useQueryClient();
   const { locale, setLocale } = useEditLocale();
-  const [form, setForm] = useState<FormState>(empty);
-  const snapshotRef = useRef(JSON.stringify(empty));
+  const [form, setForm] = useState<FormState>({ ...empty, cluster: clusterFromUrl });
+  const snapshotRef = useRef(JSON.stringify({ ...empty, cluster: clusterFromUrl }));
   const isDirty = useMemo(() => JSON.stringify(form) !== snapshotRef.current, [form]);
 
   const metaQuery = useQuery({
@@ -90,7 +95,7 @@ function FormInner() {
     if (!detailQuery.data) return;
     const d = detailQuery.data;
     const next: FormState = {
-      cluster: d.cluster || 'experiences',
+      cluster: d.cluster || clusterFromUrl,
       service_category_id: d.service_category_id ? String(d.service_category_id) : '',
       country_id: d.country_id ? String(d.country_id) : '',
       code: d.code || '',
@@ -111,11 +116,12 @@ function FormInner() {
       seo_slug: d.seo?.slug || '',
       seo_title: d.seo?.title || '',
       seo_description: d.seo?.description || '',
+      seo_parent_id: d.seo?.parent_id ? String(d.seo.parent_id) : '',
       cover: emptyImageField(d.cover),
     };
     setForm(next);
     snapshotRef.current = JSON.stringify(next);
-  }, [detailQuery.data, locale]);
+  }, [detailQuery.data, locale, clusterFromUrl]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -125,6 +131,7 @@ function FormInner() {
         country_id: form.country_id ? Number(form.country_id) : null,
         price_from: form.price_from ? Number(form.price_from) : null,
         sort: Number(form.sort) || 0,
+        seo_parent_id: form.seo_parent_id ? Number(form.seo_parent_id) : null,
         cover_media_id: form.cover.media?.id ?? null,
         remove_cover: form.cover.remove,
         locale,
@@ -133,8 +140,11 @@ function FormInner() {
     },
     onSuccess: async (data) => {
       toast.success(isNew ? 'Đã tạo' : 'Đã lưu');
-      await qc.invalidateQueries({ queryKey: ['services'] });
-      router.replace(`/services/products/form/?id=${data.id}&locale=${locale}`);
+      await qc.invalidateQueries({ queryKey: [`services-${form.cluster}`] });
+      await qc.invalidateQueries({ queryKey: ['service', data.id] });
+      router.replace(
+        `/services/products/form/?id=${data.id}&locale=${locale}&cluster=${form.cluster}`,
+      );
     },
     onError: (err: Error) => toast.error(err.message),
   });
@@ -152,7 +162,11 @@ function FormInner() {
           <HeadActions
             secondary={
               <HeadSecondary
-                href="/services/products/"
+                href={
+                  form.cluster
+                    ? `/services/products/?cluster=${form.cluster}`
+                    : '/services/products/'
+                }
                 icon={ArrowLeft}
                 title="Quay lại"
                 subtitle="Danh sách"
@@ -175,6 +189,18 @@ function FormInner() {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
+          <SeoBox
+            value={{
+              seo_title: form.seo_title,
+              seo_slug: form.seo_slug,
+              seo_description: form.seo_description,
+              seo_parent_id: form.seo_parent_id,
+            }}
+            onChange={(key, v) => setForm((prev) => ({ ...prev, [key]: v }))}
+            parents={metaQuery.data?.seo_parents ?? []}
+            showRating={false}
+            description="Chọn danh mục / hub làm trang cha → URL phân tầng."
+          />
           <FormSection title="Thông tin">
             <Select
               label="Cluster"
@@ -188,7 +214,13 @@ function FormInner() {
             <Select
               label="Danh mục"
               value={form.service_category_id}
-              onChange={(v) => set('service_category_id', v)}
+              onChange={(v) => {
+                set('service_category_id', v);
+                const parent = (metaQuery.data?.seo_parents ?? []).find(
+                  (p) => String(p.reference_id ?? '') === String(v),
+                );
+                if (parent) set('seo_parent_id', String(parent.id));
+              }}
               placeholder="Chọn"
               options={(metaQuery.data?.categories ?? []).map((c) => ({
                 value: String(c.id),
@@ -206,7 +238,14 @@ function FormInner() {
               }))}
             />
             <Input label="Mã" value={form.code} onChange={(e) => set('code', e.target.value)} />
-            <Input label="Tiêu đề" value={form.title} onChange={(e) => set('title', e.target.value)} />
+            <Input
+              label="Tiêu đề"
+              value={form.title}
+              onChange={(e) => {
+                set('title', e.target.value);
+                if (isNew && !form.seo_title) set('seo_title', e.target.value);
+              }}
+            />
             <Select
               label="Trạng thái"
               value={form.status}
@@ -261,25 +300,31 @@ function FormInner() {
               checked={form.is_hot_deal}
               onChange={(v) => set('is_hot_deal', v)}
             />
-            <Input
-              label="SEO slug"
-              value={form.seo_slug}
-              onChange={(e) => set('seo_slug', e.target.value)}
-            />
+          </FormSection>
+
+          <FormFooter
+            cancelHref={
+              form.cluster
+                ? `/services/products/?cluster=${form.cluster}`
+                : '/services/products/'
+            }
+            submitLabel="Lưu dịch vụ"
+            loading={save.isPending}
+          />
+        </div>
+
+        <FormMediaAside>
+          <FormThumbCard>
             <ImageField
-              label="Cover"
+              ariaLabel="Ảnh đại diện dịch vụ"
               folder="services"
+              aspectRatio="3 / 2"
+              variant="card"
               value={form.cover}
               onChange={(v) => set('cover', v)}
             />
-          </FormSection>
-        </div>
-        <div className="ui-form-layout__side">
-          <Button type="submit" disabled={save.isPending}>
-            <Save size={16} />
-            Lưu
-          </Button>
-        </div>
+          </FormThumbCard>
+        </FormMediaAside>
       </form>
     </div>
   );

@@ -1,19 +1,25 @@
 'use client';
 
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Anchor, ArrowLeft, Save, Search } from 'lucide-react';
+import { Anchor, ArrowLeft } from 'lucide-react';
 import toast from '@/lib/toast';
-import { cruiseTypesApi, metaApi } from '@/lib/services';
+import { cruiseTypesApi } from '@/lib/services';
 import { useEditLocale } from '@/hooks/useEditLocale';
-import { Button } from '@/components/ui/Button';
-import { Input, Switch, Textarea } from '@/components/ui/Field';
+import { Input, Select } from '@/components/ui/Field';
 import { PageHeader } from '@/components/ui/Page';
 import { FormCluster, FormSection } from '@/components/ui/FormSection';
+import {
+  ACTIVE_STATUS_OPTIONS,
+  SeoBox,
+  activeStatusValue,
+  parseActiveStatus,
+} from '@/components/ui/SeoBox';
 import { LocaleSwitcher } from '@/components/ui/LocaleSwitcher';
 import { emptyImageField, ImageField, type ImageFieldState } from '@/components/ui/ImageField';
+import { FormMediaAside, FormThumbCard, FormBannerCard } from '@/components/ui/FormMediaAside';
+import { FormFooter } from '@/components/ui/FormFooter';
 import { HeadActions, HeadSecondary } from '@/components/ui/HeadActions';
 import { ViewPublicButton } from '@/components/ui/ViewPublicButton';
 import { publicPageUrl } from '@/lib/publicUrl';
@@ -25,8 +31,10 @@ type FormState = {
   seo_slug: string;
   seo_title: string;
   seo_description: string;
+  seo_parent_id: string;
   rating_aggregate_star: string;
   rating_aggregate_count: string;
+  cover: ImageFieldState;
   banner: ImageFieldState;
 };
 
@@ -37,8 +45,10 @@ const empty: FormState = {
   seo_slug: '',
   seo_title: '',
   seo_description: '',
+  seo_parent_id: '',
   rating_aggregate_star: '',
   rating_aggregate_count: '',
+  cover: emptyImageField(),
   banner: emptyImageField(),
 };
 
@@ -65,9 +75,9 @@ function CruiseTypeFormInner() {
   const snapshotRef = useRef(JSON.stringify(empty));
   const isDirty = useMemo(() => JSON.stringify(form) !== snapshotRef.current, [form]);
 
-  const languagesQuery = useQuery({
-    queryKey: ['meta-languages'],
-    queryFn: () => metaApi.languages(),
+  const metaQuery = useQuery({
+    queryKey: ['cruise-types-meta', locale],
+    queryFn: () => cruiseTypesApi.meta(locale),
   });
 
   const detailQuery = useQuery({
@@ -86,16 +96,27 @@ function CruiseTypeFormInner() {
       seo_slug: d.seo?.slug || d.slug || '',
       seo_title: d.seo?.title || '',
       seo_description: d.seo?.description || '',
+      seo_parent_id: d.seo?.parent_id
+        ? String(d.seo.parent_id)
+        : metaQuery.data?.hub_seo_id
+          ? String(metaQuery.data.hub_seo_id)
+          : '',
       rating_aggregate_star:
         d.seo?.rating_aggregate_star != null ? String(d.seo.rating_aggregate_star) : '',
       rating_aggregate_count:
         d.seo?.rating_aggregate_count != null ? String(d.seo.rating_aggregate_count) : '',
+      cover: emptyImageField(d.cover ?? null),
       banner: emptyImageField(d.banner ?? null),
     };
     setForm(next);
     snapshotRef.current = JSON.stringify(next);
     setSlugTouched(true);
-  }, [detailQuery.data, locale]);
+  }, [detailQuery.data, locale, metaQuery.data?.hub_seo_id]);
+
+  useEffect(() => {
+    if (!isNew || form.seo_parent_id || !metaQuery.data?.hub_seo_id) return;
+    setForm((prev) => ({ ...prev, seo_parent_id: String(metaQuery.data!.hub_seo_id) }));
+  }, [isNew, form.seo_parent_id, metaQuery.data?.hub_seo_id]);
 
   const save = useMutation({
     mutationFn: async () => {
@@ -108,6 +129,7 @@ function CruiseTypeFormInner() {
         seo_slug: slug,
         seo_title: form.seo_title || form.name,
         seo_description: form.seo_description || null,
+        seo_parent_id: form.seo_parent_id ? Number(form.seo_parent_id) : null,
         rating_aggregate_star: form.rating_aggregate_star
           ? Number(form.rating_aggregate_star)
           : null,
@@ -116,6 +138,8 @@ function CruiseTypeFormInner() {
           : null,
         banner_media_id: form.banner.media?.id ?? null,
         remove_banner: form.banner.remove,
+        cover_media_id: form.cover.media?.id ?? null,
+        remove_cover: form.cover.remove,
         locale,
       };
       return isNew ? cruiseTypesApi.create(payload) : cruiseTypesApi.update(id!, payload);
@@ -146,7 +170,7 @@ function CruiseTypeFormInner() {
                 href={publicPageUrl(
                   detailQuery.data?.seo?.slug_full,
                   locale,
-                  languagesQuery.data?.default_code || 'vi',
+                  metaQuery.data?.default_locale || 'vi',
                 )}
               />
             }
@@ -163,7 +187,7 @@ function CruiseTypeFormInner() {
       />
 
       <LocaleSwitcher
-        languages={languagesQuery.data?.items ?? []}
+        languages={metaQuery.data?.languages ?? []}
         value={locale}
         onChange={(code) => setLocale(code, { confirmIfDirty: true, isDirty })}
         translatedLocales={detailQuery.data?.translated_locales ?? (isNew ? [] : undefined)}
@@ -178,55 +202,23 @@ function CruiseTypeFormInner() {
         className="ui-form-layout"
       >
         <div className="ui-form-layout__main ui-form-stack">
-        <FormSection
-          variant="priority"
-          icon={Search}
-          title="SEO"
-          description="Slug khớp packages.cruise_type — meta và schema rating."
-        >
-          <FormCluster>
-            <Input
-              label="Slug"
-              value={form.seo_slug}
-              onChange={(e) => {
-                setSlugTouched(true);
-                set('seo_slug', e.target.value);
-              }}
-              required
-              hint="Khớp packages.cruise_type và seo_slug"
-            />
-            <Input
-              label="SEO title"
-              value={form.seo_title}
-              onChange={(e) => set('seo_title', e.target.value)}
-            />
-          </FormCluster>
-          <FormCluster cols={1}>
-            <Textarea
-              label="SEO description"
-              value={form.seo_description}
-              onChange={(e) => set('seo_description', e.target.value)}
-            />
-          </FormCluster>
-          <FormCluster title="Schema rating">
-            <Input
-              label="Điểm đánh giá"
-              type="number"
-              step="0.1"
-              min={0}
-              max={5}
-              value={form.rating_aggregate_star}
-              onChange={(e) => set('rating_aggregate_star', e.target.value)}
-            />
-            <Input
-              label="Lượt đánh giá"
-              type="number"
-              min={0}
-              value={form.rating_aggregate_count}
-              onChange={(e) => set('rating_aggregate_count', e.target.value)}
-            />
-          </FormCluster>
-        </FormSection>
+        <SeoBox
+          value={{
+            seo_title: form.seo_title,
+            seo_slug: form.seo_slug,
+            seo_description: form.seo_description,
+            seo_parent_id: form.seo_parent_id,
+            rating_aggregate_star: form.rating_aggregate_star,
+            rating_aggregate_count: form.rating_aggregate_count,
+          }}
+          onChange={(key, v) => {
+            if (key === 'seo_slug') setSlugTouched(true);
+            setForm((prev) => ({ ...prev, [key]: v }));
+          }}
+          parents={metaQuery.data?.seo_parents ?? []}
+          slugHint="Khớp packages.cruise_type và seo_slug"
+          description="Chọn Hub Cruise làm trang cha → URL = /cruises/{slug}."
+        />
 
         <FormSection
           icon={Anchor}
@@ -251,32 +243,35 @@ function CruiseTypeFormInner() {
               onChange={(e) => set('sort', e.target.value)}
             />
           </FormCluster>
-          <div className="ui-form-flags">
-            <Switch label="Đang hoạt động" checked={form.is_active} onChange={(v) => set('is_active', v)} />
-          </div>
+          <FormCluster>
+            <Select
+              label="Trạng thái"
+              value={activeStatusValue(form.is_active)}
+              onChange={(v) => set('is_active', parseActiveStatus(v))}
+              options={[...ACTIVE_STATUS_OPTIONS]}
+            />
+          </FormCluster>
         </FormSection>
 
-        <div className="ui-form-footer">
-          <Link href="/cruises/types/">
-            <Button type="button" variant="secondary">
-              Hủy
-            </Button>
-          </Link>
-          <Button type="submit" loading={save.isPending}>
-            <Save size={17} />
-            Lưu loại du thuyền
-          </Button>
-        </div>
+        <FormFooter
+          cancelHref="/cruises/types/"
+          submitLabel="Lưu loại du thuyền"
+          loading={save.isPending}
+        />
         </div>
 
-        <aside className="ui-form-layout__aside">
-          <div className="ui-media-card">
-            <div className="ui-media-card__head">
-              <h3 className="ui-media-card__title">Banner listing</h3>
-              <p className="ui-media-card__desc">
-                Banner first-view trang listing loại du thuyền (tỉ lệ rộng 21:9).
-              </p>
-            </div>
+        <FormMediaAside>
+          <FormThumbCard>
+            <ImageField
+              ariaLabel="Ảnh đại diện loại du thuyền"
+              folder="cruise_types"
+              aspectRatio="3 / 2"
+              variant="card"
+              value={form.cover}
+              onChange={(cover) => set('cover', cover)}
+            />
+          </FormThumbCard>
+          <FormBannerCard>
             <ImageField
               ariaLabel="Banner listing loại du thuyền"
               folder="cruise_types"
@@ -285,8 +280,8 @@ function CruiseTypeFormInner() {
               value={form.banner}
               onChange={(banner) => set('banner', banner)}
             />
-          </div>
-        </aside>
+          </FormBannerCard>
+        </FormMediaAside>
       </form>
     </div>
   );

@@ -1,12 +1,13 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { DEFAULT_LOCALE } from '@/lib/locale';
+import { useAppRouter } from '@/hooks/useAppRouter';
 
 /** Locale edit từ query `?locale=` — đồng bộ URL + reload bản dịch */
 export function useEditLocale(defaultLocale = DEFAULT_LOCALE) {
-  const router = useRouter();
+  const router = useAppRouter();
   const pathname = usePathname();
   const search = useSearchParams();
 

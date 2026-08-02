@@ -64,7 +64,8 @@ function packagesApiFor(type: PackageType) {
         discount_badges: ValueLabel[];
         languages: LocaleOption[];
         default_locale: string;
-      }>('/packages/meta', { query: { locale } }),
+        seo_parents: { id: number; label: string; slug_full?: string; reference_id?: number | null }[];
+      }>('/packages/meta', { query: { locale, type } }),
   };
 }
 
@@ -89,6 +90,7 @@ export const categoriesApi = {
       type_options: ValueLabel[];
       languages: LocaleOption[];
       default_locale: string;
+      seo_parents: { id: number; label: string; slug_full?: string; reference_id?: number | null }[];
     }>('/tour-categories/meta', {
       query: { locale },
     }),
@@ -118,6 +120,13 @@ export const cruiseTypesApi = {
   update: (id: number, body: Record<string, unknown>) =>
     apiRequest<CruiseTypeDetail>(`/cruise-types/${id}`, { method: 'PUT', body }),
   remove: (id: number) => apiRequest<null>(`/cruise-types/${id}`, { method: 'DELETE' }),
+  meta: (locale = 'vi') =>
+    apiRequest<{
+      languages: LocaleOption[];
+      default_locale: string;
+      hub_seo_id: number;
+      seo_parents: { id: number; label: string; slug_full?: string; reference_id?: number | null }[];
+    }>('/cruise-types/meta', { query: { locale } }),
 };
 
 export const countriesApi = {
@@ -130,12 +139,17 @@ export const countriesApi = {
   update: (id: number, body: Record<string, unknown>) =>
     apiRequest<CountryDetail>(`/countries/${id}`, { method: 'PUT', body }),
   remove: (id: number) => apiRequest<null>(`/countries/${id}`, { method: 'DELETE' }),
+  setActive: (id: number, is_active: boolean) =>
+    apiRequest<{ id: number; is_active: boolean }>(`/countries/${id}/active`, {
+      method: 'PATCH',
+      body: { is_active },
+    }),
   meta: (locale = 'vi') =>
     apiRequest<{
       languages: LocaleOption[];
       default_locale: string;
       hub_seo_id: number;
-      seo_parents: { id: number; label: string }[];
+      seo_parents: { id: number; label: string; slug_full?: string; reference_id?: number | null }[];
       home_grid_sizes: ValueLabel[];
     }>('/countries/meta', { query: { locale } }),
 };
@@ -156,7 +170,7 @@ export const serviceCategoriesApi = {
       default_locale: string;
       clusters: ValueLabel[];
       hub_seo_id: number | null;
-      seo_parents: { id: number; label: string }[];
+      seo_parents: { id: number; label: string; slug_full?: string; reference_id?: number | null }[];
     }>('/service-categories/meta', { query: { locale, cluster } }),
 };
 
@@ -180,7 +194,7 @@ export const servicesApi = {
       countries: Option[];
       statuses: ValueLabel[];
       hub_seo_id: number | null;
-      seo_parents: { id: number; label: string }[];
+      seo_parents: { id: number; label: string; slug_full?: string; reference_id?: number | null }[];
     }>('/services/meta', { query: { locale, cluster } }),
 };
 
@@ -267,7 +281,12 @@ export const mediaApi = {
 
 type CrudListQuery = Record<string, string | number | boolean | undefined>;
 
-function crudApi<TList, TDetail = TList>(base: string) {
+/** Row CRUD generic — luôn có id (list + create/update). */
+export type CrudRecord = { id: number } & Record<string, unknown>;
+
+function crudApi<TList extends { id: number } = CrudRecord, TDetail extends { id: number } = TList>(
+  base: string,
+) {
   return {
     list: (query?: CrudListQuery) => apiRequest<Paginated<TList>>(base, { query }),
     get: (id: number, locale = 'vi') =>
@@ -281,7 +300,7 @@ function crudApi<TList, TDetail = TList>(base: string) {
 }
 
 export const homeSlidesApi = {
-  ...crudApi<Record<string, unknown>>('/home-slides'),
+  ...crudApi<CrudRecord>('/home-slides'),
   meta: () => apiRequest<Record<string, unknown>>('/home-slides/meta'),
 };
 
@@ -292,25 +311,25 @@ export const homeSectionsApi = {
 };
 
 export const blogCategoriesApi = {
-  ...crudApi<Record<string, unknown>>('/blog-categories'),
+  ...crudApi<CrudRecord>('/blog-categories'),
   meta: (locale = 'vi') =>
     apiRequest<Record<string, unknown>>('/blog-categories/meta', { query: { locale } }),
 };
 
 export const articlesApi = {
-  ...crudApi<Record<string, unknown>>('/articles'),
+  ...crudApi<CrudRecord>('/articles'),
   meta: (locale = 'vi') =>
     apiRequest<Record<string, unknown>>('/articles/meta', { query: { locale } }),
 };
 
 export const teamMembersApi = {
-  ...crudApi<Record<string, unknown>>('/team-members'),
+  ...crudApi<CrudRecord>('/team-members'),
   meta: (locale = 'vi') =>
     apiRequest<Record<string, unknown>>('/team-members/meta', { query: { locale } }),
 };
 
 export const officesApi = {
-  ...crudApi<Record<string, unknown>>('/offices'),
+  ...crudApi<CrudRecord>('/offices'),
   meta: (locale = 'vi') =>
     apiRequest<Record<string, unknown>>('/offices/meta', { query: { locale } }),
 };
@@ -322,20 +341,20 @@ export const companyProfileApi = {
     apiRequest<Record<string, unknown>>('/company-profile', { method: 'PUT', body }),
 };
 
-export const companyValuesApi = crudApi<Record<string, unknown>>('/company-values');
-export const reasonsApi = crudApi<Record<string, unknown>>('/reasons');
-export const referencePersonsApi = crudApi<Record<string, unknown>>('/reference-persons');
-export const reviewsApi = crudApi<Record<string, unknown>>('/reviews');
-export const reviewPlatformsApi = crudApi<Record<string, unknown>>('/review-platforms');
+export const companyValuesApi = crudApi<CrudRecord>('/company-values');
+export const reasonsApi = crudApi<CrudRecord>('/reasons');
+export const referencePersonsApi = crudApi<CrudRecord>('/reference-persons');
+export const reviewsApi = crudApi<CrudRecord>('/reviews');
+export const reviewPlatformsApi = crudApi<CrudRecord>('/review-platforms');
 
 export const galleryAlbumsApi = {
-  ...crudApi<Record<string, unknown>>('/gallery-albums'),
+  ...crudApi<CrudRecord>('/gallery-albums'),
   meta: (locale = 'vi') =>
     apiRequest<Record<string, unknown>>('/gallery-albums/meta', { query: { locale } }),
 };
 
 export const videosApi = {
-  ...crudApi<Record<string, unknown>>('/videos'),
+  ...crudApi<CrudRecord>('/videos'),
   meta: (locale = 'vi') =>
     apiRequest<Record<string, unknown>>('/videos/meta', { query: { locale } }),
 };

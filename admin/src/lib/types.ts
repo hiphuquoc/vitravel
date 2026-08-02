@@ -129,6 +129,7 @@ export type PackageDetail = PackageListItem & {
     slug_full: string | null;
     title: string | null;
     description: string | null;
+    parent_id?: number | null;
     rating_aggregate_star: number | null;
     rating_aggregate_count: number | null;
   };
@@ -148,18 +149,21 @@ export type CruiseType = {
   sort: number;
   is_active: boolean;
   seo?: { slug: string | null; slug_full: string | null };
+  cover?: MediaImage | null;
   banner?: MediaImage | null;
   updated_at: string | null;
 };
 
 export type CruiseTypeDetail = CruiseType & {
   translated_locales?: string[];
+  cover: MediaImage | null;
   banner: MediaImage | null;
   seo: {
     slug: string | null;
     slug_full: string | null;
     title: string | null;
     description: string | null;
+    parent_id?: number | null;
     rating_aggregate_star: number | null;
     rating_aggregate_count: number | null;
   };
@@ -190,6 +194,7 @@ export type TourCategoryDetail = TourCategory & {
     slug_full: string | null;
     title: string | null;
     description: string | null;
+    parent_id?: number | null;
     rating_aggregate_star: number | null;
     rating_aggregate_count: number | null;
   };
