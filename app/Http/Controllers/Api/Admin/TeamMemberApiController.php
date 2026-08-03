@@ -8,6 +8,11 @@ use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Language;
 use App\Models\TeamMember;
+use App\Models\TeamMemberAchievement;
+use App\Models\TeamMemberActivityImage;
+use App\Models\TeamMemberDegree;
+use App\Models\TeamMemberExperience;
+use App\Models\TeamMemberSkill;
 use App\Models\TeamMemberTranslation;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
@@ -75,9 +80,19 @@ class TeamMemberApiController extends Controller
     public function show(Request $request, int $id): JsonResponse
     {
         $locale = $request->string('locale', 'vi')->toString();
-        $m = TeamMember::query()->with(['translations', 'avatar', 'seoEntry.translations'])->findOrFail($id);
+        $m = TeamMember::query()->with([
+            'translations',
+            'avatar',
+            'seoEntry.translations',
+            'achievements',
+            'skills',
+            'experiences.items',
+            'degrees.items',
+            'activityImages.media',
+        ])->findOrFail($id);
         $t = $m->translation($locale);
         $seo = $m->seoEntry?->translation($locale);
+        $media = app(MediaService::class);
         $langs = is_array($m->languages) ? implode("\n", $m->languages) : (string) $m->languages;
 
         return ApiResponse::success([
@@ -100,7 +115,28 @@ class TeamMemberApiController extends Controller
             'short_bio' => $t?->short_bio,
             'bio_html' => $t?->bio_html,
             'translated_locales' => $this->translatedLocaleCodes($m, 'name'),
-            'avatar' => app(MediaService::class)->adminMediaPayload($m->avatar, 'card'),
+            'avatar' => $media->adminMediaPayload($m->avatar, 'card'),
+            'achievements' => $m->achievements->map(fn (TeamMemberAchievement $a) => [
+                'content' => $a->content,
+            ])->values()->all(),
+            'skills' => $m->skills->map(fn (TeamMemberSkill $s) => [
+                'skill' => $s->skill,
+                'percent' => (int) $s->percent,
+            ])->values()->all(),
+            'experiences' => $m->experiences->map(fn (TeamMemberExperience $e) => [
+                'title' => $e->title,
+                'company' => $e->company,
+                'items' => $e->items->pluck('content')->implode("\n"),
+            ])->values()->all(),
+            'degrees' => $m->degrees->map(fn (TeamMemberDegree $d) => [
+                'title' => $d->title,
+                'school' => $d->school,
+                'items' => $d->items->pluck('content')->implode("\n"),
+            ])->values()->all(),
+            'activity_images' => $m->activityImages->map(fn (TeamMemberActivityImage $img) => [
+                'id' => $img->id,
+                'media' => $media->adminMediaPayload($img->media, 'card'),
+            ])->values()->all(),
             'seo' => [
                 'slug' => $seo?->slug,
                 'slug_full' => $seo?->slug_full,
@@ -165,6 +201,21 @@ class TeamMemberApiController extends Controller
                 'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
                 'avatar_media_id' => 'nullable|integer|exists:media,id',
                 'remove_avatar' => 'nullable|boolean',
+                'achievements' => 'nullable|array',
+                'achievements.*.content' => 'nullable|string',
+                'skills' => 'nullable|array',
+                'skills.*.skill' => 'nullable|string|max:255',
+                'skills.*.percent' => 'nullable|integer|min:0|max:100',
+                'experiences' => 'nullable|array',
+                'experiences.*.title' => 'nullable|string|max:255',
+                'experiences.*.company' => 'nullable|string|max:255',
+                'experiences.*.items' => 'nullable|string',
+                'degrees' => 'nullable|array',
+                'degrees.*.title' => 'nullable|string|max:255',
+                'degrees.*.school' => 'nullable|string|max:255',
+                'degrees.*.items' => 'nullable|string',
+                'activity_media_ids' => 'nullable|array',
+                'activity_media_ids.*' => 'integer|exists:media,id',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -241,9 +292,146 @@ class TeamMemberApiController extends Controller
                 ],
             );
 
-            return $member->fresh(['translations', 'avatar', 'seoEntry.translations']);
+            $this->syncAchievements($member, $validated['achievements'] ?? []);
+            $this->syncSkills($member, $validated['skills'] ?? []);
+            $member->load(['experiences.items', 'degrees.items']);
+            $this->syncExperiences($member, $validated['experiences'] ?? []);
+            $this->syncDegrees($member, $validated['degrees'] ?? []);
+            $this->syncActivityImages($member, $validated['activity_media_ids'] ?? []);
+
+            return $member->fresh([
+                'translations',
+                'avatar',
+                'seoEntry.translations',
+                'achievements',
+                'skills',
+                'experiences.items',
+                'degrees.items',
+                'activityImages.media',
+            ]);
         });
 
         return $this->show($request->merge(['locale' => $locale]), $member->id);
+    }
+
+    /** @param  array<int, array<string, mixed>>  $rows */
+    private function syncAchievements(TeamMember $member, array $rows): void
+    {
+        $member->achievements()->delete();
+        $order = 0;
+        foreach ($rows as $row) {
+            $content = trim((string) ($row['content'] ?? ''));
+            if ($content === '') {
+                continue;
+            }
+            TeamMemberAchievement::query()->create([
+                'team_member_id' => $member->id,
+                'content' => $content,
+                'ordering' => $order++,
+            ]);
+        }
+    }
+
+    /** @param  array<int, array<string, mixed>>  $rows */
+    private function syncSkills(TeamMember $member, array $rows): void
+    {
+        $member->skills()->delete();
+        $order = 0;
+        foreach ($rows as $row) {
+            $skill = trim((string) ($row['skill'] ?? ''));
+            if ($skill === '') {
+                continue;
+            }
+            TeamMemberSkill::query()->create([
+                'team_member_id' => $member->id,
+                'skill' => $skill,
+                'percent' => max(0, min(100, (int) ($row['percent'] ?? 0))),
+                'ordering' => $order++,
+            ]);
+        }
+    }
+
+    /** @param  array<int, array<string, mixed>>  $rows */
+    private function syncExperiences(TeamMember $member, array $rows): void
+    {
+        $member->experiences->each(function (TeamMemberExperience $exp) {
+            $exp->items()->delete();
+            $exp->delete();
+        });
+
+        $order = 0;
+        foreach ($rows as $row) {
+            $title = trim((string) ($row['title'] ?? ''));
+            if ($title === '') {
+                continue;
+            }
+            $exp = TeamMemberExperience::query()->create([
+                'team_member_id' => $member->id,
+                'title' => $title,
+                'company' => filled($row['company'] ?? null) ? trim((string) $row['company']) : null,
+                'ordering' => $order++,
+            ]);
+            foreach ($this->linesToArray($row['items'] ?? null) as $line) {
+                $exp->items()->create(['content' => $line]);
+            }
+        }
+    }
+
+    /** @param  array<int, array<string, mixed>>  $rows */
+    private function syncDegrees(TeamMember $member, array $rows): void
+    {
+        $member->degrees->each(function (TeamMemberDegree $degree) {
+            $degree->items()->delete();
+            $degree->delete();
+        });
+
+        $order = 0;
+        foreach ($rows as $row) {
+            $title = trim((string) ($row['title'] ?? ''));
+            if ($title === '') {
+                continue;
+            }
+            $degree = TeamMemberDegree::query()->create([
+                'team_member_id' => $member->id,
+                'title' => $title,
+                'school' => filled($row['school'] ?? null) ? trim((string) $row['school']) : null,
+                'ordering' => $order++,
+            ]);
+            foreach ($this->linesToArray($row['items'] ?? null) as $line) {
+                $degree->items()->create(['content' => $line]);
+            }
+        }
+    }
+
+    /** @param  array<int, mixed>  $mediaIds */
+    private function syncActivityImages(TeamMember $member, array $mediaIds): void
+    {
+        $member->activityImages()->delete();
+        $order = 0;
+        foreach ($mediaIds as $mediaId) {
+            $id = (int) $mediaId;
+            if ($id <= 0) {
+                continue;
+            }
+            TeamMemberActivityImage::query()->create([
+                'team_member_id' => $member->id,
+                'media_id' => $id,
+                'ordering' => $order++,
+            ]);
+        }
+    }
+
+    /** @return list<string> */
+    private function linesToArray(mixed $raw): array
+    {
+        if (is_array($raw)) {
+            return collect($raw)->map(fn ($l) => trim((string) $l))->filter()->values()->all();
+        }
+
+        return collect(preg_split('/\r\n|\r|\n/', (string) $raw))
+            ->map(fn ($l) => trim($l))
+            ->filter()
+            ->values()
+            ->all();
     }
 }

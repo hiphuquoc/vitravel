@@ -10,43 +10,109 @@ use App\Services\MediaService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class MediaLibraryApiController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
+        $mediaService = app(MediaService::class);
+        $folders = $mediaService->adminFolderMap();
+
         $query = Media::query()->orderByDesc('id');
+
         if ($request->filled('search')) {
             $search = $request->string('search')->toString();
             $query->where(function ($q) use ($search) {
                 $q->where('filename', 'like', "%{$search}%")
                     ->orWhere('alt', 'like', "%{$search}%")
-                    ->orWhere('path', 'like', "%{$search}%");
+                    ->orWhere('path', 'like', "%{$search}%")
+                    ->orWhere('mime_type', 'like', "%{$search}%");
             });
         }
-        $paginator = $query->paginate(min(max($request->integer('per_page', 40), 1), 100));
-        $media = app(MediaService::class);
+
+        if ($request->filled('folder')) {
+            $folderKey = $request->string('folder')->toString();
+            $folderPath = $folders[$folderKey] ?? null;
+            if (is_string($folderPath) && $folderPath !== '') {
+                $prefix = trim(str_replace('\\', '/', $folderPath), '/');
+                $query->where(function ($q) use ($prefix) {
+                    $q->where('path', $prefix)
+                        ->orWhere('path', 'like', $prefix.'/%');
+                });
+            }
+        }
+
+        if ($request->filled('kind')) {
+            $kind = $request->string('kind')->toString();
+            if ($kind === 'video') {
+                $query->where(function ($q) {
+                    $q->where('mime_type', 'like', 'video/%')
+                        ->orWhere('meta->kind', 'video');
+                });
+            } elseif ($kind === 'image') {
+                $query->where(function ($q) {
+                    $q->where(function ($inner) {
+                        $inner->whereNull('mime_type')
+                            ->orWhere('mime_type', 'like', 'image/%');
+                    })->where(function ($inner) {
+                        $inner->whereNull('meta->kind')
+                            ->orWhere('meta->kind', '!=', 'video');
+                    });
+                });
+            }
+        }
+
+        $paginator = $query->paginate(min(max($request->integer('per_page', 48), 1), 100));
 
         return ApiResponse::success([
-            'items' => collect($paginator->items())->map(function (Media $m) use ($media) {
-                $payload = $media->adminMediaPayload($m, 'thumb') ?? [
-                    'id' => $m->id,
-                    'url' => null,
-                    'filename' => $m->filename,
-                ];
-
-                return array_merge($payload, [
-                    'created_at' => $m->created_at?->toIso8601String(),
-                    'path' => $m->path ?? null,
-                ]);
-            }),
+            'items' => collect($paginator->items())->map(
+                fn (Media $m) => $mediaService->libraryPayload($m)
+            )->values(),
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
             ],
+            'folders' => collect($folders)->map(fn ($path, $key) => [
+                'key' => $key,
+                'path' => $path,
+            ])->values(),
         ]);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $row = Media::query()->findOrFail($id);
+
+        return ApiResponse::success(app(MediaService::class)->libraryPayload($row));
+    }
+
+    public function update(Request $request, int $id): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'alt' => 'nullable|string|max:255',
+                'credit' => 'nullable|string|max:255',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        $row = Media::query()->findOrFail($id);
+        $row->fill([
+            'alt' => array_key_exists('alt', $validated) ? ($validated['alt'] ?: null) : $row->alt,
+            'credit' => array_key_exists('credit', $validated)
+                ? ($validated['credit'] ?: null)
+                : $row->credit,
+        ]);
+        $row->save();
+
+        return ApiResponse::success(
+            app(MediaService::class)->libraryPayload($row->fresh()),
+            'Đã cập nhật media',
+        );
     }
 
     public function destroy(int $id): JsonResponse

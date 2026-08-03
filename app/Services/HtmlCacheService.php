@@ -329,12 +329,66 @@ class HtmlCacheService
     {
         try {
             $files = $this->disk->allFiles($this->cacheFolder);
-            if (empty($files)) return 0;
+            if (empty($files)) {
+                return 0;
+            }
             $this->disk->delete($files);
+
             return count($files);
         } catch (\Throwable $e) {
-            Log::error('HtmlCacheService clearAll failed: ' . $e->getMessage());
+            Log::error('HtmlCacheService clearAll failed: '.$e->getMessage());
+
             return 0;
+        }
+    }
+
+    /** Số file cache HTML hiện có (để UI progress). */
+    public function countFiles(): int
+    {
+        try {
+            return count($this->disk->allFiles($this->cacheFolder));
+        } catch (\Throwable $e) {
+            Log::warning('HtmlCacheService countFiles failed: '.$e->getMessage());
+
+            return 0;
+        }
+    }
+
+    /**
+     * Xóa một lô file cache — dùng cho progress realtime.
+     *
+     * @return array{deleted: int, remaining: int, total_before: int, done: bool}
+     */
+    public function clearBatch(int $limit = 80): array
+    {
+        $limit = max(1, min(200, $limit));
+
+        try {
+            $files = $this->disk->allFiles($this->cacheFolder);
+            $totalBefore = count($files);
+            if ($totalBefore === 0) {
+                return [
+                    'deleted' => 0,
+                    'remaining' => 0,
+                    'total_before' => 0,
+                    'done' => true,
+                ];
+            }
+
+            $chunk = array_slice($files, 0, $limit);
+            $this->disk->delete($chunk);
+            $deleted = count($chunk);
+            $remaining = max(0, $totalBefore - $deleted);
+
+            return [
+                'deleted' => $deleted,
+                'remaining' => $remaining,
+                'total_before' => $totalBefore,
+                'done' => $remaining === 0,
+            ];
+        } catch (\Throwable $e) {
+            Log::error('HtmlCacheService clearBatch failed: '.$e->getMessage());
+            throw $e;
         }
     }
 

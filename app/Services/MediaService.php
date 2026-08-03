@@ -30,18 +30,29 @@ class MediaService
             && is_readable((string) config('services.gcs.key_file'));
     }
 
-    public function storeUploadedFile(UploadedFile $file, ?string $folder = null, ?string $disk = null): Media
-    {
+    public function storeUploadedFile(
+        UploadedFile $file,
+        ?string $folder = null,
+        ?string $disk = null,
+        ?string $slug = null,
+        ?string $role = null,
+    ): Media {
         $disk ??= $this->defaultDisk();
         $folder = trim($folder ?? config('media.folder', 'vitravel/images'), '/');
 
         $built = $this->buildOptimizedSet($file);
-        $uuid = Str::uuid()->toString();
         $extension = $built['extension'];
         $mime = $built['mime'];
-
         $full = $built['full'];
-        $path = $folder.'/'.$uuid.'.'.$extension;
+
+        $stem = $this->allocateUniqueMediaStem(
+            $disk,
+            $folder,
+            $this->buildMediaStem($slug, $role, $file->getClientOriginalName()),
+            $extension,
+        );
+
+        $path = $folder.'/'.$stem.'.'.$extension;
 
         Storage::disk($disk)->put($path, $full['binary'], [
             'visibility' => 'public',
@@ -51,7 +62,7 @@ class MediaService
 
         $variantMeta = [];
         foreach ($built['variants'] as $name => $variant) {
-            $variantPath = $folder.'/'.$uuid.'-'.$name.'.'.$extension;
+            $variantPath = $folder.'/'.$stem.'-'.$name.'.'.$extension;
             Storage::disk($disk)->put($variantPath, $variant['binary'], [
                 'visibility' => 'public',
                 'ContentType' => $mime,
@@ -65,6 +76,8 @@ class MediaService
             ];
         }
 
+        $altSource = $slug ?: pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+
         return Media::query()->create([
             'disk' => $disk,
             'path' => $path,
@@ -73,9 +86,116 @@ class MediaService
             'size_bytes' => strlen($full['binary']),
             'width' => $full['width'],
             'height' => $full['height'],
-            'alt' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME),
-            'meta' => ['variants' => $variantMeta],
+            'alt' => Str::limit(trim(str_replace(['-', '_'], ' ', (string) $altSource)), 255, ''),
+            'meta' => [
+                'variants' => $variantMeta,
+                'seo_stem' => $stem,
+                'seo_slug' => $this->normalizeMediaStem((string) ($slug ?: '')),
+                'seo_role' => $this->normalizeMediaStem((string) ($role ?: '')) ?: null,
+            ],
         ]);
+    }
+
+    /**
+     * Stem SEO cho tên file: {slug}[-{role}] — an toàn path, không trùng.
+     */
+    public function buildMediaStem(?string $slug, ?string $role, ?string $originalName = null): string
+    {
+        $base = $this->normalizeMediaStem((string) ($slug ?: ''));
+        if ($base === '') {
+            $base = $this->normalizeMediaStem((string) pathinfo((string) $originalName, PATHINFO_FILENAME));
+        }
+        if ($base === '') {
+            $base = 'image';
+        }
+
+        $roleStem = $this->normalizeMediaStem((string) ($role ?: ''));
+        if ($roleStem !== '' && $roleStem !== $base && ! str_ends_with($base, '-'.$roleStem)) {
+            $combined = $base.'-'.$roleStem;
+            $base = Str::limit($combined, 96, '');
+            $base = rtrim($base, '-');
+            if ($base === '') {
+                $base = 'image';
+            }
+        }
+
+        return $base;
+    }
+
+    /** Chuẩn hoá slug file: a-z0-9-, tối đa 80, không path traversal. */
+    public function normalizeMediaStem(string $raw): string
+    {
+        $raw = str_replace(['\\', '/', '..'], ' ', $raw);
+        $stem = Str::slug($raw, '-');
+        $stem = strtolower($stem);
+        $stem = preg_replace('/[^a-z0-9\-]+/', '', $stem) ?? '';
+        $stem = preg_replace('/-+/', '-', $stem) ?? '';
+        $stem = trim($stem, '-');
+        $stem = Str::limit($stem, 80, '');
+        $stem = rtrim($stem, '-');
+
+        return $stem;
+    }
+
+    /**
+     * Chọn stem chưa bị chiếm (file full + variants trên disk / DB, kể cả soft-delete).
+     */
+    public function allocateUniqueMediaStem(
+        string $disk,
+        string $folder,
+        string $preferredStem,
+        string $extension,
+    ): string {
+        $stem = $this->normalizeMediaStem($preferredStem) ?: 'image';
+        $folder = trim($folder, '/');
+        $extension = strtolower($extension);
+
+        for ($i = 0; $i < 250; $i++) {
+            $candidate = $i === 0 ? $stem : $stem.'-'.($i + 1);
+            if (! $this->mediaStemTaken($disk, $folder, $candidate, $extension)) {
+                return $candidate;
+            }
+        }
+
+        return $stem.'-'.Str::lower(Str::random(8));
+    }
+
+    /** @param list<string>|null $variantNames */
+    public function mediaStemTaken(
+        string $disk,
+        string $folder,
+        string $stem,
+        string $extension,
+        ?array $variantNames = null,
+    ): bool {
+        $folder = trim($folder, '/');
+        $stem = $this->normalizeMediaStem($stem);
+        if ($stem === '') {
+            return true;
+        }
+
+        $variantNames ??= array_keys((array) config('media.variants', []));
+        $paths = [$folder.'/'.$stem.'.'.$extension];
+        foreach ($variantNames as $name) {
+            $name = (string) $name;
+            if ($name === '' || $name === 'full') {
+                continue;
+            }
+            $paths[] = $folder.'/'.$stem.'-'.$name.'.'.$extension;
+        }
+
+        $storage = Storage::disk($disk);
+        foreach ($paths as $path) {
+            try {
+                if ($storage->exists($path)) {
+                    return true;
+                }
+            } catch (Throwable) {
+                // Disk lỗi tạm — coi như chưa chiếm, vòng allocate vẫn an toàn nhờ random fallback.
+            }
+        }
+
+        return Media::withTrashed()->whereIn('path', $paths)->exists();
     }
 
     /**
@@ -270,7 +390,13 @@ class MediaService
             $existing->delete();
         }
 
-        $media = $this->storeUploadedFile($request->file($fileField), $folder);
+        $media = $this->storeUploadedFile(
+            $request->file($fileField),
+            $folder,
+            null,
+            $request->input('slug') ?: $request->input('seo_slug'),
+            $request->input('media_role') ?: 'cover',
+        );
 
         $model->mediaAttachments()->create([
             'media_id' => $media->id,
@@ -309,7 +435,13 @@ class MediaService
             $this->deleteMedia($current);
         }
 
-        $media = $this->storeUploadedFile($request->file($fileField), $folder);
+        $media = $this->storeUploadedFile(
+            $request->file($fileField),
+            $folder,
+            null,
+            $request->input('slug') ?: $request->input('seo_slug'),
+            $request->input('media_role') ?: $fileField,
+        );
         $model->{$column} = $media->id;
         $model->save();
     }
@@ -681,6 +813,61 @@ class MediaService
         ];
     }
 
+    /**
+     * Payload đầy đủ cho trang Thư viện Media.
+     *
+     * @return array<string, mixed>
+     */
+    public function libraryPayload(Media $media): array
+    {
+        $base = $this->adminMediaPayload($media, 'card') ?? [
+            'id' => $media->id,
+            'url' => null,
+            'filename' => $media->filename,
+        ];
+
+        $kind = (($media->meta['kind'] ?? null) === 'video')
+            || str_starts_with((string) $media->mime_type, 'video/')
+            ? 'video'
+            : 'image';
+
+        return array_merge($base, [
+            'url_full' => $this->publicUrl($media, 'full'),
+            'disk' => $media->disk,
+            'path' => $media->path,
+            'credit' => $media->credit,
+            'folder' => $this->guessFolderKeyFromPath((string) $media->path),
+            'kind' => $kind,
+            'has_variants' => $media->hasVariants(),
+            'created_at' => $media->created_at?->toIso8601String(),
+            'updated_at' => $media->updated_at?->toIso8601String(),
+        ]);
+    }
+
+    /** Map path → folder key whitelist (vd. vitravel/team/... → team). */
+    public function guessFolderKeyFromPath(string $path): string
+    {
+        $path = trim(str_replace('\\', '/', $path), '/');
+        $bestKey = 'default';
+        $bestLen = -1;
+
+        foreach ($this->adminFolderMap() as $key => $folderPath) {
+            $folder = trim(str_replace('\\', '/', (string) $folderPath), '/');
+            if ($folder === '') {
+                continue;
+            }
+            if ($path === $folder || str_starts_with($path, $folder.'/')) {
+                $len = strlen($folder);
+                if ($len > $bestLen) {
+                    $bestLen = $len;
+                    $bestKey = $key;
+                }
+            }
+        }
+
+        return $bestKey;
+    }
+
     /** Gắn / thay / xóa cover (media_attachments role=cover) theo media_id đã upload. */
     public function syncCoverMediaId(Model $model, ?int $mediaId, bool $remove = false): void
     {
@@ -772,6 +959,15 @@ class MediaService
         return max(100, min($configKb, $phpKb > 0 ? $phpKb : $configKb));
     }
 
+    /** Giới hạn upload video (KB) = min(config video, PHP upload_max_filesize). */
+    public function effectiveVideoUploadMaxKb(): int
+    {
+        $configKb = (int) config('media.max_video_upload_kb', 1048576);
+        $phpKb = $this->phpIniSizeToKb((string) ini_get('upload_max_filesize'));
+
+        return max(100, min($configKb, $phpKb > 0 ? $phpKb : $configKb));
+    }
+
     protected function phpIniSizeToKb(string $value): int
     {
         $value = trim($value);
@@ -810,6 +1006,7 @@ class MediaService
             'team' => (string) config('media.team'),
             'reviews' => (string) config('media.reviews'),
             'videos' => (string) config('media.videos', config('media.folder', 'vitravel/images')),
+            'video_files' => (string) config('media.video_files', 'vitravel/video-files'),
             'company' => (string) config('media.company', config('media.folder', 'vitravel/images')),
             'default' => (string) config('media.folder', 'vitravel/images'),
         ];

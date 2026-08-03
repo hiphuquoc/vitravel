@@ -92,29 +92,48 @@
                     @foreach ($article['content'] as $block)
                         @switch($block['type'])
                             @case('p')
-                                <p>{{ $block['text'] }}</p>
+                                <p>{!! blog_rich_text($block['text'] ?? '') !!}</p>
                                 @break
 
                             @case('h2')
-                                <h2 id="{{ $block['id'] }}">{{ $block['text'] }}</h2>
+                                <h2 id="{{ $block['id'] }}">{!! blog_rich_text($block['text'] ?? '') !!}</h2>
                                 @break
 
                             @case('h3')
-                                <h3 id="{{ $block['id'] }}">{{ $block['text'] }}</h3>
+                                <h3 id="{{ $block['id'] }}">{!! blog_rich_text($block['text'] ?? '') !!}</h3>
                                 @break
 
                             @case('ul')
                                 <ul>
                                     @foreach ($block['items'] as $li)
-                                        <li>{{ $li }}</li>
+                                        <li>{!! blog_rich_text($li) !!}</li>
                                     @endforeach
                                 </ul>
                                 @break
 
+                            @case('ol')
+                                <ol>
+                                    @foreach ($block['items'] as $li)
+                                        <li>{!! blog_rich_text($li) !!}</li>
+                                    @endforeach
+                                </ol>
+                                @break
+
                             @case('image')
                                 <figure class="site-mt-lg">
-                                    <x-ph class="h-64 w-full rounded-2xl" :label="$block['caption']" icon-class="size-10" />
-                                    <figcaption>{{ $block['caption'] }}</figcaption>
+                                    @if (! empty($block['src']))
+                                        <img
+                                            src="{{ $block['src'] }}"
+                                            alt="{{ $block['caption'] ?? '' }}"
+                                            class="h-64 w-full rounded-2xl object-cover"
+                                            loading="lazy"
+                                        />
+                                    @else
+                                        <x-ph class="h-64 w-full rounded-2xl" :label="$block['caption'] ?? null" icon-class="size-10" />
+                                    @endif
+                                    @if (! empty($block['caption']))
+                                        <figcaption>{{ $block['caption'] }}</figcaption>
+                                    @endif
                                 </figure>
                                 @break
 
@@ -123,8 +142,15 @@
                                     <p class="mb-2 text-base font-bold text-primary-800">{{ $block['title'] }}</p>
                                     <ul class="list-none space-y-1.5 !pl-0">
                                         @foreach ($block['links'] as $link)
+                                            @php
+                                                $routeName = $link['route'][0] ?? null;
+                                                $routeParams = $link['route'][1] ?? [];
+                                                $href = ($routeName && $routeName !== '#')
+                                                    ? route($routeName, is_array($routeParams) ? $routeParams : [])
+                                                    : '#';
+                                            @endphp
                                             <li class="!mb-0">
-                                                <a href="{{ route($link['route'][0], $link['route'][1] ?? []) }}"
+                                                <a href="{{ $href }}"
                                                     class="inline-flex items-center gap-1.5 text-base">
                                                     <x-icon name="arrow-right" class="size-3.5" /> {{ $link['label'] }}
                                                 </a>

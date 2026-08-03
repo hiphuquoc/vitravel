@@ -37,6 +37,8 @@ class MediaApiController extends Controller
                 'file' => 'required|image|mimes:jpeg,jpg,png,webp,gif|max:'.$maxKb,
                 'folder' => ['nullable', 'string', Rule::in(array_keys($folders))],
                 'variant' => 'nullable|string|in:thumb,card,lg,full',
+                'slug' => 'nullable|string|max:200',
+                'role' => 'nullable|string|max:64',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -46,12 +48,60 @@ class MediaApiController extends Controller
         $folder = $folders[$folderKey] ?? $folders['default'];
         $variant = $validated['variant'] ?? 'card';
 
-        $media = $mediaService->storeUploadedFile($request->file('file'), $folder);
+        $media = $mediaService->storeUploadedFile(
+            $request->file('file'),
+            $folder,
+            null,
+            $validated['slug'] ?? null,
+            $validated['role'] ?? null,
+        );
 
         return ApiResponse::success(
             $mediaService->adminMediaPayload($media, $variant),
             'Đã tải ảnh lên và tối ưu',
             201,
         );
+    }
+
+    public function uploadVideo(Request $request): JsonResponse
+    {
+        $mediaService = app(MediaService::class);
+        $folders = $mediaService->adminFolderMap();
+        $maxKb = $mediaService->effectiveVideoUploadMaxKb();
+
+        try {
+            $validated = $request->validate([
+                'file' => 'required|file|mimetypes:video/mp4,video/webm,video/quicktime,video/x-m4v|max:'.$maxKb,
+                'folder' => ['nullable', 'string', Rule::in(array_keys($folders))],
+            ], [
+                'file.mimetypes' => 'Chỉ chấp nhận video MP4, WebM hoặc MOV.',
+                'file.max' => 'Video vượt quá '.round($maxKb / 1024, 1).'MB.',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        $folderKey = $validated['folder'] ?? 'video_files';
+        $folder = $folders[$folderKey] ?? $folders['video_files'] ?? $folders['default'];
+
+        $media = $mediaService->storeUploadedVideo($request->file('file'), $folder);
+
+        return ApiResponse::success(
+            $mediaService->adminMediaPayload($media, 'full'),
+            'Đã tải video lên',
+            201,
+        );
+    }
+
+    public function videoMeta(): JsonResponse
+    {
+        $media = app(MediaService::class);
+        $maxKb = $media->effectiveVideoUploadMaxKb();
+
+        return ApiResponse::success([
+            'max_upload_kb' => $maxKb,
+            'accept' => ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-m4v'],
+            'hint' => 'MP4, WebM, MOV — tối đa '.($maxKb >= 1024 ? round($maxKb / 1024, 1).'MB' : $maxKb.'KB').'.',
+        ]);
     }
 }

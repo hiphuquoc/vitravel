@@ -51,8 +51,12 @@ Route::prefix('v1/admin')->group(function () {
         Route::get('/meta/languages', [MetaApiController::class, 'languages']);
 
         Route::get('/media/meta', [MediaApiController::class, 'meta']);
+        Route::get('/media/video-meta', [MediaApiController::class, 'videoMeta']);
         Route::post('/media/upload', [MediaApiController::class, 'upload']);
+        Route::post('/media/upload-video', [MediaApiController::class, 'uploadVideo']);
         Route::get('/media/library', [MediaLibraryApiController::class, 'index']);
+        Route::get('/media/library/{id}', [MediaLibraryApiController::class, 'show'])->whereNumber('id');
+        Route::put('/media/library/{id}', [MediaLibraryApiController::class, 'update'])->whereNumber('id');
         Route::delete('/media/library/{id}', [MediaLibraryApiController::class, 'destroy'])->whereNumber('id');
 
         Route::get('/packages/meta', [PackageApiController::class, 'meta']);
@@ -164,6 +168,7 @@ Route::prefix('v1/admin')->group(function () {
         Route::delete('/reference-persons/{id}', [ReferencePersonApiController::class, 'destroy'])->whereNumber('id');
 
         Route::get('/reviews', [ReviewApiController::class, 'index']);
+        Route::get('/reviews/meta', [ReviewApiController::class, 'meta']);
         Route::post('/reviews', [ReviewApiController::class, 'store']);
         Route::get('/reviews/{id}', [ReviewApiController::class, 'show'])->whereNumber('id');
         Route::put('/reviews/{id}', [ReviewApiController::class, 'update'])->whereNumber('id');
@@ -201,7 +206,10 @@ Route::prefix('v1/admin')->group(function () {
         Route::post('/comments/{id}/reject', [CommentApiController::class, 'reject'])->whereNumber('id');
 
         Route::get('/languages', [LanguageApiController::class, 'index']);
+        Route::get('/cache/meta', [CacheApiController::class, 'meta']);
         Route::post('/cache/clear', [CacheApiController::class, 'clear']);
+        Route::post('/cache/clear-batch', [CacheApiController::class, 'clearBatch']);
+        Route::post('/cache/finish', [CacheApiController::class, 'finish']);
         Route::get('/listing-hubs/{hubKey}', [ListingHubApiController::class, 'show']);
         Route::put('/listing-hubs/{hubKey}', [ListingHubApiController::class, 'update']);
     });

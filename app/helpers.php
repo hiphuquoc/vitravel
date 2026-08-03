@@ -225,3 +225,35 @@ if (! function_exists('schema_ld')) {
         return '<script type="application/ld+json">'.$json.'</script>';
     }
 }
+
+if (! function_exists('blog_rich_text')) {
+    /**
+     * Allowlisted inline HTML for article block text (admin TipTap → public Blade).
+     */
+    function blog_rich_text(?string $html): string
+    {
+        $html = trim((string) $html);
+        if ($html === '') {
+            return '';
+        }
+
+        $clean = strip_tags($html, '<strong><b><em><i><u><a><br><span>');
+
+        return (string) preg_replace_callback(
+            '/<a\s+([^>]*?)>/i',
+            static function (array $m): string {
+                $attrs = $m[1];
+                if (! preg_match('/href\s*=\s*(["\'])(.*?)\1/i', $attrs, $href)) {
+                    return '<a>';
+                }
+                $url = html_entity_decode($href[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if (! preg_match('#^(https?:|mailto:|/|#)#i', $url)) {
+                    return '<a>';
+                }
+
+                return '<a href="'.e($url).'" rel="noopener noreferrer">';
+            },
+            $clean
+        );
+    }
+}
