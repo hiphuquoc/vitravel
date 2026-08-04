@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\Admin\AiApiController;
 use App\Http\Controllers\Api\Admin\ArticleApiController;
 use App\Http\Controllers\Api\Admin\AuthController;
 use App\Http\Controllers\Api\Admin\BlogCategoryApiController;
@@ -49,6 +50,9 @@ Route::prefix('v1/admin')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
 
         Route::get('/meta/languages', [MetaApiController::class, 'languages']);
+
+        Route::get('/ai/status', [AiApiController::class, 'status']);
+        Route::post('/ai/translate-page', [AiApiController::class, 'translatePage']);
 
         Route::get('/media/meta', [MediaApiController::class, 'meta']);
         Route::get('/media/video-meta', [MediaApiController::class, 'videoMeta']);

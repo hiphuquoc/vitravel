@@ -16,15 +16,43 @@ if (! function_exists('view_data')) {
 
 if (! function_exists('company')) {
     /**
-     * Đọc config/company.php (hoặc key con). Contact runtime: CompanyProfile::contact().
+     * Thông tin dự án runtime (DB company_profiles qua CompanyProfile::contact()).
+     * Key dạng chấm: contact.email, name, social, …
      */
     function company(?string $key = null, mixed $default = null): mixed
     {
+        $contact = \App\Models\CompanyProfile::contact();
+        $nested = [
+            'name' => $contact['name'],
+            'legal_name' => $contact['legal_name'],
+            'tagline' => $contact['tagline'],
+            'slogan' => $contact['slogan'],
+            'license_number' => $contact['license'],
+            'contact' => [
+                'email' => $contact['email'],
+                'phone' => $contact['phone'],
+                'whatsapp' => $contact['whatsapp'],
+                'zalo' => $contact['zalo'],
+                'hotline_label' => $contact['hotline_label'],
+            ],
+            'address' => $contact['address'],
+            'social' => collect($contact['social'])->keyBy('key')->map(fn ($row) => [
+                'label' => $row['label'],
+                'icon' => $row['icon'],
+                'url' => $row['url'],
+            ])->all(),
+            'schema' => $contact['schema'],
+            'footer' => [
+                'copyright' => $contact['footer_copyright'],
+                'show_dmca_badge' => $contact['show_dmca_badge'],
+            ],
+        ];
+
         if ($key === null) {
-            return config('company');
+            return $nested;
         }
 
-        return config('company.'.$key, $default);
+        return data_get($nested, $key, $default);
     }
 }
 

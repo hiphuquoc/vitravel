@@ -101,20 +101,36 @@ trait ManagesTranslations
      * Options chọn trang cha SEO cho admin API / UI.
      *
      * @param  Collection<int, \App\Models\SeoEntry>  $parents
-     * @return list<array{id: int, label: string, slug_full: string, reference_id: int|null}>
+     * @return list<array{id: int, label: string, slug_full: string, reference_id: int|null, has_locale: bool}>
      */
     protected function mapSeoParents(Collection $parents, string $locale): array
     {
-        return $parents->map(function ($entry) use ($locale) {
-            $t = $entry->translation($locale);
-            $slugFull = (string) ($t?->slug_full ?? '');
-            $title = (string) ($t?->seo_title ?: $t?->title ?: ($slugFull !== '' ? $slugFull : '#'.$entry->id));
+        $seo = $this->seoService();
+
+        return $parents->map(function ($entry) use ($locale, $seo) {
+            $exact = $entry->translationExact($locale);
+            $fallback = $exact ?? $entry->translation($locale);
+            $hasLocale = $exact && filled($exact->slug);
+            // slug_full chỉ lấy đúng locale — không fallback EN/VI.
+            $slugFull = $hasLocale
+                ? (string) ($seo->resolveEntrySlugFull($entry, $locale) ?? '')
+                : '';
+            $title = (string) (
+                $exact?->seo_title
+                ?: $exact?->title
+                ?: $fallback?->seo_title
+                ?: $fallback?->title
+                ?: ($slugFull !== '' ? $slugFull : '#'.$entry->id)
+            );
 
             return [
                 'id' => (int) $entry->id,
-                'label' => $slugFull !== '' ? $title.' — '.$slugFull : $title,
+                'label' => $hasLocale && $slugFull !== ''
+                    ? $title.' — '.$slugFull
+                    : ($title.($hasLocale ? '' : ' — (chưa có bản dịch '.$locale.')')),
                 'slug_full' => $slugFull,
                 'reference_id' => $entry->reference_id !== null ? (int) $entry->reference_id : null,
+                'has_locale' => (bool) $hasLocale,
             ];
         })->values()->all();
     }

@@ -38,6 +38,9 @@ class SeoService
         }
 
         $parentEntry = $this->resolveParentEntry($model, $seoType, $data['parent_id'] ?? null);
+        if ($parentEntry) {
+            $this->assertParentHasLocale($parentEntry, $locale);
+        }
         $slug = Str::slug((string) ($data['slug'] ?? ''));
         $context = $this->buildContext($model, $seoType, $data, $locale);
 
@@ -120,11 +123,8 @@ class SeoService
     ): string {
         $slug = ltrim(Str::slug($slug !== '' ? $slug : 'page'), '/');
 
-        $parentSlugFull = null;
-        if ($parentEntry) {
-            $parentTranslation = $parentEntry->translation($locale);
-            $parentSlugFull = $parentTranslation?->slug_full;
-        }
+        // URL cha phải cùng locale — tuyệt đối không fallback EN/VI (tránh zh-cn mượn /cruises).
+        $parentSlugFull = $this->parentSlugFullForLocale($parentEntry, $locale);
 
         // Hitour duy nhất: có cha → nối; không cha (hub/root) → /{slug}
         // Không hardcode /tours|/cruises|/cam-nang theo type.
@@ -138,6 +138,118 @@ class SeoService
         }
 
         return $this->normalizeSlugFull('/'.$slug);
+    }
+
+    /**
+     * slug_full của entry đúng locale (không fallback ngôn ngữ khác).
+     * Tự vá khi slug đã đổi nhưng slug_full còn cũ (vd. leaf ≠ slug).
+     */
+    public function resolveEntrySlugFull(SeoEntry $entry, string $locale, bool $persistRepair = true): ?string
+    {
+        $trans = $entry->translationExact($locale);
+        if (! $trans || ! filled($trans->slug)) {
+            return null;
+        }
+
+        $slug = ltrim(Str::slug((string) $trans->slug), '/');
+        if ($slug === '') {
+            return null;
+        }
+
+        $currentFull = filled($trans->slug_full)
+            ? $this->normalizeSlugFull((string) $trans->slug_full)
+            : null;
+        $leaf = $currentFull ? ltrim((string) basename($currentFull), '/') : null;
+        $leafOk = $leaf !== null && $leaf !== '' && (
+            $leaf === $slug || Str::slug($leaf) === $slug
+        );
+
+        if ($currentFull && $leafOk) {
+            // Với node có cha: prefix cũng phải khớp cha cùng locale (không giữ /cruises mượn EN).
+            if ($entry->parent_id) {
+                $parent = $entry->relationLoaded('parent')
+                    ? $entry->parent
+                    : SeoEntry::query()->with('translations')->find($entry->parent_id);
+                $parentFull = $this->parentSlugFullForLocale($parent, $locale, $persistRepair);
+                $expected = filled($parentFull)
+                    ? $this->normalizeSlugFull(rtrim((string) $parentFull, '/').'/'.$slug)
+                    : $this->normalizeSlugFull('/'.$slug);
+                if ($currentFull !== $expected) {
+                    if ($persistRepair) {
+                        $old = $trans->slug_full;
+                        $trans->forceFill(['slug_full' => $expected])->save();
+                        $languageId = Language::idByCode($locale);
+                        if ($languageId) {
+                            $this->createRedirect301($old, $expected, $languageId);
+                        }
+                    }
+
+                    return $expected;
+                }
+            }
+
+            return $currentFull;
+        }
+
+        $parent = null;
+        if ($entry->parent_id) {
+            $parent = $entry->relationLoaded('parent')
+                ? $entry->parent
+                : SeoEntry::query()->with('translations')->find($entry->parent_id);
+        }
+
+        $rebuilt = $this->buildSlugFull((string) ($entry->type ?? ''), $locale, $slug, $parent);
+        if ($persistRepair && $rebuilt !== (string) $trans->slug_full) {
+            $old = $trans->slug_full;
+            $trans->forceFill(['slug_full' => $rebuilt])->save();
+            $languageId = Language::idByCode($locale);
+            if ($languageId) {
+                $this->createRedirect301($old, $rebuilt, $languageId);
+            }
+        }
+
+        return $rebuilt;
+    }
+
+    /**
+     * Path cha cho locale đang build — không mượn EN/VI.
+     */
+    public function parentSlugFullForLocale(
+        ?SeoEntry $parentEntry,
+        string $locale,
+        bool $persistRepair = true,
+    ): ?string {
+        if (! $parentEntry) {
+            return null;
+        }
+
+        return $this->resolveEntrySlugFull($parentEntry, $locale, $persistRepair);
+    }
+
+    /**
+     * Chặn lưu trang con khi trang cha chưa có bản dịch đúng locale
+     * (tránh slug_full rơi về root /{slug}).
+     *
+     * @throws ValidationException
+     */
+    public function assertParentHasLocale(SeoEntry $parentEntry, string $locale): void
+    {
+        $parentEntry->loadMissing('translations.language');
+        $exact = $parentEntry->translationExact($locale);
+        if ($exact && filled($exact->slug)) {
+            return;
+        }
+
+        $label = $parentEntry->translation()?->title
+            ?: $parentEntry->translation()?->seo_title
+            ?: '#'.$parentEntry->id;
+
+        throw ValidationException::withMessages([
+            'seo_parent_id' => [
+                "Trang cha «{$label}» chưa có bản dịch / URL cho ngôn ngữ «{$locale}». ".
+                'Hãy dịch trang cha trước khi lưu hoặc dịch trang con.',
+            ],
+        ]);
     }
 
     public function normalizeSlugFull(string $slugFull): string
@@ -375,7 +487,7 @@ class SeoService
                 $parent,
             );
 
-            if ($childTrans->slug_full !== $newFull) {
+            if ($this->normalizeSlugFull((string) ($childTrans->slug_full ?? '')) !== $this->normalizeSlugFull($newFull)) {
                 $oldFull = $childTrans->slug_full;
                 $childTrans->forceFill(['slug_full' => $newFull])->save();
                 $this->createRedirect301($oldFull, $newFull, $languageId);
@@ -439,7 +551,7 @@ class SeoService
     {
         $locale ??= app()->getLocale();
         $entry = $this->ensureHub($hubKey, $locale);
-        $trans = $entry->translation($locale);
+        $trans = $entry->translationExact($locale) ?? $entry->translation($locale);
 
         return $this->publicUrl($trans, $locale);
     }
@@ -563,7 +675,7 @@ class SeoService
     public function hubSlugFullPath(string $hubKey, string $locale): string
     {
         $entry = $this->ensureHub($hubKey, $locale);
-        $full = $entry->translation($locale)?->slug_full
+        $full = $this->resolveEntrySlugFull($entry, $locale)
             ?? '/'.ltrim((string) (config("seo.hubs.{$hubKey}.default_slug") ?? $hubKey), '/');
 
         return $this->normalizeSlugFull((string) $full);
@@ -596,7 +708,9 @@ class SeoService
             ->where('slug', $typeSlug)
             ->first();
 
-        $full = $type?->seoEntry?->translation($locale)?->slug_full;
+        $full = $type?->seoEntry
+            ? $this->resolveEntrySlugFull($type->seoEntry, $locale)
+            : null;
         if ($full) {
             return $this->normalizeSlugFull($full);
         }
@@ -789,22 +903,42 @@ class SeoService
                 } elseif ($existing->parent_id) {
                     $parentForExpected = SeoEntry::query()->with('translations')->find($existing->parent_id);
                 }
+                // Ưu tiên slug đã lưu — không so với default_slug trong $data (ensureHub/seed),
+                // kẻo custom slug hub bị coi là «lệch» rồi bị ghi đè về mặc định.
+                $slugForExpected = filled($trans->slug)
+                    ? (string) $trans->slug
+                    : (string) ($data['slug'] ?? '');
                 $expectedFull = $this->buildSlugFull(
                     $seoType,
                     $locale,
-                    (string) ($data['slug'] ?? $trans->slug),
+                    $slugForExpected,
                     $parentForExpected,
                 );
                 $slugMismatch = $this->normalizeSlugFull((string) $trans->slug_full) !== $expectedFull;
             }
 
             if ($missingSlugFull || $parentChanged || $slugMismatch) {
-                return $this->syncSeo($model, $locale, array_merge([
-                    'slug' => $trans?->slug ?? ($data['slug'] ?? Str::slug((string) ($data['title'] ?? 'page'))),
-                    'title' => $trans?->title ?? ($data['title'] ?? null),
-                    'seo_title' => $trans?->seo_title ?? ($data['seo_title'] ?? null),
-                    'status' => $trans?->status ?? ($data['status'] ?? 'published'),
-                ], $data), $seoType);
+                // ensure* chỉ vá cấu trúc (parent / slug_full). Nội dung SEO đã có phải thắng
+                // default trong $data — trước đây array_merge([preserved], $data) để $data ghi đè.
+                $fallbackSlug = $data['slug'] ?? Str::slug((string) ($data['title'] ?? 'page'));
+                $preserved = [
+                    'slug' => filled($trans?->slug) ? (string) $trans->slug : $fallbackSlug,
+                    'title' => filled($trans?->title) ? $trans->title : ($data['title'] ?? null),
+                    'seo_title' => filled($trans?->seo_title) ? $trans->seo_title : ($data['seo_title'] ?? null),
+                    'seo_description' => filled($trans?->seo_description)
+                        ? $trans->seo_description
+                        : ($data['seo_description'] ?? null),
+                    'description' => filled($trans?->description)
+                        ? $trans->description
+                        : ($data['description'] ?? null),
+                    'keywords' => filled($trans?->keywords) ? $trans->keywords : ($data['keywords'] ?? null),
+                    'status' => filled($trans?->status) ? $trans->status : ($data['status'] ?? 'published'),
+                    'canonical_url' => filled($trans?->canonical_url)
+                        ? $trans->canonical_url
+                        : ($data['canonical_url'] ?? null),
+                ];
+
+                return $this->syncSeo($model, $locale, array_merge($data, $preserved), $seoType);
             }
 
             return $existing;
@@ -837,14 +971,25 @@ class SeoService
             ]);
         }
 
-        $title = $page->translation($locale)?->title ?? $cfg['default_title'];
+        $pageTitle = $page->translationExact($locale)?->title
+            ?? $page->translation($locale)?->title
+            ?? $cfg['default_title'];
+        $page->loadMissing('seoEntry.translations');
+        $seoTrans = $page->seoEntry?->translationExact($locale);
 
+        // Không ép default_slug/seo_* khi bản dịch đúng locale đã tồn tại.
+        // Không lấy slug EN/VI qua fallback — tránh tạo zh-cn với /cruises.
         return $this->ensureSeoFor($page, $cfg['seo_type'], $locale, [
-            'slug' => $cfg['default_slug'],
-            'title' => $title,
-            'seo_title' => $cfg['default_seo_title'] ?? $title,
-            'seo_description' => $cfg['default_seo_description'] ?? null,
-            'status' => 'published',
+            'slug' => filled($seoTrans?->slug) ? (string) $seoTrans->slug : $cfg['default_slug'],
+            'title' => filled($seoTrans?->title) ? $seoTrans->title : $pageTitle,
+            'seo_title' => filled($seoTrans?->seo_title)
+                ? $seoTrans->seo_title
+                : ($cfg['default_seo_title'] ?? $pageTitle),
+            'seo_description' => filled($seoTrans?->seo_description)
+                ? $seoTrans->seo_description
+                : ($cfg['default_seo_description'] ?? null),
+            'keywords' => $seoTrans?->keywords,
+            'status' => filled($seoTrans?->status) ? $seoTrans->status : 'published',
             'parent_id' => null,
         ]);
     }

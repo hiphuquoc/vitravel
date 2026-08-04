@@ -71,4 +71,22 @@ class SeoEntry extends Model
 
         return \App\Support\LocaleContent::firstTranslation($rows, $locale);
     }
+
+    /**
+     * Bản dịch SEO đúng locale — không fallback EN/VI (dùng cho slug_full / URL).
+     */
+    public function translationExact(?string $locale = null): ?SeoEntryTranslation
+    {
+        $locale = $locale ?: app()->getLocale();
+        $languageId = Language::idByCode($locale);
+        if (! $languageId) {
+            return null;
+        }
+
+        if ($this->relationLoaded('translations')) {
+            return $this->translations->firstWhere('language_id', $languageId);
+        }
+
+        return $this->translations()->where('language_id', $languageId)->first();
+    }
 }

@@ -4,7 +4,7 @@
     $zaloPhone = preg_replace('/\D/', '', $contact['zalo'] ?? ($contact['phone'] ?? ''));
 @endphp
 
-{{-- Nút nổi Zalo + WhatsApp — số từ config/company.php (+ admin ghi đè) --}}
+{{-- Nút nổi Zalo + WhatsApp — số từ CompanyProfile (DB / seed company) --}}
 <div class="site-fab fixed z-40 flex flex-col items-end site-gap-sm">
     {{-- Tạm ẩn Zalo fixed --}}
     {{--

@@ -3,20 +3,58 @@
 namespace Database\Seeders;
 
 use App\Models\CompanyProfile;
-use App\Models\Country;
 use App\Models\HomeFeaturedCountry;
 use App\Models\HomeFeaturedReviewPlatform;
+use App\Models\Country;
 use App\Models\ReviewPlatform;
-use App\Support\SampleData;
+use App\Support\ProjectSeed;
 use Illuminate\Database\Seeder;
 
 class HomeFeaturedSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->seedCompanyIdentity();
         $this->seedFeaturedCountries();
-        $this->seedFeaturedPlatforms();
-        $this->seedCompanyContact();
+        $this->seedFeaturedReviewPlatforms();
+    }
+
+    /**
+     * Thông tin dự án / liên hệ từ ProjectSeed `company` → company_profiles.
+     */
+    protected function seedCompanyIdentity(): void
+    {
+        $src = ProjectSeed::get('company', []);
+        if (! is_array($src) || $src === []) {
+            $src = config('company', []);
+        }
+        if (! is_array($src) || $src === []) {
+            return;
+        }
+
+        $attrs = CompanyProfile::attributesFromSeed($src);
+        $profile = CompanyProfile::query()->first();
+
+        if ($profile) {
+            // Chỉ fill ô trống — không đè dữ liệu admin đã chỉnh.
+            $fill = [];
+            foreach ($attrs as $key => $value) {
+                $current = $profile->{$key};
+                $empty = $current === null
+                    || $current === ''
+                    || (is_array($current) && $current === []);
+                if ($empty && $value !== null && $value !== '') {
+                    $fill[$key] = $value;
+                }
+            }
+            if ($fill !== []) {
+                $profile->fill($fill)->save();
+            }
+
+            return;
+        }
+
+        CompanyProfile::query()->create($attrs);
     }
 
     protected function seedFeaturedCountries(): void
@@ -25,24 +63,19 @@ class HomeFeaturedSeeder extends Seeder
             return;
         }
 
-        $sort = 0;
-        foreach (SampleData::countries() as $row) {
-            $country = Country::query()
-                ->whereHas('translations', fn ($q) => $q->where('slug', $row['slug']))
-                ->first();
-
-            if (! $country) {
-                continue;
-            }
-
-            HomeFeaturedCountry::query()->create([
-                'country_id' => $country->id,
-                'sort' => $sort++,
-            ]);
-        }
+        Country::query()
+            ->orderBy('sort')
+            ->limit(8)
+            ->get()
+            ->each(function (Country $country, int $i) {
+                HomeFeaturedCountry::query()->create([
+                    'country_id' => $country->id,
+                    'sort' => $i,
+                ]);
+            });
     }
 
-    protected function seedFeaturedPlatforms(): void
+    protected function seedFeaturedReviewPlatforms(): void
     {
         if (HomeFeaturedReviewPlatform::query()->exists()) {
             return;
@@ -58,32 +91,5 @@ class HomeFeaturedSeeder extends Seeder
                     'sort' => $i,
                 ]);
             });
-    }
-
-    protected function seedCompanyContact(): void
-    {
-        $defaults = [
-            'contact_email' => (string) config('company.contact.email', 'hello@vitravel.vn'),
-            'contact_phone' => (string) config('company.contact.phone', '+84 24 3999 8888'),
-            'contact_whatsapp' => (string) config('company.contact.whatsapp', '+84 912 345 678'),
-            'slogan' => (string) config('company.slogan', '“Hài lòng hơn cả mong đợi”'),
-            'license_number' => (string) config('company.license_number', ''),
-        ];
-
-        $profile = CompanyProfile::query()->first();
-
-        if ($profile) {
-            $profile->fill([
-                'contact_email' => $profile->contact_email ?: $defaults['contact_email'],
-                'contact_phone' => $profile->contact_phone ?: $defaults['contact_phone'],
-                'contact_whatsapp' => $profile->contact_whatsapp ?: $defaults['contact_whatsapp'],
-                'slogan' => $profile->slogan ?: $defaults['slogan'],
-                'license_number' => $profile->license_number ?: $defaults['license_number'],
-            ])->save();
-
-            return;
-        }
-
-        CompanyProfile::query()->create($defaults);
     }
 }

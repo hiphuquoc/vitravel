@@ -213,7 +213,10 @@ class CruiseTypeApiController extends Controller
     /** @return array<string, mixed> */
     private function serialize(CruiseType $type, string $locale): array
     {
-        $seo = $type->seoEntry?->translation($locale);
+        $seo = $type->seoEntry?->translationExact($locale);
+        $slugFull = $type->seoEntry
+            ? $this->seoService()->resolveEntrySlugFull($type->seoEntry, $locale)
+            : null;
 
         return [
             'id' => $type->id,
@@ -223,7 +226,7 @@ class CruiseTypeApiController extends Controller
             'is_active' => $type->is_active,
             'seo' => [
                 'slug' => $seo?->slug,
-                'slug_full' => $seo?->slug_full,
+                'slug_full' => $slugFull,
             ],
             'banner' => app(MediaService::class)->adminMediaPayload($type->banner, 'thumb'),
             'cover' => app(MediaService::class)->adminMediaPayload($type->cover, 'thumb'),
@@ -234,12 +237,15 @@ class CruiseTypeApiController extends Controller
     /** @return array<string, mixed> */
     private function serializeDetail(CruiseType $type, string $locale): array
     {
-        $seo = $type->seoEntry?->translation($locale);
+        $seo = $type->seoEntry?->translationExact($locale);
+        $slugFull = $type->seoEntry
+            ? $this->seoService()->resolveEntrySlugFull($type->seoEntry, $locale)
+            : null;
 
         return array_merge($this->serialize($type, $locale), [
             'seo' => [
                 'slug' => $seo?->slug,
-                'slug_full' => $seo?->slug_full,
+                'slug_full' => $slugFull,
                 'title' => $seo?->seo_title,
                 'description' => $seo?->seo_description,
                 'parent_id' => $type->seoEntry?->parent_id,

@@ -25,6 +25,29 @@ class LocaleContent
     }
 
     /**
+     * Tìm bản dịch đúng locale — không fallback EN/VI.
+     * Dùng cho slug_full / URL hierarchy (không được mượn path ngôn ngữ khác).
+     *
+     * @param  iterable<int, object>  $translations
+     */
+    public static function firstTranslationExact(iterable $translations, ?string $locale = null): mixed
+    {
+        $locale = $locale ?: app()->getLocale();
+        $languageId = Language::idByCode($locale);
+        if (! $languageId) {
+            return null;
+        }
+
+        foreach ($translations as $row) {
+            if ((int) $row->language_id === (int) $languageId) {
+                return $row;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Tìm bản dịch trong collection/relation đã load theo language_id chain.
      *
      * @param  iterable<int, object>  $translations

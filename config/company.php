@@ -1,110 +1,70 @@
 <?php
 
 /**
- * Thông tin doanh nghiệp — single source of truth cho hotline, footer,
- * Organization schema, social, floating buttons…
+ * Thông tin doanh nghiệp — fallback khi DB chưa seed.
+ * Nguồn chính: ProjectSeed key `company` → bảng company_profiles (admin «Thông tin dự án»).
  *
- * Ưu tiên ghi đè runtime:
- *  - Admin Company Profile (email / phone / whatsapp / slogan / license) nếu đã nhập
- *  - Biến môi trường COMPANY_* / SEO_* (tuỳ field)
- *
- * Sửa file này để đổi dữ liệu mẫu / mặc định toàn site.
+ * Không sửa file này để đổi nội dung runtime — dùng admin hoặc project/seed_company.php.
  */
 return [
 
-    'name' => env('COMPANY_NAME', 'ViTravel'),
+    'name' => env('COMPANY_NAME', null),
 
-    'legal_name' => env('COMPANY_LEGAL_NAME', 'Công ty TNHH Du lịch ViTravel'),
+    'legal_name' => env('COMPANY_LEGAL_NAME', null),
 
-    /** Tagline ngắn (meta / header). */
-    'tagline' => env('COMPANY_TAGLINE', 'Hài lòng hơn cả mong đợi'),
+    'tagline' => env('COMPANY_TAGLINE', null),
 
-    /** Slogan hiển thị footer / schema (có thể kèm dấu ngoặc kép). */
-    'slogan' => env('COMPANY_SLOGAN', '“Hài lòng hơn cả mong đợi”'),
+    'slogan' => env('COMPANY_SLOGAN', null),
 
-    /** Giấy phép lữ hành — hiện footer + schema identifier. */
-    'license_number' => env('COMPANY_LICENSE', '01-2234/TCDL-GP-LHQT'),
+    'license_number' => env('COMPANY_LICENSE', null),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Liên hệ
-    |--------------------------------------------------------------------------
-    */
     'contact' => [
-        'email' => env('COMPANY_EMAIL', 'hello@vitravel.vn'),
-        'phone' => env('COMPANY_PHONE', '+84 24 3999 8888'),
-        'whatsapp' => env('COMPANY_WHATSAPP', '+84 912 345 678'),
-        /** Số Zalo (mặc định = phone nếu trống). */
-        'zalo' => env('COMPANY_ZALO', '+84 24 3999 8888'),
-        'hotline_label' => 'Hotline',
+        'email' => env('COMPANY_EMAIL', null),
+        'phone' => env('COMPANY_PHONE', null),
+        'whatsapp' => env('COMPANY_WHATSAPP', null),
+        'zalo' => env('COMPANY_ZALO', null),
+        'hotline_label' => env('COMPANY_HOTLINE_LABEL', null),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Địa chỉ trụ sở (Organization / PostalAddress)
-    |--------------------------------------------------------------------------
-    */
     'address' => [
-        'street' => env('COMPANY_ADDRESS_STREET', '88 Xã Đàn, Đống Đa'),
-        'locality' => env('COMPANY_ADDRESS_LOCALITY', 'Hà Nội'),
-        'region' => env('COMPANY_ADDRESS_REGION', 'Hà Nội'),
-        'postal' => env('COMPANY_ADDRESS_POSTAL', '100000'),
-        'country' => env('COMPANY_ADDRESS_COUNTRY', 'VN'),
+        'street' => env('COMPANY_ADDRESS_STREET', null),
+        'locality' => env('COMPANY_ADDRESS_LOCALITY', null),
+        'region' => env('COMPANY_ADDRESS_REGION', null),
+        'postal' => env('COMPANY_ADDRESS_POSTAL', null),
+        'country' => env('COMPANY_ADDRESS_COUNTRY', null),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Mạng xã hội (footer + schema sameAs)
-    |--------------------------------------------------------------------------
-    | icon: tên x-icon trong resources/views/components/icon.blade.php
-    | url để trống → ẩn khỏi footer / không đưa vào sameAs
-    */
     'social' => [
         'facebook' => [
             'label' => 'Facebook',
             'icon' => 'facebook',
-            'url' => env('COMPANY_FACEBOOK', 'https://www.facebook.com/vitravel'),
+            'url' => env('COMPANY_FACEBOOK', null),
         ],
         'youtube' => [
             'label' => 'YouTube',
             'icon' => 'play',
-            'url' => env('COMPANY_YOUTUBE', 'https://www.youtube.com/@vitravel'),
+            'url' => env('COMPANY_YOUTUBE', null),
         ],
         'instagram' => [
             'label' => 'Instagram',
             'icon' => 'photo',
-            'url' => env('COMPANY_INSTAGRAM', 'https://www.instagram.com/vitravel'),
+            'url' => env('COMPANY_INSTAGRAM', null),
         ],
         'tiktok' => [
             'label' => 'TikTok',
             'icon' => 'share',
-            'url' => env('COMPANY_TIKTOK', 'https://www.tiktok.com/@vitravel'),
+            'url' => env('COMPANY_TIKTOK', null),
         ],
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Schema.org Organization extras
-    |--------------------------------------------------------------------------
-    */
     'schema' => [
         'available_language' => ['Vietnamese', 'English'],
         'contact_type' => 'customer service',
-        /** Logo / OG image mặc định (path public hoặc URL tuyệt đối). */
         'logo' => env('COMPANY_LOGO', null),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Footer
-    |--------------------------------------------------------------------------
-    | :year và :license được thay khi render.
-    */
     'footer' => [
-        'copyright' => env(
-            'COMPANY_FOOTER_COPYRIGHT',
-            '© :year ViTravel. Giấy phép lữ hành quốc tế số :license.'
-        ),
+        'copyright' => env('COMPANY_FOOTER_COPYRIGHT', null),
         'show_dmca_badge' => true,
     ],
 

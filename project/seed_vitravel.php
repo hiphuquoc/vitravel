@@ -5017,4 +5017,8 @@ $__vitravelSeed = array (
   ),
 );
 
-return array_merge($__vitravelSeed, require __DIR__.'/seed_services.php');
+return array_merge(
+    $__vitravelSeed,
+    require __DIR__.'/seed_services.php',
+    ['company' => require __DIR__.'/seed_company.php'],
+);

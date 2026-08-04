@@ -54,11 +54,26 @@ File seed là **single source** cho seed + fallback UI (`ProjectSeed` → `Sampl
 4. Package: `tours` → `type=tour`; `cruises` → `type=cruise` (tên technical — có thể = combo/dịch vụ khác nếu giữ pipeline SEO).
 5. Đổi slug cha/con → seed lại `SeoHierarchySeeder`.
 
+### 1b. `company` (thông tin dự án)
+
+File **`project/seed_company.php`** — merge vào `seed_vitravel.php`. Seed → bảng `company_profiles`. Admin: **Cài đặt → Thông tin dự án** (`/settings/site`).
+
+| Field | Ý nghĩa |
+|-------|---------|
+| `name`, `legal_name`, `tagline`, `slogan`, `license_number` | Thương hiệu |
+| `contact.*` | email, phone, whatsapp, zalo, hotline_label |
+| `address.*` | street, locality, region, postal, country |
+| `social.{facebook\|youtube\|instagram\|tiktok}` | `{ label, icon, url }` |
+| `schema.*` | available_language, contact_type, logo |
+| `footer.copyright`, `footer.show_dmca_badge` | Footer (`:year` / `:license` / `:name`) |
+
+Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/company.php` chỉ còn fallback env khi chưa seed.
+
 ### 1. `meta`
 
 | Field | Ý nghĩa |
 |-------|---------|
-| `brand`, `tagline` | Tên / slogan |
+| `brand`, `tagline` | Tên / slogan (meta seed; runtime brand lấy từ `company`) |
 | `admin.*` | User admin lúc seed |
 | `country_codes` | `countries[].slug` → mã DB |
 | `schema` | Version schema seed |
@@ -111,6 +126,7 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 | Key | Seeder | SEO |
 |-----|--------|-----|
 | countries / tours | ContentSeeder | country / package_tour |
+| company | **HomeFeaturedSeeder** (`seedCompanyIdentity`) | — (company_profiles) |
 | cruise_types / cruises | CruiseType + Content | cruise_type / package_cruise |
 | service_categories / services | **ServiceCatalogSeeder** | `service_category` / `service` (+ 5 hub types) |
 | tour_categories | TourCategorySeeder | tour_category |

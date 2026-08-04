@@ -55,4 +55,31 @@ return [
         'path_prefix' => env('GCS_PATH_PREFIX', env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', '')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | AI providers (OpenAI-compatible) — chuẩn BaseOS / đa dự án
+    |--------------------------------------------------------------------------
+    | Copy key từ baseos.dev khi cần. Provider nào có key sẽ dùng được ngay.
+    */
+    'openai' => [
+        'key' => env('AI_OPENAI_API_KEY', env('OPENAI_API_KEY')),
+        'base_url' => env('AI_OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+        'model' => env('AI_OPENAI_MODEL', 'gpt-4o-mini'),
+        'timeout' => (int) env('AI_OPENAI_TIMEOUT', 180),
+    ],
+
+    'deepseek' => [
+        'key' => env('DEEPSEEK_API_KEY'),
+        'base_url' => env('DEEPSEEK_BASE_URL', 'https://api.deepseek.com/v1'),
+        'model' => env('DEEPSEEK_MODEL', 'deepseek-chat'),
+        'timeout' => (int) env('DEEPSEEK_TIMEOUT', 300),
+    ],
+
+    'google' => [
+        'key' => env('GEMINI_API_KEY', env('GOOGLE_AI_API_KEY')),
+        'base_url' => env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta/openai'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
+        'timeout' => (int) env('GEMINI_TIMEOUT', 180),
+    ],
+
 ];

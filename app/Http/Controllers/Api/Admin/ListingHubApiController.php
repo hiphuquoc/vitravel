@@ -38,8 +38,9 @@ class ListingHubApiController extends BladeListingHubController
             $page->load(['translations', 'banner', 'cover', 'seoEntry.translations']);
         }
 
-        $t = $page->translation($locale);
-        $seo = $page->seoEntry?->translation($locale) ?? $hubSeo->translation($locale);
+        $t = $page->translationExact($locale) ?? $page->translation($locale);
+        $seo = $page->seoEntry?->translationExact($locale)
+            ?? $hubSeo->translationExact($locale);
         $media = app(MediaService::class);
 
         return ApiResponse::success([
@@ -53,7 +54,9 @@ class ListingHubApiController extends BladeListingHubController
             'seo_title' => $seo?->seo_title,
             'seo_description' => $seo?->seo_description,
             'seo_keywords' => $seo?->keywords,
-            'slug_full' => $seo?->slug_full,
+            'slug_full' => $seo && $page->seoEntry
+                ? $this->seoService()->resolveEntrySlugFull($page->seoEntry, $locale)
+                : ($seo?->slug_full),
             'rating_aggregate_star' => $page->seoEntry?->rating_aggregate_star ?? $hubSeo->rating_aggregate_star,
             'rating_aggregate_count' => $page->seoEntry?->rating_aggregate_count ?? $hubSeo->rating_aggregate_count,
             'banner' => $media->adminMediaPayload($page->banner, 'lg'),

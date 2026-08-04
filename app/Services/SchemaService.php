@@ -348,7 +348,7 @@ class SchemaService
     }
 
     /**
-     * SEO meta + branding. Contact/address/sameAs ưu tiên config/company.php.
+     * SEO meta + branding — ưu tiên CompanyProfile (DB).
      *
      * @return array<string, mixed>
      */
@@ -356,25 +356,16 @@ class SchemaService
     {
         $site = config('seo.site') ?? [];
         $site = is_array($site) ? $site : [];
-        $company = config('company') ?? [];
-        $company = is_array($company) ? $company : [];
-        $contact = is_array($company['contact'] ?? null) ? $company['contact'] : [];
-
-        $sameAs = [];
-        foreach ((array) ($company['social'] ?? []) as $row) {
-            if (is_array($row) && filled($row['url'] ?? null) && ($row['url'] ?? '') !== '#') {
-                $sameAs[] = (string) $row['url'];
-            }
-        }
+        $contact = CompanyProfile::contact();
 
         return array_merge([
-            'name' => $company['name'] ?? 'ViTravel',
-            'tagline' => $company['tagline'] ?? null,
+            'name' => $contact['name'] ?? 'ViTravel',
+            'tagline' => $contact['tagline'] ?? null,
             'telephone' => $contact['phone'] ?? null,
             'email' => $contact['email'] ?? null,
-            'address' => is_array($company['address'] ?? null) ? $company['address'] : [],
-            'same_as' => $sameAs,
-            'default_og_image' => $company['schema']['logo'] ?? null,
+            'address' => is_array($contact['address'] ?? null) ? $contact['address'] : [],
+            'same_as' => is_array($contact['same_as'] ?? null) ? $contact['same_as'] : [],
+            'default_og_image' => $contact['schema']['logo'] ?? null,
             'twitter_site' => null,
         ], $site);
     }

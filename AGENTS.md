@@ -15,9 +15,18 @@ Cursor rule (always on): `.cursor/rules/project-seed.mdc`
 
 ## Google Cloud Storage (critical)
 
-Canonical env block: `GCS_PROJECT_ID`, `GCS_BUCKET`, `GCS_KEY_FILE`, `GCS_PUBLIC_URL` + `MEDIA_DISK=gcs`.
-Key file: `storage/app/gcs-credentials.json` (never hardcode SA in config).
+Canonical env block: `GCS_PROJECT_ID`, `GCS_BUCKET`, `GCS_KEY_FILE`, `GCS_PUBLIC_URL` + `MEDIA_DISK=gcs`. 
+Key file: `storage/app/gcs-credentials.json` (never hardcode SA in config). 
 Full spec: `docs/gcs-standard.md` · rule: `.cursor/rules/gcs-config.mdc`
+
+## Company / site identity
+
+Runtime brand + contact + social + footer comes from **`company_profiles`** (seed key `company` in `project/seed_company.php`), not from hardcoding in Blade.
+
+- Seed: `HomeFeaturedSeeder::seedCompanyIdentity()`
+- Admin: **Cài đặt → Thông tin dự án** (`/settings/site`)
+- Reader: `CompanyProfile::contact()` / `view_data()->companyContact()`
+- `config/company.php` = env fallback only when DB empty
 
 ## Admin Console (Next.js) — phase 1
 

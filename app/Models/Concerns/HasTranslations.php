@@ -33,6 +33,24 @@ trait HasTranslations
         return LocaleContent::firstTranslation($rows, $locale);
     }
 
+    /**
+     * Bản dịch đúng locale — không fallback chuỗi EN/VI.
+     */
+    public function translationExact(?string $locale = null): mixed
+    {
+        $locale = $locale ?: app()->getLocale();
+        $languageId = Language::idByCode($locale);
+        if (! $languageId) {
+            return null;
+        }
+
+        if ($this->relationLoaded('translations')) {
+            return $this->translations->firstWhere('language_id', $languageId);
+        }
+
+        return $this->translations()->where('language_id', $languageId)->first();
+    }
+
     public function getAttribute($key): mixed
     {
         if (property_exists($this, 'translatable') && in_array($key, $this->translatable, true)) {
