@@ -30,11 +30,11 @@ Runtime brand + contact + social + footer comes from **`company_profiles`** (see
 
 ## Admin Console (Next.js) — phase 1
 
-New headless admin lives in **`admin/`** (Next.js 15 + SCSS tokens + TanStack Query).
+Headless admin lives in **separate repo** `admin.vitravel.dev` (Next.js 15 + SCSS tokens + TanStack Query).
 
-- Serve: `/he-thong/` (static `public/he-thong` hoặc live `npm run dev` :3100)
-- API: `/api/v1/admin/*` — Bearer tokens (`admin_api_tokens`), packages / tour-categories / travel-styles
-- Docs: `admin/README.md`, `docs/10-admin-console-api.md`
-- Live: `ADMIN_DEV_URL=http://localhost:3100` + `cd admin && npm run dev`
+- Production: static export → Laravel `public/he-thong` → `/he-thong/`
+- API: `/api/v1/admin/*` — Bearer tokens (`admin_api_tokens`)
+- Docs: `docs/10-admin-console-api.md`
+- Build: `cd admin.vitravel.dev && npm ci && npm run build` (syncs into this project's `public/he-thong`)
 - Menu Tour: Gói Tour, Danh mục Tour, Chủ đề Tour (`TravelStyle`)
 - Legacy Blade admin đã retire — SPA fallback / redirect trong `routes/admin.php`

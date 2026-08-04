@@ -56,18 +56,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Admin Console live HMR (local)
-    |--------------------------------------------------------------------------
-    |
-    | Khi set (vd. http://localhost:3100), mọi request /he-thong/* redirect
-    | sang Next.js `npm run dev` — đừng mở bản static public/he-thong.
-    | Tắt (để trống) khi xem bản đã build trên domain.
-    |
-    */
-    'admin_dev_url' => env('ADMIN_DEV_URL'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
