@@ -98,6 +98,11 @@ final class AdminAccess
             }
         }
 
+        // Quản lý tài khoản admin chỉ dành cho siêu quản trị hệ thống.
+        // Vai trò dự án (kể cả owner/*) không xem/sửa user — kể cả chính mình — trong module Người dùng.
+        // Hồ sơ cá nhân dùng PUT /auth/me (/account), không qua /users.
+        $granted = array_values(array_diff($granted, ['users.view', 'users.manage']));
+
         return array_values(array_intersect($granted, $all));
     }
 
@@ -257,6 +262,10 @@ final class AdminAccess
 
         foreach ($perms as $key => $label) {
             $module = explode('.', (string) $key)[0] ?? 'other';
+            // Không cho gán users.* qua vai trò dự án — chỉ quản trị hệ thống.
+            if ($module === 'users') {
+                continue;
+            }
             if (! isset($groups[$module])) {
                 $groups[$module] = [
                     'module' => $module,

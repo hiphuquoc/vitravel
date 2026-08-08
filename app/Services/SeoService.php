@@ -56,7 +56,7 @@ class SeoService
         $entry = $model->seoEntry()->withoutGlobalScope('project')->firstOrCreate([]);
         $this->ensureEntryProjectId($entry, $model);
 
-        $existingTranslation = SeoEntryTranslation::query()
+        $existingTranslation = SeoEntryTranslation::withoutGlobalScope('project')
             ->where('seo_entry_id', $entry->id)
             ->where('language_id', $languageId)
             ->first();
@@ -106,7 +106,9 @@ class SeoService
             'project_id' => $entry->project_id ?? ProjectContext::id(),
         ];
 
-        SeoEntryTranslation::query()->updateOrCreate(
+        // withoutGlobalScope: bản dịch cũ (project_id null / lệch) vẫn khớp unique (seo_entry_id, language_id).
+        // Scoped updateOrCreate sẽ "không thấy" rồi INSERT → 1062 Duplicate entry.
+        SeoEntryTranslation::withoutGlobalScope('project')->updateOrCreate(
             ['seo_entry_id' => $entry->id, 'language_id' => $languageId],
             $translationPayload,
         );

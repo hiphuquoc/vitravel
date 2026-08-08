@@ -99,7 +99,7 @@ return [
         'settings.update' => 'Sửa cài đặt / hub / ngôn ngữ / cache',
 
         'users.view' => 'Xem danh sách người dùng',
-        'users.manage' => 'Tạo / sửa / phân quyền người dùng',
+        'users.manage' => 'Tạo / sửa / phân quyền người dùng (chỉ quản trị hệ thống)',
 
         'ai.use' => 'Dùng AI dịch / hỗ trợ',
     ],
@@ -125,8 +125,7 @@ return [
             'leads.*',
             'media.*',
             'settings.*',
-            'users.view',
-            'users.manage',
+            // users.* chỉ siêu quản trị hệ thống — không cấp qua vai trò dự án
             'ai.use',
         ],
         'editor' => [

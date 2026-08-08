@@ -25,15 +25,16 @@ flowchart LR
 - **Đăng nhập:** user `is_active` và (super admin **hoặc** có ≥ 1 project active).
 - **API nội dung:** `ResolveAdminProject` + `AuthorizeAdminPermission` (map method/path → `module.action`).
 - **Frontend:** `can(permission)` từ `user.projects[].permissions`; sidebar ẩn mục không đủ quyền.
+- **Người dùng:** chỉ **siêu quản trị hệ thống** (`users.role` = admin/super_admin) được vào `/settings/users`. Tài khoản chỉ có quyền dự án **không** xem/sửa user (kể cả chính mình) tại đây — hồ sơ cá nhân dùng `/account` (`PUT /auth/me`).
 
 ## API
 
 | Method | Path | Quyền | Ghi chú |
 |--------|------|-------|---------|
 | PUT | `/auth/me` | đã đăng nhập | Hồ sơ: name, email, đổi mật khẩu |
-| GET | `/users/meta` | `users.view` | roles, permission groups, projects gán được |
-| GET | `/users` | `users.view` | list + filter |
-| POST/PUT/DELETE | `/users[/{id}]` | `users.manage` | CRUD + sync `projects[]` |
+| GET | `/users/meta` | quản trị hệ thống | roles, permission groups, projects gán được |
+| GET | `/users` | quản trị hệ thống | list + filter |
+| POST/PUT/DELETE | `/users[/{id}]` | quản trị hệ thống | CRUD + sync `projects[]` |
 
 Payload gán dự án:
 
@@ -62,7 +63,7 @@ Payload gán dự án:
 | Danh sách user | `/settings/users/` |
 | Form user | `/settings/users/form/?id=` |
 
-Sidebar: avatar/tên → hồ sơ; menu **Người dùng** (Cài đặt) chỉ hiện khi có `users.view`.
+Sidebar: avatar/tên → hồ sơ (`/account`); menu **Người dùng** chỉ hiện với quản trị hệ thống (`users.view`).
 
 ## Seed / migrate
 

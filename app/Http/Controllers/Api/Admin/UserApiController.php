@@ -26,8 +26,8 @@ class UserApiController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (! AdminAccess::can($actor, 'users.view', ProjectContext::get())) {
-            return ApiResponse::error('Không có quyền xem người dùng.', 'FORBIDDEN', 403);
+        if (! AdminAccess::isSuperAdmin($actor)) {
+            return ApiResponse::error('Chỉ quản trị hệ thống mới xem được người dùng.', 'FORBIDDEN', 403);
         }
 
         $projects = $this->manageableProjects($actor)->map(fn (Project $p) => [
@@ -54,8 +54,8 @@ class UserApiController extends Controller
         $actor = $request->user();
         $project = ProjectContext::get();
 
-        if (! AdminAccess::can($actor, 'users.view', $project)) {
-            return ApiResponse::error('Không có quyền xem người dùng.', 'FORBIDDEN', 403);
+        if (! AdminAccess::isSuperAdmin($actor)) {
+            return ApiResponse::error('Chỉ quản trị hệ thống mới xem được người dùng.', 'FORBIDDEN', 403);
         }
 
         $perPage = max(1, min(100, (int) $request->query('per_page', 20)));
@@ -117,8 +117,8 @@ class UserApiController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (! AdminAccess::can($actor, 'users.view', ProjectContext::get())) {
-            return ApiResponse::error('Không có quyền xem người dùng.', 'FORBIDDEN', 403);
+        if (! AdminAccess::isSuperAdmin($actor)) {
+            return ApiResponse::error('Chỉ quản trị hệ thống mới xem được người dùng.', 'FORBIDDEN', 403);
         }
 
         $user = User::query()->with(['projects' => fn ($q) => $q->orderBy('name')])->find($id);
@@ -138,8 +138,8 @@ class UserApiController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (! AdminAccess::can($actor, 'users.manage', ProjectContext::get())) {
-            return ApiResponse::error('Không có quyền quản lý người dùng.', 'FORBIDDEN', 403);
+        if (! AdminAccess::isSuperAdmin($actor)) {
+            return ApiResponse::error('Chỉ quản trị hệ thống mới quản lý người dùng.', 'FORBIDDEN', 403);
         }
 
         try {
@@ -175,8 +175,8 @@ class UserApiController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (! AdminAccess::can($actor, 'users.manage', ProjectContext::get())) {
-            return ApiResponse::error('Không có quyền quản lý người dùng.', 'FORBIDDEN', 403);
+        if (! AdminAccess::isSuperAdmin($actor)) {
+            return ApiResponse::error('Chỉ quản trị hệ thống mới quản lý người dùng.', 'FORBIDDEN', 403);
         }
 
         $user = User::query()->with('projects')->find($id);
@@ -225,8 +225,8 @@ class UserApiController extends Controller
         /** @var User $actor */
         $actor = $request->user();
 
-        if (! AdminAccess::can($actor, 'users.manage', ProjectContext::get())) {
-            return ApiResponse::error('Không có quyền quản lý người dùng.', 'FORBIDDEN', 403);
+        if (! AdminAccess::isSuperAdmin($actor)) {
+            return ApiResponse::error('Chỉ quản trị hệ thống mới quản lý người dùng.', 'FORBIDDEN', 403);
         }
 
         $user = User::query()->find($id);
@@ -278,9 +278,17 @@ class UserApiController extends Controller
             'projects.*.role' => ['required', 'string', Rule::in($projectRoles)],
             'projects.*.permissions' => 'nullable|array',
             'projects.*.permissions.grant' => 'nullable|array',
-            'projects.*.permissions.grant.*' => ['string', Rule::in($permissionKeys)],
+            'projects.*.permissions.grant.*' => [
+                'string',
+                Rule::in($permissionKeys),
+                Rule::notIn(['users.view', 'users.manage']),
+            ],
             'projects.*.permissions.deny' => 'nullable|array',
-            'projects.*.permissions.deny.*' => ['string', Rule::in($permissionKeys)],
+            'projects.*.permissions.deny.*' => [
+                'string',
+                Rule::in($permissionKeys),
+                Rule::notIn(['users.view', 'users.manage']),
+            ],
         ];
 
         $validated = $request->validate($rules);
