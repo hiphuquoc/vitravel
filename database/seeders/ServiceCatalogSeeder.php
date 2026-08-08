@@ -90,11 +90,12 @@ class ServiceCatalogSeeder extends Seeder
             ]);
 
             if ($this->enId) {
+                $hubEn = $this->seo->ensureHub($hubKey, 'en');
                 $this->seo->ensureSeoFor($category, 'service_category', 'en', [
                     'slug' => $slug,
                     'title' => $category->name,
                     'status' => 'published',
-                    'parent_id' => $hub->id,
+                    'parent_id' => $hubEn->id,
                     'reclaim_slug_full' => true,
                 ]);
             }
@@ -112,7 +113,11 @@ class ServiceCatalogSeeder extends Seeder
 
             $categoryKey = $cluster.'|'.($row['category_slug'] ?? '');
             $categoryId = $this->categoryIds[$categoryKey] ?? null;
-            $countryId = $this->countryIds[$row['country_slug'] ?? 'viet-nam'] ?? null;
+            $destSlug = (string) ($row['country_slug'] ?? $row['zone_slug'] ?? '');
+            $countryId = $destSlug !== '' ? ($this->countryIds[$destSlug] ?? null) : null;
+            if (! $countryId && $this->countryIds !== []) {
+                $countryId = reset($this->countryIds) ?: null;
+            }
 
             $service = Service::query()->updateOrCreate(
                 ['code' => $code],
@@ -224,6 +229,8 @@ class ServiceCatalogSeeder extends Seeder
             ], 'service');
 
             if ($this->enId && is_array($en)) {
+                // Đảm bảo cha (category/hub) đã có bản dịch EN trước khi gắn con
+                $this->ensureServiceParentLocale($cluster, $row['category_slug'] ?? null, 'en');
                 $this->seo->syncSeo($service, 'en', [
                     'slug' => $en['slug'] ?? $slug,
                     'title' => $en['title'] ?? $row['title'],
@@ -268,6 +275,37 @@ class ServiceCatalogSeeder extends Seeder
         }
 
         return $this->seo->ensureHub($hubKey, 'vi')->id;
+    }
+
+    protected function ensureServiceParentLocale(string $cluster, ?string $categorySlug, string $locale): void
+    {
+        $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
+        if (! $hubKey) {
+            return;
+        }
+
+        $hub = $this->seo->ensureHub($hubKey, $locale);
+
+        if (! $categorySlug) {
+            return;
+        }
+
+        $category = ServiceCategory::query()
+            ->where('cluster', $cluster)
+            ->where('slug', $categorySlug)
+            ->first();
+
+        if (! $category) {
+            return;
+        }
+
+        $this->seo->ensureSeoFor($category, 'service_category', $locale, [
+            'slug' => $category->slug,
+            'title' => $category->name,
+            'status' => 'published',
+            'parent_id' => $hub->id,
+            'reclaim_slug_full' => true,
+        ]);
     }
 
     /**

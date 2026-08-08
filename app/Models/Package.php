@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasMediaAttachments;
 use App\Models\Concerns\HasSeo;
@@ -16,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Package extends Model
 {
-    use HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
 
     public const TYPE_TOUR = 'tour';
 
@@ -30,7 +31,7 @@ class Package extends Model
     ];
 
     protected $fillable = [
-        'type', 'country_id', 'code', 'duration_days', 'duration_nights',
+        'project_id', 'type', 'country_id', 'code', 'duration_days', 'duration_nights',
         'price_from', 'currency', 'rating', 'review_count',
         'is_featured', 'is_hot_deal', 'discount_badge', 'status', 'published_at',
         'view_count', 'sort', 'cruise_type', 'departure_port', 'boat_class', 'nights_on_board',

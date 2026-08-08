@@ -262,7 +262,7 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 
 **Ghi chú:** Trang này nên build từ các **section component độc lập, có thể tái sắp xếp** (không hard-code thứ tự cứng trong 1 component khổng lồ) — vì đây là trang dễ được yêu cầu chỉnh sửa thứ tự/nội dung nhất trong toàn site.
 
-**CMS (2026-07):** About-only content đã wire DB + admin đa ngôn ngữ qua `CompanyProfile` / translations + CRUD `CompanyValue`, `ReasonToChooseUs`, `ReferencePerson`. Shared Home blocks (company-intro, team-grid, usp, review-platforms, testimonials, video-showcase) vẫn dùng `HomeSection` / related. Public payload: `ViewDataService::aboutPage()` (+ fallback `SampleData::aboutPage()`). Admin: `/he-thong/cong-ty` (story + chrome + ảnh), `/he-thong/gia-tri`, `/he-thong/ly-do-chon`, `/he-thong/dai-dien`.
+**CMS (2026-07):** About-only content đã wire DB + admin đa ngôn ngữ qua `CompanyProfile` / translations + CRUD `CompanyValue`, `ReasonToChooseUs`, `ReferencePerson`. Shared Home blocks (company-intro, team-grid, usp, review-platforms, testimonials, video-showcase) vẫn dùng `HomeSection` / related. Public payload: `ViewDataService::aboutPage()` (+ fallback `SampleData::aboutPage()`). Admin (host `admin.vitravel.*`): `/cong-ty` (story + chrome + ảnh), `/gia-tri`, `/ly-do-chon`, `/dai-dien`.
 
 ---
 

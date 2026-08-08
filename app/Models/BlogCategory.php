@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
@@ -12,13 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BlogCategory extends Model
 {
-    use HasFaqs, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'slug', 'seo_intro'];
 
     protected $fillable = [
-        'level', 'country_id', 'destination_id', 'sort', 'is_active',
+        'project_id', 'level', 'country_id', 'destination_id', 'sort', 'is_active',
     ];
 
     protected function casts(): array

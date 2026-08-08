@@ -7,21 +7,22 @@ return [
     |--------------------------------------------------------------------------
     */
     'site' => [
-        'name' => env('SEO_SITE_NAME', env('COMPANY_NAME', 'ViTravel')),
-        'tagline' => env('SEO_SITE_TAGLINE', env('COMPANY_TAGLINE', 'Hài lòng hơn cả mong đợi')),
-        'title_suffix' => env('SEO_TITLE_SUFFIX', env('COMPANY_NAME', 'ViTravel')),
+        // Brand runtime: CompanyProfile (SchemaService). SEO_SITE_* optional only — no COMPANY_*.
+        'name' => env('SEO_SITE_NAME', 'ViTravel'),
+        'tagline' => env('SEO_SITE_TAGLINE', 'Hài lòng hơn cả mong đợi'),
+        'title_suffix' => env('SEO_TITLE_SUFFIX', 'ViTravel'),
         'default_description' => env(
             'SEO_DEFAULT_DESCRIPTION',
             'ViTravel — đại lý du lịch bản địa: tour trọn gói, du thuyền, vé tàu, máy bay, khách sạn/resort, vui chơi và dịch vụ hỗ trợ tại Việt Nam & Đông Nam Á.'
         ),
-        'default_og_image' => env('SEO_DEFAULT_OG_IMAGE', env('COMPANY_LOGO', null)),
+        'default_og_image' => env('SEO_DEFAULT_OG_IMAGE', null),
         'twitter_site' => env('SEO_TWITTER_SITE', null),
         'locale_default' => 'vi_VN',
         'locales' => [
             'vi' => 'vi_VN',
             'en' => 'en_US',
         ],
-        // telephone / email / address / same_as: lấy từ config/company.php (SchemaService merge)
+        // telephone / email / address / same_as: CompanyProfile / config/company.php fallback (SchemaService)
     ],
 
     /*
@@ -124,6 +125,13 @@ return [
             'parent_type' => null,
             'parent_relation' => null,
         ],
+        'ferries_hub' => [
+            'label' => 'Hub Tàu / Xe ra đảo',
+            'hub' => true,
+            'default_slug' => 'tau-xe-ra-dao',
+            'parent_type' => null,
+            'parent_relation' => null,
+        ],
         'flights_hub' => [
             'label' => 'Hub Vé máy bay',
             'hub' => true,
@@ -154,12 +162,12 @@ return [
         ],
         'service_category' => [
             'label' => 'Danh mục dịch vụ',
-            'parent_type' => ['trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'],
+            'parent_type' => ['trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'],
             'parent_relation' => null,
         ],
         'service' => [
             'label' => 'Dịch vụ / sản phẩm',
-            'parent_type' => ['service_category', 'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'],
+            'parent_type' => ['service_category', 'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'],
             'parent_relation' => 'category',
         ],
     ],
@@ -215,6 +223,15 @@ return [
             'default_subtitle' => 'Đặt vé tàu SE, giường nằm và ghế mềm — hỗ trợ đổi ngày, giao vé tận nơi.',
             'default_seo_title' => 'Vé tàu cao tốc Việt Nam — ViTravel',
             'default_seo_description' => 'Đặt vé tàu Hà Nội — Đà Nẵng — Sài Gòn qua ViTravel. Ghế mềm, giường nằm, hỗ trợ 24/7.',
+        ],
+        'ferries_hub' => [
+            'template' => 'ferries_hub',
+            'seo_type' => 'ferries_hub',
+            'default_slug' => 'tau-xe-ra-dao',
+            'default_title' => 'Vé tàu cao tốc & xe khách',
+            'default_subtitle' => 'Tàu cao tốc, phà ô tô và limousine ra đảo — đặt trước, đổi ngày linh hoạt.',
+            'default_seo_title' => 'Vé tàu / xe ra đảo — Cát Bà',
+            'default_seo_description' => 'Đặt vé tàu cao tốc, phà và limousine Hà Nội / Hải Phòng / Hạ Long — Cát Bà.',
         ],
         'flights_hub' => [
             'template' => 'flights_hub',

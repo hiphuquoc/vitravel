@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasMediaAttachments;
 use App\Models\Concerns\HasSeo;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TourCategory extends Model
 {
-    use HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
 
     public const TYPE_DURATION = 'duration';
 
@@ -40,7 +41,7 @@ class TourCategory extends Model
     /** @var list<string> */
     protected array $translatable = ['name', 'slug', 'description', 'seo_intro'];
 
-    protected $fillable = ['country_id', 'type', 'sort', 'is_active'];
+    protected $fillable = ['project_id', 'country_id', 'type', 'sort', 'is_active'];
 
     protected function casts(): array
     {

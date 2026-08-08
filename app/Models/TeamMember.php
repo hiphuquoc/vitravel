@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
 use App\Services\MediaService;
@@ -12,13 +13,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TeamMember extends Model
 {
-    use HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'role', 'short_bio', 'bio_html'];
 
     protected $fillable = [
-        'department', 'avatar_media_id', 'sort', 'is_active', 'show_on_home',
+        'project_id', 'department', 'avatar_media_id', 'sort', 'is_active', 'show_on_home',
         'phone', 'email', 'area', 'years_experience', 'languages',
         'stat_clients', 'stat_tours', 'stat_awards', 'is_verified',
     ];

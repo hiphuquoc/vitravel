@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'article_id', 'full_name', 'email', 'phone', 'content',
+        'project_id', 'article_id', 'full_name', 'email', 'phone', 'content',
         'status', 'ip_address', 'user_agent', 'approved_at',
     ];
 

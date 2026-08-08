@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasMediaAttachments;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Review extends Model
 {
-    use HasMediaAttachments, SoftDeletes;
+    use BelongsToProject, HasMediaAttachments, SoftDeletes;
 
     protected $fillable = [
-        'reviewable_type', 'reviewable_id', 'country_id', 'author_name',
+        'project_id', 'reviewable_type', 'reviewable_id', 'country_id', 'author_name',
         'author_country', 'author_country_code', 'avatar_media_id', 'rating',
         'reviewed_on', 'question_title', 'content', 'photos_count',
         'is_featured', 'show_on_home', 'status', 'sort',

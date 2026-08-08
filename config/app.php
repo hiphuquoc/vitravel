@@ -56,6 +56,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Admin Console URL (Next.js — host riêng)
+    |--------------------------------------------------------------------------
+    |
+    | Ví dụ local: https://admin.vitravel.dev hoặc http://localhost:3100
+    | Production: https://admin.vitravel.net
+    |
+    */
+    'admin_url' => env('ADMIN_APP_URL', 'https://admin.vitravel.dev'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

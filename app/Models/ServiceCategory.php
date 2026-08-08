@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasSeo;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Builder;
@@ -12,10 +13,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ServiceCategory extends Model
 {
-    use HasSeo, SoftDeletes;
+    use BelongsToProject, HasSeo, SoftDeletes;
 
     protected $fillable = [
-        'cluster', 'slug', 'name', 'intro', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
+        'project_id', 'cluster', 'slug', 'name', 'intro', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
     ];
 
     protected function casts(): array

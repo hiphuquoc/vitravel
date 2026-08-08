@@ -53,6 +53,7 @@
 
     <x-layout.footer />
     <x-layout.floating-buttons />
+    <x-layout.project-switcher />
 
     @stack('scripts')
 </body>

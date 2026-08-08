@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Media;
+use App\Support\ProjectContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -23,6 +24,25 @@ class MediaService
         return $disk;
     }
 
+    /**
+     * Prefix storage folder with projects/{code}/ when ProjectContext is set.
+     */
+    public function projectPrefixedFolder(?string $folder): string
+    {
+        $folder = trim((string) $folder, '/');
+        $code = ProjectContext::code();
+        if ($code === null || $code === '') {
+            return $folder;
+        }
+
+        $prefix = 'projects/'.$code;
+        if ($folder === '' || $folder === $prefix || str_starts_with($folder, $prefix.'/')) {
+            return $folder !== '' ? $folder : $prefix;
+        }
+
+        return $prefix.'/'.$folder;
+    }
+
     public function gcsConfigured(): bool
     {
         return filled(config('services.gcs.bucket'))
@@ -38,7 +58,7 @@ class MediaService
         ?string $role = null,
     ): Media {
         $disk ??= $this->defaultDisk();
-        $folder = trim($folder ?? config('media.folder', 'vitravel/images'), '/');
+        $folder = $this->projectPrefixedFolder($folder ?? config('media.folder', 'vitravel/images'));
 
         $built = $this->buildOptimizedSet($file);
         $extension = $built['extension'];
@@ -204,7 +224,7 @@ class MediaService
     public function storeUploadedVideo(UploadedFile $file, ?string $folder = null, ?string $disk = null): Media
     {
         $disk ??= $this->defaultDisk();
-        $folder = trim($folder ?? config('media.video_files', 'vitravel/video-files'), '/');
+        $folder = $this->projectPrefixedFolder($folder ?? config('media.video_files', 'vitravel/video-files'));
 
         $extension = strtolower($file->getClientOriginalExtension() ?: 'mp4');
         $mime = $file->getMimeType() ?: match ($extension) {

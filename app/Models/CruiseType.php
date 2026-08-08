@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasSeo;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
@@ -11,10 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class CruiseType extends Model
 {
-    use HasSeo, SoftDeletes;
+    use BelongsToProject, HasSeo, SoftDeletes;
 
     protected $fillable = [
-        'slug', 'name', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
+        'project_id', 'slug', 'name', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
     ];
 
     protected function casts(): array

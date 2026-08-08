@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,13 +11,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ExperienceAlbum extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use BelongsToProject, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'description'];
 
     protected $fillable = [
-        'country_id', 'cover_media_id', 'customer_name', 'trip_date',
+        'project_id', 'country_id', 'cover_media_id', 'customer_name', 'trip_date',
         'photo_count', 'sort', 'status',
     ];
 

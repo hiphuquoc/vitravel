@@ -81,7 +81,7 @@ class ServiceCategoryApiController extends Controller
         $parents = $hubKey
             ? $this->seoService()->parentOptions($hubKey)
             : $this->seoService()->parentOptions([
-                'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub',
+                'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub',
             ]);
 
         return ApiResponse::success([

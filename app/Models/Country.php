@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasMediaAttachments;
 use App\Models\Concerns\HasSeo;
@@ -15,13 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Country extends Model
 {
-    use HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'slug', 'tagline', 'intro_text', 'long_form_content'];
 
     protected $fillable = [
-        'code', 'home_grid_size', 'banner_media_id', 'listing_banner_media_id', 'sort',
+        'project_id', 'code', 'home_grid_size', 'banner_media_id', 'listing_banner_media_id', 'sort',
         'is_active', 'show_in_menu', 'show_in_customize_form',
     ];
 

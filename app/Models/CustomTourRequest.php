@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 
 class CustomTourRequest extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'adults_count', 'children_count', 'infants_count', 'duration_text',
+        'project_id', 'adults_count', 'children_count', 'infants_count', 'duration_text',
         'arrival_date', 'countries_to_visit', 'accommodation_preference',
         'budget_amount', 'budget_currency', 'budget_unit', 'gender',
         'first_name', 'last_name', 'email', 'phone', 'nationality', 'city',

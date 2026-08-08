@@ -1,0 +1,20 @@
+; Supervisor — Laravel queue worker
+; Copy tới /etc/supervisor/conf.d/vitravel-worker.conf
+; hoặc dán vào aaPanel → Supervisor plugin
+;
+; sudo supervisorctl reread
+; sudo supervisorctl update
+; sudo supervisorctl start vitravel-worker:*
+
+[program:vitravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /www/wwwroot/vitravel/artisan queue:work database --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/www/wwwroot/vitravel/storage/logs/worker.log
+stopwaitsecs=3600

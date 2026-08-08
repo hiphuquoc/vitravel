@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,12 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Media extends Model
 {
-    use SoftDeletes;
+    use BelongsToProject, SoftDeletes;
 
     protected $table = 'media';
 
     protected $fillable = [
-        'disk', 'path', 'filename', 'mime_type', 'size_bytes',
+        'project_id', 'disk', 'path', 'filename', 'mime_type', 'size_bytes',
         'width', 'height', 'alt', 'credit', 'meta',
     ];
 

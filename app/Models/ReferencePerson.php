@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,12 +10,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ReferencePerson extends Model
 {
-    use SoftDeletes;
+    use BelongsToProject, SoftDeletes;
 
     protected $table = 'reference_persons';
 
     protected $fillable = [
-        'country_id', 'photo_media_id', 'name', 'email', 'phone', 'skype', 'sort', 'is_active',
+        'project_id', 'country_id', 'photo_media_id', 'name', 'email', 'phone', 'skype', 'sort', 'is_active',
     ];
 
     protected function casts(): array

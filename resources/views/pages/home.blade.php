@@ -62,8 +62,11 @@
         </section>
     @endunless
 
-    {{-- ── Vé tàu cao tốc nổi bật (cùng pattern tour/du thuyền) ── --}}
-    @php $trainsSection = view_data()->homeSection('featured_trains'); @endphp
+    {{-- ── Vé tàu cao tốc / phà nổi bật (train hoặc ferry theo dự án) ── --}}
+    @php
+        $trainsSection = view_data()->homeSection('featured_trains');
+        $transportCluster = view_data()->featuredTransportCluster();
+    @endphp
     @unless ($trainsSection['hidden'] ?? false)
         <section class="cv-auto section-band" aria-label="{{ $trainsSection['title'] ?? 'Vé tàu cao tốc' }}">
             <div class="container-site">
@@ -74,7 +77,7 @@
                 />
                 <div x-data="listingGrid(@js([
                     'endpoint' => route('api.listings.featured-services'),
-                    'params' => ['cluster' => 'train', 'limit' => 3],
+                    'params' => ['cluster' => $transportCluster, 'limit' => 3],
                 ]))">
                     <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
                     <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">

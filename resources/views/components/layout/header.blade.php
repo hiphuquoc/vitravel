@@ -17,6 +17,10 @@
     ], array_slice(view_data()->featuredTours(6), 0, 6));
     $searchKeywords = array_slice(view_data()->popularKeywords(), 0, 8);
     $companyContact = view_data()->companyContact();
+    $nav = view_data()->siteNav();
+    $brandName = $nav['brand'] ?? ($companyContact['name'] ?? 'ViTravel');
+    $brandTagline = $nav['tagline'] ?? '';
+    $cruiseNav = $nav['cruise'] ?? [];
     $hotlineDisplay = $companyContact['phone'] ?? '+84 24 3999 8888';
     $hotlineTel = preg_replace('/[^\d+]/', '', $hotlineDisplay) ?: $hotlineDisplay;
     $hotlineLabel = $companyContact['hotline_label'] ?? 'Hotline';
@@ -26,9 +30,13 @@
         $serviceCatsByCluster[$sc['code']] = view_data()->serviceCategories($sc['code']);
     }
     $trainHub = collect($serviceClusters)->firstWhere('code', 'train');
+    $ferryHub = collect($serviceClusters)->firstWhere('code', 'ferry');
+    $transportHub = $ferryHub ?? $trainHub;
+    $transportCluster = $transportHub['code'] ?? view_data()->featuredTransportCluster();
     $flightHub = collect($serviceClusters)->firstWhere('code', 'flight');
-    $trainServiceCount = view_data()->serviceCount('train');
+    $trainServiceCount = view_data()->serviceCount($transportCluster);
     $flightServiceCount = view_data()->serviceCount('flight');
+    $transportNavLabel = ($transportCluster === 'ferry') ? 'Vé tàu cao tốc / phà' : 'Vé tàu hỏa';
 @endphp
 
 <div
@@ -291,13 +299,15 @@
     <div class="container-site headerMain__inner">
 
         {{-- Logo --}}
-        <a href="{{ locale_route('home') }}" class="header-wordmark" aria-label="ViTravel — về trang chủ">
+        <a href="{{ locale_route('home') }}" class="header-wordmark" aria-label="{{ $brandName }} — về trang chủ">
             <span class="header-wordmark__mark" aria-hidden="true">
                 <x-icon name="compass" class="header-wordmark__icon" />
             </span>
             <span class="header-wordmark__text">
-                <span class="header-wordmark__name">ViTravel</span>
-                <span class="header-wordmark__tagline">Hài lòng hơn mong đợi</span>
+                <span class="header-wordmark__name">{{ $brandName }}</span>
+                @if ($brandTagline !== '')
+                    <span class="header-wordmark__tagline">{{ $brandTagline }}</span>
+                @endif
             </span>
         </a>
 
@@ -340,7 +350,7 @@
                 <button type="button"
                     class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
                     :aria-expanded="openMenu === 'cruise'" @click="openMenu = openMenu === 'cruise' ? null : 'cruise'; moreOpen = false">
-                    Du thuyền <x-icon name="chevron-down" class="size-3.5" />
+                    {{ $cruiseNav['label'] ?? 'Du thuyền' }} <x-icon name="chevron-down" class="size-3.5" />
                 </button>
                 <div x-cloak x-show="openMenu === 'cruise'" x-transition.opacity.duration.150ms
                     class="absolute top-full left-0 z-50 w-[580px] pt-2">
@@ -348,9 +358,9 @@
                     <a href="{{ locale_route('cruises.hub') }}" class="nav-panel-row group mb-1 border-b border-line pb-2">
                         <span class="nav-panel-item-row">
                             <span class="nav-panel-lead-mark" aria-hidden="true"></span>
-                            <span class="nav-panel-item">Tất cả du thuyền</span>
+                            <span class="nav-panel-item">{{ $cruiseNav['all_label'] ?? 'Tất cả du thuyền' }}</span>
                         </span>
-                        <span class="nav-panel-meta">Xem toàn bộ lịch trình du thuyền</span>
+                        <span class="nav-panel-meta">{{ $cruiseNav['all_meta'] ?? 'Xem toàn bộ lịch trình du thuyền' }}</span>
                     </a>
                     <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
                         @foreach ($cruiseTypes as $t)
@@ -382,7 +392,7 @@
                         {{ $sc['nav_label'] }} <x-icon name="chevron-down" class="size-3.5" />
                     </button>
                     <div x-cloak x-show="openMenu === '{{ $svcKey }}'" x-transition.opacity.duration.150ms
-                        class="absolute top-full left-0 z-50 w-72 pt-2">
+                        class="absolute top-full left-0 z-50 w-80 max-w-[min(20rem,calc(100vw-2rem))] pt-2">
                         <div class="rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
                             <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="nav-panel-row group mb-1 border-b border-line pb-2">
                                 <span class="nav-panel-item-row">
@@ -393,10 +403,10 @@
                             </a>
                             <div class="nav-panel-group">
                                 @if (($sc['code'] ?? '') === 'other')
-                                    @if ($trainHub)
-                                        <a href="{{ locale_route('services.hub', ['cluster' => 'train']) }}" class="nav-panel-link">
+                                    @if ($transportHub)
+                                        <a href="{{ locale_route('services.hub', ['cluster' => $transportCluster]) }}" class="nav-panel-link">
                                             <span class="nav-panel-item-row">
-                                                <span>Vé tàu hỏa</span>
+                                                <span>{{ $transportNavLabel }}</span>
                                                 <x-shared.count-badge :count="$trainServiceCount" />
                                             </span>
                                         </a>
@@ -443,7 +453,7 @@
                     <div class="header-more-panel__card">
                         <div class="header-more-panel__scroll vt-scrollbar">
                             <div class="nav-panel-group">
-                                <p class="nav-panel-group__title">Về ViTravel</p>
+                                <p class="nav-panel-group__title">{{ $nav['about_group'] ?? ('Về '.$brandName) }}</p>
                                 <a href="{{ locale_route('about') }}" class="nav-panel-link">Về chúng tôi</a>
                                 <a href="{{ locale_route('contact') }}" class="nav-panel-link">Liên hệ</a>
                                 @if (Route::has('team'))
@@ -509,7 +519,7 @@
                 <div class="site-search__sheet-title-row">
                     <div>
                         <h2 class="site-search__sheet-title item-title">Tìm kiếm</h2>
-                        <p class="site-search__sheet-sub">Tour, điểm đến, du thuyền, cẩm nang…</p>
+                        <p class="site-search__sheet-sub">{{ $cruiseNav['search_hint'] ?? 'Tour, điểm đến, du thuyền, cẩm nang…' }}</p>
                     </div>
                     <button type="button" class="site-search__sheet-close" @click="closeSearch()" aria-label="Đóng tìm kiếm">
                         <x-icon name="close" class="size-5" />
@@ -521,7 +531,7 @@
                 @submit="if (!(q || '').trim()) { $event.preventDefault(); }">
                 <x-icon name="search" class="site-search-bar__icon size-5" />
                 <input type="search" name="q" x-model="q" x-ref="searchInput"
-                    placeholder="Tìm tour, điểm đến, du thuyền, bài viết…"
+                    placeholder="{{ $cruiseNav['search_placeholder'] ?? 'Tìm tour, điểm đến, du thuyền, bài viết…' }}"
                     class="site-search-bar__input" autocomplete="off" enterkeyhint="search">
                 <button type="button" class="site-search-bar__clear" x-show="q.length" @click="q = ''; $refs.searchInput.focus()"
                     aria-label="Xóa từ khóa">
@@ -614,13 +624,15 @@
             x-transition:leave-start="translate-x-0"
             x-transition:leave-end="translate-x-full">
             <header class="mobile-nav-drawer__head">
-                <a href="{{ locale_route('home') }}" class="header-wordmark header-wordmark--drawer" @click="closeMobileNav()" aria-label="ViTravel — về trang chủ">
+                <a href="{{ locale_route('home') }}" class="header-wordmark header-wordmark--drawer" @click="closeMobileNav()" aria-label="{{ $brandName }} — về trang chủ">
                     <span class="header-wordmark__mark" aria-hidden="true">
                         <x-icon name="compass" class="header-wordmark__icon" />
                     </span>
                     <span class="header-wordmark__text">
-                        <span class="header-wordmark__name">ViTravel</span>
-                        <span class="header-wordmark__tagline">Hài lòng hơn mong đợi</span>
+                        <span class="header-wordmark__name">{{ $brandName }}</span>
+                        @if ($brandTagline !== '')
+                            <span class="header-wordmark__tagline">{{ $brandTagline }}</span>
+                        @endif
                     </span>
                 </a>
                 <button type="button" class="mobile-nav-drawer__close" @click="closeMobileNav()" aria-label="Đóng menu">
@@ -667,14 +679,14 @@
                         :aria-expanded="mobileSub === 'cruise'"
                         @click="toggleMobileSub('cruise')">
                         <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="cruise" class="size-4" /></span>
-                        <span class="mobile-nav-drawer__trigger-label">Du thuyền</span>
+                        <span class="mobile-nav-drawer__trigger-label">{{ $cruiseNav['label'] ?? 'Du thuyền' }}</span>
                         <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'cruise' && 'is-open'" />
                     </button>
                     <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'cruise'" x-collapse>
                         <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('cruises.hub') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
-                                    <span class="mobile-nav-drawer__tree-link-title item-title">Tất cả du thuyền</span>
+                                    <span class="mobile-nav-drawer__tree-link-title item-title">{{ $cruiseNav['all_label'] ?? 'Tất cả du thuyền' }}</span>
                                     <span class="mobile-nav-drawer__tree-link-meta">Lịch trình &amp; loại tàu</span>
                                 </a>
                             </li>
@@ -719,11 +731,11 @@
                                     </a>
                                 </li>
                                 @if (($sc['code'] ?? '') === 'other')
-                                    @if ($trainHub)
+                                    @if ($transportHub)
                                         <li>
-                                            <a href="{{ locale_route('services.hub', ['cluster' => 'train']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
+                                            <a href="{{ locale_route('services.hub', ['cluster' => $transportCluster]) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
                                                 <span class="mobile-nav-drawer__tree-link-row">
-                                                    <span class="mobile-nav-drawer__tree-link-title">Vé tàu hỏa</span>
+                                                    <span class="mobile-nav-drawer__tree-link-title">{{ $transportNavLabel }}</span>
                                                     <x-shared.count-badge :count="$trainServiceCount" />
                                                 </span>
                                             </a>
@@ -766,7 +778,7 @@
                         <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'info' && 'is-open'" />
                     </button>
                     <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'info'" x-collapse>
-                        <p class="mobile-nav-drawer__tree-group-title">Về ViTravel</p>
+                        <p class="mobile-nav-drawer__tree-group-title">{{ $nav['about_group'] ?? ('Về '.$brandName) }}</p>
                         <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('about') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">Về chúng tôi</a>

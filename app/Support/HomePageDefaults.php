@@ -3,11 +3,137 @@
 namespace App\Support;
 
 use App\Models\HomeSection;
+use Throwable;
 
 class HomePageDefaults
 {
-    /** @return list<array{icon: string, sort: int, vi: array{title: string, description: string}, en: array{title: string, description: string}}> */
+    /**
+     * USP mặc định — ưu tiên `usps` trong project/seed_{profile}.php khi có ProjectContext / useProfile.
+     *
+     * @return list<array{icon: string, sort: int, vi: array{title: string, description: string}, en: array{title: string, description: string}}>
+     */
     public static function usps(): array
+    {
+        $seed = self::seedGet('usps', []);
+        if (is_array($seed) && $seed !== []) {
+            $out = [];
+            foreach (array_values($seed) as $i => $row) {
+                if (! is_array($row)) {
+                    continue;
+                }
+                $out[] = [
+                    'icon' => (string) ($row['icon'] ?? 'support'),
+                    'sort' => (int) ($row['sort'] ?? $i),
+                    'vi' => [
+                        'title' => (string) ($row['vi']['title'] ?? ''),
+                        'description' => (string) ($row['vi']['description'] ?? ''),
+                    ],
+                    'en' => [
+                        'title' => (string) ($row['en']['title'] ?? $row['vi']['title'] ?? ''),
+                        'description' => (string) ($row['en']['description'] ?? $row['vi']['description'] ?? ''),
+                    ],
+                ];
+            }
+            if ($out !== []) {
+                return $out;
+            }
+        }
+
+        return self::fallbackUsps();
+    }
+
+    /**
+     * Section copy trang chủ — ưu tiên `home_sections` trong seed dự án (kèm `quick_inquiry`).
+     *
+     * @return list<array{key: string, sort: int, vi: array<string, mixed>, en: array<string, mixed>}>
+     */
+    public static function sections(): array
+    {
+        $byKey = [];
+        foreach (self::fallbackSections() as $row) {
+            $byKey[$row['key']] = $row;
+        }
+
+        $seed = self::seedGet('home_sections', []);
+        if (is_array($seed) && $seed !== []) {
+            foreach ($seed as $key => $byLocale) {
+                if (! is_string($key) || ! is_array($byLocale)) {
+                    continue;
+                }
+                $base = $byKey[$key] ?? [
+                    'key' => $key,
+                    'sort' => count($byKey),
+                    'vi' => [],
+                    'en' => [],
+                ];
+                foreach (['vi', 'en'] as $locale) {
+                    if (! empty($byLocale[$locale]) && is_array($byLocale[$locale])) {
+                        $base[$locale] = array_merge(
+                            $base[$locale] ?? [],
+                            self::normalizeSectionTranslation($byLocale[$locale]),
+                        );
+                    }
+                }
+                $byKey[$key] = $base;
+            }
+        }
+
+        $ordered = [];
+        foreach (HomeSection::predefinedKeys() as $i => $key) {
+            if (! isset($byKey[$key])) {
+                continue;
+            }
+            $row = $byKey[$key];
+            $row['sort'] = $i;
+            $ordered[] = $row;
+        }
+
+        return $ordered !== [] ? $ordered : array_values($byKey);
+    }
+
+    /** @return mixed */
+    private static function seedGet(string $key, mixed $default = null): mixed
+    {
+        try {
+            return ProjectSeed::get($key, $default);
+        } catch (Throwable) {
+            return $default;
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $src
+     * @return array<string, mixed>
+     */
+    private static function normalizeSectionTranslation(array $src): array
+    {
+        $map = [
+            'eyebrow' => 'eyebrow',
+            'title' => 'title',
+            'subtitle' => 'subtitle',
+            'body' => 'body',
+            'meta_line' => 'meta_line',
+            'metaLine' => 'meta_line',
+            'cta_label' => 'cta_label',
+            'ctaLabel' => 'cta_label',
+            'cta_url' => 'cta_url',
+            'ctaUrl' => 'cta_url',
+            'image_alt' => 'image_alt',
+            'imageAlt' => 'image_alt',
+        ];
+
+        $out = [];
+        foreach ($map as $from => $to) {
+            if (array_key_exists($from, $src)) {
+                $out[$to] = $src[$from];
+            }
+        }
+
+        return $out;
+    }
+
+    /** @return list<array{icon: string, sort: int, vi: array{title: string, description: string}, en: array{title: string, description: string}}> */
+    private static function fallbackUsps(): array
     {
         return [
             [
@@ -62,7 +188,7 @@ class HomePageDefaults
     }
 
     /** @return list<array{key: string, sort: int, vi: array<string, mixed>, en: array<string, mixed>}> */
-    public static function sections(): array
+    private static function fallbackSections(): array
     {
         return [
             [
@@ -230,12 +356,12 @@ class HomePageDefaults
                 'sort' => 10,
                 'vi' => [
                     'eyebrow' => 'Tư vấn miễn phí',
-                    'title' => 'Hỏi nhanh về hành trình của bạn',
+                    'title' => 'Gửi lời nhắn cho chúng tôi',
                     'body' => 'Bạn muốn khám phá Việt Nam, kết hợp Campuchia hay Thái Lan — mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa sẽ phản hồi trong vòng <strong>24 giờ làm việc</strong>, hoàn toàn miễn phí.',
                 ],
                 'en' => [
                     'eyebrow' => 'Free advice',
-                    'title' => 'Quick inquiry about your trip',
+                    'title' => 'Send us a message',
                     'body' => 'Exploring Vietnam, combining Cambodia or Thailand — which season, what budget? Leave a note — our local experts will reply within <strong>1 business day</strong>, free of charge.',
                 ],
             ],

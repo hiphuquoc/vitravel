@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,13 +10,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class SeoEntry extends Model
 {
+    use BelongsToProject;
+
     /** @var array<string, mixed> */
     protected $attributes = [
         'is_indexable' => true,
     ];
 
     protected $fillable = [
-        'reference_type', 'reference_id', 'type', 'parent_id', 'level',
+        'project_id', 'reference_type', 'reference_id', 'type', 'parent_id', 'level',
         'og_image_id', 'rating_aggregate_star', 'rating_aggregate_count', 'is_indexable',
     ];
 

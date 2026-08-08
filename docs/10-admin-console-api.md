@@ -5,17 +5,40 @@ Base path: `/api/v1/admin`
 Auth: `Authorization: Bearer <token>` (except login).  
 Tokens lưu bảng **`admin_api_tokens`** (không dùng Sanctum morph / `personal_access_tokens`).
 
-Frontend: `admin/` — live HMR xem `admin/README.md`.
+**Multi-project:** hầu hết endpoint nội dung cần context dự án — header `X-Project-Code: {code}` hoặc `X-Project-Id: {id}` (middleware `ResolveAdminProject`). Khi hệ thống chỉ có 1 project (hoặc khớp `PROJECT_DEFAULT_CODE`), API soft-resolve. Chi tiết: [`docs/11-multi-project-architecture.md`](11-multi-project-architecture.md).
+
+Frontend: repo `admin.vitravel.dev` — host riêng (`admin.vitravel.dev` / `.net`), static `out/` (không còn `/he-thong` trên domain public).
 
 ## Auth
 
 | Method | Path | Body | Notes |
 |---|---|---|---|
-| POST | `/auth/login` | `email`, `password`, `device_name?` | Returns `token` + `user` |
-| GET | `/auth/me` | — | Current admin |
+| POST | `/auth/login` | `email`, `password`, `device_name?` | Returns `token` + `user` + `projects[]` (kèm `role`, `permissions[]`) |
+| GET | `/auth/me` | — | Current user + `is_super_admin` + `projects[]`; nếu có `X-Project-Code` → thêm `permissions[]` |
+| PUT | `/auth/me` | `name`, `email`, `current_password?`, `password?`, `password_confirmation?` | Cập nhật hồ sơ / đổi mật khẩu |
 | POST | `/auth/logout` | — | Revokes current token |
 
-## Packages (Gói Tour)
+## Users & RBAC
+
+Chi tiết: [`docs/12-admin-users-rbac.md`](12-admin-users-rbac.md). Catalog: `config/admin_permissions.php`.
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/users/meta` | system/project roles, permission groups, projects gán được |
+| GET | `/users` | `search`, `status`, `role`, `page` |
+| POST | `/users` | Tạo + `projects[]` |
+| GET/PUT/DELETE | `/users/{id}` | Chi tiết / cập nhật / xóa |
+
+Mọi route trong group `ResolveAdminProject` chạy thêm `AuthorizeAdminPermission` (map HTTP → `module.action`).
+
+## Projects
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/projects` | Danh sách project user được vào (admin = tất cả active) — **không** cần `X-Project-*` |
+| GET | `/projects/{id}` | Chi tiết + domains |
+
+Sau khi chọn project trên UI, gửi `X-Project-Code` cho mọi CRUD packages/media/…
 
 | Method | Path | Notes |
 |---|---|---|

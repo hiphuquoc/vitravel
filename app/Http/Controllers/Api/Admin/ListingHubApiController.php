@@ -148,7 +148,7 @@ class ListingHubApiController extends BladeListingHubController
                 'cruises_hub' => $this->seoService()->attachCruiseTypesToCruisesHub($locale),
                 'tours_hub' => $this->seoService()->attachCountriesToToursHub($locale),
                 'guide_hub' => $this->seoService()->attachBlogCategoriesToGuideHub($locale),
-                'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+                'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
                     => $this->seoService()->rebuildServicesSeoTree($locale),
                 default => null,
             };

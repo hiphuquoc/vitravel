@@ -1,0 +1,33 @@
+# =============================================================================
+# Nginx — Admin Console (Next static export)
+# Domain: admin.vitravel.net  |  Root: .../admin.vitravel/out
+# =============================================================================
+
+server {
+    listen 80;
+    listen 443 ssl http2;
+
+    server_name admin.vitravel.net www.admin.vitravel.net;
+
+    root /www/wwwroot/admin.vitravel/out;
+    index index.html;
+
+    charset utf-8;
+    client_max_body_size 16M;
+
+    # SPA / trailingSlash export
+    location / {
+        try_files $uri $uri/ $uri/index.html /index.html;
+    }
+
+    location ^~ /_next/static/ {
+        access_log off;
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}

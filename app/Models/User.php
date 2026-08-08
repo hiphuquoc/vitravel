@@ -3,10 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\AdminAccess;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -37,13 +39,31 @@ class User extends Authenticatable
         return $this->hasMany(AdminApiToken::class);
     }
 
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class)
+            ->withPivot(['role', 'permissions'])
+            ->withTimestamps();
+    }
+
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
     }
 
+    /** Legacy: system admin / super admin. */
     public function isAdmin(): bool
     {
-        return $this->hasRole('admin');
+        return AdminAccess::isSuperAdmin($this);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return AdminAccess::isSuperAdmin($this);
+    }
+
+    public function canAccessConsole(): bool
+    {
+        return AdminAccess::canAccessConsole($this);
     }
 }

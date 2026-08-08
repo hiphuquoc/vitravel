@@ -11,7 +11,14 @@ class SampleData
 {
     public static function countries(): array
     {
-        return ProjectSeed::get('countries', []);
+        $countries = ProjectSeed::get('countries', []);
+        if (is_array($countries) && $countries !== []) {
+            return $countries;
+        }
+
+        $zones = ProjectSeed::get('zones', []);
+
+        return is_array($zones) ? $zones : [];
     }
 
     public static function country(string $slug): ?array
@@ -98,7 +105,7 @@ class SampleData
     public static function toursByCountry(string $countrySlug): array
     {
         return array_values(array_filter(static::tours(), function ($t) use ($countrySlug) {
-            $slugs = $t['countrySlugs'] ?? [($t['countrySlug'] ?? '')];
+            $slugs = $t['countrySlugs'] ?? $t['zoneSlugs'] ?? [($t['countrySlug'] ?? $t['zoneSlug'] ?? '')];
 
             return in_array($countrySlug, $slugs, true);
         }));

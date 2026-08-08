@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SeoEntryTranslation extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'seo_entry_id', 'language_id', 'title', 'description',
+        'project_id', 'seo_entry_id', 'language_id', 'title', 'description',
         'seo_title', 'seo_description', 'keywords', 'slug', 'slug_full',
         'canonical_url', 'og_image_override', 'status', 'translation_status', 'published_at',
     ];

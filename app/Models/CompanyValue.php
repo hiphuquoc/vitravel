@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class CompanyValue extends Model
 {
-    use HasTranslations;
+    use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'description'];
 
-    protected $fillable = ['sort', 'is_active'];
+    protected $fillable = ['project_id', 'sort', 'is_active'];
 
     protected function casts(): array
     {

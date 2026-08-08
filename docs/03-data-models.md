@@ -152,7 +152,7 @@ Tách khỏi bảng `packages` (tour/cruise). **5 cụm** (`cluster` code): `tra
 - sort
 ```
 
-**Public:** hub → category listing → detail; named routes `services.hub`, `services.index`, `services.show`. **Admin CRUD chưa triển khai** — dữ liệu qua `ServiceCatalogSeeder` + `project/seed_services.php`.
+**Public:** hub → category listing → detail; named routes `services.hub`, `services.index`, `services.show`. Dữ liệu qua `ServiceCatalogSeeder` + keys dịch vụ trong `project/seed_{name}.php`.
 
 ## 6. `Review` (đánh giá tổng hợp — dùng cho Tour Detail, Listing quote, và trang Reviews tổng hợp)
 ```
@@ -302,7 +302,7 @@ ExperienceVideo: id, title, youtubeId/videoUrl, thumbnail, country, publishedAt
 - description           string      // mô tả 1 dòng
 - order                  number      // vị trí quanh vòng tròn (trên/dưới/trái/phải)
 ```
-→ **Admin:** `/he-thong/gia-tri` (`admin.values.*`), i18n name/description.
+→ **Admin:** `/gia-tri` (`admin.values.*`), i18n name/description.
 
 ### 11.3 `MissionVision` + About chrome (trong `CompanyProfile`)
 ```
@@ -318,7 +318,7 @@ company_profile_translations:
 - reasons_section_title / reasons_cta_label / reasons_cta_url
 - reference_section_title / reference_section_subtitle
 ```
-→ **Admin:** `/he-thong/cong-ty` — form đa ngôn ngữ + upload ảnh.
+→ **Admin:** `/cong-ty` — form đa ngôn ngữ + upload ảnh.
 
 ### 11.4 `SalesPolicy`
 Gộp vào `CompanyProfile` (không tách model riêng).
@@ -328,7 +328,7 @@ Gộp vào `CompanyProfile` (không tách model riêng).
 - id / title / description / order / is_active
 - sectionImage    // legacy per-row; UI dùng company_profiles.reasons_image_id
 ```
-→ **Admin:** `/he-thong/ly-do-chon` (`admin.reasons.*`).
+→ **Admin:** `/ly-do-chon` (`admin.reasons.*`).
 
 ### 11.6 `ReferencePersonAbroad` (`reference_persons`)
 ```
@@ -339,7 +339,7 @@ Gộp vào `CompanyProfile` (không tách model riêng).
 - country            ref(Country)
 - order / is_active
 ```
-→ **Admin:** `/he-thong/dai-dien` (`admin.referencePersons.*`). Helper: `ReferencePerson::photoUrl()`.
+→ **Admin:** `/dai-dien` (`admin.referencePersons.*`). Helper: `ReferencePerson::photoUrl()`.
 ## 12. `Office` (văn phòng — dùng cho Footer + trang Contact)
 ```
 - id
@@ -491,7 +491,7 @@ Article 1—n Comment
 | Bảng | `service_categories`, `services`, `service_translations`, `service_options`, `service_option_translations` |
 | Config | `config/services_catalog.php` (clusters + `hub_to_cluster`); hubs + types trong `config/seo.php` |
 | SEO types | `trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`, `service_category`, `service` |
-| Seed keys | `service_clusters`, `service_categories`, `services`, `service_listing_faqs` — file `project/seed_services.php` merge vào `seed_vitravel.php` |
+| Seed keys | `service_clusters`, `service_categories`, `services`, `service_listing_faqs` — trong `project/seed_{name}.php` |
 | Seeder | `ServiceCatalogSeeder` (sau `ContentSeeder`, trước `TourCategorySeeder`; `SeoHierarchySeeder` cuối) |
 | Public | `ServiceController`, `RoutingController` dispatch; views `pages/services/*`, `components/service/*` |
 | Admin | **Chưa có** — roadmap CRUD catalogue dịch vụ |

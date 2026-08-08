@@ -1,9 +1,21 @@
 # ViTravel — Kiến trúc cơ sở dữ liệu
 
-> **Ngày:** 2026-07-31 (cập nhật catalogue dịch vụ 5 cụm)  
+> **Ngày:** 2026-08-05 (multi-project + catalogue dịch vụ)  
 > **Stack:** Laravel 13 · MySQL/MariaDB (utf8mb4) · Eloquent  
-> **Tham chiếu:** `docs/03-data-models.md` (product schema) · Hitour.dev V3.1 (`system.md` §4.3 — Translation Table + SEO hub)  
-> **Phạm vi:** Toàn bộ entity phục vụ UI hiện tại (Blade + `SampleData`) và roadmap lead-gen agency. **Không** gồm booking/payment/cart (ngoài V1).
+> **Tham chiếu:** `docs/03-data-models.md` · `docs/11-multi-project-architecture.md` · Hitour SEO hub  
+> **Phạm vi:** UI Blade + Admin API. **Không** gồm booking/payment/cart (ngoài V1).
+
+---
+
+## 0. Multi-project (runtime tenancy)
+
+| Mục tiêu | Cách đạt |
+|---|---|
+| Nhiều domain / một codebase | Bảng `projects`, `project_domains`, `project_user` |
+| Cách ly dữ liệu | Cột `project_id` trên bảng nội dung + trait `BelongsToProject` |
+| URL không đụng nhau giữa site | Unique SEO/slug scope theo `project_id` (vd. `(project_id, language_id, slug_full)`) |
+
+Chi tiết vận hành & cấu hình: **`docs/11-multi-project-architecture.md`**.
 
 ---
 
@@ -13,7 +25,7 @@
 |---|---|
 | Linh hoạt | Taxonomy chuẩn hoá (travel style, category, tag); JSON chỉ cho list không-facet; polymorphic FAQ/media |
 | Ổn định | FK + soft delete nội dung; status workflow (`draft/published/archived`); lead/comment moderation |
-| Tối ưu query | Index facet listing (`country_id`, `duration_days`, pivots); unique `(language_id, slug_full)` cho routing |
+| Tối ưu query | Index facet listing (`country_id`, `duration_days`, pivots); unique **`(project_id, language_id, slug_full)`** cho routing |
 | Đẳng cấp i18n/SEO | Pattern Hitour: `languages` + `seo_entries` hub + `*_translations` — sẵn sàng VI/EN (và locale mới) |
 | Greenfield sạch | Không kế thừa legacy Blade-as-content của Hitour; body rich text lưu DB |
 
@@ -129,7 +141,7 @@ Tách entity khỏi `packages` — phục vụ 5 hub SEO độc lập (vé tàu,
 
 Config: `config/services_catalog.php` (`clusters`, `hub_to_cluster`); hub copy/SEO defaults trong `config/seo.php` → `hubs`.
 
-Seed: `project/seed_services.php` (merge `seed_vitravel.php`) — keys `service_clusters`, `service_categories`, `services`, `service_listing_faqs`. Seeder: **`ServiceCatalogSeeder`** (sau `ContentSeeder`, trước `TourCategorySeeder`).
+Seed: keys `service_clusters`, `service_categories`, `services`, `service_listing_faqs` trong `project/seed_{name}.php`. Seeder: **`ServiceCatalogSeeder`** (sau `ContentSeeder`, trước `TourCategorySeeder`).
 
 **Admin CRUD dịch vụ:** chưa triển khai (roadmap).
 
@@ -293,7 +305,7 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | `database/seeders/ServiceCatalogSeeder.php` | **5 cụm dịch vụ** — categories + services + SEO parent |
 | `database/seeders/TourCategorySeeder.php` | danh mục tour theo quốc gia |
 | `config/services_catalog.php` | Cluster codes, hub_key map, nav labels |
-| `project/seed_services.php` | Seed data dịch vụ (merge `seed_vitravel.php`) |
+| `project/seed_{name}.php` | Seed data dự án (tours, company, dịch vụ, …) — 1 file / 1 profile |
 | `database/seeders/SeoHierarchySeeder.php` | **bước cuối** — `SeoService::rebuildPublicSeoTree` (slug_full hub→con) |
 
 ---

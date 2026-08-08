@@ -6,7 +6,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    // Optional: comma-separated origins for cross-origin admin/API (same-origin /he-thong needs none).
+    // Comma-separated origins for Admin Console on a separate host (see ADMIN_APP_URL).
     'allowed_origins' => array_values(array_filter(array_map(
         'trim',
         explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))

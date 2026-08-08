@@ -1,7 +1,12 @@
 @extends('layouts.app')
 
-@section('title', ($chrome['seo_title'] ?? 'Thiết kế tour riêng — ViTravel'))
-@section('meta_description', ($chrome['seo_description'] ?? 'Thiết kế lịch trình riêng với ViTravel.'))
+@php
+    $form = $form ?? view_data()->customizeForm();
+    $brand = $form['brand'] ?? 'ViTravel';
+@endphp
+
+@section('title', ($chrome['seo_title'] ?? 'Thiết kế tour riêng — '.$brand))
+@section('meta_description', ($chrome['seo_description'] ?? 'Thiết kế lịch trình riêng với '.$brand.'.'))
 @section('hide-inquiry', '1')
 
 @section('content')
@@ -20,7 +25,7 @@
                 </span>
                 <h2 class="form-success__title">Yêu cầu đã được gửi!</h2>
                 <p class="body-text max-w-md">
-                    Cảm ơn bạn đã tin tưởng ViTravel. Chuyên gia phụ trách tuyến của bạn sẽ nghiên cứu yêu cầu và gửi
+                    Cảm ơn bạn đã tin tưởng {{ $brand }}. Chuyên gia phụ trách tuyến của bạn sẽ nghiên cứu yêu cầu và gửi
                     lịch trình chi tiết kèm báo giá qua email trong vòng 24 giờ làm việc.
                 </p>
                 <a href="{{ locale_route('guide.index') }}" class="btn-outline site-mt">Đọc cẩm nang trong lúc chờ</a>
@@ -57,23 +62,23 @@
                     </div>
                 </div>
 
-                <p class="field-label field-required form-section__block">Bạn muốn ghé thăm quốc gia nào?</p>
+                <p class="field-label field-required form-section__block">{{ $form['destinations_label'] }}</p>
                 <div class="form-pills">
-                    @foreach (['VIỆT NAM', 'THÁI LAN', 'CAMPUCHIA', 'LÀO', 'BALI (INDONESIA)'] as $c)
+                    @foreach ($form['destinations'] as $c)
                         <x-form.checkbox-pill name="countries[]" :value="$c" :label="$c" :checked="in_array($c, old('countries', []))" />
                     @endforeach
                 </div>
                 @error('countries')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
-                <p class="field-label field-required form-section__block">Bạn thích loại lưu trú nào?</p>
+                <p class="field-label field-required form-section__block">{{ $form['accommodation_label'] }}</p>
                 <div class="form-pills">
-                    @foreach (['Tiêu chuẩn (khách sạn 3*)', 'Cao cấp (khách sạn 4*)', 'Sang trọng (khách sạn 5*)', 'Nhờ tư vấn giúp tôi'] as $a)
+                    @foreach ($form['accommodation'] as $a)
                         <x-form.checkbox-pill name="accommodation[]" :value="$a" :label="$a" :checked="in_array($a, old('accommodation', []))" />
                     @endforeach
                 </div>
                 @error('accommodation')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
 
-                <p class="field-label form-section__block">Ngân sách dự kiến (chưa gồm vé máy bay quốc tế)</p>
+                <p class="field-label form-section__block">{{ $form['budget_note'] }}</p>
                 <div class="form-budget-row">
                     <div class="form-budget-row__amount">
                         <span class="form-budget-row__currency" aria-hidden="true">₫</span>

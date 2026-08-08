@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,13 +10,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Office extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use BelongsToProject, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['city_label', 'address_line'];
 
     protected $fillable = [
-        'country_id', 'phone', 'whatsapp', 'email', 'map_embed_url',
+        'project_id', 'country_id', 'phone', 'whatsapp', 'email', 'map_embed_url',
         'latitude', 'longitude', 'sort', 'is_active',
     ];
 

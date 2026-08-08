@@ -20,6 +20,7 @@ class CheckRedirect
     {
         try {
             $first = $request->segment(1);
+            // /he-thong/* → routes/admin.php (redirect ADMIN_APP_URL); api/assets bỏ qua SEO redirect
             if (in_array($first, ['he-thong', 'api', 'currency', 'build', 'storage', 'up'], true)) {
                 return $next($request);
             }

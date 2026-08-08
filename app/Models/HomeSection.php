@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class HomeSection extends Model
 {
+    use BelongsToProject;
     public const KEY_COMPANY_INTRO = 'company_intro';
 
     public const KEY_FEATURED_TOURS = 'featured_tours';
@@ -45,7 +47,7 @@ class HomeSection extends Model
             self::KEY_REVIEW_PLATFORMS => 'Nền tảng đánh giá',
             self::KEY_TEAM => 'Đội ngũ',
             self::KEY_VIDEOS => 'Video trải nghiệm',
-            self::KEY_QUICK_INQUIRY => 'Hỏi nhanh về tour',
+            self::KEY_QUICK_INQUIRY => 'Lời nhắn cho chúng tôi',
         ];
     }
 
@@ -77,6 +79,7 @@ class HomeSection extends Model
     }
 
     protected $fillable = [
+        'project_id',
         'key',
         'image_media_id',
         'sort',

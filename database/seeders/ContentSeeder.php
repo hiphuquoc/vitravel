@@ -82,8 +82,10 @@ class ContentSeeder extends Seeder
     protected function seedCountries(): void
     {
         $codes = ProjectSeed::countryCodes();
+        $translations = ProjectSeed::get('country_translations', []);
 
         $toursHub = $this->seo->ensureToursHub('vi');
+        $toursHubEn = $this->enId ? $this->seo->ensureToursHub('en') : null;
 
         foreach (ProjectSeed::get('countries', []) as $sort => $row) {
             $country = Country::withTrashed()->updateOrCreate(
@@ -98,13 +100,19 @@ class ContentSeeder extends Seeder
                 ]
             );
 
+            $i18n = is_array($translations[$row['slug']] ?? null) ? $translations[$row['slug']] : [];
+            $viName = $i18n['vi'] ?? $row['name'];
+            $viTagline = is_array($i18n['tagline'] ?? null)
+                ? ($i18n['tagline']['vi'] ?? $row['tagline'])
+                : $row['tagline'];
+
             if ($this->viId) {
                 CountryTranslation::query()->updateOrCreate(
                     ['country_id' => $country->id, 'language_id' => $this->viId],
                     [
-                        'name' => $row['name'],
+                        'name' => $viName,
                         'slug' => $row['slug'],
-                        'tagline' => $row['tagline'],
+                        'tagline' => $viTagline,
                     ]
                 );
             }
@@ -113,12 +121,37 @@ class ContentSeeder extends Seeder
 
             $this->seo->syncSeo($country, 'vi', [
                 'slug' => $row['slug'],
-                'title' => $row['name'],
-                'description' => $row['tagline'],
+                'title' => $viName,
+                'description' => $viTagline,
                 'status' => 'published',
                 'parent_id' => $toursHub->id,
                 'country_code' => $country->code,
             ]);
+
+            if ($this->enId && $toursHubEn) {
+                $enName = $i18n['en'] ?? $viName;
+                $enTagline = is_array($i18n['tagline'] ?? null)
+                    ? ($i18n['tagline']['en'] ?? $viTagline)
+                    : $viTagline;
+
+                CountryTranslation::query()->updateOrCreate(
+                    ['country_id' => $country->id, 'language_id' => $this->enId],
+                    [
+                        'name' => $enName,
+                        'slug' => $row['slug'],
+                        'tagline' => $enTagline,
+                    ]
+                );
+
+                $this->seo->syncSeo($country, 'en', [
+                    'slug' => $row['slug'],
+                    'title' => $enName,
+                    'description' => $enTagline,
+                    'status' => 'published',
+                    'parent_id' => $toursHubEn->id,
+                    'country_code' => $country->code,
+                ]);
+            }
         }
     }
 
@@ -127,7 +160,7 @@ class ContentSeeder extends Seeder
         $guideHub = $this->seo->ensureGuideHub('vi');
 
         foreach (ProjectSeed::get('blog_categories', []) as $sort => $row) {
-            $countryId = $this->countryIds[$row['countrySlug']] ?? null;
+            $countryId = $this->countryIds[$row['countrySlug'] ?? $row['zoneSlug'] ?? ''] ?? null;
             if (! $countryId) {
                 continue;
             }
@@ -194,8 +227,15 @@ class ContentSeeder extends Seeder
     protected function seedPackages(array $items, string $type): void
     {
         foreach ($items as $sort => $row) {
-            $countrySlug = $row['countrySlug'] ?? 'viet-nam';
-            $countryId = $this->countryIds[$countrySlug] ?? $this->countryIds['viet-nam'];
+            $countrySlug = $row['countrySlug'] ?? $row['zoneSlug'] ?? null;
+            $countryId = $countrySlug ? ($this->countryIds[$countrySlug] ?? null) : null;
+            if (! $countryId) {
+                $countryId = $this->countryIds === [] ? null : reset($this->countryIds);
+            }
+            if (! $countryId) {
+                continue;
+            }
+            $countrySlug = $countrySlug ?: (string) (array_search($countryId, $this->countryIds, true) ?: '');
             $isCruise = $type === Package::TYPE_CRUISE;
 
             preg_match('/(\d+)\s*ngày\s*(\d+)\s*đêm/u', $row['duration'] ?? '', $matches);
@@ -415,9 +455,9 @@ class ContentSeeder extends Seeder
         $hub = $this->seo->ensureToursHub('vi');
         $countrySlug = $country->translation('vi')?->slug
             ?? $country->translation()?->slug
-            ?? ($row['countrySlug'] ?? null);
+            ?? ($row['countrySlug'] ?? $row['zoneSlug'] ?? null);
         if (! filled($countrySlug)) {
-            return $country->seoEntry?->id;
+            return $country->seoEntry()->withoutGlobalScope('project')->first()?->id;
         }
 
         $seo = $this->seo->ensureSeoFor($country, 'country', 'vi', [
@@ -429,14 +469,29 @@ class ContentSeeder extends Seeder
             'country_code' => $country->code,
         ]);
 
+        if ($this->enId) {
+            $hubEn = $this->seo->ensureToursHub('en');
+            $enName = $country->translation('en')?->name
+                ?? $country->translation('vi')?->name
+                ?? $countrySlug;
+            $this->seo->ensureSeoFor($country, 'country', 'en', [
+                'slug' => $countrySlug,
+                'title' => $enName,
+                'seo_title' => $enName,
+                'status' => 'published',
+                'parent_id' => $hubEn->id,
+                'country_code' => $country->code,
+            ]);
+        }
+
         return $seo->id;
     }
 
     protected function seedArticles(): void
     {
         foreach (ProjectSeed::get('articles', []) as $row) {
-            $countryId = $this->countryIds[$row['countrySlug']] ?? null;
-            $categoryId = $this->blogCategoryIds[$row['categorySlug']] ?? null;
+            $countryId = $this->countryIds[$row['countrySlug'] ?? $row['zoneSlug'] ?? ''] ?? null;
+            $categoryId = $this->blogCategoryIds[$row['categorySlug'] ?? ''] ?? null;
 
             $publishedAt = \DateTime::createFromFormat('d/m/Y', $row['publishedAt']) ?: now();
 

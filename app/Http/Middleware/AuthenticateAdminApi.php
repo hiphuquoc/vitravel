@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use App\Models\AdminApiToken as AdminApiTokenModel;
 use App\Models\User;
+use App\Support\AdminAccess;
 use App\Support\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class AuthenticateAdminApi
 
         $user = $token->user;
 
-        if (! $user instanceof User || ! $user->is_active || ! $user->isAdmin()) {
+        if (! $user instanceof User || ! AdminAccess::canAccessConsole($user)) {
             return ApiResponse::error('Không có quyền truy cập.', 'FORBIDDEN', 403);
         }
 

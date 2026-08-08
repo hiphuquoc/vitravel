@@ -1,7 +1,8 @@
 {{-- Hỏi nhanh — teaser thu gọn, form letter mở trong modal --}}
 @php
+    $companyBrand = view_data()->companyContact()['name'] ?? 'ViTravel';
     $qi = view_data()->quickInquiry();
-    $qiTitle = $qi['title'] ?? 'Hỏi nhanh về tour';
+    $qiTitle = $qi['title'] ?? 'Gửi lời nhắn cho chúng tôi';
     $qiBody = $qi['body'] ?? $qi['subtitle'] ?? 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.';
     $qiHasErrors = $errors->hasAny(['name', 'email', 'phone', 'address', 'message']);
     $qiSuccess = session('success') === 'quick_inquiry';
@@ -20,7 +21,7 @@
                 <div class="qi-teaser__copy">
                     <p class="qi-teaser__eyebrow">Đã gửi thành công</p>
                     <h2 class="qi-teaser__title">Cảm ơn bạn đã viết thư!</h2>
-                    <p class="qi-teaser__lead">Tư vấn viên ViTravel sẽ liên hệ qua email hoặc điện thoại trong vòng 24 giờ làm việc.</p>
+                    <p class="qi-teaser__lead">Tư vấn viên {{ $companyBrand }} sẽ liên hệ qua email hoặc điện thoại trong vòng 24 giờ làm việc.</p>
                 </div>
             </div>
         @else
@@ -85,7 +86,7 @@
                                     <span class="vt-letter__seal" aria-hidden="true">
                                         <x-icon name="compass" class="size-5" />
                                     </span>
-                                    <span class="vt-letter__wordmark">ViTravel</span>
+                                    <span class="vt-letter__wordmark">{{ $companyBrand }}</span>
                                 </div>
                                 <p class="vt-letter__eyebrow">Một lời nhắn gửi chúng tôi</p>
                                 <h2 id="qi-modal-title" class="vt-letter__title">{{ $qiTitle }}</h2>
@@ -94,7 +95,7 @@
 
                             <form action="{{ route('leads.quick-inquiry') }}" method="POST" class="vt-letter__form">
                                 @csrf
-                                <p class="vt-letter__salutation">Kính gửi đội ngũ ViTravel,</p>
+                                <p class="vt-letter__salutation">Kính gửi đội ngũ {{ $companyBrand }},</p>
 
                                 <div class="vt-letter__grid">
                                     <div class="vt-letter__field">

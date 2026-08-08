@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 
 class Usp extends Model
 {
-    use HasTranslations;
+    use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'description'];
@@ -25,7 +26,7 @@ class Usp extends Model
         ];
     }
 
-    protected $fillable = ['icon', 'sort', 'is_active'];
+    protected $fillable = ['project_id', 'icon', 'sort', 'is_active'];
 
     protected function casts(): array
     {

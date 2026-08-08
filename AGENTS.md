@@ -1,40 +1,53 @@
 # Agent notes — ViTravel / multi-project travel CMS
 
+## Multi-project runtime (critical)
+
+Một codebase phục vụ nhiều domain/dữ liệu qua **`projects` + `project_id`**. Không clone deploy theo từng địa phương.
+
+- **Hướng dẫn đọc lại:** [`docs/11-multi-project-architecture.md`](docs/11-multi-project-architecture.md) (seed, đổi dự án public/admin, domain local)
+- Context: `App\Support\ProjectContext` · Trait: `BelongsToProject`
+- Public: `ResolveProjectFromHost` — `?project=` / cookie `vt_project` (khi override) → Host → `PROJECT_DEFAULT_CODE` → first active
+- Domain Cát Bà Hub: local **`hicatba.dev`** · prod **`hicatba.com`** (project `code` = `hicatba`)
+- Domain phuquy.net: local **`phuquy.dev`** · prod **`phuquy.net`** (project `code` = `phuquy`)
+- Admin API: `X-Project-Code` / `X-Project-Id` → `ResolveAdminProject`
+- CLI: `php artisan project:seed hicatba --domain=hicatba.dev` · `project:seed phuquy --domain=phuquy.dev --domain=phuquy.net` · `project:ensure …` · `project:domain …`
+
 ## Seed & demo content (critical)
 
-All bootstrap/demo content goes through **`PROJECT_SEED`** → `project/seed_{name}.php`.
+Bootstrap/demo content nằm trong **`project/seed_{name}.php`**, gắn vào row `projects`.
 
-- Config: `config/project.php`, `.env` key `PROJECT_SEED`
-- Schema: `project/README.md`
-- Loader: `App\Support\ProjectSeed`
-- UI fallback: `App\Support\SampleData` (thin; no large hardcoded catalogs)
+- **Không** dùng `PROJECT_SEED` / `COMPANY_*` trong `.env`
+- `php artisan migrate:fresh --seed` → seed **tất cả** `seed_*.php`
+- Một profile: `php artisan project:seed hicatba --domain=hicatba.dev --domain=hicatba.com`
+- Phú Quý: `php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net`
+- Loader: `App\Support\ProjectSeed` (`useProfile` / `ProjectContext`)
+- Schema: `project/README.md` · UI fallback: `App\Support\SampleData`
 
-**Do not** hardcode catalog/marketing data in seeders or revive fat arrays in `SampleData` when adding features. Extend the active seed file and wire seeders to `ProjectSeed::get()`. **Services catalogue:** data in `project/seed_services.php` (merged into `seed_vitravel.php`); seeder `ServiceCatalogSeeder`.
-
-Cursor rule (always on): `.cursor/rules/project-seed.mdc`
+**Do not** hardcode catalog/marketing data in seeders hoặc revive fat arrays in `SampleData`. Extend seed file và wire `ProjectSeed::get()`. Services + company nằm trong cùng file seed.
 
 ## Google Cloud Storage (critical)
 
-Canonical env block: `GCS_PROJECT_ID`, `GCS_BUCKET`, `GCS_KEY_FILE`, `GCS_PUBLIC_URL` + `MEDIA_DISK=gcs`. 
-Key file: `storage/app/gcs-credentials.json` (never hardcode SA in config). 
-Full spec: `docs/gcs-standard.md` · rule: `.cursor/rules/gcs-config.mdc`
+Canonical env block: `GCS_PROJECT_ID`, `GCS_BUCKET`, `GCS_KEY_FILE`, `GCS_PUBLIC_URL` + `MEDIA_DISK=gcs`.
+Key file: `storage/app/gcs-credentials.json` (never hardcode SA in config).
+Full spec: `docs/gcs-standard.md`
+Media path runtime: `projects/{code}/…` khi có `ProjectContext`.
 
 ## Company / site identity
 
-Runtime brand + contact + social + footer comes from **`company_profiles`** (seed key `company` in `project/seed_company.php`), not from hardcoding in Blade.
+Runtime brand + contact + social + footer từ **`company_profiles`** (scoped theo project), seed key `company`.
 
 - Seed: `HomeFeaturedSeeder::seedCompanyIdentity()`
-- Admin: **Cài đặt → Thông tin dự án** (`/settings/site`)
+- Admin: **Cài đặt → Thông tin dự án** (`/settings/site`) — nhớ gửi `X-Project-Code`
 - Reader: `CompanyProfile::contact()` / `view_data()->companyContact()`
-- `config/company.php` = env fallback only when DB empty
+- `config/company.php` = fallback **rỗng** khi DB trống (không còn `COMPANY_*` env)
 
-## Admin Console (Next.js) — phase 1
+## Admin Console (Next.js)
 
-Headless admin lives in **separate repo** `admin.vitravel.dev` (Next.js 15 + SCSS tokens + TanStack Query).
+Headless admin: repo **`admin.vitravel.dev`** (Next.js).
 
-- Production: static export → Laravel `public/he-thong` → `/he-thong/`
-- API: `/api/v1/admin/*` — Bearer tokens (`admin_api_tokens`)
-- Docs: `docs/10-admin-console-api.md`
-- Build: `cd admin.vitravel.dev && npm ci && npm run build` (syncs into this project's `public/he-thong`)
-- Menu Tour: Gói Tour, Danh mục Tour, Chủ đề Tour (`TravelStyle`)
-- Legacy Blade admin đã retire — SPA fallback / redirect trong `routes/admin.php`
+- Production: host riêng `admin.vitravel.dev` / `.net` (static `out/`, không còn `/he-thong` trên domain public)
+- API: `/api/v1/admin/*` trên Laravel — Bearer + **`X-Project-Code`** + CORS (`ADMIN_APP_URL`, `CORS_ALLOWED_ORIGINS`)
+- Docs: `docs/10-admin-console-api.md`, `docs/11-multi-project-architecture.md`, `docs/13-deploy-aapanel-vps.md`
+- Build: `cd admin.vitravel.dev && npm ci && npm run build`
+- Legacy `/he-thong/*` trên Laravel redirect → `ADMIN_APP_URL` (`routes/admin.php`)
+- **Deploy VPS aaPanel:** [`docs/13-deploy-aapanel-vps.md`](docs/13-deploy-aapanel-vps.md) (Nginx public + admin / `.env` / Supervisor)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
@@ -10,12 +11,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Destination extends Model
 {
-    use HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'slug', 'intro_text'];
 
-    protected $fillable = ['country_id', 'image_media_id', 'sort', 'is_active'];
+    protected $fillable = ['project_id', 'country_id', 'image_media_id', 'sort', 'is_active'];
 
     protected function casts(): array
     {

@@ -24,10 +24,10 @@ class LoginController extends Controller
     public function loginForm(): View|RedirectResponse
     {
         if (Auth::check() && Auth::user()->hasRole('admin')) {
-            return redirect('/he-thong/');
+            return redirect()->away(admin_app_url('/'));
         }
 
-        return redirect('/he-thong/login/');
+        return redirect()->away(admin_app_url('/login/'));
     }
 
     public function loginAdmin(Request $request): JsonResponse
@@ -87,7 +87,7 @@ class LoginController extends Controller
                 return response()->json([
                     'success' => true,
                     'message' => 'Đăng nhập thành công! Đang chuyển hướng...',
-                    'redirect_url' => url('/he-thong/'),
+                    'redirect_url' => admin_app_url('/'),
                     'user' => [
                         'name' => $user->name,
                         'email' => $user->email,
@@ -126,6 +126,6 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/he-thong/login/');
+        return redirect()->away(admin_app_url('/login/'));
     }
 }

@@ -34,6 +34,7 @@ use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Models\TravelStyle;
 use App\Models\Usp;
+use App\Support\LocaleContent;
 use App\Support\ProjectSeed;
 use App\Support\SampleData;
 
@@ -1074,6 +1075,189 @@ class ViewDataService
         return $this->homeSection('quick_inquiry');
     }
 
+    /**
+     * Tuỳ chọn form «Tour riêng» — label + điểm đến + lưu trú theo seed dự án.
+     * Điểm đến mặc định lấy từ countries/zones có show_in_customize_form.
+     *
+     * @return array{
+     *   brand: string,
+     *   destinations_label: string,
+     *   destinations: list<string>,
+     *   accommodation_label: string,
+     *   accommodation: list<string>,
+     *   budget_note: string
+     * }
+     */
+    public function customizeForm(): array
+    {
+        $seed = [];
+        try {
+            $raw = ProjectSeed::get('customize_form', []);
+            $seed = is_array($raw) ? $raw : [];
+        } catch (\Throwable) {
+            $seed = [];
+        }
+
+        $pickText = function (string $key, string $fallback) use ($seed): string {
+            $val = $seed[$key] ?? null;
+            if (is_string($val) && $val !== '') {
+                return $val;
+            }
+            if (is_array($val)) {
+                $picked = LocaleContent::pick($val, $this->locale(), null);
+                if (is_string($picked) && $picked !== '') {
+                    return $picked;
+                }
+            }
+
+            return $fallback;
+        };
+
+        $pickList = function (string $key) use ($seed): array {
+            $val = $seed[$key] ?? null;
+            if (! is_array($val) || $val === []) {
+                return [];
+            }
+            // { vi: [...], en: [...] } hoặc list phẳng
+            if (array_is_list($val)) {
+                return array_values(array_filter(array_map('strval', $val)));
+            }
+            $picked = LocaleContent::pick($val, $this->locale(), $val['vi'] ?? []);
+            if (! is_array($picked)) {
+                return [];
+            }
+
+            return array_values(array_filter(array_map('strval', $picked)));
+        };
+
+        $destinations = $pickList('destinations');
+        if ($destinations === []) {
+            $destinations = $this->customizeFormDestinationsFromCountries();
+        }
+
+        $accommodation = $pickList('accommodation');
+        if ($accommodation === []) {
+            $accommodation = [
+                'Tiêu chuẩn (khách sạn 3*)',
+                'Cao cấp (khách sạn 4*)',
+                'Sang trọng (khách sạn 5*)',
+                'Nhờ tư vấn giúp tôi',
+            ];
+        }
+
+        $brand = (string) ($this->companyContact()['name'] ?? 'ViTravel');
+
+        $isIsland = collect($this->serviceClusters())->contains(fn ($c) => ($c['code'] ?? '') === 'ferry');
+
+        return [
+            'brand' => $brand,
+            'destinations_label' => $pickText(
+                'destinations_label',
+                $isIsland ? 'Bạn muốn khám phá khu vực nào trên đảo?' : 'Bạn muốn ghé thăm quốc gia nào?'
+            ),
+            'destinations' => $destinations,
+            'accommodation_label' => $pickText('accommodation_label', 'Bạn thích loại lưu trú nào?'),
+            'accommodation' => $accommodation,
+            'budget_note' => $pickText(
+                'budget_note',
+                $isIsland
+                    ? 'Ngân sách dự kiến (chưa gồm vé tàu cao tốc / đưa đón cửa ngõ)'
+                    : 'Ngân sách dự kiến (chưa gồm vé máy bay quốc tế)'
+            ),
+        ];
+    }
+
+    /**
+     * Nhãn header / tìm kiếm theo dự án (seed `nav`, không qua admin).
+     * `nav.cruise` đổi «Du thuyền» ↔ «Thuyền câu / trải nghiệm biển» tuỳ profile.
+     *
+     * @return array{
+     *   brand: string,
+     *   tagline: string,
+     *   about_group: string,
+     *   cruise: array{label: string, all_label: string, all_meta: string, search_hint: string, search_placeholder: string, hub_title: string, hub_subtitle: string}
+     * }
+     */
+    public function siteNav(): array
+    {
+        $contact = $this->companyContact();
+        $brand = (string) ($contact['name'] ?? 'ViTravel');
+        $tagline = (string) ($contact['tagline'] ?? '');
+        if ($tagline === '') {
+            $tagline = trim((string) ($contact['slogan'] ?? ''), " \t\n\r\0\x0B\"'");
+        }
+
+        $seed = [];
+        try {
+            $raw = ProjectSeed::get('nav', []);
+            $seed = is_array($raw) ? $raw : [];
+        } catch (\Throwable) {
+            $seed = [];
+        }
+
+        $pick = function (mixed $val, string $fallback): string {
+            if (is_string($val) && $val !== '') {
+                return $val;
+            }
+            if (is_array($val)) {
+                $picked = LocaleContent::pick($val, $this->locale(), null);
+                if (is_string($picked) && $picked !== '') {
+                    return $picked;
+                }
+            }
+
+            return $fallback;
+        };
+
+        $cruiseSeed = is_array($seed['cruise'] ?? null) ? $seed['cruise'] : [];
+
+        return [
+            'brand' => $brand,
+            'tagline' => $tagline,
+            'about_group' => $pick($seed['about_group'] ?? null, 'Về '.$brand),
+            'cruise' => [
+                'label' => $pick($cruiseSeed['label'] ?? null, 'Du thuyền'),
+                'all_label' => $pick($cruiseSeed['all_label'] ?? null, 'Tất cả du thuyền'),
+                'all_meta' => $pick($cruiseSeed['all_meta'] ?? null, 'Xem toàn bộ lịch trình du thuyền'),
+                'search_hint' => $pick($cruiseSeed['search_hint'] ?? null, 'Tour, điểm đến, du thuyền, cẩm nang…'),
+                'search_placeholder' => $pick(
+                    $cruiseSeed['search_placeholder'] ?? null,
+                    'Tìm tour, điểm đến, du thuyền, bài viết…'
+                ),
+                'hub_title' => $pick($cruiseSeed['hub_title'] ?? $cruiseSeed['label'] ?? null, 'Du thuyền'),
+                'hub_subtitle' => $pick(
+                    $cruiseSeed['hub_subtitle'] ?? null,
+                    'Chọn lịch trình trên mặt nước phù hợp với bạn'
+                ),
+            ],
+        ];
+    }
+
+    /** @return list<string> */
+    protected function customizeFormDestinationsFromCountries(): array
+    {
+        if (! Country::query()->active()->exists()) {
+            return array_values(array_filter(array_map(
+                fn ($c) => (string) ($c['name'] ?? ''),
+                array_filter(
+                    SampleData::countries(),
+                    fn ($c) => ($c['slug'] ?? '') !== 'tour-ket-hop'
+                )
+            )));
+        }
+
+        return Country::query()
+            ->active()
+            ->where('show_in_customize_form', true)
+            ->with('translations')
+            ->orderBy('sort')
+            ->get()
+            ->map(fn (Country $country) => (string) ($country->translation($this->locale())?->name ?? ''))
+            ->filter()
+            ->values()
+            ->all();
+    }
+
     public function toursHub(): array
     {
         return $this->listingHub('tours_hub');
@@ -1117,6 +1301,23 @@ class ViewDataService
     public function serviceCluster(string $code): ?array
     {
         return collect($this->serviceClusters())->firstWhere('code', $code);
+    }
+
+    /**
+     * Cluster vận tải nổi bật trên trang chủ / menu tắt:
+     * ưu tiên `ferry` (đảo) nếu dự án có cụm này, không thì `train`.
+     */
+    public function featuredTransportCluster(): string
+    {
+        $codes = collect($this->serviceClusters())->pluck('code');
+        if ($codes->contains('ferry')) {
+            return 'ferry';
+        }
+        if ($codes->contains('train')) {
+            return 'train';
+        }
+
+        return 'train';
     }
 
     /** Số dịch vụ published theo cluster (cho badge menu). */
@@ -1507,6 +1708,20 @@ class ViewDataService
             ];
         }
 
+        // Seed-only override cho cụm cruise (du thuyền / thuyền câu…) — không qua admin.
+        if ($hubKey === 'cruises_hub') {
+            $cruiseNav = $this->siteNav()['cruise'] ?? [];
+            if (! empty($cruiseNav['hub_title'])) {
+                $cfg['default_title'] = $cruiseNav['hub_title'];
+            }
+            if (! empty($cruiseNav['hub_subtitle'])) {
+                $cfg['default_subtitle'] = $cruiseNav['hub_subtitle'];
+            }
+            if (! empty($cruiseNav['hub_title'])) {
+                $cfg['default_seo_title'] = $cruiseNav['hub_title'];
+            }
+        }
+
         $this->seoService()->ensureHub($hubKey, $this->locale());
 
         $page = \App\Models\StaticPage::query()
@@ -1532,8 +1747,14 @@ class ViewDataService
         $banner = $page->bannerUrl('lg') ?: $page->bannerUrl('full');
         $subtitleRaw = $translation?->body ?: ($cfg['default_subtitle'] ?? '');
 
+        $title = $translation?->title ?: ($cfg['default_title'] ?? 'Hub');
+        // Nếu static page vẫn mang title mặc định «Du thuyền» của ViTravel → ưu tiên seed dự án.
+        if ($hubKey === 'cruises_hub' && ! empty($cfg['default_title']) && in_array($title, ['Du thuyền', 'Cruises'], true)) {
+            $title = $cfg['default_title'];
+        }
+
         return [
-            'title' => $translation?->title ?: ($cfg['default_title'] ?? 'Hub'),
+            'title' => $title,
             'subtitle' => trim(html_entity_decode(strip_tags((string) $subtitleRaw), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
             'listingBanner' => $banner,
             'listingBannerSrcset' => $page->bannerSrcset(),

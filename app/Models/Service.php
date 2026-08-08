@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasMediaAttachments;
 use App\Models\Concerns\HasSeo;
@@ -14,9 +15,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
-    use HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
 
     public const CLUSTER_TRAIN = 'train';
+
+    public const CLUSTER_FERRY = 'ferry';
 
     public const CLUSTER_FLIGHT = 'flight';
 
@@ -33,7 +36,7 @@ class Service extends Model
     ];
 
     protected $fillable = [
-        'cluster', 'service_category_id', 'country_id', 'code',
+        'project_id', 'cluster', 'service_category_id', 'country_id', 'code',
         'price_from', 'currency', 'rating', 'review_count', 'star_rating',
         'is_featured', 'is_hot_deal', 'discount_badge', 'status', 'published_at',
         'view_count', 'sort', 'attrs',

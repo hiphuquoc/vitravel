@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DestinationTranslation extends Model
 {
-    protected $fillable = ['destination_id', 'language_id', 'name', 'slug', 'intro_text'];
+    use BelongsToProject;
+
+    protected $fillable = ['project_id', 'destination_id', 'language_id', 'name', 'slug', 'intro_text'];
 
     public function destination(): BelongsTo
     {

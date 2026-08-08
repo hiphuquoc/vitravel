@@ -1,27 +1,34 @@
-# Seed đa dự án (`PROJECT_SEED`)
+# Seed đa dự án + multi-project runtime
 
-> **Cho AI / contributor:** thêm tính năng hoặc block nội dung mới → mở rộng file `project/seed_*.php` của profile đang chạy; seeder/UI chỉ đọc `ProjectSeed` / `SampleData`. Không hardcode data trong seeder. Rule Cursor: `.cursor/rules/project-seed.mdc` · `AGENTS.md`.
+> **Cho AI / contributor:** thêm tính năng hoặc block nội dung mới → mở rộng file `project/seed_*.php` của profile; seeder/UI chỉ đọc `ProjectSeed` / `SampleData`. Không hardcode data trong seeder.
+>
+> **Hướng dẫn vận hành (seed, đổi dự án public/admin, domain):**  
+> [`docs/11-multi-project-architecture.md`](../docs/11-multi-project-architecture.md)
 
-Mỗi môi trường / bản deploy chỉ **trỏ một file** dữ liệu qua `.env` — không ghi đè lẫn các file seed khác.
-
-```env
-PROJECT_SEED=vitravel
-# PROJECT_SEED_DIR=project
-```
-
-| `PROJECT_SEED` | File load |
-|----------------|-----------|
-| `vitravel` | `project/seed_vitravel.php` |
-| `other` | `project/seed_other.php` |
-| `seed_bali.php` | `project/seed_bali.php` |
-
-Fallback: nếu thiếu `seed_vitravel.php` nhưng còn `project/seed.php` → vẫn load (tương thích cũ).
+**Không dùng `PROJECT_SEED` / `COMPANY_*` trong `.env`.** Profile chọn bằng CLI / discover:
 
 ```bash
-php artisan migrate --seed
+# Seed tất cả seed_*.php
+php artisan migrate:fresh --seed
+
+# Một profile — Cát Bà Hub: hicatba.dev (local) + hicatba.com (prod); code = hicatba
+php artisan project:seed hicatba --domain=hicatba.dev --domain=hicatba.com
+php artisan project:ensure vitravel --domain=vitravel.dev
+# phuquy.net: phuquy.dev (local) + phuquy.net (prod)
+php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="phuquy.net"
 ```
 
-`ProjectSeed::path()` / `ProjectSeed::profile()` — xem file đang active.
+| Profile | File | Domain |
+|---------|------|--------|
+| `vitravel` | `project/seed_vitravel.php` | `vitravel.dev` |
+| `hicatba` | `project/seed_hicatba.php` | `hicatba.dev` / `hicatba.com` |
+| `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` / `phuquy.net` |
+
+Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
+
+Local cùng Host: `https://vitravel.dev/?project=hicatba` — chi tiết mục 2 trong docs/11.
+
+`ProjectSeed::useProfile()` / `ProjectContext` — set bởi middleware / `project:seed`.
 
 ---
 
@@ -30,13 +37,12 @@ php artisan migrate --seed
 ```
 project/
   README.md                 ← schema (file này)
-  seed_vitravel.php         ← entry ViTravel (require seed.php hoặc tự chứa data)
-  seed.php                  ← data ViTravel đầy đủ (hoặc rename thành seed_vitravel.php)
-  seed_phuquoc.php          ← dự án khác (file độc lập)
-  seed_combo_xyz.php
+  seed_vitravel.php         ← 1 dự án = 1 file (tours + company + dịch vụ + …)
+  seed_hicatba.php
+  seed_phuquy.php           ← đảo Phú Quý (Bình Thuận): phuquy.dev / phuquy.net
 ```
 
-**Dự án mới:** copy `seed_vitravel.php` / `seed.php` → `seed_{ten}.php`, sửa nội dung, đặt `PROJECT_SEED={ten}`.
+**Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.
 
 ---
 
@@ -44,19 +50,19 @@ project/
 
 File seed là **single source** cho seed + fallback UI (`ProjectSeed` → `SampleData`).
 
-**Khi nhờ AI dựng lại:** đưa README này + liệt kê phần giữ/đổi/bỏ. Chỉ sửa file seed tương ứng `PROJECT_SEED` (và nói rõ nếu cần đổi seeder/SEO type).
+**Khi nhờ AI dựng lại:** đưa README này + liệt kê phần giữ/đổi/bỏ. Chỉ sửa file seed của profile (và nói rõ nếu cần đổi seeder/SEO type).
 
 ### Quy tắc chung
 
 1. Key top-level optional về sản phẩm, nhưng **đúng shape** nếu seeder còn đọc.
-2. `slug` = kebab-case ASCII, unique trong cùng loại.
+2. `slug` = kebab-case ASCII, unique trong cùng loại **và cùng project**.
 3. i18n: thường `vi` / `en`. Locale mặc định = `vi`.
 4. Package: `tours` → `type=tour`; `cruises` → `type=cruise` (tên technical — có thể = combo/dịch vụ khác nếu giữ pipeline SEO).
 5. Đổi slug cha/con → seed lại `SeoHierarchySeeder`.
 
 ### 1b. `company` (thông tin dự án)
 
-File **`project/seed_company.php`** — merge vào `seed_vitravel.php`. Seed → bảng `company_profiles`. Admin: **Cài đặt → Thông tin dự án** (`/settings/site`).
+Key top-level **`company`** trong file seed dự án (`project/seed_{name}.php`). Seed → bảng `company_profiles` (có `project_id`). Admin: **Cài đặt → Thông tin dự án** (`/settings/site`) + header `X-Project-Code`.
 
 | Field | Ý nghĩa |
 |-------|---------|
@@ -67,7 +73,7 @@ File **`project/seed_company.php`** — merge vào `seed_vitravel.php`. Seed →
 | `schema.*` | available_language, contact_type, logo |
 | `footer.copyright`, `footer.show_dmca_badge` | Footer (`:year` / `:license` / `:name`) |
 
-Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/company.php` chỉ còn fallback env khi chưa seed.
+Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/company.php` chỉ còn fallback rỗng khi chưa seed (không `COMPANY_*` env).
 
 ### 1. `meta`
 
@@ -75,6 +81,7 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 |-------|---------|
 | `brand`, `tagline` | Tên / slogan (meta seed; runtime brand lấy từ `company`) |
 | `admin.*` | User admin lúc seed |
+| `primary_domain`, `domains[]` | Map Host → project — Cát Bà Hub: **`hicatba.dev`** + **`hicatba.com`** (multi-domain) |
 | `country_codes` | `countries[].slug` → mã DB |
 | `schema` | Version schema seed |
 
@@ -89,9 +96,11 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 
 ### 3. Điểm đến
 
-- `countries` — `{ slug, name, size, tagline }[]` → SEO `country`
-- `country_translations` — i18n theo slug
-- `tour_categories` — danh mục con dưới country
+- `countries` — `{ slug, name, size, tagline }[]` → SEO `country` (CMS entity)
+- Alias dự án 1 điểm đến: **`zones` / `zoneSlug` / `zone_translations`** được `ProjectSeed` chuẩn hoá thành `countries` / `countrySlug` / `country_translations` lúc load
+- `country_translations` — i18n theo slug (hoặc `zone_translations`)
+- `tour_categories` — danh mục con dưới country/zone (`countrySlug` hoặc `zoneSlug`)
+- `meta.country_codes` — optional; nếu thiếu, tự sinh từ slug
 
 ### 4. Sản phẩm
 
@@ -100,7 +109,7 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 
 ### 4b. Catalogue dịch vụ (5 cụm)
 
-File **`project/seed_services.php`** — merge cuối `seed_vitravel.php` (`return array_merge($__vitravelSeed, require …)`).
+Keys nằm trong cùng file seed dự án (`service_clusters`, `service_categories`, `services`, `service_listing_faqs`) — không tách file phụ.
 
 | Key | Shape (tóm tắt) |
 |-----|-----------------|
@@ -120,6 +129,8 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 - `testimonials`, `team`, `videos`, `gallery_albums`, `usps`, `offices`
 - `value_definitions`, `reason_definitions`, `reference_persons`, `about_page`
 - `home_slides`, `hero_pills`, `home_sections`, `footer_*`, `listing_faqs`
+- **`customize_form`** — form Tour riêng: `destinations_label`, `accommodation_label`, `budget_note`, `accommodation[]` (i18n `vi`/`en`); điểm đến mặc định từ countries/zones `show_in_customize_form` (có thể ghi đè bằng `destinations[]`)
+- **`nav`** — nhãn header + hub cruise (seed-only, không admin): `about_group`, `cruise.{label,all_label,all_meta,search_hint,search_placeholder,hub_title,hub_subtitle}` — đổi «Du thuyền» thành «Thuyền & trải nghiệm» tuỳ dự án
 
 ### Map seeder
 
@@ -135,8 +146,8 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 ### Prompt gợi ý
 
 ```
-PROJECT_SEED hiện tại: vitravel (file project/seed_vitravel.php).
+Profile: vitravel (file project/seed_vitravel.php).
 Dựa trên project/README.md, [giữ|đổi|xóa] key: …
 Xuất đủ shape vào đúng file seed của profile, không hardcode seeder.
-Nhắc: php artisan migrate --seed
+Nhắc: php artisan migrate --seed  (seed all) hoặc project:seed {profile}
 ```

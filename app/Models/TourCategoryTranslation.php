@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TourCategoryTranslation extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'tour_category_id', 'language_id', 'name', 'slug', 'description', 'seo_intro',
+        'project_id', 'tour_category_id', 'language_id', 'name', 'slug', 'description', 'seo_intro',
     ];
 
     public function tourCategory(): BelongsTo

@@ -79,7 +79,7 @@ Organization:
 2. [Schema Markup Validator](https://validator.schema.org/)
 3. DevTools → Elements → `script[type="application/ld+json"]`
 
-Nguồn dữ liệu: **`config/company.php`** (mẫu + env `COMPANY_*`) qua `CompanyProfile::contact()` — admin Company Profile ghi đè email/phone/whatsapp/slogan/license khi đã nhập. Meta SEO bổ sung: `config/seo.php` → `site` (title_suffix, description, og_image…).
+Nguồn dữ liệu: **`company_profiles`** (per project) qua `CompanyProfile::contact()` — `config/company.php` chỉ fallback rỗng khi DB trống. Meta SEO bổ sung: `config/seo.php` → `site` (`SEO_SITE_*` optional; brand runtime từ CompanyProfile / SchemaService).
 
 ---
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,13 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ExperienceVideo extends Model
 {
-    use HasTranslations, SoftDeletes;
+    use BelongsToProject, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'description'];
 
     protected $fillable = [
-        'country_id', 'youtube_id', 'video_url', 'duration', 'tag',
+        'project_id', 'country_id', 'youtube_id', 'video_url', 'duration', 'tag',
         'thumbnail_media_id', 'video_media_id', 'published_at', 'show_on_home', 'sort', 'status',
     ];
 

@@ -85,7 +85,7 @@ class RoutingController extends Controller
             'static_page' => $this->dispatchStaticPage($ref),
             'team_hub' => app(PageController::class)->team(),
             'team_member' => $this->dispatchTeamMember($ref),
-            'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+            'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
                 => $this->dispatchServiceHub($type),
             'service_category' => $this->dispatchServiceCategory($entry, $ref, $locale, $seoTrans?->slug),
             'service' => $this->dispatchService($entry, $ref, $locale, $seoTrans?->slug),

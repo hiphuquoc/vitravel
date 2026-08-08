@@ -14,6 +14,14 @@ return [
             'unit_label' => 'vé tàu',
             'sort' => 1,
         ],
+        'ferry' => [
+            'hub_key' => 'ferries_hub',
+            'label' => 'Vé tàu cao tốc & xe khách',
+            'nav_label' => 'Tàu / Xe',
+            'icon' => 'ship',
+            'unit_label' => 'vé tàu / xe',
+            'sort' => 1,
+        ],
         'flight' => [
             'hub_key' => 'flights_hub',
             'label' => 'Vé máy bay',
@@ -50,6 +58,7 @@ return [
 
     'hub_to_cluster' => [
         'trains_hub' => 'train',
+        'ferries_hub' => 'ferry',
         'flights_hub' => 'flight',
         'stays_hub' => 'stay',
         'experiences_hub' => 'experience',

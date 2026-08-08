@@ -36,6 +36,7 @@ class PageController extends Controller
     {
         return $this->cachedHtmlResponse(fn () => view('pages.customize-tour', [
             'chrome' => $this->data->pageChrome('customize'),
+            'form' => $this->data->customizeForm(),
         ])->render());
     }
 

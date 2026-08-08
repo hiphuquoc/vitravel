@@ -1,70 +1,71 @@
 <?php
 
 /**
- * Thông tin doanh nghiệp — fallback khi DB chưa seed.
- * Nguồn chính: ProjectSeed key `company` → bảng company_profiles (admin «Thông tin dự án»).
+ * Thông tin doanh nghiệp — fallback rỗng khi DB chưa seed.
  *
- * Không sửa file này để đổi nội dung runtime — dùng admin hoặc project/seed_company.php.
+ * Runtime brand lấy từ `company_profiles` (per project) qua CompanyProfile::contact().
+ * File này chỉ cấu trúc rỗng / null — không đọc env COMPANY_*.
+ * Không sửa file này để đổi nội dung runtime — dùng admin hoặc key `company` trong project/seed_{name}.php.
  */
 return [
 
-    'name' => env('COMPANY_NAME', null),
+    'name' => null,
 
-    'legal_name' => env('COMPANY_LEGAL_NAME', null),
+    'legal_name' => null,
 
-    'tagline' => env('COMPANY_TAGLINE', null),
+    'tagline' => null,
 
-    'slogan' => env('COMPANY_SLOGAN', null),
+    'slogan' => null,
 
-    'license_number' => env('COMPANY_LICENSE', null),
+    'license_number' => null,
 
     'contact' => [
-        'email' => env('COMPANY_EMAIL', null),
-        'phone' => env('COMPANY_PHONE', null),
-        'whatsapp' => env('COMPANY_WHATSAPP', null),
-        'zalo' => env('COMPANY_ZALO', null),
-        'hotline_label' => env('COMPANY_HOTLINE_LABEL', null),
+        'email' => null,
+        'phone' => null,
+        'whatsapp' => null,
+        'zalo' => null,
+        'hotline_label' => null,
     ],
 
     'address' => [
-        'street' => env('COMPANY_ADDRESS_STREET', null),
-        'locality' => env('COMPANY_ADDRESS_LOCALITY', null),
-        'region' => env('COMPANY_ADDRESS_REGION', null),
-        'postal' => env('COMPANY_ADDRESS_POSTAL', null),
-        'country' => env('COMPANY_ADDRESS_COUNTRY', null),
+        'street' => null,
+        'locality' => null,
+        'region' => null,
+        'postal' => null,
+        'country' => null,
     ],
 
     'social' => [
         'facebook' => [
             'label' => 'Facebook',
             'icon' => 'facebook',
-            'url' => env('COMPANY_FACEBOOK', null),
+            'url' => null,
         ],
         'youtube' => [
             'label' => 'YouTube',
             'icon' => 'play',
-            'url' => env('COMPANY_YOUTUBE', null),
+            'url' => null,
         ],
         'instagram' => [
             'label' => 'Instagram',
             'icon' => 'photo',
-            'url' => env('COMPANY_INSTAGRAM', null),
+            'url' => null,
         ],
         'tiktok' => [
             'label' => 'TikTok',
             'icon' => 'share',
-            'url' => env('COMPANY_TIKTOK', null),
+            'url' => null,
         ],
     ],
 
     'schema' => [
         'available_language' => ['Vietnamese', 'English'],
         'contact_type' => 'customer service',
-        'logo' => env('COMPANY_LOGO', null),
+        'logo' => null,
     ],
 
     'footer' => [
-        'copyright' => env('COMPANY_FOOTER_COPYRIGHT', null),
+        'copyright' => null,
         'show_dmca_badge' => true,
     ],
 

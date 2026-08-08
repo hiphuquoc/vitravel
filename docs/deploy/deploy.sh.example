@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+# Deploy nhanh trên VPS (Laravel). Chạy bằng user có quyền ghi code + www.
+# Usage: bash deploy.sh
+set -euo pipefail
+
+APP_DIR="${APP_DIR:-/www/wwwroot/vitravel}"
+ADMIN_DIR="${ADMIN_DIR:-/www/wwwroot/admin.vitravel}"
+WWW_USER="${WWW_USER:-www}"
+BUILD_ADMIN="${BUILD_ADMIN:-0}"
+BUILD_VITE="${BUILD_VITE:-0}"
+
+cd "$APP_DIR"
+
+echo "==> git pull"
+git pull --ff-only
+
+echo "==> composer"
+composer install --no-dev --optimize-autoloader --no-interaction
+
+echo "==> migrate"
+php artisan migrate --force
+
+if [[ "$BUILD_VITE" == "1" ]]; then
+  echo "==> npm build (Vite)"
+  npm ci
+  npm run build
+fi
+
+if [[ "$BUILD_ADMIN" == "1" && -d "$ADMIN_DIR" ]]; then
+  echo "==> admin build → out/ (host admin.vitravel.*)"
+  (
+    cd "$ADMIN_DIR"
+    npm ci
+    export NEXT_PUBLIC_API_BASE="${NEXT_PUBLIC_API_BASE:-https://vitravel.net/api/v1/admin}"
+    export NEXT_PUBLIC_SITE_ORIGIN="${NEXT_PUBLIC_SITE_ORIGIN:-https://vitravel.net}"
+    # Nếu Nginx root = ADMIN_DIR/out thì không cần ADMIN_PUBLIC_DIR
+    # export ADMIN_PUBLIC_DIR="$ADMIN_DIR/out"
+    npm run build
+  )
+fi
+
+echo "==> optimize"
+php artisan optimize:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan queue:restart || true
+
+echo "==> permissions"
+chown -R "$WWW_USER:$WWW_USER" storage bootstrap/cache
+chmod -R ug+rwx storage bootstrap/cache
+
+echo "==> done"
+php artisan --version

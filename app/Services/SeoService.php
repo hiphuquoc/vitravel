@@ -14,6 +14,7 @@ use App\Models\SeoRedirect;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\TourCategory;
+use App\Support\ProjectContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -51,7 +52,10 @@ class SeoService
             $slugFull = $this->buildSlugFull($seoType ?? '', $locale, $slug, $parentEntry, $context);
         }
 
-        $entry = $model->seoEntry()->firstOrCreate([]);
+        // withoutGlobalScope: orphan hub rows (project_id null) are invisible when context is set.
+        $entry = $model->seoEntry()->withoutGlobalScope('project')->firstOrCreate([]);
+        $this->ensureEntryProjectId($entry, $model);
+
         $existingTranslation = SeoEntryTranslation::query()
             ->where('seo_entry_id', $entry->id)
             ->where('language_id', $languageId)
@@ -99,6 +103,7 @@ class SeoService
             'status' => $data['status'] ?? 'draft',
                 'translation_status' => $data['translation_status'] ?? 'manual',
             'published_at' => $data['published_at'] ?? (($data['status'] ?? '') === 'published' ? now() : null),
+            'project_id' => $entry->project_id ?? ProjectContext::id(),
         ];
 
         SeoEntryTranslation::query()->updateOrCreate(
@@ -566,6 +571,14 @@ class SeoService
     {
         $locale ??= app()->getLocale();
 
+        // Alias dự án 1 điểm đến (zones) → shape CMS (countries)
+        if ($routeName === 'guide.zone') {
+            $routeName = 'guide.country';
+        }
+        if (isset($params['zone']) && ! isset($params['country'])) {
+            $params['country'] = $params['zone'];
+        }
+
         return match ($routeName) {
             'tours.hub' => $this->hubSlugFullPath('tours_hub', $locale),
             'cruises.hub' => $this->hubSlugFullPath('cruises_hub', $locale),
@@ -865,13 +878,46 @@ class SeoService
     }
 
     /**
+     * Resolve project_id from the related model, then ProjectContext.
+     */
+    protected function resolveProjectIdFor(Model $model): ?int
+    {
+        $fromModel = $model->getAttribute('project_id');
+        if ($fromModel !== null && $fromModel !== '') {
+            return (int) $fromModel;
+        }
+
+        return ProjectContext::id();
+    }
+
+    /**
+     * Morph firstOrCreate / legacy rows can miss BelongsToProject::creating — force project_id.
+     */
+    protected function ensureEntryProjectId(SeoEntry $entry, Model $model): void
+    {
+        if ($entry->project_id) {
+            return;
+        }
+
+        $projectId = $this->resolveProjectIdFor($model);
+        if (! $projectId) {
+            return;
+        }
+
+        $entry->forceFill(['project_id' => $projectId])->save();
+    }
+
+    /**
      * Ensure parent SEO exists for a related model (e.g. Country of a Package).
      */
     public function ensureSeoFor(Model $model, string $seoType, string $locale, array $data = []): SeoEntry
     {
-        $existing = $model->seoEntry;
+        // Orphan SEO (project_id null) is hidden by BelongsToProject when context is set.
+        $existing = $model->seoEntry()->withoutGlobalScope('project')->first();
 
         if ($existing) {
+            $this->ensureEntryProjectId($existing, $model);
+
             if ($existing->type !== $seoType) {
                 $existing->forceFill(['type' => $seoType])->saveQuietly();
             }
@@ -957,10 +1003,18 @@ class SeoService
             throw new \InvalidArgumentException("Unknown SEO hub: {$hubKey}");
         }
 
+        $projectId = ProjectContext::id();
         $page = \App\Models\StaticPage::query()->firstOrCreate(
             ['template' => $cfg['template']],
-            ['status' => 'published', 'published_at' => now()],
+            [
+                'status' => 'published',
+                'published_at' => now(),
+                'project_id' => $projectId,
+            ],
         );
+        if (! $page->project_id && $projectId) {
+            $page->forceFill(['project_id' => $projectId])->save();
+        }
 
         $languageId = Language::idByCode($locale);
         if ($languageId && ! $page->translations()->where('language_id', $languageId)->exists()) {

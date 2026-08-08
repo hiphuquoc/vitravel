@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ReviewPlatform extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'code', 'name', 'rating', 'review_count', 'url', 'quote', 'link_label',
+        'project_id', 'code', 'name', 'rating', 'review_count', 'url', 'quote', 'link_label',
         'logo_media_id', 'sort', 'is_active', 'show_on_home',
     ];
 

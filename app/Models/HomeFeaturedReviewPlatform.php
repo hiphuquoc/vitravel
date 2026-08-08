@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HomeFeaturedReviewPlatform extends Model
 {
-    protected $fillable = ['review_platform_id', 'sort'];
+    use BelongsToProject;
+
+    protected $fillable = ['project_id', 'review_platform_id', 'sort'];
 
     protected function casts(): array
     {

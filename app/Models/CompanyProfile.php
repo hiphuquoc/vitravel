@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use App\Services\MediaService;
 use App\Support\ProjectSeed;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CompanyProfile extends Model
 {
-    use HasTranslations;
+    use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = [
@@ -24,7 +25,7 @@ class CompanyProfile extends Model
     ];
 
     protected $fillable = [
-        'name', 'legal_name', 'tagline',
+        'project_id', 'name', 'legal_name', 'tagline',
         'license_number', 'contact_email', 'contact_phone', 'contact_whatsapp', 'contact_zalo',
         'hotline_label', 'slogan',
         'address', 'social_links', 'schema_settings',

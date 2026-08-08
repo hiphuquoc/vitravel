@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Model;
 
 class ContactMessage extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'name', 'email', 'phone', 'address', 'message', 'locale',
+        'project_id', 'name', 'email', 'phone', 'address', 'message', 'locale',
         'status', 'ip_address', 'user_agent', 'utm', 'contacted_at',
     ];
 

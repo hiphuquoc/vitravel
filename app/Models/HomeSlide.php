@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HomeSlide extends Model
 {
-    use SoftDeletes;
+    use BelongsToProject, SoftDeletes;
 
     public const ALIGN_LEFT = 'left';
 
@@ -29,6 +30,7 @@ class HomeSlide extends Model
     }
 
     protected $fillable = [
+        'project_id',
         'image_media_id',
         'image_mobile_media_id',
         'text_align',

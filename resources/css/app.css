@@ -1375,7 +1375,24 @@
     }
 
     .nav-panel-item-row {
-        @apply flex flex-wrap items-center gap-x-2 gap-y-1;
+        @apply flex flex-nowrap items-center gap-x-2;
+        min-width: 0;
+        width: 100%;
+    }
+
+    /* Label co lại / ellipsis — badge luôn cùng hàng (không nhảy xuống) */
+    .nav-panel-item-row > .nav-panel-item,
+    .nav-panel-item-row > span:not(.count-badge):not(.nav-panel-count):not(.nav-panel-lead-mark) {
+        flex: 1 1 0%;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .nav-panel-item-row > .count-badge,
+    .nav-panel-item-row > .nav-panel-count {
+        flex: 0 0 auto;
     }
 
     /* Badge số lượng (tour / bài) — dùng chung header mega menu + blog sidebar */
@@ -6301,11 +6318,17 @@ a.mobile-nav-drawer__trigger {
 }
 .mobile-nav-drawer__tree-link-row {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     gap: 0.35rem 0.5rem;
+    min-width: 0;
 }
 .mobile-nav-drawer__tree-link-title {
+    flex: 1 1 0%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-weight: 600;
     font-size: var(--fs-body, 1rem);
     line-height: 1.35;

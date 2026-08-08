@@ -2,43 +2,47 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Support\ProjectSeed;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     public function run(): void
     {
-        $this->call([
-            LanguageSeeder::class,
-            TaxonomySeeder::class,
-            CruiseTypeSeeder::class,
-            ContentSeeder::class,
-            ServiceCatalogSeeder::class,
-            TourCategorySeeder::class,
-            HomeSlideSeeder::class,
-            HomeSectionSeeder::class,
-            ReviewSeeder::class,
-            ExperienceVideoSeeder::class,
-            HomeFeaturedSeeder::class,
-            // Cuối cùng: hub → country/type → package/article + purge redirect hỏng
-            SeoHierarchySeeder::class,
-        ]);
+        $this->call(LanguageSeeder::class);
 
-        $admin = ProjectSeed::meta()['admin'] ?? [];
-        // Plain password — User::$casts['password' => 'hashed'] sẽ hash 1 lần (không Hash::make trước).
-        User::query()->updateOrCreate(
-            ['email' => $admin['email'] ?? 'admin@vitravel.dev'],
-            [
-                'name' => $admin['name'] ?? 'Admin',
-                'password' => $admin['password'] ?? '111111',
-                'role' => 'admin',
-                'is_active' => true,
-            ]
-        );
+        $dir = trim((string) config('project.seed_dir', 'project'), '/\\');
+        $pattern = base_path($dir.'/seed_*.php');
+        $files = glob($pattern) ?: [];
+        sort($files);
+
+        $seeded = [];
+        foreach ($files as $file) {
+            $base = basename($file);
+            if (! preg_match('/^seed_(.+)\.php$/i', $base, $m)) {
+                continue;
+            }
+            $name = $m[1];
+            $this->command?->info("=== Seeding profile: {$name} ===");
+
+            $exit = Artisan::call('project:seed', ['profile' => $name]);
+            $this->command?->getOutput()?->write(Artisan::output());
+
+            if ($exit !== 0) {
+                throw new RuntimeException("project:seed {$name} failed (exit {$exit}).");
+            }
+
+            $seeded[] = $name;
+        }
+
+        if ($seeded === []) {
+            throw new RuntimeException(
+                "Không tìm thấy seed_*.php trong {$dir}/. "
+                .'Thêm file seed rồi chạy lại migrate --seed.'
+            );
+        }
+
+        $this->command?->info('Seeded profiles: '.implode(', ', $seeded));
     }
 }

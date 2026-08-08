@@ -18,6 +18,8 @@ Route::prefix('__seo')->group(function () {
 
     Route::get('/guide', fn () => abort(404))->name('guide.index');
     Route::get('/guide/{country}', fn () => abort(404))->name('guide.country');
+    // Alias seed dự án zones (Cát Bà…): guide.zone ≡ guide.country
+    Route::get('/guide-zone/{zone}', fn () => abort(404))->name('guide.zone');
     Route::get('/guide/{country}/{slug}', fn () => abort(404))->name('guide.show');
 
     Route::get('/services/{cluster}/hub', fn () => abort(404))->name('services.hub');

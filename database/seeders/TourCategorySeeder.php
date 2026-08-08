@@ -121,7 +121,7 @@ class TourCategorySeeder extends Seeder
     protected function seedTourCategories(): void
     {
         foreach (ProjectSeed::get('tour_categories', []) as $row) {
-            $countryId = $this->countryIds[$row['countrySlug']] ?? null;
+            $countryId = $this->countryIds[$row['countrySlug'] ?? $row['zoneSlug'] ?? ''] ?? null;
             if (! $countryId) {
                 continue;
             }
@@ -212,7 +212,7 @@ class TourCategorySeeder extends Seeder
             }
 
             if (isset($row['minDays'], $row['maxDays'])) {
-                $countryId = $this->countryIds[$row['countrySlug']] ?? null;
+                $countryId = $this->countryIds[$row['countrySlug'] ?? $row['zoneSlug'] ?? ''] ?? null;
                 if ($countryId) {
                     $packageIds = $packageIds->merge(
                         Package::query()

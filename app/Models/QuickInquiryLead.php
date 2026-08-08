@@ -2,14 +2,17 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class QuickInquiryLead extends Model
 {
+    use BelongsToProject;
+
     protected $fillable = [
-        'name', 'email', 'phone', 'address', 'message', 'source_page_url',
+        'project_id', 'name', 'email', 'phone', 'address', 'message', 'source_page_url',
         'related_package_id', 'locale', 'status', 'ip_address', 'user_agent',
         'utm', 'contacted_at',
     ];

@@ -143,7 +143,7 @@ class ListingHubController extends Controller
                 'cruises_hub' => $this->seoService()->attachCruiseTypesToCruisesHub($locale),
                 'tours_hub' => $this->seoService()->attachCountriesToToursHub($locale),
                 'guide_hub' => $this->seoService()->attachBlogCategoriesToGuideHub($locale),
-                'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+                'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
                     => $this->seoService()->rebuildServicesSeoTree($locale),
                 default => null,
             };
@@ -168,7 +168,7 @@ class ListingHubController extends Controller
             'tours_hub' => 'admin.countries.list',
             'cruises_hub' => 'admin.cruiseTypes.list',
             'guide_hub' => 'admin.blogCategories.list',
-            'trains_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
+            'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub'
                 => 'admin.serviceCategories.list',
             default => 'admin.dashboard',
         };

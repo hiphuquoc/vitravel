@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasMediaAttachments;
 use App\Models\Concerns\HasSeo;
@@ -15,13 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
-    use HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'excerpt', 'content', 'inline_related_links'];
 
     protected $fillable = [
-        'country_id', 'destination_id', 'blog_category_id', 'author_name',
+        'project_id', 'country_id', 'destination_id', 'blog_category_id', 'author_name',
         'rating', 'rating_count', 'view_count', 'status', 'published_at',
     ];
 

@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => RoleMiddleware::class,
             'admin.api' => \App\Http\Middleware\AuthenticateAdminApi::class,
+            'admin.can' => \App\Http\Middleware\AuthorizeAdminPermission::class,
             'detectLocale' => \App\Http\Middleware\DetectLocale::class,
             'detectCurrency' => \App\Http\Middleware\DetectCurrency::class,
         ]);
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->web(append: [
+            \App\Http\Middleware\ResolveProjectFromHost::class,
             \App\Http\Middleware\DetectLocale::class,
             \App\Http\Middleware\DetectCurrency::class,
             \App\Http\Middleware\CheckRedirect::class,

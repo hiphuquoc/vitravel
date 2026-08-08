@@ -14,6 +14,22 @@ if (! function_exists('view_data')) {
     }
 }
 
+if (! function_exists('admin_app_url')) {
+    /**
+     * Absolute URL tới Admin Console (host riêng — ADMIN_APP_URL).
+     */
+    function admin_app_url(string $path = '/'): string
+    {
+        $base = rtrim((string) config('app.admin_url', env('ADMIN_APP_URL', 'https://admin.vitravel.dev')), '/');
+        $path = '/'.ltrim($path, '/');
+        if ($path === '//') {
+            $path = '/';
+        }
+
+        return $base.($path === '/' ? '/' : $path);
+    }
+}
+
 if (! function_exists('company')) {
     /**
      * Thông tin dự án runtime (DB company_profiles qua CompanyProfile::contact()).
@@ -124,12 +140,16 @@ if (! function_exists('locale_route')) {
     {
         if (! is_array($parameters) && is_string($parameters)) {
             $params = match ($name) {
-                'tours.index' => ['country' => $parameters],
+                'tours.index', 'guide.country', 'guide.zone' => ['country' => $parameters],
                 'cruises.index' => ['type' => $parameters],
                 default => [$parameters],
             };
         } else {
             $params = (array) $parameters;
+        }
+
+        if (isset($params['zone']) && ! isset($params['country'])) {
+            $params['country'] = $params['zone'];
         }
 
         $seoPath = app(SeoService::class)->namedSeoPath($name, $params);
@@ -146,7 +166,7 @@ if (! function_exists('locale_route')) {
         if (! is_default_locale()) {
             $locale = current_locale();
             if (! preg_match('#^/'.preg_quote($locale, '#').'(/|$)#', $path)
-                && ! preg_match('#^/(he-thong|api|currency|up)(/|$)#', $path)) {
+                && ! preg_match('#^/(api|currency|up)(/|$)#', $path)) {
                 $path = '/'.$locale.($path === '/' ? '' : $path);
             }
         }

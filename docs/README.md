@@ -45,22 +45,26 @@ autourasia-clone-docs/
 | `06-tham-chieu-hinh-anh.md` | Bảng ánh xạ ảnh ↔ trang, danh sách UI bổ sung từ ảnh |
 | `07-database-architecture.md` | **Kiến trúc CSDL thực thi** — SEO hub, i18n, packages, leads (tham chiếu Hitour) |
 | `09-seo-technical.md` | Meta / JSON-LD: Organization, WebSite, Breadcrumb, FAQ, TouristTrip, Article |
-| `10-admin-console-api.md` | **Admin Console API v1** — auth + Tour modules cho Next.js `admin/` |
+| `10-admin-console-api.md` | **Admin Console API v1** — auth + Tour modules cho Next.js admin |
+| `11-multi-project-architecture.md` | **Đọc khi cần:** seed all/one, đổi dự án public (`?project=` / domain), admin dropdown, hosts local |
+| `12-admin-users-rbac.md` | **Users / phân quyền** — system role, project role, API, UI `/account` + `/settings/users` |
+| `13-deploy-aapanel-vps.md` | **Deploy VPS aaPanel** — multi-domain public + admin host riêng, Nginx/env/Supervisor mẫu |
 | `gcs-standard.md` | Chuẩn GCS đa dự án |
 
 ## Trạng thái triển khai (2026-07)
 
 - **UI public:** Laravel 13 + Blade, dữ liệu qua `ViewDataService` (DB + fallback `SampleData`).
 - **Backend:** Controllers, FormRequests, Services (`SeoService`, `MediaService`, `ViewDataService`), lead POST endpoints.
-- **Dịch vụ (5 cụm — public):** vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác — hub/listing/chi tiết qua `ServiceController` + `RoutingController` (SEO types `trains_hub` … `service`). Seed: `project/seed_services.php` merge vào `seed_vitravel.php` (`service_clusters`, `service_categories`, `services`, `service_listing_faqs`). Config: `config/services_catalog.php`, hubs trong `config/seo.php`. **Chưa có admin CRUD dịch vụ** (roadmap).
+- **Dịch vụ (5 cụm — public):** vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác — hub/listing/chi tiết qua `ServiceController` + `RoutingController` (SEO types `trains_hub` … `service`). Seed keys trong **`project/seed_{name}.php`**: `service_clusters`, `service_categories`, `services`, `service_listing_faqs`. Config: `config/services_catalog.php`, hubs trong `config/seo.php`.
 - **Header:** `headerMain` hiển thị **Điểm đến**, **Du thuyền** và **5 cụm dịch vụ** (mega menu); **Cẩm nang**, **Về chúng tôi**, **Liên hệ** (và mục phụ) chuyển vào drawer icon **Thêm** (`.header-more-btn` / `.header-more-panel`).
-- **Admin:** **`/he-thong/`** — Next.js Admin Console (repo `admin.vitravel.dev`, static → `public/he-thong`). API: `/api/v1/admin/*` (`admin_api_tokens`). Đăng nhập: `admin@vitravel.dev` / `111111`. Blade admin cũ đã ngưng.
-- **DB:** `php artisan migrate --seed` — demo content trong **`project/seed_vitravel.php`** (+ merge `seed_services.php`; xem `project/README.md`). Pipeline: taxonomy → cruise types → content → **ServiceCatalogSeeder** → tour categories → home/reviews → **SeoHierarchySeeder cuối** (rebuild slug_full hub→con + `purgeBadRedirects`). Nếu chỉ thiếu URL tour/dịch vụ: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects` (hoặc `--purge-all`).
-- **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md`.
+- **Admin:** **`https://admin.vitravel.dev/`** (prod: `admin.vitravel.net`) — Next.js Admin Console (repo `admin.vitravel.dev`, static `out/`). API: `/api/v1/admin/*` trên Laravel (+ CORS). Đăng nhập: `admin@vitravel.dev` / `111111`. URL cũ `/he-thong/*` redirect sang `ADMIN_APP_URL`.
+- **DB:** `php artisan migrate --seed` — discover **mọi** `project/seed_*.php` (không cần `PROJECT_SEED`). Runtime multi-project: bảng `projects` + `project_id` (xem `docs/11-multi-project-architecture.md`). Một profile: `php artisan project:seed {name}`. Nếu chỉ thiếu URL: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects`.
+- **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md` + **`11-multi-project-architecture.md`**.
+- **Deploy VPS (aaPanel):** [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) + mẫu trong `docs/deploy/`.
 
 ### Lệnh khởi tạo (máy dev)
 
-- **DB / seed:** `PROJECT_SEED` (`.env`) → `project/seed_{name}.php`. Schema & quy tắc AI: `project/README.md`, `.cursor/rules/project-seed.mdc`, `AGENTS.md`. Không hardcode demo trong seeder.
+- **DB / seed:** `project/seed_*.php` qua `ProjectSeed::useProfile` / `project:seed`. Schema & quy tắc AI: `project/README.md`, `.cursor/rules/project-seed.mdc`, `AGENTS.md`. Không hardcode demo trong seeder. Local switch: `?project=hicatba` khi `APP_DEBUG`.
 - **GCS (chuẩn đa dự án):** `docs/gcs-standard.md` — `GCS_PROJECT_ID` / `GCS_BUCKET` / `GCS_KEY_FILE` / `GCS_PUBLIC_URL` + `MEDIA_DISK=gcs`.
 
 ```bash
@@ -71,14 +75,14 @@ npm run build   # Node 20+ — commit public/build/ cùng repo rồi deploy
 
 ### Admin modules (đã có CRUD)
 
-| Module | Route admin (phase 1) |
+| Module | Path trên admin host |
 |---|---|
-| Dashboard | `/he-thong/` |
-| Gói Tour | `/he-thong/tours/packages/` |
-| Danh mục Tour | `/he-thong/tours/categories/` |
-| Chủ đề Tour | `/he-thong/tours/themes/` |
+| Dashboard | `/` |
+| Gói Tour | `/tours/packages/` |
+| Danh mục Tour | `/tours/categories/` |
+| Chủ đề Tour | `/tours/themes/` |
 
-> Bảng Blade cũ (`/he-thong/san-pham/…`) đã retire. Roadmap mở rộng module trên console Next.js.
+> Blade admin cũ đã retire. Roadmap mở rộng module trên console Next.js.
 
 Các module brand còn lại (gallery placeholder, video, cảm nhận…) theo cùng pattern CRUD.
 

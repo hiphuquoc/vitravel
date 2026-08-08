@@ -42,6 +42,7 @@ class HomeSectionApiController extends BladeHomeSectionController
                 return [
                     'id' => $section->id,
                     'key' => $section->key,
+                    'label' => $section->label(),
                     'is_active' => $section->is_active,
                     'fields' => HomeSection::fieldsForKey($section->key),
                     'eyebrow' => $t?->eyebrow,

@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class HeroPill extends Model
 {
-    use HasTranslations;
+    use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['label'];
 
     protected $fillable = [
+        'project_id',
         'tour_category_id',
         'country_id',
         'target_url',

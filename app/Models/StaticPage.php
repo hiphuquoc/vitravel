@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
@@ -12,12 +13,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StaticPage extends Model
 {
-    use HasFaqs, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasSeo, HasTranslations, SoftDeletes;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'body'];
 
-    protected $fillable = ['template', 'banner_media_id', 'cover_media_id', 'status', 'published_at'];
+    protected $fillable = ['project_id', 'template', 'banner_media_id', 'cover_media_id', 'status', 'published_at'];
 
     protected function casts(): array
     {
