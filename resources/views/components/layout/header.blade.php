@@ -9,12 +9,28 @@
         'count' => $c['tourCount'] ?? 0,
         'url' => locale_route('tours.index', $c['slug']),
     ], $destinations);
-    $searchTours = array_map(fn ($t) => [
-        'title' => $t['title'],
-        'country' => $t['country'] ?? '',
-        'duration' => $t['duration'] ?? '',
-        'url' => locale_route('tours.show', ['country' => $t['countrySlug'], 'slug' => $t['slug']]),
-    ], array_slice(view_data()->featuredTours(6), 0, 6));
+    $searchTours = array_values(array_filter(array_map(function (array $t) {
+        $slug = (string) ($t['slug'] ?? '');
+        if ($slug === '') {
+            return null;
+        }
+        $country = (string) ($t['countrySlug'] ?? '');
+        $url = filled($country)
+            ? locale_route('tours.show', ['country' => $country, 'slug' => $slug])
+            : (filled($t['slugFull'] ?? null)
+                ? seo_url((string) $t['slugFull'])
+                : locale_route('tours.show', ['slug' => $slug]));
+        if ($url === '' || $url === url('/')) {
+            return null;
+        }
+
+        return [
+            'title' => $t['title'],
+            'country' => $t['country'] ?? '',
+            'duration' => $t['duration'] ?? '',
+            'url' => $url,
+        ];
+    }, array_slice(view_data()->featuredTours(6), 0, 6))));
     $searchKeywords = array_slice(view_data()->popularKeywords(), 0, 8);
     $companyContact = view_data()->companyContact();
     $nav = view_data()->siteNav();
@@ -317,7 +333,7 @@
                 <button type="button"
                     class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
                     :aria-expanded="openMenu === 'dest'" @click="openMenu = openMenu === 'dest' ? null : 'dest'; moreOpen = false">
-                    Tour trọn gói <x-icon name="chevron-down" class="size-3.5" />
+                    Tour trọn gói <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                 </button>
                 <div x-cloak x-show="openMenu === 'dest'" x-transition.opacity.duration.150ms
                     class="absolute top-full left-0 z-50 w-[580px] pt-2">
@@ -350,7 +366,7 @@
                 <button type="button"
                     class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
                     :aria-expanded="openMenu === 'cruise'" @click="openMenu = openMenu === 'cruise' ? null : 'cruise'; moreOpen = false">
-                    {{ $cruiseNav['label'] ?? 'Du thuyền' }} <x-icon name="chevron-down" class="size-3.5" />
+                    {{ $cruiseNav['label'] ?? 'Du thuyền' }} <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                 </button>
                 <div x-cloak x-show="openMenu === 'cruise'" x-transition.opacity.duration.150ms
                     class="absolute top-full left-0 z-50 w-[580px] pt-2">
@@ -389,7 +405,7 @@
                         class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
                         :aria-expanded="openMenu === '{{ $svcKey }}'"
                         @click="openMenu = openMenu === '{{ $svcKey }}' ? null : '{{ $svcKey }}'; moreOpen = false">
-                        {{ $sc['nav_label'] }} <x-icon name="chevron-down" class="size-3.5" />
+                        {{ $sc['nav_label'] }} <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                     </button>
                     <div x-cloak x-show="openMenu === '{{ $svcKey }}'" x-transition.opacity.duration.150ms
                         class="absolute top-full left-0 z-50 w-80 max-w-[min(20rem,calc(100vw-2rem))] pt-2">

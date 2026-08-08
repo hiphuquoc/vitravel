@@ -210,6 +210,7 @@ class ViewDataService
             ->with([
                 'package.translations',
                 'package.country.translations',
+                'package.countries.translations',
                 'package.travelStyles',
                 'package.itineraryDays.translations',
                 'package.cabinTypes.translations',
@@ -2129,13 +2130,20 @@ class ViewDataService
         if ($primarySlug !== '' && ! in_array($primarySlug, $countrySlugs, true)) {
             array_unshift($countrySlugs, $primarySlug);
         }
+        if ($primarySlug === '' && $countrySlugs !== []) {
+            $primarySlug = (string) $countrySlugs[0];
+        }
 
         $data = [
             'slug' => $seoTranslation?->slug ?? '',
+            'slugFull' => $seoTranslation?->slug_full ?? null,
             'title' => $translation?->title ?? '',
             'countrySlug' => $primarySlug,
             'countrySlugs' => $countrySlugs,
-            'country' => $countryTranslation?->name ?? '',
+            'country' => $countryTranslation?->name
+                ?? ($package->relationLoaded('countries')
+                    ? (string) ($package->countries->first()?->translation($this->locale())?->name ?? '')
+                    : ''),
             'tourCode' => $package->code ?? '',
             'duration' => $this->formatDuration($package->duration_days, $package->duration_nights),
             'days' => $package->duration_days,

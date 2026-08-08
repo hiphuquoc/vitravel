@@ -414,7 +414,10 @@
 @php
     $tripUrl = $isCruise
         ? locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']])
-        : locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]);
+        : locale_route('tours.show', array_filter([
+            'country' => $item['countrySlug'] ?? null,
+            'slug' => $item['slug'] ?? null,
+        ]));
     $styleLabels = array_values(array_intersect_key(view_data()->travelStyles(), array_flip($item['styles'] ?? [])));
     $tripItem = array_merge($item, ['styles' => $styleLabels]);
 @endphp

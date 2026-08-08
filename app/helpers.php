@@ -152,8 +152,15 @@ if (! function_exists('locale_route')) {
             $params['country'] = $params['zone'];
         }
 
-        $seoPath = app(SeoService::class)->namedSeoPath($name, $params);
-        if ($seoPath !== null) {
+        // Chuỗi rỗng ≠ đủ tham số cho route SEO (tránh UrlGenerationException).
+        foreach (['country', 'slug', 'type', 'category', 'cluster'] as $key) {
+            if (array_key_exists($key, $params) && ! filled($params[$key])) {
+                unset($params[$key]);
+            }
+        }
+
+        $seoPath = app(\App\Services\SeoService::class)->namedSeoPath($name, $params);
+        if (is_string($seoPath) && $seoPath !== '') {
             $path = '/'.ltrim($seoPath, '/');
             if (! is_default_locale()) {
                 $path = '/'.current_locale().($path === '/' ? '' : $path);
@@ -162,7 +169,22 @@ if (! function_exists('locale_route')) {
             return $absolute ? url($path) : $path;
         }
 
-        $path = route($name, $params === [] ? $parameters : $params, false);
+        $seoNames = [
+            'tours.hub', 'tours.index', 'tours.show',
+            'cruises.hub', 'cruises.index', 'cruises.show',
+            'guide.index', 'guide.country', 'guide.zone', 'guide.show',
+            'services.hub', 'services.index', 'services.show',
+        ];
+
+        try {
+            $path = route($name, $params === [] ? $parameters : $params, false);
+        } catch (\Illuminate\Routing\Exceptions\UrlGenerationException $e) {
+            if (in_array($name, $seoNames, true)) {
+                return $absolute ? url('/') : '/';
+            }
+            throw $e;
+        }
+
         if (! is_default_locale()) {
             $locale = current_locale();
             if (! preg_match('#^/'.preg_quote($locale, '#').'(/|$)#', $path)

@@ -1352,11 +1352,23 @@
 
     /* Nav chính + mục trong mega menu */
     .nav-link {
-        @apply font-semibold transition hover:bg-white hover:text-primary-600;
+        @apply inline-flex font-semibold transition hover:bg-white hover:text-primary-600;
         padding: var(--btn-pad-y-sm) calc(var(--btn-pad-x-sm) - 0.15rem);
         font-size: var(--fs-body);
         letter-spacing: var(--header-nav-track, 0);
         border-radius: 10px;
+        align-items: center;
+        gap: 0.25rem;
+        max-width: 100%;
+    }
+
+    .headerMain__nav .header-nav-chevron,
+    .headerMain__nav .nav-link > svg {
+        flex-shrink: 0;
+        width: 0.875rem;
+        height: 0.875rem;
+        display: block;
+        overflow: visible;
     }
 
     .nav-panel-item {
