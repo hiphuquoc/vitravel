@@ -11,6 +11,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\URL;
 use Symfony\Component\HttpFoundation\Response;
 
 class ResolveProjectFromHost
@@ -39,6 +40,13 @@ class ResolveProjectFromHost
         if ($project) {
             ProjectContext::set($project);
             view()->share('currentProject', $project);
+        }
+
+        // Link tuyệt đối (locale_route / url / asset) theo Host đang truy cập,
+        // không dính APP_URL của domain “chủ” (vd. vitravel.net).
+        $root = $request->getSchemeAndHttpHost();
+        if (is_string($root) && $root !== '') {
+            URL::forceRootUrl($root);
         }
 
         return $next($request);

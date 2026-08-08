@@ -3,9 +3,12 @@
 namespace App\Services;
 
 use App\Models\Language;
+use App\Models\ProjectDomain;
+use App\Support\ProjectContext;
 use App\Support\UrlPath;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
 
@@ -25,8 +28,7 @@ use Illuminate\Support\Facades\Vite;
  *    `config('html_cache.disk')`.
  *  - Cache key có thể bao gồm "namespace" (ví dụ locale) để Phase 1 đa ngôn
  *    ngữ không cần đổi service: chỉ cần đặt key dạng `vi:tour-phu-quoc`.
- *  - Menu (desktop + mobile): `menuMain_{locale}` — `getOrRenderMenu()`, dùng
- *    chung mọi trang cùng ngôn ngữ (xem `headerMainCached.blade.php`).
+ *  - Menu (desktop + mobile): `{project}_menuMain_{locale}` — `getOrRenderMenu()`.
  *
  * Ví dụ:
  *   $cacheKey = HtmlCacheService::buildKey($slugFull, ['page' => 2]);
@@ -101,7 +103,7 @@ class HtmlCacheService
         }
 
         $html = $renderCallback();
-        if (!empty($html) && $this->isRequestHostCanonical()) {
+        if (!empty($html) && $this->isRequestHostAllowedToWriteCache()) {
             if ($this->shouldPersistCacheKey($cacheKey, $allowHomepagePersist)) {
                 $this->saveToDisk($cachePath, $html);
             } elseif (self::isHomepageCacheKey($cacheKey) && config('app.debug')) {
@@ -115,25 +117,49 @@ class HtmlCacheService
     }
 
     /**
+     * Namespace cache theo project — tránh phuquy.net đọc HTML/menu của vitravel.net.
+     */
+    public static function projectCacheNamespace(): string
+    {
+        $code = ProjectContext::code();
+        if (! is_string($code) || trim($code) === '') {
+            return 'app';
+        }
+
+        $safe = strtolower((string) preg_replace('/[^a-z0-9\-_]+/i', '-', trim($code)));
+
+        return $safe !== '' ? $safe : 'app';
+    }
+
+    public static function withProjectNamespace(string $key): string
+    {
+        $key = ltrim($key, '/');
+
+        return self::projectCacheNamespace().'_'.$key;
+    }
+
+    /**
      * Cache key trang chủ — chỉ dùng từ HomeController (path `/` hoặc `/en`).
-     * File: home.html.gz, en-home.html.gz, ...
+     * File: {project}_home.html.gz, {project}_en-home.html.gz, ...
      */
     public static function homepageCacheKey(?string $locale = null): string
     {
         $locale = strtolower(trim((string) ($locale ?? app()->getLocale())));
         $default = strtolower((string) config('language.default_code', 'vi'));
         if ($locale === '' || $locale === $default) {
-            return 'home';
+            return self::withProjectNamespace('home');
         }
 
-        return $locale . '-home';
+        return self::withProjectNamespace($locale.'-home');
     }
 
     public static function isHomepageCacheKey(string $cacheKey): bool
     {
         $key = ltrim($cacheKey, '/');
+        // Bỏ suffix currency (-vnd) nếu có
+        $key = preg_replace('/-[a-z]{3}$/i', '', $key) ?: $key;
 
-        return $key === 'home' || (bool) preg_match('#^[a-z]{2}(?:-[a-z]{2})?-home$#', $key);
+        return (bool) preg_match('#(?:^|_)(?:[a-z]{2}(?:-[a-z]{2})?-)?home$#', $key);
     }
 
     /**
@@ -205,8 +231,8 @@ class HtmlCacheService
     }
 
     /**
-     * Cache key menu chính (desktop + mobile) theo ngôn ngữ.
-     * File: public/caches/menuMain_vi.html.gz, menuMain_en.html.gz, ...
+     * Cache key menu chính (desktop + mobile) theo ngôn ngữ + project.
+     * File: {project}_menuMain_vi.html.gz, ...
      */
     public static function menuCacheKey(?string $locale = null): string
     {
@@ -218,7 +244,7 @@ class HtmlCacheService
 
         $prefix = (string) config('html_cache.menu_key_prefix', 'menuMain');
 
-        return $prefix . '_' . $locale;
+        return self::withProjectNamespace($prefix.'_'.$locale);
     }
 
     /**
@@ -246,7 +272,7 @@ class HtmlCacheService
         }
 
         $html = $render();
-        if (!empty($html) && $this->isRequestHostCanonical()) {
+        if (!empty($html) && $this->isRequestHostAllowedToWriteCache()) {
             $this->saveToDisk($cachePath, $html);
         }
 
@@ -292,27 +318,41 @@ class HtmlCacheService
     }
 
     /**
-     * Kiểm tra request hiện tại có đến từ canonical host (APP_URL) hay không.
-     *
-     * Mục đích: ngăn cache HTML bị "đầu độc" khi request đi vào server bằng
-     * IP/host khác (bot scan, uptime monitor, origin pull của CDN, curl từ
-     * chính server bằng IP...). Trong những trường hợp đó, kết quả render
-     * vẫn được trả về cho người gọi nhưng KHÔNG ghi xuống đĩa.
-     *
-     * Mặc định True nếu chưa cấu hình APP_URL hoặc không có request (CLI/queue).
+     * Cho phép ghi HTML cache khi Host là APP_URL hoặc nằm trong project_domains.
+     * Chặn ghi khi vào bằng IP thô / host lạ (bot scan).
      */
-    private function isRequestHostCanonical(): bool
+    private function isRequestHostAllowedToWriteCache(): bool
     {
-        if ($this->canonicalHost === '') return true;
-
         try {
             $request = request();
-            if (!$request) return true;
+            if (! $request) {
+                return true;
+            }
+
             $reqHost = strtolower((string) $request->getHost());
-            return $reqHost === strtolower($this->canonicalHost);
+            $reqHost = preg_replace('/:\d+$/', '', $reqHost) ?: $reqHost;
+            if ($reqHost === '' || filter_var($reqHost, FILTER_VALIDATE_IP)) {
+                return false;
+            }
+
+            if ($this->canonicalHost !== '' && $reqHost === strtolower($this->canonicalHost)) {
+                return true;
+            }
+
+            if (Schema::hasTable('project_domains')) {
+                return ProjectDomain::query()->where('domain', $reqHost)->exists();
+            }
+
+            return true;
         } catch (\Throwable $e) {
             return true;
         }
+    }
+
+    /** @deprecated Dùng isRequestHostAllowedToWriteCache() */
+    private function isRequestHostCanonical(): bool
+    {
+        return $this->isRequestHostAllowedToWriteCache();
     }
 
     public function clear(string $cacheKey): void
@@ -469,7 +509,7 @@ class HtmlCacheService
             if (!empty($parts)) $base .= '-' . implode('-', $parts);
         }
 
-        return $base;
+        return self::withProjectNamespace($base);
     }
 
     /**

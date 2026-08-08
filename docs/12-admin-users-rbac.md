@@ -32,9 +32,9 @@ flowchart LR
 | Method | Path | Quyền | Ghi chú |
 |--------|------|-------|---------|
 | PUT | `/auth/me` | đã đăng nhập | Hồ sơ: name, email, đổi mật khẩu |
-| GET | `/users/meta` | quản trị hệ thống | roles, permission groups, projects gán được |
-| GET | `/users` | quản trị hệ thống | list + filter |
-| POST/PUT/DELETE | `/users[/{id}]` | quản trị hệ thống | CRUD + sync `projects[]` |
+| GET | `/users/meta` | `users.view` | roles, permission groups, projects gán được |
+| GET | `/users` | `users.view` | list + filter |
+| POST/PUT/DELETE | `/users[/{id}]` | `users.manage` | CRUD + sync `projects[]` |
 
 Payload gán dự án:
 
@@ -63,7 +63,7 @@ Payload gán dự án:
 | Danh sách user | `/settings/users/` |
 | Form user | `/settings/users/form/?id=` |
 
-Sidebar: avatar/tên → hồ sơ (`/account`); menu **Người dùng** chỉ hiện với quản trị hệ thống (`users.view`).
+Sidebar: avatar/tên → hồ sơ; menu **Người dùng** (Cài đặt) chỉ hiện khi có `users.view`.
 
 ## Seed / migrate
 

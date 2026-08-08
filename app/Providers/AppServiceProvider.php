@@ -45,9 +45,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $appUrl = config('app.url');
-        if (is_string($appUrl) && $appUrl !== '') {
-            URL::forceRootUrl($appUrl);
+        // Multi-domain public: không ép APP_URL trên HTTP — ResolveProjectFromHost
+        // sẽ forceRootUrl theo Host. CLI/queue vẫn dùng APP_URL.
+        if ($this->app->runningInConsole()) {
+            $appUrl = config('app.url');
+            if (is_string($appUrl) && $appUrl !== '') {
+                URL::forceRootUrl($appUrl);
+            }
         }
 
         Relation::enforceMorphMap([
