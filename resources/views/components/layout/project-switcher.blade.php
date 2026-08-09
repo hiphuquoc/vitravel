@@ -1,6 +1,6 @@
 {{--
-  Public project switcher (local/debug when allow_public_query_override).
-  Navigates to same path with ?project={code}.
+  Public project switcher — chỉ khi project.allow_public_query_override (mặc định = APP_DEBUG).
+  Production: tắt bằng PROJECT_PUBLIC_QUERY_OVERRIDE=false + config:cache + xóa HTML cache.
 --}}
 @php
     $__allow = (bool) config('project.allow_public_query_override', false);

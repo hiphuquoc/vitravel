@@ -41,13 +41,14 @@ return [
     | Public: cho phép ?project= / cookie chuyển dự án trên cùng Host
     |--------------------------------------------------------------------------
     |
-    | Mặc định bật khi APP_DEBUG=true (local). Production: đặt false trừ khi
-    | cố ý cho switcher (vd. staging).
+    | Mặc định = APP_DEBUG. Production: false (trừ khi đặt
+    | PROJECT_PUBLIC_QUERY_OVERRIDE=true cố ý trên staging).
+    | Dùng FILTER_VALIDATE_BOOLEAN — tránh (bool)"false" === true.
     |
     */
-    'allow_public_query_override' => (bool) env(
-        'PROJECT_PUBLIC_QUERY_OVERRIDE',
-        env('APP_DEBUG', false)
+    'allow_public_query_override' => filter_var(
+        env('PROJECT_PUBLIC_QUERY_OVERRIDE', env('APP_DEBUG', false)),
+        FILTER_VALIDATE_BOOLEAN
     ),
 
     'public_project_cookie' => 'vt_project',
