@@ -153,7 +153,7 @@ php artisan project:ensure hicatba --domain=hicatba.dev --domain=www.hicatba.dev
 2. Topbar → dropdown **Dự án** (custom Select UI đồng bộ form) → chọn `Cát Bà Hub (hicatba)` hoặc `ViTravel (vitravel)`.
 3. Mọi API gửi `X-Project-Code: …`.
 
-**Link “Xem trang” từ admin:** tự gắn `?project={code}` theo dự án đang chọn → public chuyển đúng tenant (tránh 404 khi cookie/Host vẫn là project khác trên cùng origin). Tắt: `NEXT_PUBLIC_PUBLIC_PROJECT_QUERY=0` (env admin). Public cần `PROJECT_PUBLIC_QUERY_OVERRIDE` (mặc định = `APP_DEBUG`).
+**Link “Xem trang” / slug trên list từ admin:** `publicPageUrl()` chọn origin theo domain của dự án đang chọn — local ưu tiên `*.dev`, prod ưu tiên `*.net` / `*.com` (từ `projects.domains` / `primary_domain` trong payload login/`me`). Chỉ khi vẫn dùng `NEXT_PUBLIC_SITE_ORIGIN` dùng chung mới gắn `?project={code}`. Mode: suy ra từ SITE_ORIGIN, hoặc ép `NEXT_PUBLIC_PUBLIC_HOST_MODE=local|prod`. Tắt query: `NEXT_PUBLIC_PUBLIC_PROJECT_QUERY=0`. Public chỉ cần `PROJECT_PUBLIC_QUERY_OVERRIDE` khi xem trên host dùng chung.
 
 ```bash
 cd /var/www/html/admin.vitravel.dev && npm run build

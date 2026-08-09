@@ -209,7 +209,7 @@ final class AdminAccess
     }
 
     /**
-     * @return list<array{id: int, code: string, name: string, primary_domain: ?string, role: ?string, permissions: list<string>}>
+     * @return list<array{id: int, code: string, name: string, primary_domain: ?string, domains: list<array{domain: string, is_primary: bool}>, role: ?string, permissions: list<string>}>
      */
     public static function projectsPayload(User $user): array
     {
@@ -217,35 +217,40 @@ final class AdminAccess
             return [];
         }
 
-        if (self::isSuperAdmin($user)) {
-            return Project::query()->active()->orderBy('name')->get()->map(function (Project $p) use ($user) {
-                $perms = self::permissionsFor($user, $p);
+        $mapProject = function (Project $p) use ($user): array {
+            $p->loadMissing('domains');
 
-                return [
-                    'id' => $p->id,
-                    'code' => $p->code,
-                    'name' => $p->name,
-                    'primary_domain' => $p->primary_domain,
-                    'role' => 'owner',
-                    'permissions' => $perms,
-                ];
-            })->values()->all();
+            return [
+                'id' => $p->id,
+                'code' => $p->code,
+                'name' => $p->name,
+                'primary_domain' => $p->primary_domain,
+                'domains' => $p->domains->map(fn ($d) => [
+                    'domain' => (string) $d->domain,
+                    'is_primary' => (bool) $d->is_primary,
+                ])->values()->all(),
+                'role' => self::isSuperAdmin($user) ? 'owner' : (string) ($p->pivot->role ?? 'viewer'),
+                'permissions' => self::permissionsFor($user, $p),
+            ];
+        };
+
+        if (self::isSuperAdmin($user)) {
+            return Project::query()
+                ->active()
+                ->with('domains')
+                ->orderBy('name')
+                ->get()
+                ->map(fn (Project $p) => $mapProject($p))
+                ->values()
+                ->all();
         }
 
         return $user->projects()
             ->where('projects.is_active', true)
+            ->with('domains')
             ->orderBy('projects.name')
             ->get()
-            ->map(function (Project $p) use ($user) {
-                return [
-                    'id' => $p->id,
-                    'code' => $p->code,
-                    'name' => $p->name,
-                    'primary_domain' => $p->primary_domain,
-                    'role' => (string) ($p->pivot->role ?? 'viewer'),
-                    'permissions' => self::permissionsFor($user, $p),
-                ];
-            })
+            ->map(fn (Project $p) => $mapProject($p))
             ->values()
             ->all();
     }
