@@ -1,24 +1,43 @@
 <?php
 
+$origins = array_values(array_filter(array_map(
+    'trim',
+    explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))
+)));
+
+$adminApp = rtrim((string) env('ADMIN_APP_URL', ''), '/');
+if ($adminApp !== '') {
+    $origins[] = $adminApp;
+}
+
+$origins = array_values(array_unique(array_filter($origins)));
+
+if ($origins === []) {
+    $origins = [
+        'http://localhost:3100',
+        'http://127.0.0.1:3100',
+        'https://admin.vitravel.dev',
+        'https://admin.vitravel.net',
+    ];
+}
+
 return [
 
-    'paths' => ['api/*'],
+    'paths' => ['api/*', 'api/v1/admin/*', 'api/v1/admin'],
 
     'allowed_methods' => ['*'],
 
-    // Comma-separated origins for Admin Console on a separate host (see ADMIN_APP_URL).
-    'allowed_origins' => array_values(array_filter(array_map(
-        'trim',
-        explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))
-    ))),
+    'allowed_origins' => $origins,
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '#^https://(www\.)?admin\.[a-z0-9.-]+$#i',
+    ],
 
     'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
-    'max_age' => 0,
+    'max_age' => 86400,
 
     'supports_credentials' => false,
 

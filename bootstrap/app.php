@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api(prepend: [
+            \App\Http\Middleware\EnsureAdminApiCors::class,
             \Illuminate\Http\Middleware\HandleCors::class,
         ]);
 
