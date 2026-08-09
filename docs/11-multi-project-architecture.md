@@ -187,6 +187,7 @@ Profiles hiện có:
 | `vitravel` | `project/seed_vitravel.php` | `vitravel.dev` |
 | `hicatba` | `project/seed_hicatba.php` | `hicatba.dev` (local) · `hicatba.com` (prod) |
 | `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` (local) · `phuquy.net` (prod) |
+| `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` (local) · `culaocham.net` (prod) |
 
 ---
 

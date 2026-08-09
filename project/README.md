@@ -16,6 +16,8 @@ php artisan project:seed hicatba --domain=hicatba.dev --domain=hicatba.com
 php artisan project:ensure vitravel --domain=vitravel.dev
 # phuquy.net: phuquy.dev (local) + phuquy.net (prod)
 php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="phuquy.net"
+# culaocham.net: culaocham.dev (local) + culaocham.net (prod)
+php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net --name="culaocham.net"
 ```
 
 | Profile | File | Domain |
@@ -23,6 +25,7 @@ php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="
 | `vitravel` | `project/seed_vitravel.php` | `vitravel.dev` |
 | `hicatba` | `project/seed_hicatba.php` | `hicatba.dev` / `hicatba.com` |
 | `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` / `phuquy.net` |
+| `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` / `culaocham.net` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
 
@@ -40,6 +43,7 @@ project/
   seed_vitravel.php         ← 1 dự án = 1 file (tours + company + dịch vụ + …)
   seed_hicatba.php
   seed_phuquy.php           ← đảo Phú Quý (Bình Thuận): phuquy.dev / phuquy.net
+  seed_culaocham.php        ← Cù Lao Chàm (Quảng Nam): culaocham.dev / culaocham.net
 ```
 
 **Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.

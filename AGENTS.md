@@ -9,8 +9,9 @@ Một codebase phục vụ nhiều domain/dữ liệu qua **`projects` + `projec
 - Public: `ResolveProjectFromHost` — `?project=` / cookie `vt_project` (khi override) → Host → `PROJECT_DEFAULT_CODE` → first active
 - Domain Cát Bà Hub: local **`hicatba.dev`** · prod **`hicatba.com`** (project `code` = `hicatba`)
 - Domain phuquy.net: local **`phuquy.dev`** · prod **`phuquy.net`** (project `code` = `phuquy`)
+- Domain culaocham.net: local **`culaocham.dev`** · prod **`culaocham.net`** (project `code` = `culaocham`)
 - Admin API: `X-Project-Code` / `X-Project-Id` → `ResolveAdminProject`
-- CLI: `php artisan project:seed hicatba --domain=hicatba.dev` · `project:seed phuquy --domain=phuquy.dev --domain=phuquy.net` · `project:ensure …` · `project:domain …`
+- CLI: `php artisan project:seed hicatba --domain=hicatba.dev` · `project:seed phuquy --domain=phuquy.dev --domain=phuquy.net` · `project:seed culaocham --domain=culaocham.dev --domain=culaocham.net` · `project:ensure …` · `project:domain …`
 
 ## Seed & demo content (critical)
 
@@ -20,6 +21,7 @@ Bootstrap/demo content nằm trong **`project/seed_{name}.php`**, gắn vào row
 - `php artisan migrate:fresh --seed` → seed **tất cả** `seed_*.php`
 - Một profile: `php artisan project:seed hicatba --domain=hicatba.dev --domain=hicatba.com`
 - Phú Quý: `php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net`
+- Cù Lao Chàm: `php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net`
 - Loader: `App\Support\ProjectSeed` (`useProfile` / `ProjectContext`)
 - Schema: `project/README.md` · UI fallback: `App\Support\SampleData`
 
