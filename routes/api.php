@@ -47,6 +47,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1/admin')->group(function () {
+    // Health / smoke check (browser GET) — không thay thế auth
+    Route::get('/', function () {
+        return \App\Support\ApiResponse::success([
+            'service' => 'vitravel-admin-api',
+            'version' => 'v1',
+            'login' => url('/api/v1/admin/auth/login'),
+        ], 'Admin API OK');
+    });
+    Route::get('/health', function () {
+        return \App\Support\ApiResponse::success(['ok' => true], 'OK');
+    });
+
     Route::post('/auth/login', [AuthController::class, 'login']);
 
     Route::middleware([AuthenticateAdminApi::class])->group(function () {

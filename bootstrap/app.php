@@ -63,13 +63,26 @@ return Application::configure(basePath: dirname(__DIR__))
                 $status = 500;
             }
 
+            $code = match (true) {
+                $status === 404 => 'NOT_FOUND',
+                $status === 401 => 'UNAUTHORIZED',
+                $status === 403 => 'FORBIDDEN',
+                $status === 429 => 'RATE_LIMIT',
+                $status >= 500 => 'SERVER_ERROR',
+                default => 'ERROR',
+            };
+
             $message = config('app.debug')
                 ? ($e->getMessage() ?: class_basename($e))
-                : ($status >= 500 ? 'Lỗi máy chủ. Thử lại sau.' : ($e->getMessage() ?: 'Đã xảy ra lỗi.'));
+                : ($status >= 500
+                    ? 'Lỗi máy chủ. Thử lại sau.'
+                    : ($status === 404
+                        ? 'Không tìm thấy endpoint.'
+                        : ($e->getMessage() ?: 'Đã xảy ra lỗi.')));
 
             return \App\Support\ApiResponse::error(
                 $message,
-                'SERVER_ERROR',
+                $code,
                 $status,
             );
         });
