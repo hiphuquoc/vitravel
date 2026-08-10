@@ -6,9 +6,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ReviewPlatform;
+use App\Support\ProjectUnique;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ReviewPlatformController extends Controller
@@ -47,7 +47,7 @@ class ReviewPlatformController extends Controller
                 'string',
                 'max:32',
                 'alpha_dash',
-                Rule::unique('review_platforms', 'code')->ignore($request->input('id')),
+                ProjectUnique::rule('review_platforms', 'code')->ignore($request->input('id')),
             ],
             'name' => 'required|string|max:120',
             'rating' => 'nullable|numeric|min:0|max:5',

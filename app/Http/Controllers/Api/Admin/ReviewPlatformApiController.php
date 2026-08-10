@@ -7,9 +7,9 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ReviewPlatform;
 use App\Support\ApiResponse;
+use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class ReviewPlatformApiController extends Controller
@@ -61,7 +61,7 @@ class ReviewPlatformApiController extends Controller
                 'id' => 'nullable|integer|exists:review_platforms,id',
                 'code' => [
                     'required', 'string', 'max:32', 'alpha_dash',
-                    Rule::unique('review_platforms', 'code')->ignore($request->input('id')),
+                    ProjectUnique::rule('review_platforms', 'code')->ignore($request->input('id')),
                 ],
                 'name' => 'required|string|max:120',
                 'rating' => 'nullable|numeric|min:0|max:5',

@@ -9,12 +9,12 @@ use App\Http\Controllers\Controller;
 use App\Models\TravelStyle;
 use App\Models\TravelStyleTranslation;
 use App\Support\ApiResponse;
+use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Validation\Rule;
 
 class TravelStyleApiController extends Controller
 {
@@ -97,7 +97,7 @@ class TravelStyleApiController extends Controller
                     'required',
                     'string',
                     'max:64',
-                    Rule::unique('travel_styles', 'code')->ignore($request->integer('id') ?: null),
+                    ProjectUnique::rule('travel_styles', 'code')->ignore($request->integer('id') ?: null),
                 ],
                 'sort' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean',

@@ -8,11 +8,11 @@ use App\Http\Controllers\Admin\Concerns\ManagesCoverImage;
 use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\CruiseType;
+use App\Support\ProjectUnique;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class CruiseTypeController extends Controller
@@ -86,9 +86,8 @@ class CruiseTypeController extends Controller
                 'required',
                 'string',
                 'max:64',
-                Rule::unique('cruise_types', 'slug')
-                    ->ignore($request->integer('id') ?: null)
-                    ->whereNull('deleted_at'),
+                ProjectUnique::softDeleting('cruise_types', 'slug')
+                    ->ignore($request->integer('id') ?: null),
             ],
             'sort' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',

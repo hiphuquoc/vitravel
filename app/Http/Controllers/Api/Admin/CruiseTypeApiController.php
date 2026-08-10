@@ -10,11 +10,11 @@ use App\Models\CruiseType;
 use App\Models\Language;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CruiseTypeApiController extends Controller
@@ -126,9 +126,8 @@ class CruiseTypeApiController extends Controller
                     'required',
                     'string',
                     'max:64',
-                    Rule::unique('cruise_types', 'slug')
-                        ->ignore($request->integer('id') ?: null)
-                        ->whereNull('deleted_at'),
+                    ProjectUnique::softDeleting('cruise_types', 'slug')
+                        ->ignore($request->integer('id') ?: null),
                 ],
                 'sort' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean',

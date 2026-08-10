@@ -11,11 +11,11 @@ use App\Models\CountryTranslation;
 use App\Models\Language;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class CountryApiController extends Controller
@@ -159,9 +159,8 @@ class CountryApiController extends Controller
                     'required',
                     'string',
                     'max:10',
-                    Rule::unique('countries', 'code')
-                        ->ignore($request->integer('id') ?: null)
-                        ->whereNull('deleted_at'),
+                    ProjectUnique::softDeleting('countries', 'code')
+                        ->ignore($request->integer('id') ?: null),
                 ],
                 'home_grid_size' => 'nullable|string|max:20',
                 'sort' => 'nullable|integer|min:0',

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Concerns\ManagesCoverImage;
 use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\ServiceCategory;
+use App\Support\ProjectUnique;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -147,10 +148,9 @@ class ServiceCategoryController extends Controller
                 'required',
                 'string',
                 'max:64',
-                Rule::unique('service_categories', 'slug')
+                ProjectUnique::softDeleting('service_categories', 'slug')
                     ->ignore($request->integer('id') ?: null)
-                    ->where('cluster', $request->input('cluster'))
-                    ->whereNull('deleted_at'),
+                    ->where('cluster', $request->input('cluster')),
             ],
             'sort' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',

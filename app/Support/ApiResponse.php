@@ -41,11 +41,22 @@ final class ApiResponse
 
     public static function fromValidation(ValidationException $exception): JsonResponse
     {
-        return self::error(
-            $exception->getMessage() ?: 'Dữ liệu không hợp lệ.',
-            'VALIDATION_ERROR',
-            422,
-            $exception->errors(),
-        );
+        $errors = $exception->errors();
+        $first = collect($errors)->flatten()->first();
+        $message = is_string($first) && $first !== ''
+            ? $first
+            : ($exception->getMessage() ?: 'Dữ liệu không hợp lệ.');
+
+        // Thiếu lang validation → Laravel trả key thô (validation.unique, …)
+        if (is_string($message) && str_starts_with($message, 'validation.')) {
+            $message = match ($message) {
+                'validation.unique' => 'Giá trị đã được dùng trong dự án khác hoặc bản ghi khác. Kiểm tra mã / slug.',
+                'validation.in' => 'Giá trị không nằm trong danh sách cho phép.',
+                'validation.required' => 'Thiếu trường bắt buộc.',
+                default => 'Dữ liệu không hợp lệ.',
+            };
+        }
+
+        return self::error($message, 'VALIDATION_ERROR', 422, $errors);
     }
 }

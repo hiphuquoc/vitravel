@@ -11,6 +11,7 @@ use App\Models\ServiceCategory;
 use App\Services\MediaService;
 use App\Services\ViewDataService;
 use App\Support\ApiResponse;
+use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -151,10 +152,9 @@ class ServiceCategoryApiController extends Controller
                     'required',
                     'string',
                     'max:64',
-                    Rule::unique('service_categories', 'slug')
+                    ProjectUnique::softDeleting('service_categories', 'slug')
                         ->ignore($request->integer('id') ?: null)
-                        ->where('cluster', $request->input('cluster'))
-                        ->whereNull('deleted_at'),
+                        ->where('cluster', $request->input('cluster')),
                 ],
                 'sort' => 'nullable|integer|min:0',
                 'is_active' => 'nullable|boolean',
