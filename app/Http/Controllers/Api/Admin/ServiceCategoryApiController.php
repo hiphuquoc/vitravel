@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Language;
 use App\Models\ServiceCategory;
 use App\Services\MediaService;
+use App\Services\ViewDataService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,10 +26,12 @@ class ServiceCategoryApiController extends Controller
     {
         $locale = $request->string('locale', 'vi')->toString() ?: 'vi';
         app()->setLocale($locale);
-        $clusters = config('services_catalog.clusters', []);
-        $cluster = $request->string('cluster')->toString();
+        $viewData = app(ViewDataService::class);
+        $catalog = config('services_catalog.clusters', []);
+        $requested = $request->string('cluster')->toString();
+        $cluster = $requested !== '' ? $viewData->resolveAdminServiceCluster($requested) : '';
 
-        if ($cluster !== '' && ! isset($clusters[$cluster])) {
+        if ($requested !== '' && ! isset($catalog[$cluster]) && ! in_array($cluster, $viewData->serviceClusterCodes(), true)) {
             return ApiResponse::error('Cluster không hợp lệ', 'INVALID_CLUSTER', 404);
         }
 
@@ -71,8 +74,10 @@ class ServiceCategoryApiController extends Controller
     public function meta(Request $request): JsonResponse
     {
         $locale = $request->string('locale', 'vi')->toString() ?: 'vi';
-        $cluster = $request->string('cluster')->toString();
+        $viewData = app(ViewDataService::class);
         $clusters = config('services_catalog.clusters', []);
+        $requested = $request->string('cluster')->toString();
+        $cluster = $requested !== '' ? $viewData->resolveAdminServiceCluster($requested) : '';
 
         $hubKey = ($cluster !== '' && isset($clusters[$cluster]))
             ? ($clusters[$cluster]['hub_key'] ?? null)
@@ -87,11 +92,8 @@ class ServiceCategoryApiController extends Controller
         return ApiResponse::success([
             'languages' => Language::adminOptions(),
             'default_locale' => Language::defaultCode(),
-            'clusters' => collect($clusters)->map(fn (array $cfg, string $key) => [
-                'value' => $key,
-                'label' => $cfg['label'] ?? $key,
-                'hub_key' => $cfg['hub_key'] ?? null,
-            ])->values(),
+            'cluster' => $cluster !== '' ? $cluster : null,
+            'clusters' => $viewData->adminServiceClusterOptions(),
             'hub_seo_id' => $hubSeo?->id,
             'seo_parents' => $this->mapSeoParents($parents, $locale),
         ]);

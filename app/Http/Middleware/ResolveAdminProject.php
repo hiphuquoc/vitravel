@@ -66,6 +66,7 @@ class ResolveAdminProject
         }
 
         ProjectContext::set($project);
+        \App\Support\ProjectSeed::flush();
         $request->attributes->set('currentProject', $project);
 
         return $next($request);

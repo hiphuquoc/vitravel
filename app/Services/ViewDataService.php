@@ -1404,6 +1404,65 @@ class ViewDataService
         return collect($this->serviceClusters())->firstWhere('code', $code);
     }
 
+    /** @return list<string> */
+    public function serviceClusterCodes(): array
+    {
+        return collect($this->serviceClusters())
+            ->pluck('code')
+            ->filter(fn ($code) => is_string($code) && $code !== '')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Chuẩn hoá ?cluster= cho admin theo seed dự án.
+     * Đảo: train → ferry; mainland: ferry → train khi cụm kia không có trong seed.
+     */
+    public function resolveAdminServiceCluster(?string $requested): string
+    {
+        $codes = $this->serviceClusterCodes();
+        $requested = trim((string) $requested);
+
+        if ($requested !== '' && in_array($requested, $codes, true)) {
+            return $requested;
+        }
+
+        if ($requested === 'train' && in_array('ferry', $codes, true)) {
+            return 'ferry';
+        }
+
+        if ($requested === 'ferry' && in_array('train', $codes, true)) {
+            return 'train';
+        }
+
+        if ($codes !== []) {
+            return $codes[0];
+        }
+
+        $catalog = array_keys(config('services_catalog.clusters', []));
+
+        if ($requested !== '' && in_array($requested, $catalog, true)) {
+            return $requested;
+        }
+
+        return $catalog[0] ?? 'stay';
+    }
+
+    /**
+     * @return list<array{value: string, label: string}>
+     */
+    public function adminServiceClusterOptions(): array
+    {
+        return collect($this->serviceClusters())
+            ->map(fn (array $c) => [
+                'value' => (string) ($c['code'] ?? ''),
+                'label' => (string) ($c['label'] ?? $c['nav_label'] ?? $c['code'] ?? ''),
+            ])
+            ->filter(fn (array $row) => $row['value'] !== '')
+            ->values()
+            ->all();
+    }
+
     /**
      * Cluster vận tải nổi bật trên trang chủ / menu tắt:
      * ưu tiên `ferry` (đảo) nếu dự án có cụm này, không thì `train`.

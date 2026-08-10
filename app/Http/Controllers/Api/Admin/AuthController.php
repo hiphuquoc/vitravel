@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AdminApiToken;
 use App\Models\Project;
 use App\Models\User;
+use App\Services\ViewDataService;
 use App\Support\AdminAccess;
 use App\Support\ApiResponse;
+use App\Support\ProjectContext;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -129,11 +131,14 @@ class AuthController extends Controller
 
         $project = $this->resolveProjectFromRequest($request, $user);
         if ($project) {
+            ProjectContext::set($project);
+            \App\Support\ProjectSeed::flush();
             $payload['current_project'] = [
                 'id' => $project->id,
                 'code' => $project->code,
                 'name' => $project->name,
                 'primary_domain' => $project->primary_domain,
+                'service_clusters' => app(ViewDataService::class)->serviceClusters(),
             ];
             $payload['permissions'] = AdminAccess::permissionsFor($user, $project);
             $payload['project_role'] = collect($payload['projects'])
