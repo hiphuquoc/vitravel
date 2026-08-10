@@ -23,6 +23,7 @@ class Usp extends Model
             'shield' => 'Bảo vệ (shield)',
             'compass' => 'La bàn (compass)',
             'sparkles' => 'Nổi bật (sparkles)',
+            'boat' => 'Tàu thuyền (boat)',
         ];
     }
 
