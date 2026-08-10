@@ -6,6 +6,9 @@
         'service' => 'service',
         default => 'tour',
     };
+    /** Số card trong 1 hàng desktop — vượt ngưỡng thì dùng snap-carousel dùng chung. */
+    $gridCap = (int) ($gridCap ?? 3);
+    $useCarousel = $variant === 'compact' && count($items) > $gridCap;
 @endphp
 
 @if (count($items) === 0)
@@ -16,6 +19,42 @@
         <a href="{{ route('customize') }}" class="btn-primary site-mt">
             <x-icon name="sparkles" class="size-4" /> Thiết kế hành trình riêng
         </a>
+    </div>
+@elseif ($variant === 'compact' && $useCarousel)
+    <div x-data="carousel" class="relative listing-snap">
+        <div x-ref="track" class="snap-carousel" role="list">
+            @foreach ($items as $item)
+                @php
+                    $href = match ($kind) {
+                        'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
+                        'service' => locale_route('services.show', [
+                            'cluster' => $item['cluster'],
+                            'category' => $item['categorySlug'],
+                            'slug' => $item['slug'],
+                        ]),
+                        default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
+                    };
+                @endphp
+                <div class="snap-carousel__item" role="listitem">
+                    @if ($kind === 'service')
+                        <x-service.card-compact :item="$item" :href="$href" />
+                    @else
+                        <x-tour.card-compact :item="$item" :href="$href" />
+                    @endif
+                </div>
+            @endforeach
+        </div>
+
+        <button type="button" @click="go(-1)" x-show="canPrev" x-cloak
+            class="absolute top-1/2 -left-3 z-10 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow-(--shadow-card-hover) transition hover:scale-105 hover:text-primary-600"
+            aria-label="Xem mục trước">
+            <x-icon name="chevron-left" class="size-5" />
+        </button>
+        <button type="button" @click="go(1)" x-show="canNext" x-cloak
+            class="absolute top-1/2 -right-3 z-10 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow-(--shadow-card-hover) transition hover:scale-105 hover:text-primary-600"
+            aria-label="Xem mục tiếp theo">
+            <x-icon name="chevron-right" class="size-5" />
+        </button>
     </div>
 @elseif ($variant === 'compact')
     <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">

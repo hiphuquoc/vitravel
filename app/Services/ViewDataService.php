@@ -14,9 +14,13 @@ use App\Models\ExperienceVideo;
 use App\Models\Faq;
 use App\Models\HeroPill;
 use App\Models\HomeFeaturedCountry;
-use App\Models\HomeFeaturedReviewPlatform;
 use App\Models\HomeFeaturedCruise;
+use App\Models\HomeFeaturedReview;
+use App\Models\HomeFeaturedReviewPlatform;
+use App\Models\HomeFeaturedService;
+use App\Models\HomeFeaturedTeamMember;
 use App\Models\HomeFeaturedTour;
+use App\Models\HomeFeaturedVideo;
 use App\Models\HomeSection;
 use App\Models\KeywordTag;
 use App\Models\Language;
@@ -34,6 +38,7 @@ use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Models\TravelStyle;
 use App\Models\Usp;
+use App\Support\HomeFeaturedSchema;
 use App\Support\LocaleContent;
 use App\Support\ProjectSeed;
 use App\Support\SampleData;
@@ -263,7 +268,8 @@ class ViewDataService
     }
 
     /**
-     * Dịch vụ nổi bật theo cụm (home / merchandising) — ưu tiên is_featured, fallback sort.
+     * Dịch vụ nổi bật theo cụm (home / merchandising).
+     * Ưu tiên danh sách curated `home_featured_services`; không có thì is_featured + sort.
      *
      * @return list<array<string, mixed>>
      */
@@ -275,14 +281,37 @@ class ViewDataService
             return [];
         }
 
+        $with = [
+            'translations', 'category', 'country.translations',
+            'seoEntry.translations', 'options.translations', 'faqs.translations',
+            'mediaAttachments.media',
+        ];
+
+        if (HomeFeaturedSchema::hasServices()) {
+            $curated = HomeFeaturedService::query()
+                ->orderBy('sort')
+                ->with(['service' => fn ($q) => $q->with($with)])
+                ->whereHas(
+                    'service',
+                    fn ($q) => $q->published()->forCluster($cluster),
+                )
+                ->get()
+                ->map(fn (HomeFeaturedService $row) => $row->service)
+                ->filter()
+                ->take($limit);
+
+            if ($curated->isNotEmpty()) {
+                return $curated
+                    ->map(fn (Service $s) => $this->mapService($s))
+                    ->values()
+                    ->all();
+            }
+        }
+
         $query = Service::query()
             ->published()
             ->forCluster($cluster)
-            ->with([
-                'translations', 'category', 'country.translations',
-                'seoEntry.translations', 'options.translations', 'faqs.translations',
-                'mediaAttachments.media',
-            ]);
+            ->with($with);
 
         if (! Service::query()->published()->forCluster($cluster)->exists()) {
             return SampleData::featuredServices($cluster, $limit);
@@ -307,6 +336,43 @@ class ViewDataService
         }
 
         return $featured
+            ->map(fn (Service $s) => $this->mapService($s))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Dịch vụ bổ trợ curated trên trang chủ (stay / experience / other).
+     * Rỗng → blade giữ hub links mặc định.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function featuredSupportServices(int $limit = 12): array
+    {
+        $limit = max(1, min(12, $limit));
+        $clusters = HomeFeaturedService::SUPPORT_CLUSTERS;
+
+        $with = [
+            'translations', 'category', 'country.translations',
+            'seoEntry.translations', 'options.translations', 'faqs.translations',
+            'mediaAttachments.media',
+        ];
+
+        if (! HomeFeaturedSchema::hasServices()) {
+            return [];
+        }
+
+        return HomeFeaturedService::query()
+            ->orderBy('sort')
+            ->with(['service' => fn ($q) => $q->with($with)])
+            ->whereHas(
+                'service',
+                fn ($q) => $q->published()->whereIn('cluster', $clusters),
+            )
+            ->get()
+            ->map(fn (HomeFeaturedService $row) => $row->service)
+            ->filter()
+            ->take($limit)
             ->map(fn (Service $s) => $this->mapService($s))
             ->values()
             ->all();
@@ -632,6 +698,23 @@ class ViewDataService
 
     public function testimonials(bool $homeOnly = false): array
     {
+        if ($homeOnly && HomeFeaturedSchema::hasReviews()) {
+            $curated = HomeFeaturedReview::query()
+                ->orderBy('sort')
+                ->with(['review.avatar', 'review.mediaAttachments.media', 'review.reviewable'])
+                ->whereHas('review', fn ($q) => $q->published())
+                ->get()
+                ->map(fn (HomeFeaturedReview $row) => $row->review)
+                ->filter();
+
+            if ($curated->isNotEmpty()) {
+                return $curated
+                    ->map(fn (Review $review) => $this->mapReview($review))
+                    ->values()
+                    ->all();
+            }
+        }
+
         if (! Review::query()->published()->exists()) {
             return SampleData::testimonials();
         }
@@ -696,6 +779,23 @@ class ViewDataService
 
     public function teamForHome(): array
     {
+        if (HomeFeaturedSchema::hasTeamMembers()) {
+            $curated = HomeFeaturedTeamMember::query()
+            ->orderBy('sort')
+            ->with(['teamMember.translations', 'teamMember.avatar', 'teamMember.seoEntry.translations'])
+            ->whereHas('teamMember', fn ($q) => $q->where('is_active', true))
+            ->get()
+            ->map(fn (HomeFeaturedTeamMember $row) => $row->teamMember)
+            ->filter();
+
+        if ($curated->isNotEmpty()) {
+            return $curated
+                ->map(fn (TeamMember $member) => $this->mapTeamCard($member))
+                ->values()
+                ->all();
+        }
+        }
+
         if (! TeamMember::query()->where('is_active', true)->where('show_on_home', true)->exists()) {
             if (! TeamMember::query()->where('is_active', true)->exists()) {
                 return array_map(fn (array $row) => $this->mapSampleTeamCard($row), SampleData::team());
@@ -1891,6 +1991,26 @@ class ViewDataService
 
     public function videos(bool $homeOnly = false, int $limit = 24): array
     {
+        $limit = max(1, min(12, $limit));
+
+        if ($homeOnly && HomeFeaturedSchema::hasVideos()) {
+            $curated = HomeFeaturedVideo::query()
+                ->orderBy('sort')
+                ->with(['video.translations', 'video.thumbnail', 'video.videoFile', 'video.country.translations'])
+                ->whereHas('video', fn ($q) => $q->published())
+                ->get()
+                ->map(fn (HomeFeaturedVideo $row) => $row->video)
+                ->filter()
+                ->take($limit);
+
+            if ($curated->isNotEmpty()) {
+                return $curated
+                    ->map(fn (ExperienceVideo $video) => $this->mapVideo($video))
+                    ->values()
+                    ->all();
+            }
+        }
+
         $query = ExperienceVideo::query()->published()->orderBy('sort')->orderByDesc('id');
 
         if ($homeOnly) {

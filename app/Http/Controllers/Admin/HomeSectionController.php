@@ -10,11 +10,16 @@ use App\Models\HeroPill;
 use App\Models\HeroPillTranslation;
 use App\Models\HomeFeaturedCountry;
 use App\Models\HomeFeaturedCruise;
+use App\Models\HomeFeaturedReview;
 use App\Models\HomeFeaturedReviewPlatform;
+use App\Models\HomeFeaturedService;
+use App\Models\HomeFeaturedTeamMember;
 use App\Models\HomeFeaturedTour;
+use App\Models\HomeFeaturedVideo;
 use App\Models\HomeSection;
 use App\Models\HomeSectionTranslation;
 use App\Models\Language;
+use App\Models\Service;
 use App\Models\Usp;
 use App\Models\UspTranslation;
 use App\Services\MediaService;
@@ -292,11 +297,7 @@ class HomeSectionController extends Controller
     /** @param  array<int|string, array<string, mixed>>  $rows */
     protected function saveFeaturedTours(Request $request, array $rows): void
     {
-        $hasAnyData = collect($rows)->contains(
-            fn (array $row) => ! empty($row['package_id']) || ! empty($row['id']),
-        );
-
-        if (! $hasAnyData) {
+        if (! $request->exists('featured_tours')) {
             return;
         }
 
@@ -337,11 +338,7 @@ class HomeSectionController extends Controller
     /** @param  array<int|string, array<string, mixed>>  $rows */
     protected function saveFeaturedCruises(Request $request, array $rows): void
     {
-        $hasAnyData = collect($rows)->contains(
-            fn (array $row) => ! empty($row['package_id']) || ! empty($row['id']),
-        );
-
-        if (! $hasAnyData) {
+        if (! $request->exists('featured_cruises')) {
             return;
         }
 
@@ -447,6 +444,102 @@ class HomeSectionController extends Controller
         }
 
         HomeFeaturedReviewPlatform::query()->whereNotIn('id', $keptIds ?: [0])->delete();
+    }
+
+    /**
+     * Lưu danh sách dịch vụ nổi bật theo nhóm cluster (transport / support).
+     * Chỉ đụng các dòng thuộc $clusters — không xoá nhóm kia.
+     *
+     * @param  array<int|string, array<string, mixed>>  $rows
+     * @param  list<string>  $clusters
+     */
+    protected function saveFeaturedServicesByClusters(Request $request, string $requestKey, array $rows, array $clusters): void
+    {
+        if (! $request->exists($requestKey) || $clusters === []) {
+            return;
+        }
+
+        $allowedIds = Service::query()
+            ->whereIn('cluster', $clusters)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        $sort = 0;
+        $used = [];
+        $keptIds = [];
+
+        foreach ($rows as $row) {
+            if (empty($row['service_id'])) {
+                continue;
+            }
+
+            $serviceId = (int) $row['service_id'];
+            if (! in_array($serviceId, $allowedIds, true) || in_array($serviceId, $used, true)) {
+                continue;
+            }
+            $used[] = $serviceId;
+
+            $item = ! empty($row['id'])
+                ? HomeFeaturedService::query()->findOrFail($row['id'])
+                : new HomeFeaturedService;
+
+            $item->fill(['service_id' => $serviceId, 'sort' => $sort]);
+            $item->save();
+            $keptIds[] = $item->id;
+            $sort++;
+        }
+
+        HomeFeaturedService::query()
+            ->whereHas('service', fn ($q) => $q->whereIn('cluster', $clusters))
+            ->whereNotIn('id', $keptIds ?: [0])
+            ->delete();
+    }
+
+    /**
+     * Lưu danh sách curated generic (team / review / video …).
+     *
+     * @param  class-string<\Illuminate\Database\Eloquent\Model>  $modelClass
+     * @param  array<int|string, array<string, mixed>>  $rows
+     */
+    protected function saveFeaturedRows(
+        Request $request,
+        string $requestKey,
+        array $rows,
+        string $modelClass,
+        string $foreignKey,
+    ): void {
+        if (! $request->exists($requestKey)) {
+            return;
+        }
+
+        $sort = 0;
+        $used = [];
+        $keptIds = [];
+
+        foreach ($rows as $row) {
+            if (empty($row[$foreignKey])) {
+                continue;
+            }
+
+            $foreignId = (int) $row[$foreignKey];
+            if (in_array($foreignId, $used, true)) {
+                continue;
+            }
+            $used[] = $foreignId;
+
+            /** @var \Illuminate\Database\Eloquent\Model $item */
+            $item = ! empty($row['id'])
+                ? $modelClass::query()->findOrFail($row['id'])
+                : new $modelClass;
+
+            $item->fill([$foreignKey => $foreignId, 'sort' => $sort]);
+            $item->save();
+            $keptIds[] = $item->id;
+            $sort++;
+        }
+
+        $modelClass::query()->whereNotIn('id', $keptIds ?: [0])->delete();
     }
 
     protected function ensureDefaults(): void

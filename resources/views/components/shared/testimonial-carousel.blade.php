@@ -1,4 +1,4 @@
-@props(['limit' => 6, 'section' => null, 'homeOnly' => true])
+@props(['limit' => 12, 'section' => null, 'homeOnly' => true])
 
 @php
     $testimonials = array_slice(view_data()->testimonials($homeOnly), 0, $limit);

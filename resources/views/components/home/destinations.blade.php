@@ -78,43 +78,95 @@
         </a>
 
         @if ($strip->isNotEmpty())
+            @php $useDestCarousel = $strip->count() > 4; @endphp
             <div class="vt-dest__board">
-                <div class="vt-dest__grid" role="list">
-                    @foreach ($strip as $i => $c)
-                        @php $index = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT); @endphp
-                        <a
-                            href="{{ locale_route('tours.index', $c['slug']) }}"
-                            class="vt-dest__portrait group"
-                            role="listitem"
-                            style="--vt-dest-i: {{ $i }}"
-                        >
-                            <span class="vt-dest__portrait-media" aria-hidden="true">
-                                @if (! empty($c['image']))
-                                    <x-img
-                                        :src="$c['image']"
-                                        :srcset="$c['imageSrcset'] ?? null"
-                                        preset="country"
-                                        :alt="$c['name']"
-                                        class="vt-dest__portrait-img"
-                                    />
-                                @else
-                                    <x-ph class="vt-dest__portrait-img" :label="'Ảnh: '.$c['name']" icon-class="size-8" />
-                                @endif
-                            </span>
-                            <span class="vt-dest__portrait-scrim" aria-hidden="true"></span>
-                            <span class="vt-dest__portrait-index" aria-hidden="true">{{ $index }}</span>
-                            <span class="vt-dest__portrait-copy">
-                                <span class="vt-dest__portrait-name">{{ $c['name'] }}</span>
-                                @if (! empty($c['tagline']))
-                                    <span class="vt-dest__portrait-tagline">{{ $c['tagline'] }}</span>
-                                @endif
-                                @if (! empty($c['tourCount']))
-                                    <span class="vt-dest__portrait-meta">{{ $c['tourCount'] }} tour</span>
-                                @endif
-                            </span>
-                        </a>
-                    @endforeach
-                </div>
+                @if ($useDestCarousel)
+                    <div x-data="carousel" class="relative">
+                        <div x-ref="track" class="snap-carousel vt-dest__strip-carousel" role="list">
+                            @foreach ($strip as $i => $c)
+                                @php $index = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT); @endphp
+                                <a
+                                    href="{{ locale_route('tours.index', $c['slug']) }}"
+                                    class="vt-dest__portrait snap-carousel__item group"
+                                    role="listitem"
+                                    style="--vt-dest-i: {{ $i }}"
+                                >
+                                    <span class="vt-dest__portrait-media" aria-hidden="true">
+                                        @if (! empty($c['image']))
+                                            <x-img
+                                                :src="$c['image']"
+                                                :srcset="$c['imageSrcset'] ?? null"
+                                                preset="country"
+                                                :alt="$c['name']"
+                                                class="vt-dest__portrait-img"
+                                            />
+                                        @else
+                                            <x-ph class="vt-dest__portrait-img" :label="'Ảnh: '.$c['name']" icon-class="size-8" />
+                                        @endif
+                                    </span>
+                                    <span class="vt-dest__portrait-scrim" aria-hidden="true"></span>
+                                    <span class="vt-dest__portrait-index" aria-hidden="true">{{ $index }}</span>
+                                    <span class="vt-dest__portrait-copy">
+                                        <span class="vt-dest__portrait-name">{{ $c['name'] }}</span>
+                                        @if (! empty($c['tagline']))
+                                            <span class="vt-dest__portrait-tagline">{{ $c['tagline'] }}</span>
+                                        @endif
+                                        @if (! empty($c['tourCount']))
+                                            <span class="vt-dest__portrait-meta">{{ $c['tourCount'] }} tour</span>
+                                        @endif
+                                    </span>
+                                </a>
+                            @endforeach
+                        </div>
+                        <button type="button" @click="go(-1)" x-show="canPrev" x-cloak
+                            class="absolute top-1/2 -left-3 z-10 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow-(--shadow-card-hover) transition hover:scale-105 hover:text-primary-600"
+                            aria-label="Điểm đến trước">
+                            <x-icon name="chevron-left" class="size-5" />
+                        </button>
+                        <button type="button" @click="go(1)" x-show="canNext" x-cloak
+                            class="absolute top-1/2 -right-3 z-10 flex size-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white shadow-(--shadow-card-hover) transition hover:scale-105 hover:text-primary-600"
+                            aria-label="Điểm đến tiếp">
+                            <x-icon name="chevron-right" class="size-5" />
+                        </button>
+                    </div>
+                @else
+                    <div class="vt-dest__grid" role="list">
+                        @foreach ($strip as $i => $c)
+                            @php $index = str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT); @endphp
+                            <a
+                                href="{{ locale_route('tours.index', $c['slug']) }}"
+                                class="vt-dest__portrait group"
+                                role="listitem"
+                                style="--vt-dest-i: {{ $i }}"
+                            >
+                                <span class="vt-dest__portrait-media" aria-hidden="true">
+                                    @if (! empty($c['image']))
+                                        <x-img
+                                            :src="$c['image']"
+                                            :srcset="$c['imageSrcset'] ?? null"
+                                            preset="country"
+                                            :alt="$c['name']"
+                                            class="vt-dest__portrait-img"
+                                        />
+                                    @else
+                                        <x-ph class="vt-dest__portrait-img" :label="'Ảnh: '.$c['name']" icon-class="size-8" />
+                                    @endif
+                                </span>
+                                <span class="vt-dest__portrait-scrim" aria-hidden="true"></span>
+                                <span class="vt-dest__portrait-index" aria-hidden="true">{{ $index }}</span>
+                                <span class="vt-dest__portrait-copy">
+                                    <span class="vt-dest__portrait-name">{{ $c['name'] }}</span>
+                                    @if (! empty($c['tagline']))
+                                        <span class="vt-dest__portrait-tagline">{{ $c['tagline'] }}</span>
+                                    @endif
+                                    @if (! empty($c['tourCount']))
+                                        <span class="vt-dest__portrait-meta">{{ $c['tourCount'] }} tour</span>
+                                    @endif
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         @endif
     </div>

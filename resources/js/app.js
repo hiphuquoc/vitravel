@@ -547,7 +547,21 @@ Alpine.data('listingGrid', (opts = {}) => ({
             this.count = data.count ?? 0;
             await this.$nextTick();
             if (this.$refs.results) {
-                this.$refs.results.innerHTML = data.html || '';
+                const host = this.$refs.results;
+                let mount = host.querySelector('[data-listing-mount]');
+                if (! mount) {
+                    host.innerHTML = '';
+                    mount = document.createElement('div');
+                    mount.dataset.listingMount = '1';
+                    host.appendChild(mount);
+                }
+                if (window.Alpine?.destroyTree) {
+                    window.Alpine.destroyTree(mount);
+                }
+                mount.innerHTML = data.html || '';
+                if (window.Alpine?.initTree) {
+                    window.Alpine.initTree(mount);
+                }
             }
         } catch (e) {
             if (e?.name === 'AbortError') return;

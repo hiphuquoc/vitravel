@@ -28,7 +28,7 @@
                 />
                 <div x-data="listingGrid(@js([
                     'endpoint' => route('api.listings.featured-tours'),
-                    'params' => ['limit' => 3],
+                    'params' => ['limit' => 12],
                 ]))">
                     <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
                     <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
@@ -51,7 +51,7 @@
                 />
                 <div x-data="listingGrid(@js([
                     'endpoint' => route('api.listings.featured-cruises'),
-                    'params' => ['limit' => 3],
+                    'params' => ['limit' => 12],
                 ]))">
                     <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
                     <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
@@ -77,7 +77,7 @@
                 />
                 <div x-data="listingGrid(@js([
                     'endpoint' => route('api.listings.featured-services'),
-                    'params' => ['cluster' => $transportCluster, 'limit' => 3],
+                    'params' => ['cluster' => $transportCluster, 'limit' => 12],
                 ]))">
                     <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
                     <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
@@ -88,9 +88,10 @@
         </section>
     @endunless
 
-    {{-- ── Dịch vụ bổ trợ: lưu trú / vui chơi / hỗ trợ ── --}}
+    {{-- ── Dịch vụ bổ trợ: curated cards hoặc hub lưu trú / vui chơi / hỗ trợ ── --}}
     @php
         $supportSection = view_data()->homeSection('support_services');
+        $supportFeatured = view_data()->featuredSupportServices(12);
         $homeSoloClusters = collect(view_data()->serviceClusters())
             ->filter(fn ($c) => in_array($c['code'] ?? '', ['stay', 'experience', 'other'], true))
             ->values()
@@ -102,7 +103,22 @@
         ];
     @endphp
     @unless ($supportSection['hidden'] ?? false)
-        @if (count($homeSoloClusters) > 0)
+        @if (count($supportFeatured) > 0)
+            <section class="cv-auto section-band" aria-label="{{ $supportSection['title'] ?? 'Dịch vụ bổ trợ' }}">
+                <div class="container-site">
+                    <x-shared.section-heading
+                        :eyebrow="$supportSection['eyebrow'] ?? null"
+                        :title="$supportSection['title'] ?? ''"
+                        :subtitle="$supportSection['subtitle'] ?? null"
+                    />
+                    @include('partials.listing-cards', [
+                        'items' => $supportFeatured,
+                        'kind' => 'service',
+                        'variant' => 'compact',
+                    ])
+                </div>
+            </section>
+        @elseif (count($homeSoloClusters) > 0)
             <section class="container-site section-band" aria-label="{{ $supportSection['title'] ?? 'Dịch vụ bổ trợ' }}">
                 <x-shared.section-heading
                     :eyebrow="$supportSection['eyebrow'] ?? null"
@@ -137,7 +153,7 @@
     {{-- ── Video trải nghiệm (ngay dưới điểm đến) ── --}}
     @php $videosSection = view_data()->homeSection('videos'); @endphp
     @unless ($videosSection['hidden'] ?? false)
-        <x-shared.video-showcase :section="$videosSection" :home-only="true" :limit="4" />
+        <x-shared.video-showcase :section="$videosSection" :home-only="true" :limit="12" />
     @endunless
 
     {{-- ── Đội ngũ → đánh giá nền tảng → khách hàng kể lại ── --}}
@@ -153,6 +169,6 @@
         <x-shared.review-platforms :section="$reviewPlatformsSection" />
     @endunless
     @unless ($testimonialsSection['hidden'] ?? false)
-        <x-shared.testimonial-carousel :section="$testimonialsSection" />
+        <x-shared.testimonial-carousel :section="$testimonialsSection" :limit="12" />
     @endunless
 @endsection

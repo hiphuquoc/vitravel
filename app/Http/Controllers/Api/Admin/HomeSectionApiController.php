@@ -8,13 +8,18 @@ use App\Http\Controllers\Admin\HomeSectionController as BladeHomeSectionControll
 use App\Models\HeroPill;
 use App\Models\HomeFeaturedCountry;
 use App\Models\HomeFeaturedCruise;
+use App\Models\HomeFeaturedReview;
 use App\Models\HomeFeaturedReviewPlatform;
+use App\Models\HomeFeaturedService;
+use App\Models\HomeFeaturedTeamMember;
 use App\Models\HomeFeaturedTour;
+use App\Models\HomeFeaturedVideo;
 use App\Models\HomeSection;
 use App\Models\Language;
 use App\Models\Usp;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\HomeFeaturedSchema;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -93,10 +98,35 @@ class HomeSectionApiController extends BladeHomeSectionController
                 fn ($label, $value) => ['value' => $value, 'label' => $label]
             )->values(),
             'pill_link_options' => HeroPill::linkTargetOptions($locale),
-            'tour_options' => HomeFeaturedTour::tourOptions($locale),
-            'cruise_options' => HomeFeaturedCruise::cruiseOptions($locale),
-            'country_options' => HomeFeaturedCountry::countryOptions($locale),
-            'platform_options' => HomeFeaturedReviewPlatform::platformOptions(),
+            'tour_options' => $this->selectOptions(HomeFeaturedTour::tourOptions($locale)),
+            'cruise_options' => $this->selectOptions(HomeFeaturedCruise::cruiseOptions($locale)),
+            'country_options' => $this->selectOptions(HomeFeaturedCountry::countryOptions($locale)),
+            'platform_options' => $this->selectOptions(HomeFeaturedReviewPlatform::platformOptions()),
+            'transport_service_options' => $this->selectOptions(
+                HomeFeaturedSchema::hasServices()
+                    ? HomeFeaturedService::serviceOptions(HomeFeaturedService::TRANSPORT_CLUSTERS, $locale)
+                    : []
+            ),
+            'support_service_options' => $this->selectOptions(
+                HomeFeaturedSchema::hasServices()
+                    ? HomeFeaturedService::serviceOptions(HomeFeaturedService::SUPPORT_CLUSTERS, $locale)
+                    : []
+            ),
+            'team_member_options' => $this->selectOptions(
+                HomeFeaturedSchema::hasTeamMembers()
+                    ? HomeFeaturedTeamMember::memberOptions($locale)
+                    : []
+            ),
+            'review_options' => $this->selectOptions(
+                HomeFeaturedSchema::hasReviews()
+                    ? HomeFeaturedReview::reviewOptions($locale)
+                    : []
+            ),
+            'video_options' => $this->selectOptions(
+                HomeFeaturedSchema::hasVideos()
+                    ? HomeFeaturedVideo::videoOptions($locale)
+                    : []
+            ),
             'sections' => $sections,
             'usps' => $usps,
             'pills' => $pills,
@@ -112,6 +142,27 @@ class HomeSectionApiController extends BladeHomeSectionController
             'featured_platforms' => HomeFeaturedReviewPlatform::query()->orderBy('sort')->get()->map(
                 fn (HomeFeaturedReviewPlatform $r) => ['id' => $r->id, 'review_platform_id' => $r->review_platform_id]
             )->values(),
+            'featured_transport' => HomeFeaturedSchema::hasServices()
+                ? $this->featuredServicesPayload(HomeFeaturedService::TRANSPORT_CLUSTERS)
+                : [],
+            'featured_support' => HomeFeaturedSchema::hasServices()
+                ? $this->featuredServicesPayload(HomeFeaturedService::SUPPORT_CLUSTERS)
+                : [],
+            'featured_team_members' => HomeFeaturedSchema::hasTeamMembers()
+                ? HomeFeaturedTeamMember::query()->orderBy('sort')->get()->map(
+                    fn (HomeFeaturedTeamMember $r) => ['id' => $r->id, 'team_member_id' => $r->team_member_id]
+                )->values()
+                : [],
+            'featured_reviews' => HomeFeaturedSchema::hasReviews()
+                ? HomeFeaturedReview::query()->orderBy('sort')->get()->map(
+                    fn (HomeFeaturedReview $r) => ['id' => $r->id, 'review_id' => $r->review_id]
+                )->values()
+                : [],
+            'featured_videos' => HomeFeaturedSchema::hasVideos()
+                ? HomeFeaturedVideo::query()->orderBy('sort')->get()->map(
+                    fn (HomeFeaturedVideo $r) => ['id' => $r->id, 'experience_video_id' => $r->experience_video_id]
+                )->values()
+                : [],
         ]);
     }
 
@@ -159,6 +210,21 @@ class HomeSectionApiController extends BladeHomeSectionController
                 'featured_platforms' => 'nullable|array|max:8',
                 'featured_platforms.*.id' => 'nullable|integer|exists:home_featured_review_platforms,id',
                 'featured_platforms.*.review_platform_id' => 'nullable|integer|exists:review_platforms,id',
+                'featured_transport' => 'nullable|array|max:12',
+                'featured_transport.*.id' => 'nullable|integer|exists:home_featured_services,id',
+                'featured_transport.*.service_id' => 'nullable|integer|exists:services,id',
+                'featured_support' => 'nullable|array|max:12',
+                'featured_support.*.id' => 'nullable|integer|exists:home_featured_services,id',
+                'featured_support.*.service_id' => 'nullable|integer|exists:services,id',
+                'featured_team_members' => 'nullable|array|max:12',
+                'featured_team_members.*.id' => 'nullable|integer|exists:home_featured_team_members,id',
+                'featured_team_members.*.team_member_id' => 'nullable|integer|exists:team_members,id',
+                'featured_reviews' => 'nullable|array|max:12',
+                'featured_reviews.*.id' => 'nullable|integer|exists:home_featured_reviews,id',
+                'featured_reviews.*.review_id' => 'nullable|integer|exists:reviews,id',
+                'featured_videos' => 'nullable|array|max:12',
+                'featured_videos.*.id' => 'nullable|integer|exists:home_featured_videos,id',
+                'featured_videos.*.experience_video_id' => 'nullable|integer|exists:experience_videos,id',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -217,14 +283,93 @@ class HomeSectionApiController extends BladeHomeSectionController
             }
 
             $this->saveHeroPills($request, $validated['pills'] ?? [], $locale);
+
+            $request->merge([
+                'featured_tours' => $validated['featured_tours'] ?? [],
+                'featured_cruises' => $validated['featured_cruises'] ?? [],
+                'featured_countries' => $validated['featured_countries'] ?? [],
+                'featured_platforms' => $validated['featured_platforms'] ?? [],
+                'featured_transport' => $validated['featured_transport'] ?? [],
+                'featured_support' => $validated['featured_support'] ?? [],
+                'featured_team_members' => $validated['featured_team_members'] ?? [],
+                'featured_reviews' => $validated['featured_reviews'] ?? [],
+                'featured_videos' => $validated['featured_videos'] ?? [],
+            ]);
+
             $this->saveFeaturedTours($request, $validated['featured_tours'] ?? []);
             $this->saveFeaturedCruises($request, $validated['featured_cruises'] ?? []);
-            $request->merge(['featured_countries' => $validated['featured_countries'] ?? []]);
             $this->saveFeaturedCountries($request, $validated['featured_countries'] ?? []);
-            $request->merge(['featured_platforms' => $validated['featured_platforms'] ?? []]);
             $this->saveFeaturedPlatforms($request, $validated['featured_platforms'] ?? []);
+            if (HomeFeaturedSchema::hasServices()) {
+                $this->saveFeaturedServicesByClusters(
+                    $request,
+                    'featured_transport',
+                    $validated['featured_transport'] ?? [],
+                    HomeFeaturedService::TRANSPORT_CLUSTERS,
+                );
+                $this->saveFeaturedServicesByClusters(
+                    $request,
+                    'featured_support',
+                    $validated['featured_support'] ?? [],
+                    HomeFeaturedService::SUPPORT_CLUSTERS,
+                );
+            }
+            if (HomeFeaturedSchema::hasTeamMembers()) {
+                $this->saveFeaturedRows(
+                    $request,
+                    'featured_team_members',
+                    $validated['featured_team_members'] ?? [],
+                    HomeFeaturedTeamMember::class,
+                    'team_member_id',
+                );
+            }
+            if (HomeFeaturedSchema::hasReviews()) {
+                $this->saveFeaturedRows(
+                    $request,
+                    'featured_reviews',
+                    $validated['featured_reviews'] ?? [],
+                    HomeFeaturedReview::class,
+                    'review_id',
+                );
+            }
+            if (HomeFeaturedSchema::hasVideos()) {
+                $this->saveFeaturedRows(
+                    $request,
+                    'featured_videos',
+                    $validated['featured_videos'] ?? [],
+                    HomeFeaturedVideo::class,
+                    'experience_video_id',
+                );
+            }
         });
 
         return $this->show($request->merge(['locale' => $locale]));
+    }
+
+    /**
+     * @param  array<int|string, string>  $map
+     * @return list<array{value: int|string, label: string}>
+     */
+    protected function selectOptions(array $map): array
+    {
+        return collect($map)
+            ->map(fn (string $label, $value) => ['value' => $value, 'label' => $label])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  list<string>  $clusters
+     * @return list<array{id: int, service_id: int}>
+     */
+    protected function featuredServicesPayload(array $clusters): array
+    {
+        return HomeFeaturedService::query()
+            ->orderBy('sort')
+            ->whereHas('service', fn ($q) => $q->whereIn('cluster', $clusters))
+            ->get()
+            ->map(fn (HomeFeaturedService $r) => ['id' => $r->id, 'service_id' => $r->service_id])
+            ->values()
+            ->all();
     }
 }
