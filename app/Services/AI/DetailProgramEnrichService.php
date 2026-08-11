@@ -53,12 +53,15 @@ final class DetailProgramEnrichService
                     : '(không có hướng dẫn thêm)',
             ]);
 
+            $webSearch = (bool) config('ai.enrich_web_search', true);
             $result = $this->ai->chat(
                 system: $rendered['system'],
                 user: $rendered['user'],
                 json: true,
                 provider: $provider,
-                maxTokens: (int) config('ai.enrich_max_tokens', 12288),
+                maxTokens: (int) config('ai.enrich_max_tokens', 16384),
+                webSearch: $webSearch,
+                timeout: (int) config('ai.enrich_timeout', 240),
             );
 
             $parsed = $result['parsed'] ?? [];
@@ -109,7 +112,7 @@ Schema fields (service product) — giữ đúng key:
 {
   "title": "string",
   "summary": "string (ngắn)",
-  "content": "string HTML (p, h2, h3, ul, ol, strong, a…)",
+  "content": "string HTML dài: p/h2/h3/ul/ol/strong + cuối bài 1 <figure><img placehold.co… alt+figcaption></figure>",
   "highlights": "string — mỗi ý một dòng hoặc HTML list",
   "inclusions": "string — mỗi ý một dòng",
   "exclusions": "string — mỗi ý một dòng",
@@ -119,6 +122,7 @@ Schema fields (service product) — giữ đúng key:
   "seo_title": "string",
   "seo_description": "string"
 }
+Ưu tiên content HTML giàu trải nghiệm; strong điểm đến / khung giờ nếu có quy trình.
 TXT;
         }
 
@@ -147,7 +151,7 @@ Schema fields (tour_package / cruise_package) — giữ đúng key:
       "day_number": 1,
       "meals_included": "Sáng; Trưa; Tối | Sáng; Trưa | … | \"\"",
       "title": "string",
-      "content": "string HTML chi tiết ngày (p/ul/ol/h3/strong…)",
+      "content": "string HTML DÀI (ưu tiên tuyệt đối): mở đầu vẻ đẹp điểm đến; timeline <ul>/<ol> với <strong>khung giờ</strong> + <strong>tên điểm đến</strong>; tips; CUỐI NGÀY bắt buộc 1 figure ảnh tạm placehold.co + alt SEO + figcaption",
       "overnight_at": "string"
     }
   ],
@@ -156,6 +160,8 @@ Schema fields (tour_package / cruise_package) — giữ đúng key:
   ]
 }
 Số ngày itinerary phải khớp duration_days trong context nếu có.
+Mỗi ngày content ~180–420 từ, unique SEO, không lặp mở bài giữa các ngày.
+HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img, a.
 TXT;
     }
 

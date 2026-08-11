@@ -21,8 +21,12 @@ return [
 
     'timeout' => (int) env('AI_TIMEOUT', 180),
     'max_tokens' => (int) env('AI_MAX_TOKENS', 8192),
-    /** Max tokens riêng cho enrich chương trình (itinerary dài). */
-    'enrich_max_tokens' => (int) env('AI_ENRICH_MAX_TOKENS', 12288),
+    /** Max tokens riêng cho enrich chương trình (itinerary HTML dài + ảnh). */
+    'enrich_max_tokens' => (int) env('AI_ENRICH_MAX_TOKENS', 16384),
+    /** Bật web search khi xây dựng chương trình (OpenAI Responses / Gemini google_search). */
+    'enrich_web_search' => filter_var(env('AI_ENRICH_WEB_SEARCH', true), FILTER_VALIDATE_BOOL),
+    /** Timeout riêng khi có web search (thường lâu hơn). */
+    'enrich_timeout' => (int) env('AI_ENRICH_TIMEOUT', 240),
 
     /**
      * Model theo provider (override services.*.model).
@@ -32,6 +36,14 @@ return [
         'openai' => env('AI_OPENAI_MODEL', env('OPENAI_MODEL')),
         'google' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
         'deepseek' => env('DEEPSEEK_MODEL', 'deepseek-chat'),
+    ],
+
+    /**
+     * Model ưu tiên khi enrich + web search (Chat Completions search API).
+     * Để trống → dùng Responses API + tools web_search với model openai thường.
+     */
+    'search_models' => [
+        'openai' => env('AI_OPENAI_SEARCH_MODEL', ''),
     ],
 
     /** Thư mục prompt PHP (key => file). Seed → DB qua `ai:sync-prompts`. */

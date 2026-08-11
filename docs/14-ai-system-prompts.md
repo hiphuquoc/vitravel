@@ -51,6 +51,10 @@ Gateway: `App\Services\AI\AiGateway` (OpenAI-compatible + fallback).
 Client gửi toàn bộ field nội dung hiện có + `entity_type` + `locale`.  
 AI trả `{ "fields": { … } }` đúng schema form admin (itinerary HTML, bullets, FAQ, SEO…).
 
+Prompt `enrich_detail_program` (v2+) ưu tiên **HTML lịch trình từng ngày**: mô tả điểm đến, `<strong>` khung giờ + địa danh, SEO unique, cuối mỗi ngày 1 `<figure>` ảnh tạm (`placehold.co`) với alt/figcaption chuẩn.
+
+**Web search** (mặc định bật): `AI_ENRICH_WEB_SEARCH=true` → OpenAI dùng Responses API + `tools: web_search`; Gemini thử `google_search`. Timeout/tokens: `AI_ENRICH_TIMEOUT`, `AI_ENRICH_MAX_TOKENS`.
+
 Ví dụ body:
 
 ```json
