@@ -197,7 +197,7 @@ Schema fields (tour_package / cruise_package) — giữ đúng key:
       "day_number": 1,
       "meals_included": "Sáng; Trưa; Tối | Sáng; Trưa | … | \"\"",
       "title": "string",
-      "content": "string HTML DÀI (ưu tiên tuyệt đối): mở đầu vẻ đẹp điểm đến; timeline <ul>/<ol> với <strong>khung giờ</strong> + <strong>tên điểm đến</strong>; tips; CUỐI NGÀY bắt buộc 1 figure ảnh tạm placehold.co + alt SEO + figcaption",
+      "content": "string HTML DÀI: mở đầu; timeline strong giờ+điểm đến; (tuỳ chọn) 1 <blockquote><p><strong>Mẹo nhỏ|Ghi chú|Lưu ý:</strong> …</p></blockquote>; cuối ngày 1 figure placehold.co",
       "overnight_at": "string"
     }
   ],

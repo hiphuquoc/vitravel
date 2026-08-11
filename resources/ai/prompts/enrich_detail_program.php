@@ -25,7 +25,7 @@ return [
     'name' => 'Xây dựng chương trình chi tiết (tour / dịch vụ)',
     'category' => 'enrich',
     'description' => 'Viết chương trình giàu trải nghiệm: trọng tâm HTML lịch trình từng ngày (điểm đến, khung giờ, SEO unique) + figure ảnh tạm; có thể dùng web search.',
-    'version' => 4,
+    'version' => 5,
     'variables' => ['locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
@@ -67,7 +67,13 @@ B) Timeline hoạt động (<ul> hoặc <ol>):
    - Tên điểm đến / trải nghiệm cũng bọc <strong>…</strong> (vd. <strong>Vịnh Lan Hạ</strong>, <strong>làng chài Cái Bè</strong>).
    - Sau strong: 1–2 câu mô tả cảm nhận + việc làm (không chỉ “tham quan rồi về”).
 
-C) Đoạn cảm xúc / tips (1 <p> hoặc <blockquote>): góc nhìn bản địa, lưu ý nhỏ, khoảnh khắc đáng nhớ — phục vụ SEO semantic (từ khóa tự nhiên: tên điểm + trải nghiệm + cảm xúc).
+C) Mẹo / ghi chú / lưu ý (TÙY CHỌN — không bắt buộc mỗi ngày):
+   Chỉ thêm khi thật sự có giá trị (thời tiết, trang phục, say sóng, giờ đẹp ánh sáng, tip bản địa…).
+   Khi CÓ phần này: luôn dùng đúng 1 khối <blockquote> đặt SAU timeline (B), TRƯỚC ảnh (D). Không viết mẹo bằng <p> thường, không <h3>, không bullet riêng ngoài blockquote.
+   Định dạng cố định trong blockquote:
+   <blockquote><p><strong>Mẹo nhỏ:</strong> …1–2 câu…</p></blockquote>
+   hoặc nhãn tương đương ngắn: <strong>Ghi chú:</strong> / <strong>Lưu ý:</strong> — chọn 1 nhãn phù hợp nội dung, rồi mới tới câu tip.
+   Mỗi ngày tối đa 1 blockquote tip (không chồng nhiều khối). Ngày không cần tip thì bỏ hẳn phần C.
 
 D) Ảnh tạm CUỐI MỖI NGÀY (bắt buộc 1 figure):
 <figure>
