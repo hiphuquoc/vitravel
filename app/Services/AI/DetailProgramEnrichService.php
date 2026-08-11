@@ -230,17 +230,34 @@ TXT;
     {
         $out = [];
         foreach ($ai as $i => $cell) {
-            $row = is_array($source[$i] ?? null) ? $source[$i] : [];
-            if (is_array($cell) && is_array($row) && ! array_is_list($cell)) {
-                // Giữ id kỹ thuật từ row cũ nếu AI không trả.
-                $merged = $this->mergePreferringAiLists($row, $cell);
-                if (isset($row['id']) && ! array_key_exists('id', $merged)) {
-                    $merged['id'] = $row['id'];
-                }
-                $out[] = $merged;
-            } else {
+            if (! is_array($cell) || array_is_list($cell)) {
                 $out[] = $cell;
+                continue;
             }
+
+            $row = [];
+            if (isset($cell['day_number'])) {
+                foreach ($source as $srcRow) {
+                    if (is_array($srcRow) && (int) ($srcRow['day_number'] ?? -1) === (int) $cell['day_number']) {
+                        $row = $srcRow;
+                        break;
+                    }
+                }
+            }
+            if ($row === [] && is_array($source[$i] ?? null)) {
+                $row = $source[$i];
+            }
+
+            // Giữ id kỹ thuật từ row cũ nếu AI không trả.
+            $merged = $this->mergePreferringAiLists($row, $cell);
+            if (isset($row['id']) && ! array_key_exists('id', $merged)) {
+                $merged['id'] = $row['id'];
+            }
+            // content HTML ngày: nếu AI trả chuỗi (kể cả dài) luôn nhận — không giữ bản cũ khi AI có key.
+            if (array_key_exists('content', $cell) && is_string($cell['content'])) {
+                $merged['content'] = $cell['content'];
+            }
+            $out[] = $merged;
         }
 
         return $out;

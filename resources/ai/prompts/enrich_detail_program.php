@@ -25,7 +25,7 @@ return [
     'name' => 'Xây dựng chương trình chi tiết (tour / dịch vụ)',
     'category' => 'enrich',
     'description' => 'Viết chương trình giàu trải nghiệm: trọng tâm HTML lịch trình từng ngày (điểm đến, khung giờ, SEO unique) + figure ảnh tạm; có thể dùng web search.',
-    'version' => 2,
+    'version' => 3,
     'variables' => ['locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
@@ -45,6 +45,10 @@ Các field khác (summary, bullets, FAQ, SEO…) hỗ trợ; đừng viết sơ 
 5) Dùng web search khi cần: khí hậu/mùa, đặc trưng điểm đến, hoạt động phổ biến, khung giờ tham quan thực tế — rồi viết unique.
 
 ═══ HTML LỊCH TRÌNH NGÀY (itinerary[].content) — BẮT BUỘC ═══
+QUAN TRỌNG: Viết LẠI TOÀN BỘ content cho MỌI ngày trong itinerary (ngày 1 → ngày cuối).
+Không giữ / không rút gọn / không copy HTML cũ. Context có thể để content="" + content_rewrite=true — đó là tín hiệu phải viết mới đủ chất lượng cho từng ngày.
+Không được chỉ viết kỹ ngày cuối rồi để các ngày trước sơ sài hoặc giống bản cũ.
+
 Mỗi ngày là một bài mini hấp dẫn (khoảng 180–420 từ tiếng Việt hoặc tương đương), cấu trúc gợi ý:
 
 A) Mở đầu (1–2 <p>): không khí ngày — vẻ đẹp điểm đến, cảm giác hành trình (ánh sáng, biển, rừng, làng…). Unique theo ngày, không copy mở đầu giữa các ngày.
@@ -101,6 +105,6 @@ Hướng dẫn thêm từ biên tập:
 Context sản phẩm (JSON):
 {{fields_json}}
 
-Ưu tiên tuyệt đối: itinerary[].content HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày. Trả về { "fields": { … } } thôi.
+Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào. Trả về { "fields": { … } } thôi.
 PROMPT,
 ];
