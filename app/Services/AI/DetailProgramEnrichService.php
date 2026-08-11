@@ -43,15 +43,18 @@ final class DetailProgramEnrichService
         $schemaHint = $this->schemaHintFor($entityType);
 
         try {
-            $rendered = $this->prompts->renderPrompt(self::PROMPT_KEY, [
-                'locale' => $locale,
-                'entity_type' => $entityType,
-                'fields_json' => $fieldsJson,
-                'schema_hint' => $schemaHint,
-                'extra_instructions' => trim((string) $instructions) !== ''
-                    ? trim((string) $instructions)
-                    : '(không có hướng dẫn thêm)',
-            ]);
+            $rendered = $this->prompts->renderPrompt(self::PROMPT_KEY, array_merge(
+                AiProjectBrand::vars(),
+                [
+                    'locale' => $locale,
+                    'entity_type' => $entityType,
+                    'fields_json' => $fieldsJson,
+                    'schema_hint' => $schemaHint,
+                    'extra_instructions' => trim((string) $instructions) !== ''
+                        ? trim((string) $instructions)
+                        : '(không có hướng dẫn thêm)',
+                ],
+            ));
 
             $webSearch = (bool) config('ai.enrich_web_search', true);
             $result = $this->ai->chat(
@@ -83,7 +86,7 @@ final class DetailProgramEnrichService
                 $result['provider'],
                 $result['model'],
                 $result['latency_ms'],
-                ['locale' => $locale],
+                ['locale' => $locale, 'brand' => AiProjectBrand::vars()['brand']],
             );
 
             return [

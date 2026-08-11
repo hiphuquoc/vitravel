@@ -38,12 +38,15 @@ final class PageTranslateService
         }
 
         try {
-            $rendered = $this->prompts->renderPrompt('translate_page', [
-                'source_locale' => $sourceLocale,
-                'target_locale' => $targetLocale,
-                'entity_type' => $entityType,
-                'fields_json' => $fieldsJson,
-            ]);
+            $rendered = $this->prompts->renderPrompt('translate_page', array_merge(
+                AiProjectBrand::vars(),
+                [
+                    'source_locale' => $sourceLocale,
+                    'target_locale' => $targetLocale,
+                    'entity_type' => $entityType,
+                    'fields_json' => $fieldsJson,
+                ],
+            ));
 
             $result = $this->ai->chat(
                 system: $rendered['system'],

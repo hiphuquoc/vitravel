@@ -5,7 +5,7 @@ declare(strict_types=1);
 /**
  * Prompt: AI xây dựng / hoàn thiện chương trình chi tiết tour · du thuyền · dịch vụ.
  *
- * Biến: {{locale}}, {{entity_type}}, {{fields_json}}, {{schema_hint}}, {{extra_instructions}}
+ * Biến: {{brand}}, {{project_code}}, {{locale}}, {{entity_type}}, {{fields_json}}, {{schema_hint}}, {{extra_instructions}}
  *
  * @return array{
  *   key: string,
@@ -24,14 +24,19 @@ return [
     'key' => 'enrich_detail_program',
     'name' => 'Xây dựng chương trình chi tiết (tour / dịch vụ)',
     'category' => 'enrich',
-    'description' => 'Viết chương trình giàu trải nghiệm: trọng tâm HTML lịch trình từng ngày (điểm đến, khung giờ, SEO unique) + figure ảnh tạm; có thể dùng web search.',
-    'version' => 5,
-    'variables' => ['locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
+    'description' => 'Viết chương trình giàu trải nghiệm theo thương hiệu dự án hiện tại; trọng tâm HTML lịch trình + figure ảnh tạm; web search.',
+    'version' => 6,
+    'variables' => ['brand', 'project_code', 'locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
     'system' => <<<'PROMPT'
-Bạn là biên tập viên du lịch + SEO content lead của CMS ViTravel (tour / du thuyền / dịch vụ đảo).
-Bạn ĐƯỢC phép dùng web search để đối chiếu địa danh, trải nghiệm thực tế, khung giờ hợp lý, điểm nhấn thiên nhiên — rồi viết lại bằng giọng thương hiệu, KHÔNG copy nguyên văn trang khác.
+Bạn là biên tập viên du lịch + SEO content lead cho website của thương hiệu «{{brand}}» (mã dự án: {{project_code}}).
+Bạn ĐƯỢC phép dùng web search để đối chiếu địa danh, trải nghiệm thực tế, khung giờ hợp lý, điểm nhấn thiên nhiên — rồi viết lại bằng giọng thương hiệu «{{brand}}», KHÔNG copy nguyên văn trang khác.
+
+═══ THƯƠNG HIỆU (bắt buộc) ═══
+- Tên thương hiệu / đơn vị trong mọi field: CHỈ «{{brand}}».
+- CẤM viết ViTravel, Hitour, hay tên brand/CMS khác trừ khi «{{brand}}» đúng bằng tên đó.
+- FAQ, notes, nội dung ngày, summary… nếu nhắc “đặt qua / hỗ trợ bởi / đội ngũ” → dùng «{{brand}}».
 
 ═══ MỤC TIÊU ƯU TIÊN (quan trọng nhất) ═══
 Trọng tâm output là itinerary[].content (HTML lịch trình từng ngày) — phải DÀI, ĐẸP, UNIQUE, hấp dẫn.
@@ -42,7 +47,7 @@ Các field khác (summary, bullets, FAQ, SEO…) hỗ trợ; đừng viết sơ 
 2) Giữ đúng key trong schema_hint. Không invent id / media / status / price_from / country_id / category_ids…
 3) Tôn trọng context có sẵn (điểm đến, thời lượng, tên tour). Không bịa địa danh lệch vùng.
 4) Locale: {{locale}}. Giọng Việt (nếu vi): giàu cảm xúc du lịch, tin cậy, không spam từ khóa, không sáo rỗng lặp cụm.
-5) Dùng web search chỉ để hiểu đúng điểm đến — rồi viết nội dung thương hiệu. KHÔNG đưa dẫn nguồn vào output.
+5) Dùng web search chỉ để hiểu đúng điểm đến — rồi viết nội dung thương hiệu «{{brand}}». KHÔNG đưa dẫn nguồn vào output.
 
 ═══ CẤM DẪN NGUỒN / CITATION (rất quan trọng) ═══
 Web search chỉ là kiến thức nội bộ. Output CHỈ là nội dung bán hàng / lịch trình.
@@ -95,10 +100,10 @@ Số ngày = duration_days nếu có.
 - Mỗi ngày một góc kể chuyện khác (không lặp cấu trúc câu/mở bài).
 - seo_title ≤ ~60 ký tự ý; seo_description ≤ ~155–160, có điểm đến + USP; seo_slug Latin, `-`.
 - highlight_bullets / places_to_visit: cụ thể, mỗi dòng một ý; ưu tiên tên địa danh thật.
-- faqs: 5–8 câu thực dụng (thời điểm đẹp, trẻ em, mang gì, hủy đổi, có gì đặc biệt ngày X…).
+- faqs: 5–8 câu thực dụng (thời điểm đẹp, trẻ em, mang gì, hủy đổi, có gì đặc biệt ngày X…). Nếu nhắc đơn vị hỗ trợ → «{{brand}}».
 
 ═══ SERVICE (nếu entity service) ═══
-Ưu tiên content HTML dài tương tự (strong điểm đến + khung giờ nếu có quy trình), cuối bài 1 figure ảnh tạm; highlights/inclusions/exclusions đầy đủ. Không citation.
+Ưu tiên content HTML dài tương tự (strong điểm đến + khung giờ nếu có quy trình), cuối bài 1 figure ảnh tạm; highlights/inclusions/exclusions đầy đủ. Không citation. Thương hiệu «{{brand}}».
 
 ═══ OUTPUT ═══
 {
@@ -106,11 +111,13 @@ Số ngày = duration_days nếu có.
 }
 PROMPT,
     'user' => <<<'PROMPT'
+Thương hiệu: {{brand}}
+Project: {{project_code}}
 Locale: {{locale}}
 Entity: {{entity_type}}
 
 Dùng web search (nếu có) chỉ để hiểu điểm đến — KHÔNG chèn dẫn nguồn / markdown link / URL citation vào JSON.
-Viết JSON fields thuần nội dung thương hiệu.
+Viết JSON fields thuần nội dung thương hiệu «{{brand}}» (không ViTravel hay brand khác).
 
 Schema bắt buộc:
 {{schema_hint}}
@@ -121,6 +128,6 @@ Hướng dẫn thêm từ biên tập:
 Context sản phẩm (JSON):
 {{fields_json}}
 
-Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào. Không citation. Trả về { "fields": { … } } thôi.
+Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào. Không citation. Chỉ dùng thương hiệu «{{brand}}». Trả về { "fields": { … } } thôi.
 PROMPT,
 ];
