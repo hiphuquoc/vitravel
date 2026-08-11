@@ -246,18 +246,24 @@
                                     </span>
                                     <span class="detail-itinerary__summary min-w-0 flex-1">
                                         <span class="detail-itinerary__title">{{ $day['title'] }}</span>
-                                        <span class="detail-itinerary__meta">
-                                            <span class="inline-flex items-center gap-1">
-                                                <x-icon name="clock" class="size-3.5" /> Bữa ăn: {{ $day['meals'] }}
-                                            </span>
-                                            @if (! empty($day['transport']))
-                                                <span class="inline-flex items-center gap-1.5" aria-label="Phương tiện">
-                                                    @foreach ($day['transport'] as $t)
-                                                        <x-icon :name="$t" class="size-4 text-leaf-600" />
-                                                    @endforeach
+                                        @php
+                                            $mealParts = array_values(array_filter(array_map(
+                                                'trim',
+                                                preg_split('/[;,|\/]+/', (string) ($day['meals'] ?? '')) ?: []
+                                            )));
+                                        @endphp
+                                        @if (count($mealParts))
+                                            <span class="detail-itinerary__meta">
+                                                <span class="detail-itinerary__meals" aria-label="Bữa ăn gồm">
+                                                    <span class="detail-itinerary__meals-label">Bữa ăn</span>
+                                                    <span class="detail-itinerary__meal-chips">
+                                                        @foreach ($mealParts as $meal)
+                                                            <span class="detail-itinerary__meal-chip">{{ $meal }}</span>
+                                                        @endforeach
+                                                    </span>
                                                 </span>
-                                            @endif
-                                        </span>
+                                            </span>
+                                        @endif
                                     </span>
                                     <x-icon name="chevron-down" class="size-4 shrink-0 transition"
                                         ::class="opened.includes({{ $day['day'] }}) && 'rotate-180 text-primary-600'" />
@@ -265,7 +271,12 @@
                             </h3>
                             <div x-show="opened.includes({{ $day['day'] }})" x-collapse x-cloak>
                                 <div class="detail-itinerary__body">
-                                    <p class="body-text">{{ $day['content'] }}</p>
+                                    @php $dayHtml = rich_body_html($day['content'] ?? null); @endphp
+                                    @if ($dayHtml !== '')
+                                        <div class="detail-itinerary__content prose-travel prose-travel--itinerary">
+                                            {!! $dayHtml !!}
+                                        </div>
+                                    @endif
                                     @if (! empty($day['overnight']))
                                         <p class="detail-itinerary__overnight">
                                             <x-icon name="map-pin" class="size-3.5 text-primary-600" />

@@ -327,3 +327,132 @@ if (! function_exists('blog_rich_text')) {
         );
     }
 }
+
+if (! function_exists('rich_body_html')) {
+    /**
+     * Sanitize block-level HTML for public detail bodies (itinerary day, etc.).
+     * Accepts TipTap HTML, legacy plain text, or article JSON blocks.
+     */
+    function rich_body_html(?string $raw): string
+    {
+        $raw = trim((string) $raw);
+        if ($raw === '') {
+            return '';
+        }
+
+        if (str_starts_with($raw, '[')) {
+            $blocks = json_decode($raw, true);
+            if (is_array($blocks)) {
+                $raw = article_blocks_to_html($blocks);
+            }
+        }
+
+        if ($raw === '' || $raw === '<p></p>') {
+            return '';
+        }
+
+        if (! str_contains($raw, '<')) {
+            return '<p>'.nl2br(e($raw), false).'</p>';
+        }
+
+        $clean = strip_tags(
+            $raw,
+            '<p><br><strong><b><em><i><u><a><ul><ol><li><h2><h3><blockquote><span><figure><figcaption><img>'
+        );
+
+        $clean = (string) preg_replace_callback(
+            '/<a\s+([^>]*?)>/i',
+            static function (array $m): string {
+                $attrs = $m[1];
+                if (! preg_match('/href\s*=\s*(["\'])(.*?)\1/i', $attrs, $href)) {
+                    return '<a>';
+                }
+                $url = html_entity_decode($href[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if (! preg_match('#^(https?:|mailto:|/|#)#i', $url)) {
+                    return '<a>';
+                }
+
+                return '<a href="'.e($url).'" rel="noopener noreferrer">';
+            },
+            $clean
+        );
+
+        return (string) preg_replace_callback(
+            '/<img\s+([^>]*?)\/?>/i',
+            static function (array $m): string {
+                $attrs = $m[1];
+                if (! preg_match('/src\s*=\s*(["\'])(.*?)\1/i', $attrs, $src)) {
+                    return '';
+                }
+                $url = html_entity_decode($src[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                if (! preg_match('#^(https?:|/|#)#i', $url)) {
+                    return '';
+                }
+                $alt = '';
+                if (preg_match('/alt\s*=\s*(["\'])(.*?)\1/i', $attrs, $altMatch)) {
+                    $alt = html_entity_decode($altMatch[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+
+                return '<img src="'.e($url).'" alt="'.e($alt).'" loading="lazy">';
+            },
+            $clean
+        );
+    }
+}
+
+if (! function_exists('article_blocks_to_html')) {
+    /**
+     * @param  list<array<string, mixed>>  $blocks
+     */
+    function article_blocks_to_html(array $blocks): string
+    {
+        $parts = [];
+
+        foreach ($blocks as $block) {
+            if (! is_array($block) || ! isset($block['type'])) {
+                continue;
+            }
+
+            $type = (string) $block['type'];
+
+            switch ($type) {
+                case 'p':
+                    $parts[] = '<p>'.blog_rich_text((string) ($block['text'] ?? '')).'</p>';
+                    break;
+                case 'h2':
+                    $id = trim((string) ($block['id'] ?? ''));
+                    $parts[] = $id !== ''
+                        ? '<h2 id="'.e($id).'">'.blog_rich_text((string) ($block['text'] ?? '')).'</h2>'
+                        : '<h2>'.blog_rich_text((string) ($block['text'] ?? '')).'</h2>';
+                    break;
+                case 'h3':
+                    $id = trim((string) ($block['id'] ?? ''));
+                    $parts[] = $id !== ''
+                        ? '<h3 id="'.e($id).'">'.blog_rich_text((string) ($block['text'] ?? '')).'</h3>'
+                        : '<h3>'.blog_rich_text((string) ($block['text'] ?? '')).'</h3>';
+                    break;
+                case 'ul':
+                case 'ol':
+                    $items = is_array($block['items'] ?? null) ? $block['items'] : [];
+                    $lis = '';
+                    foreach ($items as $item) {
+                        $lis .= '<li>'.blog_rich_text((string) $item).'</li>';
+                    }
+                    $parts[] = '<'.$type.'>'.$lis.'</'.$type.'>';
+                    break;
+                case 'image':
+                    $caption = (string) ($block['caption'] ?? '');
+                    $src = trim((string) ($block['src'] ?? ''));
+                    $img = $src !== ''
+                        ? '<img src="'.e($src).'" alt="'.e($caption).'" loading="lazy">'
+                        : '';
+                    $parts[] = '<figure>'.$img.'<figcaption>'.e($caption).'</figcaption></figure>';
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return implode('', $parts);
+    }
+}

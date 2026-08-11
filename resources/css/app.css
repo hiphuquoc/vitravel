@@ -2554,15 +2554,60 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
-        gap: var(--space-gap-sm) var(--space-gap);
-        margin-top: 0.35rem;
-        font-size: var(--fs-meta);
+        gap: 0.5rem 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .detail-itinerary__meals {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.45rem 0.6rem;
+    }
+
+    .detail-itinerary__meals-label {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
         color: var(--color-muted, #7a776c);
+    }
+
+    .detail-itinerary__meal-chips {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    .detail-itinerary__meal-chip {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.625rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 0.45rem;
+        background: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 12%, white);
+        color: var(--color-primary-800, #3a4e27);
+        font-size: 0.8125rem;
+        font-weight: 650;
+        line-height: 1.2;
+        border: 1px solid color-mix(in srgb, var(--color-primary-500, #6b8f3f) 22%, transparent);
     }
 
     .detail-itinerary__body {
         border-top: 1px solid var(--color-line, #ddd9c2);
         padding: var(--space-card) var(--space-card-stack-lg);
+    }
+
+    .detail-itinerary__content {
+        max-width: 42rem;
+    }
+
+    .detail-itinerary__content > :first-child {
+        margin-top: 0;
+    }
+
+    .detail-itinerary__content > :last-child {
+        margin-bottom: 0;
     }
 
     .detail-itinerary__overnight {
@@ -2572,7 +2617,7 @@
         margin-top: var(--space-card-stack-lg);
         border-radius: 999px;
         background: var(--color-page-soft, #f8f6ec);
-        padding: 0.3rem 0.75rem;
+        padding: 0.35rem 0.85rem;
         font-size: var(--fs-meta);
         font-weight: 600;
     }
@@ -4123,7 +4168,7 @@
         border-radius: 10px;
     }
 
-    /* Nội dung bài viết dài (blog, SEO intro) */
+    /* Nội dung bài viết dài (blog, SEO intro, lịch trình ngày) */
     .prose-travel {
         font-size: var(--fs-body);
         line-height: var(--lh-body);
@@ -4141,14 +4186,59 @@
     .prose-travel ul {
         @apply mb-4 list-disc space-y-1.5 pl-5;
     }
+    .prose-travel ol {
+        @apply mb-4 list-decimal space-y-1.5 pl-5;
+    }
+    .prose-travel li {
+        @apply pl-0.5;
+    }
+    .prose-travel li > p {
+        @apply mb-1.5;
+    }
+    .prose-travel blockquote {
+        @apply mb-4 border-l-4 border-primary-300 pl-4 italic text-ink;
+    }
     .prose-travel a {
         @apply font-medium text-primary-600 underline underline-offset-2 hover:text-primary-700;
     }
-    .prose-travel strong {
+    .prose-travel strong,
+    .prose-travel b {
         @apply font-semibold text-ink;
+    }
+    .prose-travel em,
+    .prose-travel i {
+        @apply italic;
+    }
+    .prose-travel u {
+        text-underline-offset: 2px;
+    }
+    .prose-travel figure {
+        @apply my-5 overflow-hidden rounded-xl;
+    }
+    .prose-travel img {
+        @apply block h-auto w-full max-w-full rounded-xl object-cover;
     }
     .prose-travel figcaption {
         @apply mt-2 text-center text-sm text-muted italic;
+    }
+
+    /* Lịch trình ngày: hierarchy gọn hơn blog dài */
+    .prose-travel--itinerary {
+        font-size: 0.975rem;
+        line-height: 1.7;
+    }
+    .prose-travel--itinerary h2 {
+        @apply mt-6 mb-2 text-xl sm:text-2xl;
+    }
+    .prose-travel--itinerary h3 {
+        @apply mt-5 mb-1.5 text-base sm:text-lg;
+    }
+    .prose-travel--itinerary p {
+        @apply mb-3.5;
+    }
+    .prose-travel--itinerary ul,
+    .prose-travel--itinerary ol {
+        @apply mb-3.5;
     }
 
     /* Carousel scroll-snap */

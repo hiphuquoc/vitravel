@@ -21,6 +21,8 @@ return [
 
     'timeout' => (int) env('AI_TIMEOUT', 180),
     'max_tokens' => (int) env('AI_MAX_TOKENS', 8192),
+    /** Max tokens riêng cho enrich chương trình (itinerary dài). */
+    'enrich_max_tokens' => (int) env('AI_ENRICH_MAX_TOKENS', 12288),
 
     /**
      * Model theo provider (override services.*.model).
@@ -32,10 +34,11 @@ return [
         'deepseek' => env('DEEPSEEK_MODEL', 'deepseek-chat'),
     ],
 
-    /** Thư mục prompt PHP (key => file). Dễ bổ sung: thêm file + đăng ký ở đây. */
+    /** Thư mục prompt PHP (key => file). Seed → DB qua `ai:sync-prompts`. */
     'prompts_path' => resource_path('ai/prompts'),
 
     'prompts' => [
         'translate_page' => 'translate_page.php',
+        'enrich_detail_program' => 'enrich_detail_program.php',
     ],
 ];

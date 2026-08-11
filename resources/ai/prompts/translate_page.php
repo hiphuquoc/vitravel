@@ -5,13 +5,29 @@ declare(strict_types=1);
 /**
  * Prompt: dịch toàn bộ field nội dung admin sang locale đích.
  *
- * Biến Blade-lite: {{source_locale}}, {{target_locale}}, {{entity_type}}, {{fields_json}}
+ * Biến: {{source_locale}}, {{target_locale}}, {{entity_type}}, {{fields_json}}
  *
- * @return array{key: string, name: string, system: string, user: string, output_format: string}
+ * @return array{
+ *   key: string,
+ *   name: string,
+ *   category: string,
+ *   description: string,
+ *   version: int,
+ *   variables: list<string>,
+ *   entity_types: list<string>,
+ *   system: string,
+ *   user: string,
+ *   output_format: string
+ * }
  */
 return [
     'key' => 'translate_page',
     'name' => 'Dịch toàn trang (admin CMS)',
+    'category' => 'translate',
+    'description' => 'Dịch JSON fields form admin từ locale nguồn sang locale đích, giữ nguyên shape.',
+    'version' => 2,
+    'variables' => ['source_locale', 'target_locale', 'entity_type', 'fields_json'],
+    'entity_types' => ['*', 'tour_package', 'cruise_package', 'service', 'article', 'country'],
     'output_format' => 'json',
     'system' => <<<'PROMPT'
 Bạn là biên dịch viên chuyên nghiệp cho website du lịch / CMS đa ngôn ngữ (ViTravel).

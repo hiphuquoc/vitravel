@@ -70,3 +70,17 @@ Sau khi chọn project trên UI, gửi `X-Project-Code` cho mọi CRUD packages/
 { "success": true, "message": "OK", "data": {} }
 { "success": false, "error": { "code": "VALIDATION_ERROR", "message": "…", "details": {} } }
 ```
+
+## AI
+
+Chi tiết đầy đủ: [`docs/14-ai-system-prompts.md`](14-ai-system-prompts.md).
+
+| Method | Path | Permission | Notes |
+|---|---|---|---|
+| GET | `/ai/status` | `ai.use` | Provider configured? |
+| POST | `/ai/translate-page` | `ai.use` | Dịch JSON fields form |
+| POST | `/ai/enrich-detail-program` | `ai.use` | Xây dựng chương trình tour/cruise/service |
+| GET | `/ai/prompts` | `ai.manage` | Catalog prompt hệ thống |
+| GET/PUT | `/ai/prompts/{key}` | `ai.manage` | Xem / cập nhật |
+| POST | `/ai/prompts/sync` | `ai.manage` | Sync file seed → DB (`force?`) |
+| GET | `/ai/usage` | `ai.manage` | Nhật ký gọi AI |

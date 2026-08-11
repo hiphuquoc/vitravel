@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(LanguageSeeder::class);
+        $this->call(AiPromptSeeder::class);
 
         $dir = trim((string) config('project.seed_dir', 'project'), '/\\');
         $pattern = base_path($dir.'/seed_*.php');

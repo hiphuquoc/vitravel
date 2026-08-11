@@ -14,11 +14,12 @@ final class PageTranslateService
     public function __construct(
         private readonly AiGateway $ai,
         private readonly PromptRepository $prompts,
+        private readonly AiUsageLogger $usage,
     ) {}
 
     /**
      * @param  array<string, mixed>  $fields
-     * @return array{fields: array<string, mixed>, provider: string, model: string, latency_ms: int}
+     * @return array{fields: array<string, mixed>, provider: string, model: string, latency_ms: int, prompt_key: string, prompt_version: int|null}
      */
     public function translate(
         array $fields,
@@ -36,38 +37,63 @@ final class PageTranslateService
             throw new RuntimeException('Không encode được fields JSON.');
         }
 
-        $rendered = $this->prompts->renderPrompt('translate_page', [
-            'source_locale' => $sourceLocale,
-            'target_locale' => $targetLocale,
-            'entity_type' => $entityType,
-            'fields_json' => $fieldsJson,
-        ]);
+        try {
+            $rendered = $this->prompts->renderPrompt('translate_page', [
+                'source_locale' => $sourceLocale,
+                'target_locale' => $targetLocale,
+                'entity_type' => $entityType,
+                'fields_json' => $fieldsJson,
+            ]);
 
-        $result = $this->ai->chat(
-            system: $rendered['system'],
-            user: $rendered['user'],
-            json: true,
-            provider: $provider,
-        );
+            $result = $this->ai->chat(
+                system: $rendered['system'],
+                user: $rendered['user'],
+                json: true,
+                provider: $provider,
+            );
 
-        $parsed = $result['parsed'] ?? [];
-        $translated = $parsed['fields'] ?? null;
-        if (! is_array($translated)) {
-            // Một số model trả thẳng object fields (không bọc).
-            $translated = is_array($parsed) ? $parsed : null;
+            $parsed = $result['parsed'] ?? [];
+            $translated = $parsed['fields'] ?? null;
+            if (! is_array($translated)) {
+                // Một số model trả thẳng object fields (không bọc).
+                $translated = is_array($parsed) ? $parsed : null;
+            }
+            if (! is_array($translated)) {
+                throw new RuntimeException('Phản hồi AI thiếu object «fields».');
+            }
+
+            $filtered = $this->intersectKeys($fields, $translated);
+
+            $this->usage->logSuccess(
+                'translate_page',
+                'translate_page',
+                $entityType,
+                $result['provider'],
+                $result['model'],
+                $result['latency_ms'],
+                [
+                    'source_locale' => $sourceLocale,
+                    'target_locale' => $targetLocale,
+                ],
+            );
+
+            return [
+                'fields' => $filtered,
+                'provider' => $result['provider'],
+                'model' => $result['model'],
+                'latency_ms' => $result['latency_ms'],
+                'prompt_key' => 'translate_page',
+                'prompt_version' => $rendered['version'] ?? null,
+            ];
+        } catch (\Throwable $e) {
+            $this->usage->logFailure(
+                'translate_page',
+                'translate_page',
+                $entityType,
+                $e->getMessage(),
+            );
+            throw $e;
         }
-        if (! is_array($translated)) {
-            throw new RuntimeException('Phản hồi AI thiếu object «fields».');
-        }
-
-        $filtered = $this->intersectKeys($fields, $translated);
-
-        return [
-            'fields' => $filtered,
-            'provider' => $result['provider'],
-            'model' => $result['model'],
-            'latency_ms' => $result['latency_ms'],
-        ];
     }
 
     /**

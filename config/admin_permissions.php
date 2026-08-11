@@ -101,7 +101,8 @@ return [
         'users.view' => 'Xem danh sách người dùng',
         'users.manage' => 'Tạo / sửa / phân quyền người dùng (chỉ quản trị hệ thống)',
 
-        'ai.use' => 'Dùng AI dịch / hỗ trợ',
+        'ai.use' => 'Dùng AI dịch / xây dựng nội dung',
+        'ai.manage' => 'Quản lý prompt AI hệ thống + xem usage',
     ],
 
     /*
@@ -127,6 +128,7 @@ return [
             'settings.*',
             // users.* chỉ siêu quản trị hệ thống — không cấp qua vai trò dự án
             'ai.use',
+            'ai.manage',
         ],
         'editor' => [
             'dashboard.view',
@@ -218,6 +220,13 @@ return [
         'PUT media/library' => 'media.manage',
         'DELETE media/library' => 'media.manage',
 
+        'GET ai/prompts' => 'ai.manage',
+        'PUT ai/prompts' => 'ai.manage',
+        'POST ai/prompts/sync' => 'ai.manage',
+        'GET ai/usage' => 'ai.manage',
+        'GET ai/status' => 'ai.use',
+        'POST ai/translate-page' => 'ai.use',
+        'POST ai/enrich-detail-program' => 'ai.use',
         'GET ai/' => 'ai.use',
         'POST ai/' => 'ai.use',
 
@@ -255,6 +264,7 @@ return [
         '/leads/' => 'leads.view',
         '/settings/site' => 'settings.view',
         '/settings/languages' => 'settings.view',
+        '/settings/ai-prompts' => 'ai.manage',
         '/settings/media' => 'media.view',
         '/settings/users' => 'users.view',
         '/account' => null, // always
