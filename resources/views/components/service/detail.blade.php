@@ -64,6 +64,19 @@
             </section>
         @endif
 
+        @php
+            $serviceBodyRaw = trim((string) ($service['content'] ?? ''));
+            $serviceBodyHtml = $serviceBodyRaw !== '' ? rich_body_html($serviceBodyRaw) : '';
+        @endphp
+        @if ($serviceBodyHtml !== '')
+            <section class="detail-section" aria-label="Nội dung chi tiết">
+                <h2 class="detail-section__title">Nội dung chi tiết</h2>
+                <div class="prose-travel prose-travel--itinerary">
+                    {!! $serviceBodyHtml !!}
+                </div>
+            </section>
+        @endif
+
         @if (! empty($service['highlights']))
             <section class="detail-section" aria-label="Điểm nhấn">
                 <h2 class="detail-section__title">Điểm nhấn</h2>

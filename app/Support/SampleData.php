@@ -435,6 +435,7 @@ class SampleData
                 'inclusions' => $row['inclusions'] ?? [],
                 'exclusions' => $row['exclusions'] ?? [],
                 'notes' => $row['notes'] ?? [],
+                'content' => $row['content'] ?? '',
                 'attrs' => $row['attrs'] ?? [],
                 'options' => array_map(fn ($o) => [
                     'code' => $o['code'] ?? null,
