@@ -317,7 +317,7 @@ if (! function_exists('blog_rich_text')) {
                     return '<a>';
                 }
                 $url = html_entity_decode($href[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                if (! preg_match('#^(https?:|mailto:|/|#)#i', $url)) {
+                if (! preg_match('~^(https?:|mailto:|/|#)~i', $url)) {
                     return '<a>';
                 }
 
@@ -351,6 +351,11 @@ if (! function_exists('rich_body_html')) {
             return '';
         }
 
+        // Gỡ citation markdown do AI web_search (đã lưu trước đó).
+        $raw = (string) preg_replace('/\s*\(\[[^\]]*]\(\s*https?:\/\/[^)]+\)\s*\)/iu', '', $raw);
+        $raw = (string) preg_replace('/\s*\[[^\]]*]\(\s*https?:\/\/[^)]+\)/iu', '', $raw);
+        $raw = (string) preg_replace('/\s*\(\s*https?:\/\/[^)]*(?:utm_source=openai|chatgpt\.com)[^)]*\)/iu', '', $raw);
+
         if (! str_contains($raw, '<')) {
             return '<p>'.nl2br(e($raw), false).'</p>';
         }
@@ -368,7 +373,7 @@ if (! function_exists('rich_body_html')) {
                     return '<a>';
                 }
                 $url = html_entity_decode($href[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                if (! preg_match('#^(https?:|mailto:|/|#)#i', $url)) {
+                if (! preg_match('~^(https?:|mailto:|/|#)~i', $url)) {
                     return '<a>';
                 }
 
@@ -385,7 +390,7 @@ if (! function_exists('rich_body_html')) {
                     return '';
                 }
                 $url = html_entity_decode($src[2], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-                if (! preg_match('#^(https?:|/|#)#i', $url)) {
+                if (! preg_match('~^(https?:|/|#)~i', $url)) {
                     return '';
                 }
                 $alt = '';

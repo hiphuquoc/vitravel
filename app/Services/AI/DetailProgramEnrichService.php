@@ -74,6 +74,7 @@ final class DetailProgramEnrichService
             }
 
             $filtered = $this->mergePreferringAiLists($fields, $enriched);
+            $filtered = $this->stripWebSearchCitations($filtered);
 
             $this->usage->logSuccess(
                 self::PROMPT_KEY,
@@ -102,6 +103,51 @@ final class DetailProgramEnrichService
             );
             throw $e;
         }
+    }
+
+    /**
+     * Gỡ citation / markdown link do web_search (vd. ([site](https://…?utm_source=openai))).
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function stripWebSearchCitations(array $data): array
+    {
+        $out = [];
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $out[$key] = $this->stripWebSearchCitations($value);
+                continue;
+            }
+            if (! is_string($value) || $value === '') {
+                $out[$key] = $value;
+                continue;
+            }
+            $out[$key] = $this->stripCitationsFromString($value);
+        }
+
+        return $out;
+    }
+
+    private function stripCitationsFromString(string $text): string
+    {
+        $s = $text;
+
+        // ([label](url)) hoặc [label](url)
+        $s = (string) preg_replace('/\s*\(\[[^\]]*]\(\s*https?:\/\/[^)]+\)\s*\)/iu', '', $s);
+        $s = (string) preg_replace('/\s*\[[^\]]*]\(\s*https?:\/\/[^)]+\)/iu', '', $s);
+
+        // (https://…utm_source=openai) hoặc (https://…)
+        $s = (string) preg_replace('/\s*\(\s*https?:\/\/[^)]*(?:utm_source=openai|chatgpt\.com)[^)]*\)/iu', '', $s);
+
+        // URL trần kèm tracking OpenAI
+        $s = (string) preg_replace('/\s*https?:\/\/[^\s)<]+(?:utm_source=openai|chatgpt\.com)[^\s)<]*/iu', '', $s);
+
+        // Khoảng trắng / dấu câu thừa sau khi gỡ
+        $s = (string) preg_replace('/[ \t]{2,}/u', ' ', $s);
+        $s = (string) preg_replace('/\s+([.,;:!?])/u', '$1', $s);
+
+        return trim($s);
     }
 
     private function schemaHintFor(string $entityType): string
@@ -161,7 +207,8 @@ Schema fields (tour_package / cruise_package) — giữ đúng key:
 }
 Số ngày itinerary phải khớp duration_days trong context nếu có.
 Mỗi ngày content ~180–420 từ, unique SEO, không lặp mở bài giữa các ngày.
-HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img, a.
+HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img.
+Không chèn citation / markdown link / URL nguồn.
 TXT;
     }
 

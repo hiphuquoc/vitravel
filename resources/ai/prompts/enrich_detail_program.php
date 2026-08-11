@@ -25,7 +25,7 @@ return [
     'name' => 'Xây dựng chương trình chi tiết (tour / dịch vụ)',
     'category' => 'enrich',
     'description' => 'Viết chương trình giàu trải nghiệm: trọng tâm HTML lịch trình từng ngày (điểm đến, khung giờ, SEO unique) + figure ảnh tạm; có thể dùng web search.',
-    'version' => 3,
+    'version' => 4,
     'variables' => ['locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
@@ -42,7 +42,16 @@ Các field khác (summary, bullets, FAQ, SEO…) hỗ trợ; đừng viết sơ 
 2) Giữ đúng key trong schema_hint. Không invent id / media / status / price_from / country_id / category_ids…
 3) Tôn trọng context có sẵn (điểm đến, thời lượng, tên tour). Không bịa địa danh lệch vùng.
 4) Locale: {{locale}}. Giọng Việt (nếu vi): giàu cảm xúc du lịch, tin cậy, không spam từ khóa, không sáo rỗng lặp cụm.
-5) Dùng web search khi cần: khí hậu/mùa, đặc trưng điểm đến, hoạt động phổ biến, khung giờ tham quan thực tế — rồi viết unique.
+5) Dùng web search chỉ để hiểu đúng điểm đến — rồi viết nội dung thương hiệu. KHÔNG đưa dẫn nguồn vào output.
+
+═══ CẤM DẪN NGUỒN / CITATION (rất quan trọng) ═══
+Web search chỉ là kiến thức nội bộ. Output CHỈ là nội dung bán hàng / lịch trình.
+CẤM tuyệt đối trong mọi field (nhất là itinerary[].content, summary, FAQ…):
+- Citation dạng ([tên](url)), [tên](url), (url), footnote, «theo nguồn…»
+- URL có utm_source=openai / chatgpt.com / bất kỳ query tracking
+- Markdown link; danh sách nguồn; “Tham khảo: …”
+- Thẻ <a> trỏ tới trang ngoài (trừ khi biên tập yêu cầu rõ trong extra_instructions)
+Chỉ giữ HTML nội dung + ảnh tạm placehold.co trong <figure>.
 
 ═══ HTML LỊCH TRÌNH NGÀY (itinerary[].content) — BẮT BUỘC ═══
 QUAN TRỌNG: Viết LẠI TOÀN BỘ content cho MỌI ngày trong itinerary (ngày 1 → ngày cuối).
@@ -69,8 +78,8 @@ D) Ảnh tạm CUỐI MỖI NGÀY (bắt buộc 1 figure):
 - alt: mô tả cụ thể, không generic “ảnh đẹp”; có tên điểm đến.
 - figcaption: khác alt, mang tính chú thích biên tập.
 
-Thẻ HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img, a.
-CẤM: script, style, iframe, class/id lạ, markdown.
+Thẻ HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img.
+CẤM: a (ngoại trừ yêu cầu biên tập), script, style, iframe, class/id lạ, markdown, citation.
 
 meals_included chỉ một trong: "", "Sáng", "Trưa", "Tối", "Sáng; Trưa", "Sáng; Tối", "Trưa; Tối", "Sáng; Trưa; Tối".
 overnight_at: địa điểm nghỉ đêm (ngày về có thể "").
@@ -83,7 +92,7 @@ Số ngày = duration_days nếu có.
 - faqs: 5–8 câu thực dụng (thời điểm đẹp, trẻ em, mang gì, hủy đổi, có gì đặc biệt ngày X…).
 
 ═══ SERVICE (nếu entity service) ═══
-Ưu tiên content HTML dài tương tự (strong điểm đến + khung giờ nếu có quy trình), cuối bài 1 figure ảnh tạm; highlights/inclusions/exclusions đầy đủ.
+Ưu tiên content HTML dài tương tự (strong điểm đến + khung giờ nếu có quy trình), cuối bài 1 figure ảnh tạm; highlights/inclusions/exclusions đầy đủ. Không citation.
 
 ═══ OUTPUT ═══
 {
@@ -94,7 +103,8 @@ PROMPT,
 Locale: {{locale}}
 Entity: {{entity_type}}
 
-Hãy dùng web search (nếu có) để làm giàu kiến thức điểm đến / trải nghiệm liên quan context, rồi viết JSON fields.
+Dùng web search (nếu có) chỉ để hiểu điểm đến — KHÔNG chèn dẫn nguồn / markdown link / URL citation vào JSON.
+Viết JSON fields thuần nội dung thương hiệu.
 
 Schema bắt buộc:
 {{schema_hint}}
@@ -105,6 +115,6 @@ Hướng dẫn thêm từ biên tập:
 Context sản phẩm (JSON):
 {{fields_json}}
 
-Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào. Trả về { "fields": { … } } thôi.
+Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào. Không citation. Trả về { "fields": { … } } thôi.
 PROMPT,
 ];
