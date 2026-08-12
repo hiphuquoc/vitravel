@@ -28,6 +28,36 @@
     $itineraryDays = array_values(array_column($item['itinerary'] ?? [], 'day'));
     $contact = view_data()->companyContact();
     $waPhone = preg_replace('/\D/', '', $contact['whatsapp'] ?? '');
+
+    $metaItems = [
+        ['icon' => 'tag', 'label' => 'Mã '.($isCruise ? 'du thuyền' : 'tour'), 'value' => $item['tourCode'] ?? null],
+        ['icon' => 'calendar', 'label' => 'Thời lượng', 'value' => $item['duration'] ?? null],
+        ['icon' => 'map-pin', 'label' => 'Khởi hành', 'value' => $item['start'] ?? null],
+        ['icon' => 'flag', 'label' => 'Kết thúc', 'value' => $item['end'] ?? null],
+    ];
+    if ($isCruise) {
+        $metaItems[] = ['icon' => 'cruise', 'label' => 'Cảng đi', 'value' => $item['departurePort'] ?? null];
+        $metaItems[] = ['icon' => 'sparkles', 'label' => 'Hạng tàu', 'value' => $item['boatClass'] ?? null];
+    }
+    $places = $item['places'] ?? [];
+    if ($places !== []) {
+        $metaItems[] = [
+            'icon' => 'map-pin',
+            'label' => 'Điểm tham quan',
+            'value' => implode(' · ', $places),
+            'wide' => true,
+        ];
+    }
+    $metaItems = array_values(array_filter($metaItems, fn ($row) => filled($row['value'] ?? null)));
+
+    $sidebarMeta = array_values(array_filter([
+        ['icon' => 'calendar', 'label' => 'Thời lượng', 'value' => $item['duration'] ?? null],
+        ['icon' => 'tag', 'label' => 'Mã', 'value' => $item['tourCode'] ?? null],
+    ], fn ($row) => filled($row['value'] ?? null)));
+
+    $sidebarPrice = (! empty($item['priceFrom']) && (float) $item['priceFrom'] > 0)
+        ? ($item['priceFormatted'] ?? null)
+        : null;
 @endphp
 
 <x-shared.detail-gallery
@@ -41,8 +71,7 @@
     :review-count="$item['reviewCount'] ?? 0"
 />
 
-<div x-data="scrollSpy(@js($sectionIds))">
-    {{-- Tabs: scroll ngang, không sticky --}}
+<div class="detail-body" x-data="scrollSpy(@js($sectionIds))">
     <nav class="detail-tabs" aria-label="Điều hướng trong trang">
         <div class="container-site detail-tabs__inner">
             @foreach ($tabs as $id => $label)
@@ -60,40 +89,19 @@
 
             <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                 <h2 class="detail-section__title">Tổng quan</h2>
-                <div class="card detail-meta-card">
-                    <dl class="detail-meta-card__grid">
-                        <div class="detail-meta-card__item">
-                            <dt><x-icon name="tag" class="size-4 text-primary-600" /> Mã {{ $isCruise ? 'du thuyền' : 'tour' }}</dt>
-                            <dd>{{ $item['tourCode'] }}</dd>
-                        </div>
-                        <div class="detail-meta-card__item">
-                            <dt><x-icon name="calendar" class="size-4 text-primary-600" /> Thời lượng</dt>
-                            <dd>{{ $item['duration'] }}</dd>
-                        </div>
-                        <div class="detail-meta-card__item">
-                            <dt><x-icon name="map-pin" class="size-4 text-primary-600" /> Khởi hành</dt>
-                            <dd>{{ $item['start'] }}</dd>
-                        </div>
-                        <div class="detail-meta-card__item">
-                            <dt><x-icon name="flag" class="size-4 text-primary-600" /> Kết thúc</dt>
-                            <dd>{{ $item['end'] }}</dd>
-                        </div>
-                        @if ($isCruise)
-                            <div class="detail-meta-card__item">
-                                <dt><x-icon name="cruise" class="size-4 text-primary-600" /> Cảng đi</dt>
-                                <dd>{{ $item['departurePort'] }}</dd>
+                @if ($metaItems !== [])
+                    <dl class="detail-facts">
+                        @foreach ($metaItems as $fact)
+                            <div @class(['detail-facts__item', 'detail-facts__item--wide' => ! empty($fact['wide'])])>
+                                <dt>
+                                    <x-icon :name="$fact['icon']" class="size-4" />
+                                    {{ $fact['label'] }}
+                                </dt>
+                                <dd>{{ $fact['value'] }}</dd>
                             </div>
-                            <div class="detail-meta-card__item">
-                                <dt><x-icon name="sparkles" class="size-4 text-primary-600" /> Hạng tàu</dt>
-                                <dd>{{ $item['boatClass'] }}</dd>
-                            </div>
-                        @endif
-                        <div class="detail-meta-card__item detail-meta-card__item--wide">
-                            <dt><x-icon name="map-pin" class="size-4 text-primary-600" /> Điểm tham quan</dt>
-                            <dd>{{ implode(' – ', $item['places'] ?? []) }}</dd>
-                        </div>
+                        @endforeach
                     </dl>
-                </div>
+                @endif
             </section>
 
             <section id="diem-nhan" class="detail-section" aria-label="Điểm nhấn hành trình">
@@ -101,11 +109,11 @@
                 @if (! empty($item['highlightsIntro']))
                     <p class="detail-section__lead prose-travel">{{ $item['highlightsIntro'] }}</p>
                 @endif
-                <ul class="detail-highlights-list">
+                <ul class="detail-checklist">
                     @foreach ($item['highlights'] ?? [] as $h)
                         <li>
-                            <span class="detail-highlights-list__icon" aria-hidden="true">
-                                <x-icon name="check" class="size-3" />
+                            <span class="detail-checklist__mark" aria-hidden="true">
+                                <x-icon name="check" class="size-3.5" />
                             </span>
                             <span>{{ $h }}</span>
                         </li>
@@ -116,15 +124,15 @@
             @if ($isCruise && ! empty($item['cabinTypes']))
                 <section id="hang-cabin" class="detail-section" aria-label="Hạng cabin">
                     <h2 class="detail-section__title">Hạng cabin</h2>
-                    <div class="detail-cabin-grid">
+                    <div class="detail-option-grid">
                         @foreach ($item['cabinTypes'] as $cabin)
-                            <article class="card cabin-card">
-                                <div class="cabin-card__media">
+                            <article class="detail-option">
+                                <div class="detail-option__media">
                                     <x-ph class="absolute inset-0" :label="'Cabin ' . $cabin['name']" icon-class="size-8" />
                                 </div>
-                                <div class="cabin-card__body">
-                                    <h3 class="cabin-card__name">{{ $cabin['name'] }}</h3>
-                                    <p class="cabin-card__meta">
+                                <div class="detail-option__body">
+                                    <h3 class="detail-option__name">{{ $cabin['name'] }}</h3>
+                                    <p class="detail-option__meta">
                                         <x-icon name="users" class="size-3.5" />
                                         Tối đa {{ $cabin['capacity'] }} khách
                                         @if (! empty($cabin['note'])) · {{ $cabin['note'] }}@endif
@@ -155,19 +163,19 @@
                     <button type="button" @click="toggleAll"
                         class="btn-ghost shrink-0" x-text="all ? 'Thu gọn tất cả' : 'Mở rộng tất cả'"></button>
                 </div>
-                <ol class="detail-itinerary-list">
+                <ol class="detail-timeline">
                     @foreach ($item['itinerary'] ?? [] as $day)
-                        <li class="card detail-itinerary-item overflow-hidden">
+                        <li class="detail-timeline__item" :class="opened.includes({{ $day['day'] }}) && 'is-open'">
                             <h3>
                                 <button type="button" @click="toggle({{ $day['day'] }})"
-                                    class="detail-itinerary__trigger"
+                                    class="detail-timeline__trigger"
                                     :aria-expanded="opened.includes({{ $day['day'] }})">
-                                    <span class="detail-itinerary__day">
-                                        <span class="detail-itinerary__day-label">Ngày</span>
-                                        <span class="detail-itinerary__day-num">{{ $day['day'] }}</span>
+                                    <span class="detail-timeline__day">
+                                        <span class="detail-timeline__day-label">Ngày</span>
+                                        <span class="detail-timeline__day-num">{{ $day['day'] }}</span>
                                     </span>
-                                    <span class="detail-itinerary__summary min-w-0 flex-1">
-                                        <span class="detail-itinerary__title">{{ $day['title'] }}</span>
+                                    <span class="detail-timeline__summary min-w-0 flex-1">
+                                        <span class="detail-timeline__title">{{ $day['title'] }}</span>
                                         @php
                                             $mealParts = array_values(array_filter(array_map(
                                                 'trim',
@@ -175,33 +183,28 @@
                                             )));
                                         @endphp
                                         @if (count($mealParts))
-                                            <span class="detail-itinerary__meta">
-                                                <span class="detail-itinerary__meals" aria-label="Bữa ăn gồm">
-                                                    <span class="detail-itinerary__meals-label">Bữa ăn</span>
-                                                    <span class="detail-itinerary__meal-chips">
-                                                        @foreach ($mealParts as $meal)
-                                                            <span class="detail-itinerary__meal-chip">{{ $meal }}</span>
-                                                        @endforeach
-                                                    </span>
-                                                </span>
+                                            <span class="detail-timeline__meals" aria-label="Bữa ăn gồm">
+                                                @foreach ($mealParts as $meal)
+                                                    <span class="detail-timeline__chip">{{ $meal }}</span>
+                                                @endforeach
                                             </span>
                                         @endif
                                     </span>
-                                    <x-icon name="chevron-down" class="size-4 shrink-0 transition"
-                                        ::class="opened.includes({{ $day['day'] }}) && 'rotate-180 text-primary-600'" />
+                                    <x-icon name="chevron-down" class="detail-timeline__chevron size-4 shrink-0"
+                                        ::class="opened.includes({{ $day['day'] }}) ? 'is-rotated' : ''" />
                                 </button>
                             </h3>
                             <div x-show="opened.includes({{ $day['day'] }})" x-collapse x-cloak>
-                                <div class="detail-itinerary__body">
+                                <div class="detail-timeline__body">
                                     @php $dayHtml = rich_body_html($day['content'] ?? null); @endphp
                                     @if ($dayHtml !== '')
-                                        <div class="detail-itinerary__content prose-travel prose-travel--itinerary">
+                                        <div class="detail-timeline__content prose-travel prose-travel--itinerary">
                                             {!! $dayHtml !!}
                                         </div>
                                     @endif
                                     @if (! empty($day['overnight']))
-                                        <p class="detail-itinerary__overnight">
-                                            <x-icon name="map-pin" class="size-3.5 text-primary-600" />
+                                        <p class="detail-timeline__overnight">
+                                            <x-icon name="map-pin" class="size-3.5" />
                                             Nghỉ đêm: {{ $day['overnight'] }}
                                         </p>
                                     @endif
@@ -212,117 +215,64 @@
                 </ol>
             </section>
 
-            <section id="bao-gom" class="detail-section" aria-label="Giá bao gồm và không bao gồm">
-                <h2 class="detail-section__title">Giá đã bao gồm những gì?</h2>
-                <div class="detail-inclusion-grid">
-                    <div class="card detail-inclusion-card">
-                        <h3 class="detail-inclusion-card__title detail-inclusion-card__title--in">
-                            <x-icon name="check" class="size-4" /> Bao gồm
-                        </h3>
-                        <ul class="detail-inclusion-card__list">
-                            @foreach ($item['inclusions'] ?? [] as $inc)
-                                <li><x-icon name="check" class="size-3.5 shrink-0 text-leaf-600" /> {{ $inc }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <div class="card detail-inclusion-card">
-                        <h3 class="detail-inclusion-card__title detail-inclusion-card__title--out">
-                            <x-icon name="x-mark" class="size-4" /> Không bao gồm
-                        </h3>
-                        <ul class="detail-inclusion-card__list">
-                            @foreach ($item['exclusions'] ?? [] as $exc)
-                                <li><x-icon name="x-mark" class="size-3.5 shrink-0 text-primary-500" /> {{ $exc }}</li>
-                            @endforeach
-                        </ul>
-                        @if (! empty($item['notes']))
-                            <h3 class="detail-inclusion-card__notes-title">Lưu ý</h3>
-                            <ul class="detail-inclusion-card__notes">
-                                @foreach ($item['notes'] as $note)
-                                    <li>{{ $note }}</li>
-                                @endforeach
-                            </ul>
-                        @endif
-                    </div>
-                </div>
-            </section>
+            <x-shared.detail-inclusions
+                title="Giá đã bao gồm những gì?"
+                :inclusions="$item['inclusions'] ?? []"
+                :exclusions="$item['exclusions'] ?? []"
+                :notes="$item['notes'] ?? []"
+            />
 
             <section id="danh-gia" class="detail-section" aria-label="Đánh giá của khách hàng">
                 <h2 class="detail-section__title">Khách hàng nói gì về hành trình này</h2>
-                <div class="detail-review-list">
+                <div class="detail-quote-list">
                     @foreach ($reviews as $r)
-                        <article class="card detail-review-card">
-                            <header class="detail-review-card__head">
-                                <x-ph class="detail-review-card__avatar" icon="user" icon-class="size-5" :label="null" />
+                        <article class="detail-quote">
+                            <header class="detail-quote__head">
+                                <x-ph class="detail-quote__avatar" icon="user" icon-class="size-5" :label="null" />
                                 <div class="min-w-0">
-                                    <p class="detail-review-card__name">
+                                    <p class="detail-quote__name">
                                         {{ $r['name'] }}
                                         @if (! empty($r['flag']))
-                                            <span class="text-muted">{{ $r['flag'] }}</span>
+                                            <span class="detail-quote__flag">{{ $r['flag'] }}</span>
                                         @endif
                                     </p>
                                     <x-shared.stars :rating="$r['rating'] ?? 5" class="mt-0.5" />
                                 </div>
                                 @if (! empty($r['trip']))
-                                    <span class="detail-review-card__trip">{{ $r['trip'] }}</span>
+                                    <span class="detail-quote__trip">{{ $r['trip'] }}</span>
                                 @endif
                             </header>
-                            <p class="body-text detail-review-card__quote">{{ $r['quote'] }}</p>
+                            <p class="detail-quote__text">{{ $r['quote'] }}</p>
                         </article>
                     @endforeach
                 </div>
             </section>
 
-            <div id="faq" class="detail-section">
+            <div id="faq" class="detail-section detail-section--faq">
                 <x-shared.faq :faqs="$item['faqs'] ?? []" title="Câu hỏi thường gặp về {{ $isCruise ? 'du thuyền' : 'tour' }} này" />
             </div>
         </div>
 
-        {{-- Sidebar booking — sticky theo --site-header-offset (đồng bộ header) --}}
-        <aside class="detail-sidebar" aria-label="Đặt {{ $isCruise ? 'du thuyền' : 'tour' }}">
-            <div class="detail-sidebar__card">
-                <div class="detail-sidebar__head">
-                    <p class="detail-sidebar__kicker">Giá trọn gói theo yêu cầu</p>
-                    <p class="detail-sidebar__price">Nhận báo giá trong 24h</p>
-                    <p class="detail-sidebar__sub">
-                        {{ $item['duration'] }}
-                        @if (! empty($item['tourCode']))
-                            <span aria-hidden="true">·</span> {{ $item['tourCode'] }}
-                        @endif
-                    </p>
-                </div>
-
-                <div class="detail-sidebar__body">
-                    @if (! empty($item['badge']))
-                        <p class="detail-sidebar__badge">
-                            <x-icon name="sparkles" class="size-3.5" /> {{ $item['badge'] }}
-                        </p>
-                    @endif
-
-                    <div class="detail-sidebar__actions">
-                        <a href="{{ route('customize') }}" class="btn-primary w-full">
-                            <x-icon name="sparkles" class="size-4" /> Yêu cầu báo giá
-                        </a>
-                        @if ($waPhone !== '')
-                            <a href="https://wa.me/{{ $waPhone }}" target="_blank" rel="noopener"
-                                class="btn-whatsapp w-full">
-                                <x-icon name="whatsapp" class="size-4.5" /> Chat WhatsApp
-                            </a>
-                        @endif
-                    </div>
-
-                    <ul class="detail-sidebar__usp">
-                        <li><x-icon name="expert" class="size-4 shrink-0 text-leaf-600" /> Chuyên gia bản địa thiết kế riêng</li>
-                        <li><x-icon name="refund" class="size-4 shrink-0 text-leaf-600" /> Cam kết hoàn tiền minh bạch</li>
-                        <li><x-icon name="value" class="size-4 shrink-0 text-leaf-600" /> Giá trị vượt trội, không phí ẩn</li>
-                        <li><x-icon name="support" class="size-4 shrink-0 text-leaf-600" /> Hỗ trợ 24/7 suốt hành trình</li>
-                    </ul>
-
-                    <p class="detail-sidebar__trust">
-                        <x-icon name="shield" class="size-4" /> Được đề xuất trên TripAdvisor
-                    </p>
-                </div>
-            </div>
-        </aside>
+        <x-shared.detail-booking-sidebar
+            :aria-label="'Đặt '.($isCruise ? 'du thuyền' : 'tour')"
+            :price="$sidebarPrice"
+            price-label="Giá từ"
+            price-hint="Giá tham khảo / khách — báo giá chính xác trong 24h"
+            fallback-price="Nhận báo giá trong 24h"
+            :meta-items="$sidebarMeta"
+            :badge="$item['badge'] ?? null"
+            :primary-href="route('customize')"
+            primary-label="Yêu cầu báo giá"
+            primary-icon="sparkles"
+            :whatsapp="$waPhone !== '' ? $waPhone : null"
+            :usps="[
+                ['icon' => 'expert', 'label' => 'Chuyên gia bản địa thiết kế riêng'],
+                ['icon' => 'refund', 'label' => 'Cam kết hoàn tiền minh bạch'],
+                ['icon' => 'value', 'label' => 'Giá trị vượt trội, không phí ẩn'],
+                ['icon' => 'support', 'label' => 'Hỗ trợ 24/7 suốt hành trình'],
+            ]"
+            trust="Được đề xuất trên TripAdvisor"
+        />
     </div>
 </div>
 
