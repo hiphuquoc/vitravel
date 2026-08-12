@@ -53,6 +53,9 @@ class SeoHierarchySeeder extends Seeder
 
     /**
      * Legacy hub rows created before BelongsToProject / ProjectContext stay project_id null.
+     *
+     * Chỉ nhận orphan thuộc project đang seed. Không stamp bản dịch SEO
+     * của entry project khác (tránh unique slug + lẫn data phuquy/culaocham).
      */
     protected function backfillNullProjectIds(): void
     {
@@ -76,6 +79,11 @@ class SeoHierarchySeeder extends Seeder
         if (Schema::hasColumn('seo_entry_translations', 'project_id')) {
             $transUpdated = SeoEntryTranslation::query()
                 ->whereNull('project_id')
+                ->whereIn('seo_entry_id', function ($query) use ($projectId) {
+                    $query->select('id')
+                        ->from('seo_entries')
+                        ->where('project_id', $projectId);
+                })
                 ->update(['project_id' => $projectId]);
         }
 
