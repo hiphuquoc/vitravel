@@ -25,7 +25,7 @@ return [
     'name' => 'Xây dựng chương trình chi tiết (tour / dịch vụ)',
     'category' => 'enrich',
     'description' => 'Viết chương trình giàu trải nghiệm theo thương hiệu dự án hiện tại; trọng tâm HTML lịch trình + figure ảnh tạm; web search.',
-    'version' => 6,
+    'version' => 7,
     'variables' => ['brand', 'project_code', 'locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
@@ -96,11 +96,17 @@ meals_included chỉ một trong: "", "Sáng", "Trưa", "Tối", "Sáng; Trưa",
 overnight_at: địa điểm nghỉ đêm (ngày về có thể "").
 Số ngày = duration_days nếu có.
 
+═══ FAQ (faqs) — BẮT BUỘC, không bỏ qua ═══
+- Luôn trả faqs: 5–8 object { "question": "…", "answer": "…" } — key CHÍNH XÁC là question và answer (CẤM q/a/cau_hoi).
+- Mỗi answer: 2–4 câu thực dụng (trẻ em, thời tiết, mang gì, hủy/đổi, giá gồm gì, điểm đặc biệt theo tour…).
+- Nếu context có faq_rewrite: true hoặc answer rỗng → viết MỚI toàn bộ FAQ; không copy answer cũ.
+- Có thể giữ/gợi ý từ question cũ nhưng answer phải viết lại đầy đủ.
+- FAQ là field bắt buộc song song itinerary — không được bỏ trống faqs: [].
+
 ═══ SEO / UNIQUE ═══
 - Mỗi ngày một góc kể chuyện khác (không lặp cấu trúc câu/mở bài).
 - seo_title ≤ ~60 ký tự ý; seo_description ≤ ~155–160, có điểm đến + USP; seo_slug Latin, `-`.
 - highlight_bullets / places_to_visit: cụ thể, mỗi dòng một ý; ưu tiên tên địa danh thật.
-- faqs: 5–8 câu thực dụng (thời điểm đẹp, trẻ em, mang gì, hủy đổi, có gì đặc biệt ngày X…). Nếu nhắc đơn vị hỗ trợ → «{{brand}}».
 
 ═══ SERVICE (nếu entity service) ═══
 Ưu tiên content HTML dài tương tự (strong điểm đến + khung giờ nếu có quy trình), cuối bài 1 figure ảnh tạm; highlights/inclusions/exclusions đầy đủ. Không citation. Thương hiệu «{{brand}}».
@@ -128,6 +134,7 @@ Hướng dẫn thêm từ biên tập:
 Context sản phẩm (JSON):
 {{fields_json}}
 
-Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào. Không citation. Chỉ dùng thương hiệu «{{brand}}». Trả về { "fields": { … } } thôi.
+Ưu tiên tuyệt đối: viết mới itinerary[].content cho MỌI ngày (HTML giàu trải nghiệm + strong giờ/điểm đến + figure ảnh tạm cuối mỗi ngày). Không bỏ sót ngày nào.
+Đồng thời BẮT BUỘC trả faqs: 5–8 cặp question/answer (viết mới answer nếu faq_rewrite: true). Không citation. Chỉ dùng thương hiệu «{{brand}}». Trả về { "fields": { … } } thôi.
 PROMPT,
 ];

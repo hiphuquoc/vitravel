@@ -77,7 +77,18 @@ final class DetailProgramEnrichService
             }
 
             $filtered = $this->mergePreferringAiLists($fields, $enriched);
+            $filtered = $this->normalizeStructuredLists($filtered, $fields);
             $filtered = $this->stripWebSearchCitations($filtered);
+
+            if (
+                in_array($entityType, ['tour_package', 'cruise_package'], true)
+                && ! empty($fields['faq_rewrite'])
+                && empty($filtered['faqs'])
+            ) {
+                throw new RuntimeException(
+                    'AI không trả FAQ (faqs). Thử chạy lại hoặc tăng AI_ENRICH_MAX_TOKENS nếu tour nhiều ngày.',
+                );
+            }
 
             $this->usage->logSuccess(
                 self::PROMPT_KEY,
@@ -205,9 +216,10 @@ Schema fields (tour_package / cruise_package) — giữ đúng key:
     }
   ],
   "faqs": [
-    { "question": "string", "answer": "string" }
+    { "question": "string (bắt buộc)", "answer": "string (bắt buộc, 2–4 câu)" }
   ]
 }
+Bắt buộc trả faqs: 5–8 phần tử, key đúng question/answer (KHÔNG dùng q/a).
 Số ngày itinerary phải khớp duration_days trong context nếu có.
 Mỗi ngày content ~180–420 từ, unique SEO, không lặp mở bài giữa các ngày.
 HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img.
@@ -243,6 +255,15 @@ TXT;
                 if ($aiVal === []) {
                     continue;
                 }
+                if ($key === 'faqs') {
+                    $normalized = $this->normalizeFaqsList($aiVal);
+                    if ($normalized === []) {
+                        continue;
+                    }
+                    $srcList = is_array($srcVal) && array_is_list($srcVal) ? $srcVal : [];
+                    $out[$key] = $this->attachFaqIds($normalized, $srcList);
+                    continue;
+                }
                 if (is_array($srcVal) && array_is_list($srcVal) && $srcVal !== []) {
                     $out[$key] = $this->mergeListRows($srcVal, $aiVal);
                 } else {
@@ -259,7 +280,14 @@ TXT;
             // Chỉ nhận key đã có trong input (tránh field lạ) — trừ list đã xử lý.
             if (! array_key_exists($key, $source)) {
                 // Cho phép AI thêm itinerary/faqs khi input thiếu.
-                if (in_array($key, ['itinerary', 'faqs'], true) && is_array($aiVal)) {
+                if ($key === 'faqs' && is_array($aiVal)) {
+                    $normalized = $this->normalizeFaqsList($aiVal);
+                    if ($normalized !== []) {
+                        $out[$key] = $normalized;
+                    }
+                    continue;
+                }
+                if ($key === 'itinerary' && is_array($aiVal)) {
                     $out[$key] = $aiVal;
                 }
                 continue;
@@ -311,5 +339,91 @@ TXT;
         }
 
         return $out;
+    }
+
+    /**
+     * Chuẩn hoá FAQ + itinerary sau merge (key AI lệch, list rỗng ẩn).
+     *
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $source
+     * @return array<string, mixed>
+     */
+    private function normalizeStructuredLists(array $data, array $source): array
+    {
+        if (isset($data['faqs']) && is_array($data['faqs'])) {
+            $normalized = $this->normalizeFaqsList($data['faqs']);
+            if ($normalized !== []) {
+                $srcList = is_array($source['faqs'] ?? null) && array_is_list($source['faqs'])
+                    ? $source['faqs']
+                    : [];
+                $data['faqs'] = $this->attachFaqIds($normalized, $srcList);
+            } else {
+                unset($data['faqs']);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param  list<mixed>  $faqs
+     * @return list<array{question: string, answer: string, id?: mixed}>
+     */
+    private function normalizeFaqsList(array $faqs): array
+    {
+        $out = [];
+        foreach ($faqs as $cell) {
+            if (! is_array($cell)) {
+                continue;
+            }
+            $row = $this->normalizeFaqRow($cell);
+            if ($row['question'] === '' && $row['answer'] === '') {
+                continue;
+            }
+            $out[] = $row;
+        }
+
+        return $out;
+    }
+
+    /**
+     * @param  array<string, mixed>  $cell
+     * @return array{question: string, answer: string, id?: mixed}
+     */
+    private function normalizeFaqRow(array $cell): array
+    {
+        $question = $cell['question'] ?? $cell['q'] ?? $cell['Question'] ?? $cell['cau_hoi'] ?? '';
+        $answer = $cell['answer'] ?? $cell['a'] ?? $cell['Answer'] ?? $cell['cau_tra_loi'] ?? $cell['tra_loi'] ?? '';
+
+        $row = [
+            'question' => is_string($question) ? trim($question) : '',
+            'answer' => is_string($answer) ? trim($answer) : '',
+        ];
+
+        if (array_key_exists('id', $cell) && $cell['id'] !== null && $cell['id'] !== '') {
+            $row['id'] = $cell['id'];
+        }
+
+        return $row;
+    }
+
+    /**
+     * @param  list<array{question: string, answer: string, id?: mixed}>  $faqs
+     * @param  list<mixed>  $source
+     * @return list<array{question: string, answer: string, id?: mixed}>
+     */
+    private function attachFaqIds(array $faqs, array $source): array
+    {
+        return array_map(function (array $row, int $i) use ($source): array {
+            if (array_key_exists('id', $row)) {
+                return $row;
+            }
+            $src = $source[$i] ?? null;
+            if (is_array($src) && array_key_exists('id', $src) && $src['id'] !== null && $src['id'] !== '') {
+                $row['id'] = $src['id'];
+            }
+
+            return $row;
+        }, $faqs, array_keys($faqs));
     }
 }
