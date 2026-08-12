@@ -83,5 +83,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title($category['name'] ?? 'Dịch vụ'))) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, ($category['name'] ?? 'Dịch vụ') . ' — ViTravel')) !!}
 @endsection

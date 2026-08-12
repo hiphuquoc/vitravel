@@ -1599,4 +1599,34 @@ return array_merge(
             'hub_subtitle' => ['vi' => 'Vòng đảo, câu mực đêm và lặn rạn — chọn trải nghiệm trên mặt nước phù hợp.', 'en' => 'Island loops, night squid fishing and reef dives — pick a water experience that fits.'],
         ],
     ]],
+    ['listing_hubs' => [
+        'tours_hub' => [
+            'vi' => ['seo_body' => 'Trang tour của :brand tập hợp hành trình khám phá đảo Phú Quý — vòng đảo, làng chài và combo cửa ngõ. Mỗi lịch trình do chuyên gia bản địa thiết kế.'],
+            'en' => ['seo_body' => ':brand tours explore Phu Quy Island — loops, fishing villages and gateway combos, designed by local experts.'],
+        ],
+        'cruises_hub' => [
+            'vi' => ['seo_body' => 'Thuyền & trải nghiệm biển Phú Quý từ :brand: vòng đảo, câu mực đêm và lặn rạn — chọn lịch phù hợp.'],
+            'en' => ['seo_body' => 'Phu Quy boat & sea experiences from :brand: island loops, night squid fishing and reef dives.'],
+        ],
+        'ferries_hub' => [
+            'vi' => ['seo_body' => 'Vé tàu cao tốc và xe cửa ngõ ra Phú Quý qua :brand — lịch chạy rõ, đổi ngày linh hoạt, e-ticket.'],
+            'en' => ['seo_body' => 'High-speed ferry and gateway transfers to Phu Quy via :brand — clear schedules, flexible changes, e-tickets.'],
+        ],
+        'flights_hub' => [
+            'vi' => ['seo_body' => 'Vé máy bay & đưa đón kết nối đảo Phú Quý qua :brand — báo giá nhanh theo lịch tour.'],
+            'en' => ['seo_body' => 'Flights and transfers connecting to Phu Quy via :brand — fast quotes for your tour dates.'],
+        ],
+        'stays_hub' => [
+            'vi' => ['seo_body' => 'Homestay, resort và bungalow Phú Quý do :brand tuyển chọn theo khu vực trên đảo.'],
+            'en' => ['seo_body' => 'Phu Quy homestays, resorts and bungalows curated by :brand by island area.'],
+        ],
+        'experiences_hub' => [
+            'vi' => ['seo_body' => 'Vé vui chơi & trải nghiệm Phú Quý — đặt qua :brand, hỗ trợ trước và trong chuyến đi.'],
+            'en' => ['seo_body' => 'Phu Quy tickets & experiences — book via :brand with support before and during your trip.'],
+        ],
+        'extras_hub' => [
+            'vi' => ['seo_body' => 'Dịch vụ hỗ trợ trên đảo Phú Quý: thuê xe, HDV và hỗ trợ khẩn cấp cùng :brand.'],
+            'en' => ['seo_body' => 'On-island support on Phu Quy: vehicle hire, guides and trip assistance with :brand.'],
+        ],
+    ]],
 );

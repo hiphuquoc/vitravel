@@ -6251,4 +6251,34 @@ return array_merge(
             'hub_subtitle' => ['vi' => 'Chọn lịch trình du thuyền phù hợp với bạn.', 'en' => 'Choose a cruise itinerary that fits you.'],
         ],
     ]],
+    ['listing_hubs' => [
+        'tours_hub' => [
+            'vi' => ['seo_body' => 'Trang tour trọn gói của :brand tập hợp hành trình Đông Nam Á — Việt Nam, Campuchia, Lào, Thái Lan và Bali. Mỗi lịch trình do chuyên gia bản địa thiết kế và có thể tuỳ chỉnh 100%.'],
+            'en' => ['seo_body' => ':brand package tours across Southeast Asia — Vietnam, Cambodia, Laos, Thailand and Bali. Every itinerary is designed by local experts and fully customisable.'],
+        ],
+        'cruises_hub' => [
+            'vi' => ['seo_body' => 'Trang du thuyền của :brand tuyển chọn hành trình ngủ đêm trên vịnh — Hạ Long, Lan Hạ và Mekong.'],
+            'en' => ['seo_body' => ':brand cruises feature overnight bay journeys — Halong, Lan Ha and the Mekong.'],
+        ],
+        'trains_hub' => [
+            'vi' => ['seo_body' => 'Đặt vé tàu cao tốc Việt Nam qua :brand — ghế mềm, giường nằm, hỗ trợ đổi ngày và giao vé.'],
+            'en' => ['seo_body' => 'Book Vietnam train tickets via :brand — soft seats, sleeper berths, date changes and ticket delivery.'],
+        ],
+        'flights_hub' => [
+            'vi' => ['seo_body' => 'Vé máy bay nội địa & châu Á qua chuyên gia :brand — báo giá nhanh trong 24 giờ.'],
+            'en' => ['seo_body' => 'Domestic and Asia flights via :brand experts — quotes within 24 hours.'],
+        ],
+        'stays_hub' => [
+            'vi' => ['seo_body' => 'Khách sạn & resort cao cấp do :brand tuyển chọn — Phú Quốc, Đà Nẵng, Nha Trang, Hạ Long…'],
+            'en' => ['seo_body' => 'Hotels & resorts curated by :brand — Phu Quoc, Da Nang, Nha Trang, Halong and more.'],
+        ],
+        'experiences_hub' => [
+            'vi' => ['seo_body' => 'Vé vui chơi & trải nghiệm Việt Nam qua :brand — Vinpearl, Fansipan, Bà Nà và thể thao biển.'],
+            'en' => ['seo_body' => 'Vietnam tickets & experiences via :brand — Vinpearl, Fansipan, Ba Na and sea sports.'],
+        ],
+        'extras_hub' => [
+            'vi' => ['seo_body' => 'Dịch vụ hỗ trợ du lịch của :brand: thuê xe, spa, HDV riêng và hotline khẩn cấp 24/7.'],
+            'en' => ['seo_body' => ':brand travel support: vehicle hire, spa, private guides and 24/7 emergency hotline.'],
+        ],
+    ]],
 );

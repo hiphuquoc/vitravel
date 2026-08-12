@@ -59,12 +59,11 @@
                 <x-tour.listing-skeleton :count="4" variant="wide" />
             </div>
 
-            <div class="prose-travel listing-seo">
-                <p>
-                    Ngủ đêm trên <strong>{{ strtolower($type['name']) }}</strong> là trải nghiệm không thể thay thế.
-                    {{ $brand }} làm việc trực tiếp với từng nhà thuyền — không qua trung gian.
-                </p>
-            </div>
+            @if (! empty($type['intro'] ?? null))
+                <div class="prose-travel listing-seo">
+                    {!! nl2br(e($type['intro'])) !!}
+                </div>
+            @endif
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về {{ strtolower($type['name']) }}" />
         </div>

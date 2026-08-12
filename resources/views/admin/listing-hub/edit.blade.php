@@ -43,11 +43,19 @@
                                 'value' => old('title', $translation?->title),
                             ])
                             @include('admin.components.formField', [
-                                'label' => 'Mô tả ngắn (subtitle)',
+                                'label' => 'Mô tả ngắn (subtitle header)',
                                 'name' => 'body',
                                 'type' => 'textarea',
                                 'rows' => 3,
                                 'value' => old('body', $translation?->body),
+                            ])
+                            @include('admin.components.formField', [
+                                'label' => 'Đoạn SEO cuối listing',
+                                'name' => 'seo_body',
+                                'type' => 'textarea',
+                                'rows' => 5,
+                                'helpText' => 'Hiển thị dưới lưới tour/dịch vụ. Để trống = ẩn khối này.',
+                                'value' => old('seo_body', $translation?->seo_body),
                             ])
                         </div>
                     </div>

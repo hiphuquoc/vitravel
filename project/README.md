@@ -139,6 +139,7 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 - `home_slides`, `hero_pills`, `home_sections`, `footer_*`, `listing_faqs`
 - **`customize_form`** — form Tour riêng: `destinations_label`, `accommodation_label`, `budget_note`, `accommodation[]` (i18n `vi`/`en`); điểm đến mặc định từ countries/zones `show_in_customize_form` (có thể ghi đè bằng `destinations[]`)
 - **`nav`** — nhãn header + hub cruise (seed-only, không admin): `about_group`, `tours.{label}`, `cruise.{label,all_label,all_meta,search_hint,search_placeholder,hub_title,hub_subtitle}` — đổi «Du thuyền» / «Tour trọn gói» tuỳ dự án
+- **`listing_hubs`** — đoạn SEO cuối trang hub (`tours_hub`, `cruises_hub`, `ferries_hub`/`trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`): `{ hubKey: { vi|en: { seo_body } } }`. Runtime: cột `static_page_translations.seo_body` (admin **Cài đặt → Hub**). Rỗng = ẩn khối. Nếu DB trống mà seed có `seo_body`, lần mở hub sẽ soft-fill (không cần `project:seed` lại). Hỗ trợ `:brand`.
 
 ### Map seeder
 

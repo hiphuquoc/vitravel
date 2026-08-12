@@ -1729,4 +1729,62 @@ return array_merge(
             'label' => array('vi' => 'Tour', 'en' => 'Tours'),
         ),
     )),
+    array('listing_hubs' => array(
+        'tours_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Trang tour của :brand tập hợp các hành trình khám phá đảo Phú Quốc — từ Dương Đông, Bãi Sao, Hòn Thơm tới Grand World. Mỗi lịch trình do chuyên gia bản địa thiết kế và có thể tuỳ chỉnh theo nhu cầu của bạn.',
+            ),
+            'en' => array(
+                'seo_body' => ':brand tours cover Phu Quoc Island — from Duong Dong and Bai Sao to Hon Thom and Grand World. Every itinerary is designed by local experts and can be tailored to your trip.',
+            ),
+        ),
+        'cruises_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Trang thuyền & trải nghiệm biển của :brand gồm tour 4 đảo, câu mực đêm, hoàng hôn và lặn nam đảo — chọn trải nghiệm trên mặt nước phù hợp lịch trình của bạn.',
+            ),
+            'en' => array(
+                'seo_body' => ':brand boat & sea experiences include 4-island trips, night squid fishing, sunsets and south-island snorkels — pick what fits your schedule.',
+            ),
+        ),
+        'ferries_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Đặt vé tàu cao tốc, phà và xe nối cửa ngõ ra Phú Quốc qua :brand — lịch chạy rõ ràng, đổi ngày linh hoạt và hỗ trợ e-ticket.',
+            ),
+            'en' => array(
+                'seo_body' => 'Book high-speed boats, car ferries and gateway transfers to Phu Quoc via :brand — clear schedules, flexible date changes and e-ticket support.',
+            ),
+        ),
+        'flights_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Vé máy bay PQC và đưa đón sân bay Phú Quốc qua :brand — báo giá nhanh, chọn giờ bay phù hợp tour đảo.',
+            ),
+            'en' => array(
+                'seo_body' => 'PQC flights and Phu Quoc airport transfers via :brand — fast quotes and flight times that fit your island itinerary.',
+            ),
+        ),
+        'stays_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Khách sạn, resort và homestay Phú Quốc được :brand tuyển chọn theo khu vực — Bãi Trường, Bãi Sao, Dương Đông, Ông Lang…',
+            ),
+            'en' => array(
+                'seo_body' => 'Hotels, resorts and homestays on Phu Quoc curated by :brand by area — Long Beach, Bai Sao, Duong Dong, Ong Lang and more.',
+            ),
+        ),
+        'experiences_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Vé vui chơi & trải nghiệm Phú Quốc — VinWonders, cáp treo Hòn Thơm, safari và hoạt động biển — đặt qua :brand.',
+            ),
+            'en' => array(
+                'seo_body' => 'Phu Quoc tickets & experiences — VinWonders, Hon Thom cable car, safari and sea activities — book via :brand.',
+            ),
+        ),
+        'extras_hub' => array(
+            'vi' => array(
+                'seo_body' => 'Dịch vụ hỗ trợ trên đảo Phú Quốc: thuê xe, HDV riêng, spa và hỗ trợ trong chuyến đi — đồng hành cùng :brand.',
+            ),
+            'en' => array(
+                'seo_body' => 'On-island support on Phu Quoc: vehicle hire, private guides, spa and trip assistance — with :brand.',
+            ),
+        ),
+    )),
 );

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StaticPageTranslation extends Model
 {
-    protected $fillable = ['static_page_id', 'language_id', 'title', 'body'];
+    protected $fillable = ['static_page_id', 'language_id', 'title', 'body', 'seo_body'];
 
     public function staticPage(): BelongsTo
     {

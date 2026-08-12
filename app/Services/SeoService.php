@@ -1024,6 +1024,7 @@ class SeoService
                 'language_id' => $languageId,
                 'title' => $cfg['default_title'],
                 'body' => $cfg['default_subtitle'] ?? null,
+                'seo_body' => \App\Support\ListingHubCopy::seoBody($hubKey, $locale) ?: null,
             ]);
         }
 

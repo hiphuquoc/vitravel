@@ -12,7 +12,7 @@
             @if (! empty($chrome['eyebrow']))
                 <p class="section-eyebrow">{{ $chrome['eyebrow'] }}</p>
             @endif
-            <h1 class="contact-intro__title">{{ $chrome['section_title'] ?? site_brand() }}</h1>
+            <h1 class="contact-intro__title">{{ $chrome['section_title'] ?? 'ViTravel' }}</h1>
             <p class="body-text site-mt">
                 {{ $chrome['section_subtitle'] ?? $chrome['page_subtitle'] ?? '' }}
             </p>

@@ -64,13 +64,11 @@
                 <p class="listing-rating-summary__meta">Đánh giá từ khách hàng đã đi tour {{ $country['name'] }}</p>
             </div>
 
-            <div class="prose-travel listing-seo">
-                <p>
-                    Một <strong>tour {{ $country['name'] }} trọn gói</strong> là cách trọn vẹn nhất để khám phá
-                    {{ $country['tagline'] }} mà không phải bận tâm khâu tổ chức. Mỗi lịch trình của {{ $brand }} đều do
-                    <strong>chuyên gia bản địa</strong> thiết kế và có thể tuỳ chỉnh 100%.
-                </p>
-            </div>
+            @if (! empty($country['longForm'] ?? null))
+                <div class="prose-travel listing-seo">
+                    {!! nl2br(e($country['longForm'])) !!}
+                </div>
+            @endif
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về tour {{ $country['name'] }}" />
         </div>

@@ -1751,4 +1751,34 @@ return array_merge(
             'hub_subtitle' => ['vi' => 'Du thuyền Lan Hạ, tour ngày vịnh và thuyền Việt Hải — chọn lịch trình phù hợp.', 'en' => 'Lan Ha cruises, bay day trips and Viet Hai boats — choose a fitting itinerary.'],
         ],
     ]],
+    ['listing_hubs' => [
+        'tours_hub' => [
+            'vi' => ['seo_body' => 'Trang tour của :brand tập hợp hành trình trekking, vịnh và combo cửa ngõ Cát Bà — thiết kế bởi chuyên gia bản địa, tuỳ chỉnh theo lịch trình của bạn.'],
+            'en' => ['seo_body' => ':brand tours cover Cat Ba trekking, bay days and gateway combos — designed by local experts and tailored to your schedule.'],
+        ],
+        'cruises_hub' => [
+            'vi' => ['seo_body' => 'Du thuyền Lan Hạ, tour ngày vịnh và thuyền Việt Hải từ :brand — chọn lịch trình ngủ đêm hoặc trong ngày phù hợp.'],
+            'en' => ['seo_body' => 'Lan Ha cruises, bay day trips and Viet Hai boats from :brand — overnight or day trips that fit your plan.'],
+        ],
+        'ferries_hub' => [
+            'vi' => ['seo_body' => 'Vé tàu cao tốc, phà và limousine Hà Nội / Hải Phòng / Hạ Long — Cát Bà qua :brand: lịch rõ, đổi ngày linh hoạt, e-ticket.'],
+            'en' => ['seo_body' => 'High-speed boats, car ferries and limousines Hanoi / Hai Phong / Ha Long — Cat Ba via :brand: clear schedules, flexible changes, e-tickets.'],
+        ],
+        'flights_hub' => [
+            'vi' => ['seo_body' => 'Vé máy bay và đưa đón sân bay kết nối Cát Bà qua :brand — báo giá nhanh, khớp lịch tour đảo.'],
+            'en' => ['seo_body' => 'Flights and airport transfers connecting to Cat Ba via :brand — fast quotes aligned with your island itinerary.'],
+        ],
+        'stays_hub' => [
+            'vi' => ['seo_body' => 'Khách sạn, resort và homestay Cát Bà do :brand tuyển chọn — trung tâm đảo, Cát Cò hoặc nghỉ trên thuyền.'],
+            'en' => ['seo_body' => 'Cat Ba hotels, resorts and homestays curated by :brand — island centre, Cat Co or overnight boats.'],
+        ],
+        'experiences_hub' => [
+            'vi' => ['seo_body' => 'Vé vui chơi & trải nghiệm Cát Bà — kayak, vịnh, điểm check-in — đặt qua :brand.'],
+            'en' => ['seo_body' => 'Cat Ba tickets & experiences — kayaking, bay spots and check-ins — book via :brand.'],
+        ],
+        'extras_hub' => [
+            'vi' => ['seo_body' => 'Dịch vụ hỗ trợ trên đảo Cát Bà: thuê xe, HDV riêng và hỗ trợ trong chuyến đi cùng :brand.'],
+            'en' => ['seo_body' => 'On-island support on Cat Ba: vehicle hire, private guides and trip assistance with :brand.'],
+        ],
+    ]],
 );

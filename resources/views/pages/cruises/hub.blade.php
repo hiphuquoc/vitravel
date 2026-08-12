@@ -5,7 +5,6 @@
 
 @section('content')
     @php
-        $brand = site_brand();
         $durationKeys = array_map('strval', array_keys($durations));
         $styleKeys = array_map('strval', array_keys($styles));
         $typeSlugs = array_values(array_filter(array_map(fn ($t) => $t['slug'] ?? null, $types)));
@@ -58,12 +57,11 @@
                 <x-tour.listing-skeleton :count="4" variant="wide" />
             </div>
 
-            <div class="prose-travel listing-seo">
-                <p>
-                    Trang <strong>du thuyền</strong> của {{ $brand }} tập hợp các hành trình ngủ đêm trên vịnh —
-                    Hạ Long, Lan Hạ và Mekong. Mỗi cabin do <strong>chuyên gia bản địa</strong> tuyển chọn.
-                </p>
-            </div>
+            @if (! empty($hub['seoBody']))
+                <div class="prose-travel listing-seo">
+                    {!! nl2br(e($hub['seoBody'])) !!}
+                </div>
+            @endif
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về du thuyền" />
         </div>

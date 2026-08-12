@@ -1809,4 +1809,34 @@ return array_merge(
             'hub_subtitle' => ['vi' => 'Vòng quần đảo, câu mực đêm và cano lặn rạn — chọn trải nghiệm trên mặt nước phù hợp.', 'en' => 'Island loops, night squid fishing and reef dive boats — pick a water experience that fits.'],
         ],
     ]],
+    ['listing_hubs' => [
+        'tours_hub' => [
+            'vi' => ['seo_body' => 'Trang tour của :brand tập hợp hành trình Cù Lao Chàm — vòng quần đảo, làng chài và combo Hội An. Thiết kế bởi chuyên gia bản địa.'],
+            'en' => ['seo_body' => ':brand tours cover Cu Lao Cham — island loops, fishing villages and Hoi An combos, designed by local experts.'],
+        ],
+        'cruises_hub' => [
+            'vi' => ['seo_body' => 'Trải nghiệm biển Cù Lao Chàm từ :brand: vòng đảo, câu mực đêm và cano lặn rạn.'],
+            'en' => ['seo_body' => 'Cu Lao Cham sea experiences from :brand: island loops, night squid fishing and reef dive boats.'],
+        ],
+        'ferries_hub' => [
+            'vi' => ['seo_body' => 'Vé cano cao tốc và xe kết nối Hội An / Đà Nẵng — Cù Lao Chàm qua :brand: lịch rõ, gồm phí khu bảo tồn khi áp dụng.'],
+            'en' => ['seo_body' => 'Speedboats and transfers Hoi An / Da Nang — Cu Lao Cham via :brand: clear schedules, marine reserve fees included when applicable.'],
+        ],
+        'flights_hub' => [
+            'vi' => ['seo_body' => 'Vé máy bay & đưa đón sân bay Đà Nẵng kết nối Cù Lao Chàm qua :brand.'],
+            'en' => ['seo_body' => 'Flights and Da Nang airport transfers connecting to Cu Lao Cham via :brand.'],
+        ],
+        'stays_hub' => [
+            'vi' => ['seo_body' => 'Homestay, bungalow và glamping Cù Lao Chàm do :brand tuyển chọn — Bãi Làng, Bãi Chồng, Bãi Hương…'],
+            'en' => ['seo_body' => 'Cu Lao Cham homestays, bungalows and glamping curated by :brand — Bai Lang, Bai Chong, Bai Huong and more.'],
+        ],
+        'experiences_hub' => [
+            'vi' => ['seo_body' => 'Vé vui chơi & trải nghiệm Cù Lao Chàm — đặt qua :brand, hỗ trợ trước chuyến đi.'],
+            'en' => ['seo_body' => 'Cu Lao Cham tickets & experiences — book via :brand with pre-trip support.'],
+        ],
+        'extras_hub' => [
+            'vi' => ['seo_body' => 'Dịch vụ hỗ trợ trên đảo Cù Lao Chàm: thuê xe, HDV và hỗ trợ trong chuyến đi cùng :brand.'],
+            'en' => ['seo_body' => 'On-island support on Cu Lao Cham: vehicle hire, guides and trip assistance with :brand.'],
+        ],
+    ]],
 );

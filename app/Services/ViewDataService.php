@@ -1859,7 +1859,7 @@ class ViewDataService
     /**
      * Hub cấp 1 từ config('seo.hubs.{hubKey}').
      *
-     * @return array{title: string, subtitle: string, listingBanner: ?string, listingBannerSrcset: ?string, seoTitle: ?string, seoDescription: ?string}
+     * @return array{title: string, subtitle: string, seoBody: string, listingBanner: ?string, listingBannerSrcset: ?string, seoTitle: ?string, seoDescription: ?string}
      */
     public function listingHub(string $hubKey): array
     {
@@ -1868,6 +1868,7 @@ class ViewDataService
             return [
                 'title' => 'Hub',
                 'subtitle' => '',
+                'seoBody' => '',
                 'listingBanner' => null,
                 'listingBannerSrcset' => null,
                 'cover' => null,
@@ -1892,6 +1893,7 @@ class ViewDataService
         }
 
         $this->seoService()->ensureHub($hubKey, $this->locale());
+        $this->syncListingHubSeoBodyFromSeed($hubKey, $this->locale());
 
         $page = \App\Models\StaticPage::query()
             ->with(['translations', 'banner', 'cover', 'seoEntry.translations'])
@@ -1902,6 +1904,7 @@ class ViewDataService
             return [
                 'title' => $cfg['default_title'] ?? 'Hub',
                 'subtitle' => $cfg['default_subtitle'] ?? '',
+                'seoBody' => \App\Support\ListingHubCopy::seoBody($hubKey, $this->locale()),
                 'listingBanner' => null,
                 'listingBannerSrcset' => null,
                 'cover' => null,
@@ -1915,6 +1918,12 @@ class ViewDataService
         $seoTrans = $page->seoEntry?->translation($this->locale());
         $banner = $page->bannerUrl('lg') ?: $page->bannerUrl('full');
         $subtitleRaw = $translation?->body ?: ($cfg['default_subtitle'] ?? '');
+        // null = chưa set → lấy seed; '' = admin cố ý ẩn.
+        if ($translation !== null && $translation->seo_body !== null) {
+            $seoBody = trim((string) $translation->seo_body);
+        } else {
+            $seoBody = \App\Support\ListingHubCopy::seoBody($hubKey, $this->locale());
+        }
 
         $title = $translation?->title ?: ($cfg['default_title'] ?? 'Hub');
         // Nếu static page vẫn mang title mặc định «Du thuyền» của ViTravel → ưu tiên seed dự án.
@@ -1925,6 +1934,7 @@ class ViewDataService
         return [
             'title' => $title,
             'subtitle' => trim(html_entity_decode(strip_tags((string) $subtitleRaw), ENT_QUOTES | ENT_HTML5, 'UTF-8')),
+            'seoBody' => $seoBody,
             'listingBanner' => $banner,
             'listingBannerSrcset' => $page->bannerSrcset(),
             'cover' => $page->coverUrl('card') ?: $page->coverUrl(),
@@ -1932,6 +1942,41 @@ class ViewDataService
             'seoTitle' => apply_site_brand((string) ($seoTrans?->seo_title ?? ($cfg['default_seo_title'] ?? ''))),
             'seoDescription' => apply_site_brand((string) ($seoTrans?->seo_description ?? ($cfg['default_seo_description'] ?? ''))),
         ];
+    }
+
+    /**
+     * Ghi seo_body từ seed vào DB chỉ khi cột đang trống (không cần re-seed full).
+     */
+    protected function syncListingHubSeoBodyFromSeed(string $hubKey, string $locale): void
+    {
+        $cfg = config("seo.hubs.{$hubKey}");
+        if (! is_array($cfg)) {
+            return;
+        }
+        $fromSeed = \App\Support\ListingHubCopy::seoBody($hubKey, $locale);
+        if ($fromSeed === '') {
+            return;
+        }
+
+        $page = \App\Models\StaticPage::query()
+            ->where('template', $cfg['template'])
+            ->first();
+        if (! $page) {
+            return;
+        }
+
+        $languageId = \App\Models\Language::idByCode($locale);
+        if (! $languageId) {
+            return;
+        }
+
+        $trans = $page->translations()->where('language_id', $languageId)->first();
+        // Chỉ soft-fill khi chưa từng set (null). Chuỗi rỗng sau khi admin xoá = cố ý ẩn.
+        if (! $trans || $trans->seo_body !== null) {
+            return;
+        }
+
+        $trans->forceFill(['seo_body' => $fromSeed])->save();
     }
 
     protected function seoService(): \App\Services\SeoService
@@ -2283,6 +2328,7 @@ class ViewDataService
                 })
                 ->count(),
             'tagline' => $translation?->tagline ?? '',
+            'longForm' => trim((string) ($translation?->long_form_content ?? $translation?->intro_text ?? '')),
             'image' => $cardImage,
             'imageHero' => $heroImage,
             'imageSrcset' => $country->bannerSrcset(),

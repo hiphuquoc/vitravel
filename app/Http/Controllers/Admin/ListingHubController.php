@@ -74,6 +74,7 @@ class ListingHubController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'body' => 'nullable|string',
+            'seo_body' => 'nullable|string',
             'seo_slug' => 'nullable|string|max:191',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string|max:320',
@@ -102,8 +103,9 @@ class ListingHubController extends Controller
                 [
                     'title' => $validated['title'],
                     'body' => $validated['body'] ?? null,
+                    'seo_body' => $validated['seo_body'] ?? null,
                 ],
-                ['title', 'body'],
+                ['title', 'body', 'seo_body'],
             );
 
             $slug = $validated['seo_slug'] ?? $cfg['default_slug'];

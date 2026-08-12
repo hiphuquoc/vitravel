@@ -28,7 +28,7 @@
             <x-shared.stars :rating="$avg" aria-label="{{ $avg }} trên 5 sao" />
             <p class="reviews-summary__meta">
                 {{ count($testimonials) }}
-                {{ $isVi ? 'cảm nhận từ khách hàng '.site_brand() : 'reviews from '.site_brand().' guests' }}
+                {{ $isVi ? 'cảm nhận từ khách hàng ViTravel' : 'reviews from ViTravel guests' }}
             </p>
         </div>
 

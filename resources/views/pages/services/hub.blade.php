@@ -5,7 +5,6 @@
 
 @section('content')
     @php
-        $brand = site_brand();
         $unitLabel = $hub['unitLabel'] ?? 'dịch vụ';
         $filterCategories = array_values(array_filter(
             $categories,
@@ -69,12 +68,11 @@
                 <x-tour.listing-skeleton :count="4" variant="wide" />
             </div>
 
-            <div class="prose-travel listing-seo">
-                <p>
-                    Trang <strong>{{ strtolower($hub['title']) }}</strong> của {{ $brand }} tập hợp các dịch vụ được chọn lọc —
-                    đặt qua <strong>chuyên gia bản địa</strong>, giá minh bạch và hỗ trợ 24/7 suốt hành trình.
-                </p>
-            </div>
+            @if (! empty($hub['seoBody']))
+                <div class="prose-travel listing-seo">
+                    {!! nl2br(e($hub['seoBody'])) !!}
+                </div>
+            @endif
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" :title="'Câu hỏi thường gặp về ' . strtolower($hub['title'])" />
         </div>

@@ -63,13 +63,11 @@
                 <p class="listing-rating-summary__meta">Đánh giá từ khách hàng đã đi tour với {{ $brand }}</p>
             </div>
 
-            <div class="prose-travel listing-seo">
-                <p>
-                    Trang <strong>tour trọn gói</strong> của {{ $brand }} tập hợp toàn bộ hành trình Đông Nam Á —
-                    từ Việt Nam, Campuchia, Lào, Thái Lan tới Bali. Mỗi lịch trình do
-                    <strong>chuyên gia bản địa</strong> thiết kế và có thể tuỳ chỉnh 100%.
-                </p>
-            </div>
+            @if (! empty($hub['seoBody']))
+                <div class="prose-travel listing-seo">
+                    {!! nl2br(e($hub['seoBody'])) !!}
+                </div>
+            @endif
 
             <x-shared.faq :faqs="$faqs" class="listing-faq" title="Câu hỏi thường gặp về tour trọn gói" />
         </div>
