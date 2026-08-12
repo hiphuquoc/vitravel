@@ -163,31 +163,15 @@ class ReviewApiController extends Controller
         );
     }
 
-    /** @param  array<int, mixed>  $mediaIds */
     private function syncGalleryMediaIds(Review $review, array $mediaIds): void
     {
-        $review->mediaAttachments()->where('role', 'gallery')->delete();
-        $sort = 0;
-        foreach ($mediaIds as $mediaId) {
-            $id = (int) $mediaId;
-            if ($id <= 0) {
-                continue;
-            }
-            $review->mediaAttachments()->create([
-                'media_id' => $id,
-                'role' => 'gallery',
-                'sort' => $sort++,
-            ]);
-        }
+        app(MediaService::class)->syncGalleryMediaIds($review, $mediaIds);
     }
 
     /** @return array<string, mixed> */
     private function serializeDetail(Review $r): array
     {
         $media = app(MediaService::class);
-        $gallery = $r->relationLoaded('mediaAttachments')
-            ? $r->mediaAttachments->where('role', 'gallery')
-            : $r->galleryAttachments()->with('media')->get();
 
         return [
             'id' => $r->id,
@@ -204,10 +188,7 @@ class ReviewApiController extends Controller
             'is_featured' => $r->is_featured,
             'show_on_home' => $r->show_on_home,
             'avatar' => $media->adminMediaPayload($r->avatar, 'card'),
-            'gallery' => $gallery->map(fn ($att) => [
-                'id' => $att->id,
-                'media' => $media->adminMediaPayload($att->media, 'card'),
-            ])->values()->all(),
+            'gallery' => $media->adminGalleryPayload($r, 'card'),
         ];
     }
 }

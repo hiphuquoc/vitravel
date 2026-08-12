@@ -24,100 +24,22 @@
 
     $coverSrc = $item['imageDetail'] ?? $item['image'] ?? null;
     $coverSrcset = $item['imageDetailSrcset'] ?? $item['imageSrcset'] ?? null;
-    $gallery = $item['gallery'] ?? [];
-
-    // Thumbs = gallery only — không nhét lại ảnh cover (tránh tải trùng)
-    $normUrl = static function (?string $url): string {
-        if (! $url) {
-            return '';
-        }
-        $path = parse_url($url, PHP_URL_PATH) ?: $url;
-
-        return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
-    };
-    $coverNorm = $normUrl($coverSrc);
-    $uniqueThumbs = collect($gallery)
-        ->filter(function ($t) use ($normUrl, $coverNorm) {
-            $src = $t['src'] ?? null;
-            if (! filled($src)) {
-                return false;
-            }
-            if ($coverNorm === '') {
-                return true;
-            }
-
-            return $normUrl($src) !== $coverNorm;
-        })
-        ->values()
-        ->all();
-
-    // Luôn giữ 4 ô bên phải (placeholder xám nếu chưa có ảnh) — không dùng lại ảnh cover
-    $thumbSlots = 4;
-    $thumbs = array_slice($uniqueThumbs, 0, $thumbSlots);
-    while (count($thumbs) < $thumbSlots) {
-        $thumbs[] = null;
-    }
-    $galleryCount = max(
-        (int) ($item['galleryCount'] ?? 0),
-        count($uniqueThumbs),
-    );
 
     $itineraryDays = array_values(array_column($item['itinerary'] ?? [], 'day'));
     $contact = view_data()->companyContact();
     $waPhone = preg_replace('/\D/', '', $contact['whatsapp'] ?? '');
 @endphp
 
-{{-- Gallery: ảnh lớn + 4 ô thumb (ảnh thật hoặc placeholder xám) --}}
-<section class="container-site detail-gallery" aria-label="Thư viện ảnh">
-    <div class="detail-gallery__grid">
-        @if ($coverSrc)
-            <x-img
-                :src="$coverSrc"
-                :srcset="$coverSrcset"
-                preset="detail"
-                :alt="$item['title']"
-                loading="eager"
-                fetchpriority="high"
-                class="detail-gallery__cover"
-            />
-        @else
-            <x-ph class="detail-gallery__cover" :label="'Ảnh chính: ' . $item['title']" icon-class="size-14" />
-        @endif
-
-        <div class="detail-gallery__thumbs" role="list">
-            @foreach ($thumbs as $i => $thumb)
-                <div class="detail-gallery__thumb" role="listitem">
-                    @if (! empty($thumb['src']))
-                        <x-img
-                            :src="$thumb['src']"
-                            :srcset="$thumb['srcset'] ?? null"
-                            preset="gallery"
-                            :alt="$item['title']"
-                            class="detail-gallery__thumb-img"
-                        />
-                    @else
-                        <x-ph class="detail-gallery__thumb-ph" icon-class="size-6" :label="null" />
-                    @endif
-                    @if ($i === $thumbSlots - 1 && $galleryCount > $thumbSlots)
-                        <span class="detail-gallery__more" aria-hidden="true">
-                            +{{ $galleryCount - $thumbSlots }}
-                        </span>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    <div class="card detail-title-card">
-        <div class="detail-title-card__row">
-            <div class="detail-title-card__copy min-w-0">
-                <x-layout.breadcrumb :items="$breadcrumbs" class="breadcrumb--page" />
-                <h1 class="detail-title-card__h1">{{ $item['title'] }}</h1>
-            </div>
-            <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" class="detail-title-card__rating" />
-        </div>
-    </div>
-</section>
+<x-shared.detail-gallery
+    :title="$item['title']"
+    :cover-src="$coverSrc"
+    :cover-srcset="$coverSrcset"
+    :gallery="$item['gallery'] ?? []"
+    :gallery-count="$item['galleryCount'] ?? 0"
+    :breadcrumbs="$breadcrumbs"
+    :rating="$item['rating'] ?? null"
+    :review-count="$item['reviewCount'] ?? 0"
+/>
 
 <div x-data="scrollSpy(@js($sectionIds))">
     {{-- Tabs: scroll ngang, không sticky --}}

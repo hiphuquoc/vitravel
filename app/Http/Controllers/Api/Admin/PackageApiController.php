@@ -283,6 +283,8 @@ class PackageApiController extends Controller
                 'faqs.*.answer' => 'nullable|string',
                 'cover_media_id' => 'nullable|integer|exists:media,id',
                 'remove_cover' => 'nullable|boolean',
+                'gallery_media_ids' => 'nullable|array|max:40',
+                'gallery_media_ids.*' => 'integer|exists:media,id',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -437,6 +439,13 @@ class PackageApiController extends Controller
                 isset($validated['cover_media_id']) ? (int) $validated['cover_media_id'] : null,
                 $request->boolean('remove_cover'),
             );
+
+            if (array_key_exists('gallery_media_ids', $validated)) {
+                app(MediaService::class)->syncGalleryMediaIds(
+                    $package,
+                    is_array($validated['gallery_media_ids']) ? $validated['gallery_media_ids'] : [],
+                );
+            }
 
             return $package->fresh([
                 'translations',
@@ -654,6 +663,7 @@ class PackageApiController extends Controller
             })->values(),
             'translated_locales' => $this->translatedLocaleCodes($package, 'title'),
             'cover' => app(MediaService::class)->adminMediaPayload($package->coverMedia(), 'card'),
+            'gallery' => app(MediaService::class)->adminGalleryPayload($package, 'card'),
             'seo' => [
                 'slug' => $seo?->slug,
                 'slug_full' => $seo?->slug_full,

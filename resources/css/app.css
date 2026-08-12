@@ -2199,12 +2199,53 @@
 
     .detail-gallery__cover {
         width: 100%;
-        border-radius: 1rem;
+        height: 100%;
+        border-radius: inherit;
         object-fit: cover;
-        height: clamp(13rem, 38vw, 24rem);
     }
 
-    .detail-gallery__grid--coverOnly .detail-gallery__cover {
+    .detail-gallery__cover-btn {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: clamp(13rem, 38vw, 24rem);
+        padding: 0;
+        border: 0;
+        border-radius: 1rem;
+        overflow: hidden;
+        background: var(--color-page-soft, #f8f6ec);
+        cursor: zoom-in;
+    }
+
+    .detail-gallery__cover-btn:focus-visible {
+        outline: 2px solid var(--color-primary-600, #0f766e);
+        outline-offset: 2px;
+    }
+
+    .detail-gallery__zoom {
+        position: absolute;
+        right: 0.85rem;
+        bottom: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 999px;
+        color: #fff;
+        background: rgb(15 23 42 / 0.55);
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+    }
+
+    .detail-gallery__cover-btn:hover .detail-gallery__zoom,
+    .detail-gallery__cover-btn:focus-visible .detail-gallery__zoom {
+        opacity: 1;
+    }
+
+    .detail-gallery__grid--coverOnly .detail-gallery__cover-btn {
         height: clamp(14rem, 42vw, 26rem);
     }
 
@@ -2237,6 +2278,23 @@
         }
     }
 
+    .detail-gallery__thumb-btn {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        cursor: zoom-in;
+    }
+
+    .detail-gallery__thumb-btn:focus-visible {
+        outline: 2px solid var(--color-primary-600, #0f766e);
+        outline-offset: 2px;
+    }
+
     .detail-gallery__thumb-img,
     .detail-gallery__thumb-ph {
         position: absolute;
@@ -2244,6 +2302,11 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
+        transition: transform 0.35s ease;
+    }
+
+    .detail-gallery__thumb-btn:hover .detail-gallery__thumb-img {
+        transform: scale(1.045);
     }
 
     .detail-gallery__thumb-ph {
@@ -2256,11 +2319,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgb(39 43 35 / 0.52);
+        background: rgb(15 23 42 / 0.55);
+        backdrop-filter: blur(2px);
         color: #fff;
-        font-size: var(--fs-meta);
+        font-size: 1.125rem;
         font-weight: 700;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.04em;
     }
 
     .detail-title-card {

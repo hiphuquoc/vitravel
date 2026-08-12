@@ -1766,8 +1766,8 @@ class ViewDataService
             ])->values()->all(),
             'quote' => $this->serviceQuote($service, $translation),
             'styles' => [],
-            'gallery' => [],
-            'galleryCount' => 0,
+            'gallery' => $this->mapGalleryAttachments($service),
+            'galleryCount' => $this->galleryAttachmentCount($service),
         ];
     }
 
@@ -2363,22 +2363,8 @@ class ViewDataService
                 'q' => $faq->question,
                 'a' => $faq->answer,
             ])->values()->all(),
-            'gallery' => (function () use ($package) {
-                $coverMediaId = $package->coverMedia()?->id;
-
-                return $package->mediaAttachments
-                    ->where('role', 'gallery')
-                    ->filter(fn ($a) => ! $coverMediaId || (int) $a->media_id !== (int) $coverMediaId)
-                    ->take(8)
-                    ->map(fn ($a) => media_payload($a->media, 'card'))
-                    ->filter(fn (array $p) => filled($p['src'] ?? null))
-                    ->values()
-                    ->all();
-            })(),
-            'galleryCount' => max(
-                0,
-                $package->mediaAttachments->where('role', 'gallery')->count()
-            ),
+            'gallery' => $this->mapGalleryAttachments($package),
+            'galleryCount' => $this->galleryAttachmentCount($package),
         ];
 
         if ($isCruise) {
@@ -2479,6 +2465,53 @@ class ViewDataService
         }
 
         return number_format($amount, 2).' '.strtoupper($currency);
+    }
+
+    /**
+     * Gallery public (role=gallery), loại trừ ảnh trùng cover; kèm URL full cho lightbox.
+     *
+     * @return list<array<string, mixed>>
+     */
+    protected function mapGalleryAttachments(Package|Service $model): array
+    {
+        if (! $model->relationLoaded('mediaAttachments')) {
+            $model->load('mediaAttachments.media');
+        }
+
+        $coverMediaId = $model->coverMedia()?->id;
+
+        return $model->mediaAttachments
+            ->where('role', 'gallery')
+            ->sortBy('sort')
+            ->filter(fn ($a) => ! $coverMediaId || (int) $a->media_id !== (int) $coverMediaId)
+            ->take(24)
+            ->map(function ($a) {
+                $card = media_payload($a->media, 'card');
+                if (! filled($card['src'] ?? null)) {
+                    return null;
+                }
+                $full = media_payload($a->media, 'lg');
+
+                return array_merge($card, [
+                    'full' => $full['src'] ?? $card['src'],
+                    'fullSrcset' => $full['srcset'] ?? ($card['srcset'] ?? null),
+                    'type' => 'image',
+                    'title' => filled($a->caption) ? (string) $a->caption : (string) ($a->media?->alt ?? ''),
+                    'caption' => $a->caption,
+                ]);
+            })
+            ->filter()
+            ->values()
+            ->all();
+    }
+
+    protected function galleryAttachmentCount(Package|Service $model): int
+    {
+        if (! $model->relationLoaded('mediaAttachments')) {
+            $model->load('mediaAttachments');
+        }
+
+        return max(0, $model->mediaAttachments->where('role', 'gallery')->count());
     }
 
     protected function countryFlag(?string $code): string

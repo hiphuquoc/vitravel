@@ -47,13 +47,16 @@
     $coverSrcset = $service['imageDetailSrcset'] ?? $service['imageSrcset'] ?? null;
 @endphp
 
-<x-layout.page-header
+<x-shared.detail-gallery
     :title="$service['title']"
-    :subtitle="$service['summary'] ?? null"
-    :banner-src="$coverSrc"
-    :banner-srcset="$coverSrcset"
-    :banner-alt="'Banner ' . $service['title']"
-    :breadcrumbs="$breadcrumbs" />
+    :cover-src="$coverSrc"
+    :cover-srcset="$coverSrcset"
+    :gallery="$service['gallery'] ?? []"
+    :gallery-count="$service['galleryCount'] ?? 0"
+    :breadcrumbs="$breadcrumbs"
+    :rating="$service['rating'] ?? null"
+    :review-count="$service['reviewCount'] ?? 0"
+/>
 
 <div class="container-site detail-layout section-band--sm">
     <div class="min-w-0 detail-stack">

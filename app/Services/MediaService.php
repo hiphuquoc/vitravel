@@ -934,6 +934,60 @@ class MediaService
         ]);
     }
 
+    /**
+     * Đồng bộ gallery (media_attachments role=gallery) theo danh sách media_id.
+     * Xóa toàn bộ gallery cũ rồi tạo lại theo thứ tự — giữ media file (không xóa disk).
+     *
+     * @param  list<int|string>  $mediaIds
+     */
+    public function syncGalleryMediaIds(Model $model, array $mediaIds): void
+    {
+        if (! method_exists($model, 'mediaAttachments')) {
+            return;
+        }
+
+        $model->mediaAttachments()->where('role', 'gallery')->delete();
+
+        $sort = 0;
+        $seen = [];
+        foreach ($mediaIds as $mediaId) {
+            $id = (int) $mediaId;
+            if ($id <= 0 || isset($seen[$id])) {
+                continue;
+            }
+            if (! Media::query()->whereKey($id)->exists()) {
+                continue;
+            }
+            $seen[$id] = true;
+            $model->mediaAttachments()->create([
+                'media_id' => $id,
+                'role' => 'gallery',
+                'sort' => $sort++,
+            ]);
+        }
+    }
+
+    /**
+     * Gallery cho Admin API — [{ id, media }].
+     *
+     * @return list<array{id: int, media: array<string, mixed>|null}>
+     */
+    public function adminGalleryPayload(Model $model, string $variant = 'card'): array
+    {
+        if (! method_exists($model, 'mediaAttachments')) {
+            return [];
+        }
+
+        $attachments = $model->relationLoaded('mediaAttachments')
+            ? $model->mediaAttachments->where('role', 'gallery')->values()
+            : $model->mediaAttachments()->where('role', 'gallery')->with('media')->orderBy('sort')->get();
+
+        return $attachments->map(fn ($att) => [
+            'id' => (int) $att->id,
+            'media' => $this->adminMediaPayload($att->media, $variant),
+        ])->values()->all();
+    }
+
     /** Gắn / thay / xóa ảnh trên cột FK (banner_media_id, …). */
     public function syncDirectMediaId(Model $model, string $column, ?int $mediaId, bool $remove = false): void
     {

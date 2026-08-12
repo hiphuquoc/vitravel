@@ -214,6 +214,8 @@ class ServiceApiController extends Controller
                 'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
                 'cover_media_id' => 'nullable|integer|exists:media,id',
                 'remove_cover' => 'nullable|boolean',
+                'gallery_media_ids' => 'nullable|array|max:40',
+                'gallery_media_ids.*' => 'integer|exists:media,id',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -323,6 +325,13 @@ class ServiceApiController extends Controller
                 $request->boolean('remove_cover'),
             );
 
+            if (array_key_exists('gallery_media_ids', $validated)) {
+                app(MediaService::class)->syncGalleryMediaIds(
+                    $service,
+                    is_array($validated['gallery_media_ids']) ? $validated['gallery_media_ids'] : [],
+                );
+            }
+
             return $service->fresh([
                 'category',
                 'country.translations',
@@ -399,6 +408,7 @@ class ServiceApiController extends Controller
             'discount_badge' => $service->discount_badge,
             'translated_locales' => $this->translatedLocaleCodes($service, 'title'),
             'cover' => app(MediaService::class)->adminMediaPayload($service->coverMedia(), 'card'),
+            'gallery' => app(MediaService::class)->adminGalleryPayload($service, 'card'),
             'seo' => [
                 'slug' => $seo?->slug,
                 'slug_full' => $seo?->slug_full,
