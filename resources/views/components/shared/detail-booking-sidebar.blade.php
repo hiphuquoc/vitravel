@@ -34,15 +34,15 @@
 @endphp
 
 <aside class="detail-sidebar" aria-label="{{ $ariaLabel }}">
-    <div class="detail-book">
-        <div class="detail-book__price-block">
-            @if ($badgeText !== '')
-                <p class="detail-book__badge detail-book__badge--{{ $badgeTone }}">
-                    <x-icon name="sparkles" class="size-3.5" />
-                    <span>{{ $badgeText }}</span>
-                </p>
-            @endif
+    <div @class(['detail-book', 'detail-book--badged' => $badgeText !== ''])>
+        @if ($badgeText !== '')
+            <p class="detail-book__badge detail-book__badge--{{ $badgeTone }}">
+                <x-icon name="sparkles" class="size-3.5" />
+                <span>{{ $badgeText }}</span>
+            </p>
+        @endif
 
+        <div class="detail-book__price-block">
             @if ($hasPrice)
                 <p class="detail-book__from">{{ $priceLabel }}</p>
                 <p class="detail-book__amount">{{ $price }}</p>

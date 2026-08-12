@@ -125,7 +125,7 @@
                 <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                     <h2 class="detail-section__title">Tổng quan</h2>
                     @if (! empty($service['summary']))
-                        <p class="detail-section__lead prose-travel">{{ $service['summary'] }}</p>
+                        <p class="detail-section__lead body-text prose-travel">{{ $service['summary'] }}</p>
                     @endif
                     @if ($displayAttrs !== [])
                         <dl class="detail-facts">

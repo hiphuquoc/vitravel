@@ -158,7 +158,7 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 | `x-service.detail` | Detail dịch vụ — reuse `.detail-layout`, `.detail-sidebar__*` |
 | `.tour-card-duration` | Chip thời lượng góc ảnh — font/padding khớp `.tour-card-badge` |
 | `.tour-card-price` / `__label` / `__value` | Label `fs-meta`; giá Fraunces `accent-500` |
-| **Detail tour/cruise** | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
+| **Detail tour/cruise** | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` — H1 dùng `--fs-section-title`; section H2 `--fs-detail-title`; giá sidebar `--fs-detail-price*`; spacing `--space-stack*` / `--space-card*` |
 | **Blog** | `.blog-layout`, `.blog-sidebar__*`, `.blog-article-*`, `.blog-inline-links`, `.blog-card-tag` |
 | **Form / liên hệ** | `.customize-form`, `.form-section__*`, `.form-stepper__*`, `.form-pill__label`, `.contact-*`, `.form-success` |
 | **Gallery / reviews / search** | `.gallery-card__*`, `.reviews-summary`, `.search-section__*`, `.page-follow` |
@@ -261,7 +261,10 @@ Base `html` font-size cascade theo breakpoint (giữ dễ đọc, tránh nhảy 
 | `--btn-pad-x` / `--btn-pad-y` | 1.75/0.75rem | ↓ | ↓ | ↓ | 1.35/0.6rem | 1.2/0.55rem |
 | `--btn-pad-x-sm` / `--btn-pad-y-sm` | 1.25/0.5rem | ↓ | ↓ | ↓ | 0.95/0.42rem | 0.85/0.4rem |
 | `--lh-body` | 1.75 | 1.75 | 1.72 | 1.68 | 1.65 | 1.62 |
-| `.section-title` | ~2.25–2.5rem | clamp xuống | ↓ | ↓ | ~1.75rem | ~1.6rem |
+| `--fs-section-title` | ~2.25–2.5rem | clamp xuống | ↓ | ↓ | ~1.75rem | ~1.6rem |
+| `--fs-detail-title` | clamp 1.35–1.625rem | ↓ | ↓ | ↓ | 1.35rem | 1.25rem | H2 section trong trang chi tiết (tabs, FAQ, lịch trình) |
+| `--fs-detail-price` | clamp 1.4–1.75rem | ↓ | ↓ | ↓ | 1.4rem | 1.3rem | Giá sidebar booking (Fraunces) |
+| `--fs-detail-price-soft` | clamp 1.125–1.35rem | — | — | — | — | 1.125rem | Giá mềm / liên hệ khi chưa có số |
 | `.section-eyebrow` | ~1.875–2rem | ↓ | ↓ | ↓ | ~1.35rem | ~1.25rem |
 | Hero H1 | clamp lớn | thu nhẹ | thu | thu | mobile clamp | compact |
 
@@ -374,7 +377,7 @@ Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển kh
 | Margin block | `.site-mt`, `.site-mt-lg`, `.site-mb` |
 | Padding khung | `.site-pad`, `.site-pad-x`, `.site-pad-y` |
 | Card inner | `--space-card`, `--space-card-stack`, `--space-card-stack-lg` → `.card-body`, `.card-inner`, `.card-footer*` |
-| Typography | `--fs-body`, `--fs-meta`, `--fs-kicker`, `--fs-item-title`, `--fs-tour-*`, `--fs-footer-brand` — override `.text-base`, `.text-sm`, `.body-text` |
+| Typography | `--fs-body`, `--fs-meta`, `--fs-kicker`, `--fs-item-title`, `--fs-tour-*`, `--fs-detail-title`, `--fs-detail-price*`, `--fs-footer-brand` — override `.text-base`, `.text-sm`, `.body-text` |
 | Buttons | `--btn-pad-*`, `--btn-gap`, `--space-hit` (min-height ≥44px mobile) |
 | Quick inquiry | `--qi-accent-inset`, `--qi-content-gap`, `--qi-pad` (padding 2 tầng) |
 | Footer | `--footer-contact-pad-top`, class `.footer-contact__*`, `.footer-nav__*`, `.footer-copyright` |

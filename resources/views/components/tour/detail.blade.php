@@ -107,7 +107,7 @@
             <section id="diem-nhan" class="detail-section" aria-label="Điểm nhấn hành trình">
                 <h2 class="detail-section__title">Điểm nhấn hành trình</h2>
                 @if (! empty($item['highlightsIntro']))
-                    <p class="detail-section__lead prose-travel">{{ $item['highlightsIntro'] }}</p>
+                    <p class="detail-section__lead body-text prose-travel">{{ $item['highlightsIntro'] }}</p>
                 @endif
                 <ul class="detail-checklist">
                     @foreach ($item['highlights'] ?? [] as $h)
