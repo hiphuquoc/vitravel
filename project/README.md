@@ -16,6 +16,8 @@ php artisan project:seed hicatba --domain=hicatba.dev --domain=hicatba.com
 php artisan project:ensure vitravel --domain=vitravel.dev
 # phuquy.net: phuquy.dev (local) + phuquy.net (prod)
 php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="phuquy.net"
+# Đảo Phú Quốc: phuquocangiang.dev (local) + phuquocangiang.com (prod)
+php artisan project:seed phuquoc --domain=phuquocangiang.dev --domain=phuquocangiang.com --name="Đảo Phú Quốc"
 # culaocham.net: culaocham.dev (local) + culaocham.net (prod)
 php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net --name="culaocham.net"
 ```
@@ -25,6 +27,7 @@ php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net
 | `vitravel` | `project/seed_vitravel.php` | `vitravel.dev` |
 | `hicatba` | `project/seed_hicatba.php` | `hicatba.dev` / `hicatba.com` |
 | `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` / `phuquy.net` |
+| `phuquoc` | `project/seed_phuquoc.php` | `phuquocangiang.dev` / `phuquocangiang.com` |
 | `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` / `culaocham.net` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
@@ -43,6 +46,7 @@ project/
   seed_vitravel.php         ← 1 dự án = 1 file (tours + company + dịch vụ + …)
   seed_hicatba.php
   seed_phuquy.php           ← đảo Phú Quý (Bình Thuận): phuquy.dev / phuquy.net
+  seed_phuquoc.php          ← đảo Phú Quốc (An Giang): phuquocangiang.dev / phuquocangiang.com — Đảo Phú Quốc
   seed_culaocham.php        ← Cù Lao Chàm (Quảng Nam): culaocham.dev / culaocham.net
 ```
 
@@ -134,7 +138,7 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 - `value_definitions`, `reason_definitions`, `reference_persons`, `about_page`
 - `home_slides`, `hero_pills`, `home_sections`, `footer_*`, `listing_faqs`
 - **`customize_form`** — form Tour riêng: `destinations_label`, `accommodation_label`, `budget_note`, `accommodation[]` (i18n `vi`/`en`); điểm đến mặc định từ countries/zones `show_in_customize_form` (có thể ghi đè bằng `destinations[]`)
-- **`nav`** — nhãn header + hub cruise (seed-only, không admin): `about_group`, `cruise.{label,all_label,all_meta,search_hint,search_placeholder,hub_title,hub_subtitle}` — đổi «Du thuyền» thành «Thuyền & trải nghiệm» tuỳ dự án
+- **`nav`** — nhãn header + hub cruise (seed-only, không admin): `about_group`, `tours.{label}`, `cruise.{label,all_label,all_meta,search_hint,search_placeholder,hub_title,hub_subtitle}` — đổi «Du thuyền» / «Tour trọn gói» tuỳ dự án
 
 ### Map seeder
 

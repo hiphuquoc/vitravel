@@ -1276,6 +1276,7 @@ class ViewDataService
      *   brand: string,
      *   tagline: string,
      *   about_group: string,
+     *   tours: array{label: string},
      *   cruise: array{label: string, all_label: string, all_meta: string, search_hint: string, search_placeholder: string, hub_title: string, hub_subtitle: string}
      * }
      */
@@ -1311,11 +1312,15 @@ class ViewDataService
         };
 
         $cruiseSeed = is_array($seed['cruise'] ?? null) ? $seed['cruise'] : [];
+        $toursSeed = is_array($seed['tours'] ?? null) ? $seed['tours'] : [];
 
         return [
             'brand' => $brand,
             'tagline' => $tagline,
             'about_group' => $pick($seed['about_group'] ?? null, 'Về '.$brand),
+            'tours' => [
+                'label' => $pick($toursSeed['label'] ?? null, 'Tour trọn gói'),
+            ],
             'cruise' => [
                 'label' => $pick($cruiseSeed['label'] ?? null, 'Du thuyền'),
                 'all_label' => $pick($cruiseSeed['all_label'] ?? null, 'Tất cả du thuyền'),

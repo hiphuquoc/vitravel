@@ -126,6 +126,7 @@ class ContentSeeder extends Seeder
                 'status' => 'published',
                 'parent_id' => $toursHub->id,
                 'country_code' => $country->code,
+                'reclaim_slug_full' => true,
             ]);
 
             if ($this->enId && $toursHubEn) {
@@ -150,6 +151,7 @@ class ContentSeeder extends Seeder
                     'status' => 'published',
                     'parent_id' => $toursHubEn->id,
                     'country_code' => $country->code,
+                    'reclaim_slug_full' => true,
                 ]);
             }
         }
@@ -191,6 +193,7 @@ class ContentSeeder extends Seeder
                 'title' => $row['name'],
                 'status' => 'published',
                 'parent_id' => $guideHub->id,
+                'reclaim_slug_full' => true,
             ]);
         }
     }
@@ -390,6 +393,7 @@ class ContentSeeder extends Seeder
                 'rating_aggregate_count' => $row['reviewCount'],
                 'status' => 'published',
                 'parent_id' => $parentId,
+                'reclaim_slug_full' => true,
             ], $seoType);
 
             if (is_array($en)) {
@@ -401,6 +405,7 @@ class ContentSeeder extends Seeder
                     'rating_aggregate_count' => $row['reviewCount'],
                     'status' => 'published',
                     'parent_id' => $parentId,
+                    'reclaim_slug_full' => true,
                 ], $seoType);
             }
         }
@@ -431,6 +436,7 @@ class ContentSeeder extends Seeder
                 'seo_title' => $cruiseType->name,
                 'status' => 'published',
                 'parent_id' => $hub->id,
+                'reclaim_slug_full' => true,
             ]);
 
             if ($this->enId) {
@@ -441,6 +447,7 @@ class ContentSeeder extends Seeder
                     'seo_title' => $cruiseType->name,
                     'status' => 'published',
                     'parent_id' => $hubEn->id,
+                    'reclaim_slug_full' => true,
                 ]);
             }
 
@@ -467,6 +474,7 @@ class ContentSeeder extends Seeder
             'status' => 'published',
             'parent_id' => $hub->id,
             'country_code' => $country->code,
+            'reclaim_slug_full' => true,
         ]);
 
         if ($this->enId) {
@@ -481,6 +489,7 @@ class ContentSeeder extends Seeder
                 'status' => 'published',
                 'parent_id' => $hubEn->id,
                 'country_code' => $country->code,
+                'reclaim_slug_full' => true,
             ]);
         }
 
@@ -543,6 +552,7 @@ class ContentSeeder extends Seeder
                 'parent_id' => isset($this->blogCategoryIds[$row['categorySlug'] ?? ''])
                     ? (BlogCategory::query()->find($this->blogCategoryIds[$row['categorySlug']])?->seoEntry?->id)
                     : null,
+                'reclaim_slug_full' => true,
             ], 'article');
         }
     }

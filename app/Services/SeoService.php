@@ -1047,6 +1047,8 @@ class SeoService
             'keywords' => $seoTrans?->keywords,
             'status' => filled($seoTrans?->status) ? $seoTrans->status : 'published',
             'parent_id' => null,
+            // Seed/re-seed: nhường slug_full nếu bản ghi SEO cũ/orphan còn giữ đường dẫn hub.
+            'reclaim_slug_full' => true,
         ]);
     }
 

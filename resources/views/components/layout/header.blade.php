@@ -37,6 +37,7 @@
     $brandName = $nav['brand'] ?? ($companyContact['name'] ?? 'ViTravel');
     $brandTagline = $nav['tagline'] ?? '';
     $cruiseNav = $nav['cruise'] ?? [];
+    $toursNav = $nav['tours'] ?? [];
     $hotlineDisplay = $companyContact['phone'] ?? '+84 24 3999 8888';
     $hotlineTel = preg_replace('/[^\d+]/', '', $hotlineDisplay) ?: $hotlineDisplay;
     $hotlineLabel = $companyContact['hotline_label'] ?? 'Hotline';
@@ -333,7 +334,7 @@
                 <button type="button"
                     class="nav-link flex cursor-pointer items-center gap-1 whitespace-nowrap"
                     :aria-expanded="openMenu === 'dest'" @click="openMenu = openMenu === 'dest' ? null : 'dest'; moreOpen = false">
-                    Tour trọn gói <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
+                    {{ $toursNav['label'] ?? 'Tour trọn gói' }} <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                 </button>
                 <div x-cloak x-show="openMenu === 'dest'" x-transition.opacity.duration.150ms
                     class="absolute top-full left-0 z-50 w-[580px] pt-2">
@@ -662,7 +663,7 @@
                         :aria-expanded="mobileSub === 'dest'"
                         @click="toggleMobileSub('dest')">
                         <span class="mobile-nav-drawer__trigger-icon" aria-hidden="true"><x-icon name="map-pin" class="size-4" /></span>
-                        <span class="mobile-nav-drawer__trigger-label">Tour trọn gói</span>
+                        <span class="mobile-nav-drawer__trigger-label">{{ $toursNav['label'] ?? 'Tour trọn gói' }}</span>
                         <x-icon name="chevron-down" class="mobile-nav-drawer__chevron size-4" ::class="mobileSub === 'dest' && 'is-open'" />
                     </button>
                     <div class="mobile-nav-drawer__sub" x-show="mobileSub === 'dest'" x-collapse>
