@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($chrome['seo_title'] ?? 'Đội ngũ của chúng tôi — ViTravel'))
-@section('meta_description', ($chrome['seo_description'] ?? 'Gặp gỡ đội ngũ chuyên gia bản địa của ViTravel.'))
+@section('title', $chrome['seo_title'] ?? seo_page_title('Đội ngũ của chúng tôi'))
+@section('meta_description', $chrome['seo_description'] ?? apply_site_brand('Gặp gỡ đội ngũ chuyên gia bản địa của :brand.'))
 
 @section('content')
     <x-layout.page-header

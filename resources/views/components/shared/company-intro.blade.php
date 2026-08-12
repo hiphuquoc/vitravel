@@ -9,7 +9,7 @@
 @endphp
 
 {{-- "Hành trình chân thật" — khối giới thiệu công ty dùng chung Home + About Us --}}
-<section {{ $attributes->merge(['class' => 'cv-auto section-band']) }} aria-label="{{ $data['title'] ?? 'Giới thiệu ViTravel' }}">
+<section {{ $attributes->merge(['class' => 'cv-auto section-band']) }} aria-label="{{ $data['title'] ?? apply_site_brand('Giới thiệu :brand') }}">
     <div class="container-site">
         <div class="card grid overflow-hidden lg:grid-cols-2">
             <div class="flex h-full min-h-0 flex-col site-pad">
@@ -54,7 +54,7 @@
                     class="min-h-64 w-full object-cover lg:min-h-full"
                 />
             @else
-                <x-ph class="min-h-64 lg:min-h-full" :label="$data['imageAlt'] ?? 'Ảnh đội ngũ ViTravel'" icon="users" icon-class="size-12" />
+                <x-ph class="min-h-64 lg:min-h-full" :label="$data['imageAlt'] ?? apply_site_brand('Ảnh đội ngũ :brand')" icon="users" icon-class="size-12" />
             @endif
         </div>
     </div>

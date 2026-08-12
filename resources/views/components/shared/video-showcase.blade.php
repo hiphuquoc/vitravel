@@ -49,7 +49,7 @@
             @if ($showCta && $ctaLabel && $ctaUrl)
                 <a href="{{ $ctaUrl }}" class="vt-videos__meta-link">{{ $ctaLabel }}</a>
             @else
-                <span class="vt-videos__meta-caption">Thư viện video ViTravel</span>
+                <span class="vt-videos__meta-caption">{{ apply_site_brand('Thư viện video :brand') }}</span>
             @endif
         </div>
     </div>

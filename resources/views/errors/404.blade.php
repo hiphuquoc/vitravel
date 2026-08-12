@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Không tìm thấy trang — ViTravel')
+@section('title', seo_page_title('Không tìm thấy trang'))
 @section('hide-inquiry', '1')
 
 @section('content')

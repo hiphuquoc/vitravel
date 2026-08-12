@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'ViTravel — Tour trọn gói & du thuyền Đông Nam Á, thiết kế bởi chuyên gia bản địa')
+@section('title', seo_home_title())
+@section('meta_description', seo_default_description())
 
 @section('content')
     <x-home.hero-slider :slides="$slides" :pills="$pills" :countries="$countries" />

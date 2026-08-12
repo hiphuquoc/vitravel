@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($q !== '' ? 'Kết quả “'.$q.'”' : 'Tìm kiếm').' — ViTravel')
-@section('meta_description', 'Tìm tour, điểm đến, du thuyền và cẩm nang du lịch trên ViTravel.')
+@section('title', seo_page_title($q !== '' ? 'Kết quả “'.$q.'”' : 'Tìm kiếm'))
+@section('meta_description', apply_site_brand('Tìm tour, điểm đến, du thuyền và cẩm nang du lịch trên :brand.'))
 
 @section('content')
     <x-layout.page-header

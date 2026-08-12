@@ -1039,11 +1039,11 @@ class SeoService
             'slug' => filled($seoTrans?->slug) ? (string) $seoTrans->slug : $cfg['default_slug'],
             'title' => filled($seoTrans?->title) ? $seoTrans->title : $pageTitle,
             'seo_title' => filled($seoTrans?->seo_title)
-                ? $seoTrans->seo_title
-                : ($cfg['default_seo_title'] ?? $pageTitle),
+                ? apply_site_brand((string) $seoTrans->seo_title)
+                : apply_site_brand((string) ($cfg['default_seo_title'] ?? $pageTitle)),
             'seo_description' => filled($seoTrans?->seo_description)
-                ? $seoTrans->seo_description
-                : ($cfg['default_seo_description'] ?? null),
+                ? apply_site_brand((string) $seoTrans->seo_description)
+                : apply_site_brand((string) ($cfg['default_seo_description'] ?? '')),
             'keywords' => $seoTrans?->keywords,
             'status' => filled($seoTrans?->status) ? $seoTrans->status : 'published',
             'parent_id' => null,

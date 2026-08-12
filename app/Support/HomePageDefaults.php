@@ -35,11 +35,11 @@ class HomePageDefaults
                 ];
             }
             if ($out !== []) {
-                return $out;
+                return apply_site_brand_deep($out);
             }
         }
 
-        return self::fallbackUsps();
+        return apply_site_brand_deep(self::fallbackUsps());
     }
 
     /**
@@ -88,7 +88,7 @@ class HomePageDefaults
             $ordered[] = $row;
         }
 
-        return $ordered !== [] ? $ordered : array_values($byKey);
+        return apply_site_brand_deep($ordered !== [] ? $ordered : array_values($byKey));
     }
 
     /** @return mixed */
@@ -197,20 +197,20 @@ class HomePageDefaults
                 'vi' => [
                     'eyebrow' => 'Chuyên gia du lịch Việt',
                     'title' => 'Hành trình chân thật, thiết kế bởi người bản địa',
-                    'body' => 'ViTravel là đại lý lữ hành đặt trụ sở tại Việt Nam, kết nối du khách quốc tế với Việt Nam và Đông Nam Á. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia bản địa tại từng điểm đến.',
+                    'body' => ':brand là đại lý lữ hành đặt trụ sở tại Việt Nam, kết nối du khách quốc tế với Việt Nam và Đông Nam Á. Chúng tôi không bán những tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ chuyên gia bản địa tại từng điểm đến.',
                     'meta_line' => 'Giấy phép lữ hành quốc tế số 01-2234/TCDL-GP-LHQT',
                     'cta_label' => 'Tìm hiểu về chúng tôi',
                     'cta_url' => '/ve-chung-toi',
-                    'image_alt' => 'Ảnh đội ngũ ViTravel tại văn phòng',
+                    'image_alt' => 'Ảnh đội ngũ :brand tại văn phòng',
                 ],
                 'en' => [
                     'eyebrow' => 'Vietnam travel experts',
                     'title' => 'Authentic journeys, designed by locals',
-                    'body' => 'ViTravel is a Vietnam-based travel agency connecting international guests with Vietnam and Southeast Asia. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience by local experts in each destination.',
+                    'body' => ':brand is a Vietnam-based travel agency connecting international guests with Vietnam and Southeast Asia. We do not sell off-the-shelf packages — every itinerary is tailored from real on-the-ground experience by local experts in each destination.',
                     'meta_line' => 'International travel license No. 01-2234/TCDL-GP-LHQT',
                     'cta_label' => 'Learn about us',
                     'cta_url' => '/ve-chung-toi',
-                    'image_alt' => 'ViTravel team at our office',
+                    'image_alt' => ':brand team at our office',
                 ],
             ],
             [
@@ -306,12 +306,12 @@ class HomePageDefaults
                 'sort' => 7,
                 'vi' => [
                     'eyebrow' => 'Được tin tưởng',
-                    'title' => 'ViTravel được đánh giá cao trên',
+                    'title' => ':brand được đánh giá cao trên',
                     'subtitle' => 'Xếp hạng xuất sắc từ cộng đồng du khách quốc tế trên các nền tảng uy tín.',
                 ],
                 'en' => [
                     'eyebrow' => 'Trusted widely',
-                    'title' => 'ViTravel is highly rated on',
+                    'title' => ':brand is highly rated on',
                     'subtitle' => 'Excellent scores from international travellers on the platforms that matter.',
                 ],
             ],
@@ -319,14 +319,14 @@ class HomePageDefaults
                 'key' => HomeSection::KEY_TEAM,
                 'sort' => 8,
                 'vi' => [
-                    'eyebrow' => 'Con người ViTravel',
+                    'eyebrow' => 'Con người :brand',
                     'title' => 'Đội ngũ tận tâm của chúng tôi',
                     'subtitle' => 'Chuyên gia bản địa am hiểu từng điểm đến — đồng hành từ lúc lên ý tưởng tới khi về nhà.',
                     'cta_label' => 'Gặp gỡ cả đội ngũ',
                     'cta_url' => '/doi-ngu',
                 ],
                 'en' => [
-                    'eyebrow' => 'The ViTravel team',
+                    'eyebrow' => 'The :brand team',
                     'title' => 'Our dedicated local experts',
                     'subtitle' => 'People who know each destination better than anyone — with you from the first idea until you are home.',
                     'cta_label' => 'Meet the full team',
@@ -339,7 +339,7 @@ class HomePageDefaults
                 'vi' => [
                     'eyebrow' => 'Trải nghiệm thật',
                     'title' => 'Hành trình qua từng thước phim đẹp',
-                    'subtitle' => 'Video chân thật do khách hàng và đội ngũ ViTravel ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
+                    'subtitle' => 'Video chân thật do khách hàng và đội ngũ :brand ghi lại — chọn một khoảnh khắc để xem toàn màn hình.',
                     'cta_label' => 'Xem tất cả video',
                     'cta_url' => '/video-trai-nghiem',
                 ],

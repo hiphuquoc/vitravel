@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($chrome['seo_title'] ?? 'Liên hệ ViTravel'))
-@section('meta_description', ($chrome['seo_description'] ?? 'Liên hệ đội ngũ ViTravel.'))
+@section('title', $chrome['seo_title'] ?? seo_page_title('Liên hệ'))
+@section('meta_description', $chrome['seo_description'] ?? apply_site_brand('Liên hệ đội ngũ :brand.'))
 @section('hide-inquiry', '1')
 
 @section('content')
@@ -12,7 +12,7 @@
             @if (! empty($chrome['eyebrow']))
                 <p class="section-eyebrow">{{ $chrome['eyebrow'] }}</p>
             @endif
-            <h1 class="contact-intro__title">{{ $chrome['section_title'] ?? 'ViTravel' }}</h1>
+            <h1 class="contact-intro__title">{{ $chrome['section_title'] ?? site_brand() }}</h1>
             <p class="body-text site-mt">
                 {{ $chrome['section_subtitle'] ?? $chrome['page_subtitle'] ?? '' }}
             </p>

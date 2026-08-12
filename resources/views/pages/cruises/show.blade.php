@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $cruise['title'] . ' — ViTravel')
+@section('title', seo_page_title($cruise['title']))
 @section('meta_description', $cruise['highlightsIntro'])
 
 @section('content')

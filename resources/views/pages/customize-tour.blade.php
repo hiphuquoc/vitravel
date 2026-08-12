@@ -2,7 +2,7 @@
 
 @php
     $form = $form ?? view_data()->customizeForm();
-    $brand = $form['brand'] ?? 'ViTravel';
+    $brand = $form['brand'] ?? site_brand();
 @endphp
 
 @section('title', ($chrome['seo_title'] ?? 'Thiết kế tour riêng — '.$brand))

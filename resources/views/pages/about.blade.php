@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', $about['seo_title'] ?? 'Về chúng tôi — ViTravel')
-@section('meta_description', $about['seo_description'] ?? '')
+@section('title', apply_site_brand($about['seo_title'] ?? 'Về chúng tôi — :brand'))
+@section('meta_description', apply_site_brand($about['seo_description'] ?? ''))
 
 @section('content')
     <x-layout.page-header
@@ -11,7 +11,7 @@
         :banner-src="$about['banner']['src'] ?? null"
         :banner-srcset="$about['banner']['srcset'] ?? null"
         :banner-alt="$about['banner']['alt'] ?? null"
-        banner-label="Ảnh banner: đội ngũ ViTravel"
+        :banner-label="apply_site_brand('Ảnh banner: đội ngũ :brand')"
     />
 
     {{-- Giới thiệu công ty (dùng chung với Home) — ẩn CTA vì đã ở trang Về chúng tôi --}}
@@ -164,7 +164,7 @@
                     class="about-mockup object-cover"
                 />
             @else
-                <x-ph class="about-mockup" label="Ảnh: điện thoại hiển thị website ViTravel" icon="photo" icon-class="size-12" />
+                <x-ph class="about-mockup" :label="apply_site_brand('Ảnh: điện thoại hiển thị website :brand')" icon="photo" icon-class="size-12" />
             @endif
             <div>
                 <h2 class="section-title">{{ $reasonsSection['title'] ?? '' }}</h2>

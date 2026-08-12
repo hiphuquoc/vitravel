@@ -184,7 +184,7 @@ return [
             'default_slug' => 'tours',
             'default_title' => 'Tour trọn gói',
             'default_subtitle' => 'Mọi hành trình Đông Nam Á — chọn điểm đến, thời lượng và phong cách phù hợp với bạn.',
-            'default_seo_title' => 'Tour trọn gói Đông Nam Á — ViTravel',
+            'default_seo_title' => 'Tour trọn gói Đông Nam Á — :brand',
             'default_seo_description' => 'Tất cả tour trọn gói Việt Nam, Campuchia, Lào, Thái Lan và Bali — thiết kế bởi chuyên gia bản địa.',
         ],
         'cruises_hub' => [
@@ -193,7 +193,7 @@ return [
             'default_slug' => 'cruises',
             'default_title' => 'Du thuyền',
             'default_subtitle' => 'Tuyển chọn du thuyền đáng trải nghiệm — Hạ Long, Lan Hạ, Mekong.',
-            'default_seo_title' => 'Du thuyền Đông Nam Á — ViTravel',
+            'default_seo_title' => 'Du thuyền Đông Nam Á — :brand',
             'default_seo_description' => 'Đặt cabin du thuyền Hạ Long, Lan Hạ, Mekong qua chuyên gia bản địa.',
         ],
         'guide_hub' => [
@@ -202,8 +202,8 @@ return [
             'default_slug' => 'cam-nang-du-lich',
             'default_title' => 'Cẩm nang du lịch',
             'default_subtitle' => 'Kinh nghiệm, lịch trình và cảm hứng cho hành trình Đông Nam Á.',
-            'default_seo_title' => 'Cẩm nang du lịch Đông Nam Á — ViTravel',
-            'default_seo_description' => 'Bài viết hướng dẫn và cảm hứng du lịch từ đội ngũ ViTravel.',
+            'default_seo_title' => 'Cẩm nang du lịch Đông Nam Á — :brand',
+            'default_seo_description' => 'Bài viết hướng dẫn và cảm hứng du lịch từ đội ngũ :brand.',
         ],
         'team_hub' => [
             'template' => 'team_hub',
@@ -211,8 +211,8 @@ return [
             'default_slug' => 'doi-ngu',
             'default_title' => 'Đội ngũ',
             'default_subtitle' => 'Những người bản địa yêu nghề, trực tiếp thiết kế và chăm chút từng hành trình.',
-            'default_seo_title' => 'Đội ngũ ViTravel — Chuyên gia bản địa',
-            'default_seo_description' => 'Gặp gỡ đội ngũ chuyên gia bản địa của ViTravel — những người trực tiếp thiết kế và đồng hành cùng hành trình của bạn.',
+            'default_seo_title' => 'Đội ngũ :brand — Chuyên gia bản địa',
+            'default_seo_description' => 'Gặp gỡ đội ngũ chuyên gia bản địa của :brand — những người trực tiếp thiết kế và đồng hành cùng hành trình của bạn.',
         ],
 
         'trains_hub' => [
@@ -221,8 +221,8 @@ return [
             'default_slug' => 've-tau-cao-toc',
             'default_title' => 'Vé tàu cao tốc',
             'default_subtitle' => 'Đặt vé tàu SE, giường nằm và ghế mềm — hỗ trợ đổi ngày, giao vé tận nơi.',
-            'default_seo_title' => 'Vé tàu cao tốc Việt Nam — ViTravel',
-            'default_seo_description' => 'Đặt vé tàu Hà Nội — Đà Nẵng — Sài Gòn qua ViTravel. Ghế mềm, giường nằm, hỗ trợ 24/7.',
+            'default_seo_title' => 'Vé tàu cao tốc Việt Nam — :brand',
+            'default_seo_description' => 'Đặt vé tàu Hà Nội — Đà Nẵng — Sài Gòn qua :brand. Ghế mềm, giường nằm, hỗ trợ 24/7.',
         ],
         'ferries_hub' => [
             'template' => 'ferries_hub',
@@ -239,8 +239,8 @@ return [
             'default_slug' => 've-may-bay',
             'default_title' => 'Vé máy bay',
             'default_subtitle' => 'Vé nội địa, quốc tế châu Á và thuê máy bay riêng — báo giá nhanh trong 24 giờ.',
-            'default_seo_title' => 'Vé máy bay nội địa & quốc tế — ViTravel',
-            'default_seo_description' => 'Đặt vé máy bay nội địa, châu Á và charter riêng qua chuyên gia bản địa ViTravel.',
+            'default_seo_title' => 'Vé máy bay nội địa & quốc tế — :brand',
+            'default_seo_description' => 'Đặt vé máy bay nội địa, châu Á và charter riêng qua chuyên gia bản địa :brand.',
         ],
         'stays_hub' => [
             'template' => 'stays_hub',
@@ -248,8 +248,8 @@ return [
             'default_slug' => 'luu-tru',
             'default_title' => 'Khách sạn & Resort',
             'default_subtitle' => 'Tuyển chọn resort và khách sạn 5 sao nổi bật — Phú Quốc, Đà Nẵng, Nha Trang, Hạ Long.',
-            'default_seo_title' => 'Khách sạn & Resort cao cấp Việt Nam — ViTravel',
-            'default_seo_description' => 'Đặt phòng resort 5 sao Phú Quốc, Đà Nẵng, Nha Trang, Hạ Long qua ViTravel — giá tốt, hỗ trợ tận nơi.',
+            'default_seo_title' => 'Khách sạn & Resort cao cấp Việt Nam — :brand',
+            'default_seo_description' => 'Đặt phòng resort 5 sao Phú Quốc, Đà Nẵng, Nha Trang, Hạ Long qua :brand — giá tốt, hỗ trợ tận nơi.',
         ],
         'experiences_hub' => [
             'template' => 'experiences_hub',
@@ -257,8 +257,8 @@ return [
             'default_slug' => 've-vui-choi',
             'default_title' => 'Vé vui chơi & trải nghiệm',
             'default_subtitle' => 'Vinpearl, cáp treo, dù lượn, kayak và thể thao biển — combo tiết kiệm.',
-            'default_seo_title' => 'Vé vui chơi & trải nghiệm Việt Nam — ViTravel',
-            'default_seo_description' => 'Vé Vinpearl, Fansipan, Bà Nà, dù lượn, kayak Hạ Long và thể thao biển qua ViTravel.',
+            'default_seo_title' => 'Vé vui chơi & trải nghiệm Việt Nam — :brand',
+            'default_seo_description' => 'Vé Vinpearl, Fansipan, Bà Nà, dù lượn, kayak Hạ Long và thể thao biển qua :brand.',
         ],
         'extras_hub' => [
             'template' => 'extras_hub',
@@ -266,8 +266,8 @@ return [
             'default_slug' => 'dich-vu-khac',
             'default_title' => 'Dịch vụ khác',
             'default_subtitle' => 'Thuê xe, spa, massage, gửi hành lý, hướng dẫn viên riêng, y tế và hỗ trợ khẩn cấp 24/7.',
-            'default_seo_title' => 'Dịch vụ hỗ trợ du lịch — ViTravel',
-            'default_seo_description' => 'Thuê xe, spa, HDV riêng, y tế và hotline khẩn cấp 24/7 — đồng hành trọn hành trình với ViTravel.',
+            'default_seo_title' => 'Dịch vụ hỗ trợ du lịch — :brand',
+            'default_seo_description' => 'Thuê xe, spa, HDV riêng, y tế và hotline khẩn cấp 24/7 — đồng hành trọn hành trình với :brand.',
         ],
     ],
 ];

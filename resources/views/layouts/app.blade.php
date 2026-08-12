@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'ViTravel — Tour trọn gói & du thuyền Đông Nam Á')</title>
-    <meta name="description" content="@yield('meta_description', 'ViTravel — đại lý du lịch bản địa thiết kế tour trọn gói, du thuyền và hành trình riêng tại Việt Nam, Campuchia, Lào, Thái Lan và Bali.')">
-    <meta property="og:title" content="@yield('title', 'ViTravel — Tour trọn gói & du thuyền Đông Nam Á')">
-    <meta property="og:description" content="@yield('meta_description', 'Tour trọn gói, du thuyền và hành trình thiết kế riêng bởi chuyên gia bản địa.')">
+    <title>@yield('title', seo_home_title())</title>
+    <meta name="description" content="@yield('meta_description', seo_default_description())">
+    <meta property="og:title" content="@yield('title', seo_home_title())">
+    <meta property="og:description" content="@yield('meta_description', seo_default_description())">
     <meta property="og:type" content="website">
-    <meta property="og:locale" content="vi_VN">
+    <meta property="og:locale" content="{{ current_locale() === 'en' ? 'en_US' : 'vi_VN' }}">
     <link rel="canonical" href="{{ url()->current() }}">
 
     @php

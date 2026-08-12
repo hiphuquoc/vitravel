@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Tour ' . $country['name'] . ' trọn gói — ViTravel')
+@section('title', seo_page_title('Tour ' . $country['name'] . ' trọn gói'))
 @section('meta_description', 'Danh sách tour ' . $country['name'] . ' trọn gói được thiết kế bởi chuyên gia bản địa: ' . $country['tagline'] . '. Nhận báo giá miễn phí trong 24 giờ.')
 
 @section('content')
     @php
+        $brand = site_brand();
         $durationKeys = array_map('strval', array_keys($durations));
         $styleKeys = array_map('strval', array_keys($styles));
         $filterDefaults = [
@@ -66,7 +67,7 @@
             <div class="prose-travel listing-seo">
                 <p>
                     Một <strong>tour {{ $country['name'] }} trọn gói</strong> là cách trọn vẹn nhất để khám phá
-                    {{ $country['tagline'] }} mà không phải bận tâm khâu tổ chức. Mỗi lịch trình của ViTravel đều do
+                    {{ $country['tagline'] }} mà không phải bận tâm khâu tổ chức. Mỗi lịch trình của {{ $brand }} đều do
                     <strong>chuyên gia bản địa</strong> thiết kế và có thể tuỳ chỉnh 100%.
                 </p>
             </div>
@@ -75,5 +76,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, 'Tour ' . $country['name'] . ' — ViTravel')) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title('Tour ' . $country['name']))) !!}
 @endsection

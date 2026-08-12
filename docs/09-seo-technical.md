@@ -6,15 +6,17 @@ Tài liệu **JSON-LD / schema.org** cho ViTravel. Triển khai: `config/seo.php
 
 ## 1. Inventory
 
-| Type | Nơi emit | Trang |
-|---|---|---|
-| **Organization** + TravelAgency | Layout (script riêng) | Mọi trang public |
-| **WebSite** + `SearchAction` | Layout (script riêng) | Mọi trang public |
-| **BreadcrumbList** | `x-layout.breadcrumb` | Trang có breadcrumb |
-| **FAQPage** | `x-shared.faq` | Listing / detail / guide… |
-| **TouristTrip** (+ rating, provider→Org) | `x-tour.detail` | Tour / Cruise detail |
-| **Article** (publisher→Org `@id`) | `guide/show` | Bài guide |
-| **ItemList** (SSR) | Listing hub/country/cruise | Schema Google — grid vẫn fetch client |
+| Type | Nơi emit | Trang | Brand / project |
+|---|---|---|---|
+| **Organization** + TravelAgency | Layout | Mọi trang public | `company_profiles` via `site_brand()` |
+| **WebSite** + `SearchAction` | Layout | Mọi trang public | Cùng brand; `description` từ tagline dự án |
+| **BreadcrumbList** | `x-layout.breadcrumb` | Trang có breadcrumb | — |
+| **FAQPage** | `x-shared.faq` | Listing / detail / guide… | — |
+| **TouristTrip** (+ rating, provider→Org) | `x-tour.detail` | Tour / Cruise detail | `provider` → Org `@id` |
+| **Article** (publisher→Org `@id`) | `guide/show` | Bài guide | author fallback = brand |
+| **ItemList** (SSR) | Listing hub/country/cruise/service | Schema Google | Tên list có brand |
+
+Trang chủ: title/description = `seo_home_title()` / `seo_default_description()` (brand + tagline), không hardcode ViTravel.
 
 ---
 
@@ -79,7 +81,10 @@ Organization:
 2. [Schema Markup Validator](https://validator.schema.org/)
 3. DevTools → Elements → `script[type="application/ld+json"]`
 
-Nguồn dữ liệu: **`company_profiles`** (per project) qua `CompanyProfile::contact()` — `config/company.php` chỉ fallback rỗng khi DB trống. Meta SEO bổ sung: `config/seo.php` → `site` (`SEO_SITE_*` optional; brand runtime từ CompanyProfile / SchemaService).
+Nguồn dữ liệu: **`company_profiles`** (per project) qua `CompanyProfile::contact()` / helpers `site_brand()`, `seo_home_title()`, `seo_default_description()`, `apply_site_brand()`.  
+`config/seo.php` → `site` (`SEO_SITE_*`) chỉ là **fallback** khi DB trống — `SchemaService::siteConfig()` **ưu tiên CompanyProfile** (không để `SEO_SITE_NAME=ViTravel` ghi đè WebSite/OG trên domain dự án khác).
+
+Hub SEO defaults trong `config/seo.hubs.*.default_seo_*` dùng placeholder `:brand` (runtime → tên dự án). Copy cũ còn «ViTravel» cũng được `apply_site_brand()` thay khi đọc hub / chrome / home sections.
 
 ---
 

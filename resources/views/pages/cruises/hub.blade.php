@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title', $hub['seoTitle'] ?? 'Du thuyền Đông Nam Á — ViTravel')
-@section('meta_description', $hub['seoDescription'] ?? 'Tuyển chọn du thuyền Hạ Long, Lan Hạ, Mekong — đặt cabin qua chuyên gia bản địa ViTravel.')
+@section('title', $hub['seoTitle'] ?: seo_page_title('Du thuyền Đông Nam Á'))
+@section('meta_description', $hub['seoDescription'] ?: apply_site_brand('Tuyển chọn du thuyền Hạ Long, Lan Hạ, Mekong — đặt cabin qua chuyên gia bản địa :brand.'))
 
 @section('content')
     @php
+        $brand = site_brand();
         $durationKeys = array_map('strval', array_keys($durations));
         $styleKeys = array_map('strval', array_keys($styles));
         $typeSlugs = array_values(array_filter(array_map(fn ($t) => $t['slug'] ?? null, $types)));
@@ -59,7 +60,7 @@
 
             <div class="prose-travel listing-seo">
                 <p>
-                    Trang <strong>du thuyền</strong> của ViTravel tập hợp các hành trình ngủ đêm trên vịnh —
+                    Trang <strong>du thuyền</strong> của {{ $brand }} tập hợp các hành trình ngủ đêm trên vịnh —
                     Hạ Long, Lan Hạ và Mekong. Mỗi cabin do <strong>chuyên gia bản địa</strong> tuyển chọn.
                 </p>
             </div>
@@ -68,5 +69,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, 'Du thuyền ViTravel')) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title('Du thuyền'))) !!}
 @endsection

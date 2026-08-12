@@ -68,8 +68,8 @@ class SchemaService
             // Dual type: tool tìm "Organization" và "TravelAgency" đều nhận
             '@type' => ['Organization', 'TravelAgency'],
             '@id' => $this->organizationId(),
-            'name' => $contact['name'] ?? ($site['name'] ?? 'ViTravel'),
-            'legalName' => $contact['legal_name'] ?? ($contact['name'] ?? ($site['name'] ?? 'ViTravel')),
+            'name' => $site['name'] ?? 'ViTravel',
+            'legalName' => $contact['legal_name'] ?? ($site['name'] ?? 'ViTravel'),
             'url' => url('/'),
             'slogan' => $this->plainSlogan($contact['slogan'] ?? ($site['tagline'] ?? null)),
             'telephone' => $contact['phone'] ?? ($site['telephone'] ?? null),
@@ -125,8 +125,9 @@ class SchemaService
         return $this->filterNull([
             '@type' => 'WebSite',
             '@id' => $this->websiteId(),
-            'name' => $site['name'] ?? 'ViTravel',
+            'name' => $site['name'] ?? site_brand(),
             'url' => url('/'),
+            'description' => $site['default_description'] ?? $site['tagline'] ?? null,
             'publisher' => ['@id' => $this->organizationId()],
             'inLanguage' => app()->getLocale() === 'en' ? 'en' : 'vi',
             'potentialAction' => [
@@ -357,17 +358,36 @@ class SchemaService
         $site = config('seo.site') ?? [];
         $site = is_array($site) ? $site : [];
         $contact = CompanyProfile::contact();
+        $brand = filled($contact['name'] ?? null)
+            ? (string) $contact['name']
+            : (string) ($site['name'] ?? 'ViTravel');
 
-        return array_merge([
-            'name' => $contact['name'] ?? 'ViTravel',
-            'tagline' => $contact['tagline'] ?? null,
-            'telephone' => $contact['phone'] ?? null,
-            'email' => $contact['email'] ?? null,
-            'address' => is_array($contact['address'] ?? null) ? $contact['address'] : [],
-            'same_as' => is_array($contact['same_as'] ?? null) ? $contact['same_as'] : [],
-            'default_og_image' => $contact['schema']['logo'] ?? null,
-            'twitter_site' => null,
-        ], $site);
+        // CompanyProfile thắng config SEO_SITE_* (tránh WebSite/OG còn «ViTravel» trên domain dự án khác).
+        return array_merge($site, [
+            'name' => $brand,
+            'title_suffix' => $brand,
+            'tagline' => filled($contact['tagline'] ?? null)
+                ? (string) $contact['tagline']
+                : ($site['tagline'] ?? null),
+            'telephone' => filled($contact['phone'] ?? null)
+                ? (string) $contact['phone']
+                : ($site['telephone'] ?? null),
+            'email' => filled($contact['email'] ?? null)
+                ? (string) $contact['email']
+                : ($site['email'] ?? null),
+            'address' => is_array($contact['address'] ?? null) && $contact['address'] !== []
+                ? $contact['address']
+                : (is_array($site['address'] ?? null) ? $site['address'] : []),
+            'same_as' => is_array($contact['same_as'] ?? null) && $contact['same_as'] !== []
+                ? $contact['same_as']
+                : (is_array($site['same_as'] ?? null) ? $site['same_as'] : []),
+            'default_og_image' => $contact['schema']['logo']
+                ?? ($site['default_og_image'] ?? null),
+            'twitter_site' => $site['twitter_site'] ?? null,
+            'default_description' => function_exists('seo_default_description')
+                ? seo_default_description()
+                : apply_site_brand((string) ($site['default_description'] ?? $brand)),
+        ]);
     }
 
     protected function plainSlogan(?string $slogan): ?string

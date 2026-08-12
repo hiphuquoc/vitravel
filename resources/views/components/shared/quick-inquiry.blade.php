@@ -1,6 +1,6 @@
 {{-- Hỏi nhanh — teaser thu gọn, form letter mở trong modal --}}
 @php
-    $companyBrand = view_data()->companyContact()['name'] ?? 'ViTravel';
+    $companyBrand = site_brand();
     $qi = view_data()->quickInquiry();
     $qiTitle = $qi['title'] ?? 'Gửi lời nhắn cho chúng tôi';
     $qiBody = $qi['body'] ?? $qi['subtitle'] ?? 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.';

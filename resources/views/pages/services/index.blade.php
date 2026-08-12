@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($category['name'] ?? '') . ' — ' . ($hub['title'] ?? 'Dịch vụ') . ' | ViTravel')
-@section('meta_description', $category['intro'] ?? ('Tuyển chọn ' . strtolower($category['name'] ?? 'dịch vụ') . ' tốt nhất — đặt qua chuyên gia bản địa ViTravel.'))
+@section('title', seo_page_title(($category['name'] ?? '') . ' — ' . ($hub['title'] ?? 'Dịch vụ')))
+@section('meta_description', apply_site_brand($category['intro'] ?? ('Tuyển chọn ' . strtolower($category['name'] ?? 'dịch vụ') . ' tốt nhất — đặt qua chuyên gia bản địa :brand.')))
 
 @section('content')
     @php
@@ -83,5 +83,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, ($category['name'] ?? 'Dịch vụ') . ' — ViTravel')) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title($category['name'] ?? 'Dịch vụ'))) !!}
 @endsection

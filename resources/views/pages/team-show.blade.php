@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($member['name'] ?? 'Thành viên').' — Đội ngũ ViTravel')
-@section('meta_description', $member['short_bio'] ?? ('Hồ sơ '.($member['name'] ?? '').' — đội ngũ chuyên gia bản địa ViTravel.'))
+@section('title', seo_page_title(($member['name'] ?? 'Thành viên').' — Đội ngũ'))
+@section('meta_description', apply_site_brand($member['short_bio'] ?? ('Hồ sơ '.($member['name'] ?? '').' — đội ngũ chuyên gia bản địa :brand.')))
 
 @section('content')
     <x-layout.page-header

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', ($chrome['seo_title'] ?? 'Cảm nhận khách hàng — ViTravel'))
-@section('meta_description', ($chrome['seo_description'] ?? 'Cảm nhận thật từ khách hàng ViTravel.'))
+@section('title', $chrome['seo_title'] ?? seo_page_title('Cảm nhận khách hàng'))
+@section('meta_description', $chrome['seo_description'] ?? apply_site_brand('Cảm nhận thật từ khách hàng :brand.'))
 
 @section('content')
     <x-layout.page-header
@@ -28,7 +28,7 @@
             <x-shared.stars :rating="$avg" aria-label="{{ $avg }} trên 5 sao" />
             <p class="reviews-summary__meta">
                 {{ count($testimonials) }}
-                {{ $isVi ? 'cảm nhận từ khách hàng ViTravel' : 'reviews from ViTravel guests' }}
+                {{ $isVi ? 'cảm nhận từ khách hàng '.site_brand() : 'reviews from '.site_brand().' guests' }}
             </p>
         </div>
 

@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title', $hub['seoTitle'] ?? ($hub['title'] . ' — ViTravel'))
+@section('title', $hub['seoTitle'] ?: seo_page_title($hub['title'] ?? 'Dịch vụ'))
 @section('meta_description', $hub['seoDescription'] ?? $hub['subtitle'])
 
 @section('content')
     @php
+        $brand = site_brand();
         $unitLabel = $hub['unitLabel'] ?? 'dịch vụ';
         $filterCategories = array_values(array_filter(
             $categories,
@@ -70,7 +71,7 @@
 
             <div class="prose-travel listing-seo">
                 <p>
-                    Trang <strong>{{ strtolower($hub['title']) }}</strong> của ViTravel tập hợp các dịch vụ được chọn lọc —
+                    Trang <strong>{{ strtolower($hub['title']) }}</strong> của {{ $brand }} tập hợp các dịch vụ được chọn lọc —
                     đặt qua <strong>chuyên gia bản địa</strong>, giá minh bạch và hỗ trợ 24/7 suốt hành trình.
                 </p>
             </div>
@@ -79,5 +80,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, $hub['title'] . ' — ViTravel')) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title($hub['title'] ?? 'Dịch vụ'))) !!}
 @endsection

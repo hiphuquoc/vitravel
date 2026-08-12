@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title', $type['name'] . ' — Danh sách du thuyền | ViTravel')
+@section('title', seo_page_title($type['name'] . ' — Danh sách du thuyền'))
 @section('meta_description', 'Tuyển chọn ' . strtolower($type['name']) . ' tốt nhất với đánh giá thật từ khách hàng. Đặt cabin qua chuyên gia bản địa, nhận báo giá trong 24 giờ.')
 
 @section('content')
     @php
+        $brand = site_brand();
         $durationKeys = array_map('strval', array_keys($durations));
         $styleKeys = array_map('strval', array_keys($styles));
         $filterDefaults = [
@@ -61,7 +62,7 @@
             <div class="prose-travel listing-seo">
                 <p>
                     Ngủ đêm trên <strong>{{ strtolower($type['name']) }}</strong> là trải nghiệm không thể thay thế.
-                    ViTravel làm việc trực tiếp với từng nhà thuyền — không qua trung gian.
+                    {{ $brand }} làm việc trực tiếp với từng nhà thuyền — không qua trung gian.
                 </p>
             </div>
 
@@ -69,5 +70,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, $type['name'] . ' — ViTravel')) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title($type['name']))) !!}
 @endsection

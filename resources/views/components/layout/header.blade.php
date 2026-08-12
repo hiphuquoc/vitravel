@@ -34,7 +34,7 @@
     $searchKeywords = array_slice(view_data()->popularKeywords(), 0, 8);
     $companyContact = view_data()->companyContact();
     $nav = view_data()->siteNav();
-    $brandName = $nav['brand'] ?? ($companyContact['name'] ?? 'ViTravel');
+    $brandName = $nav['brand'] ?? site_brand();
     $brandTagline = $nav['tagline'] ?? '';
     $cruiseNav = $nav['cruise'] ?? [];
     $toursNav = $nav['tours'] ?? [];

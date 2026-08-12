@@ -1,10 +1,11 @@
 @extends('layouts.app')
 
-@section('title', $hub['seoTitle'] ?? 'Tour trọn gói Đông Nam Á — ViTravel')
-@section('meta_description', $hub['seoDescription'] ?? 'Tất cả tour trọn gói Việt Nam, Campuchia, Lào, Thái Lan và Bali — thiết kế bởi chuyên gia bản địa. Lọc theo quốc gia, thời lượng và phong cách.')
+@section('title', $hub['seoTitle'] ?: seo_page_title('Tour trọn gói Đông Nam Á'))
+@section('meta_description', $hub['seoDescription'] ?: 'Tất cả tour trọn gói Việt Nam, Campuchia, Lào, Thái Lan và Bali — thiết kế bởi chuyên gia bản địa. Lọc theo quốc gia, thời lượng và phong cách.')
 
 @section('content')
     @php
+        $brand = site_brand();
         $durationKeys = array_map('strval', array_keys($durations));
         $styleKeys = array_map('strval', array_keys($styles));
         $countrySlugs = array_values(array_filter(array_map(fn ($c) => $c['slug'] ?? null, $countries)));
@@ -59,12 +60,12 @@
             <div class="listing-rating-summary">
                 <p class="listing-rating-summary__score">5.0</p>
                 <x-shared.stars :rating="5" aria-label="5 trên 5 sao" />
-                <p class="listing-rating-summary__meta">Đánh giá từ khách hàng đã đi tour với ViTravel</p>
+                <p class="listing-rating-summary__meta">Đánh giá từ khách hàng đã đi tour với {{ $brand }}</p>
             </div>
 
             <div class="prose-travel listing-seo">
                 <p>
-                    Trang <strong>tour trọn gói</strong> của ViTravel tập hợp toàn bộ hành trình Đông Nam Á —
+                    Trang <strong>tour trọn gói</strong> của {{ $brand }} tập hợp toàn bộ hành trình Đông Nam Á —
                     từ Việt Nam, Campuchia, Lào, Thái Lan tới Bali. Mỗi lịch trình do
                     <strong>chuyên gia bản địa</strong> thiết kế và có thể tuỳ chỉnh 100%.
                 </p>
@@ -74,5 +75,5 @@
         </div>
     </div>
 
-    {!! schema_ld(schema()->itemList($schemaItems, 'Tour trọn gói ViTravel')) !!}
+    {!! schema_ld(schema()->itemList($schemaItems, seo_page_title('Tour trọn gói'))) !!}
 @endsection

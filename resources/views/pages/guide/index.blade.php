@@ -4,10 +4,11 @@
     $pageTitle = $country ? 'Cẩm nang du lịch ' . $country['name'] : 'Cẩm nang du lịch';
 @endphp
 
-@section('title', $pageTitle . ' — kinh nghiệm, mẹo hay & lịch trình | ViTravel')
+@section('title', seo_page_title($pageTitle . ' — kinh nghiệm, mẹo hay & lịch trình'))
 @section('meta_description', 'Tổng hợp kinh nghiệm du lịch' . ($country ? ' ' . $country['name'] : ' Đông Nam Á') . ' từ chuyên gia bản địa: nên đi mùa nào, ăn gì, ở đâu và chọn tour nào phù hợp.')
 
 @section('content')
+    @php $brand = site_brand(); @endphp
     <div class="container-site blog-page-intro">
         <x-layout.breadcrumb :items="array_filter([
             ['label' => 'Cẩm nang du lịch', 'url' => $country ? locale_route('guide.index') : null],
@@ -19,7 +20,7 @@
             <x-shared.sort-dropdown :options="['Bài mới nhất', 'Xem nhiều nhất', 'Đánh giá cao nhất']" />
         </div>
         <p class="body-text site-mt max-w-2xl">
-            Kinh nghiệm thật từ những chuyến khảo sát của đội ngũ ViTravel — cập nhật liên tục để bạn lên kế hoạch dễ dàng hơn.
+            Kinh nghiệm thật từ những chuyến khảo sát của đội ngũ {{ $brand }} — cập nhật liên tục để bạn lên kế hoạch dễ dàng hơn.
         </p>
     </div>
 
@@ -46,7 +47,7 @@
 
             <div class="prose-travel blog-seo">
                 <p>
-                    <strong>Cẩm nang du lịch {{ $country['name'] ?? 'Đông Nam Á' }}</strong> của ViTravel được viết bởi chính
+                    <strong>Cẩm nang du lịch {{ $country['name'] ?? 'Đông Nam Á' }}</strong> của {{ $brand }} được viết bởi chính
                     những chuyên gia thiết kế tour — người đã trực tiếp khảo sát từng điểm đến, ăn từng quán và ngủ thử từng homestay
                     trước khi đưa vào lịch trình. Bạn sẽ tìm thấy câu trả lời cho những câu hỏi quen thuộc: nên đi mùa nào,
                     chi phí bao nhiêu, di chuyển thế nào và <a href="{{ locale_route('tours.index', $country['slug'] ?? 'viet-nam') }}">chọn tour nào phù hợp</a>.

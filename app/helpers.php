@@ -72,6 +72,114 @@ if (! function_exists('company')) {
     }
 }
 
+if (! function_exists('site_brand')) {
+    /**
+     * Tên thương hiệu runtime theo dự án (company_profiles), không hardcode ViTravel.
+     */
+    function site_brand(): string
+    {
+        $name = trim((string) (\App\Models\CompanyProfile::contact()['name'] ?? ''));
+        if ($name !== '') {
+            return $name;
+        }
+
+        $fallback = trim((string) (config('seo.site.name') ?? ''));
+
+        return $fallback !== '' ? $fallback : 'ViTravel';
+    }
+}
+
+if (! function_exists('apply_site_brand')) {
+    /**
+     * Thay :brand / ViTravel trong chuỗi copy SEO·UI bằng brand dự án hiện tại.
+     * Dùng cho fallback config/hub/chrome đã seed chung template.
+     */
+    function apply_site_brand(?string $text): string
+    {
+        if ($text === null || $text === '') {
+            return '';
+        }
+
+        $brand = site_brand();
+
+        return str_replace([':brand', 'ViTravel'], $brand, $text);
+    }
+}
+
+if (! function_exists('apply_site_brand_deep')) {
+    /**
+     * @param  mixed  $value
+     * @return mixed
+     */
+    function apply_site_brand_deep(mixed $value): mixed
+    {
+        if (is_string($value)) {
+            return apply_site_brand($value);
+        }
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        $out = [];
+        foreach ($value as $k => $v) {
+            $out[$k] = apply_site_brand_deep($v);
+        }
+
+        return $out;
+    }
+}
+
+if (! function_exists('seo_page_title')) {
+    /**
+     * Title trang: «{title} — {brand}» (không lặp brand nếu title đã chứa).
+     */
+    function seo_page_title(string $title): string
+    {
+        $brand = site_brand();
+        $title = trim(apply_site_brand($title));
+        if ($title === '') {
+            return $brand;
+        }
+        if (str_contains($title, $brand)) {
+            return $title;
+        }
+
+        return $title.' — '.$brand;
+    }
+}
+
+if (! function_exists('seo_home_title')) {
+    function seo_home_title(): string
+    {
+        $brand = site_brand();
+        $tagline = trim((string) (company('tagline') ?: ''), " \t\n\r\0\x0B\"“”'");
+        if ($tagline === '') {
+            $tagline = trim((string) (company('slogan') ?: ''), " \t\n\r\0\x0B\"“”'");
+        }
+
+        return $tagline !== '' ? $brand.' — '.$tagline : $brand;
+    }
+}
+
+if (! function_exists('seo_default_description')) {
+    function seo_default_description(): string
+    {
+        $contact = \App\Models\CompanyProfile::contact();
+        $brand = site_brand();
+        $tagline = trim((string) ($contact['tagline'] ?? ''), " \t\n\r\0\x0B\"“”'");
+        if ($tagline !== '') {
+            return $brand.' — '.$tagline;
+        }
+
+        $cfg = trim((string) (config('seo.site.default_description') ?? ''));
+        if ($cfg !== '') {
+            return apply_site_brand($cfg);
+        }
+
+        return $brand;
+    }
+}
+
 if (! function_exists('current_locale')) {
     function current_locale(): string
     {

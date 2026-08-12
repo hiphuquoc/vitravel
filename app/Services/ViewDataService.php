@@ -140,15 +140,15 @@ class ViewDataService
     public function homeSections(): array
     {
         if (! HomeSection::query()->active()->exists()) {
-            return SampleData::homeSections();
+            return apply_site_brand_deep(SampleData::homeSections());
         }
 
-        return HomeSection::query()
+        return apply_site_brand_deep(HomeSection::query()
             ->active()
             ->with(['translations', 'image'])
             ->get()
             ->mapWithKeys(fn (HomeSection $section) => [$section->key => $this->mapHomeSection($section)])
-            ->all();
+            ->all());
     }
 
     public function homeSection(string $key): array
@@ -163,10 +163,10 @@ class ViewDataService
                 return ['key' => $key, 'hidden' => true];
             }
 
-            return $this->mapHomeSection($section);
+            return apply_site_brand_deep($this->mapHomeSection($section));
         }
 
-        return SampleData::homeSection($key);
+        return apply_site_brand_deep(SampleData::homeSection($key));
     }
 
     public function homeSlides(): array
@@ -1246,7 +1246,7 @@ class ViewDataService
             ];
         }
 
-        $brand = (string) ($this->companyContact()['name'] ?? 'ViTravel');
+        $brand = (string) ($this->companyContact()['name'] ?? site_brand());
 
         $isIsland = collect($this->serviceClusters())->contains(fn ($c) => ($c['code'] ?? '') === 'ferry');
 
@@ -1283,7 +1283,7 @@ class ViewDataService
     public function siteNav(): array
     {
         $contact = $this->companyContact();
-        $brand = (string) ($contact['name'] ?? 'ViTravel');
+        $brand = (string) ($contact['name'] ?? site_brand());
         $tagline = (string) ($contact['tagline'] ?? '');
         if ($tagline === '') {
             $tagline = trim((string) ($contact['slogan'] ?? ''), " \t\n\r\0\x0B\"'");
@@ -1805,7 +1805,7 @@ class ViewDataService
     {
         $pool = match ($service->cluster) {
             'train' => [
-                ['text' => 'Đặt vé tàu qua ViTravel rất nhanh, e-ticket rõ ràng và hỗ trợ đổi ngày linh hoạt.', 'author' => 'Anh Tuấn'],
+                ['text' => 'Đặt vé tàu qua :brand rất nhanh, e-ticket rõ ràng và hỗ trợ đổi ngày linh hoạt.', 'author' => 'Anh Tuấn'],
                 ['text' => 'Ghế mềm êm, lên tàu đúng hướng dẫn — tiết kiệm được một đêm khách sạn so với bay.', 'author' => 'Chị Hương'],
                 ['text' => 'Nhân viên tư vấn rõ lịch SE và giao vé tận nơi đúng hẹn.', 'author' => 'Anh Đức'],
             ],
@@ -1815,7 +1815,7 @@ class ViewDataService
                 ['text' => 'Đổi lịch bay được hỗ trợ kịp thời trước ngày khởi hành.', 'author' => 'Chị Lan'],
             ],
             'stay' => [
-                ['text' => 'Resort đúng như mô tả, phòng sạch và view đẹp — book qua ViTravel được giá tốt.', 'author' => 'Gia đình Anh Nam'],
+                ['text' => 'Resort đúng như mô tả, phòng sạch và view đẹp — book qua :brand được giá tốt.', 'author' => 'Gia đình Anh Nam'],
                 ['text' => 'Check-in suôn sẻ, đội ngũ tư vấn chọn hạng phòng rất hợp nhu cầu.', 'author' => 'Chị Trang'],
                 ['text' => 'Vị trí thuận tiện, bữa sáng ổn và nhân viên khách sạn nhiệt tình.', 'author' => 'Anh Minh'],
             ],
@@ -1826,14 +1826,18 @@ class ViewDataService
             ],
             default => [
                 ['text' => 'Dịch vụ đúng cam kết, hỗ trợ nhanh và giá rõ ràng từ đầu.', 'author' => 'Anh Long'],
-                ['text' => 'Đặt qua ViTravel tiện hơn tự tìm — có người đồng hành khi cần hỗ trợ.', 'author' => 'Chị Ngọc'],
+                ['text' => 'Đặt qua :brand tiện hơn tự tìm — có người đồng hành khi cần hỗ trợ.', 'author' => 'Chị Ngọc'],
                 ['text' => 'Phản hồi nhanh, điều chỉnh theo nhu cầu đoàn rất linh hoạt.', 'author' => 'Anh Việt'],
             ],
         };
 
         $index = abs(crc32((string) ($service->code ?: $service->id))) % count($pool);
+        $pick = $pool[$index];
 
-        return $pool[$index];
+        return [
+            'text' => apply_site_brand($pick['text']),
+            'author' => $pick['author'],
+        ];
     }
 
     protected function serviceDurationLabel(Service $service): string
@@ -1902,8 +1906,8 @@ class ViewDataService
                 'listingBannerSrcset' => null,
                 'cover' => null,
                 'coverSrcset' => null,
-                'seoTitle' => $cfg['default_seo_title'] ?? null,
-                'seoDescription' => $cfg['default_seo_description'] ?? null,
+                'seoTitle' => apply_site_brand((string) ($cfg['default_seo_title'] ?? '')),
+                'seoDescription' => apply_site_brand((string) ($cfg['default_seo_description'] ?? '')),
             ];
         }
 
@@ -1925,8 +1929,8 @@ class ViewDataService
             'listingBannerSrcset' => $page->bannerSrcset(),
             'cover' => $page->coverUrl('card') ?: $page->coverUrl(),
             'coverSrcset' => $page->coverSrcset(),
-            'seoTitle' => $seoTrans?->seo_title ?? ($cfg['default_seo_title'] ?? null),
-            'seoDescription' => $seoTrans?->seo_description ?? ($cfg['default_seo_description'] ?? null),
+            'seoTitle' => apply_site_brand((string) ($seoTrans?->seo_title ?? ($cfg['default_seo_title'] ?? ''))),
+            'seoDescription' => apply_site_brand((string) ($seoTrans?->seo_description ?? ($cfg['default_seo_description'] ?? ''))),
         ];
     }
 

@@ -268,7 +268,7 @@ class SampleData
 
     public static function pageChrome(string $key): array
     {
-        return PageChromeDefaults::get($key);
+        return apply_site_brand_deep(PageChromeDefaults::get($key));
     }
 
     public static function heroPills(): array
@@ -471,7 +471,7 @@ class SampleData
 
         $pool = match ($row['cluster'] ?? '') {
             'train' => [
-                ['text' => 'Đặt vé tàu qua ViTravel rất nhanh, e-ticket rõ ràng và hỗ trợ đổi ngày linh hoạt.', 'author' => 'Anh Tuấn'],
+                ['text' => 'Đặt vé tàu qua :brand rất nhanh, e-ticket rõ ràng và hỗ trợ đổi ngày linh hoạt.', 'author' => 'Anh Tuấn'],
                 ['text' => 'Ghế mềm êm, lên tàu đúng hướng dẫn — tiết kiệm được một đêm khách sạn so với bay.', 'author' => 'Chị Hương'],
                 ['text' => 'Nhân viên tư vấn rõ lịch SE và giao vé tận nơi đúng hẹn.', 'author' => 'Anh Đức'],
             ],
@@ -481,7 +481,7 @@ class SampleData
                 ['text' => 'Đổi lịch bay được hỗ trợ kịp thời trước ngày khởi hành.', 'author' => 'Chị Lan'],
             ],
             'stay' => [
-                ['text' => 'Resort đúng như mô tả, phòng sạch và view đẹp — book qua ViTravel được giá tốt.', 'author' => 'Gia đình Anh Nam'],
+                ['text' => 'Resort đúng như mô tả, phòng sạch và view đẹp — book qua :brand được giá tốt.', 'author' => 'Gia đình Anh Nam'],
                 ['text' => 'Check-in suôn sẻ, đội ngũ tư vấn chọn hạng phòng rất hợp nhu cầu.', 'author' => 'Chị Trang'],
                 ['text' => 'Vị trí thuận tiện, bữa sáng ổn và nhân viên khách sạn nhiệt tình.', 'author' => 'Anh Minh'],
             ],
@@ -492,14 +492,18 @@ class SampleData
             ],
             default => [
                 ['text' => 'Dịch vụ đúng cam kết, hỗ trợ nhanh và giá rõ ràng từ đầu.', 'author' => 'Anh Long'],
-                ['text' => 'Đặt qua ViTravel tiện hơn tự tìm — có người đồng hành khi cần hỗ trợ.', 'author' => 'Chị Ngọc'],
+                ['text' => 'Đặt qua :brand tiện hơn tự tìm — có người đồng hành khi cần hỗ trợ.', 'author' => 'Chị Ngọc'],
                 ['text' => 'Phản hồi nhanh, điều chỉnh theo nhu cầu đoàn rất linh hoạt.', 'author' => 'Anh Việt'],
             ],
         };
 
         $index = abs(crc32((string) ($row['code'] ?? $row['slug'] ?? 'svc'))) % count($pool);
+        $pick = $pool[$index];
 
-        return $pool[$index];
+        return [
+            'text' => apply_site_brand($pick['text']),
+            'author' => $pick['author'],
+        ];
     }
 
     public static function service(string $slug, ?string $cluster = null): ?array
