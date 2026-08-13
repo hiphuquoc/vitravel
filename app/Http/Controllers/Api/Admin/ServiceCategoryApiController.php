@@ -146,10 +146,6 @@ class ServiceCategoryApiController extends Controller
         ListingFields::mergeAliases($request, [
             'intro' => 'subtitle',
         ]);
-        // seo_body → intro khi chưa có intro (service category chỉ có 1 khối copy)
-        if (! $request->exists('intro') && $request->exists('seo_body')) {
-            $request->merge(['intro' => $request->input('seo_body')]);
-        }
 
         try {
             $validated = $request->validate([
@@ -158,7 +154,7 @@ class ServiceCategoryApiController extends Controller
                 'name' => 'required|string|max:255',
                 'intro' => 'nullable|string|max:2000',
                 'subtitle' => 'nullable|string|max:2000',
-                'seo_body' => 'nullable|string|max:2000',
+                'seo_body' => 'nullable|string',
                 'slug' => [
                     'required',
                     'string',
@@ -200,6 +196,7 @@ class ServiceCategoryApiController extends Controller
                 'cluster' => $cluster,
                 'name' => $validated['name'],
                 'intro' => $validated['intro'] ?? null,
+                'seo_body' => $validated['seo_body'] ?? null,
                 'slug' => $seoSlug,
                 'sort' => $validated['sort'] ?? 0,
                 'is_active' => $request->boolean('is_active', true),
@@ -264,7 +261,7 @@ class ServiceCategoryApiController extends Controller
             'slug' => $category->slug,
             'intro' => $category->intro,
             'subtitle' => $category->intro,
-            'seo_body' => $category->intro,
+            'seo_body' => $category->seo_body ?: $category->intro,
             'sort' => $category->sort,
             'is_active' => $category->is_active,
             'seo' => [

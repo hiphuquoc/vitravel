@@ -134,7 +134,7 @@ Keys nằm trong cùng file seed dự án (`service_clusters`, `service_categori
 | Key | Shape (tóm tắt) |
 |-----|-----------------|
 | `service_clusters` | `[{ code, nav_label, label, icon, hub_key, sort }]` — 5 cụm: `train`, `flight`, `stay`, `experience`, `other` |
-| `service_categories` | `[{ cluster, slug, name, sort, intro? }]` — danh mục con dưới hub. Alias AI/listing: `subtitle` / `seo_body` → cột `intro` |
+| `service_categories` | `[{ cluster, slug, name, sort, intro?, seo_body? }]` — danh mục con dưới hub. `intro` = subtitle dưới H1; `seo_body` = HTML cuối listing |
 | `services` | `[{ code, cluster, category_slug, country_slug?, title, slug, price_from, currency, rating, highlights[], inclusions[], exclusions[], notes[], attrs{}, options[], faqs[], en? }]` |
 | `service_listing_faqs` | `[{ q, a }]` — FAQ chung hub/listing dịch vụ |
 
@@ -161,7 +161,7 @@ Mọi trang listing (tours hub / country / chủ đề tour / cruise type / serv
 |-----------|---------|------------------------|
 | `title` | H1 | `name` / hub title |
 | `subtitle` | Copy ngắn dưới H1 | `tour_categories.subtitle`, country `tagline`, hub `body`, service `intro` |
-| `seoBody` | Prose SEO dưới lưới | `tour_categories.seo_body`, country `long_form`, hub `seo_body`, service `intro` |
+| `seoBody` | Prose HTML dưới lưới | `tour_categories.seo_body`, country `long_form`, hub `seo_body`, service `seo_body` |
 | `banner` | Hero | cover / listing banner |
 
 Admin API chấp nhận cả tên cũ lẫn canonical (`ListingFields`).

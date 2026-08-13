@@ -1776,7 +1776,7 @@ class ViewDataService
             'title' => $cat->name,
             'intro' => $cat->intro,
             'subtitle' => (string) ($cat->intro ?? ''),
-            'seoBody' => (string) ($cat->intro ?? ''),
+            'seoBody' => (string) ($cat->seo_body ?: $cat->intro ?? ''),
             'cluster' => $cat->cluster,
             'count' => (int) ($cat->services_count ?? $cat->services()->published()->count()),
             'image' => $cardImage,

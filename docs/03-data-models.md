@@ -123,7 +123,8 @@ Tách khỏi bảng `packages` (tour/cruise). **5 cụm** (`cluster` code): `tra
 - cluster            enum        // train | flight | stay | experience | other
 - slug               string
 - name               string
-- intro              richText    // SEO intro trang danh mục
+- intro              richText    // mô tả ngắn dưới H1 (listing subtitle)
+- seo_body           richText    // HTML đoạn SEO cuối listing
 - sort / is_active
 - seo                SEOFields   // type service_category, parent = hub cụm
 ```
@@ -458,7 +459,7 @@ Article 1—n Comment
 | Destination | `destinations` + `destination_translations` | |
 | TourCategory | `tour_categories` + `tour_category_translations` | `description`/`seo_intro` columns; public aliases subtitle/seoBody; FAQ morph |
 | Tour / Cruise | **`packages`** (`type=tour\|cruise`) + `package_translations` | Gộp 1 bảng sản phẩm |
-| ServiceCategory | `service_categories` | `name`, `intro` on main table; listing aliases `subtitle`/`seo_body` → `intro` |
+| ServiceCategory | `service_categories` | `name`, `intro` (subtitle), `seo_body` (HTML cuối listing) |
 | Service | `services` + `service_translations` | `attrs` JSON theo cụm |
 | ServiceOption | `service_options` + `service_option_translations` | Biến thể giá |
 | ItineraryDay | `package_itinerary_days` + translations | |

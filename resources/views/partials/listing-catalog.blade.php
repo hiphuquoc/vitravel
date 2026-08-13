@@ -61,7 +61,7 @@
 
         @if (! empty($listing['seoBody']))
             <div class="prose-travel listing-seo">
-                {!! nl2br(e($listing['seoBody'])) !!}
+                {!! rich_body_html($listing['seoBody']) !!}
             </div>
         @endif
 

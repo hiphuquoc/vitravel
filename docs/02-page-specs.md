@@ -146,7 +146,7 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 1. Page header — breadcrumb: Hub → Tên danh mục
 2. Sidebar: danh sách category cùng cụm (active state)
 3. List card ngang qua API (`x-service.card`)
-4. `subtitle` / `seoBody` từ `intro` (seed alias: `subtitle` / `seo_body`) + FAQ listing
+4. `subtitle` (intro) / `seoBody` (cột `seo_body`, HTML) + FAQ listing
 5. Quick Inquiry + footer
 
 ### D2.3 Chi tiết dịch vụ — `/{hub}/{category}/{slug}`

@@ -16,7 +16,7 @@ class ServiceCategory extends Model
     use BelongsToProject, HasSeo, SoftDeletes;
 
     protected $fillable = [
-        'project_id', 'cluster', 'slug', 'name', 'intro', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
+        'project_id', 'cluster', 'slug', 'name', 'intro', 'seo_body', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
     ];
 
     protected function casts(): array

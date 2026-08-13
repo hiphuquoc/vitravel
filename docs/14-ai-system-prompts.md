@@ -92,7 +92,7 @@ Admin map về form:
 | `listing_hub` | `body` | `seo_body` |
 | `country` | `tagline` | `long_form_content` |
 | `tour_category` | `description` | `seo_intro` |
-| `service_category` | gộp vào `intro` | (cùng `intro`) |
+| `service_category` | `intro` | `seo_body` |
 | `cruise_type` | — (form chưa có) | — |
 
 Ví dụ body:
