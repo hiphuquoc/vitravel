@@ -160,8 +160,8 @@ class TourCategorySeeder extends Seeder
                     [
                         'name' => $row['name'][$locale] ?? $row['name']['vi'],
                         'slug' => $row['slug'],
-                        'description' => $row['description'][$locale] ?? ($row['description']['vi'] ?? null),
-                        'seo_intro' => $row['seoIntro'][$locale] ?? ($row['seoIntro']['vi'] ?? null),
+                        'description' => $this->i18nField($row, ['subtitle', 'description'], $locale),
+                        'seo_intro' => $this->i18nField($row, ['seo_body', 'seoBody', 'seoIntro'], $locale),
                     ],
                 );
             }
@@ -171,14 +171,14 @@ class TourCategorySeeder extends Seeder
 
             foreach (['vi', 'en'] as $locale) {
                 $name = $row['name'][$locale] ?? $row['name']['vi'];
-                $description = $row['description'][$locale] ?? ($row['description']['vi'] ?? null);
+                $subtitle = $this->i18nField($row, ['subtitle', 'description'], $locale);
 
                 $this->seo->syncSeo($category, $locale, [
                     'slug' => $row['slug'],
                     'title' => $name,
                     'seo_title' => $name,
-                    'description' => $description,
-                    'seo_description' => $description,
+                    'description' => $subtitle,
+                    'seo_description' => $subtitle,
                     'status' => 'published',
                     'parent_id' => $parentId,
                     'country_code' => $country?->code,
@@ -227,6 +227,26 @@ class TourCategorySeeder extends Seeder
 
             $category->packages()->sync($packageIds->unique()->values()->all());
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     * @param  list<string>  $keys  canonical first, then legacy aliases
+     */
+    protected function i18nField(array $row, array $keys, string $locale): ?string
+    {
+        foreach ($keys as $key) {
+            $value = $row[$key] ?? null;
+            if (! is_array($value)) {
+                continue;
+            }
+            $text = $value[$locale] ?? ($value['vi'] ?? null);
+            if (is_string($text) && $text !== '') {
+                return $text;
+            }
+        }
+
+        return null;
     }
 
     /**

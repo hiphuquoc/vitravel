@@ -4423,12 +4423,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Việt Nam 10 ngày',
         'en' => 'Vietnam 10 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Lựa chọn phổ biến nhất cho lần đầu khám phá Việt Nam — đủ thời gian đi Hà Nội, Hạ Long và Sa Pa.',
         'en' => 'The most popular choice for first-time visitors — enough time for Hanoi, Halong Bay and Sapa.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Việt Nam 10 ngày là lịch trình lý tưởng để cảm nhận miền Bắc: di sản, ẩm thực và cảnh quan thiên nhiên trong một hành trình cân bằng.',
         'en' => 'A 10-day Vietnam tour is the ideal itinerary to experience the north: heritage, cuisine and nature in one balanced journey.',
@@ -4460,12 +4460,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Việt Nam 2 tuần',
         'en' => 'Vietnam 2 Weeks Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Xuyên Việt Bắc – Trung – Nam trong 14 ngày, phù hợp ai muốn thấy trọn vẹn ba miền.',
         'en' => 'Cross Vietnam north to south in 14 days — ideal for seeing all three regions.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Việt Nam 2 tuần kết nối Hà Nội, Huế, Hội An và TP. Hồ Chí Minh — hành trình kinh điển được đặt nhiều nhất.',
         'en' => 'A two-week Vietnam tour links Hanoi, Hue, Hoi An and Ho Chi Minh City — our classic best-selling route.',
@@ -4492,12 +4492,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Việt Nam 15 ngày',
         'en' => 'Vietnam 15 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Thêm thời gian cho miền Trung và Đồng bằng sông Cửu Long so với lịch trình 10 ngày.',
         'en' => 'Extra time for central Vietnam and the Mekong Delta compared to a 10-day plan.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Việt Nam 15 ngày cho phép đi chậm hơn, ở lâu hơn ở Hội An và khám phá sâu miền Tây.',
         'en' => 'A 15-day Vietnam tour lets you travel slower, stay longer in Hoi An and explore the Mekong in depth.',
@@ -4519,12 +4519,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Việt Nam 3 tuần',
         'en' => 'Vietnam 3 Weeks Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Hành trình trọn vẹn nhất: Hà Giang, cố đô Huế, Đà Lạt và mũi Cà Mau.',
         'en' => 'The most complete journey: Ha Giang, imperial Hue, Da Lat and Ca Mau cape.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Việt Nam 3 tuần dành cho du khách muốn trải nghiệm sâu từng vùng miền mà không vội vàng.',
         'en' => 'A 3-week Vietnam tour is for travellers who want an in-depth, unhurried experience of every region.',
@@ -4546,12 +4546,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Việt Nam dưới 7 ngày',
         'en' => 'Vietnam Short Tours (under 7 days)',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Tour ngắn ngày: Sa Pa trekking, Phú Quốc nghỉ dưỡng, Hạ Long 2N1D.',
         'en' => 'Short breaks: Sapa trekking, Phu Quoc beach, Halong 2D1N.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Các tour Việt Nam dưới 7 ngày phù hợp nghỉ phép ngắn hoặc kết hợp công tác.',
         'en' => 'Vietnam tours under 7 days suit short holidays or business-trip extensions.',
@@ -4576,12 +4576,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour miền Bắc',
         'en' => 'Northern Vietnam Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Hà Nội, Hạ Long, Sa Pa, Ninh Bình và các vùng cao nguyên phía Bắc.',
         'en' => 'Hanoi, Halong Bay, Sapa, Ninh Binh and the northern highlands.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Miền Bắc Việt Nam nổi bật với di sản thiên nhiên Hạ Long, văn hoá bản địa Tây Bắc và ẩm thực phố cổ.',
         'en' => 'Northern Vietnam is known for Halong Bay, northwest ethnic culture and Hanoi street food.',
@@ -4605,12 +4605,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour miền Trung',
         'en' => 'Central Vietnam Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Huế, Đà Nẵng, Hội An và di sản miền Trung.',
         'en' => 'Hue, Da Nang, Hoi An and central heritage sites.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Miền Trung mang đến cố đô Huế, phố cổ Hội An và bãi biển Mỹ Khê — trái tim di sản Việt Nam.',
         'en' => 'Central Vietnam offers imperial Hue, ancient Hoi An and My Khe beach — the heart of Vietnamese heritage.',
@@ -4632,12 +4632,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Campuchia 7 ngày',
         'en' => 'Cambodia 7 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Siem Reap & Angkor trong một tuần — lịch trình gọn cho người bận rộn.',
         'en' => 'Siem Reap & Angkor in one week — a compact itinerary for busy travellers.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Campuchia 7 ngày tập trung vào quần thể Angkor và làng nổi Tonlé Sap.',
         'en' => 'A 7-day Cambodia tour focuses on the Angkor complex and Tonlé Sap floating villages.',
@@ -4664,12 +4664,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Campuchia 10 ngày',
         'en' => 'Cambodia 10 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Angkor, Phnom Penh và biển hồ Sihanoukville hoặc Kampot.',
         'en' => 'Angkor, Phnom Penh and the coast at Sihanoukville or Kampot.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Campuchia 10 ngày kết hợp di sản Khmer và nhịp sống thủ đô Phnom Penh.',
         'en' => 'A 10-day Cambodia tour combines Khmer heritage with the rhythm of capital Phnom Penh.',
@@ -4689,12 +4689,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour di sản Angkor',
         'en' => 'Angkor Heritage Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Chuyên sâu đền tháp Angkor Wat, Bayon, Ta Prohm và Banteay Srei.',
         'en' => 'In-depth temples: Angkor Wat, Bayon, Ta Prohm and Banteay Srei.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Các tour di sản Angkor được thiết kế cho người yêu lịch sử và nhiếp ảnh — bình minh tại Angkor Wat là điểm nhấn.',
         'en' => 'Angkor heritage tours are designed for history and photography lovers — sunrise at Angkor Wat is the highlight.',
@@ -4716,12 +4716,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Bali 7 ngày',
         'en' => 'Bali 7 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Ubud, đền Tanah Lot và bãi biển Seminyak trong một tuần.',
         'en' => 'Ubud, Tanah Lot temple and Seminyak beach in one week.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Bali 7 ngày cân bằng giữa văn hoá đền chùa và thời gian thư giãn bên biển.',
         'en' => 'A 7-day Bali tour balances temple culture with beach relaxation.',
@@ -4747,12 +4747,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Bali 10 ngày',
         'en' => 'Bali 10 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Khám phá Ubud, Nusa Penida và các resort biển phía nam.',
         'en' => 'Explore Ubud, Nusa Penida and southern beach resorts.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Bali 10 ngày cho phép thêm ngày nghỉ resort và chuyến đi Nusa Penida trong ngày.',
         'en' => 'A 10-day Bali tour adds resort time and a Nusa Penida day trip.',
@@ -4776,12 +4776,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour nghỉ dưỡng Bali',
         'en' => 'Bali Beach & Wellness Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Resort 5 sao, spa và bãi biển riêng tư — lý tưởng trăng mật.',
         'en' => '5-star resorts, spa and private beaches — ideal for honeymoons.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Các tour nghỉ dưỡng Bali kết hợp villa hướng biển, yoga và ẩm thực healthy tại Ubud.',
         'en' => 'Bali wellness tours combine ocean-view villas, yoga and healthy cuisine in Ubud.',
@@ -4803,12 +4803,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Thái Lan 7 ngày',
         'en' => 'Thailand 7 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Bangkok, Ayutthaya và một điểm biển (Phuket hoặc Krabi).',
         'en' => 'Bangkok, Ayutthaya and a beach stop (Phuket or Krabi).',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Thái Lan 7 ngày là lựa chọn phổ biến kết hợp chùa vàng Bangkok với biển đảo phía nam.',
         'en' => 'A 7-day Thailand tour is the popular mix of Bangkok temples and southern islands.',
@@ -4834,12 +4834,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Thái Lan 10 ngày',
         'en' => 'Thailand 10 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Bắc – Trung – Nam: Chiang Mai, Bangkok và biển phía nam.',
         'en' => 'North to south: Chiang Mai, Bangkok and southern beaches.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Thái Lan 10 ngày khám phá cả văn hoá Lanna ở Chiang Mai lẫn sự sôi động của Bangkok.',
         'en' => 'A 10-day Thailand tour covers Lanna culture in Chiang Mai and vibrant Bangkok.',
@@ -4861,12 +4861,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Lào 7 ngày',
         'en' => 'Laos 7 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Luang Prabang, Pak Ou và thác Kuang Si — nhịp sống chậm bên Mekong.',
         'en' => 'Luang Prabang, Pak Ou caves and Kuang Si falls — slow life on the Mekong.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Lào 7 ngày tập trung vào Luang Prabang — di sản UNESCO và chợ đêm ven sông.',
         'en' => 'A 7-day Laos tour focuses on UNESCO Luang Prabang and riverside night markets.',
@@ -4888,12 +4888,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Lào 10 ngày',
         'en' => 'Laos 10 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Luang Prabang, Vang Vieng và Vientiane — khám phá trọn miền trung Lào.',
         'en' => 'Luang Prabang, Vang Vieng and Vientiane — central Laos in depth.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Lào 10 ngày thêm thời gian cho Vang Vieng và thủ đô Vientiane so với lịch trình 7 ngày.',
         'en' => 'A 10-day Laos tour adds Vang Vieng and capital Vientiane to the 7-day route.',
@@ -4919,12 +4919,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Đông Dương 15 ngày',
         'en' => 'Indochina 15 Days Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Việt Nam & Campuchia trong một hành trình — Angkor và Mekong.',
         'en' => 'Vietnam & Cambodia in one journey — Angkor and the Mekong.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Đông Dương 15 ngày là hành trình bán chạy nhất, kết nối di sản Việt Nam với Angkor Wat.',
         'en' => 'The 15-day Indochina tour is our bestseller, linking Vietnamese heritage with Angkor Wat.',
@@ -4951,12 +4951,12 @@ $__vitravelSeed = array (
         'vi' => 'Tour Đông Dương 3 tuần',
         'en' => 'Indochina 3 Weeks Tours',
       ),
-      'description' => 
+      'subtitle' => 
       array (
         'vi' => 'Việt Nam, Campuchia, Lào và Thái Lan — trọn vẹn Đông Dương.',
         'en' => 'Vietnam, Cambodia, Laos and Thailand — full Indochina.',
       ),
-      'seoIntro' => 
+      'seo_body' => 
       array (
         'vi' => 'Tour Đông Dương 3 tuần dành cho ai muốn một chuyến đi để đời xuyên suốt bán đảo.',
         'en' => 'A 3-week Indochina tour is for travellers wanting a once-in-a-lifetime peninsula journey.',

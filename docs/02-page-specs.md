@@ -45,6 +45,8 @@ Mỗi trang được mô tả theo: **Mục đích → Ảnh tham chiếu → La
 
 **Mục đích:** Trang hub SEO chính — vừa là danh sách sản phẩm, vừa có nội dung dài để rank từ khóa.
 
+**Triển khai ViTravel:** mọi listing (tours hub `/tours`, country, chủ đề `tour_category`, cruise type, service hub/category) dùng chung `App\Support\ListingChrome` + `resources/views/partials/listing-catalog.blade.php`. Canonical fields: `title`, `subtitle`, `seoBody`, `banner`. Chủ đề tour: SEO type `tour_category` → `TourController::category` (URL `/tours/{country}/{topic}`).
+
 **Thành phần (đã đối chiếu ảnh thật — có một số khác biệt quan trọng so với bản .com):**
 1. Banner ảnh full-width
 2. **Card trắng bo góc đè lên banner** chứa: Tiêu đề H1 ("Tour Vietnam 10 giorni") + breadcrumb ngay bên dưới — đây là pattern UI khác với giả định "breadcrumb rời rạc", cần làm thành 1 khối overlay thống nhất
@@ -79,7 +81,7 @@ Mỗi trang được mô tả theo: **Mục đích → Ảnh tham chiếu → La
 - FAQ đặt **ngay sau đoạn intro SEO**, phía trên "Esperienze Autentiche" — thứ tự này khác với vị trí FAQ ở Tour Detail (đặt cuối trang), cần lưu ý khi implement layout riêng cho từng loại trang.
 - Long-form content dạng "Things you should know" của bản .com có thể được rút gọn thành 1 đoạn ngắn hơn + đẩy trọng tâm sang FAQ — tuỳ chọn cả 2 nếu muốn tối đa hoá SEO.
 
-**Dữ liệu cần:** danh sách tour theo category + facet filter (duration, travelStyle[]), block FAQ riêng theo từng category, đoạn rich text SEO riêng theo category.
+**Dữ liệu cần:** danh sách tour theo category + facet filter (duration, travelStyle[], `category[]` API), block FAQ riêng theo từng category, `subtitle` + `seo_body` (seed `tour_categories`) hiển thị dưới H1 / dưới lưới.
 
 ---
 
@@ -126,24 +128,25 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 
 **Mục đích:** Landing SEO cụm + điều hướng nhanh tới danh mục con.
 
+**Triển khai:** `ServiceController::hub` → `ListingChrome` + `pages/services/hub` (cùng partial listing với tour/cruise).
+
 **Thành phần:**
 1. `x-layout.page-header` — banner, H1, subtitle, breadcrumb (1 cấp hub)
-2. Hàng **pill danh mục** (`btn-chip`) — mỗi `service_category` + count badge
-3. Danh sách dịch vụ nổi bật / toàn cụm — card ngang `x-service.card` (reuse typography tour listing)
-4. Khối FAQ chung (`service_listing_faqs` từ seed)
-5. Quick Inquiry + footer (dùng chung)
+2. Sidebar filter danh mục + lưới card dịch vụ (`api.listings.services`)
+3. Khối `seoBody` (hub `listing_hubs.*.seo_body`) + FAQ chung (`service_listing_faqs`)
+4. Quick Inquiry + footer (dùng chung)
 
-**Dữ liệu:** hub copy từ `config/seo.php` + StaticPage template; `services[]` filter theo `cluster`.
+**Dữ liệu:** hub copy từ StaticPage / `listing_hubs` seed + `config/seo.php`; `services[]` filter theo `cluster`.
 
 ### D2.2 Danh mục dịch vụ — `/{hub}/{category}`
 
-**Pattern:** reuse **`.listing-layout`** (sidebar trái ~280px + list phải) như tour listing.
+**Pattern:** cùng `ListingChrome` / `.listing-layout` như tour listing.
 
 **Thành phần:**
 1. Page header — breadcrumb: Hub → Tên danh mục
 2. Sidebar: danh sách category cùng cụm (active state)
-3. List card ngang `x-service.card` — rating, badge, location, highlights rút gọn, giá “từ”, CTA
-4. SEO intro category (`intro` từ translation) + FAQ listing (nếu có)
+3. List card ngang qua API (`x-service.card`)
+4. `subtitle` / `seoBody` từ `intro` (seed alias: `subtitle` / `seo_body`) + FAQ listing
 5. Quick Inquiry + footer
 
 ### D2.3 Chi tiết dịch vụ — `/{hub}/{category}/{slug}`

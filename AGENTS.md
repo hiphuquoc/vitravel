@@ -26,6 +26,7 @@ Bootstrap/demo content nằm trong **`project/seed_{name}.php`**, gắn vào row
 - Cù Lao Chàm: `php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net`
 - Loader: `App\Support\ProjectSeed` (`useProfile` / `ProjectContext`)
 - Schema: `project/README.md` · UI fallback: `App\Support\SampleData`
+- Listing chrome (hub / country / chủ đề tour / cruise / service): `ListingChrome` + seed keys `subtitle` / `seo_body` trên `tour_categories` (xem README § Listing chrome)
 
 **Do not** hardcode catalog/marketing data in seeders hoặc revive fat arrays in `SampleData`. Extend seed file và wire `ProjectSeed::get()`. Services + company nằm trong cùng file seed.
 

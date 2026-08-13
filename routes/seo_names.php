@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('__seo')->group(function () {
     Route::get('/tours/hub', fn () => abort(404))->name('tours.hub');
     Route::get('/tours/{country}', fn () => abort(404))->name('tours.index');
+    Route::get('/tours/{country}/category/{slug}', fn () => abort(404))->name('tours.category');
     Route::get('/tours/{country}/{slug}', fn () => abort(404))->name('tours.show');
 
     Route::get('/cruises/hub', fn () => abort(404))->name('cruises.hub');

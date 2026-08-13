@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\RendersWithHtmlCache;
+use App\Support\ListingChrome;
 use App\Services\ViewDataService;
 
 class CruiseController extends Controller
@@ -11,24 +12,48 @@ class CruiseController extends Controller
 
     public function __construct(protected ViewDataService $data) {}
 
-    /**
-     * Hub tất cả du thuyền: /cruises
-     */
     public function hub()
     {
         return $this->cachedHtmlResponse(function () {
             $hub = $this->data->cruisesHub();
             $cruises = $this->data->cruises();
             $types = $this->data->cruiseTypes();
+            $styles = $this->data->travelStyles();
+            $durations = $this->data->durationBuckets();
+            $typeSlugs = array_values(array_filter(array_map(fn ($t) => $t['slug'] ?? null, $types)));
 
-            return view('pages.cruises.hub', [
-                'hub' => $hub,
-                'cruises' => $cruises,
+            $listing = ListingChrome::make([
+                'kind' => 'cruises_hub',
+                'title' => $hub['title'] ?? 'Du thuyền',
+                'subtitle' => $hub['subtitle'] ?? '',
+                'seoBody' => $hub['seoBody'] ?? '',
+                'seoTitle' => $hub['seoTitle'] ?? '',
+                'seoDescription' => $hub['seoDescription'] ?? '',
+                'banner' => $hub['listingBanner'] ?? null,
+                'bannerSrcset' => $hub['listingBannerSrcset'] ?? null,
+                'breadcrumbs' => [['label' => $hub['title'] ?? 'Du thuyền']],
+                'unitLabel' => 'du thuyền',
+                'endpoint' => route('api.listings.cruises'),
+                'endpointParams' => ['variant' => 'wide'],
+                'filterDefaults' => [
+                    'type' => $typeSlugs,
+                    'duration' => array_map('strval', array_keys($durations)),
+                    'style' => array_map('strval', array_keys($styles)),
+                ],
+                'showTypeFilter' => true,
                 'types' => $types,
-                'styles' => $this->data->travelStyles(),
-                'durations' => $this->data->durationBuckets(),
+                'durations' => $durations,
+                'styles' => $styles,
                 'faqs' => $this->data->listingFaqs(),
-            ])->render();
+                'faqTitle' => 'Câu hỏi thường gặp về du thuyền',
+                'schemaItems' => collect($cruises)->map(fn ($c) => [
+                    'name' => $c['title'],
+                    'url' => locale_route('cruises.show', ['type' => $c['typeSlug'], 'slug' => $c['slug']]),
+                ])->all(),
+                'schemaName' => seo_page_title('Du thuyền'),
+            ]);
+
+            return view('pages.cruises.hub', compact('listing'))->render();
         });
     }
 
@@ -37,20 +62,49 @@ class CruiseController extends Controller
         return $this->cachedHtmlResponse(function () use ($type) {
             $types = collect($this->data->cruiseTypes());
             $typeData = $types->firstWhere('slug', $type) ?? abort(404);
-
+            $styles = $this->data->travelStyles();
+            $durations = $this->data->durationBuckets();
             $cruises = array_values(array_filter(
                 $this->data->cruises(),
                 fn ($c) => $c['typeSlug'] === $type
             ));
+            $name = (string) ($typeData['title'] ?? $typeData['name'] ?? '');
 
-            return view('pages.cruises.index', [
-                'type' => $typeData,
+            $listing = ListingChrome::make([
+                'kind' => 'cruise_type',
+                'title' => $name,
+                'subtitle' => $typeData['subtitle'] ?? '',
+                'seoBody' => $typeData['seoBody'] ?? ($typeData['intro'] ?? ''),
+                'seoTitle' => seo_page_title($name.' — Danh sách du thuyền'),
+                'seoDescription' => 'Tuyển chọn '.strtolower($name).' tốt nhất. Đặt cabin qua chuyên gia bản địa, nhận báo giá trong 24 giờ.',
+                'banner' => $typeData['banner'] ?? ($typeData['imageHero'] ?? null),
+                'bannerSrcset' => $typeData['bannerSrcset'] ?? ($typeData['imageSrcset'] ?? null),
+                'breadcrumbs' => [
+                    ['label' => 'Du thuyền', 'url' => locale_route('cruises.hub')],
+                    ['label' => $name],
+                ],
+                'unitLabel' => 'du thuyền',
+                'endpoint' => route('api.listings.cruises'),
+                'endpointParams' => ['variant' => 'wide'],
+                'filterDefaults' => [
+                    'type' => [$typeData['slug']],
+                    'duration' => array_map('strval', array_keys($durations)),
+                    'style' => array_map('strval', array_keys($styles)),
+                ],
+                'showTypeFilter' => true,
                 'types' => $types->all(),
-                'cruises' => $cruises,
-                'styles' => $this->data->travelStyles(),
-                'durations' => $this->data->durationBuckets(),
+                'durations' => $durations,
+                'styles' => $styles,
                 'faqs' => $this->data->listingFaqs(),
-            ])->render();
+                'faqTitle' => 'Câu hỏi thường gặp về '.strtolower($name),
+                'schemaItems' => collect($cruises)->map(fn ($c) => [
+                    'name' => $c['title'],
+                    'url' => locale_route('cruises.show', ['type' => $c['typeSlug'], 'slug' => $c['slug']]),
+                ])->all(),
+                'schemaName' => seo_page_title($name),
+            ]);
+
+            return view('pages.cruises.index', compact('listing'))->render();
         });
     }
 

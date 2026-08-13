@@ -60,7 +60,7 @@ class HeroPill extends Model
                 $categorySlug = $category->translation($locale)?->slug;
 
                 if ($countrySlug && $categorySlug) {
-                    return locale_route('tours.show', ['country' => $countrySlug, 'slug' => $categorySlug]);
+                    return locale_route('tours.category', ['country' => $countrySlug, 'slug' => $categorySlug]);
                 }
             }
         }

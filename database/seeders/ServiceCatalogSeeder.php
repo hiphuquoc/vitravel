@@ -60,11 +60,16 @@ class ServiceCatalogSeeder extends Seeder
                 continue;
             }
 
+            $intro = $row['intro']
+                ?? $row['subtitle']
+                ?? $row['seo_body']
+                ?? null;
+
             $category = ServiceCategory::query()->updateOrCreate(
                 ['cluster' => $cluster, 'slug' => $slug],
                 [
                     'name' => $row['name'] ?? $slug,
-                    'intro' => $row['intro'] ?? null,
+                    'intro' => $intro,
                     'sort' => $row['sort'] ?? $sort,
                     'is_active' => true,
                 ]

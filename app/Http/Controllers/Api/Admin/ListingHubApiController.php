@@ -9,6 +9,7 @@ use App\Models\Language;
 use App\Models\StaticPage;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\ListingFields;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -50,6 +51,7 @@ class ListingHubApiController extends BladeListingHubController
             'default_locale' => Language::defaultCode(),
             'title' => $t?->title,
             'body' => $t?->body,
+            'subtitle' => $t?->body,
             'seo_body' => $t?->seo_body,
             'seo_slug' => $seo?->slug,
             'seo_title' => $seo?->seo_title,
@@ -71,9 +73,14 @@ class ListingHubApiController extends BladeListingHubController
         $locale = $request->string('locale', 'vi')->toString();
 
         try {
+            ListingFields::mergeAliases($request, [
+                'body' => 'subtitle',
+            ]);
+
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'body' => 'nullable|string',
+                'subtitle' => 'nullable|string',
                 'seo_body' => 'nullable|string',
                 'seo_slug' => 'nullable|string|max:191',
                 'seo_title' => 'nullable|string|max:255',

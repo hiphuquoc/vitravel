@@ -71,7 +71,7 @@ class RoutingController extends Controller
                 $this->entitySlug($ref, $locale, $seoTrans?->slug)
             ),
             'package_tour' => $this->dispatchPackageTour($entry, $ref, $locale, $seoTrans?->slug),
-            'tour_category' => abort(404),
+            'tour_category' => $this->dispatchTourCategory($entry, $ref, $locale, $seoTrans?->slug),
             'cruises_hub' => app(CruiseController::class)->hub(),
             'cruise_type' => app(CruiseController::class)->index(
                 $this->cruiseTypeSlug($ref, $seoTrans?->slug)
@@ -180,7 +180,15 @@ class RoutingController extends Controller
             return app(TourController::class)->index($rest[0]);
         }
 
-        return app(TourController::class)->show($rest[0], $rest[1]);
+        // Ưu tiên chủ đề tour nếu slug khớp TourCategory; không thì package detail.
+        $countrySlug = $rest[0];
+        $leaf = $rest[1];
+        $category = app(\App\Services\ViewDataService::class)->tourCategory($countrySlug, $leaf);
+        if ($category) {
+            return app(TourController::class)->category($countrySlug, $leaf);
+        }
+
+        return app(TourController::class)->show($countrySlug, $leaf);
     }
 
     /**
@@ -281,6 +289,22 @@ class RoutingController extends Controller
         }
 
         return null;
+    }
+
+    protected function dispatchTourCategory(SeoEntry $entry, mixed $ref, string $locale, ?string $fallbackSlug): Response
+    {
+        $category = $ref instanceof \App\Models\TourCategory ? $ref : null;
+        $categorySlug = $fallbackSlug
+            ?: $category?->translation($locale)?->slug
+            ?: abort(404);
+
+        $country = $category?->country;
+        $countrySlug = $country?->seoEntry?->translation($locale)?->slug
+            ?? $country?->translation($locale)?->slug
+            ?? $entry->parent?->translation($locale)?->slug
+            ?? abort(404);
+
+        return app(TourController::class)->category($countrySlug, $categorySlug);
     }
 
     protected function dispatchPackageTour(SeoEntry $entry, mixed $ref, string $locale, ?string $packageSlug): Response

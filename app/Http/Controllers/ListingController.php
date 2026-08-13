@@ -154,6 +154,24 @@ class ListingController extends Controller
             ));
         }
 
+        if ($request->exists('category')) {
+            $raw = $request->input('category');
+            $categories = is_array($raw)
+                ? array_values(array_filter(array_map('strval', $raw)))
+                : array_values(array_filter([(string) $raw]));
+            if ($categories === []) {
+                return [];
+            }
+            $tours = array_values(array_filter(
+                $tours,
+                function (array $tour) use ($categories) {
+                    $slugs = $tour['categorySlugs'] ?? [];
+
+                    return count(array_intersect($slugs, $categories)) > 0;
+                }
+            ));
+        }
+
         $q = mb_strtolower(trim((string) $request->input('q', '')));
         if ($q !== '') {
             $tours = array_values(array_filter($tours, function (array $tour) use ($q) {

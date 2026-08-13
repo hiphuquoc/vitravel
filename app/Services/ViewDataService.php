@@ -36,6 +36,7 @@ use App\Models\ServiceCategory;
 use App\Models\ServiceTranslation;
 use App\Models\StaticPage;
 use App\Models\TeamMember;
+use App\Models\TourCategory;
 use App\Models\TravelStyle;
 use App\Models\Usp;
 use App\Support\HomeFeaturedSchema;
@@ -400,6 +401,87 @@ class ViewDataService
             ->all();
     }
 
+    public function tourCategory(string $countrySlug, string $categorySlug): ?array
+    {
+        $country = $this->findCountryBySlug($countrySlug);
+        if (! $country) {
+            return null;
+        }
+
+        $ids = $this->languageIdChain();
+        $category = TourCategory::query()
+            ->where('is_active', true)
+            ->where('country_id', $country->id)
+            ->whereHas('translations', fn ($q) => $q->whereIn('language_id', $ids)->where('slug', $categorySlug))
+            ->with(['translations', 'country.translations', 'faqs.translations', 'mediaAttachments.media', 'seoEntry.translations'])
+            ->first();
+
+        return $category ? $this->mapTourCategory($category) : null;
+    }
+
+    public function toursByCategory(string $countrySlug, string $categorySlug): array
+    {
+        $category = $this->tourCategory($countrySlug, $categorySlug);
+        if (! $category) {
+            return [];
+        }
+
+        $country = $this->findCountryBySlug($countrySlug);
+        if (! $country) {
+            return [];
+        }
+
+        return $this->packageQuery(Package::TYPE_TOUR)
+            ->where(function ($q) use ($country) {
+                $q->where('country_id', $country->id)
+                    ->orWhereHas('countries', fn ($c) => $c->where('countries.id', $country->id));
+            })
+            ->whereHas('categories', function ($q) use ($category) {
+                $q->where('tour_categories.id', $category['id']);
+            })
+            ->get()
+            ->map(fn (Package $package) => $this->mapPackage($package))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function mapTourCategory(TourCategory $category): array
+    {
+        $translation = $category->translation($this->locale());
+        $country = $category->country;
+        $countryTrans = $country?->translation($this->locale());
+        $seoTrans = $category->seoEntry?->translation($this->locale());
+        $cover = $category->coverUrl('lg') ?: $category->coverUrl('card');
+        $subtitle = trim((string) ($translation?->description ?? ''));
+        $seoBody = trim((string) ($translation?->seo_intro ?? ''));
+
+        return [
+            'id' => $category->id,
+            'kind' => 'tour_category',
+            'slug' => $translation?->slug ?? '',
+            'name' => $translation?->name ?? '',
+            'title' => $translation?->name ?? '',
+            'type' => $category->type,
+            'subtitle' => $subtitle,
+            'description' => $subtitle,
+            'seoBody' => $seoBody,
+            'seoIntro' => $seoBody,
+            'seoTitle' => apply_site_brand((string) ($seoTrans?->seo_title ?? ($translation?->name ?? ''))),
+            'seoDescription' => apply_site_brand((string) ($seoTrans?->seo_description ?? $subtitle)),
+            'countrySlug' => $countryTrans?->slug ?? '',
+            'countryName' => $countryTrans?->name ?? '',
+            'banner' => $cover,
+            'bannerSrcset' => $category->coverSrcset(),
+            'faqs' => $category->faqs->where('is_active', true)->map(fn (Faq $faq) => [
+                'q' => $faq->question,
+                'a' => $faq->answer,
+            ])->values()->all(),
+        ];
+    }
+
     public function cruiseTypes(): array
     {
         $types = CruiseType::query()->active()->with('banner')->get();
@@ -451,10 +533,16 @@ class ViewDataService
         return [
             'slug' => $type->slug,
             'name' => $type->name,
+            'title' => $type->name,
+            'subtitle' => '',
+            'seoBody' => '',
+            'intro' => '',
             'count' => Package::query()->published()->cruises()->where('cruise_type', $type->slug)->count(),
             'image' => $cardImage,
             'imageHero' => $heroImage,
+            'banner' => $heroImage,
             'imageSrcset' => $type->coverSrcset() ?: $type->bannerSrcset(),
+            'bannerSrcset' => $type->bannerSrcset() ?: $type->coverSrcset(),
         ];
     }
 
@@ -1685,12 +1773,17 @@ class ViewDataService
         return [
             'slug' => $cat->slug,
             'name' => $cat->name,
+            'title' => $cat->name,
             'intro' => $cat->intro,
+            'subtitle' => (string) ($cat->intro ?? ''),
+            'seoBody' => (string) ($cat->intro ?? ''),
             'cluster' => $cat->cluster,
             'count' => (int) ($cat->services_count ?? $cat->services()->published()->count()),
             'image' => $cardImage,
             'imageHero' => $cat->bannerUrl('lg') ?: $cat->bannerUrl('full') ?: $cardImage,
+            'banner' => $cat->bannerUrl('lg') ?: $cat->bannerUrl('full') ?: $cardImage,
             'imageSrcset' => $cat->coverSrcset() ?: $cat->bannerSrcset(),
+            'bannerSrcset' => $cat->bannerSrcset() ?: $cat->coverSrcset(),
         ];
     }
 
@@ -2186,6 +2279,7 @@ class ViewDataService
                 'country.translations',
                 'countries.translations',
                 'travelStyles',
+                'categories.translations',
                 'itineraryDays.translations',
                 'cabinTypes.translations',
                 'faqs.translations',
@@ -2328,6 +2422,8 @@ class ViewDataService
                 })
                 ->count(),
             'tagline' => $translation?->tagline ?? '',
+            'subtitle' => $translation?->tagline ?? '',
+            'seoBody' => trim((string) ($translation?->long_form_content ?? $translation?->intro_text ?? '')),
             'longForm' => trim((string) ($translation?->long_form_content ?? $translation?->intro_text ?? '')),
             'image' => $cardImage,
             'imageHero' => $heroImage,
@@ -2394,6 +2490,13 @@ class ViewDataService
             'imageDetail' => $package->coverUrl('lg'),
             'imageDetailSrcset' => $package->coverSrcset(),
             'styles' => $package->travelStyles->pluck('code')->all(),
+            'categorySlugs' => $package->relationLoaded('categories')
+                ? $package->categories
+                    ->map(fn (TourCategory $c) => $c->translation($this->locale())?->slug)
+                    ->filter()
+                    ->values()
+                    ->all()
+                : [],
             'quote' => [
                 'text' => $translation?->featured_quote_text ?? '',
                 'author' => $translation?->featured_quote_author ?? '',

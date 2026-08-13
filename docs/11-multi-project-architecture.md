@@ -223,8 +223,9 @@ Media upload: `projects/{code}/…`.
 
 ## 6. Checklist site mới (production)
 
-1. Copy `project/seed_vitravel.php` → `seed_{code}.php`, sửa brand + `meta.primary_domain` / `meta.domains` (local + prod nếu cần).
+1. Copy `project/seed_vitravel.php` (hoặc seed đảo gần nhất) → `seed_{code}.php`, sửa brand + `meta.primary_domain` / `meta.domains` (local + prod nếu cần). Giữ shape listing: `tour_categories[].subtitle` / `seo_body`, `listing_hubs.*.seo_body` — xem `project/README.md`.
 2. `php artisan project:seed {code} --domain=example.com --name="..."`.
 3. DNS + SSL; Nginx `server_name` → cùng root PHP.
 4. Sau import DB: `php artisan project:domain {code} --add=prod.example --primary=prod.example` (không cần re-seed).
 5. Admin: chọn project → CRUD. Public: domain thật (tắt query override).
+6. Kiểm URL chủ đề tour: `/tours/{country}/{topic}` (SEO type `tour_category`).

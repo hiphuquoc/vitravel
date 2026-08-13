@@ -13,6 +13,7 @@ use App\Models\TourCategory;
 use App\Models\TourCategoryTranslation;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\ListingFields;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -136,6 +137,12 @@ class TourCategoryApiController extends Controller
         $locale = $request->string('locale', 'vi')->toString();
         app()->setLocale($locale);
 
+        // Canonical AI/listing aliases → cột DB
+        ListingFields::mergeAliases($request, [
+            'description' => 'subtitle',
+            'seo_intro' => 'seo_body',
+        ]);
+
         try {
             $validated = $request->validate([
                 'id' => 'nullable|integer|exists:tour_categories,id',
@@ -147,6 +154,8 @@ class TourCategoryApiController extends Controller
                 'slug' => 'required|string|max:191',
                 'description' => 'nullable|string',
                 'seo_intro' => 'nullable|string',
+                'subtitle' => 'nullable|string',
+                'seo_body' => 'nullable|string',
                 'seo_slug' => 'nullable|string|max:191',
                 'seo_title' => 'nullable|string|max:255',
                 'seo_description' => 'nullable|string|max:320',
@@ -285,6 +294,9 @@ class TourCategoryApiController extends Controller
             'country_id' => $category->country_id,
             'description' => $t?->description,
             'seo_intro' => $t?->seo_intro,
+            // Canonical listing / AI aliases (map → description / seo_intro)
+            'subtitle' => $t?->description,
+            'seo_body' => $t?->seo_intro,
             'translated_locales' => $this->translatedLocaleCodes($category, 'name'),
             'cover' => app(MediaService::class)->adminMediaPayload($category->coverMedia(), 'card'),
             'seo' => [

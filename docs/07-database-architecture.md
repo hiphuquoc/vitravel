@@ -109,7 +109,7 @@ UI có 2 route (`/tours/...`, `/cruises/...`) nhưng layout chi tiết gần nh�
 | `countries` | Mega menu, hub `/tours`, listing `/tours/{country}` |
 | `destinations` | Filter phụ, blog sidebar level=destination |
 | `travel_styles` | Facet 11 “Stile di viaggio” |
-| `tour_categories` | Duration/region/theme listing + FAQ category |
+| `tour_categories` | Duration/region/theme listing + FAQ; URL `/tours/{country}/{slug}`; seed keys `subtitle` / `seo_body` |
 | `blog_categories` | Sidebar “Categorie del blog” |
 | `content_type_tags` | “Filtra articoli” |
 | `keyword_tags` | Tag cloud SEO |
@@ -266,9 +266,10 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | Home hero pills | `hero_pills` |
 | Home featured tours | `packages` (`is_featured`, type=tour) |
 | Bento destinations | `countries.home_grid_size` |
-| Tour listing + filter | `packages` + `travel_styles` + duration buckets (query) |
+| Tour listing + filter | `packages` + `travel_styles` + duration buckets + `category[]` |
+| Tour topic (`tour_category`) | `TourController::category` + `ListingChrome`; URL `/tours/{country}/{slug}` |
 | Tour/Cruise detail | `packages` + itinerary + cabin + faqs + reviews |
-| Service hub / listing / detail | `services` + `service_categories` + options + faqs; hub StaticPage template |
+| Service hub / listing / detail | `services` + `service_categories` + `ListingChrome`; hub StaticPage / `listing_hubs` |
 | Blog listing/detail | `articles` + blog taxonomies + comments |
 | About | `company_profiles`, values, reasons, reference_persons, team |
 | Reviews page | `reviews` (company + package) |

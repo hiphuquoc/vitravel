@@ -11,6 +11,7 @@ use App\Models\CountryTranslation;
 use App\Models\Language;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\ListingFields;
 use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -152,6 +153,11 @@ class CountryApiController extends Controller
             'seo_slug' => Str::slug((string) ($request->input('seo_slug') ?: $request->input('slug', ''))),
         ]);
 
+        ListingFields::mergeAliases($request, [
+            'tagline' => 'subtitle',
+            'long_form_content' => 'seo_body',
+        ]);
+
         try {
             $validated = $request->validate([
                 'id' => 'nullable|integer|exists:countries,id',
@@ -170,8 +176,10 @@ class CountryApiController extends Controller
                 'name' => 'required|string|max:255',
                 'slug' => 'required|string|max:191',
                 'tagline' => 'nullable|string|max:255',
+                'subtitle' => 'nullable|string|max:255',
                 'intro_text' => 'nullable|string',
                 'long_form_content' => 'nullable|string',
+                'seo_body' => 'nullable|string',
                 'seo_slug' => 'nullable|string|max:191',
                 'seo_title' => 'nullable|string|max:255',
                 'seo_description' => 'nullable|string|max:320',
@@ -314,6 +322,9 @@ class CountryApiController extends Controller
             'tagline' => $t?->tagline,
             'intro_text' => $t?->intro_text,
             'long_form_content' => $t?->long_form_content,
+            // Canonical listing / AI aliases
+            'subtitle' => $t?->tagline,
+            'seo_body' => $t?->long_form_content ?: $t?->intro_text,
             'translated_locales' => $this->translatedLocaleCodes($country, 'name'),
             'banner' => $media->adminMediaPayload($country->banner, 'card'),
             'listing_banner' => $media->adminMediaPayload($country->listingBanner, 'lg'),

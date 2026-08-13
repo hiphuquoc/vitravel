@@ -104,10 +104,22 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 
 ### 3. Điểm đến
 
-- `countries` — `{ slug, name, size, tagline }[]` → SEO `country` (CMS entity)
+- `countries` — `{ slug, name, size, tagline }[]` → SEO `country` (CMS entity). Runtime listing: `tagline` → `subtitle`; `long_form`/`intro_text` (nếu có) → `seoBody`
 - Alias dự án 1 điểm đến: **`zones` / `zoneSlug` / `zone_translations`** được `ProjectSeed` chuẩn hoá thành `countries` / `countrySlug` / `country_translations` lúc load
 - `country_translations` — i18n theo slug (hoặc `zone_translations`)
-- `tour_categories` — danh mục con dưới country/zone (`countrySlug` hoặc `zoneSlug`)
+- `tour_categories` — danh mục con dưới country/zone (`countrySlug` hoặc `zoneSlug`). Shape:
+
+```
+{
+  countrySlug|zoneSlug, slug, type, sort, minDays?, maxDays?, packageSlugs?[],
+  name: { vi, en },
+  subtitle: { vi, en },   // short copy dưới H1 (DB: description)
+  seo_body: { vi, en },   // prose SEO dưới lưới (DB: seo_intro)
+  faqs?: [{ q, a }]
+}
+```
+
+  Public URL: `/tours/{country}/{slug}` (SEO type `tour_category` → `TourController::category`). Legacy seed keys `description` / `seoIntro` vẫn được seeder đọc nếu còn.
 - `meta.country_codes` — optional; nếu thiếu, tự sinh từ slug
 
 ### 4. Sản phẩm
@@ -122,7 +134,7 @@ Keys nằm trong cùng file seed dự án (`service_clusters`, `service_categori
 | Key | Shape (tóm tắt) |
 |-----|-----------------|
 | `service_clusters` | `[{ code, nav_label, label, icon, hub_key, sort }]` — 5 cụm: `train`, `flight`, `stay`, `experience`, `other` |
-| `service_categories` | `[{ cluster, slug, name, sort, intro? }]` — danh mục con dưới hub |
+| `service_categories` | `[{ cluster, slug, name, sort, intro? }]` — danh mục con dưới hub. Alias AI/listing: `subtitle` / `seo_body` → cột `intro` |
 | `services` | `[{ code, cluster, category_slug, country_slug?, title, slug, price_from, currency, rating, highlights[], inclusions[], exclusions[], notes[], attrs{}, options[], faqs[], en? }]` |
 | `service_listing_faqs` | `[{ q, a }]` — FAQ chung hub/listing dịch vụ |
 
@@ -139,7 +151,20 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 - `home_slides`, `hero_pills`, `home_sections`, `footer_*`, `listing_faqs`
 - **`customize_form`** — form Tour riêng: `destinations_label`, `accommodation_label`, `budget_note`, `accommodation[]` (i18n `vi`/`en`); điểm đến mặc định từ countries/zones `show_in_customize_form` (có thể ghi đè bằng `destinations[]`)
 - **`nav`** — nhãn header + hub cruise (seed-only, không admin): `about_group`, `tours.{label}`, `cruise.{label,all_label,all_meta,search_hint,search_placeholder,hub_title,hub_subtitle}` — đổi «Du thuyền» / «Tour trọn gói» tuỳ dự án
-- **`listing_hubs`** — đoạn SEO cuối trang hub (`tours_hub`, `cruises_hub`, `ferries_hub`/`trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`): `{ hubKey: { vi|en: { seo_body } } }`. Runtime: cột `static_page_translations.seo_body` (admin **Cài đặt → Hub**). Rỗng = ẩn khối. Nếu DB trống mà seed có `seo_body`, lần mở hub sẽ soft-fill (không cần `project:seed` lại). Hỗ trợ `:brand`.
+- **`listing_hubs`** — đoạn SEO cuối trang hub (`tours_hub`, `cruises_hub`, `ferries_hub`/`trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`): `{ hubKey: { vi|en: { seo_body } } }`. Runtime: cột `static_page_translations.seo_body` (admin **Cài đặt → Hub**). `body`/`subtitle` = copy ngắn dưới H1; `seo_body` = prose cuối listing. Rỗng = ẩn khối. Nếu DB trống mà seed có `seo_body`, lần mở hub sẽ soft-fill (không cần `project:seed` lại). Hỗ trợ `:brand`.
+
+### Listing chrome (public + AI)
+
+Mọi trang listing (tours hub / country / chủ đề tour / cruise type / service hub|category) dùng chung `App\Support\ListingChrome` + `partials/listing-catalog.blade.php`.
+
+| Canonical | Ý nghĩa | Seed / DB (tuỳ entity) |
+|-----------|---------|------------------------|
+| `title` | H1 | `name` / hub title |
+| `subtitle` | Copy ngắn dưới H1 | `tour_categories.subtitle`, country `tagline`, hub `body`, service `intro` |
+| `seoBody` | Prose SEO dưới lưới | `tour_categories.seo_body`, country `long_form`, hub `seo_body`, service `intro` |
+| `banner` | Hero | cover / listing banner |
+
+Admin API chấp nhận cả tên cũ lẫn canonical (`ListingFields`).
 
 ### Map seeder
 

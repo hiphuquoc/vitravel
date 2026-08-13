@@ -11,6 +11,7 @@ use App\Models\ServiceCategory;
 use App\Services\MediaService;
 use App\Services\ViewDataService;
 use App\Support\ApiResponse;
+use App\Support\ListingFields;
 use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -142,12 +143,22 @@ class ServiceCategoryApiController extends Controller
             'seo_slug' => Str::slug((string) ($request->input('seo_slug') ?: $request->input('slug', ''))),
         ]);
 
+        ListingFields::mergeAliases($request, [
+            'intro' => 'subtitle',
+        ]);
+        // seo_body → intro khi chưa có intro (service category chỉ có 1 khối copy)
+        if (! $request->exists('intro') && $request->exists('seo_body')) {
+            $request->merge(['intro' => $request->input('seo_body')]);
+        }
+
         try {
             $validated = $request->validate([
                 'id' => 'nullable|integer|exists:service_categories,id',
                 'cluster' => ['required', 'string', Rule::in($clusters)],
                 'name' => 'required|string|max:255',
                 'intro' => 'nullable|string|max:2000',
+                'subtitle' => 'nullable|string|max:2000',
+                'seo_body' => 'nullable|string|max:2000',
                 'slug' => [
                     'required',
                     'string',
@@ -252,6 +263,8 @@ class ServiceCategoryApiController extends Controller
             'name' => $category->name,
             'slug' => $category->slug,
             'intro' => $category->intro,
+            'subtitle' => $category->intro,
+            'seo_body' => $category->intro,
             'sort' => $category->sort,
             'is_active' => $category->is_active,
             'seo' => [

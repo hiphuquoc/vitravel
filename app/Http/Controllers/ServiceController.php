@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\RendersWithHtmlCache;
+use App\Support\ListingChrome;
 use App\Services\ViewDataService;
 
 class ServiceController extends Controller
@@ -18,14 +19,46 @@ class ServiceController extends Controller
             $hub = $this->data->serviceHub($cluster);
             $categories = $this->data->serviceCategoriesForHub($cluster);
             $services = $this->data->servicesForHub($cluster);
+            $filterCategories = array_values(array_filter(
+                $categories,
+                fn ($cat) => ((int) ($cat['count'] ?? 0)) > 0 && ! empty($cat['slug'])
+            ));
+            $categorySlugs = array_values(array_map(fn ($cat) => (string) $cat['slug'], $filterCategories));
+            $unitLabel = $hub['unitLabel'] ?? 'dịch vụ';
 
-            return view('pages.services.hub', [
-                'cluster' => $cluster,
-                'hub' => $hub,
-                'categories' => $categories,
-                'services' => $services,
+            $listing = ListingChrome::make([
+                'kind' => 'service_hub',
+                'title' => $hub['title'] ?? 'Dịch vụ',
+                'subtitle' => $hub['subtitle'] ?? '',
+                'seoBody' => $hub['seoBody'] ?? '',
+                'seoTitle' => $hub['seoTitle'] ?: seo_page_title($hub['title'] ?? 'Dịch vụ'),
+                'seoDescription' => $hub['seoDescription'] ?? ($hub['subtitle'] ?? ''),
+                'banner' => $hub['listingBanner'] ?? null,
+                'bannerSrcset' => $hub['listingBannerSrcset'] ?? null,
+                'breadcrumbs' => [['label' => $hub['navLabel'] ?? $hub['title']]],
+                'unitLabel' => $unitLabel,
+                'endpoint' => route('api.listings.services'),
+                'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide'],
+                'filterDefaults' => ['category' => $categorySlugs],
+                'showCategoryFilter' => true,
+                'showDurationFilter' => false,
+                'showStyleFilter' => false,
+                'categories' => $filterCategories,
+                'categoryLegend' => $this->categoryLegend($cluster),
                 'faqs' => $this->data->serviceListingFaqs(),
-            ])->render();
+                'faqTitle' => 'Câu hỏi thường gặp về '.strtolower((string) ($hub['title'] ?? 'dịch vụ')),
+                'schemaItems' => collect($services)->map(fn ($s) => [
+                    'name' => $s['title'],
+                    'url' => locale_route('services.show', [
+                        'cluster' => $s['cluster'] ?? $cluster,
+                        'category' => $s['categorySlug'],
+                        'slug' => $s['slug'],
+                    ]),
+                ])->all(),
+                'schemaName' => seo_page_title($hub['title'] ?? 'Dịch vụ'),
+            ]);
+
+            return view('pages.services.hub', compact('listing', 'cluster'))->render();
         });
     }
 
@@ -40,15 +73,54 @@ class ServiceController extends Controller
                 fn ($s) => ($s['categorySlug'] ?? '') === $category
             ));
             $hub = $this->data->serviceHub($cluster);
+            $filterCategories = array_values(array_filter(
+                $categories,
+                fn ($c) => ((int) ($c['count'] ?? 0)) > 0 && ! empty($c['slug'])
+            ));
+            if (! empty($cat['slug']) && ! collect($filterCategories)->contains(fn ($c) => ($c['slug'] ?? '') === $cat['slug'])) {
+                array_unshift($filterCategories, $cat);
+            }
+            $name = (string) ($cat['title'] ?? $cat['name'] ?? '');
 
-            return view('pages.services.index', [
-                'cluster' => $cluster,
-                'hub' => $hub,
-                'category' => $cat,
-                'categories' => $categories,
-                'services' => $services,
+            $listing = ListingChrome::make([
+                'kind' => 'service_category',
+                'title' => $name,
+                'subtitle' => $cat['subtitle'] ?? ($cat['intro'] ?? ''),
+                'seoBody' => $cat['seoBody'] ?? ($cat['intro'] ?? ''),
+                'seoTitle' => seo_page_title($name.' — '.($hub['title'] ?? 'Dịch vụ')),
+                'seoDescription' => apply_site_brand($cat['intro'] ?? ('Tuyển chọn '.strtolower($name).' — đặt qua chuyên gia bản địa :brand.')),
+                'banner' => $cat['banner'] ?? ($cat['imageHero'] ?? null),
+                'bannerSrcset' => $cat['bannerSrcset'] ?? ($cat['imageSrcset'] ?? null),
+                'breadcrumbs' => [
+                    [
+                        'label' => $hub['navLabel'] ?? $hub['title'],
+                        'url' => locale_route('services.hub', ['cluster' => $cluster]),
+                    ],
+                    ['label' => $name],
+                ],
+                'unitLabel' => $hub['unitLabel'] ?? 'dịch vụ',
+                'endpoint' => route('api.listings.services'),
+                'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide'],
+                'filterDefaults' => ['category' => [$cat['slug'] ?? $category]],
+                'showCategoryFilter' => true,
+                'showDurationFilter' => false,
+                'showStyleFilter' => false,
+                'categories' => $filterCategories,
+                'categoryLegend' => $this->categoryLegend($cluster),
                 'faqs' => $this->data->serviceListingFaqs(),
-            ])->render();
+                'faqTitle' => 'Câu hỏi thường gặp về '.strtolower($name),
+                'schemaItems' => collect($services)->map(fn ($s) => [
+                    'name' => $s['title'],
+                    'url' => locale_route('services.show', [
+                        'cluster' => $cluster,
+                        'category' => $s['categorySlug'],
+                        'slug' => $s['slug'],
+                    ]),
+                ])->all(),
+                'schemaName' => seo_page_title($name),
+            ]);
+
+            return view('pages.services.index', compact('listing', 'cluster'))->render();
         });
     }
 
@@ -82,5 +154,16 @@ class ServiceController extends Controller
         if (! config("services_catalog.clusters.{$cluster}")) {
             abort(404);
         }
+    }
+
+    protected function categoryLegend(string $cluster): string
+    {
+        return match ($cluster) {
+            'train', 'ferry' => 'Tuyến',
+            'flight' => 'Tuyến bay',
+            'stay' => 'Khu vực lưu trú',
+            'experience' => 'Loại trải nghiệm',
+            default => 'Danh mục',
+        };
     }
 }

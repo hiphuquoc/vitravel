@@ -589,6 +589,11 @@ class SeoService
                 is_array($params['country'] ?? null) ? null : ($params['country'] ?? null),
                 $locale
             ),
+            'tours.category' => $this->tourCategorySlugFullPath(
+                is_array($params['country'] ?? null) ? null : ($params['country'] ?? null),
+                $params['slug'] ?? ($params['category'] ?? null),
+                $locale
+            ),
             'tours.show' => $this->packageSlugFullPath('tour', $params['slug'] ?? null, $locale)
                 ?? $this->composeSlugPath(
                     $this->hubSlugFullPath('tours_hub', $locale),
@@ -710,6 +715,32 @@ class SeoService
         $hub = $this->hubSlugFullPath('tours_hub', $locale);
 
         return $this->normalizeSlugFull(rtrim($hub, '/').'/'.$countrySlug);
+    }
+
+    protected function tourCategorySlugFullPath(?string $countrySlug, ?string $categorySlug, string $locale): ?string
+    {
+        if (! filled($categorySlug)) {
+            return null;
+        }
+
+        $countryPath = $this->countrySlugFullPath($countrySlug, $locale);
+        $composed = $countryPath
+            ? $this->normalizeSlugFull(rtrim($countryPath, '/').'/'.$categorySlug)
+            : null;
+
+        $full = $this->seoSlugFullByTypeAndSlug('tour_category', $categorySlug, $locale);
+        if ($full) {
+            $normalized = $this->normalizeSlugFull($full);
+            // Orphan flat `/topic` (no parent in tree) → ưu tiên ghép theo country hub.
+            $segments = array_values(array_filter(explode('/', trim($normalized, '/'))));
+            if (count($segments) <= 1 && $composed) {
+                return $composed;
+            }
+
+            return $normalized;
+        }
+
+        return $composed;
     }
 
     protected function cruiseTypeSlugFullPath(?string $typeSlug, string $locale): ?string
@@ -897,12 +928,12 @@ class SeoService
      */
     protected function ensureEntryProjectId(SeoEntry $entry, Model $model): void
     {
-        if ($entry->project_id) {
+        $projectId = $this->resolveProjectIdFor($model);
+        if (! $projectId) {
             return;
         }
 
-        $projectId = $this->resolveProjectIdFor($model);
-        if (! $projectId) {
+        if ((int) $entry->project_id === $projectId) {
             return;
         }
 
@@ -1271,17 +1302,20 @@ class SeoService
 
         if (class_exists(TourCategory::class)) {
             TourCategory::query()
-                ->with(['country.seoEntry', 'translations', 'seoEntry.translations'])
+                ->with(['country', 'translations', 'seoEntry.translations'])
                 ->each(function (TourCategory $category) use ($locale) {
                     $country = $category->country;
-                    $country?->load('seoEntry.translations');
-                    $parentId = $country?->seoEntry?->id;
+                    // SEO quốc gia có thể lệch project_id (legacy) — không dùng scoped relation.
+                    $parentId = $country
+                        ? $country->seoEntry()->withoutGlobalScope('project')->value('id')
+                        : null;
                     if (! $parentId) {
                         return;
                     }
 
                     $catTrans = $category->translation($locale) ?? $category->translation();
-                    $seoTrans = $category->seoEntry?->translation($locale);
+                    $seoEntry = $category->seoEntry()->withoutGlobalScope('project')->first();
+                    $seoTrans = $seoEntry?->translation($locale);
                     $slug = $seoTrans?->slug ?: ($catTrans?->slug ?? null);
                     $title = $seoTrans?->title ?: ($catTrans?->name ?? null);
                     if (! filled($slug)) {

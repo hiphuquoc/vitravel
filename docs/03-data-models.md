@@ -34,10 +34,17 @@ Ghi chú: danh sách quốc gia thực tế gồm **Vietnam, Thailand, Cambodia,
 - slug               string
 - country            ref(Country)
 - type               enum        // "duration" | "region" | "theme" | "day-trip" | "package"
-- description        richText
-- faqs                FAQItem[]    // FAQ riêng theo từng category, hiển thị ở Tour Listing
-- seoIntro            richText     // đoạn SEO ngắn hiển thị dưới danh sách tour trong trang Listing
+- subtitle           richText    // copy ngắn dưới H1 (DB cột description; seed key subtitle)
+- seoBody            richText    // prose SEO dưới lưới listing (DB cột seo_intro; seed key seo_body)
+- faqs               FAQItem[]   // FAQ riêng theo category
+- coverImage         image       // banner listing
 ```
+
+**Public:** `/tours/{country}/{slug}` — SEO type `tour_category` → `TourController::category` + `ListingChrome` (cùng layout với hub/country/cruise/service listing).
+
+**Seed:** `project/seed_*.php` → `tour_categories[]` (`subtitle` / `seo_body`); seeder vẫn nhận legacy `description` / `seoIntro`.
+
+**Admin/AI aliases:** `subtitle` ↔ `description`, `seo_body` ↔ `seo_intro` (`ListingFields`).
 
 ## 4. `Tour`
 ```
@@ -447,11 +454,11 @@ Article 1—n Comment
 
 | Model docs (mục trên) | Bảng SQL | Ghi chú |
 |---|---|---|
-| Country | `countries` + `country_translations` | + `seo_entries` khi có URL listing |
+| Country | `countries` + `country_translations` | Listing: `tagline`→subtitle, `long_form_content`→seoBody; + `seo_entries` |
 | Destination | `destinations` + `destination_translations` | |
-| TourCategory | `tour_categories` + `tour_category_translations` | FAQ qua morph `faqs` |
+| TourCategory | `tour_categories` + `tour_category_translations` | `description`/`seo_intro` columns; public aliases subtitle/seoBody; FAQ morph |
 | Tour / Cruise | **`packages`** (`type=tour\|cruise`) + `package_translations` | Gộp 1 bảng sản phẩm |
-| ServiceCategory | `service_categories` | `name`, `intro` on main table (no `*_translations` yet) |
+| ServiceCategory | `service_categories` | `name`, `intro` on main table; listing aliases `subtitle`/`seo_body` → `intro` |
 | Service | `services` + `service_translations` | `attrs` JSON theo cụm |
 | ServiceOption | `service_options` + `service_option_translations` | Biến thể giá |
 | ItineraryDay | `package_itinerary_days` + translations | |
@@ -493,5 +500,5 @@ Article 1—n Comment
 | SEO types | `trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`, `service_category`, `service` |
 | Seed keys | `service_clusters`, `service_categories`, `services`, `service_listing_faqs` — trong `project/seed_{name}.php` |
 | Seeder | `ServiceCatalogSeeder` (sau `ContentSeeder`, trước `TourCategorySeeder`; `SeoHierarchySeeder` cuối) |
-| Public | `ServiceController`, `RoutingController` dispatch; views `pages/services/*`, `components/service/*` |
+| Public | `ServiceController` + `ListingChrome` / `partials/listing-catalog`; `RoutingController` dispatch; views `pages/services/{hub,index,show}` |
 | Admin | **Chưa có** — roadmap CRUD catalogue dịch vụ |

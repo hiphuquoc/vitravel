@@ -84,7 +84,7 @@ Hệ font gồm **3 tầng**, tất cả nạp qua Bunny Fonts (`vite.config.js`
 3. **Không dùng `text-[15px]` / `text-[13px]` ad-hoc** cho body — thay bằng `.body-text` hoặc `text-base` / `text-sm` theo bảng trên.
 4. **Buttons (bắt buộc)** — không dùng `rounded-full` cho CTA. Radius **12px** (`.btn-primary`, `.btn-outline`) hoặc **10px** (`.btn-primary-sm`, `.btn-whatsapp`, `.btn-chip`, `.nav-link`). **Font luôn `text-base`** trên mọi size; chỉ khác padding. Hover có **vệt sáng** (gradient chạy ngang). Icon: trái = hành động khởi tạo (`search`, `mail`, `sparkles`, `whatsapp`, `filter`, `check`); phải = điều hướng tiếp (`arrow-right`).
 5. **Nav chính** — `.nav-link` (`text-base`, radius 10px); mục mega menu `.nav-panel-item` / `.nav-panel-link`. Bộ lọc: `.filter-legend` + `.filter-option`.
-6. **Tour / cruise listing grid** dùng component dùng chung (`x-tour.card`, `x-tour.card-compact`) — chỉnh typography tại component + CSS class, không chỉnh riêng từng trang danh mục.
+6. **Tour / cruise / service listing** dùng chung `ListingChrome` + `partials/listing-catalog` + card components (`x-tour.card`, `x-service.card`) — không chỉnh riêng từng trang danh mục.
 7. **Rating** dùng `x-shared.rating` + `x-shared.stars` duy nhất — không tự vẽ sao/`★` rời trên frontend.
 8. Body dài (blog, SEO intro, itinerary) dùng `.prose-travel` (`text-base` + leading ~1.75).
 
@@ -438,20 +438,22 @@ Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển kh
 
 **Nguồn triển khai:** `resources/css/app.css` (`:root` + `@layer components`); Blade trong `resources/views/components/` và `resources/views/pages/`.
 
-### 3.13 Trang danh mục Tour / Du thuyền — mapping component
+### 3.13 Trang danh mục Tour / Du thuyền / Dịch vụ — mapping component
+
+Chrome dùng chung: `App\Support\ListingChrome` → `partials/listing-catalog.blade.php` (hub / country / chủ đề tour / cruise type / service hub|category).
 
 | Block | Component / class | Ghi chú |
 |---|---|---|
-| Page header | `x-layout.page-header` | Token page-header |
+| Page header | `x-layout.page-header` | Token page-header; `title` / `subtitle` / `banner` |
 | Layout 2 cột | `.listing-layout` | Filter trái ~17.5rem + list phải; mobile stack |
 | Bộ lọc | `x-tour.filter-sidebar` | `.filter-sidebar__*` — drawer ≤1023, cột ≥1024 |
 | Toolbar | `.listing-toolbar` | Count (số Fraunces brand + nhãn body) `align-items: flex-end` + `sort-dropdown` |
-| Danh sách | `x-tour.card` | `.tour-card-*`, `.card-body`, `.card-inner` — đã token |
+| Danh sách | `x-tour.card` / `x-service.card` | `.tour-card-*`, `.card-body`, `.card-inner` — đã token |
 | Empty state | `.listing-empty` | Padding `--space-stack-lg` |
 | Rating tổng (tour) | `.listing-rating-summary` | Score clamp responsive |
-| SEO intro | `.prose-travel.listing-seo` | Border-top + `--space-stack-lg` |
+| SEO prose | `.prose-travel.listing-seo` | `seoBody` từ ListingChrome |
 | FAQ | `x-shared.faq.listing-faq` | `.faq-list`, `.faq-item__*` |
-| Cruise pills | `.cruise-type-nav` | `btn-chip` chuyển tuyến |
+| Cruise pills | `.cruise-type-nav` | `btn-chip` chuyển tuyến (nếu còn dùng ngoài chrome) |
 
 **Không dùng:** badge pill “Top N — 2026” / đếm sản phẩm cạnh sort — toolbar chỉ giữ sắp xếp.
 
@@ -473,8 +475,7 @@ Tài liệu này ghi lại **toàn bộ** thay đổi responsive đã triển kh
 | Videos / Team | `videos`, `team` | Dùng `page-header` + shared components đã token |
 | Home | `home.blade.php` | Đã token từ các component dùng chung |
 | About | `about.blade.php` | §3.11 |
-| Danh mục tour/cruise | `tours/index`, `cruises/index` | §3.13 |
-| Hub / listing / detail dịch vụ | `pages/services/hub`, `index`, `show` + `x-service.*` | `.listing-layout` / `.detail-layout` |
+| Danh mục tour/cruise/service | `tours/{hub,index,category}`, `cruises/{hub,index}`, `services/{hub,index}` → `partials/listing-catalog` | §3.13 |
 
 Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạng thái gửi form thành công), `.listing-empty`.
 
