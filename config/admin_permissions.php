@@ -227,6 +227,7 @@ return [
         'GET ai/status' => 'ai.use',
         'POST ai/translate-page' => 'ai.use',
         'POST ai/enrich-detail-program' => 'ai.use',
+        'POST ai/enrich-listing-page' => 'ai.use',
         'GET ai/' => 'ai.use',
         'POST ai/' => 'ai.use',
 

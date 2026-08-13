@@ -52,5 +52,6 @@ return [
     'prompts' => [
         'translate_page' => 'translate_page.php',
         'enrich_detail_program' => 'enrich_detail_program.php',
+        'enrich_listing_page' => 'enrich_listing_page.php',
     ],
 ];

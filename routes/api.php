@@ -82,6 +82,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/ai/status', [AiApiController::class, 'status']);
             Route::post('/ai/translate-page', [AiApiController::class, 'translatePage']);
             Route::post('/ai/enrich-detail-program', [AiApiController::class, 'enrichDetailProgram']);
+            Route::post('/ai/enrich-listing-page', [AiApiController::class, 'enrichListingPage']);
             Route::get('/ai/prompts', [AiApiController::class, 'prompts']);
             Route::post('/ai/prompts/sync', [AiApiController::class, 'syncPrompts']);
             Route::get('/ai/prompts/{key}', [AiApiController::class, 'showPrompt']);

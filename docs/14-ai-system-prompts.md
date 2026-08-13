@@ -7,6 +7,7 @@
 | Trạng thái provider | `GET /ai/status` | — | `ai.use` |
 | Dịch toàn trang form | `POST /ai/translate-page` | `translate_page` | `ai.use` |
 | Xây dựng chương trình chi tiết | `POST /ai/enrich-detail-program` | `enrich_detail_program` | `ai.use` |
+| Xây dựng trang listing | `POST /ai/enrich-listing-page` | `enrich_listing_page` | `ai.use` |
 | Danh sách / chi tiết prompt | `GET /ai/prompts`, `GET /ai/prompts/{key}` | — | `ai.manage` |
 | Cập nhật prompt | `PUT /ai/prompts/{key}` | — | `ai.manage` |
 | Sync file → DB | `POST /ai/prompts/sync` | — | `ai.manage` |
@@ -75,6 +76,37 @@ Ví dụ body:
 ```
 
 Admin UI: nút **AI chương trình** trên FormFooter (sát trái nhóm Hủy / Xem / Lưu) ở form tour, du thuyền, dịch vụ. Kết quả ghi vào form (chưa auto-save).
+
+## Enrich trang listing (hub / country / chủ đề / cruise type / service category)
+
+Client **chỉ gửi `title`** (+ `entity_type`, `locale`, optional `hub_key`, `instructions`) — **không** gửi subtitle/SEO cũ để tránh nhiễu; AI tự research (web search) và viết lại toàn bộ.
+
+`entity_type`: `listing_hub` | `country` | `tour_category` | `cruise_type` | `service_category`
+
+AI trả canonical keys: `title`, `subtitle`, `seo_body`, `seo_title`, `seo_description`, `seo_slug`; thêm `faqs` (5–6 cặp) cho `tour_category`.
+
+Admin map về form:
+
+| entity_type | subtitle → | seo_body → |
+|---|---|---|
+| `listing_hub` | `body` | `seo_body` |
+| `country` | `tagline` | `long_form_content` |
+| `tour_category` | `description` | `seo_intro` |
+| `service_category` | gộp vào `intro` | (cùng `intro`) |
+| `cruise_type` | — (form chưa có) | — |
+
+Ví dụ body:
+
+```json
+{
+  "title": "Tour biển đảo Phú Quốc",
+  "entity_type": "tour_category",
+  "locale": "vi",
+  "instructions": "Nhấn mạnh snorkeling và sunset"
+}
+```
+
+Admin UI: nút **AI trang listing** trên FormFooter các form hub, điểm đến, chủ đề tour, loại du thuyền, danh mục dịch vụ.
 
 ## Quản lý UI
 

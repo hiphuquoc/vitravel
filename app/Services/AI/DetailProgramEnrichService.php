@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\AI;
 
+use App\Services\AI\Concerns\StripsAiCitations;
 use RuntimeException;
 
 /**
@@ -12,6 +13,7 @@ use RuntimeException;
  */
 final class DetailProgramEnrichService
 {
+    use StripsAiCitations;
     public const PROMPT_KEY = 'enrich_detail_program';
 
     public function __construct(
@@ -117,51 +119,6 @@ final class DetailProgramEnrichService
             );
             throw $e;
         }
-    }
-
-    /**
-     * Gỡ citation / markdown link do web_search (vd. ([site](https://…?utm_source=openai))).
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
-    private function stripWebSearchCitations(array $data): array
-    {
-        $out = [];
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $out[$key] = $this->stripWebSearchCitations($value);
-                continue;
-            }
-            if (! is_string($value) || $value === '') {
-                $out[$key] = $value;
-                continue;
-            }
-            $out[$key] = $this->stripCitationsFromString($value);
-        }
-
-        return $out;
-    }
-
-    private function stripCitationsFromString(string $text): string
-    {
-        $s = $text;
-
-        // ([label](url)) hoặc [label](url)
-        $s = (string) preg_replace('/\s*\(\[[^\]]*]\(\s*https?:\/\/[^)]+\)\s*\)/iu', '', $s);
-        $s = (string) preg_replace('/\s*\[[^\]]*]\(\s*https?:\/\/[^)]+\)/iu', '', $s);
-
-        // (https://…utm_source=openai) hoặc (https://…)
-        $s = (string) preg_replace('/\s*\(\s*https?:\/\/[^)]*(?:utm_source=openai|chatgpt\.com)[^)]*\)/iu', '', $s);
-
-        // URL trần kèm tracking OpenAI
-        $s = (string) preg_replace('/\s*https?:\/\/[^\s)<]+(?:utm_source=openai|chatgpt\.com)[^\s)<]*/iu', '', $s);
-
-        // Khoảng trắng / dấu câu thừa sau khi gỡ
-        $s = (string) preg_replace('/[ \t]{2,}/u', ' ', $s);
-        $s = (string) preg_replace('/\s+([.,;:!?])/u', '$1', $s);
-
-        return trim($s);
     }
 
     private function schemaHintFor(string $entityType): string

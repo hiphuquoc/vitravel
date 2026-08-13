@@ -9,6 +9,7 @@ use App\Models\AiSystemPrompt;
 use App\Models\AiUsageLog;
 use App\Services\AI\AiGateway;
 use App\Services\AI\DetailProgramEnrichService;
+use App\Services\AI\ListingPageEnrichService;
 use App\Services\AI\PageTranslateService;
 use App\Services\AI\PromptRepository;
 use App\Support\ApiResponse;
@@ -92,6 +93,39 @@ final class AiApiController extends Controller
         }
 
         return ApiResponse::success($result, 'Đã xây dựng chương trình');
+    }
+
+    public function enrichListingPage(Request $request, ListingPageEnrichService $service): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'locale' => 'nullable|string|max:12',
+                'entity_type' => 'required|string|in:listing_hub,country,tour_category,cruise_type,service_category',
+                'hub_key' => 'nullable|string|max:64',
+                'provider' => 'nullable|string|in:openai,google,gemini,deepseek',
+                'instructions' => 'nullable|string|max:4000',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        try {
+            $result = $service->enrich(
+                title: $validated['title'],
+                entityType: $validated['entity_type'],
+                locale: $validated['locale'] ?? 'vi',
+                hubKey: $validated['hub_key'] ?? null,
+                provider: isset($validated['provider'])
+                    ? ($validated['provider'] === 'gemini' ? 'google' : $validated['provider'])
+                    : null,
+                instructions: $validated['instructions'] ?? null,
+            );
+        } catch (\Throwable $e) {
+            return ApiResponse::error($e->getMessage(), 'AI_ERROR', 502);
+        }
+
+        return ApiResponse::success($result, 'Đã xây dựng nội dung listing');
     }
 
     public function prompts(Request $request, PromptRepository $repo): JsonResponse
