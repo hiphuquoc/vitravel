@@ -158,8 +158,8 @@ final class ListingPageEnrichService
         $base = <<<'TXT'
 Canonical ListingChrome (public + admin aliases):
 - title: H1 trang (có thể tinh chỉnh nhẹ từ input, không đổi ý)
-- subtitle: copy ngắn dưới H1 (~1–3 câu, không HTML)
-- seo_body: prose SEO dưới lưới sản phẩm (plain text hoặc HTML đơn giản p/strong/ul — không citation)
+- subtitle: copy ngắn dưới H1 (~1–3 câu, PLAIN TEXT — cấm HTML)
+- seo_body: BẮT BUỘC HTML — 3–5 <p>, có <strong> cho điểm đến/chủ đề/brand (cấm plain text, cấm markdown)
 - seo_title: meta title ≤ ~60 ký tự
 - seo_description: meta description ≤ ~155–160 ký tự
 - seo_slug: Latin, dấu gạch ngang, gợi ý từ tiêu đề (không bắt buộc nếu admin đã có slug)
@@ -195,7 +195,7 @@ TXT,
             }
             $val = $fields[$key];
             if (is_string($val) && trim($val) !== '') {
-                $out[$key] = trim($val);
+                $out[$key] = $key === 'seo_body' ? $this->ensureSeoBodyHtml(trim($val)) : trim($val);
             }
         }
 
@@ -211,6 +211,36 @@ TXT,
         }
 
         return $out;
+    }
+
+    /**
+     * seo_body phải là HTML (p/strong). Nếu model trả plain/markdown thì bọc lại.
+     */
+    private function ensureSeoBodyHtml(string $raw): string
+    {
+        $s = trim($raw);
+        if ($s === '') {
+            return $s;
+        }
+
+        $s = (string) preg_replace('/^```(?:html)?\s*|\s*```$/iu', '', $s);
+        $s = (string) preg_replace('/\*\*(.+?)\*\*/u', '<strong>$1</strong>', $s);
+
+        if (str_contains($s, '<p') || str_contains($s, '<ul') || str_contains($s, '<ol')) {
+            return $s;
+        }
+
+        $parts = preg_split('/\n{2,}/u', $s) ?: [$s];
+        $html = '';
+        foreach ($parts as $part) {
+            $part = trim((string) preg_replace('/\s+/u', ' ', str_replace(["\r\n", "\n"], ' ', $part)));
+            if ($part === '') {
+                continue;
+            }
+            $html .= '<p>'.$part.'</p>';
+        }
+
+        return $html !== '' ? $html : $s;
     }
 
     /**

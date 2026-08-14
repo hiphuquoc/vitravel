@@ -17,7 +17,7 @@ return [
     'name' => 'Xây dựng trang listing (hub / danh mục / chủ đề)',
     'category' => 'enrich',
     'description' => 'Viết subtitle, seo_body, SEO meta cho trang danh sách theo thương hiệu dự án; input chỉ tiêu đề; web search.',
-    'version' => 1,
+    'version' => 2,
     'variables' => [
         'brand', 'project_code', 'locale', 'entity_type', 'hub_key', 'page_kind',
         'context_json', 'schema_hint', 'extra_instructions',
@@ -49,11 +49,13 @@ Chỉ dùng kiến thức nội bộ — **CẤM** citation, markdown link, URL,
 
 ═══ CẤU TRÚC NỘI DUNG LISTING ═══
 1) **title** — H1: giữ đúng ý tiêu đề input; có thể chỉnh nhẹ cho tự nhiên / SEO (không đổi chủ đề).
-2) **subtitle** — 1–3 câu dưới H1: hook + phạm vi danh mục (plain text, không HTML dài).
-3) **seo_body** — đoạn văn dưới lưới listing:
-   - 2–5 đoạn (hoặc HTML p/ul với strong từ khóa) giải thích vì sao chọn danh mục này tại «{{brand}}».
-   - Gợi ý kinh nghiệm, mùa, đối tượng phù hợp — unique, không spam từ khóa.
-   - Không liệt kê tour cụ thể như catalog; tập trung prose SEO + trust.
+2) **subtitle** — 1–3 câu dưới H1: hook + phạm vi danh mục. **Plain text thuần** (CẤM thẻ HTML).
+3) **seo_body** — BẮT BUỘC HTML (không được trả plain text / markdown).
+   - 3–5 thẻ `<p>…</p>` (có thể thêm 1 `<ul><li>` nếu hợp). CẤM một khối text không thẻ.
+   - Trong mỗi `<p>`: bọc `<strong>` cho tên điểm đến / chủ đề / trải nghiệm / mùa / USP «{{brand}}» (ít nhất 2–4 `<strong>` trong cả khối).
+   - Ví dụ đúng: `<p>Một <strong>tour Phú Quốc 4 ngày</strong> giúp bạn cân bằng biển đảo và chợ đêm — đặt qua <strong>{{brand}}</strong>.</p>`
+   - CẤM: markdown (`**bold**`, `# heading`), citation, URL, `\n\n` thay cho `<p>`.
+   - Không liệt kê tour cụ thể như catalog; prose SEO + trust, unique, không spam từ khóa.
 4) **seo_title** / **seo_description** — meta chuẩn, có điểm đến/chủ đề + USP «{{brand}}».
 5) **seo_slug** — gợi ý Latin slug ngắn (optional).
 
@@ -84,6 +86,6 @@ Hướng dẫn thêm từ biên tập:
 Context (CHỈ tiêu đề — viết lại mọi thứ khác):
 {{context_json}}
 
-Trả về { "fields": { … } } thôi.
+Trả về { "fields": { … } } thôi. seo_body phải là HTML <p> + <strong>, không plain text.
 PROMPT,
 ];
