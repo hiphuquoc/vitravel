@@ -7207,21 +7207,28 @@ body.is-mobileNavOpen {
 }
 
 .vt-dest__hero-name {
+    overflow: hidden;
     font-family: var(--font-display), Fraunces, Georgia, serif;
     font-size: clamp(2.35rem, 1.6rem + 2.4vw, 3.5rem);
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.05;
-    text-wrap: balance;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     text-shadow: 0 2px 20px rgb(0 0 0 / 0.28);
 }
 
 .vt-dest__hero-tagline {
+    display: -webkit-box;
+    overflow: hidden;
     margin-top: 0.7rem;
     max-width: 30rem;
+    min-height: calc(1.65em * 2);
     font-size: 1.05rem;
     line-height: 1.65;
     color: rgb(255 255 255 / 0.9);
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
 }
 
 .vt-dest__hero-cta {
@@ -7330,21 +7337,26 @@ body.is-mobileNavOpen {
 }
 
 .vt-dest__portrait-name {
+    overflow: hidden;
+    min-width: 0;
     font-family: var(--font-display), Fraunces, Georgia, serif;
     font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1.2rem);
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.25;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .vt-dest__portrait-tagline {
+    display: -webkit-box;
+    overflow: hidden;
+    min-height: calc(1.35em * 2);
     font-size: clamp(0.72rem, 0.68rem + 0.12vw, 0.8rem);
     line-height: 1.35;
     color: rgb(255 255 255 / 0.8);
-    display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    overflow: hidden;
 }
 
 .vt-dest__portrait-meta {
