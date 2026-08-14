@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class PackageApiController extends Controller
@@ -210,6 +211,13 @@ class PackageApiController extends Controller
         $locale = $request->string('locale', 'vi')->toString();
         app()->setLocale($locale);
 
+        if ($type === Package::TYPE_CRUISE && $request->filled('cruise_type')) {
+            $resolved = $this->resolveCruiseTypeSlug((string) $request->input('cruise_type'));
+            if ($resolved !== null) {
+                $request->merge(['cruise_type' => $resolved]);
+            }
+        }
+
         try {
             $validated = $request->validate([
                 'id' => 'nullable|integer|exists:packages,id',
@@ -264,7 +272,7 @@ class PackageApiController extends Controller
                     $type === Package::TYPE_CRUISE ? 'required' : 'nullable',
                     'string',
                     'max:64',
-                    'exists:cruise_types,slug',
+                    Rule::exists(CruiseType::class, 'slug'),
                 ],
                 'departure_port' => 'nullable|string|max:255',
                 'boat_class' => 'nullable|string|max:100',
@@ -678,5 +686,28 @@ class PackageApiController extends Controller
                     : ($package->review_count !== null ? (int) $package->review_count : null),
             ],
         ]);
+    }
+
+    /**
+     * AI / form có thể gửi tên loại thay vì slug. Map về slug của project hiện tại.
+     */
+    private function resolveCruiseTypeSlug(string $value): ?string
+    {
+        $value = trim($value);
+        if ($value === '') {
+            return null;
+        }
+
+        $lower = mb_strtolower($value);
+
+        $match = CruiseType::query()
+            ->get(['id', 'slug', 'name'])
+            ->first(function (CruiseType $type) use ($value, $lower) {
+                return $type->slug === $value
+                    || mb_strtolower($type->slug) === $lower
+                    || mb_strtolower(trim((string) $type->name)) === $lower;
+            });
+
+        return $match?->slug;
     }
 }

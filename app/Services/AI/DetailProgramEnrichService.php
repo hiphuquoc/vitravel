@@ -447,6 +447,16 @@ TXT;
             }
         }
 
+        unset(
+            $fields['cruise_type'],
+            $fields['country_id'],
+            $fields['category_ids'],
+            $fields['travel_style_ids'],
+            $fields['seo_parent_id'],
+            $fields['id'],
+            $fields['type'],
+        );
+
         return $fields;
     }
 
