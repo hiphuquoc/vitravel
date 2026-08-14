@@ -81,6 +81,7 @@ final class DetailProgramEnrichService
             $filtered = $this->mergePreferringAiLists($fields, $enriched);
             $filtered = $this->normalizeStructuredLists($filtered, $fields);
             $filtered = $this->stripWebSearchCitations($filtered);
+            $filtered = $this->sanitizeForAdminSave($filtered);
 
             if (
                 in_array($entityType, ['tour_package', 'cruise_package'], true)
@@ -283,10 +284,14 @@ TXT;
                 $row = $source[$i];
             }
 
-            // Giữ id kỹ thuật từ row cũ nếu AI không trả.
+            // Giữ id kỹ thuật từ row cũ — không nhận id do AI bịa.
             $merged = $this->mergePreferringAiLists($row, $cell);
-            if (isset($row['id']) && ! array_key_exists('id', $merged)) {
+            unset($merged['id']);
+            if (isset($row['id']) && $row['id'] !== null && $row['id'] !== '') {
                 $merged['id'] = $row['id'];
+            }
+            if (array_key_exists('meals_included', $merged)) {
+                $merged['meals_included'] = $this->stringifyLines($merged['meals_included'], '; ');
             }
             // content HTML ngày: nếu AI trả chuỗi (kể cả dài) luôn nhận — không giữ bản cũ khi AI có key.
             if (array_key_exists('content', $cell) && is_string($cell['content'])) {
@@ -357,10 +362,6 @@ TXT;
             'answer' => is_string($answer) ? trim($answer) : '',
         ];
 
-        if (array_key_exists('id', $cell) && $cell['id'] !== null && $cell['id'] !== '') {
-            $row['id'] = $cell['id'];
-        }
-
         return $row;
     }
 
@@ -372,9 +373,7 @@ TXT;
     private function attachFaqIds(array $faqs, array $source): array
     {
         return array_map(function (array $row, int $i) use ($source): array {
-            if (array_key_exists('id', $row)) {
-                return $row;
-            }
+            unset($row['id']);
             $src = $source[$i] ?? null;
             if (is_array($src) && array_key_exists('id', $src) && $src['id'] !== null && $src['id'] !== '') {
                 $row['id'] = $src['id'];
@@ -382,5 +381,104 @@ TXT;
 
             return $row;
         }, $faqs, array_keys($faqs));
+    }
+
+    /**
+     * Cắt / ép kiểu để khớp rule lưu form admin (tránh 422 validation.* mơ hồ).
+     *
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    private function sanitizeForAdminSave(array $fields): array
+    {
+        $limits = [
+            'title' => 255,
+            'featured_quote_text' => 255,
+            'featured_quote_author' => 255,
+            'start_location' => 255,
+            'end_location' => 255,
+            'location_label' => 255,
+            'seo_title' => 255,
+            'seo_description' => 320,
+            'seo_slug' => 191,
+            'discount_badge' => 100,
+        ];
+
+        foreach ($limits as $key => $max) {
+            if (! isset($fields[$key]) || ! is_string($fields[$key])) {
+                continue;
+            }
+            $fields[$key] = $this->mbClip($fields[$key], $max);
+        }
+
+        foreach (['highlights', 'inclusions', 'exclusions', 'notes', 'highlight_bullets', 'places_to_visit'] as $listKey) {
+            if (array_key_exists($listKey, $fields)) {
+                $fields[$listKey] = $this->stringifyLines($fields[$listKey], "\n");
+            }
+        }
+
+        if (isset($fields['itinerary']) && is_array($fields['itinerary'])) {
+            foreach ($fields['itinerary'] as $i => $row) {
+                if (! is_array($row)) {
+                    continue;
+                }
+                if (array_key_exists('meals_included', $row)) {
+                    $row['meals_included'] = $this->mbClip($this->stringifyLines($row['meals_included'], '; '), 100);
+                }
+                if (isset($row['title']) && is_string($row['title'])) {
+                    $row['title'] = $this->mbClip($row['title'], 255);
+                }
+                if (isset($row['overnight_at']) && is_string($row['overnight_at'])) {
+                    $row['overnight_at'] = $this->mbClip($row['overnight_at'], 255);
+                }
+                $fields['itinerary'][$i] = $row;
+            }
+        }
+
+        if (isset($fields['faqs']) && is_array($fields['faqs'])) {
+            foreach ($fields['faqs'] as $i => $row) {
+                if (! is_array($row)) {
+                    continue;
+                }
+                if (isset($row['question']) && is_string($row['question'])) {
+                    $row['question'] = $this->mbClip($row['question'], 500);
+                }
+                $fields['faqs'][$i] = $row;
+            }
+        }
+
+        return $fields;
+    }
+
+    private function stringifyLines(mixed $value, string $glue = "\n"): string
+    {
+        if ($value === null) {
+            return '';
+        }
+        if (is_array($value)) {
+            $parts = [];
+            foreach ($value as $item) {
+                if (is_string($item) || is_numeric($item)) {
+                    $part = trim((string) $item);
+                    if ($part !== '') {
+                        $parts[] = $part;
+                    }
+                }
+            }
+
+            return implode($glue, $parts);
+        }
+
+        return is_scalar($value) ? trim((string) $value) : '';
+    }
+
+    private function mbClip(string $value, int $max): string
+    {
+        $value = trim($value);
+        if ($value === '' || mb_strlen($value) <= $max) {
+            return $value;
+        }
+
+        return rtrim(mb_substr($value, 0, $max));
     }
 }
