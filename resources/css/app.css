@@ -501,6 +501,7 @@
     .card-inner {
         display: flex;
         flex-direction: column;
+        min-width: 0;
         gap: var(--space-card-stack);
     }
 
@@ -724,6 +725,14 @@
     .tour-card-quote {
         @apply flex gap-2 leading-5 text-ink-soft italic;
         font-size: var(--fs-tour-quote);
+    }
+
+    .tour-card-quote--clamp > span {
+        display: -webkit-box;
+        overflow: hidden;
+        min-width: 0;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
     }
 
     .tour-card-media {
@@ -4290,21 +4299,37 @@
         background-size: 22px 22px;
     }
 
-    /* Badge rating tròn "5.0" */
+    /* Badge rating tròn "5.0" / "3.5" */
     .rating-badge {
-        @apply inline-flex items-center justify-center rounded-full bg-primary-500 text-sm font-bold text-white;
+        @apply inline-flex shrink-0 items-center justify-center rounded-full bg-primary-500 text-sm font-bold text-white tabular-nums;
         width: var(--size-rating-badge);
         height: var(--size-rating-badge);
+        font-size: clamp(0.7rem, 0.66rem + 0.12vw, 0.8125rem);
     }
 
-    /* Hàng rating: badge + sao + nhãn + lượt — gap gọn */
+    /* Hàng rating: một dòng, gap nhỏ; lượt đánh giá cắt ellipsis */
     .rating {
-        @apply inline-flex max-w-full flex-wrap items-center;
-        gap: var(--space-gap-sm) calc(var(--space-gap-sm) + 0.15rem);
+        @apply flex max-w-full min-w-0 items-center;
+        gap: 0.2rem 0.3rem;
     }
 
-    .rating .text-sm {
-        font-size: clamp(0.78rem, 0.74rem + 0.1vw, 0.875rem);
+    .rating > .inline-flex {
+        @apply shrink-0;
+    }
+
+    .rating > .inline-flex svg {
+        width: 1.05rem;
+        height: 1.05rem;
+    }
+
+    .rating-label {
+        @apply shrink-0 text-sm font-semibold text-ink;
+        font-size: clamp(0.75rem, 0.72rem + 0.08vw, 0.8125rem);
+    }
+
+    .rating-count {
+        @apply min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted;
+        font-size: clamp(0.72rem, 0.7rem + 0.08vw, 0.8125rem);
     }
 
     /* Review platform cards */

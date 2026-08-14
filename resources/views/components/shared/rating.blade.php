@@ -26,10 +26,10 @@
     @endif
 
     @if ($label)
-        <span class="text-sm font-semibold text-ink">{{ $label }}</span>
+        <span class="rating-label">{{ $label }}</span>
     @endif
 
     @if ($count !== null && (int) $count > 0)
-        <span class="text-sm text-muted">— {{ number_format((int) $count) }} đánh giá</span>
+        <span class="rating-count" title="{{ number_format((int) $count) }} đánh giá">({{ number_format((int) $count) }} đánh giá)</span>
     @endif
 </span>

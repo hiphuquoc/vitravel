@@ -62,7 +62,7 @@
             @endif
 
             @if (! empty($item['quote']['text']))
-                <blockquote class="tour-card-quote">
+                <blockquote class="tour-card-quote tour-card-quote--clamp">
                     <x-icon name="quote" class="size-4 shrink-0 text-primary-300" />
                     <span>{{ $item['quote']['text'] }}
                         @if (! empty($item['quote']['author']))
