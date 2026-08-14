@@ -8,7 +8,7 @@
 @endphp
 
 {{-- Card dọc gọn — lưới dịch vụ liên quan --}}
-<article {{ $attributes->merge(['class' => 'card group flex flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-(--shadow-card-hover)']) }}>
+<article {{ $attributes->merge(['class' => 'card card--stand group flex flex-col overflow-hidden transition hover:-translate-y-1 hover:shadow-(--shadow-card-hover)']) }}>
     <a href="{{ $href }}" class="relative block" aria-hidden="true" tabindex="-1">
         <div class="relative aspect-[3/2] overflow-hidden">
             @if (! empty($item['image']))

@@ -735,6 +735,16 @@
         -webkit-line-clamp: 2;
     }
 
+    /* Grid đứng: giữ 2 hàng cho title + places để card không lệch chiều cao */
+    .card--stand .tour-card-title,
+    .card--stand .tour-card-places {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        min-height: calc(1.375em * 2);
+    }
+
     .tour-card-media {
         height: 13rem;
         width: 100%;
