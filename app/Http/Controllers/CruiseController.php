@@ -75,8 +75,8 @@ class CruiseController extends Controller
                 'title' => $name,
                 'subtitle' => $typeData['subtitle'] ?? '',
                 'seoBody' => $typeData['seoBody'] ?? ($typeData['intro'] ?? ''),
-                'seoTitle' => seo_page_title($name.' — Danh sách du thuyền'),
-                'seoDescription' => 'Tuyển chọn '.strtolower($name).' tốt nhất. Đặt cabin qua chuyên gia bản địa, nhận báo giá trong 24 giờ.',
+                'seoTitle' => $typeData['seoTitle'] ?: seo_page_title($name.' — Danh sách du thuyền'),
+                'seoDescription' => $typeData['seoDescription'] ?: apply_site_brand('Tuyển chọn '.strtolower($name).' tốt nhất. Đặt cabin qua chuyên gia bản địa :brand.'),
                 'banner' => $typeData['banner'] ?? ($typeData['imageHero'] ?? null),
                 'bannerSrcset' => $typeData['bannerSrcset'] ?? ($typeData['imageSrcset'] ?? null),
                 'breadcrumbs' => [
@@ -102,6 +102,7 @@ class CruiseController extends Controller
                     'url' => locale_route('cruises.show', ['type' => $c['typeSlug'], 'slug' => $c['slug']]),
                 ])->all(),
                 'schemaName' => seo_page_title($name),
+                'ratingMeta' => 'Đánh giá từ khách hàng đã chọn '.$name,
             ]);
 
             return view('pages.cruises.index', compact('listing'))->render();

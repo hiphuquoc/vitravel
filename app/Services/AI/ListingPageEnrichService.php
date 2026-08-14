@@ -173,7 +173,7 @@ TXT;
 Thêm faqs: 5–6 object { "question": "…", "answer": "…" } — key CHÍNH XÁC question/answer.
 FAQ thực dụng: thời lượng, chi phí, ai phù hợp, mùa đi, visa/đi lại nếu liên quan.
 TXT,
-            'cruise_type' => "\nChỉ SEO + subtitle/seo_body nếu có giá trị (loại du thuyền / vịnh). Không FAQ.",
+            'cruise_type' => "\nTrang listing theo loại du thuyền. subtitle = intro; seo_body = HTML cuối listing. Không FAQ.",
             'service_category' => "\nCụm dịch vụ — subtitle + seo_body mô tả danh mục con. Không FAQ.",
             default => '',
         };

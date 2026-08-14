@@ -15,6 +15,8 @@ class CruiseTypeSeeder extends Seeder
                 ['slug' => $row['slug']],
                 [
                     'name' => $row['name'],
+                    'intro' => $row['intro'] ?? $row['subtitle'] ?? null,
+                    'seo_body' => $row['seo_body'] ?? null,
                     'sort' => $row['sort'],
                     'is_active' => true,
                 ],

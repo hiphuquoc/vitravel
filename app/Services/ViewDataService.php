@@ -484,7 +484,7 @@ class ViewDataService
 
     public function cruiseTypes(): array
     {
-        $types = CruiseType::query()->active()->with('banner')->get();
+        $types = CruiseType::query()->active()->with(['banner', 'cover', 'seoEntry.translations'])->get();
 
         if ($types->isNotEmpty()) {
             return $types
@@ -529,14 +529,19 @@ class ViewDataService
     {
         $cardImage = $type->coverUrl('card') ?: $type->bannerUrl('card');
         $heroImage = $type->bannerUrl('lg') ?: $type->bannerUrl('full') ?: $cardImage;
+        $subtitle = trim((string) ($type->intro ?? ''));
+        $seoBody = trim((string) ($type->seo_body ?: $type->intro ?? ''));
+        $seoTrans = $type->seoEntry?->translation($this->locale());
 
         return [
             'slug' => $type->slug,
             'name' => $type->name,
             'title' => $type->name,
-            'subtitle' => '',
-            'seoBody' => '',
-            'intro' => '',
+            'subtitle' => $subtitle,
+            'seoBody' => $seoBody,
+            'intro' => $subtitle,
+            'seoTitle' => apply_site_brand((string) ($seoTrans?->seo_title ?? $type->name)),
+            'seoDescription' => apply_site_brand((string) ($seoTrans?->seo_description ?? $subtitle)),
             'count' => Package::query()->published()->cruises()->where('cruise_type', $type->slug)->count(),
             'image' => $cardImage,
             'imageHero' => $heroImage,
@@ -1614,7 +1619,7 @@ class ViewDataService
     /** @return list<array<string, mixed>> */
     public function serviceCategories(?string $cluster = null): array
     {
-        $query = ServiceCategory::query()->active()->with('banner');
+        $query = ServiceCategory::query()->active()->with(['banner', 'cover', 'seoEntry.translations']);
         if ($cluster) {
             $query->forCluster($cluster);
         }
@@ -1687,7 +1692,7 @@ class ViewDataService
             ->active()
             ->forCluster($cluster)
             ->where('slug', $slug)
-            ->with(['banner'])
+            ->with(['banner', 'cover', 'seoEntry.translations'])
             ->withCount(['services' => fn ($q) => $q->published()])
             ->first();
 
@@ -1770,13 +1775,19 @@ class ViewDataService
     {
         $cardImage = $cat->coverUrl('card') ?: $cat->bannerUrl('card');
 
+        $seoTrans = $cat->seoEntry?->translation($this->locale());
+        $subtitle = trim((string) ($cat->intro ?? ''));
+        $seoBody = trim((string) ($cat->seo_body ?: $cat->intro ?? ''));
+
         return [
             'slug' => $cat->slug,
             'name' => $cat->name,
             'title' => $cat->name,
-            'intro' => $cat->intro,
-            'subtitle' => (string) ($cat->intro ?? ''),
-            'seoBody' => (string) ($cat->seo_body ?: $cat->intro ?? ''),
+            'intro' => $subtitle,
+            'subtitle' => $subtitle,
+            'seoBody' => $seoBody,
+            'seoTitle' => apply_site_brand((string) ($seoTrans?->seo_title ?? $cat->name)),
+            'seoDescription' => apply_site_brand((string) ($seoTrans?->seo_description ?? $subtitle)),
             'cluster' => $cat->cluster,
             'count' => (int) ($cat->services_count ?? $cat->services()->published()->count()),
             'image' => $cardImage,

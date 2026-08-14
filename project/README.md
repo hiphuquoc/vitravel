@@ -125,7 +125,7 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 ### 4. Sản phẩm
 
 - `tours` → `package_tour`
-- `cruises` + `cruise_types` → `package_cruise` (đổi nghĩa dịch vụ: giữ key hoặc bảo AI đổi seeder/`config/seo.php`)
+- `cruises` + `cruise_types` → `package_cruise`. Listing chrome trên loại du thuyền: `intro` (subtitle dưới H1), `seo_body` (HTML cuối listing).
 
 ### 4b. Catalogue dịch vụ (5 cụm)
 
@@ -160,8 +160,8 @@ Mọi trang listing (tours hub / country / chủ đề tour / cruise type / serv
 | Canonical | Ý nghĩa | Seed / DB (tuỳ entity) |
 |-----------|---------|------------------------|
 | `title` | H1 | `name` / hub title |
-| `subtitle` | Copy ngắn dưới H1 | `tour_categories.subtitle`, country `tagline`, hub `body`, service `intro` |
-| `seoBody` | Prose HTML dưới lưới | `tour_categories.seo_body`, country `long_form`, hub `seo_body`, service `seo_body` |
+| `subtitle` | Copy ngắn dưới H1 | `tour_categories.subtitle`, country `tagline`, hub `body`, cruise `intro`, service `intro` |
+| `seoBody` | Prose HTML dưới lưới | `tour_categories.seo_body`, country `long_form`, hub `seo_body`, cruise `seo_body`, service `seo_body` |
 | `banner` | Hero | cover / listing banner |
 
 Admin API chấp nhận cả tên cũ lẫn canonical (`ListingFields`).

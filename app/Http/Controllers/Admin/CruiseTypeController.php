@@ -82,6 +82,8 @@ class CruiseTypeController extends Controller
         $validated = $request->validate([
             'id' => 'nullable|integer|exists:cruise_types,id',
             'name' => 'required|string|max:255',
+            'intro' => 'nullable|string|max:2000',
+            'seo_body' => 'nullable|string',
             'slug' => [
                 'required',
                 'string',
@@ -114,6 +116,8 @@ class CruiseTypeController extends Controller
 
             $type->fill([
                 'name' => $validated['name'],
+                'intro' => $validated['intro'] ?? null,
+                'seo_body' => $validated['seo_body'] ?? null,
                 'slug' => $seoSlug,
                 'sort' => $validated['sort'] ?? 0,
                 'is_active' => $request->boolean('is_active', true),

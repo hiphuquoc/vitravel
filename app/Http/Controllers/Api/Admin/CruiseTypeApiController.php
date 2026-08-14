@@ -10,6 +10,7 @@ use App\Models\CruiseType;
 use App\Models\Language;
 use App\Services\MediaService;
 use App\Support\ApiResponse;
+use App\Support\ListingFields;
 use App\Support\ProjectUnique;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -118,10 +119,17 @@ class CruiseTypeApiController extends Controller
             'seo_slug' => Str::slug((string) ($request->input('seo_slug') ?: $request->input('slug', ''))),
         ]);
 
+        ListingFields::mergeAliases($request, [
+            'intro' => 'subtitle',
+        ]);
+
         try {
             $validated = $request->validate([
                 'id' => 'nullable|integer|exists:cruise_types,id',
                 'name' => 'required|string|max:255',
+                'intro' => 'nullable|string|max:2000',
+                'subtitle' => 'nullable|string|max:2000',
+                'seo_body' => 'nullable|string',
                 'slug' => [
                     'required',
                     'string',
@@ -153,6 +161,8 @@ class CruiseTypeApiController extends Controller
 
             $type->fill([
                 'name' => $validated['name'],
+                'intro' => $validated['intro'] ?? null,
+                'seo_body' => $validated['seo_body'] ?? null,
                 'slug' => $validated['slug'],
                 'sort' => $validated['sort'] ?? 0,
                 'is_active' => $request->boolean('is_active', true),
@@ -221,6 +231,9 @@ class CruiseTypeApiController extends Controller
             'id' => $type->id,
             'name' => $type->name,
             'slug' => $type->slug,
+            'intro' => $type->intro,
+            'subtitle' => $type->intro,
+            'seo_body' => $type->seo_body,
             'sort' => $type->sort,
             'is_active' => $type->is_active,
             'seo' => [

@@ -1393,6 +1393,12 @@
     .nav-panel-meta {
         @apply mt-1 block leading-snug text-muted;
         font-size: var(--fs-meta);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .nav-panel-row {
@@ -6936,7 +6942,12 @@ a.mobile-nav-drawer__trigger {
     line-height: 1.35;
 }
 .mobile-nav-drawer__tree-link-meta {
-    display: block;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
     margin-top: 0.1rem;
     font-size: var(--fs-meta, 0.8125rem);
     line-height: 1.35;

@@ -93,7 +93,7 @@ Admin map về form:
 | `country` | `tagline` | `long_form_content` |
 | `tour_category` | `description` | `seo_intro` |
 | `service_category` | `intro` | `seo_body` |
-| `cruise_type` | — (form chưa có) | — |
+| `cruise_type` | `intro` | `seo_body` |
 
 Ví dụ body:
 

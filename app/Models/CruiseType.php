@@ -15,7 +15,7 @@ class CruiseType extends Model
     use BelongsToProject, HasSeo, SoftDeletes;
 
     protected $fillable = [
-        'project_id', 'slug', 'name', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
+        'project_id', 'slug', 'name', 'intro', 'seo_body', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',
     ];
 
     protected function casts(): array

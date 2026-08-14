@@ -87,8 +87,8 @@ class ServiceController extends Controller
                 'title' => $name,
                 'subtitle' => $cat['subtitle'] ?? ($cat['intro'] ?? ''),
                 'seoBody' => $cat['seoBody'] ?? ($cat['intro'] ?? ''),
-                'seoTitle' => seo_page_title($name.' — '.($hub['title'] ?? 'Dịch vụ')),
-                'seoDescription' => apply_site_brand($cat['intro'] ?? ('Tuyển chọn '.strtolower($name).' — đặt qua chuyên gia bản địa :brand.')),
+                'seoTitle' => $cat['seoTitle'] ?: seo_page_title($name.' — '.($hub['title'] ?? 'Dịch vụ')),
+                'seoDescription' => $cat['seoDescription'] ?: apply_site_brand($cat['subtitle'] ?? ('Tuyển chọn '.strtolower($name).' — đặt qua chuyên gia bản địa :brand.')),
                 'banner' => $cat['banner'] ?? ($cat['imageHero'] ?? null),
                 'bannerSrcset' => $cat['bannerSrcset'] ?? ($cat['imageSrcset'] ?? null),
                 'breadcrumbs' => [
@@ -118,6 +118,7 @@ class ServiceController extends Controller
                     ]),
                 ])->all(),
                 'schemaName' => seo_page_title($name),
+                'ratingMeta' => 'Đánh giá từ khách hàng đã chọn '.$name,
             ]);
 
             return view('pages.services.index', compact('listing', 'cluster'))->render();
