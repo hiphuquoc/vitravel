@@ -129,6 +129,37 @@ if (! function_exists('apply_site_brand_deep')) {
     }
 }
 
+if (! function_exists('tour_listing_label')) {
+    /**
+     * Nhãn listing/menu tour: tối đa một lần "Tour " ở đầu.
+     * Tên điểm đến/danh mục trong seed hoặc admin đã thường chứa "Tour" sẵn
+     * (vd. "Tour kết hợp", "Tour Dương Đông Phú Quốc") — không ghép thêm lần nữa.
+     *
+     * @param  bool  $prefixIfMissing  true = luôn có tiền tố Tour (menu điểm đến).
+     *                                 false = chỉ gỡ lặp "Tour Tour …", không thêm mới (H1 danh mục).
+     */
+    function tour_listing_label(?string $name, bool $prefixIfMissing = true): string
+    {
+        $name = trim((string) $name);
+        if ($name === '') {
+            return $prefixIfMissing ? 'Tour' : '';
+        }
+
+        $stripped = trim((string) preg_replace('/^(tours?\s+)+/iu', '', $name));
+        $hadPrefix = strcasecmp($stripped, $name) !== 0;
+
+        if ($stripped === '') {
+            return 'Tour';
+        }
+
+        if ($prefixIfMissing || $hadPrefix) {
+            return 'Tour '.$stripped;
+        }
+
+        return $name;
+    }
+}
+
 if (! function_exists('seo_page_title')) {
     /**
      * Title trang: «{title} — {brand}» (không lặp brand nếu title đã chứa).

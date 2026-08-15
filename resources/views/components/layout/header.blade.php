@@ -350,7 +350,7 @@
                         @foreach ($destinations as $c)
                             <a href="{{ locale_route('tours.index', $c['slug']) }}" class="nav-panel-row group">
                                 <span class="nav-panel-item-row">
-                                    <span class="nav-panel-item">Tour {{ $c['name'] }}</span>
+                                    <span class="nav-panel-item">{{ tour_listing_label($c['name'] ?? '') }}</span>
                                     <x-shared.count-badge :count="$c['tourCount'] ?? 0" />
                                 </span>
                                 @if (! empty($c['tagline']))
@@ -678,7 +678,7 @@
                                 <li @class(['mobile-nav-drawer__tree-item--last' => $loop->last])>
                                     <a href="{{ locale_route('tours.index', $c['slug']) }}" class="mobile-nav-drawer__tree-link" @click="closeMobileNav()">
                                         <span class="mobile-nav-drawer__tree-link-row">
-                                            <span class="mobile-nav-drawer__tree-link-title">Tour {{ $c['name'] }}</span>
+                                            <span class="mobile-nav-drawer__tree-link-title">{{ tour_listing_label($c['name'] ?? '') }}</span>
                                             <x-shared.count-badge :count="$c['tourCount'] ?? 0" />
                                         </span>
                                         @if (! empty($c['tagline']))

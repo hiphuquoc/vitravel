@@ -72,19 +72,20 @@ class TourController extends Controller
             $styles = $this->data->travelStyles();
             $durations = $this->data->durationBuckets();
             $name = (string) ($countryData['name'] ?? '');
+            $listingTitle = tour_listing_label($name);
 
             $listing = ListingChrome::make([
                 'kind' => 'country',
-                'title' => 'Tour '.$name,
+                'title' => $listingTitle,
                 'subtitle' => $countryData['subtitle'] ?? ($countryData['tagline'] ?? ''),
                 'seoBody' => $countryData['seoBody'] ?? ($countryData['longForm'] ?? ''),
-                'seoTitle' => seo_page_title('Tour '.$name.' trọn gói'),
-                'seoDescription' => 'Danh sách tour '.$name.' trọn gói: '.($countryData['tagline'] ?? '').'. Nhận báo giá miễn phí trong 24 giờ.',
+                'seoTitle' => seo_page_title($listingTitle.' trọn gói'),
+                'seoDescription' => 'Danh sách '.$listingTitle.' trọn gói: '.($countryData['tagline'] ?? '').'. Nhận báo giá miễn phí trong 24 giờ.',
                 'banner' => $countryData['listingBanner'] ?? null,
                 'bannerSrcset' => $countryData['listingBannerSrcset'] ?? null,
                 'breadcrumbs' => [
                     ['label' => 'Tour', 'url' => locale_route('tours.hub')],
-                    ['label' => 'Tour '.$name],
+                    ['label' => $listingTitle],
                 ],
                 'unitLabel' => 'tour',
                 'endpoint' => route('api.listings.tours'),
@@ -98,13 +99,13 @@ class TourController extends Controller
                 'durations' => $durations,
                 'styles' => $styles,
                 'faqs' => $this->data->listingFaqs(),
-                'faqTitle' => 'Câu hỏi thường gặp về tour '.$name,
+                'faqTitle' => 'Câu hỏi thường gặp về '.$listingTitle,
                 'schemaItems' => collect($tours)->map(fn ($t) => [
                     'name' => $t['title'],
                     'url' => locale_route('tours.show', ['country' => $t['countrySlug'], 'slug' => $t['slug']]),
                 ])->all(),
-                'schemaName' => seo_page_title('Tour '.$name),
-                'ratingMeta' => 'Đánh giá từ khách hàng đã đi tour '.$name,
+                'schemaName' => seo_page_title($listingTitle),
+                'ratingMeta' => 'Đánh giá từ khách hàng đã đi '.$listingTitle,
             ]);
 
             return view('pages.tours.index', compact('listing'))->render();
@@ -122,7 +123,7 @@ class TourController extends Controller
             $countries = $this->data->countries();
             $styles = $this->data->travelStyles();
             $durations = $this->data->durationBuckets();
-            $title = (string) ($category['title'] ?? $category['name'] ?? '');
+            $title = tour_listing_label((string) ($category['title'] ?? $category['name'] ?? ''), prefixIfMissing: false);
 
             $listing = ListingChrome::make([
                 'kind' => 'tour_category',
@@ -136,7 +137,7 @@ class TourController extends Controller
                 'breadcrumbs' => [
                     ['label' => 'Tour', 'url' => locale_route('tours.hub')],
                     [
-                        'label' => 'Tour '.($category['countryName'] ?? ''),
+                        'label' => tour_listing_label((string) ($category['countryName'] ?? '')),
                         'url' => locale_route('tours.index', ['country' => $category['countrySlug'] ?? $country]),
                     ],
                     ['label' => $title],

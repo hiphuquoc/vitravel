@@ -7,7 +7,7 @@
     <x-tour.detail :item="$tour" type="tour"
         :breadcrumbs="[
             ['label' => 'Tour', 'url' => locale_route('tours.hub')],
-            ['label' => 'Tour ' . $tour['country'], 'url' => locale_route('tours.index', $tour['countrySlug'])],
+            ['label' => tour_listing_label($tour['country'] ?? ''), 'url' => locale_route('tours.index', $tour['countrySlug'])],
             ['label' => $tour['title']],
         ]" />
 @endsection

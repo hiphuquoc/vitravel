@@ -56,7 +56,7 @@
                         @foreach ($results['destinations'] as $c)
                             <a href="{{ locale_route('tours.index', $c['slug']) }}" class="search-dest-card">
                                 <span>
-                                    <span class="block font-semibold text-ink">Tour {{ $c['name'] }}</span>
+                                    <span class="block font-semibold text-ink">{{ tour_listing_label($c['name'] ?? '') }}</span>
                                     <span class="text-sm text-muted">{{ $c['tagline'] }}</span>
                                 </span>
                                 <span class="text-sm font-medium text-muted">{{ $c['tourCount'] }}</span>
