@@ -3,10 +3,13 @@
 namespace App\Services;
 
 use App\Models\Media;
+use App\Models\MediaAttachment;
 use App\Support\ProjectContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Throwable;
@@ -379,6 +382,69 @@ class MediaService
     }
 
     /**
+     * Chỉ xóa file khi media không còn attachment / FK nào (ảnh dùng chung thư viện).
+     */
+    public function deleteMediaIfOrphan(?Media $media): void
+    {
+        if (! $media) {
+            return;
+        }
+
+        if ($this->mediaIsReferenced((int) $media->id)) {
+            return;
+        }
+
+        $this->deleteMedia($media);
+    }
+
+    private function mediaIsReferenced(int $mediaId): bool
+    {
+        if (MediaAttachment::query()->where('media_id', $mediaId)->exists()) {
+            return true;
+        }
+
+        foreach ($this->mediaForeignKeys() as [$table, $column]) {
+            if (! Schema::hasTable($table) || ! Schema::hasColumn($table, $column)) {
+                continue;
+            }
+            if (DB::table($table)->where($column, $mediaId)->exists()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @return list<array{0: string, 1: string}> */
+    private function mediaForeignKeys(): array
+    {
+        return [
+            ['countries', 'banner_media_id'],
+            ['countries', 'listing_banner_media_id'],
+            ['cruise_types', 'banner_media_id'],
+            ['cruise_types', 'cover_media_id'],
+            ['service_categories', 'banner_media_id'],
+            ['service_categories', 'cover_media_id'],
+            ['tour_categories', 'banner_media_id'],
+            ['home_slides', 'image_media_id'],
+            ['home_slides', 'image_mobile_media_id'],
+            ['home_sections', 'image_media_id'],
+            ['destinations', 'image_media_id'],
+            ['listing_hubs', 'banner_media_id'],
+            ['listing_hubs', 'cover_media_id'],
+            ['company_profiles', 'about_banner_media_id'],
+            ['company_profiles', 'reasons_image_id'],
+            ['experience_videos', 'thumbnail_media_id'],
+            ['experience_videos', 'video_media_id'],
+            ['team_members', 'avatar_media_id'],
+            ['team_member_activity_images', 'media_id'],
+            ['articles', 'cover_media_id'],
+            ['static_pages', 'cover_media_id'],
+            ['seo_entries', 'og_image_id'],
+        ];
+    }
+
+    /**
      * Sync cover image stored as morph media_attachments (role=cover).
      */
     public function syncCoverAttachment(
@@ -396,8 +462,9 @@ class MediaService
             ->first();
 
         if ($request->boolean($removeField) && $existing) {
-            $this->deleteMedia($existing->media);
+            $old = $existing->media;
             $existing->delete();
+            $this->deleteMediaIfOrphan($old);
             $existing = null;
         }
 
@@ -406,8 +473,9 @@ class MediaService
         }
 
         if ($existing) {
-            $this->deleteMedia($existing->media);
+            $old = $existing->media;
             $existing->delete();
+            $this->deleteMediaIfOrphan($old);
         }
 
         $media = $this->storeUploadedFile(
@@ -902,8 +970,9 @@ class MediaService
 
         if ($remove) {
             if ($existing) {
-                $this->deleteMedia($existing->media);
+                $old = $existing->media;
                 $existing->delete();
+                $this->deleteMediaIfOrphan($old);
             }
 
             return;
@@ -918,8 +987,9 @@ class MediaService
         }
 
         if ($existing) {
-            $this->deleteMedia($existing->media);
+            $old = $existing->media;
             $existing->delete();
+            $this->deleteMediaIfOrphan($old);
         }
 
         $media = Media::query()->find($mediaId);
@@ -995,11 +1065,9 @@ class MediaService
         $current = $currentId ? Media::query()->find($currentId) : null;
 
         if ($remove) {
-            if ($current) {
-                $this->deleteMedia($current);
-            }
             $model->{$column} = null;
             $model->save();
+            $this->deleteMediaIfOrphan($current);
 
             return;
         }
@@ -1012,16 +1080,13 @@ class MediaService
             return;
         }
 
-        if ($current) {
-            $this->deleteMedia($current);
-        }
-
         if (! Media::query()->whereKey($mediaId)->exists()) {
             return;
         }
 
         $model->{$column} = $mediaId;
         $model->save();
+        $this->deleteMediaIfOrphan($current);
     }
 
     /** Giới hạn upload thực tế (KB) = min(config, PHP upload_max_filesize). */
