@@ -43,6 +43,7 @@ use App\Support\HomeFeaturedSchema;
 use App\Support\LocaleContent;
 use App\Support\ProjectSeed;
 use App\Support\SampleData;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewDataService
 {
@@ -286,6 +287,8 @@ class ViewDataService
             'translations', 'category', 'country.translations',
             'seoEntry.translations', 'options.translations', 'faqs.translations',
             'mediaAttachments.media',
+            'priceTable.variants.translations',
+            'priceTable.periods.rates',
         ];
 
         if (HomeFeaturedSchema::hasServices()) {
@@ -357,6 +360,8 @@ class ViewDataService
             'translations', 'category', 'country.translations',
             'seoEntry.translations', 'options.translations', 'faqs.translations',
             'mediaAttachments.media',
+            'priceTable.variants.translations',
+            'priceTable.periods.rates',
         ];
 
         if (! HomeFeaturedSchema::hasServices()) {
@@ -1712,6 +1717,8 @@ class ViewDataService
                 'translations', 'category', 'country.translations',
                 'seoEntry.translations', 'options.translations', 'faqs.translations',
                 'mediaAttachments.media',
+                'priceTable.variants.translations',
+                'priceTable.periods.rates',
             ])
             ->orderBy('sort')
             ->orderByDesc('id');
@@ -1735,6 +1742,8 @@ class ViewDataService
                 'translations', 'category', 'country.translations',
                 'seoEntry.translations', 'options.translations', 'faqs.translations',
                 'mediaAttachments.media',
+                'priceTable.variants.translations',
+                'priceTable.periods.rates',
             ]);
 
         if ($cluster) {
@@ -1822,7 +1831,7 @@ class ViewDataService
             $priceLabel = 'Liên hệ';
         }
 
-        return [
+        $payload = [
             'slug' => $seoTranslation?->slug ?? ($service->code ?? ''),
             'code' => $service->code,
             'title' => $translation?->title ?? '',
@@ -1878,6 +1887,8 @@ class ViewDataService
             'gallery' => $this->mapGalleryAttachments($service),
             'galleryCount' => $this->galleryAttachmentCount($service),
         ];
+
+        return $this->attachPriceTable($payload, $service);
     }
 
     /**
@@ -2296,6 +2307,8 @@ class ViewDataService
                 'faqs.translations',
                 'mediaAttachments.media',
                 'seoEntry.translations',
+                'priceTable.variants.translations',
+                'priceTable.periods.rates',
             ]);
     }
 
@@ -2558,7 +2571,7 @@ class ViewDataService
             ])->values()->all();
         }
 
-        return $data;
+        return $this->attachPriceTable($data, $package);
     }
 
     protected function mapArticle(Article $article): array
@@ -2634,6 +2647,28 @@ class ViewDataService
         }
 
         return number_format($amount, 2).' '.strtoupper($currency);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function attachPriceTable(array $data, Model $priceable): array
+    {
+        $svc = app(PriceTableService::class);
+        $data['priceTable'] = $svc->publicPayload($priceable, $this->locale());
+
+        $current = $data['priceFrom'] ?? null;
+        if ($current === null || (float) $current <= 0) {
+            $min = $svc->minAmount($priceable);
+            if ($min !== null && $min > 0) {
+                $currency = (string) ($data['currency'] ?? 'VND');
+                $data['priceFrom'] = $min;
+                $data['priceFormatted'] = $this->formatMoney($min, $currency);
+            }
+        }
+
+        return $data;
     }
 
     /**

@@ -34,6 +34,80 @@ $__vitravelSeed = array (
     ),
     'exported_at' => '2026-07-31T04:16:51+00:00',
   ),
+  'price_guest_types' =>
+  array (
+    0 =>
+    array (
+      'code' => 'adult',
+      'sort' => 10,
+      'age_min' => 12,
+      'age_max' => 59,
+      'name' =>
+      array (
+        'vi' => 'Người lớn',
+        'en' => 'Adult',
+      ),
+    ),
+    1 =>
+    array (
+      'code' => 'child',
+      'sort' => 20,
+      'age_min' => 2,
+      'age_max' => 11,
+      'name' =>
+      array (
+        'vi' => 'Trẻ em',
+        'en' => 'Child',
+      ),
+    ),
+    2 =>
+    array (
+      'code' => 'senior',
+      'sort' => 30,
+      'age_min' => 60,
+      'age_max' => NULL,
+      'name' =>
+      array (
+        'vi' => 'Cao tuổi (60+)',
+        'en' => 'Senior (60+)',
+      ),
+    ),
+  ),
+  'price_table_defaults' =>
+  array (
+    'unit' => 'per_person',
+    'notes' => 'Giá tham khảo theo người. Trẻ em và cao tuổi giảm theo bảng. Liên hệ để chốt báo giá chính xác.',
+    'guest_multipliers' =>
+    array (
+      'adult' => 1,
+      'child' => 0.7,
+      'senior' => 0.85,
+    ),
+    'cluster_units' =>
+    array (
+      'stay' => 'per_room',
+    ),
+    'periods' =>
+    array (
+      0 =>
+      array (
+        'kind' => 'year',
+        'label' => 'Giá năm {year}',
+        'is_promo' => false,
+        'priority' => 0,
+      ),
+      1 =>
+      array (
+        'kind' => 'range',
+        'label' => 'Ưu đãi hè {year}',
+        'starts_on' => '{year}-06-01',
+        'ends_on' => '{year}-08-31',
+        'is_promo' => true,
+        'priority' => 10,
+        'amount_multiplier' => 0.9,
+      ),
+    ),
+  ),
   'content_tag_map' => 
   array (
     'Ăn gì, uống gì?' => 'where-to-eat',
@@ -582,6 +656,88 @@ $__vitravelSeed = array (
       'galleryCount' => 6,
       'priceFrom' => 28000000.0,
       'currency' => 'VND',
+      'price_table' =>
+      array (
+        'currency' => 'VND',
+        'unit' => 'per_person',
+        'notes' => 'Ví dụ bảng giá chi tiết — copy khi tour mới cần override `price_table_defaults`.',
+        'variants' =>
+        array (
+          0 =>
+          array (
+            'code' => 'standard',
+            'name' => 'Tiêu chuẩn',
+            'source' => 'custom',
+            'sort' => 0,
+            'is_active' => true,
+          ),
+        ),
+        'periods' =>
+        array (
+          0 =>
+          array (
+            'kind' => 'year',
+            'year' => 2026,
+            'label' => 'Giá năm 2026',
+            'is_promo' => false,
+            'priority' => 0,
+            'rates' =>
+            array (
+              0 =>
+              array (
+                'variant_code' => 'standard',
+                'guest_type_code' => 'adult',
+                'amount' => 28000000,
+              ),
+              1 =>
+              array (
+                'variant_code' => 'standard',
+                'guest_type_code' => 'child',
+                'amount' => 19600000,
+              ),
+              2 =>
+              array (
+                'variant_code' => 'standard',
+                'guest_type_code' => 'senior',
+                'amount' => 23800000,
+              ),
+            ),
+          ),
+          1 =>
+          array (
+            'kind' => 'range',
+            'starts_on' => '2026-06-01',
+            'ends_on' => '2026-08-31',
+            'label' => 'Ưu đãi hè 2026',
+            'is_promo' => true,
+            'priority' => 10,
+            'rates' =>
+            array (
+              0 =>
+              array (
+                'variant_code' => 'standard',
+                'guest_type_code' => 'adult',
+                'amount' => 25200000,
+                'compare_at_amount' => 28000000,
+              ),
+              1 =>
+              array (
+                'variant_code' => 'standard',
+                'guest_type_code' => 'child',
+                'amount' => 17640000,
+                'compare_at_amount' => 19600000,
+              ),
+              2 =>
+              array (
+                'variant_code' => 'standard',
+                'guest_type_code' => 'senior',
+                'amount' => 21420000,
+                'compare_at_amount' => 23800000,
+              ),
+            ),
+          ),
+        ),
+      ),
     ),
     1 => 
     array (

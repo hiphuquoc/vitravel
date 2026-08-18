@@ -34,6 +34,60 @@ $__hicatbaSeed = array(
         'exported_at' => '2026-08-04T00:00:00+00:00',
     ),
 
+    'price_guest_types' => array(
+        array(
+            'code' => 'adult',
+            'sort' => 10,
+            'age_min' => 12,
+            'age_max' => 59,
+            'name' => array('vi' => 'Người lớn', 'en' => 'Adult'),
+        ),
+        array(
+            'code' => 'child',
+            'sort' => 20,
+            'age_min' => 2,
+            'age_max' => 11,
+            'name' => array('vi' => 'Trẻ em', 'en' => 'Child'),
+        ),
+        array(
+            'code' => 'senior',
+            'sort' => 30,
+            'age_min' => 60,
+            'age_max' => null,
+            'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)'),
+        ),
+    ),
+
+    'price_table_defaults' => array(
+        'unit' => 'per_person',
+        'notes' => 'Giá tham khảo theo người. Trẻ em và cao tuổi giảm theo bảng. Liên hệ để chốt báo giá chính xác.',
+        'guest_multipliers' => array(
+            'adult' => 1,
+            'child' => 0.7,
+            'senior' => 0.85,
+        ),
+        'cluster_units' => array(
+            'stay' => 'per_room',
+        ),
+        'periods' => array(
+            array(
+                'kind' => 'year',
+                'label' => 'Giá năm {year}',
+                'is_promo' => false,
+                'priority' => 0,
+            ),
+            array(
+                'kind' => 'range',
+                'label' => 'Ưu đãi hè {year}',
+                'starts_on' => '{year}-06-01',
+                'ends_on' => '{year}-08-31',
+                'is_promo' => true,
+                'priority' => 10,
+                'amount_multiplier' => 0.9,
+            ),
+        ),
+    ),
+
     'content_tag_map' => array(
         'Ăn gì, uống gì?' => 'where-to-eat',
         'Ở đâu?' => 'where-to-stay',

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasFaqs;
 use App\Models\Concerns\HasMediaAttachments;
+use App\Models\Concerns\HasPriceTable;
 use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
-    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasPriceTable, HasSeo, HasTranslations, SoftDeletes;
 
     public const CLUSTER_TRAIN = 'train';
 

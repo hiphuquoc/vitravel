@@ -137,6 +137,9 @@ Keys nằm trong cùng file seed dự án (`service_clusters`, `service_categori
 | `service_categories` | `[{ cluster, slug, name, sort, intro?, seo_body? }]` — danh mục con dưới hub. `intro` = subtitle dưới H1; `seo_body` = HTML cuối listing |
 | `services` | `[{ code, cluster, category_slug, country_slug?, title, slug, price_from, currency, rating, highlights[], inclusions[], exclusions[], notes[], attrs{}, options[], faqs[], en? }]` |
 | `service_listing_faqs` | `[{ q, a }]` — FAQ chung hub/listing dịch vụ |
+| `price_guest_types` | optional `[{ code, sort, age_min?, age_max?, name: { vi, en }, description?: { vi, en } }]` — chỉ **thêm mã chưa có**; mặc định adult/child/senior từ `config/pricing.php`. |
+| `price_table_defaults` | template bảng giá mẫu khi clone dự án / seed chương trình chưa có rate. Shape: `{ unit, notes?, guest_multipliers: { adult: 1, child: 0.7, senior: 0.85 }, cluster_units?: { stay: per_room }, periods: [{ kind, label, starts_on?, ends_on?, is_promo, priority, amount_multiplier? }] }`. `{year}` được thay năm hiện tại. Fallback: `config/pricing.php` → `sample`. |
+| `tours[].price_table` / `cruises[].price_table` / `services[].price_table` | optional override đầy đủ (variants + periods + rates). Ví dụ: tour `VN10D-01` trong `seed_vitravel.php`. Không khai báo → `PriceTableSeeder` dựng từ `price_from` + cabin / service option. **An toàn:** bỏ qua chương trình đã có `price_rates`. |
 
 Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 experience, 7 other). Config runtime: `config/services_catalog.php`.
 
@@ -174,6 +177,7 @@ Admin API chấp nhận cả tên cũ lẫn canonical (`ListingFields`).
 | company | **HomeFeaturedSeeder** (`seedCompanyIdentity`) | — (company_profiles) |
 | cruise_types / cruises | CruiseType + Content | cruise_type / package_cruise |
 | service_categories / services | **ServiceCatalogSeeder** | `service_category` / `service` (+ 5 hub types) |
+| price_guest_types / price_table_defaults | **PriceGuestTypeSeeder** + **PriceTableSeeder** | — (chỉ thêm mã / bảng giá còn thiếu) |
 | tour_categories | TourCategorySeeder | tour_category |
 | (cuối) | **SeoHierarchySeeder** | rebuild cây |
 

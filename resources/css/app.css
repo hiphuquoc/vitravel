@@ -2771,6 +2771,143 @@
         color: var(--color-leaf-600, #567834);
     }
 
+    .price-table__unit,
+    .price-table__range,
+    .price-table__notes,
+    .price-table__hint {
+        margin: 0;
+        color: var(--color-ink-muted, #6b6a62);
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    .price-table__unit {
+        margin-left: auto;
+    }
+
+    .price-table__periods {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0 0 var(--space-card-stack, 1rem);
+    }
+
+    .price-table__period {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.85rem;
+        border-radius: 999px;
+        border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 80%, transparent);
+        background: #fff;
+        color: var(--color-ink, #2c2b26);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .price-table__period.is-active {
+        border-color: color-mix(in srgb, var(--color-primary-400, #8aa85c) 70%, var(--color-line, #ddd9c2));
+        background: color-mix(in srgb, var(--color-primary-50, #f3f6ec) 88%, #fff);
+        color: var(--color-primary-800, #3d5224);
+    }
+
+    .price-table__promo {
+        display: inline-flex;
+        padding: 0.1rem 0.4rem;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--color-accent, #c45c26) 14%, #fff);
+        color: var(--color-accent, #c45c26);
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+    }
+
+    .price-table__range {
+        margin-bottom: 0.75rem;
+    }
+
+    .price-table__scroll {
+        overflow-x: auto;
+        border-radius: 0.9rem;
+        border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+        background: #fff;
+    }
+
+    .price-table {
+        width: 100%;
+        min-width: 28rem;
+        border-collapse: collapse;
+        font-size: 0.9375rem;
+    }
+
+    .price-table th,
+    .price-table td {
+        padding: 0.85rem 1rem;
+        text-align: right;
+        vertical-align: top;
+        border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 70%, transparent);
+    }
+
+    .price-table thead th {
+        background: color-mix(in srgb, var(--color-sand-50, #f7f5ec) 80%, #fff);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .price-table th:first-child,
+    .price-table td:first-child {
+        text-align: left;
+        position: sticky;
+        left: 0;
+        background: inherit;
+        min-width: 10rem;
+    }
+
+    .price-table tbody th {
+        background: #fff;
+        font-weight: 600;
+    }
+
+    .price-table tbody tr:last-child th,
+    .price-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .price-table__variant {
+        display: block;
+    }
+
+    .price-table__hint {
+        display: block;
+        margin-top: 0.2rem;
+        font-weight: 400;
+    }
+
+    .price-table__amount {
+        display: block;
+        font-weight: 700;
+        color: var(--color-ink, #2c2b26);
+        white-space: nowrap;
+    }
+
+    .price-table__was {
+        display: block;
+        color: var(--color-ink-muted, #6b6a62);
+        text-decoration: line-through;
+        font-size: 0.8rem;
+        white-space: nowrap;
+    }
+
+    .price-table__empty {
+        color: var(--color-ink-muted, #6b6a62);
+    }
+
+    .price-table__notes {
+        margin-top: var(--space-card-stack, 1rem);
+    }
+
     /* Itinerary timeline */
     .detail-timeline {
         position: relative;

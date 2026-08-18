@@ -94,11 +94,12 @@ Mỗi trang được mô tả theo: **Mục đích → Ảnh tham chiếu → La
 **Thành phần:**
 1. **Gallery ảnh** — ảnh lớn + thumbnail strip cuộn ngang bên dưới, click để đổi ảnh chính
 2. Card breadcrumb + tiêu đề (đồng bộ style với mục B.2)
-3. **Tab điều hướng nội bộ (anchor links, sticky khi scroll)**: Overview | Highlight | Itinerary | What's included | Customer Reviews
+3. **Tab điều hướng nội bộ (anchor links, sticky khi scroll)**: Overview | Highlight | Itinerary | **Bảng giá** (khi có `priceTable`) | What's included | Customer Reviews
 4. **Info box tóm tắt**: badge rating tròn + "Eccellente" + review count, Tour code, Duration, Start in, Finish in, Places to visit (full list)
 5. **Bản đồ tuyến đường (Tour Map)** — ảnh map custom vẽ tuyến, "Click to view map" mở lightbox
 6. **Highlights section**: đoạn mô tả SEO dài + bullet list 5-7 điểm nhấn
 7. **Itinerary — "Expand All"** — accordion theo từng ngày (tiêu đề ngày + bữa ăn B/L/D, icon phương tiện, ảnh, nội dung, overnight)
+7b. **Bảng giá chi tiết** (`x-shared.detail-price-table`) — tab theo giai đoạn (ngày / khoảng / năm), hàng = tuỳ chọn (cabin hoặc custom), cột = đối tượng khách do admin định nghĩa; badge ưu đãi + giá gạch ngang nếu có. Ẩn khi chưa có period còn hạn. Chi tiết: [`15-pricing.md`](15-pricing.md).
 8. **What's Included / What's Excluded / Notes** — 3 khối bullet list
 9. **Sticky booking sidebar**: tên tour, rating, badge "Offerta speciale"/giảm giá, nút CTA "Price Request", 4 USP badge thu nhỏ, logo TripAdvisor
 10. Esperienze Autentiche dei Nostri Clienti (dùng chung)
@@ -116,7 +117,7 @@ Mỗi trang được mô tả theo: **Mục đích → Ảnh tham chiếu → La
 
 ## D. Danh mục Cruise — `/cruises/{type}` và Chi tiết Cruise — `/cruises/{type}/{slug}`
 
-Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuyền, hạng cabin, cảng khởi hành, số đêm trên thuyền. Xem chi tiết field ở `03-data-models.md`.
+Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuyền, hạng cabin, cảng khởi hành, số đêm trên thuyền. **Bảng giá** cùng component tour — biến thể thường map từ hạng cabin (`price_variants.source = cabin`). Xem field ở `03-data-models.md` và [`15-pricing.md`](15-pricing.md).
 
 ---
 
@@ -156,13 +157,14 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 **Thành phần (`x-service.detail`):**
 1. Page header + gallery/placeholder theo cụm icon
 2. Tóm tắt, điểm nhấn (bullet ✓), thuộc tính theo cụm (`attrs`: điểm đi/đến, hạng ghế, check-in, địa điểm…)
-3. Bảng **ServiceOption** (biến thể giá) khi có
+3. Bảng **ServiceOption** (biến thể / hạng) khi có
+3b. **Bảng giá chi tiết** (`x-shared.detail-price-table`) — cùng model tour/cruise; tuỳ chọn có thể gắn `service_option`. Ẩn khi chưa nhập period còn hạn. Docs: [`15-pricing.md`](15-pricing.md).
 4. Inclusion / exclusion / notes
 5. **Sticky sidebar:** giá “từ”, rating, CTA Liên hệ / WhatsApp / Yêu cầu báo giá (không “Add to cart”)
 6. FAQ riêng dịch vụ + dịch vụ liên quan (`related`)
 7. Quick Inquiry + footer
 
-**Ghi chú:** Admin CRUD dịch vụ **chưa có** — nội dung từ seed; roadmap CMS sau.
+**Ghi chú:** Admin CRUD dịch vụ qua `/api/v1/admin/services` + `price_table`. Checkout **chưa** có — CTA báo giá / WhatsApp.
 
 ---
 

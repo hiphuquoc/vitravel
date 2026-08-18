@@ -80,6 +80,7 @@ Ghi chú: danh sách quốc gia thực tế gồm **Vietnam, Thailand, Cambodia,
 - exclusions              string[]
 - notes                   string[]
 - faqs                    FAQItem[]      // FAQ riêng của tour, hiển thị cuối Tour Detail
+- priceTable              PriceTable?    // bảng giá đa chiều — 15-pricing.md; ẩn public nếu chưa có period còn hạn
 - reviews                 Review[]
 - relatedTourIds           ref(Tour)[]
 - featured                 boolean       // hiển thị ở "I tour più richiesti" Home (giới hạn hiển thị 3)
@@ -141,11 +142,12 @@ Tách khỏi bảng `packages` (tour/cruise). **5 cụm** (`cluster` code): `tra
 - summary            richText
 - highlights         string[]
 - inclusions / exclusions / notes   string[]
-- price_from / currency             display-only (lead-gen)
+- price_from / currency             listing “giá từ”; chi tiết → PriceTable
 - rating / review_count / star_rating?
 - is_featured / is_hot_deal / discount_badge
 - attrs              json            // cluster-specific: from/to, train_number, check_in, venue…
 - options            ref(ServiceOption)[]
+- priceTable         PriceTable?    // cùng model tour/cruise
 - faqs               FAQItem[]
 - relatedServiceIds  ref(Service)[]  // optional
 - seo                SEOFields       // type service
@@ -161,6 +163,30 @@ Tách khỏi bảng `packages` (tour/cruise). **5 cụm** (`cluster` code): `tra
 ```
 
 **Public:** hub → category listing → detail; named routes `services.hub`, `services.index`, `services.show`. Dữ liệu qua `ServiceCatalogSeeder` + keys dịch vụ trong `project/seed_{name}.php`.
+
+## 5b. `PriceTable` (bảng giá chi tiết — mọi loại chương trình)
+
+Một bảng / một `package` hoặc `service`. Chi tiết vận hành: [`15-pricing.md`](15-pricing.md).
+
+```
+PriceGuestType (project-scoped, admin CRUD — không hardcode adult/child)
+- code / name / description? / age_min? / age_max? / sort / is_active
+
+PriceTable
+- currency / unit (per_person|per_room|per_vehicle|per_group|per_unit) / notes?
+
+PriceVariant
+- code / name / source (custom|cabin|service_option) / source_id? / sort
+  // cabin → package_cabin_types; service_option → service_options
+
+PricePeriod
+- kind (date|range|year) / starts_on / ends_on / year? / label? / is_promo / priority
+
+PriceRate (ô)
+- period × variant × guest_type → amount / compare_at_amount? / min_qty? / max_qty?
+```
+
+`PriceTableService::quote()` chọn period phủ ngày (promo đè gốc) — sẵn sàng booking; **chưa** checkout.
 
 ## 6. `Review` (đánh giá tổng hợp — dùng cho Tour Detail, Listing quote, và trang Reviews tổng hợp)
 ```
@@ -463,7 +489,9 @@ Article 1—n Comment
 | Service | `services` + `service_translations` | `attrs` JSON theo cụm |
 | ServiceOption | `service_options` + `service_option_translations` | Biến thể giá |
 | ItineraryDay | `package_itinerary_days` + translations | |
-| CabinType | `package_cabin_types` + translations | Chỉ cruise |
+| CabinType | `package_cabin_types` + translations | Chỉ cruise; có thể `source=cabin` trên price_variants |
+| PriceGuestType | `price_guest_types` + translations | Đối tượng khách theo project |
+| PriceTable | `price_tables` + `price_variants` + `price_periods` + `price_rates` | Morph `package` \| `service` — xem `15-pricing.md` |
 | travelStyles[] | `travel_styles` + pivot `package_travel_style` | 11 style seed sẵn |
 | Review | `reviews` (morph `reviewable`) | + `media_attachments` ảnh review |
 | BlogCategory | `blog_categories` + translations | |
@@ -488,7 +516,7 @@ Article 1—n Comment
 | Media | `media` + `media_attachments` | cover/gallery/map/collage |
 
 **Migrate:** `php artisan migrate --seed`  
-**Seeders:** `LanguageSeeder` (vi/en), `TaxonomySeeder` (11 travel styles, content tags, review platforms), **`ServiceCatalogSeeder`** (trước `TourCategorySeeder` — đọc `service_categories` + `services` từ ProjectSeed).
+**Seeders:** `LanguageSeeder` (vi/en), `TaxonomySeeder`, **`ServiceCatalogSeeder`**, **`PriceGuestTypeSeeder`**, **`PriceTableSeeder`** (bảng giá mẫu, bỏ qua nếu đã có rate).
 
 ---
 
@@ -499,7 +527,7 @@ Article 1—n Comment
 | Bảng | `service_categories`, `services`, `service_translations`, `service_options`, `service_option_translations` |
 | Config | `config/services_catalog.php` (clusters + `hub_to_cluster`); hubs + types trong `config/seo.php` |
 | SEO types | `trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`, `service_category`, `service` |
-| Seed keys | `service_clusters`, `service_categories`, `services`, `service_listing_faqs` — trong `project/seed_{name}.php` |
-| Seeder | `ServiceCatalogSeeder` (sau `ContentSeeder`, trước `TourCategorySeeder`; `SeoHierarchySeeder` cuối) |
+| Seed keys | `service_clusters`, `service_categories`, `services`, `service_listing_faqs`, `price_guest_types`, `price_table_defaults` — trong `project/seed_{name}.php` |
+| Seeder | `ServiceCatalogSeeder` (sau `ContentSeeder`); `PriceTableSeeder` (sau catalogue, không ghi đè rate có sẵn); `SeoHierarchySeeder` cuối |
 | Public | `ServiceController` + `ListingChrome` / `partials/listing-catalog`; `RoutingController` dispatch; views `pages/services/{hub,index,show}` |
-| Admin | **Chưa có** — roadmap CRUD catalogue dịch vụ |
+| Admin | `/api/v1/admin/services` + `price_table` — form Next.js repo admin |

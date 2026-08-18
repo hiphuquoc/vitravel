@@ -16,6 +16,7 @@ use App\Models\PackageTranslation;
 use App\Models\TravelStyle;
 use App\Services\CurrencyManager;
 use App\Services\MediaService;
+use App\Services\PriceTableService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -96,6 +97,7 @@ class PackageApiController extends Controller
                 'seoEntry.translations',
                 'itineraryDays.translations',
                 'faqs.translations',
+                'cabinTypes.translations',
                 'mediaAttachments.media',
             ])
             ->findOrFail($id);
@@ -293,7 +295,7 @@ class PackageApiController extends Controller
                 'remove_cover' => 'nullable|boolean',
                 'gallery_media_ids' => 'nullable|array|max:40',
                 'gallery_media_ids.*' => 'integer|exists:media,id',
-            ]);
+            ] + PriceTableService::validationRules());
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
         }
@@ -306,7 +308,8 @@ class PackageApiController extends Controller
             $countryIds[] = (int) $validated['country_id'];
         }
 
-        $package = DB::transaction(function () use ($request, $validated, $type, $locale, $countryIds) {
+        try {
+            $package = DB::transaction(function () use ($request, $validated, $type, $locale, $countryIds) {
             $package = isset($validated['id'])
                 ? Package::query()->findOrFail($validated['id'])
                 : new Package(['type' => $type]);
@@ -455,6 +458,10 @@ class PackageApiController extends Controller
                 );
             }
 
+            if (isset($validated['price_table']) && is_array($validated['price_table'])) {
+                app(PriceTableService::class)->sync($package, $validated['price_table'], $locale);
+            }
+
             return $package->fresh([
                 'translations',
                 'country.translations',
@@ -464,9 +471,13 @@ class PackageApiController extends Controller
                 'seoEntry.translations',
                 'itineraryDays.translations',
                 'faqs.translations',
+                'cabinTypes.translations',
                 'mediaAttachments.media',
             ]);
         });
+        } catch (\InvalidArgumentException $e) {
+            return ApiResponse::error($e->getMessage(), 'INVALID_PRICE_PERIOD', 422);
+        }
 
         return ApiResponse::success(
             $this->serializeDetail($package, $locale),
@@ -672,6 +683,7 @@ class PackageApiController extends Controller
             'translated_locales' => $this->translatedLocaleCodes($package, 'title'),
             'cover' => app(MediaService::class)->adminMediaPayload($package->coverMedia(), 'card'),
             'gallery' => app(MediaService::class)->adminGalleryPayload($package, 'card'),
+            'price_table' => app(PriceTableService::class)->adminPayload($package, $locale),
             'seo' => [
                 'slug' => $seo?->slug,
                 'slug_full' => $seo?->slug_full,

@@ -44,10 +44,24 @@ Sau khi chọn project trên UI, gửi `X-Project-Code` cho mọi CRUD packages/
 |---|---|---|
 | GET | `/packages?type=tour&search=&country_id=&status=&page=` | Paginated list |
 | GET | `/packages/meta` | Countries, travel styles, statuses |
-| GET | `/packages/{id}` | Detail |
-| POST | `/packages` | Create (`type=tour`) |
-| PUT | `/packages/{id}` | Update |
+| GET | `/packages/{id}` | Detail (kèm `price_table`) |
+| POST | `/packages` | Create (`type=tour`); optional `price_table` |
+| PUT | `/packages/{id}` | Update; `price_table` chỉ sync khi gửi key |
 | DELETE | `/packages/{id}` | Soft delete |
+| GET/PUT | `/packages/{id}/price-table` | Bảng giá tách (cùng payload) |
+| GET | `/packages/{id}/price-quote` | Quote: `date`, `variant_id`, `guests[]` |
+
+Cùng pattern cho **services**: `/services/{id}/price-table`, `/services/{id}/price-quote`. Chi tiết schema + payload: [`15-pricing.md`](15-pricing.md).
+
+### Đối tượng khách (bảng giá)
+
+Quyền map `packages.*`. Editor được tạo/sửa; xóa cần quyền delete (hoặc owner/admin).
+
+| Method | Path | Notes |
+|---|---|---|
+| GET | `/price-guest-types` | Kèm `units`, `period_kinds` |
+| POST | `/price-guest-types` | `name` bắt buộc; `code` tự slug nếu trống |
+| PUT/DELETE | `/price-guest-types/{id}` | Không xóa khi đang dùng trong `price_rates` |
 
 ## Tour categories (Danh mục Tour)
 

@@ -14,6 +14,8 @@ use Database\Seeders\ExperienceVideoSeeder;
 use Database\Seeders\HomeFeaturedSeeder;
 use Database\Seeders\HomeSectionSeeder;
 use Database\Seeders\HomeSlideSeeder;
+use Database\Seeders\PriceGuestTypeSeeder;
+use Database\Seeders\PriceTableSeeder;
 use Database\Seeders\ProjectSeeder;
 use Database\Seeders\ReviewSeeder;
 use Database\Seeders\SeoHierarchySeeder;
@@ -131,9 +133,11 @@ class ProjectSeedCommand extends Command
     {
         $seeders = [
             TaxonomySeeder::class,
+            PriceGuestTypeSeeder::class,
             CruiseTypeSeeder::class,
             ContentSeeder::class,
             ServiceCatalogSeeder::class,
+            PriceTableSeeder::class,
             TourCategorySeeder::class,
             HomeSlideSeeder::class,
             HomeSectionSeeder::class,
@@ -145,13 +149,23 @@ class ProjectSeedCommand extends Command
 
         foreach ($seeders as $seeder) {
             $this->info(' → '.class_basename($seeder));
-            $this->call($seeder);
+            $instance = $this->laravel->make($seeder);
+            $instance->setContainer($this->laravel);
+            $instance->setCommand($this);
+            $instance->__invoke();
         }
     }
 
     private function purgeProjectContent(int $projectId): void
     {
         $tables = [
+            'price_rates',
+            'price_periods',
+            'price_variant_translations',
+            'price_variants',
+            'price_tables',
+            'price_guest_type_translations',
+            'price_guest_types',
             'seo_entry_translations',
             'seo_entries',
             'package_translations',

@@ -3,7 +3,7 @@
 > **Ngày:** 2026-08-05 (multi-project + catalogue dịch vụ)  
 > **Stack:** Laravel 13 · MySQL/MariaDB (utf8mb4) · Eloquent  
 > **Tham chiếu:** `docs/03-data-models.md` · `docs/11-multi-project-architecture.md` · Hitour SEO hub  
-> **Phạm vi:** UI Blade + Admin API. **Không** gồm booking/payment/cart (ngoài V1).
+> **Phạm vi:** UI Blade + Admin API. Checkout/payment/cart **chưa** có; bảng giá chi tiết + `quote()` đã sẵn để nối booking (`docs/15-pricing.md`).
 
 ---
 
@@ -47,7 +47,7 @@ Chi tiết vận hành & cấu hình: **`docs/11-multi-project-architecture.md`*
 | `tour_info`, ship, hotel, combo, booking | `packages` (tour \| cruise), **catalogue dịch vụ** (`services`), blog, brand, **3 lead forms** |
 | Blade file content theo slug | Rich text / HTML trong DB |
 | Bảng `seo` legacy + migrate dần | `seo_entries` greenfield sạch |
-| Commerce / giá động / booking qty | `price_from` display-only; CTA → inquiry |
+| Commerce / giá | `price_from` listing; bảng giá đa chiều (`price_tables`…) + quote; CTA inquiry cho đến khi có booking |
 
 ### 2.3. Package thống nhất Tour + Cruise
 
@@ -69,13 +69,15 @@ UI có 2 route (`/tours/...`, `/cruises/...`) nhưng layout chi tiết gần nh�
        │            └──────┬───────┘
        │                   ├── package_translations
        │                   ├── package_itinerary_days (+ translations)
-       │                   └── package_cabin_types (+ translations) [cruise]
+       │                   ├── package_cabin_types (+ translations) [cruise]
+       │                   └── price_tables (morph) → variants / periods / rates
        │
        │            ┌──────────────────┐
        │            │ service_categories│◄── cluster: train|flight|stay|experience|other
        │            └────────┬─────────┘
        │                     └── services (+ service_translations, options, attrs JSON)
-       │                           └── service_options (+ service_option_translations)
+       │                           ├── service_options (+ translations)
+       │                           └── price_tables (morph, cùng model packages)
        │
        ├── countries / destinations (+ translations)
        ├── taxonomies: travel_styles, tour_categories, blog_categories,
@@ -120,7 +122,7 @@ Cột quan trọng (locale-independent):
 
 - `type`, `country_id` (quốc gia chính URL/SEO), `code`, `duration_days`, `duration_nights`
 - Pivot `package_country` — nhiều quốc gia cho bộ lọc (tour kết hợp: VN + Campuchia hiện khi lọc VN hoặc Campuchia)
-- `rating`, `review_count`, `price_from`, `currency`
+- `rating`, `review_count`, `price_from`, `currency` (`price_from` = giá “từ” listing; chi tiết xem `price_tables`)
 - `is_featured`, `is_hot_deal`, `status`, `published_at`
 - Cruise: `cruise_type`, `departure_port`, `boat_class`, `nights_on_board`
 
@@ -137,13 +139,33 @@ Tách entity khỏi `packages` — phục vụ 5 hub SEO độc lập (vé tàu,
 | `service_categories` | Danh mục con trong cụm (`cluster`, `slug`, `name`, `intro`, sort); SEO type `service_category`, parent = hub cụm |
 | `services` | Sản phẩm dịch vụ: `cluster`, `service_category_id`, `country_id?`, `code`, giá display, rating, `attrs` (JSON), flags featured/hot |
 | `service_translations` | `title`, `location_label`, `summary`, highlights/inclusions/exclusions/notes (JSON), `content` |
-| `service_options` + `service_option_translations` | Biến thể giá (ghế tàu, loại phòng, combo…) |
+| `service_options` + `service_option_translations` | Biến thể / hạng; có thể gắn `price_variants.source = service_option` |
 
 Config: `config/services_catalog.php` (`clusters`, `hub_to_cluster`); hub copy/SEO defaults trong `config/seo.php` → `hubs`.
 
 Seed: keys `service_clusters`, `service_categories`, `services`, `service_listing_faqs` trong `project/seed_{name}.php`. Seeder: **`ServiceCatalogSeeder`** (sau `ContentSeeder`, trước `TourCategorySeeder`).
 
-**Admin CRUD dịch vụ:** chưa triển khai (roadmap).
+**Admin CRUD dịch vụ:** `/api/v1/admin/services` (+ nested / dedicated `price-table`).
+
+### 4.3b. Bảng giá chi tiết (`price_*`)
+
+Một `price_tables` / một package hoặc service (morph). Đối tượng khách project-scoped, không enum cứng.
+
+| Bảng | Vai trò |
+|---|---|
+| `price_guest_types` + translations | Người lớn / trẻ em / cao tuổi / loại admin tự tạo |
+| `price_tables` | `currency`, `unit`, `notes`; unique `(priceable_type, priceable_id)` |
+| `price_variants` + translations | Tuỳ chọn; `source` custom \| cabin \| service_option |
+| `price_periods` | `kind` date \| range \| year; `is_promo`, `priority` |
+| `price_rates` | Ô: period × variant × guest_type → `amount` |
+
+Seeder: **`PriceGuestTypeSeeder`** (sau `TaxonomySeeder`, chỉ insert mã thiếu) rồi **`PriceTableSeeder`** (sau `ServiceCatalogSeeder`, chỉ điền chương trình chưa có rate). Config: `config/pricing.php`. Docs: **`15-pricing.md`**. Quote: `PriceTableService::quote()`.
+
+Chạy độc lập (không `project:seed`, không đụng catalogue):
+
+```bash
+php artisan db:seed --class=PriceTableSeeder
+```
 
 ### 4.4. Content hub
 
@@ -304,6 +326,8 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | `database/seeders/CruiseTypeSeeder.php` | loại du thuyền (trước ContentSeeder) |
 | `database/seeders/ContentSeeder.php` | countries / packages / articles + SEO parent_id |
 | `database/seeders/ServiceCatalogSeeder.php` | **5 cụm dịch vụ** — categories + services + SEO parent |
+| `database/seeders/PriceGuestTypeSeeder.php` | Đối tượng khách (chỉ mã thiếu) |
+| `database/seeders/PriceTableSeeder.php` | Bảng giá mẫu (bỏ qua nếu đã có rate) |
 | `database/seeders/TourCategorySeeder.php` | danh mục tour theo quốc gia |
 | `config/services_catalog.php` | Cluster codes, hub_key map, nav labels |
 | `project/seed_{name}.php` | Seed data dự án (tours, company, dịch vụ, …) — 1 file / 1 profile |

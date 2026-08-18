@@ -203,6 +203,7 @@ return [
         'ai' => 'ai',
         'meta' => 'dashboard',
         'users' => 'users',
+        'price-guest-types' => 'packages',
     ],
 
     /*

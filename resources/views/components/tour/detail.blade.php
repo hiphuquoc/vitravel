@@ -7,15 +7,21 @@
 
 @php
     $isCruise = $type === 'cruise';
+    $hasPriceTable = ! empty($item['priceTable']['periods']);
     $sectionIds = ['tong-quan', 'diem-nhan', 'lich-trinh', 'bao-gom', 'danh-gia', 'faq'];
     if ($isCruise && ! empty($item['cabinTypes'])) {
         array_splice($sectionIds, 2, 0, 'hang-cabin');
+    }
+    if ($hasPriceTable) {
+        $baoGomAt = array_search('bao-gom', $sectionIds, true);
+        array_splice($sectionIds, $baoGomAt === false ? count($sectionIds) : $baoGomAt, 0, 'bang-gia');
     }
     $tabs = [
         'tong-quan' => 'Tổng quan',
         'diem-nhan' => 'Điểm nhấn',
         ...($isCruise && ! empty($item['cabinTypes']) ? ['hang-cabin' => 'Hạng cabin'] : []),
         'lich-trinh' => 'Lịch trình',
+        ...($hasPriceTable ? ['bang-gia' => 'Bảng giá'] : []),
         'bao-gom' => 'Bao gồm',
         'danh-gia' => 'Đánh giá',
         'faq' => 'FAQ',
@@ -214,6 +220,8 @@
                     @endforeach
                 </ol>
             </section>
+
+            <x-shared.detail-price-table :table="$item['priceTable'] ?? null" />
 
             <x-shared.detail-inclusions
                 title="Giá đã bao gồm những gì?"

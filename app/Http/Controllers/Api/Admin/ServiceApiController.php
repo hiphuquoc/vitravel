@@ -12,6 +12,7 @@ use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\ServiceTranslation;
 use App\Services\MediaService;
+use App\Services\PriceTableService;
 use App\Services\ViewDataService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -142,6 +143,7 @@ class ServiceApiController extends Controller
                 'translations',
                 'seoEntry.translations',
                 'seoEntry.parent',
+                'options.translations',
                 'mediaAttachments.media',
             ])
             ->findOrFail($id);
@@ -216,12 +218,13 @@ class ServiceApiController extends Controller
                 'remove_cover' => 'nullable|boolean',
                 'gallery_media_ids' => 'nullable|array|max:40',
                 'gallery_media_ids.*' => 'integer|exists:media,id',
-            ]);
+            ] + PriceTableService::validationRules());
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
         }
 
-        $service = DB::transaction(function () use ($request, $validated, $locale) {
+        try {
+            $service = DB::transaction(function () use ($request, $validated, $locale) {
             $cluster = $validated['cluster'];
             $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
             $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
@@ -332,14 +335,22 @@ class ServiceApiController extends Controller
                 );
             }
 
+            if (isset($validated['price_table']) && is_array($validated['price_table'])) {
+                app(PriceTableService::class)->sync($service, $validated['price_table'], $locale);
+            }
+
             return $service->fresh([
                 'category',
                 'country.translations',
                 'translations',
                 'seoEntry.translations',
+                'options.translations',
                 'mediaAttachments.media',
             ]);
         });
+        } catch (\InvalidArgumentException $e) {
+            return ApiResponse::error($e->getMessage(), 'INVALID_PRICE_PERIOD', 422);
+        }
 
         return ApiResponse::success(
             $this->serializeDetail($service, $locale),
@@ -409,6 +420,7 @@ class ServiceApiController extends Controller
             'translated_locales' => $this->translatedLocaleCodes($service, 'title'),
             'cover' => app(MediaService::class)->adminMediaPayload($service->coverMedia(), 'card'),
             'gallery' => app(MediaService::class)->adminGalleryPayload($service, 'card'),
+            'price_table' => app(PriceTableService::class)->adminPayload($service, $locale),
             'seo' => [
                 'slug' => $seo?->slug,
                 'slug_full' => $seo?->slug_full,

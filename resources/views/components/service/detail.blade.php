@@ -70,6 +70,10 @@
         $tabs['tuy-chon'] = 'Tuỳ chọn';
         $sectionIds[] = 'tuy-chon';
     }
+    if (! empty($service['priceTable']['periods'])) {
+        $tabs['bang-gia'] = 'Bảng giá';
+        $sectionIds[] = 'bang-gia';
+    }
     if (! empty($service['inclusions']) || ! empty($service['exclusions']) || ! empty($service['notes'])) {
         $tabs['bao-gom'] = 'Bao gồm';
         $sectionIds[] = 'bao-gom';
@@ -213,6 +217,8 @@
                     </div>
                 </section>
             @endif
+
+            <x-shared.detail-price-table :table="$service['priceTable'] ?? null" />
 
             <x-shared.detail-inclusions
                 title="Bao gồm &amp; lưu ý"

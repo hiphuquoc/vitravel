@@ -24,6 +24,8 @@ use App\Http\Controllers\Api\Admin\MediaLibraryApiController;
 use App\Http\Controllers\Api\Admin\MetaApiController;
 use App\Http\Controllers\Api\Admin\OfficeApiController;
 use App\Http\Controllers\Api\Admin\PackageApiController;
+use App\Http\Controllers\Api\Admin\PriceGuestTypeApiController;
+use App\Http\Controllers\Api\Admin\PriceTableApiController;
 use App\Http\Controllers\Api\Admin\ReasonApiController;
 use App\Http\Controllers\Api\Admin\ReferencePersonApiController;
 use App\Http\Controllers\Api\Admin\ReviewApiController;
@@ -104,6 +106,9 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/packages/{id}', [PackageApiController::class, 'show'])->whereNumber('id');
             Route::put('/packages/{id}', [PackageApiController::class, 'update'])->whereNumber('id');
             Route::delete('/packages/{id}', [PackageApiController::class, 'destroy'])->whereNumber('id');
+            Route::get('/packages/{id}/price-table', [PriceTableApiController::class, 'showPackage'])->whereNumber('id');
+            Route::put('/packages/{id}/price-table', [PriceTableApiController::class, 'updatePackage'])->whereNumber('id');
+            Route::get('/packages/{id}/price-quote', [PriceTableApiController::class, 'quotePackage'])->whereNumber('id');
 
             Route::get('/tour-categories/meta', [TourCategoryApiController::class, 'meta']);
             Route::get('/tour-categories', [TourCategoryApiController::class, 'index']);
@@ -146,6 +151,14 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/services/{id}', [ServiceApiController::class, 'show'])->whereNumber('id');
             Route::put('/services/{id}', [ServiceApiController::class, 'update'])->whereNumber('id');
             Route::delete('/services/{id}', [ServiceApiController::class, 'destroy'])->whereNumber('id');
+            Route::get('/services/{id}/price-table', [PriceTableApiController::class, 'showService'])->whereNumber('id');
+            Route::put('/services/{id}/price-table', [PriceTableApiController::class, 'updateService'])->whereNumber('id');
+            Route::get('/services/{id}/price-quote', [PriceTableApiController::class, 'quoteService'])->whereNumber('id');
+
+            Route::get('/price-guest-types', [PriceGuestTypeApiController::class, 'index']);
+            Route::post('/price-guest-types', [PriceGuestTypeApiController::class, 'store']);
+            Route::put('/price-guest-types/{id}', [PriceGuestTypeApiController::class, 'update'])->whereNumber('id');
+            Route::delete('/price-guest-types/{id}', [PriceGuestTypeApiController::class, 'destroy'])->whereNumber('id');
 
             Route::get('/home-slides/meta', [HomeSlideApiController::class, 'meta']);
             Route::get('/home-slides', [HomeSlideApiController::class, 'index']);

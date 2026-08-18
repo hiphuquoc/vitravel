@@ -50,6 +50,7 @@ autourasia-clone-docs/
 | `12-admin-users-rbac.md` | **Users / phân quyền** — system role, project role, API, UI `/account` + `/settings/users` |
 | `13-deploy-aapanel-vps.md` | **Deploy VPS aaPanel** — multi-domain public + admin host riêng, Nginx/env/Supervisor mẫu |
 | `14-ai-system-prompts.md` | **AI** — dịch trang, enrich chương trình, registry prompt + usage |
+| `15-pricing.md` | **Bảng giá chi tiết** — đa chiều (ngày × tuỳ chọn × đối tượng khách × promo), quote booking-ready |
 | `gcs-standard.md` | Chuẩn GCS đa dự án |
 
 ## Trạng thái triển khai (2026-07)
@@ -61,7 +62,8 @@ autourasia-clone-docs/
 - **Admin:** **`https://admin.vitravel.dev/`** (prod: `admin.vitravel.net`) — Next.js Admin Console (repo `admin.vitravel.dev`, static `out/`). API: `/api/v1/admin/*` trên Laravel (+ CORS). Đăng nhập: `admin@vitravel.dev` / `111111`. URL cũ `/he-thong/*` redirect sang `ADMIN_APP_URL`.
 - **AI:** dịch trang + xây dựng chương trình chi tiết; registry prompt DB (`ai:sync-prompts`); docs [`14-ai-system-prompts.md`](14-ai-system-prompts.md).
 - **DB:** `php artisan migrate --seed` — discover **mọi** `project/seed_*.php` (không cần `PROJECT_SEED`). Runtime multi-project: bảng `projects` + `project_id` (xem `docs/11-multi-project-architecture.md`). Một profile: `php artisan project:seed {name}`. Nếu chỉ thiếu URL: `php artisan db:seed --class=SeoHierarchySeeder`. Nếu `ERR_TOO_MANY_REDIRECTS`: `php artisan seo:fix-redirects`.
-- **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md` + **`11-multi-project-architecture.md`**.
+- **Bảng giá chi tiết:** morph trên package/service — ngày/khoảng/năm × tuỳ chọn × đối tượng khách (admin quản, không hardcode) × khuyến mãi. Docs [`15-pricing.md`](15-pricing.md). `price_from` vẫn là giá “từ” listing. Quote `PriceTableService::quote()` sẵn sàng booking (chưa checkout).
+- **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md` + **`11-multi-project-architecture.md`** + **`15-pricing.md`**.
 - **Deploy VPS (aaPanel):** [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) + mẫu trong `docs/deploy/`.
 
 ### Lệnh khởi tạo (máy dev)
