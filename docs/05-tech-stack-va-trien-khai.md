@@ -118,7 +118,7 @@ Trang bài viết có "Sommario dell'articolo" tự sinh từ heading H2/H3 tron
 6. QuickInquiryForm + PriceRequestModal + API `/api/leads`
 
 **Giai đoạn 3 — Nhân bản sang Cruise**
-7. Reuse toàn bộ component Tour cho Cruise, chỉ đổi field đặc thù (cabinTypes, departurePort)
+7. Reuse toàn bộ component Tour cho Cruise, chỉ đổi field đặc thù (departurePort, boatClass; hạng cabin nằm trong bảng giá)
 
 **Giai đoạn 4 — Content hub (Blog/Travel Guide — phức tạp hơn dự kiến ban đầu, tách kỹ)**
 8a. Blog Listing: `BlogCard` grid + `BlogSidebar` (Categorie del blog / Filtra articoli / Mots-clés populaires) + FAQ + pagination

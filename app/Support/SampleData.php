@@ -437,17 +437,6 @@ class SampleData
                 'notes' => $row['notes'] ?? [],
                 'content' => $row['content'] ?? '',
                 'attrs' => $row['attrs'] ?? [],
-                'options' => array_map(fn ($o) => [
-                    'code' => $o['code'] ?? null,
-                    'name' => $o['name'] ?? '',
-                    'description' => $o['description'] ?? null,
-                    'priceFrom' => isset($o['price_from']) ? (float) $o['price_from'] : null,
-                    'priceFormatted' => isset($o['price_from']) && (float) $o['price_from'] > 0
-                        ? self::formatMoney((float) $o['price_from'], $row['currency'] ?? 'VND')
-                        : null,
-                    'capacity' => $o['capacity'] ?? null,
-                    'amenities' => $o['amenities'] ?? [],
-                ], $row['options'] ?? []),
                 'faqs' => $row['faqs'] ?? [],
                 'quote' => self::serviceQuoteFromRow($row),
                 'styles' => [],

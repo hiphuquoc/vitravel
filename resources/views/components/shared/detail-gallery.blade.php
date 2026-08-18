@@ -37,17 +37,19 @@
         ->values()
         ->all();
 
-    $thumbSlots = max(1, (int) $thumbSlots);
-    $thumbs = array_slice($uniqueThumbs, 0, $thumbSlots);
-    while (count($thumbs) < $thumbSlots) {
-        $thumbs[] = null;
+    if (! filled($coverSrc) && $uniqueThumbs !== []) {
+        $first = array_shift($uniqueThumbs);
+        $coverSrc = $first['full'] ?? $first['src'] ?? null;
+        $coverSrcset = $first['fullSrcset'] ?? ($first['srcset'] ?? null);
     }
 
-    $extraCount = max(
-        (int) $galleryCount,
-        count($uniqueThumbs),
-    );
-    $moreCount = max(0, $extraCount - $thumbSlots);
+    $thumbSlots = max(1, (int) $thumbSlots);
+    $thumbs = array_slice($uniqueThumbs, 0, $thumbSlots);
+    $thumbCount = count($thumbs);
+    $coverOnly = $thumbCount === 0;
+    $shown = $thumbCount + (filled($coverSrc) ? 1 : 0);
+    $catalogCount = max((int) $galleryCount, count($uniqueThumbs) + (filled($coverSrc) ? 1 : 0));
+    $moreCount = max(0, $catalogCount - $shown);
 
     $lightboxItems = [];
     if (filled($coverSrc)) {
@@ -80,7 +82,7 @@
 >
     <div @class([
         'detail-gallery__grid',
-        'detail-gallery__grid--coverOnly' => collect($thumbs)->every(fn ($t) => empty($t['src'] ?? null)) && $lightboxItems === [],
+        'detail-gallery__grid--coverOnly' => $coverOnly,
     ])>
         @if ($coverSrc)
             <button
@@ -103,19 +105,20 @@
                 </span>
             </button>
         @else
-            <x-ph class="detail-gallery__cover" :label="'Ảnh chính: ' . $title" icon-class="size-14" />
+            <div class="detail-gallery__cover-btn detail-gallery__cover-btn--static">
+                <x-ph class="detail-gallery__cover" :label="'Ảnh chính: ' . $title" icon-class="size-14" />
+            </div>
         @endif
 
-        <div class="detail-gallery__thumbs" role="list">
-            @foreach ($thumbs as $i => $thumb)
-                @php
-                    $hasImg = ! empty($thumb['src']);
-                    $lbIndex = $thumbBaseIndex + $i;
-                    $isLast = $i === $thumbSlots - 1;
-                    $showMore = $isLast && $moreCount > 0 && $hasImg;
-                @endphp
-                <div class="detail-gallery__thumb" role="listitem">
-                    @if ($hasImg)
+        @if ($thumbCount > 0)
+            <div class="detail-gallery__thumbs" role="list" data-count="{{ $thumbCount }}">
+                @foreach ($thumbs as $i => $thumb)
+                    @php
+                        $lbIndex = $thumbBaseIndex + $i;
+                        $isLast = $i === $thumbCount - 1;
+                        $showMore = $isLast && $moreCount > 0;
+                    @endphp
+                    <div class="detail-gallery__thumb" role="listitem">
                         <button
                             type="button"
                             class="detail-gallery__thumb-btn"
@@ -135,12 +138,10 @@
                                 </span>
                             @endif
                         </button>
-                    @else
-                        <x-ph class="detail-gallery__thumb-ph" icon-class="size-6" :label="null" />
-                    @endif
-                </div>
-            @endforeach
-        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
     </div>
 
     @if ($showTitleCard)

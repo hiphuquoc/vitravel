@@ -29,13 +29,23 @@
         @php
             $coverSrc = $article['imageDetail'] ?? $article['image'] ?? null;
             $coverSrcset = $article['imageDetailSrcset'] ?? $article['imageSrcset'] ?? null;
-            $gallery = $article['gallery'] ?? [];
-            $thumbs = array_slice($gallery, 0, 4);
-            if ($thumbs === [] && $coverSrc) {
-                $thumbs[] = ['src' => $coverSrc, 'srcset' => $coverSrcset];
-            }
+            $gallery = collect($article['gallery'] ?? [])
+                ->filter(fn ($t) => filled($t['src'] ?? null))
+                ->values();
+            $coverPath = $coverSrc ? (parse_url($coverSrc, PHP_URL_PATH) ?: $coverSrc) : '';
+            $thumbs = $gallery
+                ->reject(function ($t) use ($coverPath) {
+                    if ($coverPath === '') {
+                        return false;
+                    }
+                    $path = parse_url($t['src'], PHP_URL_PATH) ?: $t['src'];
+
+                    return $path === $coverPath;
+                })
+                ->take(4)
+                ->values();
         @endphp
-        <div class="blog-article-gallery">
+        <div @class(['blog-article-gallery', 'blog-article-gallery--coverOnly' => $thumbs->isEmpty()])>
             @if ($coverSrc)
                 <x-img
                     :src="$coverSrc"
@@ -49,12 +59,11 @@
             @else
                 <x-ph class="h-64 w-full rounded-2xl sm:h-80" :label="'Ảnh: ' . $article['title']" icon-class="size-12" />
             @endif
-            <div class="detail-gallery__thumbs">
-                @for ($i = 0; $i < 4; $i++)
-                    @php $thumb = $thumbs[$i] ?? null; @endphp
-                    <div class="relative overflow-hidden rounded-xl">
-                        <div class="relative aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[90px]">
-                            @if (! empty($thumb['src']))
+            @if ($thumbs->isNotEmpty())
+                <div class="detail-gallery__thumbs" data-count="{{ $thumbs->count() }}">
+                    @foreach ($thumbs as $i => $thumb)
+                        <div class="relative overflow-hidden rounded-xl">
+                            <div class="relative aspect-[4/3] lg:aspect-auto lg:h-full lg:min-h-[90px]">
                                 <x-img
                                     :src="$thumb['src']"
                                     :srcset="$thumb['srcset'] ?? null"
@@ -62,18 +71,16 @@
                                     :alt="$article['title']"
                                     class="absolute inset-0 h-full w-full object-cover"
                                 />
-                            @else
-                                <x-ph class="absolute inset-0" icon-class="size-5" :label="null" />
-                            @endif
-                            @if ($i === 3 && ($article['galleryCount'] ?? 0) > 4)
-                                <span class="absolute inset-0 flex items-center justify-center bg-ink/50 text-sm font-bold text-white">
-                                    +{{ $article['galleryCount'] - 4 }}
-                                </span>
-                            @endif
+                                @if ($i === $thumbs->count() - 1 && ($article['galleryCount'] ?? 0) > $thumbs->count() + (int) (bool) $coverSrc)
+                                    <span class="absolute inset-0 flex items-center justify-center bg-ink/50 text-sm font-bold text-white">
+                                        +{{ ($article['galleryCount'] ?? 0) - $thumbs->count() - (int) (bool) $coverSrc }}
+                                    </span>
+                                @endif
+                            </div>
                         </div>
-                    </div>
-                @endfor
-            </div>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         <p class="blog-article-meta">

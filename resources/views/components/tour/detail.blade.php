@@ -8,20 +8,16 @@
 @php
     $isCruise = $type === 'cruise';
     $hasPriceTable = ! empty($item['priceTable']['periods']);
-    $sectionIds = ['tong-quan', 'diem-nhan', 'lich-trinh', 'bao-gom', 'danh-gia', 'faq'];
-    if ($isCruise && ! empty($item['cabinTypes'])) {
-        array_splice($sectionIds, 2, 0, 'hang-cabin');
-    }
+    $highlights = array_values(array_filter($item['highlights'] ?? [], fn ($h) => filled($h)));
+    $sectionIds = ['tong-quan'];
     if ($hasPriceTable) {
-        $baoGomAt = array_search('bao-gom', $sectionIds, true);
-        array_splice($sectionIds, $baoGomAt === false ? count($sectionIds) : $baoGomAt, 0, 'bang-gia');
+        $sectionIds[] = 'bang-gia';
     }
+    array_push($sectionIds, 'lich-trinh', 'bao-gom', 'danh-gia', 'faq');
     $tabs = [
         'tong-quan' => 'Tổng quan',
-        'diem-nhan' => 'Điểm nhấn',
-        ...($isCruise && ! empty($item['cabinTypes']) ? ['hang-cabin' => 'Hạng cabin'] : []),
-        'lich-trinh' => 'Lịch trình',
         ...($hasPriceTable ? ['bang-gia' => 'Bảng giá'] : []),
+        'lich-trinh' => 'Lịch trình',
         'bao-gom' => 'Bao gồm',
         'danh-gia' => 'Đánh giá',
         'faq' => 'FAQ',
@@ -95,7 +91,10 @@
 
             <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                 <h2 class="detail-section__title">Tổng quan</h2>
-                @if ($metaItems !== [])
+                @if (! empty($item['highlightsIntro']))
+                    <p class="detail-section__lead body-text prose-travel">{{ $item['highlightsIntro'] }}</p>
+                @endif
+                @if ($metaItems !== [] || $highlights !== [])
                     <dl class="detail-facts">
                         @foreach ($metaItems as $fact)
                             <div @class(['detail-facts__item', 'detail-facts__item--wide' => ! empty($fact['wide'])])>
@@ -106,49 +105,31 @@
                                 <dd>{{ $fact['value'] }}</dd>
                             </div>
                         @endforeach
+                        @if ($highlights !== [])
+                            <div class="detail-facts__item detail-facts__item--wide detail-facts__item--highlights">
+                                <dt>
+                                    <x-icon name="sparkles" class="size-4" />
+                                    Điểm nhấn hành trình
+                                </dt>
+                                <dd>
+                                    <ul class="detail-facts__checks">
+                                        @foreach ($highlights as $h)
+                                            <li>
+                                                <span class="detail-facts__check-mark" aria-hidden="true">
+                                                    <x-icon name="check" class="size-3.5" />
+                                                </span>
+                                                <span>{{ $h }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </dd>
+                            </div>
+                        @endif
                     </dl>
                 @endif
             </section>
 
-            <section id="diem-nhan" class="detail-section" aria-label="Điểm nhấn hành trình">
-                <h2 class="detail-section__title">Điểm nhấn hành trình</h2>
-                @if (! empty($item['highlightsIntro']))
-                    <p class="detail-section__lead body-text prose-travel">{{ $item['highlightsIntro'] }}</p>
-                @endif
-                <ul class="detail-checklist">
-                    @foreach ($item['highlights'] ?? [] as $h)
-                        <li>
-                            <span class="detail-checklist__mark" aria-hidden="true">
-                                <x-icon name="check" class="size-3.5" />
-                            </span>
-                            <span>{{ $h }}</span>
-                        </li>
-                    @endforeach
-                </ul>
-            </section>
-
-            @if ($isCruise && ! empty($item['cabinTypes']))
-                <section id="hang-cabin" class="detail-section" aria-label="Hạng cabin">
-                    <h2 class="detail-section__title">Hạng cabin</h2>
-                    <div class="detail-option-grid">
-                        @foreach ($item['cabinTypes'] as $cabin)
-                            <article class="detail-option">
-                                <div class="detail-option__media">
-                                    <x-ph class="absolute inset-0" :label="'Cabin ' . $cabin['name']" icon-class="size-8" />
-                                </div>
-                                <div class="detail-option__body">
-                                    <h3 class="detail-option__name">{{ $cabin['name'] }}</h3>
-                                    <p class="detail-option__meta">
-                                        <x-icon name="users" class="size-3.5" />
-                                        Tối đa {{ $cabin['capacity'] }} khách
-                                        @if (! empty($cabin['note'])) · {{ $cabin['note'] }}@endif
-                                    </p>
-                                </div>
-                            </article>
-                        @endforeach
-                    </div>
-                </section>
-            @endif
+            <x-shared.detail-price-table :table="$item['priceTable'] ?? null" />
 
             <section id="lich-trinh" class="detail-section" aria-label="Lịch trình chi tiết"
                 x-data="{ opened: @js($itineraryDays), all: true,
@@ -221,8 +202,6 @@
                 </ol>
             </section>
 
-            <x-shared.detail-price-table :table="$item['priceTable'] ?? null" />
-
             <x-shared.detail-inclusions
                 title="Giá đã bao gồm những gì?"
                 :inclusions="$item['inclusions'] ?? []"
@@ -271,6 +250,7 @@
             :badge="$item['badge'] ?? null"
             :primary-href="route('customize')"
             primary-label="Yêu cầu báo giá"
+            primary-label-short="Báo giá"
             primary-icon="sparkles"
             :whatsapp="$waPhone !== '' ? $waPhone : null"
             :usps="[

@@ -52,27 +52,22 @@
     $serviceBodyRaw = trim((string) ($service['content'] ?? ''));
     $serviceBodyHtml = $serviceBodyRaw !== '' ? rich_body_html($serviceBodyRaw) : '';
 
+    $highlights = array_values(array_filter($service['highlights'] ?? [], fn ($h) => filled($h)));
+    $hasOverview = ! empty($service['summary']) || $displayAttrs !== [] || $highlights !== [];
+
     $tabs = [];
     $sectionIds = [];
-    if (! empty($service['summary']) || $displayAttrs !== []) {
+    if ($hasOverview) {
         $tabs['tong-quan'] = 'Tổng quan';
         $sectionIds[] = 'tong-quan';
-    }
-    if ($serviceBodyHtml !== '') {
-        $tabs['noi-dung'] = 'Nội dung';
-        $sectionIds[] = 'noi-dung';
-    }
-    if (! empty($service['highlights'])) {
-        $tabs['diem-nhan'] = 'Điểm nhấn';
-        $sectionIds[] = 'diem-nhan';
-    }
-    if (! empty($service['options'])) {
-        $tabs['tuy-chon'] = 'Tuỳ chọn';
-        $sectionIds[] = 'tuy-chon';
     }
     if (! empty($service['priceTable']['periods'])) {
         $tabs['bang-gia'] = 'Bảng giá';
         $sectionIds[] = 'bang-gia';
+    }
+    if ($serviceBodyHtml !== '') {
+        $tabs['noi-dung'] = 'Nội dung';
+        $sectionIds[] = 'noi-dung';
     }
     if (! empty($service['inclusions']) || ! empty($service['exclusions']) || ! empty($service['notes'])) {
         $tabs['bao-gom'] = 'Bao gồm';
@@ -125,13 +120,13 @@
 
     <div class="container-site detail-layout section-band--sm">
         <div class="min-w-0 detail-stack">
-            @if (! empty($service['summary']) || $displayAttrs !== [])
+            @if ($hasOverview)
                 <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                     <h2 class="detail-section__title">Tổng quan</h2>
                     @if (! empty($service['summary']))
                         <p class="detail-section__lead body-text prose-travel">{{ $service['summary'] }}</p>
                     @endif
-                    @if ($displayAttrs !== [])
+                    @if ($displayAttrs !== [] || $highlights !== [])
                         <dl class="detail-facts">
                             @foreach ($displayAttrs as $attr)
                                 <div @class([
@@ -154,71 +149,34 @@
                                     </dd>
                                 </div>
                             @endforeach
+                            @if ($highlights !== [])
+                                <div class="detail-facts__item detail-facts__item--wide detail-facts__item--highlights">
+                                    <dt>
+                                        <x-icon name="sparkles" class="size-4" />
+                                        Điểm nhấn
+                                    </dt>
+                                    <dd>
+                                        <ul class="detail-facts__checks">
+                                            @foreach ($highlights as $h)
+                                                <li>
+                                                    <span class="detail-facts__check-mark" aria-hidden="true">
+                                                        <x-icon name="check" class="size-3.5" />
+                                                    </span>
+                                                    <span>{{ $h }}</span>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </dd>
+                                </div>
+                            @endif
                         </dl>
                     @endif
                 </section>
             @endif
 
-            @if ($serviceBodyHtml !== '')
-                <section id="noi-dung" class="detail-section" aria-label="Nội dung chi tiết">
-                    <h2 class="detail-section__title">Nội dung chi tiết</h2>
-                    <div class="detail-prose prose-travel prose-travel--itinerary">
-                        {!! $serviceBodyHtml !!}
-                    </div>
-                </section>
-            @endif
-
-            @if (! empty($service['highlights']))
-                <section id="diem-nhan" class="detail-section" aria-label="Điểm nhấn">
-                    <h2 class="detail-section__title">Điểm nhấn</h2>
-                    <ul class="detail-checklist">
-                        @foreach ($service['highlights'] as $h)
-                            <li>
-                                <span class="detail-checklist__mark" aria-hidden="true">
-                                    <x-icon name="check" class="size-3.5" />
-                                </span>
-                                <span>{{ $h }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                </section>
-            @endif
-
-            @if (! empty($service['options']))
-                <section id="tuy-chon" class="detail-section" aria-label="Tuỳ chọn">
-                    <h2 class="detail-section__title">Tuỳ chọn &amp; hạng</h2>
-                    <div class="detail-option-grid">
-                        @foreach ($service['options'] as $option)
-                            <article class="detail-option">
-                                <div class="detail-option__body">
-                                    <h3 class="detail-option__name">{{ $option['name'] }}</h3>
-                                    @if (! empty($option['priceFormatted']))
-                                        <p class="detail-option__price">
-                                            <span class="detail-option__price-label">Từ</span>
-                                            <span class="detail-option__price-value">{{ $option['priceFormatted'] }}</span>
-                                        </p>
-                                    @endif
-                                    @if (! empty($option['description']))
-                                        <p class="detail-option__desc">{{ $option['description'] }}</p>
-                                    @endif
-                                    @if (! empty($option['amenities']))
-                                        <ul class="detail-option__amenities">
-                                            @foreach ($option['amenities'] as $amenity)
-                                                <li>
-                                                    <x-icon name="check" class="size-3.5 shrink-0" />
-                                                    <span>{{ $amenity }}</span>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
-                                </div>
-                            </article>
-                        @endforeach
-                    </div>
-                </section>
-            @endif
-
             <x-shared.detail-price-table :table="$service['priceTable'] ?? null" />
+
+            <x-shared.detail-content :html="$serviceBodyHtml" />
 
             <x-shared.detail-inclusions
                 title="Bao gồm &amp; lưu ý"
@@ -244,6 +202,7 @@
             :badge="$service['badge'] ?? null"
             :primary-href="locale_route('customize')"
             primary-label="Thiết kế hành trình"
+            primary-label-short="Tư vấn"
             primary-icon="route"
             :secondary-href="locale_route('contact')"
             secondary-label="Liên hệ tư vấn"

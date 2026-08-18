@@ -117,7 +117,7 @@ UI form bảng giá nằm repo **`admin.vitravel.dev`** (chưa có trong Laravel
 - Cột khách = các type thực sự xuất hiện trong rate.
 - Nếu `price_from` trống: điền min rate còn hạn (listing + sidebar).
 
-Blade: `x-shared.detail-price-table` — tab **Bảng giá** trên tour/cruise/service detail khi có dữ liệu.
+Blade: `x-shared.detail-price-table` — tab **Bảng giá** ngay sau Tổng quan trên tour/cruise/service detail. Desktop bảng + sticky cột tuỳ chọn; ≤768 mỗi hàng thành card. Typography token (`--fs-detail-title`, `--fs-item-title`, `--fs-meta`); giá Fraunces primary, ô ưu đãi accent. Chip giai đoạn radius 10px (không pill).
 
 ## 6. Mở rộng sau
 

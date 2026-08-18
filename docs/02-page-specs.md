@@ -94,14 +94,13 @@ Mỗi trang được mô tả theo: **Mục đích → Ảnh tham chiếu → La
 **Thành phần:**
 1. **Gallery ảnh** — ảnh lớn + thumbnail strip cuộn ngang bên dưới, click để đổi ảnh chính
 2. Card breadcrumb + tiêu đề (đồng bộ style với mục B.2)
-3. **Tab điều hướng nội bộ (anchor links, sticky khi scroll)**: Overview | Highlight | Itinerary | **Bảng giá** (khi có `priceTable`) | What's included | Customer Reviews
-4. **Info box tóm tắt**: badge rating tròn + "Eccellente" + review count, Tour code, Duration, Start in, Finish in, Places to visit (full list)
+3. **Tab điều hướng nội bộ (anchor links, sticky khi scroll)**: Tổng quan | **Bảng giá** (khi có `priceTable`) | Lịch trình | Bao gồm | Đánh giá | FAQ
+4. **Tổng quan** (`.detail-facts`): mã, thời lượng, khởi hành/kết thúc, điểm tham quan; **điểm nhấn hành trình** nằm **trong cùng card**, ngay dưới điểm tham quan (kicker + checklist), không tách tab/section.
 5. **Bản đồ tuyến đường (Tour Map)** — ảnh map custom vẽ tuyến, "Click to view map" mở lightbox
-6. **Highlights section**: đoạn mô tả SEO dài + bullet list 5-7 điểm nhấn
-7. **Itinerary — "Expand All"** — accordion theo từng ngày (tiêu đề ngày + bữa ăn B/L/D, icon phương tiện, ảnh, nội dung, overnight)
-7b. **Bảng giá chi tiết** (`x-shared.detail-price-table`) — tab theo giai đoạn (ngày / khoảng / năm), hàng = tuỳ chọn (cabin hoặc custom), cột = đối tượng khách do admin định nghĩa; badge ưu đãi + giá gạch ngang nếu có. Ẩn khi chưa có period còn hạn. Chi tiết: [`15-pricing.md`](15-pricing.md).
+6. **Itinerary — "Expand All"** — accordion theo từng ngày (tiêu đề ngày + bữa ăn B/L/D, icon phương tiện, ảnh, nội dung, overnight)
+7. **Bảng giá chi tiết** (`x-shared.detail-price-table`) — đặt **ngay dưới Tổng quan**. Chip giai đoạn (radius 10px, không pill); hàng = tuỳ chọn, cột = đối tượng khách (+ nhãn tuổi). Desktop: bảng + cột tuỳ chọn sticky. Mobile (≤768): mỗi tuỳ chọn một card. Badge ưu đãi terracotta + giá gạch ngang. Ẩn khi chưa có period còn hạn. Chi tiết: [`15-pricing.md`](15-pricing.md).
 8. **What's Included / What's Excluded / Notes** — 3 khối bullet list
-9. **Sticky booking sidebar**: tên tour, rating, badge "Offerta speciale"/giảm giá, nút CTA "Price Request", 4 USP badge thu nhỏ, logo TripAdvisor
+9. **Booking CTA**: desktop ≥1024 — sidebar sticky “Giá từ” + meta xếp dọc (nhãn trên, giá trị wrap, không chen hàng) + CTA. **≤1023** — `detail-book-bar` fixed đáy: cột trái giá (tabular, co font khi dài), cột phải WhatsApp + CTA ngắn (`Báo giá` / `Tư vấn`, không icon); hit ≥44px, `safe-area`; ẩn sidebar và FAB WhatsApp trùng.
 10. Esperienze Autentiche dei Nostri Clienti (dùng chung)
 11. "Other Similar Tours" — carousel liên quan
 12. Autour Asia è altamente raccomandata su (dùng chung)
@@ -117,7 +116,7 @@ Mỗi trang được mô tả theo: **Mục đích → Ảnh tham chiếu → La
 
 ## D. Danh mục Cruise — `/cruises/{type}` và Chi tiết Cruise — `/cruises/{type}/{slug}`
 
-Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuyền, hạng cabin, cảng khởi hành, số đêm trên thuyền. **Bảng giá** cùng component tour — biến thể thường map từ hạng cabin (`price_variants.source = cabin`). Xem field ở `03-data-models.md` và [`15-pricing.md`](15-pricing.md).
+Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuyền, cảng khởi hành, số đêm trên thuyền. **Không** render khối “Hạng cabin” trên public — biến thể nằm trong **bảng giá** (`price_variants.source = cabin`). Xem field ở `03-data-models.md` và [`15-pricing.md`](15-pricing.md).
 
 ---
 
@@ -156,13 +155,13 @@ Dùng chung pattern với mục B/C, khác dữ liệu đặc thù: loại thuy�
 
 **Thành phần (`x-service.detail`):**
 1. Page header + gallery/placeholder theo cụm icon
-2. Tóm tắt, điểm nhấn (bullet ✓), thuộc tính theo cụm (`attrs`: điểm đi/đến, hạng ghế, check-in, địa điểm…)
-3. Bảng **ServiceOption** (biến thể / hạng) khi có
-3b. **Bảng giá chi tiết** (`x-shared.detail-price-table`) — cùng model tour/cruise; tuỳ chọn có thể gắn `service_option`. Ẩn khi chưa nhập period còn hạn. Docs: [`15-pricing.md`](15-pricing.md).
-4. Inclusion / exclusion / notes
-5. **Sticky sidebar:** giá “từ”, rating, CTA Liên hệ / WhatsApp / Yêu cầu báo giá (không “Add to cart”)
-6. FAQ riêng dịch vụ + dịch vụ liên quan (`related`)
-7. Quick Inquiry + footer
+2. **Tổng quan**: tóm tắt + thuộc tính theo cụm (`attrs`) + **điểm nhấn** (cùng `.detail-facts`, dưới vị trí / điểm tham quan)
+3. **Bảng giá chi tiết** (`x-shared.detail-price-table`) — ngay dưới Tổng quan; cùng model tour/cruise; hàng tuỳ chọn có thể gắn `service_option`. Ẩn khi chưa nhập period còn hạn. Docs: [`15-pricing.md`](15-pricing.md).
+4. **Nội dung chi tiết** (`x-shared.detail-content`) — card trắng prose dùng chung với tour (`.detail-content`); ẩn khi chưa có HTML.
+5. Inclusion / exclusion / notes — **không** render khối “Tuỳ chọn & hạng” (`ServiceOption`) trên public (biến thể thuộc bảng giá)
+6. **Booking CTA** cùng tour: sidebar sticky ≥1024; `detail-book-bar` fixed đáy ≤1023
+7. FAQ riêng dịch vụ + dịch vụ liên quan (`related`)
+8. Quick Inquiry + footer
 
 **Ghi chú:** Admin CRUD dịch vụ qua `/api/v1/admin/services` + `price_table`. Checkout **chưa** có — CTA báo giá / WhatsApp.
 

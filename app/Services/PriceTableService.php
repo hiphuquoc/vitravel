@@ -179,6 +179,7 @@ class PriceTableService
                 'id' => $g->id,
                 'code' => $g->code,
                 'name' => $g->translation($locale)?->name ?? $g->code,
+                'ageLabel' => $this->guestAgeLabel($g),
             ])
             ->values()
             ->all();
@@ -717,6 +718,23 @@ class PriceTableService
                 'max_qty' => $r->max_qty,
             ])->values()->all(),
         ];
+    }
+
+    public function guestAgeLabel(PriceGuestType $guest): ?string
+    {
+        $min = $guest->age_min;
+        $max = $guest->age_max;
+        if ($min !== null && $max !== null) {
+            return $min.'–'.$max.' tuổi';
+        }
+        if ($min !== null) {
+            return 'Từ '.$min.' tuổi';
+        }
+        if ($max !== null) {
+            return 'Đến '.$max.' tuổi';
+        }
+
+        return null;
     }
 
     public function periodDateLabel(PricePeriod $period): string

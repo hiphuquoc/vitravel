@@ -285,7 +285,7 @@ class ViewDataService
 
         $with = [
             'translations', 'category', 'country.translations',
-            'seoEntry.translations', 'options.translations', 'faqs.translations',
+            'seoEntry.translations', 'faqs.translations',
             'mediaAttachments.media',
             'priceTable.variants.translations',
             'priceTable.periods.rates',
@@ -358,7 +358,7 @@ class ViewDataService
 
         $with = [
             'translations', 'category', 'country.translations',
-            'seoEntry.translations', 'options.translations', 'faqs.translations',
+            'seoEntry.translations', 'faqs.translations',
             'mediaAttachments.media',
             'priceTable.variants.translations',
             'priceTable.periods.rates',
@@ -1715,7 +1715,7 @@ class ViewDataService
             ->published()
             ->with([
                 'translations', 'category', 'country.translations',
-                'seoEntry.translations', 'options.translations', 'faqs.translations',
+                'seoEntry.translations', 'faqs.translations',
                 'mediaAttachments.media',
                 'priceTable.variants.translations',
                 'priceTable.periods.rates',
@@ -1740,7 +1740,7 @@ class ViewDataService
             ->published()
             ->with([
                 'translations', 'category', 'country.translations',
-                'seoEntry.translations', 'options.translations', 'faqs.translations',
+                'seoEntry.translations', 'faqs.translations',
                 'mediaAttachments.media',
                 'priceTable.variants.translations',
                 'priceTable.periods.rates',
@@ -1867,17 +1867,6 @@ class ViewDataService
             'notes' => $translation?->notes ?? [],
             'content' => $translation?->content ?? '',
             'attrs' => is_array($service->attrs) ? $service->attrs : [],
-            'options' => $service->options->map(fn ($opt) => [
-                'code' => $opt->code,
-                'name' => $opt->name,
-                'description' => $opt->description,
-                'priceFrom' => $opt->price_from !== null ? (float) $opt->price_from : null,
-                'priceFormatted' => $opt->price_from !== null && (float) $opt->price_from > 0
-                    ? $this->formatMoney((float) $opt->price_from, $service->currency ?? 'VND')
-                    : null,
-                'capacity' => $opt->capacity,
-                'amenities' => $opt->amenities ?? [],
-            ])->values()->all(),
             'faqs' => $service->faqs->where('is_active', true)->map(fn (Faq $faq) => [
                 'q' => $faq->question,
                 'a' => $faq->answer,
@@ -2564,11 +2553,6 @@ class ViewDataService
             $data['departurePort'] = $package->departure_port ?? '';
             $data['boatClass'] = $package->boat_class ?? '';
             $data['nightsOnBoard'] = $package->nights_on_board;
-            $data['cabinTypes'] = $package->cabinTypes->map(fn ($cabin) => [
-                'name' => $cabin->name,
-                'capacity' => $cabin->capacity,
-                'note' => $cabin->description,
-            ])->values()->all();
         }
 
         return $this->attachPriceTable($data, $package);

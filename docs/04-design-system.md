@@ -461,7 +461,8 @@ Chrome dùng chung: `App\Support\ListingChrome` → `partials/listing-catalog.bl
 
 | Trang | File / component | Class chính |
 |---|---|---|
-| Chi tiết tour/cruise | `x-tour.detail` | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body` |
+| Chi tiết tour/cruise | `x-tour.detail` | `.detail-*`, `.detail-sidebar__*`, `.cabin-card__body`, `.price-table*` (bảng giá dưới Tổng quan), `.detail-gallery*` (cover-only khi ít/không ảnh) |
+| Chi tiết dịch vụ | `x-service.detail` | Cùng chrome tour + `x-shared.detail-content` (`.detail-content`) |
 | Blog listing | `guide/index` | `.blog-layout`, `.blog-toolbar`, `.blog-seo`, `.page-follow` |
 | Blog chi tiết | `guide/show` | `.blog-article-gallery`, `.blog-share-bar`, `.comment-*`, `.blog-inline-links`, `.article-toc*` (TOC đầu bài + FAB/drawer) |
 | Blog sidebar | `x-blog.sidebar` | `.blog-sidebar__card` / `__title` / `__nav-link` / `__tag` |
@@ -535,7 +536,7 @@ Utility chung: `.page-follow` (margin-top section phụ), `.form-success` (trạ
 
 1. **Card overlay cho tiêu đề trang** — không đặt H1/breadcrumb trực tiếp lên ảnh banner; luôn bọc trong card trắng bo góc để đảm bảo contrast & thống nhất phong cách.
 2. **Nội dung dài nhưng có cấu trúc rõ** — accordion cho itinerary/FAQ, mục lục (TOC) cho bài blog dài.
-3. **CTA lặp lại nhiều lần** — Quick Inquiry ở cuối hầu hết trang + sticky booking sidebar ở Tour Detail + nút Customize Tour nổi bật trên header mọi trang.
+3. **CTA lặp lại nhiều lần** — Quick Inquiry ở cuối hầu hết trang + booking sidebar (≥1024) / `detail-book-bar` cố định đáy (≤1023) ở Tour/Cruise/Service Detail + nút Customize Tour nổi bật trên header mọi trang.
 4. **Trust signal dày đặc và lặp lại** — testimonial carousel + logo TripAdvisor/Google/Trustpilot xuất hiện lại ở Home, Tour Listing, About Us — không chỉ 1 lần.
 5. **Internal linking chủ động, đặt NGAY TRONG luồng đọc** — không chỉ ở cuối bài; box "Vedi di più:" chèn giữa nội dung Blog Article là ví dụ điển hình cần tái tạo đúng.
 6. **Illustration mộc mạc, mang bản sắc địa phương** — 2 hình minh hoạ vẽ tay (xe đạp chở hoa, người gánh hàng) ở Quick Inquiry Form là điểm nhấn thương hiệu, không phải ảnh chụp — nên tạo bộ illustration riêng phù hợp brand mới nếu clone.

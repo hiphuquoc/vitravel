@@ -8,6 +8,7 @@
     'badge' => null,
     'primaryHref' => null,
     'primaryLabel' => 'Yêu cầu báo giá',
+    'primaryLabelShort' => null,
     'primaryIcon' => 'sparkles',
     'secondaryHref' => null,
     'secondaryLabel' => null,
@@ -31,6 +32,10 @@
             $badgeTone = 'popular';
         }
     }
+
+    $barPrimaryLabel = filled($primaryLabelShort)
+        ? trim((string) $primaryLabelShort)
+        : (mb_strlen($primaryLabel) > 10 ? 'Báo giá' : $primaryLabel);
 @endphp
 
 <aside class="detail-sidebar" aria-label="{{ $ariaLabel }}">
@@ -113,3 +118,35 @@
         @endif
     </div>
 </aside>
+
+<nav class="detail-book-bar" aria-label="{{ $ariaLabel }}">
+    <div class="detail-book-bar__lead">
+        @if ($hasPrice)
+            <p class="detail-book-bar__from">{{ $priceLabel }}</p>
+            <p class="detail-book-bar__amount">{{ $price }}</p>
+        @else
+            <p class="detail-book-bar__amount detail-book-bar__amount--soft">{{ $fallbackPrice }}</p>
+        @endif
+    </div>
+    <div class="detail-book-bar__actions">
+        @if ($whatsapp)
+            <a href="https://wa.me/{{ $whatsapp }}" target="_blank" rel="noopener"
+                class="detail-book-bar__icon"
+                aria-label="Chat WhatsApp">
+                <x-icon name="whatsapp" class="size-5" />
+            </a>
+        @endif
+        @if ($secondaryHref && $secondaryLabel)
+            <a href="{{ $secondaryHref }}"
+                class="detail-book-bar__icon detail-book-bar__icon--ghost"
+                aria-label="{{ $secondaryLabel }}">
+                <x-icon :name="$secondaryIcon" class="size-4.5" />
+            </a>
+        @endif
+        @if ($primaryHref)
+            <a href="{{ $primaryHref }}" class="detail-book-bar__cta">
+                <span class="detail-book-bar__cta-text">{{ $barPrimaryLabel }}</span>
+            </a>
+        @endif
+    </div>
+</nav>
