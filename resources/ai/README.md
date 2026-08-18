@@ -25,7 +25,11 @@ Thư mục seed **file** cho system prompt. Runtime ưu tiên đọc bảng `ai_
 | Key | Category | Mục đích |
 |---|---|---|
 | `translate_page` | translate | AI dịch toàn trang form |
-| `enrich_detail_program` | enrich | AI xây dựng chương trình tour/cruise/service |
-| `enrich_listing_page` | enrich | AI xây dựng trang listing (hub / danh mục / chủ đề); input chỉ tiêu đề |
+| `enrich_detail_meta` | enrich | Chương trình chi tiết — thông tin bài + SEO (chỉ tiêu đề) |
+| `enrich_detail_content` | enrich | Chương trình chi tiết — lịch trình / HTML dịch vụ |
+| `enrich_detail_faq` | enrich | Chương trình chi tiết — FAQ |
+| `enrich_listing_meta` | enrich | Listing — H1 + subtitle + meta (chỉ tiêu đề) |
+| `enrich_listing_body` | enrich | Listing — seo_body HTML |
+| `enrich_listing_faq` | enrich | Listing — FAQ |
 
 Chi tiết sản phẩm: [`docs/14-ai-system-prompts.md`](../../docs/14-ai-system-prompts.md).

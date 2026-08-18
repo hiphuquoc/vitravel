@@ -93,7 +93,8 @@ Chi tiết đầy đủ: [`docs/14-ai-system-prompts.md`](14-ai-system-prompts.m
 |---|---|---|---|
 | GET | `/ai/status` | `ai.use` | Provider configured? |
 | POST | `/ai/translate-page` | `ai.use` | Dịch JSON fields form |
-| POST | `/ai/enrich-detail-program` | `ai.use` | Xây dựng chương trình tour/cruise/service |
+| POST | `/ai/enrich-detail-program` | `ai.use` | 3 luồng `stage`: meta \| content \| faq |
+| POST | `/ai/enrich-listing-page` | `ai.use` | 3 luồng `stage`: meta \| body \| faq |
 | GET | `/ai/prompts` | `ai.manage` | Catalog prompt hệ thống |
 | GET/PUT | `/ai/prompts/{key}` | `ai.manage` | Xem / cập nhật |
 | POST | `/ai/prompts/sync` | `ai.manage` | Sync file seed → DB (`force?`) |

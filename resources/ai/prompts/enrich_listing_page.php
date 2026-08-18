@@ -5,6 +5,9 @@ declare(strict_types=1);
 /**
  * Prompt: AI xây dựng nội dung trang listing (hub / country / chủ đề tour / cruise / service category).
  *
+ * @deprecated Tách thành enrich_listing_meta / enrich_listing_body / enrich_listing_faq.
+ * File giữ lại để tham chiếu; không còn đăng ký trong config/ai.php.
+ *
  * Biến: {{brand}}, {{project_code}}, {{locale}}, {{entity_type}}, {{hub_key}}, {{page_kind}},
  *       {{context_json}}, {{schema_hint}}, {{extra_instructions}}
  *

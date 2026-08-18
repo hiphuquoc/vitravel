@@ -5,6 +5,9 @@ declare(strict_types=1);
 /**
  * Prompt: AI xây dựng / hoàn thiện chương trình chi tiết tour · du thuyền · dịch vụ.
  *
+ * @deprecated Tách thành enrich_detail_meta / enrich_detail_content / enrich_detail_faq.
+ * File giữ lại để tham chiếu; không còn đăng ký trong config/ai.php.
+ *
  * Biến: {{brand}}, {{project_code}}, {{locale}}, {{entity_type}}, {{fields_json}}, {{schema_hint}}, {{extra_instructions}}
  *
  * @return array{

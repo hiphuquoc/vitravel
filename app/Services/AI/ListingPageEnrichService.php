@@ -10,13 +10,28 @@ use RuntimeException;
 /**
  * AI xây dựng nội dung trang listing (hub / country / chủ đề tour / cruise type / service category).
  *
- * Input tối thiểu: chỉ tiêu đề trang — tránh nhiễu từ nội dung cũ; AI tự research + viết lại.
+ * 3 luồng: meta (chỉ title) → body (title + meta) → faq (title + SEO + body).
  */
 final class ListingPageEnrichService
 {
     use StripsAiCitations;
 
-    public const PROMPT_KEY = 'enrich_listing_page';
+    public const STAGE_META = 'meta';
+    public const STAGE_BODY = 'body';
+    public const STAGE_FAQ = 'faq';
+
+    /** @deprecated Dùng STAGE_* */
+    public const PROMPT_KEY = 'enrich_listing_body';
+
+    /** @var list<string> */
+    public const STAGES = [self::STAGE_META, self::STAGE_BODY, self::STAGE_FAQ];
+
+    /** @var array<string, string> */
+    public const PROMPT_KEYS = [
+        self::STAGE_META => 'enrich_listing_meta',
+        self::STAGE_BODY => 'enrich_listing_body',
+        self::STAGE_FAQ => 'enrich_listing_faq',
+    ];
 
     /** @var list<string> */
     private const ENTITY_TYPES = [
@@ -34,13 +49,15 @@ final class ListingPageEnrichService
     ) {}
 
     /**
+     * @param  array<string, mixed>  $fields
      * @return array{
      *   fields: array<string, mixed>,
      *   provider: string,
      *   model: string,
      *   latency_ms: int,
      *   prompt_key: string,
-     *   prompt_version: int|null
+     *   prompt_version: int|null,
+     *   stage: string
      * }
      */
     public function enrich(
@@ -50,6 +67,8 @@ final class ListingPageEnrichService
         ?string $hubKey = null,
         ?string $provider = null,
         ?string $instructions = null,
+        string $stage = self::STAGE_META,
+        array $fields = [],
     ): array {
         $title = trim($title);
         if ($title === '') {
@@ -60,17 +79,24 @@ final class ListingPageEnrichService
             throw new RuntimeException("entity_type không hỗ trợ: {$entityType}");
         }
 
-        $contextJson = json_encode(['title' => $title], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $stage = $this->normalizeStage($stage);
+        $promptKey = self::PROMPT_KEYS[$stage];
+        $context = $this->contextForStage($title, $fields, $stage);
+
+        $contextJson = json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         if ($contextJson === false) {
             throw new RuntimeException('Không encode được context JSON.');
         }
 
         $hubKey = trim((string) $hubKey);
-        $schemaHint = $this->schemaHintFor($entityType, $hubKey);
+        $schemaHint = $this->schemaHintFor($entityType, $hubKey, $stage);
         $pageKind = $this->pageKindLabel($entityType, $hubKey);
+        $maxTokens = $stage === self::STAGE_BODY
+            ? min(8192, (int) config('ai.enrich_max_tokens', 16384))
+            : min(4096, (int) config('ai.enrich_max_tokens', 16384));
 
         try {
-            $rendered = $this->prompts->renderPrompt(self::PROMPT_KEY, array_merge(
+            $rendered = $this->prompts->renderPrompt($promptKey, array_merge(
                 AiProjectBrand::vars(),
                 [
                     'locale' => $locale,
@@ -91,7 +117,7 @@ final class ListingPageEnrichService
                 user: $rendered['user'],
                 json: true,
                 provider: $provider,
-                maxTokens: (int) config('ai.enrich_max_tokens', 16384),
+                maxTokens: $maxTokens,
                 webSearch: $webSearch,
                 timeout: (int) config('ai.enrich_timeout', 240),
             );
@@ -105,11 +131,11 @@ final class ListingPageEnrichService
                 throw new RuntimeException('Phản hồi AI thiếu object «fields».');
             }
 
-            $filtered = $this->normalizeOutput($enriched, $entityType);
+            $filtered = $this->normalizeOutput($enriched, $stage);
             $filtered = $this->stripWebSearchCitations($filtered);
 
             $this->usage->logSuccess(
-                self::PROMPT_KEY,
+                $promptKey,
                 'enrich_listing_page',
                 $entityType,
                 $result['provider'],
@@ -119,6 +145,7 @@ final class ListingPageEnrichService
                     'locale' => $locale,
                     'brand' => AiProjectBrand::vars()['brand'],
                     'hub_key' => $hubKey !== '' ? $hubKey : null,
+                    'stage' => $stage,
                 ],
             );
 
@@ -127,18 +154,54 @@ final class ListingPageEnrichService
                 'provider' => $result['provider'],
                 'model' => $result['model'],
                 'latency_ms' => $result['latency_ms'],
-                'prompt_key' => self::PROMPT_KEY,
+                'prompt_key' => $promptKey,
                 'prompt_version' => $rendered['version'] ?? null,
+                'stage' => $stage,
             ];
         } catch (\Throwable $e) {
             $this->usage->logFailure(
-                self::PROMPT_KEY,
+                $promptKey,
                 'enrich_listing_page',
                 $entityType,
                 $e->getMessage(),
             );
             throw $e;
         }
+    }
+
+    public function normalizeStage(string $stage): string
+    {
+        $stage = strtolower(trim($stage));
+        if (! in_array($stage, self::STAGES, true)) {
+            throw new RuntimeException('stage không hợp lệ. Dùng: meta, body, faq.');
+        }
+
+        return $stage;
+    }
+
+    /**
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    private function contextForStage(string $title, array $fields, string $stage): array
+    {
+        if ($stage === self::STAGE_META) {
+            return ['title' => $title];
+        }
+
+        $out = ['title' => $title];
+        foreach (['subtitle', 'seo_title', 'seo_description', 'seo_slug', 'seo_body'] as $key) {
+            $val = $fields[$key] ?? null;
+            if (is_string($val) && trim($val) !== '') {
+                $out[$key] = trim($val);
+            }
+        }
+
+        if ($stage === self::STAGE_BODY) {
+            unset($out['seo_body']);
+        }
+
+        return $out;
     }
 
     private function pageKindLabel(string $entityType, string $hubKey): string
@@ -153,61 +216,86 @@ final class ListingPageEnrichService
         };
     }
 
-    private function schemaHintFor(string $entityType, string $hubKey): string
+    private function schemaHintFor(string $entityType, string $hubKey, string $stage): string
     {
-        $base = <<<'TXT'
-Canonical ListingChrome (public + admin aliases):
-- title: H1 trang (có thể tinh chỉnh nhẹ từ input, không đổi ý)
-- subtitle: copy ngắn dưới H1 (~1–3 câu, PLAIN TEXT — cấm HTML)
-- seo_body: BẮT BUỘC HTML — 3–5 <p>, có <strong> cho điểm đến/chủ đề/brand (cấm plain text, cấm markdown)
-- seo_title: meta title ≤ ~60 ký tự
-- seo_description: meta description ≤ ~155–160 ký tự
-- seo_slug: Latin, dấu gạch ngang, gợi ý từ tiêu đề (không bắt buộc nếu admin đã có slug)
+        if ($stage === self::STAGE_META) {
+            $extra = $entityType === 'listing_hub' && $hubKey !== ''
+                ? "\nHub key: {$hubKey}. subtitle → field body trên admin."
+                : '';
+
+            return <<<TXT
+Chỉ các key:
+{
+  "title": "H1 — giữ ý tiêu đề input",
+  "subtitle": "1–3 câu, PLAIN TEXT — cấm HTML",
+  "seo_title": "≤ ~60 ký tự",
+  "seo_description": "≤ ~155–160 ký tự",
+  "seo_slug": "Latin, dấu gạch ngang"
+}
+CẤM seo_body, faqs.{$extra}
 TXT;
+        }
 
-        $extra = match ($entityType) {
-            'listing_hub' => "\nHub key: {$hubKey}. subtitle → field body; seo_body → seo_body. Không FAQ.",
-            'country' => "\nTrang tour theo điểm đến. subtitle = tagline; seo_body = long-form dưới grid.",
-            'tour_category' => <<<'TXT'
+        if ($stage === self::STAGE_BODY) {
+            return <<<'TXT'
+Chỉ seo_body:
+{
+  "seo_body": "HTML bắt buộc — 3–5 <p>, có <strong> điểm đến/chủ đề/brand (cấm plain text, cấm markdown)"
+}
+CẤM title, subtitle, seo_title, seo_description, seo_slug, faqs.
+TXT;
+        }
 
-Thêm faqs: 5–6 object { "question": "…", "answer": "…" } — key CHÍNH XÁC question/answer.
-FAQ thực dụng: thời lượng, chi phí, ai phù hợp, mùa đi, visa/đi lại nếu liên quan.
-TXT,
-            'cruise_type' => "\nTrang listing theo loại du thuyền. subtitle = intro; seo_body = HTML cuối listing. Không FAQ.",
-            'service_category' => "\nCụm dịch vụ — subtitle + seo_body mô tả danh mục con. Không FAQ.",
-            default => '',
-        };
-
-        return $base.$extra."\n\nJSON output:\n{\n  \"fields\": { … }\n}";
+        return <<<'TXT'
+Chỉ faqs:
+{
+  "faqs": [
+    { "question": "…", "answer": "…" }
+  ]
+}
+5–6 object, key CHÍNH XÁC question/answer. CẤM mọi field khác.
+TXT;
     }
 
     /**
      * @param  array<string, mixed>  $fields
      * @return array<string, mixed>
      */
-    private function normalizeOutput(array $fields, string $entityType): array
+    private function normalizeOutput(array $fields, string $stage): array
     {
         $out = [];
 
-        foreach (['title', 'subtitle', 'seo_body', 'seo_title', 'seo_description', 'seo_slug'] as $key) {
-            if (! array_key_exists($key, $fields)) {
-                continue;
+        if ($stage === self::STAGE_META) {
+            foreach (['title', 'subtitle', 'seo_title', 'seo_description', 'seo_slug'] as $key) {
+                if (! array_key_exists($key, $fields)) {
+                    continue;
+                }
+                $val = $fields[$key];
+                if (is_string($val) && trim($val) !== '') {
+                    $out[$key] = trim($val);
+                }
             }
-            $val = $fields[$key];
+        } elseif ($stage === self::STAGE_BODY) {
+            $val = $fields['seo_body'] ?? null;
             if (is_string($val) && trim($val) !== '') {
-                $out[$key] = $key === 'seo_body' ? $this->ensureSeoBodyHtml(trim($val)) : trim($val);
+                $out['seo_body'] = $this->ensureSeoBodyHtml(trim($val));
             }
-        }
-
-        if ($entityType === 'tour_category' && isset($fields['faqs']) && is_array($fields['faqs'])) {
-            $faqs = $this->normalizeFaqsList($fields['faqs']);
-            if ($faqs !== []) {
-                $out['faqs'] = $faqs;
+        } elseif ($stage === self::STAGE_FAQ) {
+            if (isset($fields['faqs']) && is_array($fields['faqs'])) {
+                $faqs = $this->normalizeFaqsList($fields['faqs']);
+                if ($faqs !== []) {
+                    $out['faqs'] = $faqs;
+                }
             }
         }
 
         if ($out === []) {
-            throw new RuntimeException('AI không trả nội dung listing hợp lệ.');
+            $hint = match ($stage) {
+                self::STAGE_FAQ => 'AI không trả FAQ listing hợp lệ.',
+                self::STAGE_BODY => 'AI không trả seo_body HTML hợp lệ.',
+                default => 'AI không trả nội dung listing hợp lệ.',
+            };
+            throw new RuntimeException($hint);
         }
 
         return $out;

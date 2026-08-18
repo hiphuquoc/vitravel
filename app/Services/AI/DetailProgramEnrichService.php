@@ -9,12 +9,28 @@ use RuntimeException;
 
 /**
  * AI xây dựng / hoàn thiện chương trình chi tiết (tour, cruise, service)
- * theo đúng shape field form admin.
+ * theo đúng shape field form admin — 3 luồng độc lập (meta / content / faq).
  */
 final class DetailProgramEnrichService
 {
     use StripsAiCitations;
-    public const PROMPT_KEY = 'enrich_detail_program';
+
+    public const STAGE_META = 'meta';
+    public const STAGE_CONTENT = 'content';
+    public const STAGE_FAQ = 'faq';
+
+    /** @deprecated Dùng STAGE_* + promptKeys() */
+    public const PROMPT_KEY = 'enrich_detail_content';
+
+    /** @var list<string> */
+    public const STAGES = [self::STAGE_META, self::STAGE_CONTENT, self::STAGE_FAQ];
+
+    /** @var array<string, string> */
+    public const PROMPT_KEYS = [
+        self::STAGE_META => 'enrich_detail_meta',
+        self::STAGE_CONTENT => 'enrich_detail_content',
+        self::STAGE_FAQ => 'enrich_detail_faq',
+    ];
 
     public function __construct(
         private readonly AiGateway $ai,
@@ -24,7 +40,7 @@ final class DetailProgramEnrichService
 
     /**
      * @param  array<string, mixed>  $fields
-     * @return array{fields: array<string, mixed>, provider: string, model: string, latency_ms: int, prompt_key: string, prompt_version: int|null}
+     * @return array{fields: array<string, mixed>, provider: string, model: string, latency_ms: int, prompt_key: string, prompt_version: int|null, stage: string}
      */
     public function enrich(
         array $fields,
@@ -32,20 +48,31 @@ final class DetailProgramEnrichService
         string $locale = 'vi',
         ?string $provider = null,
         ?string $instructions = null,
+        string $stage = self::STAGE_CONTENT,
     ): array {
-        if ($fields === []) {
+        $stage = $this->normalizeStage($stage);
+        $promptKey = self::PROMPT_KEYS[$stage];
+        $context = $this->contextForStage($fields, $stage);
+
+        if ($stage === self::STAGE_META && trim((string) ($context['title'] ?? '')) === '') {
+            throw new RuntimeException('Thiếu tiêu đề chương trình để AI xử lý thông tin + SEO.');
+        }
+        if ($context === []) {
             throw new RuntimeException('Không có field nào để AI xử lý.');
         }
 
-        $fieldsJson = json_encode($fields, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        $fieldsJson = json_encode($context, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
         if ($fieldsJson === false) {
             throw new RuntimeException('Không encode được fields JSON.');
         }
 
-        $schemaHint = $this->schemaHintFor($entityType);
+        $schemaHint = $this->schemaHintFor($entityType, $stage);
+        $maxTokens = $stage === self::STAGE_CONTENT
+            ? (int) config('ai.enrich_max_tokens', 16384)
+            : min(8192, (int) config('ai.enrich_max_tokens', 16384));
 
         try {
-            $rendered = $this->prompts->renderPrompt(self::PROMPT_KEY, array_merge(
+            $rendered = $this->prompts->renderPrompt($promptKey, array_merge(
                 AiProjectBrand::vars(),
                 [
                     'locale' => $locale,
@@ -64,43 +91,49 @@ final class DetailProgramEnrichService
                 user: $rendered['user'],
                 json: true,
                 provider: $provider,
-                maxTokens: (int) config('ai.enrich_max_tokens', 16384),
+                maxTokens: $maxTokens,
                 webSearch: $webSearch,
                 timeout: (int) config('ai.enrich_timeout', 240),
             );
 
-            $parsed = $result['parsed'] ?? [];
-            $enriched = $parsed['fields'] ?? null;
-            if (! is_array($enriched)) {
-                $enriched = is_array($parsed) ? $parsed : null;
-            }
-            if (! is_array($enriched)) {
-                throw new RuntimeException('Phản hồi AI thiếu object «fields».');
-            }
+            $enriched = $this->extractFieldsObject($result['parsed'] ?? null);
+            $allowed = $this->outputKeys($entityType, $stage);
+            $enriched = array_intersect_key($enriched, array_flip($allowed));
 
-            $filtered = $this->mergePreferringAiLists($fields, $enriched);
-            $filtered = $this->normalizeStructuredLists($filtered, $fields);
+            $mergeSource = $stage === self::STAGE_META ? $enriched : $context;
+            $filtered = $this->mergePreferringAiLists($mergeSource, $enriched);
+            $filtered = array_intersect_key($filtered, array_flip($allowed));
+            $filtered = $this->normalizeStructuredLists($filtered, $context);
             $filtered = $this->stripWebSearchCitations($filtered);
             $filtered = $this->sanitizeForAdminSave($filtered);
+            $filtered = array_intersect_key($filtered, array_flip($allowed));
 
+            if ($stage === self::STAGE_FAQ && empty($filtered['faqs'])) {
+                throw new RuntimeException('AI không trả FAQ (faqs). Thử chạy lại luồng câu hỏi.');
+            }
             if (
-                in_array($entityType, ['tour_package', 'cruise_package'], true)
-                && ! empty($fields['faq_rewrite'])
-                && empty($filtered['faqs'])
+                $stage === self::STAGE_CONTENT
+                && in_array($entityType, ['tour_package', 'cruise_package'], true)
+                && empty($filtered['itinerary'])
             ) {
-                throw new RuntimeException(
-                    'AI không trả FAQ (faqs). Thử chạy lại hoặc tăng AI_ENRICH_MAX_TOKENS nếu tour nhiều ngày.',
-                );
+                throw new RuntimeException('AI không trả lịch trình (itinerary). Thử chạy lại luồng nội dung chi tiết.');
+            }
+            if (
+                $stage === self::STAGE_CONTENT
+                && in_array($entityType, ['service', 'service_product'], true)
+                && trim((string) ($filtered['content'] ?? '')) === ''
+            ) {
+                throw new RuntimeException('AI không trả nội dung chi tiết (content). Thử chạy lại luồng nội dung.');
             }
 
             $this->usage->logSuccess(
-                self::PROMPT_KEY,
+                $promptKey,
                 'enrich_detail_program',
                 $entityType,
                 $result['provider'],
                 $result['model'],
                 $result['latency_ms'],
-                ['locale' => $locale, 'brand' => AiProjectBrand::vars()['brand']],
+                ['locale' => $locale, 'brand' => AiProjectBrand::vars()['brand'], 'stage' => $stage],
             );
 
             return [
@@ -108,12 +141,13 @@ final class DetailProgramEnrichService
                 'provider' => $result['provider'],
                 'model' => $result['model'],
                 'latency_ms' => $result['latency_ms'],
-                'prompt_key' => self::PROMPT_KEY,
+                'prompt_key' => $promptKey,
                 'prompt_version' => $rendered['version'] ?? null,
+                'stage' => $stage,
             ];
         } catch (\Throwable $e) {
             $this->usage->logFailure(
-                self::PROMPT_KEY,
+                $promptKey,
                 'enrich_detail_program',
                 $entityType,
                 $e->getMessage(),
@@ -122,66 +156,158 @@ final class DetailProgramEnrichService
         }
     }
 
-    private function schemaHintFor(string $entityType): string
+    public function normalizeStage(string $stage): string
     {
-        if (in_array($entityType, ['service', 'service_product'], true)) {
-            return <<<'TXT'
-Schema fields (service product) — giữ đúng key:
-{
-  "title": "string",
-  "summary": "string (ngắn)",
-  "content": "string HTML dài: p/h2/h3/ul/ol/strong + cuối bài 1 <figure><img placehold.co… alt+figcaption></figure>",
-  "highlights": "string — mỗi ý một dòng hoặc HTML list",
-  "inclusions": "string — mỗi ý một dòng",
-  "exclusions": "string — mỗi ý một dòng",
-  "notes": "string — mỗi ý một dòng",
-  "location_label": "string",
-  "seo_slug": "string",
-  "seo_title": "string",
-  "seo_description": "string"
-}
-Ưu tiên content HTML giàu trải nghiệm; strong điểm đến / khung giờ nếu có quy trình.
-TXT;
+        $stage = strtolower(trim($stage));
+        if (! in_array($stage, self::STAGES, true)) {
+            throw new RuntimeException('stage không hợp lệ. Dùng: meta, content, faq.');
         }
 
-        return <<<'TXT'
-Schema fields (tour_package / cruise_package) — giữ đúng key:
+        return $stage;
+    }
+
+    /**
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    private function contextForStage(array $fields, string $stage): array
+    {
+        if ($stage === self::STAGE_META) {
+            return ['title' => trim((string) ($fields['title'] ?? ''))];
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function outputKeys(string $entityType, string $stage): array
+    {
+        $isService = in_array($entityType, ['service', 'service_product'], true);
+
+        return match ($stage) {
+            self::STAGE_META => $isService
+                ? ['title', 'summary', 'location_label', 'seo_slug', 'seo_title', 'seo_description']
+                : [
+                    'title', 'summary', 'highlights_intro',
+                    'featured_quote_text', 'featured_quote_author',
+                    'places_to_visit', 'start_location', 'end_location',
+                    'departure_port', 'boat_class',
+                    'seo_slug', 'seo_title', 'seo_description',
+                ],
+            self::STAGE_CONTENT => $isService
+                ? ['content', 'highlights', 'inclusions', 'exclusions', 'notes']
+                : ['itinerary', 'highlight_bullets', 'inclusions', 'exclusions', 'notes'],
+            self::STAGE_FAQ => ['faqs'],
+            default => [],
+        };
+    }
+
+    /**
+     * @param  mixed  $parsed
+     * @return array<string, mixed>
+     */
+    private function extractFieldsObject(mixed $parsed): array
+    {
+        $enriched = is_array($parsed) ? ($parsed['fields'] ?? null) : null;
+        if (! is_array($enriched)) {
+            $enriched = is_array($parsed) ? $parsed : null;
+        }
+        if (! is_array($enriched)) {
+            throw new RuntimeException('Phản hồi AI thiếu object «fields».');
+        }
+
+        return $enriched;
+    }
+
+    private function schemaHintFor(string $entityType, string $stage): string
+    {
+        $isService = in_array($entityType, ['service', 'service_product'], true);
+
+        if ($stage === self::STAGE_META) {
+            if ($isService) {
+                return <<<'TXT'
+Chỉ các key sau (service):
 {
   "title": "string",
-  "summary": "string",
+  "summary": "string (2–4 câu)",
+  "location_label": "string",
+  "seo_slug": "string",
+  "seo_title": "string ≤ ~60",
+  "seo_description": "string ≤ ~160"
+}
+CẤM content, highlights, inclusions, faqs.
+TXT;
+            }
+
+            return <<<'TXT'
+Chỉ các key sau (tour / cruise):
+{
+  "title": "string",
+  "summary": "string (2–4 câu)",
   "highlights_intro": "string",
   "featured_quote_text": "string",
   "featured_quote_author": "string",
   "places_to_visit": "string — mỗi địa điểm một dòng",
-  "highlight_bullets": "string — mỗi ý một dòng",
-  "inclusions": "string — mỗi ý một dòng",
-  "exclusions": "string — mỗi ý một dòng",
-  "notes": "string — mỗi ý một dòng",
   "start_location": "string",
   "end_location": "string",
   "departure_port": "string (cruise)",
   "boat_class": "string (cruise)",
   "seo_slug": "string",
-  "seo_title": "string",
-  "seo_description": "string",
+  "seo_title": "string ≤ ~60",
+  "seo_description": "string ≤ ~160"
+}
+CẤM itinerary, faqs, highlight_bullets, inclusions/exclusions/notes.
+TXT;
+        }
+
+        if ($stage === self::STAGE_CONTENT) {
+            if ($isService) {
+                return <<<'TXT'
+Chỉ các key sau (service content):
+{
+  "content": "string HTML dài: p/h2/h3/ul/ol/strong + cuối bài 1 <figure><img placehold.co… alt+figcaption></figure>",
+  "highlights": "string — mỗi ý một dòng",
+  "inclusions": "string — mỗi ý một dòng",
+  "exclusions": "string — mỗi ý một dòng",
+  "notes": "string — mỗi ý một dòng"
+}
+CẤM title, summary, seo_*, faqs, location_label.
+TXT;
+            }
+
+            return <<<'TXT'
+Chỉ các key sau (tour / cruise content):
+{
+  "highlight_bullets": "string — mỗi ý một dòng",
+  "inclusions": "string — mỗi ý một dòng",
+  "exclusions": "string — mỗi ý một dòng",
+  "notes": "string — mỗi ý một dòng",
   "itinerary": [
     {
       "day_number": 1,
       "meals_included": "Sáng; Trưa; Tối | Sáng; Trưa | … | \"\"",
       "title": "string",
-      "content": "string HTML DÀI: mở đầu; timeline strong giờ+điểm đến; (tuỳ chọn) 1 <blockquote><p><strong>Mẹo nhỏ|Ghi chú|Lưu ý:</strong> …</p></blockquote>; cuối ngày 1 figure placehold.co",
+      "content": "string HTML DÀI: mở đầu; timeline strong giờ+điểm đến; (tuỳ chọn) 1 blockquote mẹo; cuối ngày 1 figure placehold.co",
       "overnight_at": "string"
     }
-  ],
+  ]
+}
+Số ngày khớp duration_days nếu có. Mỗi ngày ~180–420 từ, unique.
+HTML: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img.
+CẤM faqs, seo_*, summary, highlights_intro, featured_quote_*.
+TXT;
+        }
+
+        return <<<'TXT'
+Chỉ faqs:
+{
   "faqs": [
     { "question": "string (bắt buộc)", "answer": "string (bắt buộc, 2–4 câu)" }
   ]
 }
-Bắt buộc trả faqs: 5–8 phần tử, key đúng question/answer (KHÔNG dùng q/a).
-Số ngày itinerary phải khớp duration_days trong context nếu có.
-Mỗi ngày content ~180–420 từ, unique SEO, không lặp mở bài giữa các ngày.
-HTML cho phép: p, br, strong, em, u, ul, ol, li, h3, blockquote, figure, figcaption, img.
-Không chèn citation / markdown link / URL nguồn.
+5–8 phần tử. Key đúng question/answer (KHÔNG q/a). CẤM mọi field khác.
 TXT;
     }
 

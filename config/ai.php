@@ -51,7 +51,11 @@ return [
 
     'prompts' => [
         'translate_page' => 'translate_page.php',
-        'enrich_detail_program' => 'enrich_detail_program.php',
-        'enrich_listing_page' => 'enrich_listing_page.php',
+        'enrich_detail_meta' => 'enrich_detail_meta.php',
+        'enrich_detail_content' => 'enrich_detail_content.php',
+        'enrich_detail_faq' => 'enrich_detail_faq.php',
+        'enrich_listing_meta' => 'enrich_listing_meta.php',
+        'enrich_listing_body' => 'enrich_listing_body.php',
+        'enrich_listing_faq' => 'enrich_listing_faq.php',
     ],
 ];

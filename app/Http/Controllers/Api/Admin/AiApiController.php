@@ -70,6 +70,7 @@ final class AiApiController extends Controller
             $validated = $request->validate([
                 'locale' => 'nullable|string|max:12',
                 'entity_type' => 'required|string|max:64',
+                'stage' => 'required|string|in:meta,content,faq',
                 'provider' => 'nullable|string|in:openai,google,gemini,deepseek',
                 'instructions' => 'nullable|string|max:4000',
                 'fields' => 'required|array|min:1',
@@ -87,6 +88,7 @@ final class AiApiController extends Controller
                     ? ($validated['provider'] === 'gemini' ? 'google' : $validated['provider'])
                     : null,
                 instructions: $validated['instructions'] ?? null,
+                stage: $validated['stage'],
             );
         } catch (\Throwable $e) {
             return ApiResponse::error($e->getMessage(), 'AI_ERROR', 502);
@@ -102,9 +104,11 @@ final class AiApiController extends Controller
                 'title' => 'required|string|max:255',
                 'locale' => 'nullable|string|max:12',
                 'entity_type' => 'required|string|in:listing_hub,country,tour_category,cruise_type,service_category',
+                'stage' => 'required|string|in:meta,body,faq',
                 'hub_key' => 'nullable|string|max:64',
                 'provider' => 'nullable|string|in:openai,google,gemini,deepseek',
                 'instructions' => 'nullable|string|max:4000',
+                'fields' => 'nullable|array',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -120,6 +124,8 @@ final class AiApiController extends Controller
                     ? ($validated['provider'] === 'gemini' ? 'google' : $validated['provider'])
                     : null,
                 instructions: $validated['instructions'] ?? null,
+                stage: $validated['stage'],
+                fields: $validated['fields'] ?? [],
             );
         } catch (\Throwable $e) {
             return ApiResponse::error($e->getMessage(), 'AI_ERROR', 502);
