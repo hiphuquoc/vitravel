@@ -9,6 +9,9 @@
     'reviewCount' => null,
     'showTitleCard' => true,
     'thumbSlots' => 4,
+    'kicker' => null,
+    'starRating' => null,
+    'location' => null,
 ])
 
 @php
@@ -151,7 +154,26 @@
                     @if (count($breadcrumbs) > 0)
                         <x-layout.breadcrumb :items="$breadcrumbs" class="breadcrumb--page" />
                     @endif
+                    @if (filled($kicker))
+                        <p class="kicker detail-title-card__kicker">{{ $kicker }}</p>
+                    @endif
                     <h1 class="detail-title-card__h1">{{ $title }}</h1>
+                    @if (filled($starRating) || filled($location))
+                        <div class="detail-title-card__meta">
+                            @if (filled($starRating))
+                                <span class="detail-title-card__meta-item" aria-label="{{ $starRating }} sao">
+                                    <x-shared.stars :rating="$starRating" />
+                                    <span>{{ $starRating }} sao</span>
+                                </span>
+                            @endif
+                            @if (filled($location))
+                                <span class="detail-title-card__meta-item">
+                                    <x-icon name="map-pin" class="size-4" />
+                                    <span>{{ $location }}</span>
+                                </span>
+                            @endif
+                        </div>
+                    @endif
                 </div>
                 @if ($rating !== null)
                     <x-shared.rating :rating="$rating" :count="$reviewCount ?? 0" class="detail-title-card__rating" />

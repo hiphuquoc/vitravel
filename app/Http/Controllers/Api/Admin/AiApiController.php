@@ -10,6 +10,7 @@ use App\Models\AiUsageLog;
 use App\Services\AI\AiGateway;
 use App\Services\AI\DetailProgramEnrichService;
 use App\Services\AI\ListingPageEnrichService;
+use App\Services\AI\StayEnrichService;
 use App\Services\AI\PageTranslateService;
 use App\Services\AI\PromptRepository;
 use App\Support\ApiResponse;
@@ -132,6 +133,37 @@ final class AiApiController extends Controller
         }
 
         return ApiResponse::success($result, 'Đã xây dựng nội dung listing');
+    }
+
+    public function enrichStay(Request $request, StayEnrichService $service): JsonResponse
+    {
+        try {
+            $validated = $request->validate([
+                'locale' => 'nullable|string|max:12',
+                'stage' => 'required|string|in:meta,property,faq',
+                'provider' => 'nullable|string|in:openai,google,gemini,deepseek',
+                'instructions' => 'nullable|string|max:4000',
+                'fields' => 'required|array|min:1',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        try {
+            $result = $service->enrich(
+                fields: $validated['fields'],
+                locale: $validated['locale'] ?? 'vi',
+                provider: isset($validated['provider'])
+                    ? ($validated['provider'] === 'gemini' ? 'google' : $validated['provider'])
+                    : null,
+                instructions: $validated['instructions'] ?? null,
+                stage: $validated['stage'],
+            );
+        } catch (\Throwable $e) {
+            return ApiResponse::error($e->getMessage(), 'AI_ERROR', 502);
+        }
+
+        return ApiResponse::success($result, 'Đã xây dựng nội dung lưu trú');
     }
 
     public function prompts(Request $request, PromptRepository $repo): JsonResponse

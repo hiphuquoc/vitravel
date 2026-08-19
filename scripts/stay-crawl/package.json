@@ -1,0 +1,8 @@
+{
+    "private": true,
+    "name": "vitravel-stay-crawl",
+    "description": "Puppeteer crawler for Booking.com stay import (Chrome, optional proxy).",
+    "dependencies": {
+        "puppeteer": "^24.31.0"
+    }
+}

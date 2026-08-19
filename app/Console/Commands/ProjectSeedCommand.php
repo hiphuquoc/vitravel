@@ -39,6 +39,7 @@ class ProjectSeedCommand extends Command
         {profile : Mã seed / project (vd: vitravel, hicatba)}
         {--domain= : Domain map Host → project (vd: hicatba.dev)}
         {--name= : Tên hiển thị project}
+        {--only= : Chỉ chạy nhóm seeder: services (catalogue dịch vụ/lưu trú). Không đụng content/tour/SEO}
         {--fresh-project : Xóa toàn bộ data của project này rồi seed lại (giữ project khác)}';
 
     protected $description = 'Seed nội dung một profile (project/seed_{name}.php) vào DB hiện tại';
@@ -100,7 +101,19 @@ class ProjectSeedCommand extends Command
             ProjectContext::set($project);
             $this->info("ProjectContext → {$project->code} (#{$project->id})");
 
-            $this->callSilentSeeders();
+            try {
+                $this->callSilentSeeders();
+            } catch (\InvalidArgumentException $e) {
+                $this->error($e->getMessage());
+
+                return self::FAILURE;
+            }
+
+            if ($this->option('only')) {
+                $this->info("Xong (only={$this->option('only')}). Project {$project->code}.");
+
+                return self::SUCCESS;
+            }
 
             $admin = ProjectSeed::meta()['admin'] ?? [];
             $user = User::query()->updateOrCreate(
@@ -129,9 +142,12 @@ class ProjectSeedCommand extends Command
         }
     }
 
-    private function callSilentSeeders(): void
+    /**
+     * @return list<class-string>
+     */
+    private function seederList(): array
     {
-        $seeders = [
+        $all = [
             TaxonomySeeder::class,
             PriceGuestTypeSeeder::class,
             CruiseTypeSeeder::class,
@@ -146,6 +162,31 @@ class ProjectSeedCommand extends Command
             HomeFeaturedSeeder::class,
             SeoHierarchySeeder::class,
         ];
+
+        $only = strtolower(trim((string) $this->option('only')));
+        if ($only === '') {
+            return $all;
+        }
+
+        $aliases = [
+            'services' => [ServiceCatalogSeeder::class],
+            'service' => [ServiceCatalogSeeder::class],
+            'stay' => [ServiceCatalogSeeder::class],
+            'catalog' => [ServiceCatalogSeeder::class],
+        ];
+
+        if (! isset($aliases[$only])) {
+            throw new \InvalidArgumentException(
+                'Giá trị --only không hợp lệ. Dùng: services (catalogue dịch vụ/lưu trú).'
+            );
+        }
+
+        return $aliases[$only];
+    }
+
+    private function callSilentSeeders(): void
+    {
+        $seeders = $this->seederList();
 
         foreach ($seeders as $seeder) {
             $this->info(' → '.class_basename($seeder));

@@ -13,6 +13,7 @@ use App\Models\ServiceOptionTranslation;
 use App\Models\ServiceTranslation;
 use App\Services\SeoService;
 use App\Support\ProjectSeed;
+use App\Support\StaySeed;
 use Illuminate\Database\Seeder;
 
 /**
@@ -117,6 +118,12 @@ class ServiceCatalogSeeder extends Seeder
                 continue;
             }
 
+            $hadOptions = array_key_exists('options', $row);
+            $hadFaqs = array_key_exists('faqs', $row);
+            if ($cluster === Service::CLUSTER_STAY) {
+                $row = StaySeed::complete($row);
+            }
+
             $categoryKey = $cluster.'|'.($row['category_slug'] ?? '');
             $categoryId = $this->categoryIds[$categoryKey] ?? null;
             $destSlug = (string) ($row['country_slug'] ?? $row['zone_slug'] ?? '');
@@ -183,40 +190,16 @@ class ServiceCatalogSeeder extends Seeder
                 );
             }
 
-            $service->options()->delete();
-            foreach ($row['options'] ?? [] as $optSort => $opt) {
-                $option = ServiceOption::query()->create([
-                    'service_id' => $service->id,
-                    'code' => $opt['code'] ?? null,
-                    'price_from' => $opt['price_from'] ?? null,
-                    'capacity' => $opt['capacity'] ?? null,
-                    'sort' => $optSort,
-                    'attrs' => $opt['attrs'] ?? null,
-                ]);
-
-                if ($this->viId) {
-                    ServiceOptionTranslation::query()->create([
-                        'service_option_id' => $option->id,
-                        'language_id' => $this->viId,
-                        'name' => $opt['name'],
-                        'description' => $opt['description'] ?? null,
-                        'amenities' => $opt['amenities'] ?? null,
-                    ]);
-                }
-
-                if ($this->enId && ! empty($opt['en']['name'])) {
-                    ServiceOptionTranslation::query()->create([
-                        'service_option_id' => $option->id,
-                        'language_id' => $this->enId,
-                        'name' => $opt['en']['name'],
-                        'description' => $opt['en']['description'] ?? ($opt['description'] ?? null),
-                        'amenities' => $opt['en']['amenities'] ?? ($opt['amenities'] ?? null),
-                    ]);
-                }
+            $options = $row['options'] ?? [];
+            if ($hadOptions || $cluster === Service::CLUSTER_STAY) {
+                $this->syncServiceOptions($service, is_array($options) ? $options : []);
             }
 
-            $service->faqs()->delete();
-            $this->syncFaqs($service, $row['faqs'] ?? [], is_array($en) ? ($en['faqs'] ?? []) : []);
+            $faqs = $row['faqs'] ?? [];
+            if ($hadFaqs || ($cluster === Service::CLUSTER_STAY && $faqs !== [])) {
+                $service->faqs()->delete();
+                $this->syncFaqs($service, is_array($faqs) ? $faqs : [], is_array($en) ? ($en['faqs'] ?? []) : []);
+            }
 
             $parentId = $this->resolveSeoParentId($service, $cluster, $row['category_slug'] ?? null);
             $slug = (string) ($row['slug'] ?? $code);
@@ -246,6 +229,64 @@ class ServiceCatalogSeeder extends Seeder
                     'reclaim_slug_full' => true,
                 ], 'service');
             }
+        }
+    }
+
+    /**
+     * Upsert hạng phòng / tuỳ chọn theo code — không xoá bản ghi ngoài list seed.
+     *
+     * @param  list<array<string, mixed>>  $options
+     */
+    protected function syncServiceOptions(Service $service, array $options): void
+    {
+        $keepIds = [];
+
+        foreach ($options as $optSort => $opt) {
+            if (! is_array($opt) || trim((string) ($opt['name'] ?? '')) === '') {
+                continue;
+            }
+
+            $code = (string) ($opt['code'] ?? '');
+            if ($code === '') {
+                $code = 'opt-'.$service->id.'-'.$optSort;
+            }
+
+            $option = ServiceOption::query()->updateOrCreate(
+                ['service_id' => $service->id, 'code' => $code],
+                [
+                    'price_from' => $opt['price_from'] ?? null,
+                    'capacity' => $opt['capacity'] ?? null,
+                    'sort' => $optSort,
+                    'attrs' => $opt['attrs'] ?? null,
+                ]
+            );
+            $keepIds[] = $option->id;
+
+            if ($this->viId) {
+                ServiceOptionTranslation::query()->updateOrCreate(
+                    ['service_option_id' => $option->id, 'language_id' => $this->viId],
+                    [
+                        'name' => $opt['name'],
+                        'description' => $opt['description'] ?? null,
+                        'amenities' => $opt['amenities'] ?? null,
+                    ]
+                );
+            }
+
+            if ($this->enId && ! empty($opt['en']['name'])) {
+                ServiceOptionTranslation::query()->updateOrCreate(
+                    ['service_option_id' => $option->id, 'language_id' => $this->enId],
+                    [
+                        'name' => $opt['en']['name'],
+                        'description' => $opt['en']['description'] ?? ($opt['description'] ?? null),
+                        'amenities' => $opt['en']['amenities'] ?? ($opt['amenities'] ?? null),
+                    ]
+                );
+            }
+        }
+
+        if ($keepIds !== []) {
+            $service->options()->whereNotIn('id', $keepIds)->delete();
         }
     }
 

@@ -31,6 +31,7 @@ use App\Http\Controllers\Api\Admin\ReferencePersonApiController;
 use App\Http\Controllers\Api\Admin\ReviewApiController;
 use App\Http\Controllers\Api\Admin\ReviewPlatformApiController;
 use App\Http\Controllers\Api\Admin\ServiceApiController;
+use App\Http\Controllers\Api\Admin\StayCrawlApiController;
 use App\Http\Controllers\Api\Admin\ServiceCategoryApiController;
 use App\Http\Controllers\Api\Admin\TeamMemberApiController;
 use App\Http\Controllers\Api\Admin\TourCategoryApiController;
@@ -85,6 +86,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('/ai/translate-page', [AiApiController::class, 'translatePage']);
             Route::post('/ai/enrich-detail-program', [AiApiController::class, 'enrichDetailProgram']);
             Route::post('/ai/enrich-listing-page', [AiApiController::class, 'enrichListingPage']);
+            Route::post('/ai/enrich-stay', [AiApiController::class, 'enrichStay']);
             Route::get('/ai/prompts', [AiApiController::class, 'prompts']);
             Route::post('/ai/prompts/sync', [AiApiController::class, 'syncPrompts']);
             Route::get('/ai/prompts/{key}', [AiApiController::class, 'showPrompt']);
@@ -151,6 +153,21 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/services/{id}', [ServiceApiController::class, 'show'])->whereNumber('id');
             Route::put('/services/{id}', [ServiceApiController::class, 'update'])->whereNumber('id');
             Route::delete('/services/{id}', [ServiceApiController::class, 'destroy'])->whereNumber('id');
+
+            Route::get('/stay-crawls/jobs', [StayCrawlApiController::class, 'jobs']);
+            Route::get('/stay-crawls/status', [StayCrawlApiController::class, 'status']);
+            Route::post('/stay-crawls/jobs', [StayCrawlApiController::class, 'enqueueList']);
+            Route::post('/stay-crawls/from-category', [StayCrawlApiController::class, 'fromCategory']);
+            Route::post('/stay-crawls/jobs/{id}/process-next', [StayCrawlApiController::class, 'processNext'])->whereNumber('id');
+            Route::get('/stay-crawls/jobs/{id}', [StayCrawlApiController::class, 'job'])->whereNumber('id');
+            Route::get('/stay-crawls/items', [StayCrawlApiController::class, 'items']);
+            Route::post('/stay-crawls/items', [StayCrawlApiController::class, 'enqueueHotel']);
+            Route::post('/stay-crawls/ingest', [StayCrawlApiController::class, 'ingest']);
+            Route::get('/stay-crawls/items/{id}', [StayCrawlApiController::class, 'showItem'])->whereNumber('id');
+            Route::post('/stay-crawls/items/{id}/detail', [StayCrawlApiController::class, 'crawlDetail'])->whereNumber('id');
+            Route::post('/stay-crawls/items/{id}/map', [StayCrawlApiController::class, 'mapProcess'])->whereNumber('id');
+            Route::post('/stay-crawls/items/{id}/ai', [StayCrawlApiController::class, 'aiProcess'])->whereNumber('id');
+            Route::post('/stay-crawls/items/{id}/import', [StayCrawlApiController::class, 'import'])->whereNumber('id');
             Route::get('/services/{id}/price-table', [PriceTableApiController::class, 'showService'])->whereNumber('id');
             Route::put('/services/{id}/price-table', [PriceTableApiController::class, 'updateService'])->whereNumber('id');
             Route::get('/services/{id}/price-quote', [PriceTableApiController::class, 'quoteService'])->whereNumber('id');

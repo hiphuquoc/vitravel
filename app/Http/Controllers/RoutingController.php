@@ -27,7 +27,8 @@ class RoutingController extends Controller
         }
 
         $path = implode('/', $segments);
-        $entry = app(SeoService::class)->findBySlugFull($path, $locale);
+        $publishedOnly = ! ($request->boolean('preview') && app()->environment('local'));
+        $entry = app(SeoService::class)->findBySlugFull($path, $locale, $publishedOnly);
 
         if ($entry) {
             return $this->dispatch($entry, $locale);

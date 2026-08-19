@@ -1521,8 +1521,30 @@ $__servicesSeed = [
             'summary' => 'Resort quy mô lớn ven biển với hồ bơi vô cực, spa và nhiều lựa chọn ẩm thực — điểm nghỉ dưỡng cao cấp phổ biến nhất trên đảo.',
             'highlights' => ['Mặt tiền biển tại bãi Cát Cò', 'Hồ bơi vô cực nhìn ra vịnh', 'Spa và các nhà hàng đa dạng', 'Gần trung tâm thị trấn, đi bộ 10 phút ra chợ đêm'],
             'inclusions' => ['Phòng nghỉ theo loại đã chọn', 'Wi-Fi miễn phí', 'Phí dịch vụ đặt phòng'], 'exclusions' => ['Ăn sáng (tùy gói rate)', 'Minibar', 'Spa & hoạt động ngoài resort'],
-            'notes' => ['Giá tham khảo mùa thấp điểm — báo giá lại theo ngày check-in.'], 'attrs' => ['amenities' => ['Hồ bơi vô cực', 'Spa', 'Bãi biển', 'Nhà hàng', 'Gym'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort'],
-            'options' => [['code' => 'flamingo-deluxe', 'name' => 'Deluxe Ocean View', 'price_from' => 2800000, 'capacity' => 2], ['code' => 'flamingo-suite', 'name' => 'Family Suite', 'price_from' => 4200000, 'capacity' => 4]],
+            'notes' => ['Giá tham khảo mùa thấp điểm — báo giá lại theo ngày check-in.'],
+            'content' => '<p>Flamingo Cát Bà Resort nằm sát bãi Cát Cò 3 — lựa chọn nghỉ dưỡng 5 sao phổ biến nhất trên đảo khi muốn hồ bơi, spa và đi bộ ra thị trấn.</p><h2>Không gian</h2><p>Hồ bơi vô cực nhìn vịnh, nhiều hạng phòng hướng biển và khu nhà hàng đa dạng. Trung tâm thị trấn và chợ đêm cách khoảng 10 phút đi bộ.</p><h2>Đặt phòng</h2><p>Giá từ là tham khảo / đêm. Báo giá chính xác theo ngày nhận phòng, hạng phòng và số khách.</p>',
+            'attrs' => [
+                'amenities' => ['Hồ bơi vô cực', 'Spa', 'Bãi biển', 'Nhà hàng', 'Gym', 'Wi-Fi'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort',
+                'cancellation_policy' => 'Huỷ/đổi ngày theo chính sách resort và gói rate — xác nhận trên báo giá. Tour vịnh / tàu bị cấm biển không tự động huỷ phòng.',
+                'child_policy' => 'Trẻ em ngủ chung tuỳ loại phòng; extra bed báo giá riêng.',
+                'pet_policy' => 'Không nhận thú cưng (trừ hỗ trợ đặc biệt đã xác nhận).',
+                'payment_policy' => 'Đặt cọc theo xác nhận booking. Giá từ không phải giá chốt mọi ngày.',
+                'id_required_policy' => 'CCCD/hộ chiếu bản gốc khi check-in — tên khớp booking.',
+                'nearby' => [
+                    ['name' => 'Bãi Cát Cò 3', 'distance' => 'Sát resort', 'icon' => 'umbrella'],
+                    ['name' => 'Chợ đêm Cát Bà', 'distance' => '~10 phút đi bộ', 'icon' => 'map-pin'],
+                    ['name' => 'Bến Bèo', 'distance' => '~10–15 phút', 'icon' => 'ship'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'flamingo-deluxe', 'name' => 'Deluxe Ocean View', 'price_from' => 2800000, 'capacity' => 2, 'description' => 'Phòng hướng biển, phù hợp cặp đôi.', 'amenities' => ['Giường king', 'Ban công hướng biển', '42m²'], 'attrs' => ['bed' => '1 giường king', 'size_sqm' => 42, 'view' => 'Hướng biển']],
+                ['code' => 'flamingo-suite', 'name' => 'Family Suite', 'price_from' => 4200000, 'capacity' => 4, 'description' => 'Suite gia đình, sức chứa tối đa 4 khách.', 'amenities' => ['2 giường', 'Khu ngồi', '58m²'], 'attrs' => ['bed' => 'King + extra', 'size_sqm' => 58, 'view' => 'Hướng biển / hồ bơi']],
+            ],
+            'faqs' => [
+                ['q' => 'Resort cách bến tàu bao xa?', 'a' => 'Khoảng 10–15 phút tới bến Bèo tuỳ giờ. Có thể đặt xe đưa đón riêng nếu mang nhiều hành lý.'],
+                ['q' => 'Có hồ bơi và bãi biển riêng không?', 'a' => 'Có hồ bơi vô cực trong khuôn viên; bãi Cát Cò 3 sát resort — tình trạng tắm biển phụ thuộc mùa và biển động.'],
+            ],
         ],
         [
             'code' => 'stay-catco-beach-hotel', 'cluster' => 'stay', 'category_slug' => 'bai-cat-co', 'zone_slug' => 'trung-tam-cat-ba',
@@ -1532,7 +1554,20 @@ $__servicesSeed = [
             'summary' => 'Khách sạn tầm trung ngay sát biển, phòng đơn giản nhưng view đẹp — phù hợp khách muốn tiết kiệm mà vẫn ở gần bãi tắm.',
             'highlights' => ['Đi bộ 2 phút ra bãi Cát Cò 1', 'Ban công hướng biển ở hầu hết phòng', 'Giá hợp lý cho nhóm bạn/gia đình', 'Gần các quán hải sản ven biển'],
             'inclusions' => ['Phòng nghỉ', 'Wi-Fi'], 'exclusions' => ['Ăn sáng', 'Đưa đón'],
-            'notes' => ['Mùa hè nên đặt trước ít nhất 1 tuần.'], 'attrs' => ['amenities' => ['Bãi biển gần', 'Nhà hàng', 'Ban công'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel'],
+            'notes' => ['Mùa hè nên đặt trước ít nhất 1 tuần.'],
+            'content' => '<p>Cat Ba Beach Hotel nằm sát bãi Cát Cò 1 — lựa chọn tầm trung khi ưu tiên đi bộ ra biển hơn tiện ích resort lớn.</p><h2>Phòng &amp; vị trí</h2><p>Phòng đơn giản, nhiều căn có ban công hướng biển. Quán hải sản ven bãi trong bán kính đi bộ.</p>',
+            'attrs' => [
+                'amenities' => ['Bãi biển gần', 'Nhà hàng', 'Ban công', 'Wi-Fi'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel',
+                'nearby' => [
+                    ['name' => 'Bãi Cát Cò 1', 'distance' => '~2 phút đi bộ', 'icon' => 'umbrella'],
+                    ['name' => 'Thị trấn Cát Bà', 'distance' => '~8 phút', 'icon' => 'map-pin'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'catco-std', 'name' => 'Phòng hướng phố', 'price_from' => 1350000, 'capacity' => 2, 'amenities' => ['Giường đôi', '28m²'], 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 28, 'view' => 'Phố / một phần biển']],
+                ['code' => 'catco-sea', 'name' => 'Phòng hướng biển', 'price_from' => 1650000, 'capacity' => 2, 'amenities' => ['Ban công hướng biển', '32m²'], 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 32, 'view' => 'Hướng biển']],
+            ],
         ],
         [
             'code' => 'stay-catba-sunrise-hotel', 'cluster' => 'stay', 'category_slug' => 'trung-tam-thi-tran', 'zone_slug' => 'trung-tam-cat-ba',
@@ -1542,7 +1577,19 @@ $__servicesSeed = [
             'summary' => 'Khách sạn boutique nhỏ, thiết kế ấm cúng, ngay trung tâm — thuận tiện đi bộ ra bến tàu, chợ đêm và các quán ăn.',
             'highlights' => ['Vị trí trung tâm, đi bộ ra bến Bèo 5 phút', 'Sân thượng ngắm hoàng hôn thị trấn', 'Chủ khách sạn hỗ trợ đặt tour trực tiếp', 'Giá tốt cho khách đi 1 mình/backpacker'],
             'inclusions' => ['Phòng nghỉ', 'Wi-Fi', 'Nước uống chào mừng'], 'exclusions' => ['Ăn sáng (có thể mua thêm)'],
-            'notes' => ['Không có hồ bơi — phù hợp khách ưu tiên vị trí và giá.'], 'attrs' => ['amenities' => ['Sân thượng', 'Wi-Fi', 'Hỗ trợ đặt tour'], 'check_in' => '13:00', 'check_out' => '11:00', 'property_type' => 'boutique hotel'],
+            'notes' => ['Không có hồ bơi — phù hợp khách ưu tiên vị trí và giá.'],
+            'content' => '<p>Sunrise Boutique nằm trung tâm thị trấn Cát Bà — hợp khách cần gần bến Bèo, chợ đêm và ngân sách vừa.</p><h2>Lưu ý</h2><p>Không có hồ bơi. Sân thượng ngắm hoàng hôn; chủ nhà hỗ trợ đặt tour ngày vịnh.</p>',
+            'attrs' => [
+                'amenities' => ['Sân thượng', 'Wi-Fi', 'Hỗ trợ đặt tour'],
+                'check_in' => '13:00', 'check_out' => '11:00', 'property_type' => 'boutique',
+                'nearby' => [
+                    ['name' => 'Bến Bèo', 'distance' => '~5 phút đi bộ', 'icon' => 'ship'],
+                    ['name' => 'Chợ đêm', 'distance' => '~5 phút', 'icon' => 'map-pin'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'sunrise-std', 'name' => 'Phòng boutique 2 khách', 'price_from' => 950000, 'capacity' => 2, 'amenities' => ['Giường đôi', '22m²'], 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 22, 'view' => 'Phố']],
+            ],
         ],
         [
             'code' => 'stay-floating-bungalow-lanha', 'cluster' => 'stay', 'category_slug' => 'vinh-lan-ha-nghi-duong', 'zone_slug' => 'vinh-lan-ha',
@@ -1552,7 +1599,25 @@ $__servicesSeed = [
             'summary' => 'Trải nghiệm hiếm có: ngủ trong bungalow nổi ngay giữa vịnh, xung quanh là núi đá vôi — không tiếng động cơ, chỉ có sóng vỗ.',
             'highlights' => ['Bungalow nổi trực tiếp trên mặt nước', 'View 360° núi đá vôi và vịnh', 'Kayak miễn phí ngay tại bungalow', 'Chỉ nhận số lượng khách hạn chế mỗi ngày'],
             'inclusions' => ['Bungalow 1 đêm', 'Đưa đón bằng tàu từ bến Bèo', 'Kayak', 'Bữa tối & sáng'], 'exclusions' => ['Đồ uống có cồn', 'Hoạt động lặn biển (đặt thêm)'],
-            'notes' => ['Số lượng bungalow rất hạn chế — nên đặt trước ít nhất 1 tuần.'], 'attrs' => ['amenities' => ['Kayak', 'View vịnh', 'Bữa ăn tại chỗ'], 'check_in' => '13:00', 'check_out' => '11:00', 'property_type' => 'floating bungalow'],
+            'notes' => ['Số lượng bungalow rất hạn chế — nên đặt trước ít nhất 1 tuần.'],
+            'content' => '<p>Bungalow nổi Lan Hạ là chỗ ngủ trên mặt nước, di chuyển bằng tàu từ bến Bèo — không phải khách sạn trên đảo.</p><h2>Trải nghiệm</h2><p>View núi đá vôi 360°, kayak tại chỗ, bữa tối và sáng theo gói. Số lượng hạn chế từng đêm.</p><h2>Lưu ý thời tiết</h2><p>Biển động có thể hoãn hoặc đổi ngày — không tự ý hứa giữ lịch khi cơ quan chức năng cấm tàu.</p>',
+            'attrs' => [
+                'amenities' => ['Kayak', 'View vịnh', 'Bữa ăn tại chỗ', 'Đưa đón tàu'],
+                'check_in' => '13:00', 'check_out' => '11:00', 'property_type' => 'floating',
+                'cancellation_policy' => 'Đổi ngày miễn phí hoặc hoàn theo xác nhận nếu tàu không ra vịnh vì thời tiết. Huỷ chủ quan theo điều kiện gói trên voucher.',
+                'child_policy' => 'Phù hợp trẻ biết bơi, luôn có người lớn kèm. Áo phao bắt buộc khi kayak.',
+                'nearby' => [
+                    ['name' => 'Bến Bèo (xuất phát)', 'distance' => 'Tàu đưa đón theo gói', 'icon' => 'ship'],
+                    ['name' => 'Vịnh Lan Hạ', 'distance' => 'Tại chỗ', 'icon' => 'waves'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'float-dbl', 'name' => 'Bungalow nổi 2 khách', 'price_from' => 3500000, 'capacity' => 2, 'description' => 'Gồm tàu đưa đón, kayak, tối & sáng.', 'amenities' => ['Giường đôi', 'Kayak', 'View vịnh'], 'attrs' => ['bed' => '1 giường đôi', 'view' => 'Vịnh 360°']],
+            ],
+            'faqs' => [
+                ['q' => 'Có điện và nhà vệ sinh trên bungalow không?', 'a' => 'Có tiện nghi cơ bản theo từng căn — xác nhận chi tiết (điện, nước ngọt, WC) trên báo giá vì mỗi cụm bungalow khác nhau.'],
+                ['q' => 'Trẻ em có ở được không?', 'a' => 'Được khi có người lớn kèm và trẻ thoải mái trên mặt nước. Áo phao bắt buộc khi kayak.'],
+            ],
         ],
         [
             'code' => 'stay-overnight-cruise-cabin', 'cluster' => 'stay', 'category_slug' => 'vinh-lan-ha-nghi-duong', 'zone_slug' => 'vinh-lan-ha',
@@ -1562,7 +1627,19 @@ $__servicesSeed = [
             'summary' => 'Chỉ đặt cabin ngủ đêm trên du thuyền — không kèm các hoạt động trong tour trọn gói, phù hợp khách muốn tự ghép lịch trình riêng.',
             'highlights' => ['Chỉ đặt cabin, tự chọn hoạt động riêng nếu muốn', 'Vẫn có bữa ăn cơ bản trên tàu', 'Linh hoạt ghép với tour ngày khác'],
             'inclusions' => ['Cabin 1 đêm', 'Bữa sáng & tối cơ bản'], 'exclusions' => ['Kayak, lặn ngắm san hô (đặt thêm)', 'Xe đưa đón bến tàu'],
-            'notes' => ['Phù hợp khách đã tự sắp xếp các hoạt động ban ngày.'], 'attrs' => ['amenities' => ['Cabin điều hoà', 'Bữa ăn cơ bản'], 'check_in' => '12:00', 'check_out' => '10:30', 'property_type' => 'cruise cabin'],
+            'notes' => ['Phù hợp khách đã tự sắp xếp các hoạt động ban ngày.'],
+            'content' => '<p>Cabin qua đêm là chỗ ngủ trên du thuyền, không phải khách sạn đất liền và không mặc định gồm kayak/lặn.</p><h2>Phù hợp ai?</h2><p>Khách đã có lịch ngày riêng, chỉ cần chỗ ngủ và bữa ăn cơ bản trên tàu.</p>',
+            'attrs' => [
+                'amenities' => ['Cabin điều hoà', 'Bữa ăn cơ bản'],
+                'check_in' => '12:00', 'check_out' => '10:30', 'property_type' => 'cabin',
+                'nearby' => [
+                    ['name' => 'Bến Bèo', 'distance' => 'Xuất phát theo lịch tàu', 'icon' => 'ship'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'cabin-twin', 'name' => 'Cabin twin', 'price_from' => 1800000, 'capacity' => 2, 'amenities' => ['2 giường đơn', 'Điều hoà'], 'attrs' => ['bed' => '2 giường twin', 'view' => 'Vịnh (tuỳ vị trí cabin)']],
+                ['code' => 'cabin-dbl', 'name' => 'Cabin giường đôi', 'price_from' => 1950000, 'capacity' => 2, 'amenities' => ['Giường đôi', 'Điều hoà'], 'attrs' => ['bed' => '1 giường đôi']],
+            ],
         ],
         [
             'code' => 'stay-viethai-homestay', 'cluster' => 'stay', 'category_slug' => 'homestay-viet-hai', 'zone_slug' => 'lang-viet-hai',
@@ -1572,7 +1649,24 @@ $__servicesSeed = [
             'summary' => 'Ở lại một đêm cùng người dân làng Việt Hải — không xe máy, không tiếng ồn, chỉ có rừng và tiếng côn trùng buổi tối.',
             'highlights' => ['Nhà sàn đơn giản, sạch sẽ, chủ nhà thân thiện', 'Ăn tối cùng gia đình chủ nhà với món địa phương', 'Yên tĩnh tuyệt đối — không có xe máy trong làng', 'Dễ kết hợp với tour trekking'],
             'inclusions' => ['Phòng/giường theo homestay', 'Bữa tối và sáng với gia đình chủ nhà'], 'exclusions' => ['Đồ uống', 'Xe/thuyền vào làng (đặt riêng hoặc gộp tour trekking)'],
-            'notes' => ['Điện chạy máy phát, có thể cắt vào một số giờ đêm.'], 'attrs' => ['amenities' => ['Bữa ăn gia đình', 'Không gian yên tĩnh'], 'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'homestay'],
+            'notes' => ['Điện chạy máy phát, có thể cắt vào một số giờ đêm.'],
+            'content' => '<p>Homestay Việt Hải nằm trong làng không xe máy giữa vườn quốc gia — tiện nghi đơn giản, bữa ăn cùng gia đình chủ nhà.</p><h2>Lưu ý</h2><p>Điện máy phát có thể cắt giờ đêm. Di chuyển vào làng bằng thuyền hoặc trekking — đặt kèm tour nếu chưa tự sắp xếp.</p>',
+            'attrs' => [
+                'amenities' => ['Bữa ăn gia đình', 'Không gian yên tĩnh'],
+                'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'homestay',
+                'child_policy' => 'Phù hợp gia đình; trẻ nhỏ cần người lớn kèm trên đường rừng/thuyền.',
+                'nearby' => [
+                    ['name' => 'Làng Việt Hải', 'distance' => 'Tại chỗ', 'icon' => 'map-pin'],
+                    ['name' => 'Vườn quốc gia Cát Bà', 'distance' => 'Trong vùng bảo tồn', 'icon' => 'trees'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'vh-fan', 'name' => 'Phòng quạt / giường homestay', 'price_from' => 400000, 'capacity' => 2, 'description' => 'Gồm tối & sáng cùng gia đình chủ nhà.', 'amenities' => ['Giường', 'Bữa ăn'], 'attrs' => ['bed' => 'Giường homestay']],
+            ],
+            'faqs' => [
+                ['q' => 'Có xe máy trong làng không?', 'a' => 'Không — làng không có xe máy. Vào làng bằng thuyền hoặc trekking.'],
+                ['q' => 'Điện có ổn định không?', 'a' => 'Điện máy phát, có thể cắt một số giờ đêm. Mang sạc dự phòng nếu cần thiết bị y tế / làm việc.'],
+            ],
         ],
 
         // ── EXPERIENCE (7) ───────────────────────────────────────────────────

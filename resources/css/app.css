@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './components/stay-detail.css' layer(components);
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -2443,6 +2444,37 @@
         flex-shrink: 0;
     }
 
+    .detail-title-card__kicker {
+        margin: var(--space-card-stack) 0 0;
+        color: var(--color-primary-700, #455f2c);
+    }
+
+    .detail-title-card__kicker + .detail-title-card__h1 {
+        margin-top: 0.35rem;
+    }
+
+    .detail-title-card__meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-gap-sm) var(--space-gap);
+        margin-top: var(--space-card-stack);
+        font-size: var(--fs-meta);
+        color: var(--color-ink-soft, #514f45);
+    }
+
+    .detail-title-card__meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        min-width: 0;
+    }
+
+    .detail-title-card__meta-item svg {
+        flex: none;
+        color: var(--color-primary-600, #567834);
+    }
+
     /* ── Detail body (tabs → stack → sidebar) — token §3 docs/04-design-system.md ── */
     .detail-body {
         margin-top: var(--space-stack);
@@ -3778,7 +3810,18 @@
             left: var(--space-card-stack-lg);
             max-width: calc(100% - (var(--space-card-stack-lg) * 2));
         }
+    }
 
+    .detail-book__unit,
+    .detail-book-bar__unit {
+        font-size: 0.72em;
+        font-weight: 600;
+        opacity: 0.72;
+        margin-left: 0.15em;
+    }
+
+
+    @media (max-width: 767px) {
         .detail-title-card__row {
             flex-direction: column;
         }

@@ -2,6 +2,7 @@
     'ariaLabel' => 'Đặt chỗ',
     'priceLabel' => 'Giá từ',
     'price' => null,
+    'priceUnit' => null,
     'priceHint' => 'Giá tham khảo — nhận báo giá chính xác trong 24h',
     'fallbackPrice' => 'Nhận báo giá trong 24h',
     'metaItems' => [],
@@ -50,7 +51,9 @@
         <div class="detail-book__price-block">
             @if ($hasPrice)
                 <p class="detail-book__from">{{ $priceLabel }}</p>
-                <p class="detail-book__amount">{{ $price }}</p>
+                <p class="detail-book__amount">
+                    {{ $price }}@if ($priceUnit)<span class="detail-book__unit">{{ $priceUnit }}</span>@endif
+                </p>
                 @if ($priceHint)
                     <p class="detail-book__hint">{{ $priceHint }}</p>
                 @endif
@@ -123,7 +126,9 @@
     <div class="detail-book-bar__lead">
         @if ($hasPrice)
             <p class="detail-book-bar__from">{{ $priceLabel }}</p>
-            <p class="detail-book-bar__amount">{{ $price }}</p>
+            <p class="detail-book-bar__amount">
+                {{ $price }}@if ($priceUnit)<span class="detail-book-bar__unit">{{ $priceUnit }}</span>@endif
+            </p>
         @else
             <p class="detail-book-bar__amount detail-book-bar__amount--soft">{{ $fallbackPrice }}</p>
         @endif

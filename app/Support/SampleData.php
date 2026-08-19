@@ -398,8 +398,11 @@ class SampleData
         return array_map(function (array $row) {
             $price = isset($row['price_from']) ? (float) $row['price_from'] : null;
             $cfg = config('services_catalog.clusters.'.($row['cluster'] ?? ''), []);
+            $attrs = is_array($row['attrs'] ?? null) ? $row['attrs'] : [];
+            $isStay = ($row['cluster'] ?? '') === 'stay';
+            $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
 
-            return [
+            $base = [
                 'slug' => $row['slug'] ?? '',
                 'code' => $row['code'] ?? '',
                 'title' => $row['title'] ?? '',
@@ -411,16 +414,17 @@ class SampleData
                 'countrySlug' => $row['country_slug'] ?? 'viet-nam',
                 'location' => $row['location_label'] ?? '',
                 'places' => array_values(array_filter([$row['location_label'] ?? null])),
-                'start' => $row['attrs']['from'] ?? '',
-                'end' => $row['attrs']['to'] ?? '',
-                'duration' => ! empty($row['attrs']['duration_hours'])
-                    ? ((int) $row['attrs']['duration_hours']).' giờ'
-                    : ($row['attrs']['flight_time'] ?? ''),
+                'start' => $attrs['from'] ?? '',
+                'end' => $attrs['to'] ?? '',
+                'duration' => ! empty($attrs['duration_hours'])
+                    ? ((int) $attrs['duration_hours']).' giờ'
+                    : ($isStay ? 'Theo đêm' : ($attrs['flight_time'] ?? '')),
                 'priceFrom' => $price,
                 'currency' => $row['currency'] ?? 'VND',
                 'priceFormatted' => $price !== null && $price > 0
                     ? self::formatMoney($price, $row['currency'] ?? 'VND')
                     : ($price !== null ? 'Liên hệ' : null),
+                'priceUnitLabel' => $isStay ? '/ đêm' : null,
                 'rating' => (float) ($row['rating'] ?? 0),
                 'reviewCount' => (int) ($row['review_count'] ?? 0),
                 'starRating' => $row['star_rating'] ?? null,
@@ -436,13 +440,71 @@ class SampleData
                 'exclusions' => $row['exclusions'] ?? [],
                 'notes' => $row['notes'] ?? [],
                 'content' => $row['content'] ?? '',
-                'attrs' => $row['attrs'] ?? [],
+                'attrs' => $attrs,
                 'faqs' => $row['faqs'] ?? [],
                 'quote' => self::serviceQuoteFromRow($row),
                 'styles' => [],
                 'gallery' => [],
                 'galleryCount' => 0,
             ];
+
+            if (! $isStay) {
+                return $base;
+            }
+
+            $amenities = array_values(array_filter(
+                is_array($attrs['amenities'] ?? null) ? $attrs['amenities'] : [],
+                fn ($a) => filled($a),
+            ));
+            $rooms = array_map(function (array $opt) use ($row) {
+                return \App\Support\StayFacilities::mapRoom($opt, $row['currency'] ?? 'VND', function ($amount, $cur) {
+                    return self::formatMoney($amount, $cur);
+                });
+            }, is_array($row['options'] ?? null) ? $row['options'] : []);
+
+            $nearby = is_array($attrs['nearby'] ?? null) ? $attrs['nearby'] : [];
+            $highlightBadges = \App\Support\StayFacilities::stringList($attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null);
+            if ($highlightBadges === []) {
+                $highlightBadges = array_slice($amenities, 0, 6);
+            }
+
+            $base['isStay'] = true;
+            $base['propertyType'] = $propertyType;
+            $base['propertyTypeLabel'] = config("stay.property_types.{$propertyType}") ?? ucfirst($propertyType);
+            $base['address'] = (string) ($attrs['address'] ?? '');
+            $base['checkIn'] = (string) ($attrs['check_in'] ?? '15:00');
+            $base['checkOut'] = (string) ($attrs['check_out'] ?? '12:00');
+            $base['amenities'] = $amenities;
+            $base['highlightBadges'] = $highlightBadges;
+            $base['amenityGroups'] = \App\Support\StayFacilities::displayGroups(
+                $amenities,
+                is_array($attrs['amenity_groups'] ?? null) ? $attrs['amenity_groups'] : null,
+            );
+            $base['nearby'] = $nearby;
+            $base['nearbyGroups'] = \App\Support\StayFacilities::nearbyGroups(
+                $nearby,
+                is_array($attrs['nearby_groups'] ?? null) ? $attrs['nearby_groups'] : null,
+            );
+            $base['reviewScores'] = \App\Support\StayFacilities::reviewScores($attrs);
+            $base['rooms'] = $rooms;
+            $base['policies'] = [
+                'check_in' => $base['checkIn'],
+                'check_out' => $base['checkOut'],
+                'cancellation' => (string) ($attrs['cancellation_policy'] ?? ''),
+                'child' => (string) ($attrs['child_policy'] ?? ''),
+                'extra_bed' => (string) ($attrs['extra_bed_policy'] ?? ''),
+                'age_restriction' => (string) ($attrs['age_restriction'] ?? ''),
+                'pet' => (string) ($attrs['pet_policy'] ?? ''),
+                'smoking' => (string) ($attrs['smoking_policy'] ?? ''),
+                'payment' => (string) ($attrs['payment_policy'] ?? ''),
+                'payment_cards' => is_array($attrs['payment_cards'] ?? null)
+                    ? implode(', ', $attrs['payment_cards'])
+                    : (string) ($attrs['payment_cards'] ?? ''),
+                'id_required' => (string) ($attrs['id_required_policy'] ?? ''),
+            ];
+            $base['featuredQuote'] = $base['quote'];
+
+            return $base;
         }, $rows);
     }
 

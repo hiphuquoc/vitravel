@@ -1550,8 +1550,24 @@ $__servicesSeed = [
             'summary' => 'Phòng trong nhà dân tại trung tâm xã đảo — gần bến cano, chợ Tân Hiệp và chùa Hải Tạng, chủ nhà hỗ trợ đặt tour lặn.',
             'highlights' => ['Gần bến cano và chợ Tân Hiệp', 'Chủ nhà nấu bữa tối theo yêu cầu', 'Hỗ trợ đặt snorkel và câu mực đêm', 'Wi-Fi cơ bản'],
             'inclusions' => ['Phòng 1 đêm', 'Wi-Fi', 'Khai báo lưu trú'], 'exclusions' => ['Bữa ăn (đặt thêm)', 'Đồ uống'],
-            'notes' => ['Tiện nghi đơn giản, điện có thể yếu vào giờ cao điểm buổi tối.'], 'attrs' => ['amenities' => ['Gần bến cano', 'Gần chợ', 'Hỗ trợ tour'], 'check_in' => 'Linh hoạt', 'check_out' => '11:00', 'property_type' => 'homestay'],
-            'options' => [['code' => 'bl-quat', 'name' => 'Phòng quạt 2 khách', 'price_from' => 450000, 'capacity' => 2], ['code' => 'bl-may-lanh', 'name' => 'Phòng máy lạnh 2 khách', 'price_from' => 650000, 'capacity' => 2]],
+            'notes' => ['Tiện nghi đơn giản, điện có thể yếu vào giờ cao điểm buổi tối.'],
+            'content' => '<p>Homestay nhà dân Bãi Làng — gần bến cano, chợ Tân Hiệp và chùa Hải Tạng. Chủ nhà hỗ trợ đặt snorkel / câu mực đêm; bữa tối đặt thêm.</p><h2>Tiện nghi</h2><p>Phòng quạt hoặc máy lạnh. Điện có thể yếu giờ cao điểm tối — không kỳ vọng resort.</p>',
+            'attrs' => [
+                'amenities' => ['Gần bến cano', 'Gần chợ', 'Hỗ trợ tour', 'Wi-Fi'],
+                'check_in' => 'Linh hoạt', 'check_out' => '11:00', 'property_type' => 'homestay',
+                'nearby' => [
+                    ['name' => 'Bến cano Bãi Làng', 'distance' => 'Đi bộ / vài phút', 'icon' => 'ship'],
+                    ['name' => 'Chợ Tân Hiệp', 'distance' => 'Gần', 'icon' => 'utensils'],
+                    ['name' => 'Chùa Hải Tạng', 'distance' => 'Đi bộ trong làng', 'icon' => 'map-pin'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bl-quat', 'name' => 'Phòng quạt 2 khách', 'price_from' => 450000, 'capacity' => 2, 'attrs' => ['bed' => '1 giường đôi / 2 đơn']],
+                ['code' => 'bl-may-lanh', 'name' => 'Phòng máy lạnh 2 khách', 'price_from' => 650000, 'capacity' => 2, 'amenities' => ['Máy lạnh'], 'attrs' => ['bed' => '1 giường đôi']],
+            ],
+            'faqs' => [
+                ['q' => 'Có điện ổn không?', 'a' => 'Điện đảo có thể yếu giờ cao điểm tối. Homestay không phải khách sạn đất liền — mang sạc dự phòng nếu cần.'],
+            ],
         ],
         [
             'code' => 'stay-homestay-bai-lang-family', 'cluster' => 'stay', 'category_slug' => 'homestay-bai-lang', 'zone_slug' => 'bai-lang',
@@ -1561,7 +1577,20 @@ $__servicesSeed = [
             'summary' => 'Phòng rộng cho gia đình hoặc nhóm bạn 3–5 người — giảm chi phí mỗi khách so với đặt hai phòng đôi.',
             'highlights' => ['Sức chứa 3–5 khách', 'Máy lạnh và nhà vệ sinh riêng', 'Gần quán ăn và bến cano'],
             'inclusions' => ['Phòng family 1 đêm', 'Wi-Fi'], 'exclusions' => ['Bữa ăn', 'Giường phụ ngoài sức chứa'],
-            'notes' => ['Số phòng gia đình rất hạn chế — nên đặt trước 5–7 ngày vào mùa cao điểm.'], 'attrs' => ['amenities' => ['Family room', 'Máy lạnh', 'Gần bến'], 'check_in' => 'Linh hoạt', 'check_out' => '11:00', 'property_type' => 'homestay'],
+            'notes' => ['Số phòng gia đình rất hạn chế — nên đặt trước 5–7 ngày vào mùa cao điểm.'],
+            'content' => '<p>Phòng gia đình homestay Bãi Làng cho 3–5 khách — máy lạnh, WC riêng. Số phòng rất hạn chế mùa cao điểm.</p>',
+            'attrs' => [
+                'amenities' => ['Family room', 'Máy lạnh', 'Gần bến', 'Wi-Fi'],
+                'check_in' => 'Linh hoạt', 'check_out' => '11:00', 'property_type' => 'homestay',
+                'child_policy' => 'Phù hợp 3–5 khách kể cả trẻ em; không thêm giường phụ ngoài sức chứa đã xác nhận.',
+                'nearby' => [
+                    ['name' => 'Bến cano Bãi Làng', 'distance' => 'Gần', 'icon' => 'ship'],
+                    ['name' => 'Quán ăn làng', 'distance' => 'Đi bộ', 'icon' => 'utensils'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bl-family', 'name' => 'Family 3–5 khách', 'price_from' => 850000, 'capacity' => 5, 'amenities' => ['Máy lạnh', 'WC riêng'], 'attrs' => ['bed' => '1 đôi + extra / nhiều giường']],
+            ],
         ],
         [
             'code' => 'stay-bungalow-bai-chong', 'cluster' => 'stay', 'category_slug' => 'bungalow-resort-bai-chong', 'zone_slug' => 'bai-chong',
@@ -1571,8 +1600,24 @@ $__servicesSeed = [
             'summary' => 'Bungalow ngay sau bãi tắm đẹp nhất đảo — buổi sáng và chiều muộn bãi gần như vắng khách.',
             'highlights' => ['Bước vài chục mét là xuống biển', 'Sáng sớm bãi vắng trước khi cano khách tới', 'Nhà hàng nhỏ tại chỗ', 'Số lượng bungalow hạn chế'],
             'inclusions' => ['Bungalow 1 đêm', 'Ăn sáng', 'Wi-Fi'], 'exclusions' => ['Bữa trưa và tối', 'Thuê kayak'],
-            'notes' => ['Không nhận khách trong mùa biển động khi cano ngưng hoạt động.'], 'attrs' => ['amenities' => ['Sát biển', 'Ăn sáng', 'Nhà hàng tại chỗ'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'bungalow'],
-            'options' => [['code' => 'bc-standard', 'name' => 'Bungalow tiêu chuẩn', 'price_from' => 1400000, 'capacity' => 2], ['code' => 'bc-seaview', 'name' => 'Bungalow hướng biển', 'price_from' => 1900000, 'capacity' => 2]],
+            'notes' => ['Không nhận khách trong mùa biển động khi cano ngưng hoạt động.'],
+            'content' => '<p>Bungalow sát Bãi Chồng — sáng sớm và chiều muộn bãi vắng. Ăn sáng gồm trong gói; kayak thuê thêm.</p><h2>Biển động</h2><p>Không nhận khách khi cano ngưng vì biển động — xác nhận lại lịch trước ngày đi.</p>',
+            'attrs' => [
+                'amenities' => ['Sát biển', 'Ăn sáng', 'Nhà hàng tại chỗ', 'Wi-Fi'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'bungalow',
+                'cancellation_policy' => 'Huỷ/đổi ngày theo chỗ nghỉ. Khi cano ngưng vì biển động, điều hành xác nhận lại — không tự ý hứa hoàn 100% trừ khi chỗ nghỉ đồng ý bằng văn bản.',
+                'nearby' => [
+                    ['name' => 'Bãi Chồng', 'distance' => 'Vài chục mét', 'icon' => 'umbrella'],
+                    ['name' => 'Bãi Làng', 'distance' => 'Xe / đi bộ nội đảo', 'icon' => 'map-pin'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bc-standard', 'name' => 'Bungalow tiêu chuẩn', 'price_from' => 1400000, 'capacity' => 2, 'attrs' => ['bed' => '1 giường đôi']],
+                ['code' => 'bc-seaview', 'name' => 'Bungalow hướng biển', 'price_from' => 1900000, 'capacity' => 2, 'amenities' => ['Hướng biển'], 'attrs' => ['bed' => '1 giường đôi', 'view' => 'Hướng biển']],
+            ],
+            'faqs' => [
+                ['q' => 'Có ngủ được khi biển động không?', 'a' => 'Khi cano ngưng, bungalow cũng không nhận khách. Lịch ngủ đảo phụ thuộc thời tiết — xác nhận với điều hành trước ngày đi.'],
+            ],
         ],
         [
             'code' => 'stay-glamping-bai-chong', 'cluster' => 'stay', 'category_slug' => 'bungalow-resort-bai-chong', 'zone_slug' => 'bai-chong',
@@ -1582,7 +1627,22 @@ $__servicesSeed = [
             'summary' => 'Lều dựng sẵn có nệm, đèn và quạt — trải nghiệm ngủ sát biển với chi phí thấp hơn bungalow.',
             'highlights' => ['Lều dựng sẵn, có nệm và đèn', 'Khu vệ sinh và tắm nước ngọt chung', 'Ngay sau bãi tắm', 'Phù hợp nhóm bạn trẻ'],
             'inclusions' => ['Lều 1 đêm', 'Nệm, gối, đèn'], 'exclusions' => ['Bữa ăn', 'Túi ngủ riêng'],
-            'notes' => ['Chỉ hoạt động trong mùa biển êm và khi được ban quản lý cho phép.'], 'attrs' => ['amenities' => ['Sát biển', 'Vệ sinh chung'], 'check_in' => '14:00', 'check_out' => '11:00', 'property_type' => 'glamping'],
+            'notes' => ['Chỉ hoạt động trong mùa biển êm và khi được ban quản lý cho phép.'],
+            'content' => '<p>Glamping Bãi Chồng — lều dựng sẵn có nệm, đèn, quạt; vệ sinh và tắm nước ngọt chung. Chỉ mở mùa biển êm và khi được phép.</p>',
+            'attrs' => [
+                'amenities' => ['Sát biển', 'Vệ sinh chung', 'Lều dựng sẵn'],
+                'check_in' => '14:00', 'check_out' => '11:00', 'property_type' => 'glamping',
+                'cancellation_policy' => 'Chỉ hoạt động khi biển êm và ban quản lý cho phép. Huỷ vì thời tiết theo xác nhận điều hành.',
+                'nearby' => [
+                    ['name' => 'Bãi Chồng', 'distance' => 'Sát bãi', 'icon' => 'umbrella'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'gl-tent', 'name' => 'Lều glamping 2 khách', 'price_from' => 900000, 'capacity' => 2, 'amenities' => ['Nệm', 'Đèn', 'Quạt']],
+            ],
+            'faqs' => [
+                ['q' => 'Lều có WC riêng không?', 'a' => 'Không — khu vệ sinh và tắm nước ngọt chung. Muốn WC riêng chọn bungalow Bãi Chồng.'],
+            ],
         ],
         [
             'code' => 'stay-homestay-bai-huong', 'cluster' => 'stay', 'category_slug' => 'homestay-bai-huong', 'zone_slug' => 'bai-huong',
@@ -1592,7 +1652,23 @@ $__servicesSeed = [
             'summary' => 'Homestay nhà dân tại làng chài phía nam đảo — yên tĩnh nhất, ăn cơm cùng gia đình chủ nhà, gần như không có khách đoàn.',
             'highlights' => ['Khu vực yên tĩnh nhất đảo', 'Bữa cơm gia đình với cá tươi trong ngày', 'Có thể theo ghe ngư dân thăm lưới', 'Bãi biển vắng ngay trước làng'],
             'inclusions' => ['Phòng 1 đêm', 'Khai báo lưu trú'], 'exclusions' => ['Bữa ăn (đặt thêm, rất nên đặt)', 'Di chuyển từ Bãi Làng'],
-            'notes' => ['Cách Bãi Làng 5–6 km — cần đặt xe hoặc ghe nội đảo.', 'Sóng di động và wifi yếu hơn Bãi Làng.'], 'attrs' => ['amenities' => ['Yên tĩnh', 'Bữa cơm nhà dân', 'Gần biển'], 'check_in' => 'Linh hoạt', 'check_out' => '11:00', 'property_type' => 'homestay'],
+            'notes' => ['Cách Bãi Làng 5–6 km — cần đặt xe hoặc ghe nội đảo.', 'Sóng di động và wifi yếu hơn Bãi Làng.'],
+            'content' => '<p>Homestay Bãi Hương — làng chài phía nam, yên nhất đảo. Bữa cơm nhà dân nên đặt thêm; di chuyển từ Bãi Làng cần xe hoặc ghe nội đảo (~5–6 km).</p>',
+            'attrs' => [
+                'amenities' => ['Yên tĩnh', 'Bữa cơm nhà dân', 'Gần biển'],
+                'check_in' => 'Linh hoạt', 'check_out' => '11:00', 'property_type' => 'homestay',
+                'nearby' => [
+                    ['name' => 'Bãi Hương', 'distance' => 'Sát làng', 'icon' => 'umbrella'],
+                    ['name' => 'Bãi Làng', 'distance' => '~5–6 km (xe / ghe nội đảo)', 'icon' => 'ship'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bh-room', 'name' => 'Phòng nhà dân 2 khách', 'price_from' => 400000, 'capacity' => 2],
+            ],
+            'faqs' => [
+                ['q' => 'Làm sao tới Bãi Hương?', 'a' => 'Từ Bãi Làng khoảng 5–6 km — đặt xe hoặc ghe nội đảo khi book, không tự ý đi đường rừng một mình.'],
+                ['q' => 'Wifi có ổn không?', 'a' => 'Sóng và wifi yếu hơn Bãi Làng. Coi đây là nghỉ làng chài, không phải khách sạn có mạng ổn định.'],
+            ],
         ],
         [
             'code' => 'stay-camping-bai-xep', 'cluster' => 'stay', 'category_slug' => 'cam-trai-bai-xep', 'zone_slug' => 'bai-xep',
@@ -1602,7 +1678,23 @@ $__servicesSeed = [
             'summary' => 'Chỗ dựng lều hoặc thuê lều tại vịnh kín gió Bãi Xếp — lựa chọn tiết kiệm nhất để ngủ lại đảo.',
             'highlights' => ['Vịnh kín gió, sóng nhẹ', 'Có thể thuê lều hoặc mang lều riêng', 'Khu vệ sinh chung', 'Gần điểm kayak'],
             'inclusions' => ['Chỗ dựng trại hoặc lều cơ bản'], 'exclusions' => ['Túi ngủ (thuê thêm)', 'Ăn uống', 'BBQ'],
-            'notes' => ['Áp dụng nguyên tắc không để lại rác — toàn bộ rác phải mang về đất liền.'], 'attrs' => ['amenities' => ['Camping', 'Vịnh kín gió'], 'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'camping'],
+            'notes' => ['Áp dụng nguyên tắc không để lại rác — toàn bộ rác phải mang về đất liền.'],
+            'content' => '<p>Camping Bãi Xếp — vịnh kín gió, thuê lều hoặc chỗ dựng. Vệ sinh chung; rác mang về đất liền. BBQ không mặc định.</p>',
+            'attrs' => [
+                'amenities' => ['Camping', 'Vịnh kín gió', 'Vệ sinh chung'],
+                'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'camping',
+                'cancellation_policy' => 'Huỷ khi gió mạnh / biển động theo xác nhận điều hành — không cắm trại nếu không an toàn.',
+                'nearby' => [
+                    ['name' => 'Bãi Xếp', 'distance' => 'Sát vịnh', 'icon' => 'umbrella'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bx-pitch', 'name' => 'Chỗ dựng (mang lều)', 'price_from' => 220000, 'capacity' => 2],
+                ['code' => 'bx-tent', 'name' => 'Thuê lều cơ bản', 'price_from' => 320000, 'capacity' => 2],
+            ],
+            'faqs' => [
+                ['q' => 'Có được đốt lửa / BBQ không?', 'a' => 'Chỉ khi được phép tại điểm camping và thời tiết an toàn — xác nhận khi đặt. Rác phải mang về đất liền.'],
+            ],
         ],
         [
             'code' => 'stay-khach-san-hoi-an-cua-dai', 'cluster' => 'stay', 'category_slug' => 'khach-san-hoi-an-cua-dai', 'zone_slug' => 'ket-hop-hoi-an',
@@ -1612,7 +1704,22 @@ $__servicesSeed = [
             'summary' => 'Lưu trú đất liền cách bến cano 5–10 phút — tiện cho khách phải có mặt tại bến trước 07:30.',
             'highlights' => ['Gần bến cano Cửa Đại', 'Cách phố cổ khoảng 10–15 phút', 'Hồ bơi và ăn sáng', 'Giữ hành lý miễn phí trong ngày ra đảo'],
             'inclusions' => ['Phòng 1 đêm', 'Ăn sáng', 'Wi-Fi'], 'exclusions' => ['Minibar', 'Đưa đón sân bay'],
-            'notes' => ['Nhiều khách chọn ngủ tại đây một đêm trước ngày ra đảo để tránh dậy quá sớm ở phố cổ.'], 'attrs' => ['amenities' => ['Hồ bơi', 'Ăn sáng', 'Gần bến cano'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel'],
+            'notes' => ['Nhiều khách chọn ngủ tại đây một đêm trước ngày ra đảo để tránh dậy quá sớm ở phố cổ.'],
+            'content' => '<p>Khách sạn gần bến Cửa Đại — 5–10 phút tới cano, ăn sáng gồm trong gói, giữ hành lý ngày ra đảo. Đưa đón sân bay không mặc định.</p>',
+            'attrs' => [
+                'amenities' => ['Hồ bơi', 'Ăn sáng', 'Gần bến cano', 'Wi-Fi', 'Giữ hành lý'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel',
+                'nearby' => [
+                    ['name' => 'Bến cano Cửa Đại', 'distance' => '5–10 phút', 'icon' => 'ship'],
+                    ['name' => 'Phố cổ Hội An', 'distance' => '~10–15 phút xe', 'icon' => 'map-pin'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'cd-std', 'name' => 'Superior 2 khách', 'price_from' => 750000, 'capacity' => 2, 'amenities' => ['Điều hoà', '28m²'], 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 28]],
+            ],
+            'faqs' => [
+                ['q' => 'Có giữ hành lý ngày ra đảo không?', 'a' => 'Có — giữ hành lý miễn phí trong ngày ra đảo theo xác nhận chỗ nghỉ. Đưa đón sân bay tính riêng trừ khi gói ghi rõ.'],
+            ],
         ],
 
         // ── EXPERIENCE (9) ───────────────────────────────────────────────────

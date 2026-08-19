@@ -1378,8 +1378,23 @@ $__servicesSeed = [
             'summary' => 'Lưu trú sát dải bãi chính — đi bộ ra biển, gần quán ăn, phù hợp gia đình và lần đầu tới đảo.',
             'highlights' => ['Gần Bãi Nhỏ', 'Phòng điều hoà / quạt tuỳ hạng', 'Hỗ trợ đặt jeep & snorkel', 'Wi-Fi cơ bản'],
             'inclusions' => ['Phòng theo hạng', 'Wi-Fi', 'Phí đặt phòng'], 'exclusions' => ['Ăn sáng (tuỳ rate)', 'Minibar'],
-            'notes' => ['Mùa lễ nên đặt trước 5–7 ngày.'], 'attrs' => ['amenities' => ['Gần biển', 'Nhà hàng gần', 'Hỗ trợ tour'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort/hotel'],
-            'options' => [['code' => 'bn-standard', 'name' => 'Standard', 'price_from' => 1200000, 'capacity' => 2], ['code' => 'bn-ocean', 'name' => 'Ocean View', 'price_from' => 1650000, 'capacity' => 2]],
+            'notes' => ['Mùa lễ nên đặt trước 5–7 ngày.'],
+            'content' => '<p>Chỗ nghỉ sát Bãi Nhỏ — khu tiện nhất đảo cho lần đầu tới Phú Quý: đi bộ ra biển, quán ăn và thuê xe.</p><h2>Hạng phòng</h2><p>Standard hoặc Ocean View. Ăn sáng tuỳ gói rate — không mặc định gồm mọi dịch vụ.</p>',
+            'attrs' => [
+                'amenities' => ['Gần biển', 'Nhà hàng gần', 'Hỗ trợ tour', 'Wi-Fi'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort',
+                'nearby' => [
+                    ['name' => 'Bãi Nhỏ', 'distance' => 'Đi bộ', 'icon' => 'umbrella'],
+                    ['name' => 'Cảng Phú Quý', 'distance' => '~10–15 phút xe', 'icon' => 'ship'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bn-standard', 'name' => 'Standard', 'price_from' => 1200000, 'capacity' => 2, 'amenities' => ['Điều hoà', '28m²'], 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 28]],
+                ['code' => 'bn-ocean', 'name' => 'Ocean View', 'price_from' => 1650000, 'capacity' => 2, 'amenities' => ['Hướng biển', '32m²'], 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 32, 'view' => 'Hướng biển']],
+            ],
+            'faqs' => [
+                ['q' => 'Bãi Nhỏ có ồn không?', 'a' => 'Khu chính đông hơn Bãi Dài vào mùa lễ — hợp gia đình cần tiện nghi. Muốn yên hơn chọn bungalow Bãi Dài.'],
+            ],
         ],
         [
             'code' => 'stay-bai-nho-boutique', 'cluster' => 'stay', 'category_slug' => 'resort-bai-nho', 'zone_slug' => 'bai-nho',
@@ -1389,7 +1404,16 @@ $__servicesSeed = [
             'summary' => 'Khách sạn nhỏ, sạch, giá mềm hơn resort mặt biển — đi bộ vài phút ra bãi.',
             'highlights' => ['Giá hợp lý', 'Chủ nhà hỗ trợ thuê xe', 'Yên hơn khu bar đông'],
             'inclusions' => ['Phòng', 'Wi-Fi'], 'exclusions' => ['Ăn sáng'],
-            'notes' => ['Không phải mặt tiền biển trực tiếp.'], 'attrs' => ['amenities' => ['Wi-Fi', 'Hỗ trợ xe máy'], 'check_in' => '13:00', 'check_out' => '11:00', 'property_type' => 'boutique hotel'],
+            'notes' => ['Không phải mặt tiền biển trực tiếp.'],
+            'content' => '<p>Boutique gần Bãi Nhỏ — không mặt tiền biển, giá mềm hơn, chủ nhà hỗ trợ thuê xe máy.</p>',
+            'attrs' => [
+                'amenities' => ['Wi-Fi', 'Hỗ trợ xe máy'],
+                'check_in' => '13:00', 'check_out' => '11:00', 'property_type' => 'boutique',
+                'nearby' => [['name' => 'Bãi Nhỏ', 'distance' => 'Vài phút đi bộ', 'icon' => 'umbrella']],
+            ],
+            'options' => [
+                ['code' => 'bnb-std', 'name' => 'Phòng boutique 2 khách', 'price_from' => 950000, 'capacity' => 2, 'attrs' => ['bed' => '1 giường đôi', 'size_sqm' => 22]],
+            ],
         ],
         [
             'code' => 'stay-bai-dai-bungalow', 'cluster' => 'stay', 'category_slug' => 'bungalow-bai-dai', 'zone_slug' => 'bai-dai',
@@ -1399,7 +1423,19 @@ $__servicesSeed = [
             'summary' => 'Bungalow gần bãi cát dài — ít ồn hơn Bãi Nhỏ, hợp couple và ai muốn ngủ nghe sóng.',
             'highlights' => ['Không gian yên', 'Gần bãi dài', 'Phù hợp honeymoon', 'Số phòng hạn chế'],
             'inclusions' => ['Bungalow 1 đêm', 'Wi-Fi (nếu có)', 'Phí đặt'], 'exclusions' => ['Ăn uống', 'Xe máy'],
-            'notes' => ['Xa trung tâm hơn — nên thuê xe hoặc đặt jeep đưa đón.'], 'attrs' => ['amenities' => ['Gần biển', 'Yên tĩnh'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'bungalow'],
+            'notes' => ['Xa trung tâm hơn — nên thuê xe hoặc đặt jeep đưa đón.'],
+            'content' => '<p>Bungalow Bãi Dài yên hơn khu Bãi Nhỏ — hợp couple. Xa chợ/cảng hơn, nên thuê xe hoặc jeep đưa đón.</p>',
+            'attrs' => [
+                'amenities' => ['Gần biển', 'Yên tĩnh'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'bungalow',
+                'nearby' => [
+                    ['name' => 'Bãi Dài', 'distance' => 'Sát bãi', 'icon' => 'umbrella'],
+                    ['name' => 'Thị trấn / cảng', 'distance' => 'Cần xe máy hoặc jeep', 'icon' => 'car'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'bd-bungalow', 'name' => 'Bungalow 2 khách', 'price_from' => 1500000, 'capacity' => 2, 'attrs' => ['bed' => '1 giường đôi', 'view' => 'Gần biển']],
+            ],
         ],
         [
             'code' => 'stay-homestay-thi-tran', 'cluster' => 'stay', 'category_slug' => 'homestay-thi-tran', 'zone_slug' => 'trung-tam-phu-quy',
@@ -1409,7 +1445,20 @@ $__servicesSeed = [
             'summary' => 'Homestay sạch, gần cảng và chợ hải sản — tiện giờ tàu sớm/muộn và ngân sách tiết kiệm.',
             'highlights' => ['Gần cảng', 'Giá mềm', 'Chủ nhà thân thiện', 'Thuận ăn hải sản'],
             'inclusions' => ['Phòng/giường', 'Wi-Fi cơ bản'], 'exclusions' => ['Ăn sáng (có thể mua thêm)'],
-            'notes' => ['Không phải view biển trực diện.'], 'attrs' => ['amenities' => ['Gần cảng', 'Gần chợ'], 'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'homestay'],
+            'notes' => ['Không phải view biển trực diện.'],
+            'content' => '<p>Homestay thị trấn — gần cảng và chợ hải sản, hợp giờ tàu sớm/muộn. Không phải view biển.</p>',
+            'attrs' => [
+                'amenities' => ['Gần cảng', 'Gần chợ', 'Wi-Fi'],
+                'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'homestay',
+                'nearby' => [
+                    ['name' => 'Cảng Phú Quý', 'distance' => 'Đi bộ / vài phút xe', 'icon' => 'ship'],
+                    ['name' => 'Chợ hải sản', 'distance' => 'Gần', 'icon' => 'utensils'],
+                ],
+            ],
+            'options' => [
+                ['code' => 'hs-fan', 'name' => 'Phòng quạt 2 khách', 'price_from' => 450000, 'capacity' => 2],
+                ['code' => 'hs-ac', 'name' => 'Phòng máy lạnh 2 khách', 'price_from' => 650000, 'capacity' => 2, 'amenities' => ['Máy lạnh']],
+            ],
         ],
         [
             'code' => 'stay-family-room-bai-nho', 'cluster' => 'stay', 'category_slug' => 'resort-bai-nho', 'zone_slug' => 'bai-nho',
@@ -1419,7 +1468,17 @@ $__servicesSeed = [
             'summary' => 'Phòng rộng cho 3–4 khách — giảm chi phí/người so với đặt 2 phòng riêng.',
             'highlights' => ['Sức chứa 3–4', 'Gần biển', 'Phù hợp cuối tuần gia đình'],
             'inclusions' => ['Phòng family', 'Wi-Fi'], 'exclusions' => ['Ăn sáng'],
-            'notes' => ['Số phòng hạn chế — đặt sớm lễ.'], 'attrs' => ['amenities' => ['Family room', 'Gần biển'], 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel'],
+            'notes' => ['Số phòng hạn chế — đặt sớm lễ.'],
+            'content' => '<p>Phòng gia đình Bãi Nhỏ cho 3–4 khách — inventory ít, đặt sớm lễ.</p>',
+            'attrs' => [
+                'amenities' => ['Family room', 'Gần biển', 'Wi-Fi'],
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel',
+                'child_policy' => 'Phù hợp 3–4 khách kể cả trẻ em; không thêm người ngoài sức chứa đã xác nhận.',
+                'nearby' => [['name' => 'Bãi Nhỏ', 'distance' => 'Gần', 'icon' => 'umbrella']],
+            ],
+            'options' => [
+                ['code' => 'bn-family', 'name' => 'Family 3–4 khách', 'price_from' => 1800000, 'capacity' => 4, 'attrs' => ['bed' => '1 đôi + 1 extra / 2 giường', 'size_sqm' => 36]],
+            ],
         ],
         [
             'code' => 'stay-camping-gear-bai-dai', 'cluster' => 'stay', 'category_slug' => 'bungalow-bai-dai', 'zone_slug' => 'bai-dai',
@@ -1429,7 +1488,22 @@ $__servicesSeed = [
             'summary' => 'Điểm dựng lều / thuê lều gần Bãi Dài cho ai muốn ngủ nghe sóng với ngân sách thấp.',
             'highlights' => ['Giá thấp', 'Gần biển', 'Khu vệ sinh chung'],
             'inclusions' => ['Chỗ dựng / lều cơ bản'], 'exclusions' => ['Túi ngủ (thuê thêm)', 'Ăn uống'],
-            'notes' => ['Không khuyến khích khi gió rất mạnh.'], 'attrs' => ['amenities' => ['Camping'], 'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'camping'],
+            'notes' => ['Không khuyến khích khi gió rất mạnh.'],
+            'content' => '<p>Camping Bãi Dài — lều hoặc chỗ dựng, vệ sinh chung. Không khuyến khích khi gió mạnh; mang rác về.</p>',
+            'attrs' => [
+                'amenities' => ['Camping', 'Vệ sinh chung'],
+                'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'camping',
+                'cancellation_policy' => 'Huỷ khi gió mạnh / cảnh báo thời tiết theo xác nhận điều hành — không cắm trại nếu không an toàn.',
+                'nearby' => [['name' => 'Bãi Dài', 'distance' => 'Sát bãi', 'icon' => 'umbrella']],
+            ],
+            'options' => [
+                ['code' => 'camp-pitch', 'name' => 'Chỗ dựng (mang lều)', 'price_from' => 250000, 'capacity' => 2],
+                ['code' => 'camp-tent', 'name' => 'Thuê lều cơ bản', 'price_from' => 350000, 'capacity' => 2],
+            ],
+            'faqs' => [
+                ['q' => 'Có nhà vệ sinh không?', 'a' => 'Có khu vệ sinh chung. Không phải bungalow có WC riêng.'],
+                ['q' => 'Có được đốt lửa không?', 'a' => 'Chỉ khi được phép tại điểm camping và thời tiết an toàn — xác nhận khi đặt, không tự ý đốt trên bãi.'],
+            ],
         ],
 
         // ── EXPERIENCE (7) ───────────────────────────────────────────────────

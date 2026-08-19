@@ -177,6 +177,7 @@ return [
         'travel-styles' => 'travel_styles',
         'countries' => 'countries',
         'services' => 'services',
+        'stay-crawls' => 'services',
         'service-categories' => 'service_categories',
         'home-slides' => 'content',
         'home-sections' => 'content',
@@ -232,7 +233,8 @@ return [
         'GET ai/' => 'ai.use',
         'POST ai/' => 'ai.use',
 
-        'GET cache' => 'settings.view',
+        'POST stay-crawls' => 'services.create',
+        'GET stay-crawls' => 'services.view',
         'POST cache' => 'settings.update',
         'DELETE cache' => 'settings.update',
 
@@ -256,6 +258,7 @@ return [
         '/cruises/packages' => 'packages.view',
         '/cruises/types' => 'cruise_types.view',
         '/services/products' => 'services.view',
+        '/services/stays/crawler' => 'services.view',
         '/services/categories' => 'service_categories.view',
         '/settings/hubs' => 'settings.view',
         '/content/slides' => 'content.view',

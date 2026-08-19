@@ -4,9 +4,13 @@
     'exclusions' => [],
     'notes' => [],
     'sectionId' => 'bao-gom',
+    'embedded' => false,
 ])
 
 @if (count($inclusions) || count($exclusions) || count($notes))
+    @if ($embedded)
+        <div class="detail-cover">
+    @else
     <section
         id="{{ $sectionId }}"
         class="detail-section"
@@ -15,6 +19,7 @@
         <h2 class="detail-section__title">{{ $title }}</h2>
 
         <div class="detail-cover">
+    @endif
             @if (count($inclusions))
                 <div class="detail-cover__box detail-cover__box--in">
                     <h3 class="detail-cover__head">
@@ -78,5 +83,7 @@
                 </div>
             @endif
         </div>
+    @if (! $embedded)
     </section>
+    @endif
 @endif

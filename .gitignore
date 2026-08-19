@@ -14,6 +14,7 @@
 /.zed
 /auth.json
 /node_modules
+/scripts/stay-crawl/node_modules
 /admin/node_modules
 /admin/.next
 /admin/.env.local

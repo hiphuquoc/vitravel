@@ -1,0 +1,600 @@
+/* Stay detail — white cards on cream canvas (docs/04-design-system.md). */
+
+.stay-chip-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stay-chip-list .vt-chip {
+    gap: 0.35rem;
+}
+
+.stay-chip-list .vt-chip svg {
+    flex: none;
+    color: var(--color-primary-600, #567834);
+}
+
+.stay-panel__title {
+    margin: 0 0 var(--space-card-stack);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--color-ink, #272b23);
+}
+
+.stay-highlight-panel,
+.stay-score-panel,
+.stay-quote,
+.stay-amenity-group {
+    padding: var(--space-card);
+    border-radius: 0.9rem;
+    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+}
+
+.stay-highlight-panel + .detail-facts,
+.detail-facts + .stay-score-panel,
+.detail-facts + .stay-quote,
+.stay-score-panel + .stay-quote {
+    margin-top: var(--space-stack);
+}
+
+.stay-quote {
+    margin-left: 0;
+    margin-right: 0;
+    border-left: 3px solid var(--color-primary-500, #6b8f3f);
+    border-radius: 0 0.9rem 0.9rem 0;
+    background: color-mix(in srgb, var(--color-primary-50, #f5f8ec) 70%, #fff);
+    font-style: italic;
+}
+
+.stay-quote p {
+    margin: 0;
+    font-size: var(--fs-body);
+    line-height: var(--lh-body);
+    color: var(--color-ink, #272b23);
+}
+
+.stay-quote footer {
+    margin-top: var(--space-card-stack);
+    font-size: var(--fs-meta);
+    font-style: normal;
+    color: var(--color-muted, #817d6e);
+}
+
+.stay-score-bars {
+    display: grid;
+    gap: var(--space-card-stack);
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .stay-score-bars {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--space-card-stack) var(--space-gap-lg);
+    }
+}
+
+.stay-score-bars__row {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 8.5rem) minmax(0, 1fr) 2.2rem;
+    align-items: center;
+    gap: var(--space-gap-sm);
+    font-size: var(--fs-meta);
+    color: var(--color-ink-soft, #514f45);
+}
+
+.stay-score-bars__track {
+    height: 0.45rem;
+    border-radius: 99px;
+    background: var(--color-line, #ddd9c2);
+    overflow: hidden;
+}
+
+.stay-score-bars__track i {
+    display: block;
+    height: 100%;
+    background: var(--color-primary-600, #567834);
+    border-radius: inherit;
+}
+
+.stay-score-bars__row strong {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-align: right;
+    color: var(--color-ink, #272b23);
+}
+
+.stay-amenity-groups,
+.stay-nearby-groups {
+    display: grid;
+    gap: var(--space-gap);
+}
+
+@media (min-width: 768px) {
+    .stay-amenity-groups,
+    .stay-nearby-groups {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.stay-amenity-group__title {
+    margin: 0 0 var(--space-card-stack-lg);
+    font-size: var(--fs-body);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.stay-amenity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+    gap: var(--space-card-stack) var(--space-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stay-amenity-grid li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.45rem;
+    font-size: var(--fs-body);
+    line-height: 1.4;
+    color: var(--color-ink-soft, #514f45);
+}
+
+.stay-amenity-grid li svg {
+    flex: none;
+    margin-top: 0.15rem;
+    color: var(--color-primary-600, #567834);
+}
+
+.stay-rooms {
+    display: grid;
+    gap: var(--space-gap);
+}
+
+.stay-room-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-gap);
+    padding: var(--space-card);
+    border-radius: 0.9rem;
+    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.stay-room-card--gallery {
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.stay-room-card__gallery {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 0.4rem;
+    height: 9.75rem;
+    overflow: hidden;
+    border-radius: 0.75rem;
+}
+
+.stay-room-card__gallery--1 { grid-template-columns: 1fr; }
+.stay-room-card__gallery--2 { grid-template-columns: 1.4fr 1fr; }
+.stay-room-card__gallery--3 { grid-template-columns: 1.6fr 1fr 1fr; }
+.stay-room-card__gallery--4 { grid-template-columns: 1.5fr 1fr 1fr 1fr; }
+
+.stay-room-card__shot {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    background: var(--color-page-soft, #f8f6ec);
+    cursor: pointer;
+}
+
+.stay-room-card__shot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stay-room-card__more-count {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: rgb(39 43 35 / 0.45);
+    color: #fff;
+    font-size: var(--fs-body);
+    font-weight: 700;
+}
+
+.stay-room-card:hover,
+.stay-room-card:focus-within {
+    box-shadow: var(--shadow-card-hover);
+    border-color: color-mix(in srgb, var(--color-primary-300, #b5cb86) 55%, var(--color-line, #ddd9c2));
+}
+
+.stay-room-card__body {
+    min-width: 0;
+}
+
+.stay-room-card__name {
+    margin: 0 0 var(--space-card-stack);
+}
+
+.stay-room-card__desc {
+    margin: 0 0 var(--space-card-stack-lg);
+    color: var(--color-ink-soft, #514f45);
+}
+
+.stay-room-card__specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(6.75rem, 1fr));
+    gap: var(--space-card-stack) var(--space-gap);
+    margin: 0;
+}
+
+.stay-room-card__specs div {
+    min-width: 0;
+}
+
+.stay-room-card__specs dt {
+    margin: 0;
+    font-size: var(--fs-kicker);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-muted, #817d6e);
+}
+
+.stay-room-card__specs dd {
+    margin: 0.15rem 0 0;
+    font-size: var(--fs-body);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--color-ink, #272b23);
+}
+
+.stay-room-card__tags {
+    margin-top: var(--space-card-stack-lg);
+    padding: 0;
+    list-style: none;
+}
+
+.stay-room-card__tags .vt-chip {
+    pointer-events: none;
+}
+
+.stay-room-card__price {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.15rem;
+    min-width: 9.25rem;
+    padding-left: var(--space-gap);
+    border-left: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+    text-align: right;
+}
+
+.stay-room-card__price--inline {
+    align-items: flex-start;
+    text-align: left;
+    min-width: 0;
+    padding-left: 0;
+    border-left: 0;
+}
+
+.stay-room-card__from {
+    color: var(--color-muted, #817d6e);
+}
+
+.stay-room-card__amount {
+    font-family: var(--font-display);
+    font-size: var(--fs-detail-price);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-primary-700, #455f2c);
+}
+
+.stay-room-card__amount--soft {
+    font-size: var(--fs-detail-price-soft);
+    color: var(--color-primary-800, #3a4e27);
+}
+
+.stay-room-card__unit {
+    font-size: var(--fs-meta);
+    font-weight: 600;
+    color: var(--color-muted, #817d6e);
+}
+
+.stay-room-card__more {
+    margin-top: var(--space-card-stack);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stay-nearby {
+    display: grid;
+    gap: var(--space-card-stack);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stay-nearby--flat {
+    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    gap: var(--space-gap-sm);
+}
+
+.stay-nearby li {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-gap-sm);
+    font-size: var(--fs-body);
+    line-height: 1.4;
+}
+
+.stay-nearby li svg {
+    flex: none;
+    margin-top: 0.2rem;
+    color: var(--color-primary-600, #567834);
+}
+
+.stay-nearby strong {
+    display: block;
+    font-weight: 600;
+    color: var(--color-ink, #272b23);
+}
+
+.stay-nearby span {
+    display: block;
+    margin-top: 0.1rem;
+    font-size: var(--fs-meta);
+    color: var(--color-muted, #817d6e);
+}
+
+.detail-section .detail-facts + .detail-cover {
+    margin-top: var(--space-stack);
+}
+
+body.stay-room-lock {
+    overflow: hidden;
+}
+
+.stay-room-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    display: grid;
+    place-items: center;
+    padding: var(--space-gutter);
+}
+
+.stay-room-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(39 43 35 / 0.45);
+}
+
+.stay-room-modal__panel {
+    position: relative;
+    z-index: 1;
+    width: min(72rem, 100%);
+    max-height: min(92vh, 56rem);
+    overflow: auto;
+    border-radius: 1rem;
+    background: #fff;
+    box-shadow: var(--shadow-card-hover);
+}
+
+.stay-room-modal__close {
+    position: absolute;
+    top: var(--space-card-stack-lg);
+    right: var(--space-card-stack-lg);
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: var(--space-hit);
+    height: var(--space-hit);
+    padding: 0;
+    border: 1px solid var(--color-line, #ddd9c2);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--color-ink, #272b23);
+    cursor: pointer;
+}
+
+.stay-room-modal__close:hover {
+    border-color: var(--color-primary-400, #93b25e);
+    color: var(--color-primary-700, #455f2c);
+}
+
+.stay-room-modal__grid {
+    display: grid;
+}
+
+.stay-room-modal__hero {
+    min-height: 14rem;
+    background: var(--color-page-soft, #f8f6ec);
+    overflow: hidden;
+}
+
+.stay-room-modal__hero img {
+    display: block;
+    width: 100%;
+    height: 14rem;
+    object-fit: cover;
+}
+
+.stay-room-modal__thumbs {
+    display: flex;
+    gap: var(--space-card-stack);
+    overflow-x: auto;
+    padding: var(--space-card-stack-lg) var(--space-card);
+}
+
+.stay-room-modal__thumb {
+    flex: 0 0 4.25rem;
+    width: 4.25rem;
+    height: 4.25rem;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 0.65rem;
+    overflow: hidden;
+    background: none;
+    cursor: pointer;
+}
+
+.stay-room-modal__thumb.is-active {
+    border-color: var(--color-primary-500, #6b8f3f);
+}
+
+.stay-room-modal__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stay-room-modal__body {
+    padding: var(--space-card);
+}
+
+.stay-room-modal__title {
+    margin: 0.2rem 0 var(--space-card-stack-lg);
+    font-family: var(--font-display);
+    font-size: var(--fs-detail-title);
+    font-weight: 700;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+}
+
+.stay-room-modal__block {
+    margin-top: var(--space-stack);
+    padding: var(--space-card-stack-lg);
+    border-radius: 0.75rem;
+    background: color-mix(in srgb, var(--color-page-soft, #f8f6ec) 65%, #fff);
+    border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 70%, transparent);
+}
+
+.stay-room-modal__block .stay-panel__title {
+    margin-bottom: var(--space-card-stack);
+}
+
+.stay-room-modal__bed {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.75rem;
+    margin: 0 0 var(--space-card-stack);
+    font-size: var(--fs-body);
+}
+
+.stay-room-modal__bed:last-child {
+    margin-bottom: 0;
+}
+
+.stay-room-modal__bed strong {
+    min-width: 6.5rem;
+    color: var(--color-ink, #272b23);
+}
+
+.stay-room-modal__meta,
+.stay-room-modal__comfort,
+.stay-room-modal__desc,
+.stay-room-modal__smoke {
+    margin: var(--space-card-stack-lg) 0 0;
+    color: var(--color-ink-soft, #514f45);
+}
+
+.stay-room-modal__comfort {
+    font-size: var(--fs-meta);
+}
+
+.stay-room-modal__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-gap);
+    margin-top: var(--space-stack);
+    padding-top: var(--space-card-stack-lg);
+    border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+}
+
+@media (min-width: 1024px) {
+    .stay-room-modal__grid {
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        min-height: 28rem;
+    }
+
+    .stay-room-modal__photos {
+        position: sticky;
+        top: 0;
+        align-self: start;
+    }
+
+    .stay-room-modal__hero {
+        min-height: 22rem;
+        border-radius: 1rem 0 0 0;
+    }
+
+    .stay-room-modal__hero img {
+        height: 22rem;
+        border-radius: 1rem 0 0 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .stay-room-card {
+        grid-template-columns: 1fr;
+    }
+
+    .stay-room-card__gallery {
+        height: 10.5rem;
+        grid-template-columns: 1.4fr 1fr !important;
+    }
+
+    .stay-room-card__gallery--1 {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stay-room-card__gallery--3 .stay-room-card__shot:nth-child(3),
+    .stay-room-card__gallery--4 .stay-room-card__shot:nth-child(n+3) {
+        display: none;
+    }
+
+    .stay-room-card__price {
+        align-items: flex-start;
+        text-align: left;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.25rem 0.55rem;
+        min-width: 0;
+        padding-top: var(--space-card-stack-lg);
+        padding-left: 0;
+        border-left: 0;
+        border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+    }
+
+    .stay-room-card__more {
+        margin-top: 0;
+        margin-left: auto;
+    }
+
+    .stay-score-bars__row {
+        grid-template-columns: minmax(0, 1fr) 2.2rem;
+    }
+
+    .stay-score-bars__row span:first-child {
+        grid-column: 1 / -1;
+    }
+}

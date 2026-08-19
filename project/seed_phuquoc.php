@@ -1431,8 +1431,24 @@ $__servicesSeed = array(
             'summary' => 'Lưu trú sát Long Beach — đi bộ ra biển, gần nhà hàng và thuận tiện đi Dương Đông / Grand World.',
             'highlights' => array('Gần Bãi Trường', 'Hồ bơi (tuỳ cơ sở)', 'Hỗ trợ đặt tour', 'Wi-Fi'),
             'inclusions' => array('Phòng theo hạng', 'Wi-Fi', 'Phí đặt phòng'), 'exclusions' => array('Ăn sáng (tuỳ rate)', 'Minibar'),
-            'notes' => array('Mùa lễ nên đặt trước 7–10 ngày.'), 'attrs' => array('amenities' => array('Gần biển', 'Hồ bơi', 'Nhà hàng gần'), 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort/hotel'),
-            'options' => array(array('code' => 'bt-standard', 'name' => 'Standard', 'price_from' => 1400000, 'capacity' => 2), array('code' => 'bt-ocean', 'name' => 'Ocean View', 'price_from' => 1900000, 'capacity' => 2)),
+            'notes' => array('Mùa lễ nên đặt trước 7–10 ngày.'),
+            'content' => '<p>Chỗ nghỉ sát Bãi Trường (Long Beach) — khu tây đảo tiện đi Dương Đông, Grand World và sân bay hơn nam đảo.</p><h2>Hạng phòng</h2><p>Standard hoặc Ocean View. Hồ bơi tuỳ cơ sở; ăn sáng tuỳ gói rate.</p>',
+            'attrs' => array(
+                'amenities' => array('Gần biển', 'Hồ bơi', 'Nhà hàng gần', 'Wi-Fi'),
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort',
+                'nearby' => array(
+                    array('name' => 'Bãi Trường', 'distance' => 'Đi bộ ra biển', 'icon' => 'umbrella'),
+                    array('name' => 'Dương Đông / chợ đêm', 'distance' => '~10–15 phút xe', 'icon' => 'map-pin'),
+                    array('name' => 'Sân bay Phú Quốc', 'distance' => '~15–25 phút', 'icon' => 'plane'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'bt-standard', 'name' => 'Standard', 'price_from' => 1400000, 'capacity' => 2, 'amenities' => array('Điều hoà', '28m²'), 'attrs' => array('bed' => '1 giường đôi', 'size_sqm' => 28)),
+                array('code' => 'bt-ocean', 'name' => 'Ocean View', 'price_from' => 1900000, 'capacity' => 2, 'amenities' => array('Hướng biển', '32m²'), 'attrs' => array('bed' => '1 giường đôi', 'size_sqm' => 32, 'view' => 'Hướng biển')),
+            ),
+            'faqs' => array(
+                array('q' => 'Bãi Trường có ồn không?', 'a' => 'Khu tây đông hơn Bãi Sao / Ông Lang vào mùa lễ. Muốn yên hơn chọn bungalow Bãi Sao hoặc boutique Ông Lang.'),
+            ),
         ),
         array(
             'code' => 'stay-duong-dong-hotel', 'cluster' => 'stay', 'category_slug' => 'resort-bai-truong-duong-dong', 'zone_slug' => 'duong-dong',
@@ -1442,7 +1458,19 @@ $__servicesSeed = array(
             'summary' => 'Khách sạn trung tâm gần chợ đêm — giá mềm hơn mặt biển, thuận tiện ăn uống và thuê xe.',
             'highlights' => array('Gần chợ đêm', 'Giá hợp lý', 'Thuận thuê xe máy'),
             'inclusions' => array('Phòng', 'Wi-Fi'), 'exclusions' => array('Ăn sáng'),
-            'notes' => array('Không phải view biển trực diện.'), 'attrs' => array('amenities' => array('Gần chợ', 'Wi-Fi'), 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel'),
+            'notes' => array('Không phải view biển trực diện.'),
+            'content' => '<p>Khách sạn trung tâm Dương Đông — gần chợ đêm, giá mềm hơn mặt biển. Không phải view biển trực diện; thuận thuê xe máy.</p>',
+            'attrs' => array(
+                'amenities' => array('Gần chợ', 'Wi-Fi', 'Thuê xe máy'),
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel',
+                'nearby' => array(
+                    array('name' => 'Chợ đêm Dương Đông', 'distance' => 'Đi bộ / vài phút xe', 'icon' => 'utensils'),
+                    array('name' => 'Bãi Trường', 'distance' => '~10–15 phút xe', 'icon' => 'umbrella'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'dd-std', 'name' => 'Phòng 2 khách', 'price_from' => 850000, 'capacity' => 2, 'attrs' => array('bed' => '1 giường đôi', 'size_sqm' => 22)),
+            ),
         ),
         array(
             'code' => 'stay-bai-sao-bungalow', 'cluster' => 'stay', 'category_slug' => 'resort-bai-sao', 'zone_slug' => 'bai-sao',
@@ -1452,7 +1480,22 @@ $__servicesSeed = array(
             'summary' => 'Nghỉ gần cát trắng Bãi Sao — buổi sáng ra biển ngay, ít ồn hơn khu Bãi Trường đông.',
             'highlights' => array('Gần Bãi Sao', 'Không gian yên', 'Phù hợp couple / gia đình nhỏ'),
             'inclusions' => array('Phòng/bungalow', 'Wi-Fi (nếu có)'), 'exclusions' => array('Ăn uống', 'Xe máy'),
-            'notes' => array('Xa trung tâm — nên thuê xe hoặc đặt xe riêng.'), 'attrs' => array('amenities' => array('Gần biển', 'Yên tĩnh'), 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'bungalow/resort'),
+            'notes' => array('Xa trung tâm — nên thuê xe hoặc đặt xe riêng.'),
+            'content' => '<p>Bungalow / resort gần Bãi Sao — cát trắng, yên hơn Bãi Trường. Xa Dương Đông; nên thuê xe hoặc đặt xe riêng.</p>',
+            'attrs' => array(
+                'amenities' => array('Gần biển', 'Yên tĩnh'),
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'bungalow',
+                'nearby' => array(
+                    array('name' => 'Bãi Sao', 'distance' => 'Gần bãi', 'icon' => 'umbrella'),
+                    array('name' => 'Dương Đông', 'distance' => 'Cần xe máy / xe riêng', 'icon' => 'car'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'bs-bungalow', 'name' => 'Bungalow 2 khách', 'price_from' => 1600000, 'capacity' => 2, 'attrs' => array('bed' => '1 giường đôi', 'view' => 'Gần biển')),
+            ),
+            'faqs' => array(
+                array('q' => 'Có cần thuê xe không?', 'a' => 'Nên thuê xe máy hoặc đặt xe riêng — Bãi Sao xa chợ đêm Dương Đông và nhiều điểm ăn uống hơn khu tây.'),
+            ),
         ),
         array(
             'code' => 'stay-ong-lang-boutique', 'cluster' => 'stay', 'category_slug' => 'resort-ong-lang', 'zone_slug' => 'ong-lang',
@@ -1462,7 +1505,19 @@ $__servicesSeed = array(
             'summary' => 'Resort boutique khu Ông Lang — hoàng hôn đẹp, số phòng hạn chế, hợp couple.',
             'highlights' => array('Yên tĩnh', 'Hoàng hôn đẹp', 'Thiết kế riêng tư', 'Gần bãi tắm'),
             'inclusions' => array('Phòng theo hạng', 'Wi-Fi'), 'exclusions' => array('Ăn sáng (tuỳ rate)', 'Spa'),
-            'notes' => array('Đặt sớm mùa cao điểm — inventory ít.'), 'attrs' => array('amenities' => array('Boutique', 'Gần biển', 'Yên tĩnh'), 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'boutique resort'),
+            'notes' => array('Đặt sớm mùa cao điểm — inventory ít.'),
+            'content' => '<p>Boutique Ông Lang — hoàng hôn phía tây, số phòng hạn chế, hợp couple. Inventory ít mùa cao điểm.</p>',
+            'attrs' => array(
+                'amenities' => array('Boutique', 'Gần biển', 'Yên tĩnh', 'Wi-Fi'),
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'boutique',
+                'nearby' => array(
+                    array('name' => 'Bãi Ông Lang', 'distance' => 'Gần bãi / hoàng hôn', 'icon' => 'umbrella'),
+                    array('name' => 'Dương Đông', 'distance' => '~15–20 phút xe', 'icon' => 'map-pin'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'ol-deluxe', 'name' => 'Deluxe 2 khách', 'price_from' => 2200000, 'capacity' => 2, 'attrs' => array('bed' => '1 giường đôi', 'size_sqm' => 32, 'view' => 'Hướng biển / vườn')),
+            ),
         ),
         array(
             'code' => 'stay-vinpearl', 'cluster' => 'stay', 'category_slug' => 'vinpearl-resort', 'zone_slug' => 'vinpearl-grand-world',
@@ -1472,7 +1527,24 @@ $__servicesSeed = array(
             'summary' => 'Ở trong hệ sinh thái Vinpearl / gần Grand World — tiện VinWonders, Safari và phố đêm.',
             'highlights' => array('Gần công viên giải trí', 'Phù hợp gia đình', 'Tiện ích resort lớn', 'Đưa đón nội khu tuỳ cơ sở'),
             'inclusions' => array('Phòng theo hạng', 'Wi-Fi', 'Tiện ích resort cơ bản'), 'exclusions' => array('Vé VinWonders', 'Ăn buffet (tuỳ rate)'),
-            'notes' => array('Có thể mua combo phòng + vé công viên.'), 'attrs' => array('amenities' => array('Hồ bơi', 'Gần Grand World', 'Family-friendly'), 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort'),
+            'notes' => array('Có thể mua combo phòng + vé công viên.'),
+            'content' => '<p>Lưu trú Vinpearl / gần Grand World — tiện VinWonders, Safari và phố đêm. Vé công viên không mặc định gồm trong giá phòng.</p><h2>Gia đình</h2><p>Có thể gộp combo phòng + vé — xác nhận trên báo giá, không tự ý hứa vé miễn phí.</p>',
+            'attrs' => array(
+                'amenities' => array('Hồ bơi', 'Gần Grand World', 'Family-friendly', 'Wi-Fi'),
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'resort',
+                'child_policy' => 'Phù hợp gia đình; extra bed / cũi báo giá riêng. Vé VinWonders không mặc định gồm trong phòng.',
+                'nearby' => array(
+                    array('name' => 'Grand World', 'distance' => 'Gần / nội khu tuỳ cơ sở', 'icon' => 'map-pin'),
+                    array('name' => 'VinWonders', 'distance' => 'Nội khu / xe shuttle tuỳ gói', 'icon' => 'sparkles'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'vp-deluxe', 'name' => 'Deluxe 2 khách', 'price_from' => 2800000, 'capacity' => 2, 'attrs' => array('bed' => '1 giường đôi', 'size_sqm' => 38)),
+                array('code' => 'vp-family', 'name' => 'Family 3–4 khách', 'price_from' => 3600000, 'capacity' => 4, 'attrs' => array('bed' => 'King + extra', 'size_sqm' => 48)),
+            ),
+            'faqs' => array(
+                array('q' => 'Vé VinWonders đã gồm trong phòng chưa?', 'a' => 'Chưa — trừ khi báo giá ghi rõ combo. Có thể mua thêm vé hoặc combo phòng + công viên khi đặt.'),
+            ),
         ),
         array(
             'code' => 'stay-bai-khem-luxury', 'cluster' => 'stay', 'category_slug' => 'resort-bai-khem', 'zone_slug' => 'bai-khem',
@@ -1482,7 +1554,20 @@ $__servicesSeed = array(
             'summary' => 'Resort 5* trên bãi cát trắng đông nam — yên, sang, hợp honeymoon và nghỉ dưỡng cao cấp.',
             'highlights' => array('Bãi riêng / gần bãi đẹp', 'Spa & hồ bơi', 'Nhà hàng trong resort', 'Xe đưa đón sân bay (tuỳ gói)'),
             'inclusions' => array('Phòng theo hạng', 'Wi-Fi', 'Tiện ích resort'), 'exclusions' => array('Ăn uống ngoài rate', 'Tour'),
-            'notes' => array('Giá biến động mạnh theo mùa và hạng phòng.'), 'attrs' => array('amenities' => array('Luxury', 'Spa', 'Private beach access'), 'check_in' => '15:00', 'check_out' => '12:00', 'property_type' => 'luxury resort'),
+            'notes' => array('Giá biến động mạnh theo mùa và hạng phòng.'),
+            'content' => '<p>Resort 5* Bãi Khem — cát trắng đông nam, yên hơn khu tây. Đưa đón sân bay tuỳ gói; giá biến động mạnh theo mùa.</p>',
+            'attrs' => array(
+                'amenities' => array('Spa', 'Hồ bơi', 'Bãi biển', 'Nhà hàng', 'Wi-Fi'),
+                'check_in' => '15:00', 'check_out' => '12:00', 'property_type' => 'resort',
+                'nearby' => array(
+                    array('name' => 'Bãi Khem', 'distance' => 'Sát resort / bãi riêng tuỳ cơ sở', 'icon' => 'umbrella'),
+                    array('name' => 'Sân bay Phú Quốc', 'distance' => 'Xe đưa đón tuỳ gói', 'icon' => 'plane'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'bk-deluxe', 'name' => 'Deluxe Ocean View', 'price_from' => 4500000, 'capacity' => 2, 'amenities' => array('Hướng biển', '45m²'), 'attrs' => array('bed' => '1 giường king', 'size_sqm' => 45, 'view' => 'Hướng biển')),
+                array('code' => 'bk-suite', 'name' => 'Suite', 'price_from' => 6800000, 'capacity' => 3, 'amenities' => array('Bồn tắm', '65m²'), 'attrs' => array('bed' => 'King', 'size_sqm' => 65, 'view' => 'Hướng biển')),
+            ),
         ),
         array(
             'code' => 'stay-homestay-duong-dong', 'cluster' => 'stay', 'category_slug' => 'homestay-phu-quoc', 'zone_slug' => 'duong-dong',
@@ -1492,7 +1577,19 @@ $__servicesSeed = array(
             'summary' => 'Homestay sạch, gần chợ đêm — hợp ngân sách tiết kiệm và khách thích nhịp phố đảo.',
             'highlights' => array('Giá mềm', 'Gần chợ đêm', 'Chủ nhà hỗ trợ thuê xe', 'Wi-Fi cơ bản'),
             'inclusions' => array('Phòng/giường', 'Wi-Fi'), 'exclusions' => array('Ăn sáng'),
-            'notes' => array('Không phải view biển.'), 'attrs' => array('amenities' => array('Gần chợ', 'Budget'), 'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'homestay'),
+            'notes' => array('Không phải view biển.'),
+            'content' => '<p>Homestay Dương Đông gần chợ đêm — giá mềm, chủ nhà hỗ trợ thuê xe. Không phải view biển.</p>',
+            'attrs' => array(
+                'amenities' => array('Gần chợ', 'Wi-Fi', 'Hỗ trợ xe máy'),
+                'check_in' => 'Linh hoạt', 'check_out' => 'Linh hoạt', 'property_type' => 'homestay',
+                'nearby' => array(
+                    array('name' => 'Chợ đêm Dương Đông', 'distance' => 'Đi bộ / gần', 'icon' => 'utensils'),
+                ),
+            ),
+            'options' => array(
+                array('code' => 'hs-dd-fan', 'name' => 'Phòng quạt 2 khách', 'price_from' => 450000, 'capacity' => 2),
+                array('code' => 'hs-dd-ac', 'name' => 'Phòng máy lạnh 2 khách', 'price_from' => 650000, 'capacity' => 2, 'amenities' => array('Máy lạnh')),
+            ),
         ),
         array(
             'code' => 'stay-family-room-bai-truong', 'cluster' => 'stay', 'category_slug' => 'resort-bai-truong-duong-dong', 'zone_slug' => 'bai-truong',
@@ -1502,7 +1599,17 @@ $__servicesSeed = array(
             'summary' => 'Phòng rộng cho 3–4 khách — giảm chi phí/người so với đặt 2 phòng riêng.',
             'highlights' => array('Sức chứa 3–4', 'Gần biển', 'Phù hợp cuối tuần gia đình'),
             'inclusions' => array('Phòng family', 'Wi-Fi'), 'exclusions' => array('Ăn sáng'),
-            'notes' => array('Số phòng hạn chế — đặt sớm lễ.'), 'attrs' => array('amenities' => array('Family room', 'Gần biển'), 'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel'),
+            'notes' => array('Số phòng hạn chế — đặt sớm lễ.'),
+            'content' => '<p>Phòng gia đình Bãi Trường cho 3–4 khách — inventory ít, đặt sớm lễ.</p>',
+            'attrs' => array(
+                'amenities' => array('Family room', 'Gần biển', 'Wi-Fi'),
+                'check_in' => '14:00', 'check_out' => '12:00', 'property_type' => 'hotel',
+                'child_policy' => 'Phù hợp 3–4 khách kể cả trẻ em; không thêm người ngoài sức chứa đã xác nhận.',
+                'nearby' => array(array('name' => 'Bãi Trường', 'distance' => 'Gần', 'icon' => 'umbrella')),
+            ),
+            'options' => array(
+                array('code' => 'bt-family', 'name' => 'Family 3–4 khách', 'price_from' => 2100000, 'capacity' => 4, 'attrs' => array('bed' => '1 đôi + extra / 2 giường', 'size_sqm' => 38)),
+            ),
         ),
 
         // ── EXPERIENCE (10) ──────────────────────────────────────────────────

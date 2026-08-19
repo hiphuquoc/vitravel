@@ -8,6 +8,8 @@
 | Dịch toàn trang form | `POST /ai/translate-page` | `translate_page` | `ai.use` |
 | Xây dựng chương trình chi tiết | `POST /ai/enrich-detail-program` | `enrich_detail_meta` · `enrich_detail_content` · `enrich_detail_faq` (theo `stage`) | `ai.use` |
 | Xây dựng trang listing | `POST /ai/enrich-listing-page` | `enrich_listing_meta` · `enrich_listing_body` · `enrich_listing_faq` (theo `stage`) | `ai.use` |
+| Xây dựng trang lưu trú | `POST /ai/enrich-stay` | `enrich_stay_meta` · `enrich_stay_property` · `enrich_stay_faq` (theo `stage`) | `ai.use` |
+| Crawler lưu trú | `POST /stay-crawls/*` | **không AI** — `StayHtmlMapper` (HTML → schema). Prompt `crawl_stay_extract` chỉ còn CLI `stay:crawl ai` | `services.create` |
 | Danh sách / chi tiết prompt | `GET /ai/prompts`, `GET /ai/prompts/{key}` | — | `ai.manage` |
 | Cập nhật prompt | `PUT /ai/prompts/{key}` | — | `ai.manage` |
 | Sync file → DB | `POST /ai/prompts/sync` | — | `ai.manage` |

@@ -573,5 +573,29 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 }));
 
+Alpine.data('stayRooms', (rooms = []) => ({
+    rooms,
+    open: false,
+    index: 0,
+    photo: 0,
+    get room() {
+        return this.rooms[this.index] || null;
+    },
+    show(i, photoIndex = 0) {
+        this.index = i;
+        this.photo = Number.isInteger(photoIndex) ? photoIndex : 0;
+        this.open = true;
+        document.body.classList.add('stay-room-lock');
+        this.$nextTick(() => this.$refs.roomClose?.focus());
+    },
+    close() {
+        this.open = false;
+        document.body.classList.remove('stay-room-lock');
+    },
+    destroy() {
+        document.body.classList.remove('stay-room-lock');
+    },
+}));
+
 window.Alpine = Alpine;
 Alpine.start();

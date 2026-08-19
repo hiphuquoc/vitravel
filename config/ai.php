@@ -57,5 +57,9 @@ return [
         'enrich_listing_meta' => 'enrich_listing_meta.php',
         'enrich_listing_body' => 'enrich_listing_body.php',
         'enrich_listing_faq' => 'enrich_listing_faq.php',
+        'enrich_stay_meta' => 'enrich_stay_meta.php',
+        'enrich_stay_property' => 'enrich_stay_property.php',
+        'enrich_stay_faq' => 'enrich_stay_faq.php',
+        'crawl_stay_extract' => 'crawl_stay_extract.php',
     ],
 ];

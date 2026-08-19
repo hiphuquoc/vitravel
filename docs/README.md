@@ -51,13 +51,14 @@ autourasia-clone-docs/
 | `13-deploy-aapanel-vps.md` | **Deploy VPS aaPanel** — multi-domain public + admin host riêng, Nginx/env/Supervisor mẫu |
 | `14-ai-system-prompts.md` | **AI** — dịch trang, enrich chương trình, registry prompt + usage |
 | `15-pricing.md` | **Bảng giá chi tiết** — đa chiều (ngày × tuỳ chọn × đối tượng khách × promo), quote booking-ready |
+| `16-accommodation-stays.md` | **Lưu trú** — UI, admin, AI, crawler Booking.com |
 | `gcs-standard.md` | Chuẩn GCS đa dự án |
 
 ## Trạng thái triển khai (2026-07)
 
 - **UI public:** Laravel 13 + Blade, dữ liệu qua `ViewDataService` (DB + fallback `SampleData`).
 - **Backend:** Controllers, FormRequests, Services (`SeoService`, `MediaService`, `ViewDataService`), lead POST endpoints.
-- **Dịch vụ (5 cụm — public):** vé tàu, máy bay, lưu trú, vui chơi, dịch vụ khác — hub/listing/chi tiết qua `ServiceController` + `RoutingController` (SEO types `trains_hub` … `service`). Seed keys trong **`project/seed_{name}.php`**: `service_clusters`, `service_categories`, `services`, `service_listing_faqs`. Config: `config/services_catalog.php`, hubs trong `config/seo.php`.
+- **Dịch vụ (5 cụm — public):** vé tàu, máy bay, **lưu trú** ([`16-accommodation-stays.md`](16-accommodation-stays.md)), vui chơi, dịch vụ khác — hub/listing/chi tiết qua `ServiceController` + `RoutingController` (SEO types `trains_hub` … `service`). Seed keys trong **`project/seed_{name}.php`**: `service_clusters`, `service_categories`, `services`, `service_listing_faqs`. Config: `config/services_catalog.php`, hubs trong `config/seo.php`.
 - **Header:** `headerMain` hiển thị **Điểm đến**, **Du thuyền** và **5 cụm dịch vụ** (mega menu); **Cẩm nang**, **Về chúng tôi**, **Liên hệ** (và mục phụ) chuyển vào drawer icon **Thêm** (`.header-more-btn` / `.header-more-panel`).
 - **Admin:** **`https://admin.vitravel.dev/`** (prod: `admin.vitravel.net`) — Next.js Admin Console (repo `admin.vitravel.dev`, static `out/`). API: `/api/v1/admin/*` trên Laravel (+ CORS). Đăng nhập: `admin@vitravel.dev` / `111111`. URL cũ `/he-thong/*` redirect sang `ADMIN_APP_URL`.
 - **AI:** dịch trang + xây dựng chương trình chi tiết; registry prompt DB (`ai:sync-prompts`); docs [`14-ai-system-prompts.md`](14-ai-system-prompts.md).

@@ -1736,11 +1736,13 @@ class ViewDataService
 
     public function service(string $slug, ?string $cluster = null): ?array
     {
+        $preview = app()->environment('local') && request()?->boolean('preview');
         $query = Service::query()
-            ->published()
+            ->when(! $preview, fn ($q) => $q->published())
             ->with([
                 'translations', 'category', 'country.translations',
                 'seoEntry.translations', 'faqs.translations',
+                'options.translations',
                 'mediaAttachments.media',
                 'priceTable.variants.translations',
                 'priceTable.periods.rates',
@@ -1849,6 +1851,7 @@ class ViewDataService
             'priceFrom' => $priceFrom,
             'currency' => $service->currency ?? 'VND',
             'priceFormatted' => $priceLabel,
+            'priceUnitLabel' => $service->cluster === 'stay' ? '/ đêm' : null,
             'rating' => (float) $service->rating,
             'reviewCount' => (int) $service->review_count,
             'starRating' => $service->star_rating,
@@ -1877,7 +1880,128 @@ class ViewDataService
             'galleryCount' => $this->galleryAttachmentCount($service),
         ];
 
-        return $this->attachPriceTable($payload, $service);
+        $payload = $this->attachPriceTable($payload, $service);
+
+        if ($service->cluster === Service::CLUSTER_STAY) {
+            return $this->attachStayPayload($payload, $service, $translation);
+        }
+
+        return $payload;
+    }
+
+    /**
+     * Bổ sung payload trang chi tiết lưu trú (Booking-style).
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array<string, mixed>
+     */
+    protected function attachStayPayload(array $payload, Service $service, ?ServiceTranslation $translation): array
+    {
+        $attrs = is_array($service->attrs) ? $service->attrs : [];
+        $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
+        $amenities = array_values(array_filter(
+            is_array($attrs['amenities'] ?? null) ? $attrs['amenities'] : [],
+            fn ($a) => filled($a),
+        ));
+
+        $nearby = array_values(array_filter(
+            is_array($attrs['nearby'] ?? null) ? $attrs['nearby'] : [],
+            fn ($n) => is_array($n) && filled($n['name'] ?? null),
+        ));
+        $highlightBadges = \App\Support\StayFacilities::stringList($attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null);
+        if ($highlightBadges === []) {
+            $highlightBadges = array_slice($amenities, 0, 6);
+        }
+
+        $payload['isStay'] = true;
+        $payload['propertyType'] = $propertyType;
+        $payload['propertyTypeLabel'] = config("stay.property_types.{$propertyType}") ?? ucfirst($propertyType);
+        $payload['address'] = (string) ($attrs['address'] ?? '');
+        $payload['checkIn'] = (string) ($attrs['check_in'] ?? '15:00');
+        $payload['checkOut'] = (string) ($attrs['check_out'] ?? '12:00');
+        $payload['amenities'] = $amenities;
+        $payload['highlightBadges'] = $highlightBadges;
+        $payload['amenityGroups'] = \App\Support\StayFacilities::displayGroups(
+            $amenities,
+            is_array($attrs['amenity_groups'] ?? null) ? $attrs['amenity_groups'] : null,
+        );
+        $payload['nearby'] = $nearby;
+        $payload['nearbyGroups'] = \App\Support\StayFacilities::nearbyGroups(
+            $nearby,
+            is_array($attrs['nearby_groups'] ?? null) ? $attrs['nearby_groups'] : null,
+        );
+        $payload['reviewScores'] = \App\Support\StayFacilities::reviewScores($attrs);
+        $payload['totalRooms'] = isset($attrs['total_rooms']) ? (int) $attrs['total_rooms'] : null;
+        $payload['languages'] = is_array($attrs['languages'] ?? null) ? $attrs['languages'] : [];
+        $payload['rooms'] = $this->mapStayRooms($service);
+        $payload['policies'] = [
+            'check_in' => $payload['checkIn'],
+            'check_out' => $payload['checkOut'],
+            'cancellation' => (string) ($attrs['cancellation_policy'] ?? ''),
+            'child' => (string) ($attrs['child_policy'] ?? ''),
+            'extra_bed' => (string) ($attrs['extra_bed_policy'] ?? ''),
+            'age_restriction' => (string) ($attrs['age_restriction'] ?? ''),
+            'pet' => (string) ($attrs['pet_policy'] ?? ''),
+            'smoking' => (string) ($attrs['smoking_policy'] ?? ''),
+            'payment' => (string) ($attrs['payment_policy'] ?? ''),
+            'payment_cards' => is_array($attrs['payment_cards'] ?? null)
+                ? implode(', ', $attrs['payment_cards'])
+                : (string) ($attrs['payment_cards'] ?? ''),
+            'id_required' => (string) ($attrs['id_required_policy'] ?? ''),
+        ];
+        $payload['featuredQuote'] = $payload['quote'] ?? ['text' => '', 'author' => ''];
+
+        $remoteGallery = $this->mapStayRemotePhotos(is_array($attrs['photos'] ?? null) ? $attrs['photos'] : []);
+        if (($payload['gallery'] ?? []) === [] && $remoteGallery !== []) {
+            $payload['gallery'] = $remoteGallery;
+            $payload['galleryCount'] = count($remoteGallery);
+        }
+        if (! filled($payload['imageDetail'] ?? null) && $remoteGallery !== []) {
+            $first = $remoteGallery[0]['src'];
+            $payload['image'] = $payload['image'] ?: $first;
+            $payload['imageDetail'] = $first;
+        }
+
+        return $payload;
+    }
+
+    public function stayAmenityIcon(string $label): string
+    {
+        $lower = mb_strtolower($label);
+        foreach (config('stay.amenity_icons', []) as $needle => $icon) {
+            if (str_contains($lower, (string) $needle)) {
+                return (string) $icon;
+            }
+        }
+
+        return 'check';
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    protected function mapStayRooms(Service $service): array
+    {
+        if (! $service->relationLoaded('options')) {
+            $service->load('options.translations');
+        }
+
+        $locale = $this->locale();
+        $currency = $service->currency ?? 'VND';
+
+        return $service->options->map(function ($opt) use ($locale, $currency) {
+            $t = $opt->translation($locale);
+
+            return \App\Support\StayFacilities::mapRoom([
+                'code' => $opt->code,
+                'name' => $t?->name ?? '',
+                'description' => $t?->description ?? '',
+                'price_from' => $opt->price_from,
+                'capacity' => $opt->capacity,
+                'amenities' => is_array($t?->amenities) ? $t->amenities : [],
+                'attrs' => is_array($opt->attrs) ? $opt->attrs : [],
+            ], $currency, fn ($amount, $cur) => $this->formatMoney($amount, $cur));
+        })->values()->all();
     }
 
     /**
@@ -2700,6 +2824,44 @@ class ViewDataService
         }
 
         return max(0, $model->mediaAttachments->where('role', 'gallery')->count());
+    }
+
+    /**
+     * Ảnh hotlink từ crawler (Booking CDN) khi chưa upload media_attachments.
+     *
+     * @param  list<mixed>  $photos
+     * @return list<array<string, mixed>>
+     */
+    protected function mapStayRemotePhotos(array $photos): array
+    {
+        $out = [];
+        $seen = [];
+        foreach ($photos as $photo) {
+            $url = '';
+            $alt = '';
+            if (is_string($photo)) {
+                $url = $photo;
+            } elseif (is_array($photo)) {
+                $url = (string) ($photo['url'] ?? $photo['src'] ?? $photo['full'] ?? '');
+                $alt = (string) ($photo['alt'] ?? $photo['title'] ?? '');
+            }
+            $url = trim($url);
+            if ($url === '' || ! preg_match('#^https?://#i', $url) || isset($seen[$url])) {
+                continue;
+            }
+            $seen[$url] = true;
+            $out[] = [
+                'src' => $url,
+                'srcset' => null,
+                'full' => $url,
+                'fullSrcset' => null,
+                'type' => 'image',
+                'title' => $alt,
+                'caption' => null,
+            ];
+        }
+
+        return array_slice($out, 0, 24);
     }
 
     protected function countryFlag(?string $code): string
