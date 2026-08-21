@@ -139,6 +139,16 @@ return [
         'other' => 'Lân cận',
     ],
 
+    'review_score_icons' => [
+        'staff' => 'users',
+        'facilities' => 'building',
+        'cleanliness' => 'sparkles',
+        'comfort' => 'bed',
+        'value' => 'value',
+        'location' => 'map-pin',
+        'wifi' => 'wifi',
+    ],
+
     'review_score_tags' => [
         'staff' => 'Nhân viên',
         'facilities' => 'Cơ sở vật chất',

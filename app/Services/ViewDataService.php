@@ -1989,6 +1989,27 @@ class ViewDataService
         return $payload;
     }
 
+    public function stayScoreIcon(string $tagOrLabel): string
+    {
+        $tag = mb_strtolower(trim($tagOrLabel));
+        $icons = config('stay.review_score_icons', []);
+        if (isset($icons[$tag])) {
+            return (string) $icons[$tag];
+        }
+
+        $labels = array_flip(config('stay.review_score_tags', []));
+        $lowerLabels = [];
+        foreach ($labels as $lbl => $tTag) {
+            $lowerLabels[mb_strtolower((string) $lbl)] = (string) $tTag;
+        }
+
+        if (isset($lowerLabels[$tag], $icons[$lowerLabels[$tag]])) {
+            return (string) $icons[$lowerLabels[$tag]];
+        }
+
+        return 'star';
+    }
+
     public function stayAmenityIcon(string $label): string
     {
         $lower = mb_strtolower($label);

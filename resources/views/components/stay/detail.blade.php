@@ -125,19 +125,19 @@
 
     <div class="container-site detail-layout section-band--sm">
         <div class="min-w-0 detail-stack">
-            @if ($hasOverview)
+            @if ($hasOverview || $bodyHtml !== '')
                 <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                     <h2 class="detail-section__title">Tổng quan</h2>
-                    <div class="stay-overview-panel">
+                    <div class="stay-overview-card">
                         @if ($overviewFacts !== [])
-                            <dl class="detail-facts detail-facts--flat">
+                            <dl class="stay-facts-grid">
                                 @foreach ($overviewFacts as $fact)
-                                    <div @class(['detail-facts__item', 'detail-facts__item--wide' => ! empty($fact['wide'])])>
-                                        <dt>
-                                            <x-icon :name="$fact['icon']" class="size-4" />
-                                            {{ $fact['label'] }}
+                                    <div @class(['stay-facts-grid__item', 'stay-facts-grid__item--wide' => ! empty($fact['wide'])])>
+                                        <dt class="stay-facts-grid__label">
+                                            <x-icon :name="$fact['icon']" class="size-4 text-primary-600 shrink-0" />
+                                            <span>{{ $fact['label'] }}</span>
                                         </dt>
-                                        <dd>
+                                        <dd class="stay-facts-grid__value">
                                             @if (! empty($fact['isStar']))
                                                 <span class="detail-facts__stars">
                                                     <x-shared.stars :rating="$fact['value']" />
@@ -151,19 +151,53 @@
                                 @endforeach
                             </dl>
                         @endif
+
                         @if ($reviewScores !== [])
-                            <div class="stay-score-panel" aria-label="Điểm theo hạng mục">
-                                <p class="stay-score-panel__label">Điểm theo hạng mục</p>
-                                <div class="stay-score-bars">
+                            <div class="stay-scores-section" aria-label="Điểm theo hạng mục">
+                                <div class="stay-section-subhead">
+                                    <div class="stay-facts-grid__label">
+                                        <x-icon name="star" class="size-4 text-primary-600 shrink-0" />
+                                        <span>Điểm theo hạng mục</span>
+                                    </div>
+                                </div>
+                                <div class="stay-score-grid">
                                     @foreach ($reviewScores as $row)
-                                        <div class="stay-score-bars__row">
-                                            <span>{{ $row['label'] }}</span>
-                                            <div class="stay-score-bars__track" aria-hidden="true">
-                                                <i style="width: {{ min(100, (float) $row['score'] * 10) }}%"></i>
+                                        <div class="stay-score-card">
+                                            <div class="stay-score-card__header">
+                                                <span class="stay-score-card__label">
+                                                    <x-icon :name="view_data()->stayScoreIcon($row['tag'] ?? $row['key'] ?? $row['label'])" class="size-4 text-primary-600 shrink-0" />
+                                                    <span>{{ $row['label'] }}</span>
+                                                </span>
+                                                <strong class="stay-score-card__badge">{{ number_format((float) $row['score'], 1) }}</strong>
                                             </div>
-                                            <strong>{{ number_format((float) $row['score'], 1) }}</strong>
+                                            <div class="stay-score-card__track" aria-hidden="true">
+                                                <div class="stay-score-card__bar" style="width: {{ min(100, (float) $row['score'] * 10) }}%"></div>
+                                            </div>
                                         </div>
                                     @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($bodyHtml !== '')
+                            <div id="gioi-thieu" class="stay-about-section" x-data="{ expanded: false }">
+                                <div class="stay-section-subhead">
+                                    <div class="stay-facts-grid__label">
+                                        <x-icon name="info" class="size-4 text-primary-600 shrink-0" />
+                                        <span>Về chỗ nghỉ</span>
+                                    </div>
+                                </div>
+                                <div class="stay-about-content" :class="{ 'is-expanded': expanded }">
+                                    <div class="prose-travel prose-travel--itinerary">
+                                        {!! $bodyHtml !!}
+                                    </div>
+                                    <div class="stay-about-fade" x-show="!expanded" aria-hidden="true"></div>
+                                </div>
+                                <div class="stay-about-actions">
+                                    <button type="button" class="stay-about-toggle-btn" @click="expanded = !expanded" :aria-expanded="expanded.toString()">
+                                        <span x-text="expanded ? 'Thu gọn' : 'Xem thêm về chỗ nghỉ'"></span>
+                                        <x-icon name="chevron-down" class="size-4 transition-transform duration-200" ::class="expanded ? 'rotate-180' : ''" />
+                                    </button>
                                 </div>
                             </div>
                         @endif
@@ -194,7 +228,6 @@
 
             <x-stay.rooms :rooms="$rooms" />
 
-            <x-shared.detail-content :html="$bodyHtml" title="Về chỗ nghỉ" id="gioi-thieu" />
 
             @if ($nearbyGroups !== [])
                 <section id="vi-tri" class="detail-section" aria-label="Vị trí">

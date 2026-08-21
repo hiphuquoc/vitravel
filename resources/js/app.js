@@ -578,6 +578,12 @@ Alpine.data('stayRooms', (rooms = []) => ({
     open: false,
     index: 0,
     photo: 0,
+    toast: {
+        show: false,
+        title: '',
+        message: '',
+        timer: null,
+    },
     /** Random 1–5 mỗi lần tải trang (ổn định trong session trang; HTML cache vẫn được). */
     scarcityRolls: {},
     init() {
@@ -608,6 +614,13 @@ Alpine.data('stayRooms', (rooms = []) => ({
     get photoCount() {
         return this.room?.photos?.length || 0;
     },
+    handleCardClick(event, i) {
+        const target = event.target;
+        if (target.closest('button, a, input, select, textarea, .stay-hprt__tip')) {
+            return;
+        }
+        this.show(i);
+    },
     show(i, photoIndex = 0) {
         this.index = i;
         this.photo = Number.isInteger(photoIndex) ? photoIndex : 0;
@@ -618,6 +631,17 @@ Alpine.data('stayRooms', (rooms = []) => ({
     close() {
         this.open = false;
         document.body.classList.remove('stay-room-lock');
+    },
+    bookRoom(roomName = '') {
+        if (this.toast.timer) {
+            clearTimeout(this.toast.timer);
+        }
+        this.toast.title = roomName ? `Đặt phòng: ${roomName}` : 'Tính năng đang hoàn thiện';
+        this.toast.message = 'Hệ thống đặt phòng trực tuyến đang được nâng cấp. Vui lòng liên hệ hotline/Zalo của ViTravel để được hỗ trợ đặt giữ phòng ngay!';
+        this.toast.show = true;
+        this.toast.timer = setTimeout(() => {
+            this.toast.show = false;
+        }, 6000);
     },
     nextPhoto() {
         if (this.photoCount < 2) return;

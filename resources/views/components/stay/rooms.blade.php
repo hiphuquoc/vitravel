@@ -8,18 +8,40 @@
         <div class="stay-rooms">
             @foreach ($rooms as $i => $room)
                 @php
+                    $photos = is_array($room['photos'] ?? null) ? array_values(array_filter($room['photos'])) : [];
+                    $firstPhoto = $photos[0]['url'] ?? ($room['image'] ?? null);
+                    $photoCount = count($photos);
+                    $morePhotosCount = max(0, $photoCount - 1);
                     $displayTags = ! empty($room['displayTags'])
                         ? $room['displayTags']
                         : (! empty($room['highlights']) ? $room['highlights'] : []);
                     $allRates = $room['rateOptions'] ?? [];
                     $hasFallbackRate = $allRates === [] && ! empty($room['priceFormatted']);
                 @endphp
-                <article class="stay-hprt">
+                <article class="stay-hprt stay-hprt--clickable" @click="handleCardClick($event, {{ $i }})">
                     <div class="stay-hprt__room">
+                        @if (filled($firstPhoto))
+                            <div class="stay-hprt__thumb-wrapper">
+                                <img
+                                    src="{{ $firstPhoto }}"
+                                    alt="{{ $room['name'] }}"
+                                    class="stay-hprt__thumb"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer"
+                                />
+                                @if ($morePhotosCount > 0)
+                                    <span class="stay-hprt__photo-badge">
+                                        <x-icon name="image" class="size-3.5" />
+                                        <span>+{{ $morePhotosCount }} ảnh</span>
+                                    </span>
+                                @endif
+                            </div>
+                        @endif
+
                         <button
                             type="button"
                             class="stay-hprt__name"
-                            @click="show({{ $i }})"
+                            @click.stop="show({{ $i }})"
                         >
                             {{ $room['name'] }}
                         </button>
@@ -189,7 +211,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <a class="btn-primary stay-hprt__cta" href="{{ locale_route('customize') }}">Đặt phòng</a>
+                                    <button type="button" class="btn-primary stay-hprt__cta" @click.stop="bookRoom('{{ addslashes($room['name']) }}')">Đặt phòng</button>
                                 </div>
                             </div>
                         @empty
@@ -201,7 +223,7 @@
                                     </div>
                                     <div class="stay-hprt__offer">
                                         <div class="stay-hprt__conds"></div>
-                                        <a class="btn-primary stay-hprt__cta" href="{{ locale_route('customize') }}">Đặt phòng</a>
+                                        <button type="button" class="btn-primary stay-hprt__cta" @click.stop="bookRoom('{{ addslashes($room['name']) }}')">Đặt phòng</button>
                                     </div>
                                 </div>
                             @else
@@ -216,7 +238,7 @@
                                                 <span>Chưa có bảng giá cố định cho hạng này</span>
                                             </div>
                                         </div>
-                                        <a class="btn-primary stay-hprt__cta" href="{{ locale_route('customize') }}">Đặt phòng</a>
+                                        <button type="button" class="btn-primary stay-hprt__cta" @click.stop="bookRoom('{{ addslashes($room['name']) }}')">Đặt phòng</button>
                                     </div>
                                 </div>
                             @endif
@@ -455,8 +477,34 @@
                         <strong x-text="room.priceFormatted"></strong>
                         <span>/ đêm</span>
                     </div>
-                    <a class="btn-primary" href="{{ locale_route('customize') }}">Đặt phòng</a>
+                    <button type="button" class="btn-primary" @click.stop="bookRoom(room ? room.name : '')">Đặt phòng</button>
                 </footer>
+            </div>
+        </div>
+    
+        <!-- Toast notification for booking feature -->
+        <div
+            class="stay-booking-toast"
+            x-cloak
+            x-show="toast.show"
+            x-transition:enter="stay-toast-enter"
+            x-transition:enter-start="stay-toast-enter-start"
+            x-transition:enter-end="stay-toast-enter-end"
+            x-transition:leave="stay-toast-leave"
+            x-transition:leave-start="stay-toast-leave-start"
+            x-transition:leave-end="stay-toast-leave-end"
+        >
+            <div class="stay-booking-toast__content">
+                <div class="stay-booking-toast__icon">
+                    <x-icon name="info" class="size-5" />
+                </div>
+                <div class="stay-booking-toast__body">
+                    <strong class="stay-booking-toast__title" x-text="toast.title"></strong>
+                    <p class="stay-booking-toast__desc" x-text="toast.message"></p>
+                </div>
+                <button type="button" class="stay-booking-toast__close" @click="toast.show = false" aria-label="Đóng thông báo">
+                    <x-icon name="close" class="size-4" />
+                </button>
             </div>
         </div>
     </section>
