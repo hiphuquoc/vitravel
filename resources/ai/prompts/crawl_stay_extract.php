@@ -25,8 +25,8 @@ Bạn là biên tập chỗ nghỉ của «{{brand}}». Nhiệm vụ: đọc HTM
 - highlight_badges, amenities[], amenity_groups{} — **copy đúng chữ nguồn**
 - Hạng phòng: name, capacity, size_sqm, unit_type, beds, bathroom_count, smoking, amenity_groups, photos[].url (URL nguồn, không bịa URL)
 - Giá từ + currency nếu nguồn có (ghi rõ là tham khảo)
-- nearby (name + distance + category)
-- review_scores số 0–10 nếu nguồn công bố — **không** copy nguyên văn review khách
+- nearby_groups (groupKey → [{name, distance, category}])
+- review_scores dạng `[{ "tag": "staff|facilities|cleanliness|comfort|value|location|wifi", "score": 0–10 }]` nếu nguồn công bố — **không** copy nguyên văn review khách
 - Chính sách huỷ / trẻ em / giường phụ / thú cưng / hút thuốc / thẻ / giấy tờ **nếu nguồn có**
 
 ## VIẾT LẠI cho hay, unique, giọng «{{brand}}» (không spam keyword)

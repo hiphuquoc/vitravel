@@ -35,6 +35,28 @@ return [
         'cabin' => 'Cabin',
     ],
 
+    /**
+     * Nhãn ưu đãi (deal_key) — crawler mặc định `seasonal`.
+     * Admin chọn lại trên form hạng phòng.
+     */
+    'deal_labels' => [
+        'seasonal' => 'Ưu Đãi Mùa Du Lịch',
+        'loyalty' => 'Ưu đãi khách hàng thân thiết',
+        'brand_exclusive' => 'Chỉ có trên website của chúng tôi',
+        'early_bird' => 'Ưu đãi đặt sớm',
+        'last_minute' => 'Ưu đãi phút chót',
+        'long_stay' => 'Ưu đãi lưu trú dài ngày',
+        'online' => 'Ưu đãi đặt trực tuyến',
+        'flash' => 'Flash sale hôm nay',
+        'member' => 'Giá dành cho thành viên',
+        'bundle' => 'Combo tiết kiệm',
+    ],
+
+    /** Template scarcity public — {n} random 1–5 mỗi lần tải (JS, an toàn HTML cache). */
+    'scarcity_template' => 'Chúng tôi còn {n} phòng',
+    'scarcity_min' => 1,
+    'scarcity_max' => 5,
+
     /** Map tiện ích (label) → tên icon trong x-icon. */
     'amenity_icons' => [
         'hồ bơi' => 'waves',
@@ -70,7 +92,13 @@ return [
         'điều hoà' => 'snowflake',
         'điều hòa' => 'snowflake',
         'ban công' => 'building',
+        'sân hiên' => 'building',
+        'sân trong' => 'building',
         'phòng tắm' => 'sparkles',
+        'm²' => 'maximize',
+        'm2' => 'maximize',
+        'giường' => 'bed',
+        'tv' => 'photo',
         'thang máy' => 'building',
         'an toàn' => 'shield',
         'xe lăn' => 'users',
@@ -111,6 +139,17 @@ return [
         'other' => 'Lân cận',
     ],
 
+    'review_score_tags' => [
+        'staff' => 'Nhân viên',
+        'facilities' => 'Cơ sở vật chất',
+        'cleanliness' => 'Sạch sẽ',
+        'comfort' => 'Thoải mái',
+        'value' => 'Đáng giá tiền',
+        'location' => 'Vị trí',
+        'wifi' => 'WiFi miễn phí',
+    ],
+
+    /** @deprecated Dùng review_score_tags — giữ alias cho code cũ. */
     'review_score_labels' => [
         'staff' => 'Nhân viên',
         'facilities' => 'Cơ sở vật chất',
@@ -142,7 +181,8 @@ return [
     'crawl' => [
         'user_agent' => env('STAY_CRAWL_UA', 'ViTravelStayBot/1.0 (+https://vitravel.dev/bot; research import)'),
         'timeout' => (int) env('STAY_CRAWL_TIMEOUT', 35),
-        'delay_ms' => (int) env('STAY_CRAWL_DELAY_MS', 800),
+        /** Nghỉ giữa các request HTTP fallback / lịch sự với Booking (ms). */
+        'delay_ms' => (int) env('STAY_CRAWL_DELAY_MS', 450),
         'max_html_bytes' => (int) env('STAY_CRAWL_MAX_HTML', 6_000_000),
         'max_extract_chars' => (int) env('STAY_CRAWL_MAX_EXTRACT', 90_000),
         'max_images' => 120,
@@ -158,6 +198,24 @@ return [
         'driver' => env('STAY_CRAWL_DRIVER', 'browser'),
         'browser_timeout' => (int) env('STAY_CRAWL_BROWSER_TIMEOUT', 240),
         'node_bin' => env('STAY_CRAWL_NODE', ''),
+        /** false = mở cửa sổ Chrome trên màn hình (xem thao tác). VPS để true. */
+        'headless' => (static function () {
+            $raw = env('STAY_CRAWL_HEADLESS', true);
+            // phpdotenv ép `false` thành bool; (string) false === '' nên không được so sánh chuỗi.
+            if (is_bool($raw)) {
+                return $raw;
+            }
+
+            return filter_var($raw, FILTER_VALIDATE_BOOLEAN);
+        })(),
+        'slow_mo' => (int) env('STAY_CRAWL_SLOW_MO', 0),
+        /** Listing category: số trang offset tối đa (mỗi trang ~list_page_size URL). */
+        'list_max_pages' => (int) env('STAY_CRAWL_LIST_MAX_PAGES', 80),
+        'list_page_size' => (int) env('STAY_CRAWL_LIST_PAGE_SIZE', 25),
+        /** Worker stay-crawl:work — nghỉ giữa các bước processNext (ms). */
+        'worker_sleep_ms' => (int) env('STAY_CRAWL_WORKER_SLEEP_MS', 400),
+        /** Heartbeat worker quá hạn → coi chết (phải > thời gian 1 bước Chrome gallery/phòng). */
+        'worker_heartbeat_stale_sec' => (int) env('STAY_CRAWL_WORKER_STALE_SEC', 900),
         'proxy' => [
             'enabled' => (bool) env('STAY_CRAWL_PROXY', false),
             'host' => env('STAY_CRAWL_PROXY_HOST', env('PROXY_HOST', '')),

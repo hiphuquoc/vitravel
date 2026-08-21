@@ -153,12 +153,19 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/services/{id}', [ServiceApiController::class, 'show'])->whereNumber('id');
             Route::put('/services/{id}', [ServiceApiController::class, 'update'])->whereNumber('id');
             Route::delete('/services/{id}', [ServiceApiController::class, 'destroy'])->whereNumber('id');
+            Route::post('/services/{id}/options', [ServiceApiController::class, 'storeOption'])->whereNumber('id');
+            Route::put('/services/{id}/options/{optionId}', [ServiceApiController::class, 'updateOption'])->whereNumber('id')->whereNumber('optionId');
+            Route::post('/services/{id}/options/{optionId}/duplicate', [ServiceApiController::class, 'duplicateOption'])->whereNumber('id')->whereNumber('optionId');
+            Route::delete('/services/{id}/options/{optionId}', [ServiceApiController::class, 'destroyOption'])->whereNumber('id')->whereNumber('optionId');
 
             Route::get('/stay-crawls/jobs', [StayCrawlApiController::class, 'jobs']);
             Route::get('/stay-crawls/status', [StayCrawlApiController::class, 'status']);
             Route::post('/stay-crawls/jobs', [StayCrawlApiController::class, 'enqueueList']);
             Route::post('/stay-crawls/from-category', [StayCrawlApiController::class, 'fromCategory']);
             Route::post('/stay-crawls/jobs/{id}/process-next', [StayCrawlApiController::class, 'processNext'])->whereNumber('id');
+            Route::post('/stay-crawls/jobs/{id}/work', [StayCrawlApiController::class, 'startWork'])->whereNumber('id');
+            Route::post('/stay-crawls/jobs/{id}/pause', [StayCrawlApiController::class, 'pauseWork'])->whereNumber('id');
+            Route::post('/stay-crawls/jobs/{id}/resume', [StayCrawlApiController::class, 'resumeWork'])->whereNumber('id');
             Route::get('/stay-crawls/jobs/{id}', [StayCrawlApiController::class, 'job'])->whereNumber('id');
             Route::get('/stay-crawls/items', [StayCrawlApiController::class, 'items']);
             Route::post('/stay-crawls/items', [StayCrawlApiController::class, 'enqueueHotel']);

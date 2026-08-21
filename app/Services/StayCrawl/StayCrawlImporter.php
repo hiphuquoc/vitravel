@@ -13,6 +13,7 @@ use App\Models\ServiceOption;
 use App\Models\ServiceOptionTranslation;
 use App\Models\ServiceTranslation;
 use App\Models\StayCrawlItem;
+use App\Services\HtmlCacheService;
 use App\Services\SeoService;
 use App\Support\StayBookingUrl;
 use App\Support\StayFacilities;
@@ -80,10 +81,10 @@ final class StayCrawlImporter
                     [
                         'title' => $row['title'],
                         'location_label' => $row['location_label'] ?? null,
-                        'summary' => $row['summary'] ?? null,
-                        'featured_quote_text' => $row['featured_quote_text'] ?? ($row['quote']['text'] ?? null),
-                        'featured_quote_author' => $row['featured_quote_author'] ?? ($row['quote']['author'] ?? null),
-                        'highlights' => $row['highlights'] ?? [],
+                        'summary' => null,
+                        'featured_quote_text' => null,
+                        'featured_quote_author' => null,
+                        'highlights' => [],
                         'inclusions' => [],
                         'exclusions' => [],
                         'notes' => [],
@@ -106,9 +107,9 @@ final class StayCrawlImporter
             $this->seo->syncSeo($service, $locale, [
                 'slug' => (string) ($row['seo_slug'] ?? $row['code']),
                 'title' => $row['title'],
-                'description' => $row['seo_description'] ?? ($row['summary'] ?? $row['title']),
+                'description' => $row['seo_description'] ?? ($row['content'] ?? $row['title']),
                 'seo_title' => $row['seo_title'] ?? $row['title'],
-                'seo_description' => $row['seo_description'] ?? ($row['summary'] ?? $row['title']),
+                'seo_description' => $row['seo_description'] ?? ($row['content'] ?? $row['title']),
                 'status' => ($strategy === 'improve' && $existing?->status === 'published') ? 'published' : 'draft',
                 'parent_id' => $this->seoParentIdForCategory($categoryId, $locale),
                 'reclaim_slug_full' => true,
@@ -118,6 +119,8 @@ final class StayCrawlImporter
             $item->status = StayCrawlItem::STATUS_IMPORTED;
             $item->imported_at = now();
             $item->save();
+
+            app(HtmlCacheService::class)->clearAll();
 
             return $service->fresh(['options', 'faqs', 'seoEntry.translations']);
         });
@@ -145,11 +148,6 @@ final class StayCrawlImporter
             }
         }
 
-        $highlights = $fields['highlights'] ?? [];
-        if (is_string($highlights)) {
-            $highlights = StayFacilities::stringList($highlights);
-        }
-
         $options = [];
         foreach (is_array($fields['options'] ?? null) ? $fields['options'] : [] as $opt) {
             if (! is_array($opt)) {
@@ -168,9 +166,7 @@ final class StayCrawlImporter
             'code' => $code,
             'title' => $fields['title'],
             'location_label' => $fields['location_label'] ?? ($attrs['address'] ?? null),
-            'summary' => $fields['summary'] ?? null,
             'content' => $fields['content'] ?? null,
-            'highlights' => $highlights,
             'featured_quote_text' => $fields['featured_quote_text'] ?? null,
             'featured_quote_author' => $fields['featured_quote_author'] ?? null,
             'star_rating' => $fields['star_rating'] ?? null,
@@ -216,7 +212,7 @@ final class StayCrawlImporter
                 continue;
             }
             $code = trim((string) ($opt['code'] ?? '')) ?: Str::slug($name);
-            $option = $service->options()->firstOrNew(['code' => $code]);
+            $option = $this->findOption($service, $name, $code);
             $mergedAttrs = is_array($opt['attrs'] ?? null) ? $opt['attrs'] : [];
             if ($option->exists && is_array($option->attrs)) {
                 $mergedAttrs = self::mergeFilled($option->attrs, $mergedAttrs);
@@ -357,6 +353,14 @@ final class StayCrawlImporter
             if (self::isBlank($value)) {
                 continue;
             }
+            if ($key === 'rate_options' && is_array($value) && ! self::isAssoc($value)) {
+                $out[$key] = self::mergeRateOptionLists(
+                    is_array($old[$key] ?? null) ? $old[$key] : [],
+                    $value,
+                );
+
+                continue;
+            }
             if (is_array($value) && self::isAssoc($value) && is_array($old[$key] ?? null) && self::isAssoc($old[$key])) {
                 $out[$key] = self::mergeFilled($old[$key], $value);
 
@@ -366,6 +370,33 @@ final class StayCrawlImporter
         }
 
         return $out;
+    }
+
+    /**
+     * @param  list<mixed>  $old
+     * @param  list<mixed>  $incoming
+     * @return list<array<string, mixed>>
+     */
+    private static function mergeRateOptionLists(array $old, array $incoming): array
+    {
+        $by = [];
+        foreach (array_merge($old, $incoming) as $rate) {
+            if (! is_array($rate)) {
+                continue;
+            }
+            $id = (string) ($rate['block_id'] ?? '');
+            if ($id === '') {
+                continue;
+            }
+            if (! isset($by[$id])) {
+                $by[$id] = $rate;
+
+                continue;
+            }
+            $by[$id] = self::mergeFilled($by[$id], $rate);
+        }
+
+        return array_values($by);
     }
 
     /** @param  array<string, mixed>  $incoming */
@@ -401,6 +432,8 @@ final class StayCrawlImporter
         $merged = self::mergeFilled($old, $incoming);
         $merged['code'] = $existing->code;
         $merged['options'] = $incoming['options'] ?? [];
+        $merged['summary'] = null;
+        $merged['highlights'] = [];
 
         return $merged;
     }
@@ -442,6 +475,36 @@ final class StayCrawlImporter
         }
 
         return array_keys($arr) !== range(0, count($arr) - 1);
+    }
+
+    /**
+     * Bổ sung 1 hạng phòng từ modal (không xóa option khác).
+     *
+     * @param  array<string, mixed>  $option
+     */
+    public function overlayRoom(Service $service, array $option, string $locale = 'vi'): void
+    {
+        $this->syncOptions($service, [$option], $locale, prune: false);
+    }
+
+    private function findOption(Service $service, string $name, string $code): ServiceOption
+    {
+        $option = $service->options()->where('code', $code)->first();
+        if ($option) {
+            return $option;
+        }
+        $matched = $service->options()
+            ->whereHas('translations', fn ($q) => $q->where('name', $name))
+            ->first();
+        if ($matched) {
+            return $matched;
+        }
+
+        $option = new ServiceOption;
+        $option->service_id = $service->id;
+        $option->code = $code;
+
+        return $option;
     }
 
     private function uniqueCode(string $base): string

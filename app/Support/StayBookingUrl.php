@@ -35,6 +35,67 @@ final class StayBookingUrl
             || str_contains($path, '/landmark/');
     }
 
+    /** Offset hiện tại trên URL listing Booking (mặc định 0). */
+    public static function searchOffset(string $url): int
+    {
+        $query = [];
+        parse_str((string) parse_url($url, PHP_URL_QUERY), $query);
+        foreach (['offset', 'rows_offset', 'start_from'] as $key) {
+            if (isset($query[$key]) && is_numeric($query[$key])) {
+                return max(0, (int) $query[$key]);
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Gắn / ghi đè offset cho URL listing (searchresults / city / …).
+     * Giữ nguyên các query khác (ss, checkin, …).
+     */
+    public static function withSearchOffset(string $url, int $offset, int $pageSize = 25): string
+    {
+        $parts = parse_url(trim($url));
+        if (! is_array($parts) || empty($parts['host'])) {
+            return trim($url);
+        }
+        $query = [];
+        parse_str((string) ($parts['query'] ?? ''), $query);
+        $offset = max(0, $offset);
+        if ($offset === 0) {
+            unset($query['offset'], $query['rows_offset'], $query['start_from']);
+        } else {
+            $query['offset'] = $offset;
+        }
+        if (! isset($query['rows']) && str_contains(strtolower((string) ($parts['path'] ?? '')), 'searchresults')) {
+            $query['rows'] = max(10, min(50, $pageSize));
+        }
+
+        $scheme = $parts['scheme'] ?? 'https';
+        $host = $parts['host'];
+        $path = (string) ($parts['path'] ?? '/');
+        $built = $scheme.'://'.$host.$path;
+        $qs = http_build_query($query);
+        if ($qs !== '') {
+            $built .= '?'.$qs;
+        }
+
+        return $built;
+    }
+
+    /**
+     * URL trang listing kế tiếp (cộng pageSize vào offset).
+     */
+    public static function nextSearchPageUrl(string $url, int $pageSize = 25): ?string
+    {
+        if (self::isHotelPage($url) || ! self::isSearchPage($url)) {
+            return null;
+        }
+        $pageSize = max(10, min(50, $pageSize));
+
+        return self::withSearchOffset($url, self::searchOffset($url) + $pageSize, $pageSize);
+    }
+
     /**
      * URL canonical (bỏ tracking query, locale infix .en-gb).
      * URL gốc (source_url) vẫn được lưu riêng trên item.

@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
  */
 final class StayHtmlMapper
 {
-    public const VERSION = 6;
+    public const VERSION = 8;
 
     /**
      * @param  array<string, mixed>  $extracted  kết quả StayHtmlExtractor
@@ -47,7 +47,6 @@ final class StayHtmlMapper
         $images = $this->images($xpath, $extracted, $sourceUrl, $pack, $html);
         $policies = $this->policies($xpath, $html, $pack);
         $nearbyPack = $this->nearby($xpath);
-        $nearby = $nearbyPack['items'];
         $nearbyGroups = $nearbyPack['groups'];
         $amenityGroups = $this->amenityGroups($xpath, $popular, $pack);
         $propertyType = $this->propertyType($title, $xpath);
@@ -78,38 +77,62 @@ final class StayHtmlMapper
                 array_slice($popular, 0, 8),
                 $highlights,
             ))),
-            'nearby' => $nearby,
-            'nearby_groups' => $nearbyGroups,
-            'review_scores' => $reviews['scores'],
+            'nearby_groups' => $nearbyGroups !== [] ? $nearbyGroups : null,
+            'review_scores' => StayFacilities::normalizeReviewScores($reviews['scores']),
             'photos' => $images,
             'check_in' => $policies['check_in'] ?? null,
             'check_out' => $policies['check_out'] ?? null,
             'cancellation_policy' => $policies['cancellation'] ?? null,
             'child_policy' => $policies['child'] ?? null,
+            'extra_bed_policy' => $policies['extra_bed'] ?? null,
             'pet_policy' => $policies['pet'] ?? null,
             'smoking_policy' => $policies['smoking'] ?? null,
             'payment_policy' => $policies['payment'] ?? null,
             'id_required_policy' => $policies['id'] ?? null,
             'age_restriction' => $policies['age'] ?? null,
+            'policy_sections' => is_array($policies['_sections'] ?? null) ? $policies['_sections'] : [],
         ], fn ($v) => $v !== null && $v !== '' && $v !== []);
 
         return [
             'title' => $title,
             'location_label' => $location,
-            'summary' => $summary,
             'content' => $description !== '' ? '<p>'.e($description).'</p>' : null,
-            'highlights' => array_slice($highlights !== [] ? $highlights : $popular, 0, 8),
             'star_rating' => $stars,
             'rating' => $reviews['rating'],
             'review_count' => $reviews['count'],
             'seo_slug' => $slug,
             'seo_title' => $title,
-            'seo_description' => Str::limit($summary, 160, ''),
+            'seo_description' => Str::limit(strip_tags($summary), 160, ''),
             'attrs' => $attrs,
             'options' => $rooms,
             'faqs' => [],
             'mapper_version' => self::VERSION,
         ];
+    }
+
+    /**
+     * @param  list<mixed>  $rooms
+     * @return list<array<string, mixed>>
+     */
+    public function mapRoomsFromPack(array $rooms): array
+    {
+        return $this->roomsFromPack($rooms);
+    }
+
+    /**
+     * Parse bảng #hprt-table (có ngày check-in/out) → hạng phòng + rate_options[].
+     *
+     * @param  array<string, mixed>|null  $crawlDates
+     * @return list<array<string, mixed>>
+     */
+    public function mapRoomsFromHprtHtml(string $html, ?array $crawlDates = null): array
+    {
+        $rooms = $this->roomsFromHprtTable($this->xpathFromHtml($html));
+        if (is_array($crawlDates) && $crawlDates !== []) {
+            $rooms = $this->attachCrawlDates($rooms, $crawlDates);
+        }
+
+        return $rooms;
     }
 
     private function title(?DOMXPath $xpath, array $extracted): string
@@ -358,11 +381,52 @@ final class StayHtmlMapper
     /** @return list<array<string, mixed>> */
     private function rooms(?DOMXPath $xpath, array $pack = []): array
     {
+        $fromHprtPack = [];
+        if (! empty($pack['hprt_html']) && is_string($pack['hprt_html'])) {
+            $fromHprtPack = $this->roomsFromHprtTable($this->xpathFromHtml($pack['hprt_html']));
+        }
         $fromPack = $this->roomsFromPack(is_array($pack['rooms'] ?? null) ? $pack['rooms'] : []);
         $fromTable = $this->roomsFromTable($xpath);
-        $merged = $this->mergeRoomLists($fromTable, $fromPack);
+        $merged = $this->mergeRoomLists($fromTable, $fromHprtPack);
+        $merged = $this->mergeRoomLists($merged, $fromPack);
+        if (is_array($pack['crawl_dates'] ?? null)) {
+            $merged = $this->attachCrawlDates($merged, $pack['crawl_dates']);
+        }
 
         return array_slice($merged, 0, (int) config('stay.crawl.max_rooms', 16));
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rooms
+     * @param  array<string, mixed>  $dates
+     * @return list<array<string, mixed>>
+     */
+    private function attachCrawlDates(array $rooms, array $dates): array
+    {
+        $slice = array_filter([
+            'checkin' => $dates['checkin'] ?? null,
+            'checkout' => $dates['checkout'] ?? null,
+            'nights' => isset($dates['nights']) ? (int) $dates['nights'] : null,
+        ]);
+        if ($slice === []) {
+            return $rooms;
+        }
+        foreach ($rooms as &$room) {
+            $attrs = is_array($room['attrs'] ?? null) ? $room['attrs'] : [];
+            $attrs['crawl_dates'] = $slice;
+            $rates = is_array($attrs['rate_options'] ?? null) ? $attrs['rate_options'] : [];
+            if ($rates !== []) {
+                $attrs['rate_options'] = \App\Support\StayRateCopy::enrichRateOptions(
+                    $rates,
+                    $slice,
+                    (string) ($attrs['deal_key'] ?? \App\Support\StayRateCopy::DEFAULT_DEAL_KEY),
+                );
+            }
+            $room['attrs'] = $attrs;
+        }
+        unset($room);
+
+        return $rooms;
     }
 
     /** @return list<array<string, mixed>> */
@@ -371,9 +435,17 @@ final class StayHtmlMapper
         if (! $xpath) {
             return [];
         }
+        $hprt = $this->roomsFromHprtTable($xpath);
+        if ($hprt !== []) {
+            return $hprt;
+        }
+
         $out = [];
         $seen = [];
-        $nodes = $xpath->query('//*[@data-testid="rt-name-link" or @data-testid="rt-name-no-room-page"]') ?: [];
+        $nodes = $xpath->query(
+            '//*[@data-testid="rt-name-link" or @data-testid="rt-name-no-room-page"'
+            .' or contains(@class,"hprt-roomtype-link") or starts-with(@id,"room_type_id_")]'
+        ) ?: [];
         foreach ($nodes as $node) {
             if (! $node instanceof DOMElement) {
                 continue;
@@ -386,8 +458,13 @@ final class StayHtmlMapper
             $row = $this->closest($node, 'tr') ?? $this->closest($node, 'th') ?? $node;
             $rowText = $this->clean($this->nodeText($row));
             $beds = [];
-            if (preg_match_all('/\d+\s*giường[^.,\n]{0,48}/iu', $rowText, $bedHits)) {
-                $beds = array_values(array_unique(array_map(fn ($t) => $this->clean($t), $bedHits[0])));
+            if (preg_match_all('/\d+\s*giường[^.,\n+]{0,40}/iu', $rowText, $bedHits)) {
+                $beds = array_values(array_unique(array_filter(array_map(function (string $t) {
+                    $t = $this->clean($t);
+                    $t = preg_replace('/\+?\s*Hiển thị giá.*$/iu', '', $t) ?? $t;
+
+                    return $this->clean($t);
+                }, $bedHits[0]))));
             }
             $capLabel = '';
             if ($row instanceof DOMElement) {
@@ -398,15 +475,21 @@ final class StayHtmlMapper
                     }
                 }
             }
-            $capacity = $this->capacityFromLabel($capLabel);
+            $capacity = $this->capacityFromLabel($capLabel !== '' ? $capLabel : $rowText);
+            $roomId = $node->getAttribute('data-room-id');
             $id = $node->getAttribute('id');
-            $code = preg_match('/room_type_id_(\d+)/', $id, $m) ? $m[1] : Str::slug($name);
+            if ($roomId === '' && preg_match('/room_type_id_(\d+)/', $id, $m)) {
+                $roomId = $m[1];
+            }
+            $code = $roomId !== '' ? $roomId : Str::slug($name);
             $out[] = [
                 'code' => 'bk-'.$code,
                 'name' => $name,
                 'capacity' => $capacity,
                 'amenities' => $beds,
                 'attrs' => array_filter([
+                    'room_id' => $roomId !== '' ? $roomId : null,
+                    'hash' => $roomId !== '' ? '#RD'.$roomId : null,
                     'bed' => $beds !== [] ? implode(', ', $beds) : null,
                     'beds' => $beds !== [] ? [['name' => 'Phòng', 'items' => array_map(
                         fn ($b) => ['type' => $b, 'count' => 1, 'label' => $b],
@@ -422,6 +505,409 @@ final class StayHtmlMapper
     }
 
     /**
+     * Một loại phòng = th roomtype (rowspan); mỗi tr[data-block-id] = một rate option.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function roomsFromHprtTable(?DOMXPath $xpath): array
+    {
+        if (! $xpath) {
+            return [];
+        }
+        $table = $xpath->query('//*[@id="hprt-table"] | //table[contains(@class,"hprt-table")]')->item(0);
+        if (! $table instanceof DOMElement) {
+            return [];
+        }
+
+        $rows = $xpath->query('.//tbody/tr[@data-block-id]', $table) ?: [];
+        $rooms = [];
+        $current = null;
+
+        foreach ($rows as $tr) {
+            if (! $tr instanceof DOMElement) {
+                continue;
+            }
+            $blockId = trim($tr->getAttribute('data-block-id'));
+            if ($blockId === '') {
+                continue;
+            }
+
+            $roomTh = $xpath->query('.//th[contains(@class,"hprt-table-cell-roomtype")]', $tr)->item(0);
+            if ($roomTh instanceof DOMElement) {
+                if ($current !== null) {
+                    $rooms[] = $this->finalizeHprtRoom($current);
+                }
+                $current = $this->parseHprtRoomType($xpath, $roomTh);
+            }
+            if ($current === null) {
+                continue;
+            }
+
+            $rate = $this->parseHprtRateRow($xpath, $tr, $blockId);
+            if ($rate !== null) {
+                $current['attrs']['rate_options'][] = $rate;
+            }
+        }
+        if ($current !== null) {
+            $rooms[] = $this->finalizeHprtRoom($current);
+        }
+
+        return array_slice($rooms, 0, (int) config('stay.crawl.max_rooms', 16));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function parseHprtRoomType(DOMXPath $xpath, DOMElement $roomTh): array
+    {
+        $link = $xpath->query('.//a[contains(@class,"hprt-roomtype-link") or starts-with(@id,"room_type_id_")]', $roomTh)->item(0);
+        $name = '';
+        $roomId = '';
+        if ($link instanceof DOMElement) {
+            $roomId = trim($link->getAttribute('data-room-id'));
+            $id = $link->getAttribute('id');
+            if ($roomId === '' && preg_match('/room_type_id_(\d+)/', $id, $m)) {
+                $roomId = $m[1];
+            }
+            $nameNode = $xpath->query('.//*[contains(@class,"hprt-roomtype-icon-link")]', $link)->item(0);
+            $name = $this->clean($this->nodeText($nameNode instanceof DOMElement ? $nameNode : $link));
+        }
+        if ($name === '') {
+            $name = $this->clean($this->nodeText($roomTh));
+            $name = preg_replace('/Sức chứa:.*$/iu', '', $name) ?? $name;
+            $name = $this->clean($name);
+        }
+
+        $occ = $this->firstTextIn($xpath, $roomTh, './/*[contains(@class,"hprt-roomtype-occupancy-text")]');
+        $capacity = $this->capacityFromLabel($occ !== '' ? $occ : $this->nodeText($roomTh));
+
+        $beds = [];
+        foreach ($xpath->query('.//*[contains(@class,"rt-bed-type")]', $roomTh) ?: [] as $bedEl) {
+            $t = $this->clean($this->nodeText($bedEl));
+            $t = preg_replace('/\s+và\s*$/iu', '', $t) ?? $t;
+            $t = $this->clean($t);
+            if ($t !== '' && mb_strlen($t) < 80) {
+                $beds[] = $t;
+            }
+        }
+        $beds = array_values(array_unique($beds));
+
+        $size = null;
+        $facilities = [];
+        foreach ($xpath->query('.//*[contains(@class,"hprt-facilities-facility")]', $roomTh) ?: [] as $fac) {
+            if (! $fac instanceof DOMElement) {
+                continue;
+            }
+            $label = $this->clean($this->nodeText($fac));
+            if ($label === '') {
+                continue;
+            }
+            if (preg_match('/(\d+)\s*m\s*²/u', $label, $m) || preg_match('/(\d+)\s*m2\b/iu', $label, $m)) {
+                $size = (int) $m[1];
+            }
+            if (mb_strlen($label) < 80) {
+                $facilities[] = $label;
+            }
+        }
+        $facilities = array_values(array_unique($facilities));
+
+        $scarcity = $this->clean($this->firstTextIn($xpath, $roomTh, './/*[contains(@class,"only_x_left")]'));
+        $availabilityLeft = null;
+        if (preg_match('/(\d+)/', $scarcity, $m)) {
+            $availabilityLeft = (int) $m[1];
+        }
+
+        $amenities = array_values(array_unique(array_merge($beds, $facilities)));
+
+        return [
+            'code' => 'bk-'.($roomId !== '' ? $roomId : Str::slug($name)),
+            'name' => $name,
+            'capacity' => $capacity,
+            'amenities' => $amenities,
+            'attrs' => array_filter([
+                'room_id' => $roomId !== '' ? $roomId : null,
+                'hash' => $roomId !== '' ? '#RD'.$roomId : null,
+                'bed' => $beds !== [] ? implode(', ', $beds) : null,
+                'beds' => $beds !== [] ? [['name' => 'Phòng', 'items' => array_map(
+                    fn ($b) => ['type' => $b, 'count' => 1, 'label' => $b],
+                    $beds,
+                )]] : null,
+                'size_sqm' => $size,
+                'scarcity' => $scarcity !== '' ? $scarcity : null,
+                'availability_left' => $availabilityLeft,
+                'highlights' => $facilities !== [] ? array_slice($facilities, 0, 12) : null,
+                'unit_type' => $this->unitType($name),
+                'view' => $this->viewFromName($name) ?? $this->viewFromFacilityList($facilities),
+                'rate_options' => [],
+            ], fn ($v) => $v !== null && $v !== '' && $v !== []),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $room
+     * @return array<string, mixed>
+     */
+    private function finalizeHprtRoom(array $room): array
+    {
+        $attrs = is_array($room['attrs'] ?? null) ? $room['attrs'] : [];
+        $rates = is_array($attrs['rate_options'] ?? null) ? $attrs['rate_options'] : [];
+        $crawlDates = is_array($attrs['crawl_dates'] ?? null) ? $attrs['crawl_dates'] : null;
+        $rates = \App\Support\StayRateCopy::enrichRateOptions($rates, $crawlDates, \App\Support\StayRateCopy::DEFAULT_DEAL_KEY);
+
+        $perNight = [];
+        $hasDeal = false;
+        foreach ($rates as $rate) {
+            if (! is_array($rate)) {
+                continue;
+            }
+            $p = $rate['price_per_night'] ?? null;
+            if (is_numeric($p) && (float) $p > 0) {
+                $perNight[] = (float) $p;
+            }
+            if (! empty($rate['deal_key']) || ! empty($rate['save_percent'])) {
+                $hasDeal = true;
+            }
+        }
+        if ($perNight !== []) {
+            $room['price_from'] = min($perNight);
+        }
+        $attrs['rate_options'] = $rates;
+
+        $rawScarcity = trim((string) ($attrs['scarcity'] ?? ''));
+        $left = isset($attrs['availability_left']) ? (int) $attrs['availability_left'] : null;
+        $attrs['scarcity_active'] = $rawScarcity !== '' || ($left !== null && $left > 0);
+        // Không giữ câu Booking tuyệt đối — public random hoá.
+        unset($attrs['scarcity']);
+        if ($hasDeal && empty($attrs['deal_key'])) {
+            $attrs['deal_key'] = \App\Support\StayRateCopy::DEFAULT_DEAL_KEY;
+        }
+        $room['attrs'] = $attrs;
+
+        return $room;
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function parseHprtRateRow(DOMXPath $xpath, DOMElement $tr, string $blockId): ?array
+    {
+        $price = null;
+        $rawPrice = $tr->getAttribute('data-hotel-rounded-price');
+        if ($rawPrice !== '' && is_numeric($rawPrice)) {
+            $price = (float) $rawPrice;
+        }
+        $strikethrough = null;
+        $strikeEl = $xpath->query('.//*[@data-strikethrough-value]', $tr)->item(0);
+        if ($strikeEl instanceof DOMElement) {
+            $sv = $strikeEl->getAttribute('data-strikethrough-value');
+            if ($sv !== '' && is_numeric($sv)) {
+                $strikethrough = (float) $sv;
+            }
+        }
+
+        $nights = 2;
+        $priceCell = $xpath->query('.//*[contains(@class,"hprt-table-cell-price")]', $tr)->item(0);
+        $priceText = $priceCell instanceof DOMElement ? $this->clean($this->nodeText($priceCell)) : '';
+        if (preg_match('/×\s*(\d+)\s*đêm/iu', $priceText, $m)
+            || preg_match('/(\d+)\s*đêm/iu', $priceText, $m)) {
+            $nights = max(1, (int) $m[1]);
+        }
+        $pricePerNight = $price !== null ? round($price / $nights, 2) : null;
+
+        $taxesIncluded = str_contains(mb_strtolower($priceText), 'đã bao gồm thuế')
+            || (bool) $xpath->query('.//*[contains(@class,"prd-taxes-and-fees-under-price")]', $tr)->length;
+
+        $fltrsRaw = $tr->getAttribute('data-fltrs');
+        $fltrs = [];
+        if ($fltrsRaw !== '') {
+            $decoded = json_decode(html_entity_decode($fltrsRaw, ENT_QUOTES | ENT_HTML5, 'UTF-8'), true);
+            if (is_array($decoded)) {
+                $fltrs = $decoded;
+            }
+        }
+
+        $breakfastIncluded = ! empty($fltrs['breakfast_included'])
+            || (bool) $xpath->query('.//*[@data-testid="rt-rate-breakfast-included"]', $tr)->length;
+        $breakfastLabel = '';
+        $breakfastExtra = null;
+        foreach ($xpath->query('.//*[contains(@class,"hprt-conditions-bui")]//*[contains(@class,"bui-list__description")]', $tr) ?: [] as $desc) {
+            $t = $this->clean($this->nodeText($desc));
+            if ($t === '' || ! preg_match('/bữa\s*sáng/iu', $t)) {
+                continue;
+            }
+            $breakfastLabel = $t;
+            if (preg_match('/VND\s*([\d.]+)/u', $t, $pm)) {
+                $breakfastExtra = (float) str_replace('.', '', $pm[1]);
+            }
+            break;
+        }
+        if ($breakfastIncluded && $breakfastLabel === '') {
+            $breakfastLabel = 'Bao gồm bữa sáng';
+        }
+
+        $cancelTitle = $this->clean($this->firstTextIn(
+            $xpath,
+            $tr,
+            './/*[@data-testid="cancellation-subtitle"]//*[@data-testid="policy-title"]',
+        ));
+        $prepayTitle = $this->clean($this->firstTextIn(
+            $xpath,
+            $tr,
+            './/*[@data-testid="prepayment-subtitle"]//*[@data-testid="policy-title"]',
+        ));
+
+        $modal = $xpath->query('//*[@id="policyModal_'.addcslashes($blockId, '"\\').'"]')->item(0);
+        $mealsDetail = [];
+        $cancelDesc = '';
+        $prepayDesc = '';
+        if ($modal instanceof DOMElement) {
+            $parsed = $this->parseHprtPolicyModal($xpath, $modal);
+            $mealsDetail = $parsed['meals'];
+            $cancelTitle = $parsed['cancellation_title'] ?: $cancelTitle;
+            $cancelDesc = $parsed['cancellation_description'];
+            $prepayTitle = $parsed['prepayment_title'] ?: $prepayTitle;
+            $prepayDesc = $parsed['prepayment_description'];
+        }
+
+        $deals = [];
+        foreach ($xpath->query('.//*[contains(@class,"c-deals-container__badge-box_title")]', $tr) ?: [] as $dealTitle) {
+            $title = $this->clean($this->nodeText($dealTitle));
+            if ($title === '') {
+                continue;
+            }
+            $box = $dealTitle->parentNode?->parentNode;
+            $desc = '';
+            if ($box instanceof DOMElement) {
+                $descEl = $xpath->query('.//*[contains(@class,"c-deals-container__badge-box_description")]', $box)->item(0);
+                $desc = $descEl instanceof DOMElement ? $this->clean($this->nodeText($descEl)) : '';
+            }
+            $deals[] = array_filter(['title' => $title, 'description' => $desc !== '' ? $desc : null]);
+        }
+        if ($deals === []) {
+            foreach ($xpath->query('.//*[contains(@class,"bui-badge__text")]', $tr) ?: [] as $badge) {
+                $t = $this->clean($this->nodeText($badge));
+                if ($t !== '' && mb_strlen($t) < 80) {
+                    $deals[] = ['title' => $t];
+                }
+            }
+        }
+
+        $maxRooms = 0;
+        $select = $xpath->query('.//select[contains(@class,"hprt-nos-select")]', $tr)->item(0);
+        if ($select instanceof DOMElement) {
+            foreach ($xpath->query('./option', $select) ?: [] as $opt) {
+                if (! $opt instanceof DOMElement) {
+                    continue;
+                }
+                $v = (int) $opt->getAttribute('value');
+                if ($v > $maxRooms) {
+                    $maxRooms = $v;
+                }
+            }
+        }
+
+        $refundable = $cancelTitle !== '' && ! preg_match('/không\s*hoàn\s*tiền|non[\s-]?refundable/iu', $cancelTitle);
+
+        return array_filter([
+            'block_id' => $blockId,
+            'price' => $price,
+            'price_strikethrough' => $strikethrough,
+            'currency' => 'VND',
+            'nights' => $nights,
+            'price_per_night' => $pricePerNight,
+            'taxes_included' => $taxesIncluded,
+            'breakfast' => array_filter([
+                'included' => $breakfastIncluded,
+                'label' => $breakfastLabel !== '' ? $breakfastLabel : null,
+                'extra_price' => $breakfastExtra,
+            ], fn ($v) => $v !== null && $v !== ''),
+            'cancellation' => array_filter([
+                'refundable' => $refundable,
+                'title' => $cancelTitle !== '' ? $cancelTitle : null,
+                'description' => $cancelDesc !== '' ? $cancelDesc : null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            'prepayment' => array_filter([
+                'title' => $prepayTitle !== '' ? $prepayTitle : null,
+                'description' => $prepayDesc !== '' ? $prepayDesc : null,
+            ], fn ($v) => $v !== null && $v !== ''),
+            'meals_detail' => $mealsDetail !== [] ? $mealsDetail : null,
+            'deals' => $deals !== [] ? array_values($deals) : null,
+            'max_rooms' => $maxRooms > 0 ? $maxRooms : null,
+        ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+    }
+
+    /**
+     * @return array{
+     *     meals: list<string>,
+     *     cancellation_title: string,
+     *     cancellation_description: string,
+     *     prepayment_title: string,
+     *     prepayment_description: string
+     * }
+     */
+    private function parseHprtPolicyModal(DOMXPath $xpath, DOMElement $modal): array
+    {
+        $meals = [];
+        $cancelTitle = '';
+        $cancelDesc = '';
+        $prepayTitle = '';
+        $prepayDesc = '';
+
+        foreach ($xpath->query('.//h3', $modal) ?: [] as $h3) {
+            if (! $h3 instanceof DOMElement) {
+                continue;
+            }
+            $heading = mb_strtolower($this->clean($this->nodeText($h3)));
+            $group = $h3->parentNode;
+            if (! $group instanceof DOMElement) {
+                continue;
+            }
+            $bodyTexts = [];
+            foreach ($xpath->query('.//*[contains(@class,"bui-text--variant-body_2")]', $group) ?: [] as $body) {
+                $t = $this->clean($this->nodeText($body));
+                if ($t !== '') {
+                    $bodyTexts[] = $t;
+                }
+            }
+            if (str_contains($heading, 'bữa ăn') || str_contains($heading, 'meal')) {
+                $meals = $bodyTexts;
+            } elseif (str_contains($heading, 'hủy') || str_contains($heading, 'cancel')) {
+                $cancelTitle = $this->clean($this->firstTextIn($xpath, $group, './/*[@data-testid="policy-title"]'));
+                $cancelDesc = $this->clean($this->firstTextIn($xpath, $group, './/*[@data-testid="policy-description"]'));
+                if ($cancelDesc === '' && $bodyTexts !== []) {
+                    $cancelDesc = implode(' ', $bodyTexts);
+                }
+            } elseif (str_contains($heading, 'trả trước') || str_contains($heading, 'prepay') || str_contains($heading, 'prepayment')) {
+                $prepayTitle = $this->clean($this->firstTextIn($xpath, $group, './/*[@data-testid="policy-title"]'));
+                $prepayDesc = $this->clean($this->firstTextIn($xpath, $group, './/*[@data-testid="policy-description"]'));
+                if ($prepayDesc === '' && $bodyTexts !== []) {
+                    $prepayDesc = implode(' ', $bodyTexts);
+                }
+            }
+        }
+
+        return [
+            'meals' => $meals,
+            'cancellation_title' => $cancelTitle,
+            'cancellation_description' => $cancelDesc,
+            'prepayment_title' => $prepayTitle,
+            'prepayment_description' => $prepayDesc,
+        ];
+    }
+
+    /** @param  list<string>  $facilities */
+    private function viewFromFacilityList(array $facilities): ?string
+    {
+        foreach ($facilities as $f) {
+            if (preg_match('/nhìn\s*ra|view/iu', $f)) {
+                return $f;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @param  list<array<string, mixed>>  $base
      * @param  list<array<string, mixed>>  $extra
      * @return list<array<string, mixed>>
@@ -434,37 +920,110 @@ final class StayHtmlMapper
         if ($base === []) {
             return $extra;
         }
-        $byName = [];
+        $byKey = [];
         foreach ($base as $row) {
-            $byName[(string) ($row['name'] ?? '')] = $row;
+            $byKey[$this->roomMergeKey($row)] = $row;
         }
         foreach ($extra as $row) {
             $name = (string) ($row['name'] ?? '');
-            if ($name === '') {
+            if ($name === '' && empty($row['attrs']['room_id'])) {
                 continue;
             }
-            if (! isset($byName[$name])) {
-                $byName[$name] = $row;
-                continue;
+            $key = $this->roomMergeKey($row);
+            if (! isset($byKey[$key])) {
+                // Thử khớp theo tên nếu chưa có room_id ở một phía
+                $matched = null;
+                foreach ($byKey as $k => $existing) {
+                    if ((string) ($existing['name'] ?? '') === $name && $name !== '') {
+                        $matched = $k;
+                        break;
+                    }
+                }
+                if ($matched !== null) {
+                    $key = $matched;
+                } else {
+                    $byKey[$key] = $row;
+                    continue;
+                }
             }
-            $old = $byName[$name];
+            $old = $byKey[$key];
             $oldAttrs = is_array($old['attrs'] ?? null) ? $old['attrs'] : [];
             $newAttrs = is_array($row['attrs'] ?? null) ? $row['attrs'] : [];
-            $byName[$name] = [
+            $mergedAttrs = array_merge($oldAttrs, array_filter($newAttrs, fn ($v) => ! $this->isEmptyMergeValue($v)));
+            $mergedAttrs['rate_options'] = $this->mergeRateOptions(
+                is_array($oldAttrs['rate_options'] ?? null) ? $oldAttrs['rate_options'] : [],
+                is_array($newAttrs['rate_options'] ?? null) ? $newAttrs['rate_options'] : [],
+            );
+            if ($mergedAttrs['rate_options'] === []) {
+                unset($mergedAttrs['rate_options']);
+            }
+            $byKey[$key] = [
                 'code' => $old['code'] ?? $row['code'],
-                'name' => $name,
+                'name' => $name !== '' ? $name : (string) ($old['name'] ?? ''),
                 'capacity' => $row['capacity'] ?? $old['capacity'] ?? null,
                 'description' => $row['description'] ?? $old['description'] ?? null,
+                'price_from' => $row['price_from'] ?? $old['price_from'] ?? null,
                 'amenities' => array_values(array_unique(array_merge(
                     is_array($old['amenities'] ?? null) ? $old['amenities'] : [],
                     is_array($row['amenities'] ?? null) ? $row['amenities'] : [],
                 ))),
                 'photos' => ! empty($row['photos']) ? $row['photos'] : ($old['photos'] ?? []),
-                'attrs' => array_filter(array_merge($oldAttrs, $newAttrs)),
+                'attrs' => array_filter($mergedAttrs, fn ($v) => ! $this->isEmptyMergeValue($v)),
             ];
+            if (isset($mergedAttrs['rate_options'])) {
+                $byKey[$key]['attrs']['rate_options'] = $mergedAttrs['rate_options'];
+                $final = $this->finalizeHprtRoom($byKey[$key]);
+                $byKey[$key] = $final;
+            }
         }
 
-        return array_values(array_filter($byName, fn ($k) => $k !== '', ARRAY_FILTER_USE_KEY));
+        return array_values(array_filter($byKey, fn ($k) => $k !== '', ARRAY_FILTER_USE_KEY));
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private function roomMergeKey(array $row): string
+    {
+        $roomId = (string) ($row['attrs']['room_id'] ?? '');
+        if ($roomId !== '') {
+            return 'id:'.$roomId;
+        }
+        $code = (string) ($row['code'] ?? '');
+        if ($code !== '' && preg_match('/^bk-\d+$/', $code)) {
+            return 'code:'.$code;
+        }
+
+        return 'name:'.(string) ($row['name'] ?? '');
+    }
+
+    /**
+     * @param  list<mixed>  $a
+     * @param  list<mixed>  $b
+     * @return list<array<string, mixed>>
+     */
+    private function mergeRateOptions(array $a, array $b): array
+    {
+        $by = [];
+        foreach (array_merge($a, $b) as $rate) {
+            if (! is_array($rate)) {
+                continue;
+            }
+            $id = (string) ($rate['block_id'] ?? '');
+            if ($id === '') {
+                continue;
+            }
+            if (! isset($by[$id])) {
+                $by[$id] = $rate;
+                continue;
+            }
+            $by[$id] = array_merge($by[$id], array_filter($rate, fn ($v) => ! $this->isEmptyMergeValue($v)));
+        }
+
+        return array_values($by);
+    }
+
+    private function isEmptyMergeValue(mixed $value): bool
+    {
+        return $value === null || $value === '' || $value === [];
     }
 
     /**
@@ -633,7 +1192,7 @@ final class StayHtmlMapper
         }
 
         $roots = $xpath->query(
-            '//*[@id="hotelPoliciesInc"] | //*[@data-testid="house-rules"] | //*[@data-testid="house-rules-section"] | //*[@data-testid="PropertyImportantInfo-wrapper"] | //*[contains(@class,"hp-policies")]'
+            '//*[@id="vt-policies"] | //*[@id="policies"] | //*[@id="hotelPoliciesInc"] | //*[@data-testid="house-rules"] | //*[@data-testid="house-rules-section"] | //*[@data-testid="PropertyImportantInfo-wrapper"] | //*[contains(@class,"hp-policies")]'
         ) ?: [];
 
         $blobParts = [];
@@ -641,7 +1200,8 @@ final class StayHtmlMapper
             if (! $root instanceof DOMElement) {
                 continue;
             }
-            $blobParts[] = $this->clean($this->nodeText($root));
+            $blobParts[] = $this->clean($this->readableBlockText($root));
+            $this->policiesFromBookingRows($xpath, $root, $out);
             foreach ($xpath->query('.//*[self::h3 or self::h4 or self::h5 or contains(@class,"headline") or contains(@class,"description__headline")]', $root) ?: [] as $heading) {
                 if (! $heading instanceof DOMElement) {
                     continue;
@@ -655,23 +1215,41 @@ final class StayHtmlMapper
                         if (in_array($tag, ['h3', 'h4', 'h5'], true)) {
                             break;
                         }
-                        $body .= ' '.$this->nodeText($next);
+                        $body .= ' '.$this->readableBlockText($next);
                     } elseif ($next instanceof \DOMText) {
                         $body .= ' '.$next->textContent;
                     }
                     $next = $next->nextSibling;
                 }
                 if ($body === '' && $heading->parentNode instanceof DOMElement) {
-                    $body = str_replace($title, '', $this->nodeText($heading->parentNode));
+                    $body = str_replace($title, '', $this->readableBlockText($heading->parentNode));
                 }
                 $this->assignPolicy($out, $title, $this->clean($body));
             }
-            foreach ($xpath->query('.//*[@data-testid="PolicyBlock"] | .//*[@data-testid="house-rule"] | .//*[@data-testid="HouseRulesBlock"]', $root) ?: [] as $block) {
+            foreach ($xpath->query('.//*[@data-vt-policy] | .//*[@data-testid="PolicyBlock"] | .//*[@data-testid="house-rule"] | .//*[@data-testid="HouseRulesBlock"]', $root) ?: [] as $block) {
                 if (! $block instanceof DOMElement) {
                     continue;
                 }
+                if ($block->hasAttribute('data-vt-policy')) {
+                    $title = $this->clean($this->firstTextIn($xpath, $block, './/h3'));
+                    $bodyNode = null;
+                    foreach ($block->childNodes as $child) {
+                        if ($child instanceof DOMElement && strtolower($child->tagName) === 'div') {
+                            $bodyNode = $child;
+                            break;
+                        }
+                    }
+                    $body = $bodyNode
+                        ? $this->clean($this->readableBlockText($bodyNode))
+                        : $this->clean($this->firstTextIn($xpath, $block, './/div'));
+                    if ($title !== '') {
+                        $this->assignPolicy($out, $title, $body);
+                    }
+
+                    continue;
+                }
                 $title = $this->clean($this->firstTextIn($xpath, $block, './/h3 | .//h4 | .//*[@data-testid="PolicyExceptionTitle"]'));
-                $body = $this->clean($this->nodeText($block));
+                $body = $this->clean($this->readableBlockText($block));
                 if ($title !== '') {
                     $body = $this->clean(str_replace($title, '', $body));
                 }
@@ -684,7 +1262,7 @@ final class StayHtmlMapper
         if ($blobParts === []) {
             $fallback = $xpath->query('//*[@id="vt-pack"]')?->item(0);
             if ($fallback) {
-                $blobParts[] = $this->clean($this->nodeText($fallback));
+                $blobParts[] = $this->clean($this->readableBlockText($fallback));
             }
         }
 
@@ -697,13 +1275,14 @@ final class StayHtmlMapper
             if (empty($out['check_in']) && preg_match('/Nhận phòng[^0-9]{0,40}(?:Từ\s+)?(\d{1,2}:\d{2})/iu', $blob, $m)) {
                 $out['check_in'] = $m[1];
             }
-            if (empty($out['check_out']) && preg_match('/Trả phòng[^0-9]{0,40}(?:Trước\s+|Đến\s+)?(\d{1,2}:\d{2})/iu', $blob, $m)) {
+            if (empty($out['check_out']) && preg_match('/Trả phòng[^0-9]{0,80}(?:Từ\s+|Trước\s+|Đến\s+)?(\d{1,2}:\d{2})/iu', $blob, $m)) {
                 $out['check_out'] = $m[1];
             }
             foreach ([
                 'cancellation' => '/(?:Huỷ|Hủy)\s*(?:\/\s*đổi ngày)?[:\s]+(.{12,280})/iu',
                 'child' => '/Trẻ em[:\s]+(.{8,280})/iu',
-                'pet' => '/Thú cưng[:\s]+(.{8,180})/iu',
+                'extra_bed' => '/(?:Giường phụ|cũi)[:\s]+(.{8,280})/iu',
+                'pet' => '/(?:Thú cưng|Vật nuôi)[:\s]+(.{8,180})/iu',
                 'smoking' => '/Hút thuốc[:\s]+(.{8,180})/iu',
                 'payment' => '/Thanh toán[:\s]+(.{8,280})/iu',
                 'id' => '/(?:Giấy tờ|CCCD|hộ chiếu)[:\s]+(.{8,280})/iu',
@@ -727,6 +1306,125 @@ final class StayHtmlMapper
         return $out;
     }
 
+    /**
+     * Booking house-rules redesign: rows = [icon+title col | body col], separated by <hr>.
+     *
+     * @param  array<string, mixed>  $out
+     */
+    private function policiesFromBookingRows(DOMXPath $xpath, DOMElement $root, array &$out): void
+    {
+        $contentList = $xpath->query(
+            './/*[@data-testid="property-section--content"] | .//*[@data-testid="PropertyImportantInfo-wrapper"]',
+            $root
+        );
+        $start = $contentList && $contentList->item(0) instanceof DOMElement
+            ? $contentList->item(0)
+            : $root;
+
+        foreach ($this->collectBookingPolicyRows($start) as $row) {
+            $this->assignPolicy($out, $row['title'], $row['body']);
+        }
+    }
+
+    /**
+     * @return list<array{title: string, body: string}>
+     */
+    private function collectBookingPolicyRows(DOMElement $container): array
+    {
+        $blocks = [];
+        foreach ($container->childNodes as $child) {
+            if (! $child instanceof DOMElement) {
+                continue;
+            }
+            if (strcasecmp($child->tagName, 'hr') === 0) {
+                continue;
+            }
+            if (strcasecmp($child->tagName, 'div') !== 0) {
+                continue;
+            }
+            if ($this->isBookingPolicyRow($child)) {
+                $cols = $this->directDivChildrenWithText($child);
+                if (count($cols) < 2) {
+                    continue;
+                }
+                $title = $this->policyTitleFromColumn($cols[0]);
+                $body = $this->clean($this->readableBlockText($cols[1]));
+                if ($title !== '' && $body !== '') {
+                    $blocks[] = ['title' => $title, 'body' => $body];
+                }
+            } else {
+                foreach ($this->collectBookingPolicyRows($child) as $nested) {
+                    $blocks[] = $nested;
+                }
+            }
+        }
+
+        return $blocks;
+    }
+
+    private function isBookingPolicyRow(DOMElement $el): bool
+    {
+        $cols = $this->directDivChildrenWithText($el);
+        if (count($cols) !== 2) {
+            return false;
+        }
+        $title = $this->policyTitleFromColumn($cols[0]);
+        if ($title === '' || mb_strlen($title) > 120) {
+            return false;
+        }
+        $body = $this->clean($this->readableBlockText($cols[1]));
+        if ($body === '') {
+            return false;
+        }
+        $hasSvg = $cols[0]->getElementsByTagName('svg')->length > 0;
+        $titleLines = preg_split('/\n+/u', trim($this->readableBlockText($cols[0]))) ?: [];
+        $titleLines = array_values(array_filter(array_map('trim', $titleLines)));
+
+        return $hasSvg || count($titleLines) <= 3;
+    }
+
+    /**
+     * @return list<DOMElement>
+     */
+    private function directDivChildrenWithText(DOMElement $el): array
+    {
+        $cols = [];
+        foreach ($el->childNodes as $child) {
+            if (! $child instanceof DOMElement || strcasecmp($child->tagName, 'div') !== 0) {
+                continue;
+            }
+            if ($this->clean($this->readableBlockText($child)) === '') {
+                continue;
+            }
+            $cols[] = $child;
+        }
+
+        return $cols;
+    }
+
+    private function policyTitleFromColumn(DOMElement $col): string
+    {
+        $raw = trim($this->readableBlockText($col));
+        $lines = preg_split('/\n+/u', $raw) ?: [];
+        $lines = array_values(array_filter(array_map(
+            fn ($line) => $this->clean((string) $line),
+            $lines
+        )));
+        if ($lines === []) {
+            return '';
+        }
+        foreach ($lines as $line) {
+            if (preg_match('/^(Nhận phòng|Trả phòng|Hủy|Huỷ|Trẻ em|Không giới hạn|Vật nuôi|Thú cưng|Các phương thức|Thanh toán|Hút thuốc|Giấy tờ)/iu', $line) === 1) {
+                return $line;
+            }
+        }
+        if (count($lines) <= 2 && mb_strlen($lines[0]) <= 100) {
+            return $this->clean(implode(' ', $lines));
+        }
+
+        return $lines[0];
+    }
+
     private function assignPolicy(array &$out, string $titleOrKey, string $body): void
     {
         $body = $this->cleanPolicyValue($body);
@@ -734,41 +1432,95 @@ final class StayHtmlMapper
             return;
         }
         $key = match (true) {
-            $titleOrKey === 'check_in' || preg_match('/nhận phòng/iu', $titleOrKey) === 1 => 'check_in',
-            $titleOrKey === 'check_out' || preg_match('/trả phòng/iu', $titleOrKey) === 1 => 'check_out',
-            $titleOrKey === 'cancellation' || preg_match('/huỷ|hủy|đổi ngày|cancel/iu', $titleOrKey) === 1 => 'cancellation',
+            $titleOrKey === 'check_in' || preg_match('/^nhận phòng/iu', $titleOrKey) === 1 => 'check_in',
+            $titleOrKey === 'check_out' || preg_match('/^trả phòng/iu', $titleOrKey) === 1 => 'check_out',
+            $titleOrKey === 'cancellation' || preg_match('/huỷ|hủy|đổi ngày|trả trước|cancel/iu', $titleOrKey) === 1 => 'cancellation',
             $titleOrKey === 'child' || preg_match('/trẻ em|trẻ nhỏ/iu', $titleOrKey) === 1 => 'child',
-            $titleOrKey === 'pet' || preg_match('/thú cưng/iu', $titleOrKey) === 1 => 'pet',
+            $titleOrKey === 'extra_bed' || preg_match('/giường phụ|cũi|extra bed/iu', $titleOrKey) === 1 => 'extra_bed',
+            $titleOrKey === 'pet' || preg_match('/thú cưng|vật nuôi/iu', $titleOrKey) === 1 => 'pet',
             $titleOrKey === 'smoking' || preg_match('/hút thuốc/iu', $titleOrKey) === 1 => 'smoking',
-            $titleOrKey === 'payment' || preg_match('/thanh toán|thẻ/iu', $titleOrKey) === 1 => 'payment',
+            $titleOrKey === 'payment' || preg_match('/thanh toán|phương thức thanh toán|thẻ/iu', $titleOrKey) === 1 => 'payment',
             $titleOrKey === 'id' || preg_match('/giấy tờ|cccd|hộ chiếu/iu', $titleOrKey) === 1 => 'id',
-            $titleOrKey === 'age' || preg_match('/độ tuổi|tuổi tối thiểu/iu', $titleOrKey) === 1 => 'age',
+            $titleOrKey === 'age' || preg_match('/độ tuổi|tuổi tối thiểu|không giới hạn độ tuổi/iu', $titleOrKey) === 1 => 'age',
             default => null,
         };
-        if ($key === null || isset($out[$key])) {
-            return;
-        }
-        if (in_array($key, ['check_in', 'check_out'], true) && preg_match('/(\d{1,2}:\d{2})/', $body, $m)) {
-            $out[$key] = $m[1];
+        if ($key === null) {
+            $title = $this->clean($titleOrKey);
+            if ($title === '' || $this->isJunkPolicyText($body)) {
+                return;
+            }
+            $out['_sections'] ??= [];
+            foreach ($out['_sections'] as $section) {
+                if (is_array($section) && ($section['title'] ?? '') === $title) {
+                    return;
+                }
+            }
+            $out['_sections'][] = ['title' => $title, 'body' => $body];
 
             return;
         }
-        if (in_array($key, ['check_in', 'check_out'], true)) {
+
+        // Guard: mis-paired rows (wrapper treated as one block) put checkout into check-in.
+        if ($key === 'check_in' && preg_match('/^trả phòng\b/iu', $body) === 1) {
+            $this->assignPolicy($out, 'check_out', preg_replace('/^trả phòng\s*/iu', '', $body) ?? $body);
+
             return;
         }
-        $out[$key] = $body;
+        if ($key === 'check_out' && preg_match('/^nhận phòng\b/iu', $body) === 1) {
+            return;
+        }
+
+        if (in_array($key, ['check_in', 'check_out'], true)) {
+            $time = $this->extractPolicyTimeWindow($body);
+            $notes = $time !== ''
+                ? $this->clean(preg_replace('/'.preg_quote($time, '/').'/u', '', $body, 1) ?? $body)
+                : '';
+            $value = $time !== '' ? $time : $body;
+            if (! isset($out[$key]) || mb_strlen($value) >= mb_strlen((string) $out[$key])) {
+                $out[$key] = $value;
+            }
+            if ($key === 'check_in' && $notes !== '' && preg_match('/giấy tờ|thẻ tín dụng|xuất trình|giờ bạn sẽ đến/iu', $notes) === 1) {
+                if (empty($out['id']) || mb_strlen($notes) > mb_strlen((string) $out['id'])) {
+                    $out['id'] = $notes;
+                }
+            }
+
+            return;
+        }
+        if (! isset($out[$key]) || mb_strlen($body) > mb_strlen((string) $out[$key])) {
+            $out[$key] = $body;
+        }
+    }
+
+    private function extractPolicyTimeWindow(string $body): string
+    {
+        if (preg_match('/Từ\s+\d{1,2}:\d{2}\s*[-–]\s*\d{1,2}:\d{2}/u', $body, $m) === 1) {
+            return $this->clean($m[0]);
+        }
+        if (preg_match('/(?:Từ|Trước|Đến)\s+\d{1,2}:\d{2}/u', $body, $m) === 1) {
+            return $this->clean($m[0]);
+        }
+        if (preg_match('/\b\d{1,2}:\d{2}\b/u', $body, $m) === 1) {
+            return $m[0];
+        }
+
+        return '';
     }
 
     private function cleanPolicyValue(string $text): string
     {
-        $text = $this->clean(html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $text = html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = str_replace("\xc2\xa0", ' ', $text);
+        // Adjacent block nodes often arrive glued: "trở lênCó giường"
+        $text = preg_replace('/([\p{Ll}\p{N}])(\p{Lu})/u', '$1 $2', $text) ?? $text;
+        $text = preg_replace('/([.!?…])([^\s\d])/u', '$1 $2', $text) ?? $text;
         $text = preg_replace('/["\'][a-z0-9_.]+["]\s*:\s*/iu', ' ', $text) ?? $text;
         $text = $this->clean($text);
         if ($this->isJunkPolicyText($text)) {
             return '';
         }
-        if (mb_strlen($text) > 400) {
-            $text = Str::limit($text, 400, '');
+        if (mb_strlen($text) > 1200) {
+            $text = Str::limit($text, 1200, '');
         }
 
         return rtrim($text, " \t.;");
@@ -1109,6 +1861,8 @@ final class StayHtmlMapper
             'rooms' => [],
             'facilities_html' => '',
             'policies_html' => '',
+            'hprt_html' => '',
+            'crawl_dates' => null,
         ];
         foreach ($packs as $pack) {
             if ($pack === []) {
@@ -1122,11 +1876,14 @@ final class StayHtmlMapper
             if (count($rooms) > count($out['rooms'])) {
                 $out['rooms'] = $rooms;
             }
-            foreach (['facilities_html', 'policies_html'] as $key) {
+            foreach (['facilities_html', 'policies_html', 'hprt_html'] as $key) {
                 $val = trim((string) ($pack[$key] ?? ''));
                 if ($val !== '' && strlen($val) > strlen((string) $out[$key])) {
                     $out[$key] = $val;
                 }
+            }
+            if (is_array($pack['crawl_dates'] ?? null) && ($out['crawl_dates'] === null || $out['crawl_dates'] === [])) {
+                $out['crawl_dates'] = $pack['crawl_dates'];
             }
             if (! empty($pack['debug'])) {
                 $out['debug'] = $pack['debug'];
@@ -1159,11 +1916,21 @@ final class StayHtmlMapper
                 continue;
             }
             $fromHtml = $this->roomFieldsFromRpHtml((string) ($row['html'] ?? ''));
+            $rowAttrs = is_array($row['attrs'] ?? null) ? $row['attrs'] : [];
             $name = $this->clean((string) ($row['name'] ?? $fromHtml['name'] ?? ''));
-            if ($name === '' || isset($seen[$name])) {
+            $roomId = $this->clean((string) ($row['room_id'] ?? $rowAttrs['room_id'] ?? ''));
+            $hash = $this->clean((string) ($row['hash'] ?? $rowAttrs['hash'] ?? ''));
+            if ($roomId === '' && preg_match('/#?RD(\d+)/i', $hash, $hm)) {
+                $roomId = $hm[1];
+            }
+            if ($hash === '' && $roomId !== '') {
+                $hash = '#RD'.$roomId;
+            }
+            $dedupeKey = $roomId !== '' ? 'id:'.$roomId : ($name !== '' ? 'name:'.$name : '');
+            if ($dedupeKey === '' || isset($seen[$dedupeKey])) {
                 continue;
             }
-            $seen[$name] = true;
+            $seen[$dedupeKey] = true;
             $text = $this->clean((string) ($row['text'] ?? ''));
             $description = $this->clean((string) ($row['description'] ?? $fromHtml['description'] ?? ''));
             if ($description === '' && $text !== '') {
@@ -1222,14 +1989,30 @@ final class StayHtmlMapper
                 $view = $groups['view'][0];
             }
             $amenities = array_values(array_unique(array_merge($beds, $amenities, $highlights)));
+            $rateOptions = is_array($row['rate_options'] ?? null)
+                ? $row['rate_options']
+                : (is_array($rowAttrs['rate_options'] ?? null) ? $rowAttrs['rate_options'] : []);
+            $crawlDates = is_array($row['crawl_dates'] ?? null)
+                ? $row['crawl_dates']
+                : (is_array($rowAttrs['crawl_dates'] ?? null) ? $rowAttrs['crawl_dates'] : null);
+            $scarcity = $this->clean((string) ($row['scarcity'] ?? $rowAttrs['scarcity'] ?? ''));
+            $codeStem = $roomId !== '' ? $roomId : Str::slug($name);
+            if ($codeStem === '') {
+                continue;
+            }
             $out[] = [
-                'code' => 'bk-'.Str::slug($name),
-                'name' => $name,
+                'code' => 'bk-'.$codeStem,
+                'name' => $name !== '' ? $name : ('Phòng '.$roomId),
                 'capacity' => $capacity,
                 'description' => $description !== '' ? $description : null,
+                'price_from' => isset($row['price_from']) && is_numeric($row['price_from'])
+                    ? (float) $row['price_from']
+                    : null,
                 'amenities' => $amenities,
                 'photos' => $photos,
                 'attrs' => array_filter([
+                    'room_id' => $roomId !== '' ? $roomId : null,
+                    'hash' => $hash !== '' ? $hash : null,
                     'bed' => $beds !== [] ? implode(', ', $beds) : null,
                     'size_sqm' => $size,
                     'photos' => $photos !== [] ? $photos : null,
@@ -1238,7 +2021,10 @@ final class StayHtmlMapper
                     'smoking' => $smoking !== '' ? $smoking : null,
                     'unit_type' => $this->unitType($name),
                     'view' => $view,
-                ]),
+                    'scarcity' => $scarcity !== '' ? $scarcity : null,
+                    'rate_options' => $rateOptions !== [] ? $rateOptions : null,
+                    'crawl_dates' => $crawlDates,
+                ], fn ($v) => $v !== null && $v !== '' && $v !== []),
             ];
         }
 
@@ -1334,20 +2120,34 @@ final class StayHtmlMapper
         $seen = [];
         foreach (is_array($photos) ? $photos : [] as $photo) {
             $url = is_array($photo) ? (string) ($photo['url'] ?? '') : (string) $photo;
+            $local = is_array($photo) ? (string) ($photo['local_path'] ?? $photo['path'] ?? '') : '';
             $url = $this->normalizeHotelPhotoUrl($url);
-            if (! $this->isHotelPhotoUrl($url)) {
+            if (! $this->isHotelPhotoUrl($url) && $local === '') {
                 continue;
             }
             $id = $this->hotelPhotoId($url);
-            $key = $id ?? $url;
+            $key = $id ?? ($url !== '' ? $url : $local);
+            $hasSig = str_contains($url, '?k=') || str_contains($url, '&k=');
             if (isset($seen[$key])) {
+                $idx = $seen[$key];
+                if ($local !== '' && empty($out[$idx]['local_path'])) {
+                    $out[$idx]['local_path'] = $local;
+                }
+                if ($hasSig && ! str_contains((string) ($out[$idx]['url'] ?? ''), 'k=')) {
+                    $out[$idx]['url'] = $url;
+                }
+
                 continue;
             }
-            $seen[$key] = true;
-            $out[] = [
+            $seen[$key] = count($out);
+            $row = [
                 'url' => $url,
                 'alt' => is_array($photo) ? $this->clean((string) ($photo['alt'] ?? '')) : '',
             ];
+            if ($local !== '') {
+                $row['local_path'] = $local;
+            }
+            $out[] = $row;
         }
 
         return $out;
@@ -1453,6 +2253,48 @@ final class StayHtmlMapper
     private function nodeText(\DOMNode $node): string
     {
         return html_entity_decode($node->textContent ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    /**
+     * Prefer spaced text between block elements (DOM textContent glues sibling divs).
+     */
+    private function readableBlockText(\DOMNode $node): string
+    {
+        if ($node instanceof \DOMText) {
+            return $node->textContent ?? '';
+        }
+        if (! $node instanceof DOMElement) {
+            return '';
+        }
+        $tag = strtolower($node->tagName);
+        if (in_array($tag, ['script', 'style', 'noscript', 'svg'], true)) {
+            return '';
+        }
+        if ($tag === 'br') {
+            return "\n";
+        }
+        $imgAlt = '';
+        if ($tag === 'img') {
+            $imgAlt = trim((string) $node->getAttribute('alt'));
+        }
+        $parts = [];
+        if ($imgAlt !== '') {
+            $parts[] = $imgAlt;
+        }
+        $blockish = in_array($tag, ['p', 'div', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'tr', 'section', 'article'], true);
+        foreach ($node->childNodes as $child) {
+            $chunk = $this->readableBlockText($child);
+            if ($chunk === '') {
+                continue;
+            }
+            $parts[] = $chunk;
+        }
+        $joined = implode($blockish ? "\n" : ' ', $parts);
+        if ($blockish) {
+            return "\n".$joined."\n";
+        }
+
+        return $joined;
     }
 
     private function childByClass(DOMElement $parent, string $class): ?DOMElement

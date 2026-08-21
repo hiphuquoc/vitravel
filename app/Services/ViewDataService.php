@@ -31,9 +31,11 @@ use App\Models\ReferencePerson;
 use App\Models\Review;
 use App\Models\ReviewPlatform;
 use App\Models\SeoEntryTranslation;
+use App\Models\Media;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\ServiceTranslation;
+use App\Models\StayCrawlItem;
 use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Models\TourCategory;
@@ -1752,11 +1754,15 @@ class ViewDataService
             $query->forCluster($cluster);
         }
 
-        $service = $query->get()->first(function (Service $s) use ($slug) {
+        $matches = $query->get()->filter(function (Service $s) use ($slug) {
             $seoSlug = $s->seoEntry?->translation($this->locale())?->slug;
 
             return $seoSlug === $slug || $s->code === $slug;
         });
+
+        // Nhiều bản draft trùng slug (crawl lại) — luôn ưu tiên published, rồi id mới nhất.
+        $service = $matches->first(fn (Service $s) => $s->status === 'published')
+            ?? $matches->sortByDesc('id')->first();
 
         if ($service) {
             return $this->mapService($service);
@@ -1897,40 +1903,37 @@ class ViewDataService
      */
     protected function attachStayPayload(array $payload, Service $service, ?ServiceTranslation $translation): array
     {
-        $attrs = is_array($service->attrs) ? $service->attrs : [];
-        $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
-        $amenities = array_values(array_filter(
-            is_array($attrs['amenities'] ?? null) ? $attrs['amenities'] : [],
-            fn ($a) => filled($a),
-        ));
-
-        $nearby = array_values(array_filter(
-            is_array($attrs['nearby'] ?? null) ? $attrs['nearby'] : [],
-            fn ($n) => is_array($n) && filled($n['name'] ?? null),
-        ));
-        $highlightBadges = \App\Support\StayFacilities::stringList($attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null);
-        if ($highlightBadges === []) {
-            $highlightBadges = array_slice($amenities, 0, 6);
+        $attrs = \App\Support\StayFacilities::normalizeStayAttrs(
+            is_array($service->attrs) ? $service->attrs : [],
+        );
+        try {
+            $crawlAttrs = $this->stayCrawlMappedAttrs($service, $attrs);
+            if ($crawlAttrs !== []) {
+                $attrs = \App\Support\StayFacilities::overlayRicherStayAttrs($attrs, $crawlAttrs);
+            }
+        } catch (\Throwable) {
+            // Crawl overlay chỉ để hiển thị — không được làm rơi trang public.
         }
+        $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
+        $sections = \App\Support\StayFacilities::resolvePublicSections($attrs);
 
         $payload['isStay'] = true;
+        $payload['summary'] = '';
+        $payload['highlightsIntro'] = '';
+        $payload['highlights'] = [];
         $payload['propertyType'] = $propertyType;
         $payload['propertyTypeLabel'] = config("stay.property_types.{$propertyType}") ?? ucfirst($propertyType);
         $payload['address'] = (string) ($attrs['address'] ?? '');
         $payload['checkIn'] = (string) ($attrs['check_in'] ?? '15:00');
         $payload['checkOut'] = (string) ($attrs['check_out'] ?? '12:00');
-        $payload['amenities'] = $amenities;
-        $payload['highlightBadges'] = $highlightBadges;
-        $payload['amenityGroups'] = \App\Support\StayFacilities::displayGroups(
-            $amenities,
-            is_array($attrs['amenity_groups'] ?? null) ? $attrs['amenity_groups'] : null,
+        $payload['amenities'] = [];
+        $payload['highlightBadges'] = \App\Support\StayFacilities::stringList(
+            $attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null,
         );
-        $payload['nearby'] = $nearby;
-        $payload['nearbyGroups'] = \App\Support\StayFacilities::nearbyGroups(
-            $nearby,
-            is_array($attrs['nearby_groups'] ?? null) ? $attrs['nearby_groups'] : null,
-        );
-        $payload['reviewScores'] = \App\Support\StayFacilities::reviewScores($attrs);
+        $payload['amenityGroups'] = $sections['amenityGroups'];
+        $payload['nearbyGroups'] = $sections['nearbyGroups'];
+        $payload['reviewScores'] = $sections['reviewScores'];
+        $payload['attrs'] = $attrs;
         $payload['totalRooms'] = isset($attrs['total_rooms']) ? (int) $attrs['total_rooms'] : null;
         $payload['languages'] = is_array($attrs['languages'] ?? null) ? $attrs['languages'] : [];
         $payload['rooms'] = $this->mapStayRooms($service);
@@ -1949,18 +1952,39 @@ class ViewDataService
                 : (string) ($attrs['payment_cards'] ?? ''),
             'id_required' => (string) ($attrs['id_required_policy'] ?? ''),
         ];
-        $payload['featuredQuote'] = $payload['quote'] ?? ['text' => '', 'author' => ''];
+        $payload['featuredQuote'] = ['text' => '', 'author' => ''];
 
         $remoteGallery = $this->mapStayRemotePhotos(is_array($attrs['photos'] ?? null) ? $attrs['photos'] : []);
-        if (($payload['gallery'] ?? []) === [] && $remoteGallery !== []) {
-            $payload['gallery'] = $remoteGallery;
-            $payload['galleryCount'] = count($remoteGallery);
+        app(MediaService::class)->hydrateStayGalleryAttachments($service);
+        if (! $service->relationLoaded('mediaAttachments')) {
+            $service->load('mediaAttachments.media');
         }
-        if (! filled($payload['imageDetail'] ?? null) && $remoteGallery !== []) {
-            $first = $remoteGallery[0]['src'];
-            $payload['image'] = $payload['image'] ?: $first;
-            $payload['imageDetail'] = $first;
+        // Stay: giữ cover trong gallery (lightbox đủ ảnh); tour vẫn lọc cover để tránh trùng.
+        $attachedGallery = $this->mapGalleryAttachments($service, includeCover: true);
+        $mergedGallery = $this->mergeStayGallery(
+            $attachedGallery,
+            $remoteGallery !== [] ? $remoteGallery : (is_array($payload['gallery'] ?? null) ? $payload['gallery'] : []),
+        );
+        if ($mergedGallery !== []) {
+            $payload['gallery'] = $mergedGallery;
         }
+        $payload['galleryCount'] = count($mergedGallery !== [] ? $mergedGallery : $attachedGallery);
+        // Chỉ đổ hero từ gallery khi chưa có cover media.
+        $hasCover = filled($payload['imageDetail'] ?? null) || filled($payload['image'] ?? null);
+        if (! $hasCover && $mergedGallery !== []) {
+            $hero = $mergedGallery[0];
+            $heroSrc = (string) ($hero['full'] ?? $hero['src'] ?? '');
+            if ($heroSrc !== '') {
+                $payload['image'] = $heroSrc;
+                $payload['imageDetail'] = $heroSrc;
+                $payload['imageSrcset'] = $hero['srcset'] ?? null;
+                $payload['imageDetailSrcset'] = $hero['fullSrcset'] ?? ($hero['srcset'] ?? null);
+            }
+        }
+        $payload['policySections'] = \App\Support\StayFacilities::policySections($attrs);
+        $payload['paymentCards'] = is_array($attrs['payment_cards'] ?? null)
+            ? array_values(array_filter($attrs['payment_cards'], fn ($c) => filled($c)))
+            : array_values(array_filter(preg_split('/[\n,]+/', (string) ($attrs['payment_cards'] ?? '')) ?: [], fn ($c) => filled(trim($c))));
 
         return $payload;
     }
@@ -1988,9 +2012,24 @@ class ViewDataService
 
         $locale = $this->locale();
         $currency = $service->currency ?? 'VND';
+        $crawlRooms = [];
+        try {
+            $crawlRooms = $this->stayCrawlRoomPhotos($service);
+        } catch (\Throwable) {
+            $crawlRooms = [];
+        }
 
-        return $service->options->map(function ($opt) use ($locale, $currency) {
+        return $service->options->map(function ($opt) use ($locale, $currency, $crawlRooms) {
             $t = $opt->translation($locale);
+            $attrs = is_array($opt->attrs) ? $opt->attrs : [];
+            if (empty($attrs['photos'])) {
+                $code = (string) $opt->code;
+                $name = mb_strtolower((string) ($t?->name ?? ''));
+                $photos = $crawlRooms['code:'.$code] ?? $crawlRooms['name:'.$name] ?? [];
+                if ($photos !== []) {
+                    $attrs['photos'] = $photos;
+                }
+            }
 
             return \App\Support\StayFacilities::mapRoom([
                 'code' => $opt->code,
@@ -1999,9 +2038,69 @@ class ViewDataService
                 'price_from' => $opt->price_from,
                 'capacity' => $opt->capacity,
                 'amenities' => is_array($t?->amenities) ? $t->amenities : [],
-                'attrs' => is_array($opt->attrs) ? $opt->attrs : [],
+                'attrs' => $attrs,
             ], $currency, fn ($amount, $cur) => $this->formatMoney($amount, $cur));
         })->values()->all();
+    }
+
+    /**
+     * @return array<string, list<mixed>>
+     */
+    protected function stayCrawlRoomPhotos(Service $service): array
+    {
+        $itemId = (int) data_get($service->attrs, 'crawl.item_id', 0);
+        $item = $itemId > 0 ? StayCrawlItem::query()->find($itemId) : null;
+        if (! $item) {
+            $item = StayCrawlItem::query()->where('service_id', $service->id)->latest('id')->first();
+        }
+        if (! $item || ! is_array($item->ai_json)) {
+            return [];
+        }
+        $out = [];
+        foreach (is_array($item->ai_json['options'] ?? null) ? $item->ai_json['options'] : [] as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+            $photos = is_array($row['photos'] ?? null) ? $row['photos'] : [];
+            if ($photos === [] && is_array($row['attrs']['photos'] ?? null)) {
+                $photos = $row['attrs']['photos'];
+            }
+            if ($photos === []) {
+                continue;
+            }
+            $code = trim((string) ($row['code'] ?? ''));
+            $name = mb_strtolower(trim((string) ($row['name'] ?? '')));
+            if ($code !== '') {
+                $out['code:'.$code] = $photos;
+            }
+            if ($name !== '') {
+                $out['name:'.$name] = $photos;
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * attrs đã map từ crawl (ai_json) — bổ sung amenity_groups / nearby / photos nếu service.attrs thiếu.
+     *
+     * @param  array<string, mixed>  $attrs
+     * @return array<string, mixed>
+     */
+    protected function stayCrawlMappedAttrs(Service $service, array $attrs): array
+    {
+        $itemId = (int) data_get($attrs, 'crawl.item_id', 0);
+        $item = $itemId > 0
+            ? StayCrawlItem::query()->find($itemId)
+            : null;
+        if (! $item) {
+            $item = StayCrawlItem::query()->where('service_id', $service->id)->latest('id')->first();
+        }
+        if (! $item || ! is_array($item->ai_json)) {
+            return [];
+        }
+
+        return is_array($item->ai_json['attrs'] ?? null) ? $item->ai_json['attrs'] : [];
     }
 
     /**
@@ -2784,19 +2883,19 @@ class ViewDataService
      *
      * @return list<array<string, mixed>>
      */
-    protected function mapGalleryAttachments(Package|Service $model): array
+    protected function mapGalleryAttachments(Package|Service $model, bool $includeCover = false): array
     {
         if (! $model->relationLoaded('mediaAttachments')) {
             $model->load('mediaAttachments.media');
         }
 
-        $coverMediaId = $model->coverMedia()?->id;
+        $coverMediaId = $includeCover ? null : $model->coverMedia()?->id;
 
         return $model->mediaAttachments
             ->where('role', 'gallery')
             ->sortBy('sort')
             ->filter(fn ($a) => ! $coverMediaId || (int) $a->media_id !== (int) $coverMediaId)
-            ->take(24)
+            ->take((int) config('stay.crawl.max_images', 120))
             ->map(function ($a) {
                 $card = media_payload($a->media, 'card');
                 if (! filled($card['src'] ?? null)) {
@@ -2839,17 +2938,37 @@ class ViewDataService
         foreach ($photos as $photo) {
             $url = '';
             $alt = '';
+            $mediaId = 0;
             if (is_string($photo)) {
                 $url = $photo;
             } elseif (is_array($photo)) {
                 $url = (string) ($photo['url'] ?? $photo['src'] ?? $photo['full'] ?? '');
                 $alt = (string) ($photo['alt'] ?? $photo['title'] ?? '');
+                $mediaId = (int) ($photo['media_id'] ?? 0);
             }
-            $url = trim($url);
-            if ($url === '' || ! preg_match('#^https?://#i', $url) || isset($seen[$url])) {
+            if (! \App\Support\StayFacilities::shouldExposePublicPhoto($url, $mediaId)) {
                 continue;
             }
-            $seen[$url] = true;
+            // Có media_id → luôn lấy URL GCS từ Media (tránh hotlink Booking còn trong attrs).
+            if ($mediaId > 0) {
+                $media = Media::query()->find($mediaId);
+                $resolved = $this->absoluteStayPhotoUrl((string) ($media?->url('lg') ?: $media?->url('card') ?: ''));
+                if ($resolved !== '') {
+                    $url = $resolved;
+                }
+                if ($alt === '') {
+                    $alt = (string) ($media?->alt ?? '');
+                }
+            }
+            $url = $this->absoluteStayPhotoUrl(trim($url));
+            if ($url === '') {
+                continue;
+            }
+            $key = $this->normalizeStayGalleryUrl($url);
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
             $out[] = [
                 'src' => $url,
                 'srcset' => null,
@@ -2861,7 +2980,73 @@ class ViewDataService
             ];
         }
 
-        return array_slice($out, 0, 24);
+        return array_slice($out, 0, (int) config('stay.crawl.max_images', 120));
+    }
+
+    /**
+     * Gộp gallery từ media_attachments với ảnh hotlink/GCS trong attrs.photos.
+     *
+     * @param  list<array<string, mixed>>  $attached
+     * @param  list<array<string, mixed>>  $remote
+     * @return list<array<string, mixed>>
+     */
+    protected function mergeStayGallery(array $attached, array $remote): array
+    {
+        if ($remote === []) {
+            return $attached;
+        }
+
+        $merged = [];
+        $seen = [];
+        foreach ($attached as $item) {
+            $url = (string) ($item['src'] ?? $item['full'] ?? '');
+            if ($url === '') {
+                continue;
+            }
+            $seen[$this->normalizeStayGalleryUrl($url)] = true;
+            $merged[] = $item;
+        }
+
+        foreach ($remote as $item) {
+            $url = (string) ($item['src'] ?? $item['full'] ?? '');
+            if ($url === '') {
+                continue;
+            }
+            $key = $this->normalizeStayGalleryUrl($url);
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+            $merged[] = $item;
+        }
+
+        return array_slice($merged, 0, (int) config('stay.crawl.max_images', 120));
+    }
+
+    protected function absoluteStayPhotoUrl(string $url): string
+    {
+        $url = html_entity_decode(trim($url), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        if ($url === '' || str_starts_with($url, 'data:')) {
+            return '';
+        }
+        if (str_starts_with($url, '//')) {
+            $url = 'https:'.$url;
+        }
+        if (str_starts_with($url, '/') && ! str_starts_with($url, '//')) {
+            $url = rtrim((string) config('app.url'), '/').$url;
+        }
+        if (! preg_match('#^https?://#i', $url)) {
+            return '';
+        }
+
+        return $url;
+    }
+
+    protected function normalizeStayGalleryUrl(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH) ?: $url;
+
+        return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
     }
 
     protected function countryFlag(?string $code): string

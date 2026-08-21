@@ -31,6 +31,9 @@ final class StayCrawlApiController extends Controller
             'browser_ready' => $this->browser->isReady(),
             'proxy_configured' => $this->browser->proxyConfigured(),
             'proxy_enabled_default' => (bool) config('stay.crawl.proxy.enabled', false),
+            'headless' => (bool) config('stay.crawl.headless', true),
+            'headed' => ! (bool) config('stay.crawl.headless', true),
+            'slow_mo' => (int) config('stay.crawl.slow_mo', 0),
         ]);
     }
 
@@ -105,7 +108,7 @@ final class StayCrawlApiController extends Controller
                 'url' => 'required|url|max:2000',
                 'service_category_id' => 'nullable|integer|exists:service_categories,id',
                 'html' => 'nullable|string',
-                'max_pages' => 'nullable|integer|min:1|max:5',
+                'max_pages' => 'nullable|integer|min:1|max:80',
                 'ignore_robots' => 'nullable|boolean',
                 'use_proxy' => 'nullable|boolean',
             ]);
@@ -146,10 +149,11 @@ final class StayCrawlApiController extends Controller
                 'service_category_id' => 'required|integer',
                 'url' => 'required|url|max:2000',
                 'html' => 'nullable|string',
-                'max_pages' => 'nullable|integer|min:1|max:5',
+                'max_pages' => 'nullable|integer|min:1|max:80',
                 'ignore_robots' => 'nullable|boolean',
                 'use_proxy' => 'nullable|boolean',
                 'rerun' => 'nullable|in:improve,replace',
+                'from' => 'nullable|in:basic,gallery,rooms,rooms_modals',
             ]);
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -162,6 +166,10 @@ final class StayCrawlApiController extends Controller
                 ?? $request->input('rerun')
                 ?? $request->query('rerun')
                 ?? $request->header('X-Stay-Crawl-Rerun');
+            $from = $validated['from']
+                ?? $request->input('from')
+                ?? $request->query('from')
+                ?? $request->header('X-Stay-Crawl-From');
             $result = $this->crawl->startForCategory(
                 (int) $validated['service_category_id'],
                 $validated['url'],
@@ -170,6 +178,7 @@ final class StayCrawlApiController extends Controller
                 (int) ($validated['max_pages'] ?? 1),
                 $this->useProxyFlag($validated),
                 is_string($rerun) ? $rerun : null,
+                is_string($from) ? $from : null,
             );
         } catch (StayCrawlAlreadyExistsException $e) {
             return ApiResponse::error($e->getMessage(), 'STAY_CRAWL_EXISTS', 409, $e->details());
@@ -178,18 +187,33 @@ final class StayCrawlApiController extends Controller
         }
 
         $job = $result['job'];
+        $autoWork = ! \App\Support\StayBookingUrl::isHotelPage($validated['url'])
+            || $job->items()->count() > 1;
+        if ($autoWork && $job->items()->count() > 0) {
+            $this->crawl->spawnWorker($job->fresh() ?? $job, [
+                'locale' => 'vi',
+                'useProxy' => $this->useProxyFlag($validated),
+                'respectRobots' => $this->respectRobotsFlag($validated),
+            ]);
+            $job = $job->fresh() ?? $job;
+        }
+
         $items = $job->items()->with('service.seoEntry.translations')->latest('id')->limit(80)->get();
 
         return ApiResponse::success([
             'job' => $this->mapJob($job->loadCount('items')),
             'urls' => $result['urls'],
             'items' => $items->map(fn (StayCrawlItem $i) => $this->mapItem($i))->values(),
+            'worker' => data_get($job->meta, 'worker'),
+            'worker_hint' => $autoWork
+                ? 'Worker nền đang chạy (stay-crawl:work). Có thể đóng tab — resume bằng API work/resume hoặc CLI.'
+                : 'Gọi process-next (hoặc work) để cào tiếp từng bước.',
         ], 'Đã lấy danh sách chỗ nghỉ — đang tạo trang con');
     }
 
     public function processNext(Request $request, int $id): JsonResponse
     {
-        @set_time_limit(480);
+        @set_time_limit(60);
         $job = StayCrawlJob::query()->findOrFail($id);
         try {
             $validated = $request->validate([
@@ -202,30 +226,107 @@ final class StayCrawlApiController extends Controller
             return ApiResponse::fromValidation($e);
         }
 
-        $html = $validated['html'] ?? null;
-        $result = $this->crawl->processNext(
-            $job,
-            $validated['locale'] ?? 'vi',
-            is_string($html) && $html !== '' ? $html : null,
-            $this->respectRobotsFlag($validated),
-            $this->useProxyFlag($validated),
-        );
-
-        $item = $result['item'];
-        $service = $item?->service;
         $locale = $validated['locale'] ?? 'vi';
+        $html = $validated['html'] ?? null;
+        $html = is_string($html) && $html !== '' ? $html : null;
+
+        if ($this->crawl->isWorkerAlive($job)) {
+            $busyMsg = $this->crawl->isWorkerPaused($job)
+                ? 'Worker đang tạm dừng (paused) — gọi resume để tiếp tục'
+                : 'Worker nền đang chạy (stay-crawl:work) — không cần poll process-next';
+
+            return $this->stepResponse($this->crawl->httpStepSnapshot($job), $locale, $busyMsg);
+        }
+
+        if (! $this->crawl->isStepRunning($job)) {
+            $this->crawl->clearStaleStep($job);
+            $snap = $this->crawl->httpStepSnapshot($job);
+            if (! $snap['done']) {
+                $this->crawl->markStepRunning($job);
+                $this->crawl->spawnHttpStep($job, [
+                    'locale' => $locale,
+                    'html' => $html,
+                    'respectRobots' => $this->respectRobotsFlag($validated),
+                    'useProxy' => $this->useProxyFlag($validated),
+                ]);
+            }
+        }
+
+        return $this->stepResponse($this->crawl->httpStepSnapshot($job), $locale, 'Chrome đang chạy nền');
+    }
+
+    /** Khởi động / đảm bảo worker nền cho job dài ngày. */
+    public function startWork(Request $request, int $id): JsonResponse
+    {
+        $job = StayCrawlJob::query()->findOrFail($id);
+        try {
+            $validated = $request->validate([
+                'locale' => 'nullable|string|max:12',
+                'ignore_robots' => 'nullable|boolean',
+                'use_proxy' => 'nullable|boolean',
+            ]);
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        $this->crawl->resumeWorker($job, [
+            'locale' => $validated['locale'] ?? 'vi',
+            'useProxy' => $this->useProxyFlag($validated),
+            'respectRobots' => $this->respectRobotsFlag($validated),
+        ]);
+
+        $fresh = $job->fresh() ?? $job;
 
         return ApiResponse::success([
-            'done' => $result['done'],
-            'remaining' => $result['remaining'],
-            'imported' => $result['imported'],
-            'blocked' => $result['blocked'],
-            'failed' => $result['failed'],
-            'total' => $result['total'],
+            'job' => $this->mapJob($fresh),
+            'worker' => data_get($fresh->meta, 'worker'),
+            'worker_hint' => 'php artisan stay-crawl:work '.$fresh->id.' --proxy',
+        ], 'Đã bật worker nền');
+    }
+
+    public function pauseWork(int $id): JsonResponse
+    {
+        $job = StayCrawlJob::query()->findOrFail($id);
+        $this->crawl->pauseWorker($job, 'api_pause');
+        $fresh = $job->fresh() ?? $job;
+
+        return ApiResponse::success([
+            'job' => $this->mapJob($fresh),
+            'worker' => data_get($fresh->meta, 'worker'),
+        ], 'Đã tạm dừng worker (hoàn tất bước đang chạy rồi nghỉ)');
+    }
+
+    public function resumeWork(Request $request, int $id): JsonResponse
+    {
+        return $this->startWork($request, $id);
+    }
+
+    /**
+     * @param  array<string, mixed>  $result
+     */
+    private function stepResponse(array $result, string $locale, string $busyMessage): JsonResponse
+    {
+        $item = $result['item'] instanceof StayCrawlItem ? $result['item'] : null;
+        $service = $item?->service;
+        $busy = (bool) ($result['busy'] ?? false);
+
+        return ApiResponse::success([
+            'done' => (bool) ($result['done'] ?? false),
+            'busy' => $busy,
+            'remaining' => $result['remaining'] ?? 0,
+            'imported' => $result['imported'] ?? 0,
+            'blocked' => $result['blocked'] ?? 0,
+            'failed' => $result['failed'] ?? 0,
+            'total' => $result['total'] ?? 0,
             'job' => $this->mapJob($result['job']),
             'item' => $item ? $this->mapItem($item) : null,
             'service' => $service ? $this->mapServiceSeo($service, $locale) : null,
-        ], $result['done'] ? 'Đã xử lý xong danh sách' : 'Đã xử lý 1 chỗ nghỉ');
+            'phase' => $result['phase'] ?? null,
+            'message' => $busy ? $busyMessage : ($result['message'] ?? null),
+            'last_step' => $result['last_step'] ?? null,
+        ], $busy
+            ? $busyMessage
+            : (($result['done'] ?? false) ? 'Đã xử lý xong danh sách' : ($result['message'] ?? 'Đã xử lý 1 bước crawler')));
     }
 
     public function enqueueHotel(Request $request): JsonResponse
@@ -330,13 +431,21 @@ final class StayCrawlApiController extends Controller
 
         $item = $this->crawl->queueHotelUrl($validated['url']);
         $html = $validated['html'] ?? null;
-        $item = $this->crawl->crawlDetail(
+        $item = $this->crawl->ingestRemaining(
             $item,
+            $validated['service_category_id'] ?? null,
+            $validated['locale'] ?? 'vi',
             is_string($html) && $html !== '' ? $html : null,
             $this->respectRobotsFlag($validated),
-            true,
+            (bool) ($validated['dry_run'] ?? false),
             $this->useProxyFlag($validated),
         );
+        $steps = 0;
+        while ($this->crawl->itemNeedsEnrich($item) && $steps < 40) {
+            $step = $this->crawl->enrichNext($item, $this->useProxyFlag($validated));
+            $item = $step['item'];
+            $steps++;
+        }
         if ($item->status === StayCrawlItem::STATUS_BLOCKED) {
             return ApiResponse::error(
                 $item->error ?: 'Booking.com chặn fetch. Dán HTML đã lưu vào trường html.',
@@ -345,20 +454,20 @@ final class StayCrawlApiController extends Controller
                 ['item' => $this->mapItem($item)],
             );
         }
-        if ($item->status === StayCrawlItem::STATUS_EXTRACTED) {
-            $item = $this->crawl->mapProcess($item);
+        if ($item->status === StayCrawlItem::STATUS_FAILED || ! $item->service_id) {
+            return ApiResponse::error(
+                $item->error ?: 'Ingest thất bại.',
+                'CRAWL_FAILED',
+                422,
+                ['item' => $this->mapItem($item)],
+            );
         }
-        $service = $this->crawl->importItem(
-            $item,
-            $validated['service_category_id'] ?? null,
-            $validated['locale'] ?? 'vi',
-            (bool) ($validated['dry_run'] ?? false),
-        );
+        $service = Service::query()->findOrFail((int) $item->service_id);
 
         return ApiResponse::success([
             'item' => $this->mapItem($item->fresh(), true),
             ...$this->mapServiceSeo($service, $validated['locale'] ?? 'vi'),
-        ], 'Ingest xong — draft chỗ nghỉ (map HTML)');
+        ], 'Ingest xong — draft + gallery/phòng (nếu Chrome lấy được)');
     }
 
     /** @return array<string, mixed> */
@@ -374,6 +483,12 @@ final class StayCrawlApiController extends Controller
             'items_count' => $job->items_count ?? null,
             'service_category_id' => $job->service_category_id,
             'error' => $job->error,
+            'rerun' => data_get($job->meta, 'rerun'),
+            'rerun_from' => data_get($job->meta, 'rerun_from'),
+            'list' => data_get($job->meta, 'list'),
+            'worker' => data_get($job->meta, 'worker'),
+            'worker_alive' => $this->crawl->isWorkerAlive($job),
+            'worker_paused' => $this->crawl->isWorkerPaused($job),
             'created_at' => $job->created_at?->toIso8601String(),
         ];
     }
@@ -397,6 +512,7 @@ final class StayCrawlApiController extends Controller
             'has_extracted' => filled($item->extracted_html),
             'has_ai' => is_array($item->ai_json) && $item->ai_json !== [],
             'slug_full' => $this->itemSlugFull($item),
+            'enrich' => is_array($item->raw_json['enrich'] ?? null) ? $item->raw_json['enrich'] : null,
         ];
         if ($full) {
             $payload['raw_json'] = $item->raw_json;

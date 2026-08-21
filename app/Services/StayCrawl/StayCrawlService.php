@@ -22,6 +22,7 @@ final class StayCrawlService
         private readonly StayHtmlMapper $mapper,
         private readonly StayCrawlAiService $ai,
         private readonly StayCrawlImporter $importer,
+        private readonly StayCrawlEnricher $enricher,
     ) {}
 
     public function ensureSource(string $url): StayCrawlSource
@@ -64,9 +65,22 @@ final class StayCrawlService
         $job->status = StayCrawlJob::STATUS_CRAWLING;
         $job->save();
 
+        $pageSize = max(10, min(50, (int) config('stay.crawl.list_page_size', 25)));
+        $maxCap = max(1, (int) config('stay.crawl.list_max_pages', 80));
+        $pages = max(1, min($maxPages, $maxCap));
         $urls = [];
-        $pages = max(1, min($maxPages, 5));
+        $seen = [];
         $current = $job->list_url;
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['list'] = [
+            'max_pages' => $pages,
+            'page_size' => $pageSize,
+            'pages_done' => 0,
+            'offset' => StayBookingUrl::searchOffset($current),
+            'stopped_reason' => null,
+        ];
+        $job->meta = $meta;
+        $job->save();
 
         try {
             for ($page = 1; $page <= $pages; $page++) {
@@ -81,18 +95,56 @@ final class StayCrawlService
                     $body = $fetch['html'];
                     $finalUrl = $fetch['final_url'] ?: $current;
                 }
+
                 $extracted = $this->extractor->extract($body, $finalUrl);
+                $newOnPage = 0;
                 foreach ($extracted['hotel_urls'] as $url) {
+                    $canon = StayBookingUrl::canonicalize($url);
+                    if (isset($seen[$canon])) {
+                        continue;
+                    }
+                    $seen[$canon] = true;
                     $urls[] = $url;
                     $this->queueHotelUrl($url, $job);
+                    $newOnPage++;
                 }
+
+                $meta = is_array($job->meta) ? $job->meta : [];
+                $listMeta = is_array($meta['list'] ?? null) ? $meta['list'] : [];
+                $listMeta['pages_done'] = $page;
+                $listMeta['offset'] = StayBookingUrl::searchOffset($current);
+                $listMeta['last_page_new'] = $newOnPage;
+                $listMeta['urls_queued'] = count($seen);
+                $meta['list'] = $listMeta;
+                $job->meta = $meta;
                 $job->pages_crawled = $page;
+                $job->items_found = $job->items()->count();
                 $job->save();
+
                 $html = null;
-                if ($page < $pages) {
+
+                if ($page >= $pages) {
                     break;
                 }
+                if ($newOnPage === 0) {
+                    $listMeta['stopped_reason'] = 'empty_page';
+                    $meta['list'] = $listMeta;
+                    $job->meta = $meta;
+                    $job->save();
+                    break;
+                }
+
+                $next = StayBookingUrl::nextSearchPageUrl($current, $pageSize);
+                if ($next === null || $next === $current) {
+                    $listMeta['stopped_reason'] = 'no_next_url';
+                    $meta['list'] = $listMeta;
+                    $job->meta = $meta;
+                    $job->save();
+                    break;
+                }
+                $current = $next;
             }
+
             $urls = array_values(array_unique($urls));
             $job->items_found = $job->items()->count();
             $job->status = StayCrawlJob::STATUS_READY;
@@ -155,7 +207,7 @@ final class StayCrawlService
             $fetchDriver = 'dump';
             $pack = [];
             if ($html === null) {
-                $fetch = $this->fetcher->fetch($item->source_url, $respectRobots, $useProxy);
+                $fetch = $this->fetcher->fetch($item->source_url, $respectRobots, $useProxy, ['mode' => 'basic']);
                 $fetchDriver = $fetch['driver'] ?? 'browser';
                 $pack = is_array($fetch['pack'] ?? null) ? $fetch['pack'] : [];
                 $item->http_status = $fetch['status'] ?: null;
@@ -182,6 +234,40 @@ final class StayCrawlService
             if (! $extracted['blocked']) {
                 $mapped = $this->mapper->map((string) $html, $item->source_url, $extracted, $pack);
             }
+            // --- Supplement gallery via HTTP if initial extraction has few images ---
+            $mappedPhotos = is_array($mapped['attrs']['photos'] ?? null) ? $mapped['attrs']['photos'] : [];
+            $httpGalleryCount = 0;
+            if (count($mappedPhotos) < 15 && count($extracted['images']) < 15) {
+                try {
+                    $galleryHtml = $this->fetcher->fetchGalleryHtml($item->source_url, $useProxy);
+                    if ($galleryHtml !== '') {
+                        $galleryPhotos = $this->extractor->extractGalleryImages($galleryHtml);
+                        $httpGalleryCount = count($galleryPhotos);
+                        if ($galleryPhotos !== []) {
+                            // Merge HTTP gallery photos into extracted images
+                            $seenIds = [];
+                            foreach ($extracted['images'] as $img) {
+                                if (preg_match('#/(\d{5,})\.jpe?g#i', $img['url'] ?? '', $m)) {
+                                    $seenIds[$m[1]] = true;
+                                }
+                            }
+                            foreach ($galleryPhotos as $gp) {
+                                if (preg_match('#/(\d{5,})\.jpe?g#i', $gp['url'], $m) && ! isset($seenIds[$m[1]])) {
+                                    $extracted['images'][] = $gp;
+                                    $seenIds[$m[1]] = true;
+                                }
+                            }
+                            // Re-run mapper with enriched images if we had few mapped photos
+                            if ($mappedPhotos === [] || count($mappedPhotos) < count($galleryPhotos)) {
+                                $mapped = $this->mapper->map((string) $html, $item->source_url, $extracted, $pack);
+                            }
+                        }
+                    }
+                } catch (\Throwable) {
+                    // HTTP gallery fallback failed — continue with original data
+                }
+            }
+
             $item->raw_json = [
                 'title' => $extracted['title'],
                 'json_ld' => $extracted['json_ld'],
@@ -197,6 +283,7 @@ final class StayCrawlService
                     'chrome_rooms' => count(is_array($pack['rooms'] ?? null) ? $pack['rooms'] : []),
                     'mapped_photos' => count(is_array($mapped['attrs']['photos'] ?? null) ? $mapped['attrs']['photos'] : []),
                     'mapped_rooms' => count(is_array($mapped['options'] ?? null) ? $mapped['options'] : []),
+                    'http_gallery_photos' => $httpGalleryCount,
                     'error' => $pack['error'] ?? null,
                     'debug' => $pack['debug'] ?? null,
                 ],
@@ -293,10 +380,37 @@ final class StayCrawlService
         if ($fields === []) {
             throw new RuntimeException("Item #{$item->id} chưa map HTML. Chạy crawl detail trước.");
         }
+        $html = (string) ($item->raw_html ?: $item->extracted_html);
+        if (trim($html) !== '') {
+            $mapped = $this->mapper->map(
+                $html,
+                $item->source_url,
+                is_array($item->raw_json) ? $item->raw_json : [],
+            );
+            if (is_array($mapped['attrs'] ?? null)) {
+                $fields['attrs'] = \App\Support\StayFacilities::overlayRicherStayAttrs(
+                    is_array($fields['attrs'] ?? null) ? $fields['attrs'] : [],
+                    $mapped['attrs'],
+                );
+            }
+        }
         $categoryId = $categoryId ?: $item->job?->service_category_id;
         $strategy = $strategy === 'improve' ? 'improve' : 'replace';
 
         return $this->importer->import($item, $fields, $categoryId, $locale, $dryRun, $strategy);
+    }
+
+    /**
+     * @return array{phase: string, item: StayCrawlItem, message: string}
+     */
+    public function enrichNext(StayCrawlItem $item, bool $useProxy = false): array
+    {
+        return $this->enricher->runNext($item, $useProxy);
+    }
+
+    public function itemNeedsEnrich(StayCrawlItem $item): bool
+    {
+        return $this->enricher->needsEnrich($item);
     }
 
     public function requireStayCategory(int $categoryId): ServiceCategory
@@ -322,9 +436,11 @@ final class StayCrawlService
         int $maxPages = 1,
         bool $useProxy = false,
         ?string $rerun = null,
+        ?string $from = null,
     ): array {
         $this->requireStayCategory($categoryId);
         $rerun = in_array($rerun, ['improve', 'replace'], true) ? $rerun : null;
+        $from = StayCrawlEnricher::normalizeFrom($from);
 
         if (StayBookingUrl::isHotelPage($url) && $rerun === null) {
             $this->throwIfAlreadyCrawled($url);
@@ -333,35 +449,20 @@ final class StayCrawlService
         $job = $this->enqueueList($url, $categoryId, $useProxy);
         $meta = is_array($job->meta) ? $job->meta : [];
         $meta['rerun'] = $rerun;
+        $meta['rerun_from'] = $rerun === 'improve' ? $from : null;
         $job->meta = $meta;
         $job->save();
 
         if (StayBookingUrl::isHotelPage($url)) {
             $item = $this->queueHotelUrl($url, $job);
             if ($rerun) {
-                $this->resetItemForRerun($item, $rerun);
+                $this->resetItemForRerun($item, $rerun, $from);
             }
             $job->items_found = 1;
             $job->pages_crawled = 0;
             $job->status = StayCrawlJob::STATUS_READY;
             $job->error = null;
             $job->save();
-
-            $item = $this->ingestRemaining(
-                $item->fresh() ?? $item,
-                $categoryId,
-                'vi',
-                $html,
-                $respectRobots,
-                false,
-                $useProxy,
-            );
-            $job = $job->fresh() ?? $job;
-            if (in_array($item->status, [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_BLOCKED, StayCrawlItem::STATUS_FAILED], true)
-                && $this->processableQuery($job)->count() === 0) {
-                $job->status = StayCrawlJob::STATUS_DONE;
-                $job->save();
-            }
 
             return ['job' => $job->fresh() ?? $job, 'urls' => [StayBookingUrl::canonicalize($url)]];
         }
@@ -373,7 +474,7 @@ final class StayCrawlService
             $job->save();
             throw new RuntimeException($job->error);
         }
-        $this->applyRerunToJob($result['job']->fresh() ?? $result['job'], $rerun);
+        $this->applyRerunToJob($result['job']->fresh() ?? $result['job'], $rerun, $from);
 
         return $result;
     }
@@ -389,6 +490,8 @@ final class StayCrawlService
      *     blocked: int,
      *     failed: int,
      *     total: int,
+     *     phase: string|null,
+     *     message: string|null,
      *     job: StayCrawlJob
      * }
      */
@@ -404,6 +507,22 @@ final class StayCrawlService
         }
 
         $useProxy = $useProxy || (bool) data_get($job->meta, 'use_proxy', false);
+
+        $enrichItem = $this->nextEnrichItem($job);
+        if ($enrichItem) {
+            try {
+                $step = $this->enricher->runNext($enrichItem, $useProxy);
+            } catch (\Throwable $e) {
+                $step = $this->failEnrichStep($enrichItem, $e->getMessage());
+            }
+            $remaining = $this->remainingCount($job);
+            if ($remaining === 0) {
+                $job->status = StayCrawlJob::STATUS_DONE;
+                $job->save();
+            }
+
+            return $this->jobProgress($job->fresh() ?? $job, $step['item'], $remaining === 0, $step['phase'], $step['message']);
+        }
 
         $item = $this->nextProcessableItem($job, $html !== null && $html !== '');
         if (! $item) {
@@ -423,13 +542,358 @@ final class StayCrawlService
             $useProxy,
         );
 
-        $remaining = $this->processableQuery($job)->count();
+        $remaining = $this->remainingCount($job);
         if ($remaining === 0) {
             $job->status = StayCrawlJob::STATUS_DONE;
             $job->save();
         }
 
-        return $this->jobProgress($job->fresh() ?? $job, $item, $remaining === 0);
+        $basicMessage = $item->service_id
+            ? 'Đã tạo draft chỗ nghỉ'
+            : ($item->error ?: 'Đã cào HTML');
+
+        return $this->jobProgress($job->fresh() ?? $job, $item, $remaining === 0, 'basic', $basicMessage);
+    }
+
+    public function isStepRunning(StayCrawlJob $job): bool
+    {
+        $job->refresh();
+        if ($this->isWorkerAlive($job)) {
+            return true;
+        }
+        if (! (bool) data_get($job->meta, 'step_running', false)) {
+            return false;
+        }
+        $started = (string) data_get($job->meta, 'step_started_at', '');
+        if ($started === '') {
+            return true;
+        }
+        $ts = strtotime($started);
+        // Khớp timeout Chrome gallery (~7–8 phút). Quá hạn → coi như chết để spawn lại.
+        return $ts !== false && (time() - $ts) < 480;
+    }
+
+    /** Worker nền (stay-crawl:work) còn heartbeat trong cửa sổ an toàn. */
+    public function isWorkerAlive(StayCrawlJob $job): bool
+    {
+        $job->refresh();
+        if (! (bool) data_get($job->meta, 'worker.running', false)) {
+            return false;
+        }
+        $hb = (string) data_get($job->meta, 'worker.heartbeat_at', '');
+        if ($hb === '') {
+            return true;
+        }
+        $ts = strtotime($hb);
+        $stale = max(90, (int) config('stay.crawl.worker_heartbeat_stale_sec', 120));
+
+        return $ts !== false && (time() - $ts) < $stale;
+    }
+
+    public function isWorkerPaused(StayCrawlJob $job): bool
+    {
+        return (bool) data_get($job->meta, 'worker.paused', false);
+    }
+
+    /**
+     * @param  array{locale?: string, useProxy?: bool, respectRobots?: bool}  $opts
+     */
+    public function spawnWorker(StayCrawlJob $job, array $opts = []): void
+    {
+        if ($this->isWorkerAlive($job)) {
+            return;
+        }
+
+        $php = $this->phpCliBinary();
+        $artisan = base_path('artisan');
+        $setsid = is_executable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
+        $nohup = is_executable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
+        $parts = array_values(array_filter([
+            $setsid,
+            $nohup,
+            escapeshellarg($php),
+            escapeshellarg($artisan),
+            'stay-crawl:work',
+            (string) $job->id,
+            '--locale='.escapeshellarg((string) ($opts['locale'] ?? 'vi')),
+        ]));
+        if (! empty($opts['useProxy']) || (bool) data_get($job->meta, 'use_proxy', false)) {
+            $parts[] = '--proxy';
+        }
+        if (! empty($opts['respectRobots'])) {
+            $parts[] = '--respect-robots';
+        }
+        $log = storage_path('logs/stay-crawl-work-'.$job->id.'.log');
+        $stamp = now()->toIso8601String();
+        @file_put_contents($log, "{$stamp} SPAWN stay-crawl:work {$job->id}\n", FILE_APPEND);
+        $cmd = 'cd '.escapeshellarg(base_path()).' && '.implode(' ', $parts)
+            .' >> '.escapeshellarg($log).' 2>&1 < /dev/null & echo $!';
+        $pid = trim((string) shell_exec($cmd));
+
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['worker'] = array_merge(is_array($meta['worker'] ?? null) ? $meta['worker'] : [], [
+            'running' => true,
+            'paused' => false,
+            'pid' => is_numeric($pid) ? (int) $pid : null,
+            'spawned_at' => $stamp,
+            'heartbeat_at' => $stamp,
+            'log' => 'storage/logs/stay-crawl-work-'.$job->id.'.log',
+            'stop_reason' => null,
+        ]);
+        $job->meta = $meta;
+        $job->save();
+        @file_put_contents($log, "{$stamp} SPAWN_PID=".($pid !== '' ? $pid : 'unknown')."\n", FILE_APPEND);
+    }
+
+    public function pauseWorker(StayCrawlJob $job, string $reason = 'paused'): void
+    {
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $worker = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $worker['paused'] = true;
+        $worker['pause_reason'] = $reason;
+        $worker['paused_at'] = now()->toIso8601String();
+        $meta['worker'] = $worker;
+        $job->meta = $meta;
+        $job->save();
+        @file_put_contents(storage_path('app/stay-crawl-pause-'.$job->id), $reason."\n".now()->toIso8601String()."\n");
+    }
+
+    public function resumeWorker(StayCrawlJob $job, array $opts = []): void
+    {
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $worker = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $worker['paused'] = false;
+        $worker['pause_reason'] = null;
+        $worker['resumed_at'] = now()->toIso8601String();
+        $meta['worker'] = $worker;
+        $job->meta = $meta;
+        $job->save();
+        $pauseFile = storage_path('app/stay-crawl-pause-'.$job->id);
+        if (is_file($pauseFile)) {
+            @unlink($pauseFile);
+        }
+
+        if (! $this->isWorkerAlive($job)) {
+            $this->spawnWorker($job, $opts);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $patch
+     */
+    public function touchWorkerHeartbeat(StayCrawlJob $job, array $patch = []): void
+    {
+        $job->refresh();
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $worker = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $worker = array_merge($worker, $patch, [
+            'running' => true,
+            'heartbeat_at' => now()->toIso8601String(),
+        ]);
+        $meta['worker'] = $worker;
+        $job->meta = $meta;
+        $job->save();
+    }
+
+    public function stopWorkerMeta(StayCrawlJob $job, string $reason): void
+    {
+        $job->refresh();
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $worker = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $worker['running'] = false;
+        $worker['stop_reason'] = $reason;
+        $worker['stopped_at'] = now()->toIso8601String();
+        $worker['heartbeat_at'] = now()->toIso8601String();
+        $meta['worker'] = $worker;
+        $job->meta = $meta;
+        $job->save();
+    }
+
+    /**
+     * Bước nền bị kẹt (step_running quá hạn) — clear để poll tiếp tục.
+     */
+    public function clearStaleStep(StayCrawlJob $job): bool
+    {
+        $job->refresh();
+        if (! (bool) data_get($job->meta, 'step_running', false)) {
+            return false;
+        }
+        if ($this->isStepRunning($job)) {
+            return false;
+        }
+        $this->failStep($job, 'Bước nền quá hạn / Chrome kẹt profile — sẽ chạy lại bước tiếp.');
+
+        return true;
+    }
+
+    public function markStepRunning(StayCrawlJob $job): void
+    {
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['step_running'] = true;
+        $meta['step_started_at'] = now()->toIso8601String();
+        $job->meta = $meta;
+        $job->save();
+    }
+
+    /**
+     * @param  array{done?: bool, item?: StayCrawlItem|null, remaining?: int, imported?: int, blocked?: int, failed?: int, phase?: string|null, message?: string|null}  $result
+     */
+    public function finishStep(StayCrawlJob $job, array $result): void
+    {
+        $job->refresh();
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $seq = (int) ($meta['step_seq'] ?? 0) + 1;
+        $item = $result['item'] ?? null;
+        $meta['step_running'] = false;
+        $meta['step_started_at'] = null;
+        $meta['step_seq'] = $seq;
+        $meta['last_step'] = [
+            'seq' => $seq,
+            'phase' => $result['phase'] ?? null,
+            'message' => $result['message'] ?? null,
+            'done' => (bool) ($result['done'] ?? false),
+            'imported' => (int) ($result['imported'] ?? 0),
+            'blocked' => (int) ($result['blocked'] ?? 0),
+            'failed' => (int) ($result['failed'] ?? 0),
+            'remaining' => (int) ($result['remaining'] ?? 0),
+            'item_id' => $item?->id,
+            'source_url' => $item?->source_url,
+            'item_status' => $item?->status,
+            'blocked_reason' => $item?->blocked_reason,
+            'error' => $item?->error,
+        ];
+        $job->meta = $meta;
+        $job->save();
+    }
+
+    public function failStep(StayCrawlJob $job, string $error): void
+    {
+        $this->finishStep($job, [
+            'done' => false,
+            'item' => null,
+            'remaining' => $this->remainingCount($job),
+            'imported' => 0,
+            'blocked' => 0,
+            'failed' => 0,
+            'phase' => 'error',
+            'message' => 'Luồng Chrome lỗi: '.$error,
+        ]);
+    }
+
+    /**
+     * @return array{
+     *     done: bool,
+     *     busy: bool,
+     *     item: StayCrawlItem|null,
+     *     remaining: int,
+     *     imported: int,
+     *     blocked: int,
+     *     failed: int,
+     *     total: int,
+     *     phase: string|null,
+     *     message: string|null,
+     *     last_step: array<string, mixed>|null,
+     *     job: StayCrawlJob
+     * }
+     */
+    public function httpStepSnapshot(StayCrawlJob $job): array
+    {
+        $job->refresh();
+        $busy = $this->isStepRunning($job);
+        $last = is_array($job->meta['last_step'] ?? null) ? $job->meta['last_step'] : null;
+        $item = null;
+        if (is_array($last) && ! empty($last['item_id'])) {
+            $item = StayCrawlItem::query()
+                ->with('service.seoEntry.translations')
+                ->find((int) $last['item_id']);
+        }
+        $remaining = $this->remainingCount($job);
+        $progress = $this->jobProgress(
+            $job,
+            $item,
+            ! $busy && $remaining === 0,
+            is_array($last) ? ($last['phase'] ?? null) : null,
+            is_array($last) ? ($last['message'] ?? null) : null,
+        );
+        $progress['busy'] = $busy;
+        $progress['last_step'] = $last;
+
+        return $progress;
+    }
+
+    /**
+     * Chạy 1 bước Chrome ngoài request HTTP (tránh Nginx cắt ~60s).
+     *
+     * @param  array{locale: string, html: ?string, respectRobots: bool, useProxy: bool}  $opts
+     */
+    public function spawnHttpStep(StayCrawlJob $job, array $opts): void
+    {
+        $htmlFile = '';
+        $html = $opts['html'] ?? null;
+        if (is_string($html) && $html !== '') {
+            $dir = storage_path('app/tmp');
+            if (! is_dir($dir)) {
+                mkdir($dir, 0775, true);
+            }
+            $htmlFile = $dir.'/stay_step_'.$job->id.'.html';
+            file_put_contents($htmlFile, $html);
+        }
+
+        $php = $this->phpCliBinary();
+        $artisan = base_path('artisan');
+        $setsid = is_executable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
+        $nohup = is_executable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
+        $parts = array_values(array_filter([
+            $setsid,
+            $nohup,
+            escapeshellarg($php),
+            escapeshellarg($artisan),
+            'stay-crawl:step',
+            (string) $job->id,
+            '--locale='.escapeshellarg((string) ($opts['locale'] ?? 'vi')),
+        ]));
+        if (! empty($opts['useProxy'])) {
+            $parts[] = '--proxy';
+        }
+        if (! empty($opts['respectRobots'])) {
+            $parts[] = '--respect-robots';
+        }
+        if ($htmlFile !== '') {
+            $parts[] = '--html-file='.escapeshellarg($htmlFile);
+        }
+        $log = storage_path('logs/stay-crawl-step-'.$job->id.'.log');
+        $stamp = now()->toIso8601String();
+        @file_put_contents(
+            $log,
+            "{$stamp} SPAWN stay-crawl:step {$job->id} php={$php}\n",
+            FILE_APPEND,
+        );
+        $cmd = 'cd '.escapeshellarg(base_path()).' && '.implode(' ', $parts)
+            .' >> '.escapeshellarg($log).' 2>&1 < /dev/null & echo $!';
+        $pid = trim((string) shell_exec($cmd));
+        @file_put_contents(
+            $log,
+            "{$stamp} SPAWN_PID=".($pid !== '' ? $pid : 'unknown')."\n",
+            FILE_APPEND,
+        );
+    }
+
+    private function phpCliBinary(): string
+    {
+        $candidates = array_filter([
+            trim((string) env('STAY_CRAWL_PHP', '')),
+            PHP_BINDIR.'/php',
+            '/usr/bin/php',
+            '/usr/local/bin/php',
+            PHP_SAPI === 'cli' ? PHP_BINARY : '',
+        ]);
+        foreach ($candidates as $path) {
+            if (is_string($path) && $path !== '' && is_executable($path) && ! str_contains($path, 'php-fpm')) {
+                return $path;
+            }
+        }
+
+        throw new RuntimeException('Không tìm thấy php CLI để chạy crawler nền (stay-crawl:step).');
     }
 
     public function ingestRemaining(
@@ -472,6 +936,10 @@ final class StayCrawlService
                 $strategy = (string) data_get($item->job?->meta, 'rerun', 'replace');
                 $this->importItem($item, $categoryId, $locale, $dryRun, $strategy === 'improve' ? 'improve' : 'replace');
                 $item = $item->fresh(['job', 'service.seoEntry.translations']) ?? $item;
+                if (! $dryRun && $item->status === StayCrawlItem::STATUS_IMPORTED) {
+                    $this->enricher->markPending($item);
+                    $item = $item->fresh(['job', 'service.seoEntry.translations']) ?? $item;
+                }
             }
         } catch (\Throwable $e) {
             $item->status = StayCrawlItem::STATUS_FAILED;
@@ -509,6 +977,64 @@ final class StayCrawlService
         ]);
     }
 
+    private function nextEnrichItem(StayCrawlJob $job): ?StayCrawlItem
+    {
+        foreach ($job->items()->where('status', StayCrawlItem::STATUS_IMPORTED)->orderBy('id')->get() as $item) {
+            if ($this->enricher->needsEnrich($item)) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    private function remainingCount(StayCrawlJob $job): int
+    {
+        $enrich = 0;
+        foreach ($job->items()->where('status', StayCrawlItem::STATUS_IMPORTED)->get() as $item) {
+            if ($this->enricher->needsEnrich($item)) {
+                $enrich++;
+            }
+        }
+
+        return $this->processableQuery($job)->count() + $enrich;
+    }
+
+    /**
+     * @return array{phase: string, item: StayCrawlItem, message: string}
+     */
+    private function failEnrichStep(StayCrawlItem $item, string $error): array
+    {
+        $raw = is_array($item->raw_json) ? $item->raw_json : [];
+        $enrich = is_array($raw['enrich'] ?? null) ? $raw['enrich'] : [];
+        if (($enrich['gallery'] ?? 'done') !== 'done') {
+            $enrich['gallery'] = 'done';
+            $enrich['gallery_error'] = $error;
+            $phase = 'gallery';
+        } elseif (($enrich['rooms_total'] ?? null) === null) {
+            $enrich['rooms'] = 'done';
+            $enrich['rooms_error'] = $error;
+            $phase = 'rooms_list';
+        } else {
+            $enrich['rooms_next'] = (int) ($enrich['rooms_next'] ?? 0) + 1;
+            $enrich['last_room_error'] = $error;
+            if ((int) $enrich['rooms_next'] >= (int) ($enrich['rooms_total'] ?? 0)) {
+                $enrich['rooms'] = 'done';
+            }
+            $phase = 'room';
+        }
+        $raw['enrich'] = $enrich;
+        $item->raw_json = $raw;
+        $item->error = $error;
+        $item->save();
+
+        return [
+            'phase' => $phase,
+            'item' => $item,
+            'message' => 'Luồng phụ lỗi: '.$error,
+        ];
+    }
+
     /**
      * @return array{
      *     done: bool,
@@ -518,11 +1044,18 @@ final class StayCrawlService
      *     blocked: int,
      *     failed: int,
      *     total: int,
+     *     phase: string|null,
+     *     message: string|null,
      *     job: StayCrawlJob
      * }
      */
-    private function jobProgress(StayCrawlJob $job, ?StayCrawlItem $item, bool $done): array
-    {
+    private function jobProgress(
+        StayCrawlJob $job,
+        ?StayCrawlItem $item,
+        bool $done,
+        ?string $phase = null,
+        ?string $message = null,
+    ): array {
         $job->loadCount([
             'items',
             'items as imported_count' => fn ($q) => $q->where('status', StayCrawlItem::STATUS_IMPORTED),
@@ -533,11 +1066,13 @@ final class StayCrawlService
         return [
             'done' => $done,
             'item' => $item,
-            'remaining' => $this->processableQuery($job)->count(),
+            'remaining' => $this->remainingCount($job),
             'imported' => (int) $job->imported_count,
             'blocked' => (int) $job->blocked_count,
             'failed' => (int) $job->failed_count,
             'total' => (int) ($job->items_count ?? $job->items()->count()),
+            'phase' => $phase,
+            'message' => $message,
             'job' => $job,
         ];
     }
@@ -558,7 +1093,7 @@ final class StayCrawlService
         );
     }
 
-    private function applyRerunToJob(StayCrawlJob $job, ?string $rerun): void
+    private function applyRerunToJob(StayCrawlJob $job, ?string $rerun, string $from = 'basic'): void
     {
         $done = $job->items()->get()->filter(fn (StayCrawlItem $i) => $this->itemIsAlreadyCrawled($i));
         if ($done->isEmpty()) {
@@ -571,8 +1106,17 @@ final class StayCrawlService
             );
         }
         foreach ($done as $item) {
-            $this->resetItemForRerun($item, $rerun);
+            $this->resetItemForRerun($item, $rerun, $from);
         }
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['rerun'] = $rerun;
+        $meta['rerun_from'] = $rerun === 'improve' ? StayCrawlEnricher::normalizeFrom($from) : null;
+        $job->meta = $meta;
+        if ($job->status === StayCrawlJob::STATUS_DONE) {
+            $job->status = StayCrawlJob::STATUS_READY;
+        }
+        $job->error = null;
+        $job->save();
     }
 
     private function itemIsAlreadyCrawled(StayCrawlItem $item): bool
@@ -584,8 +1128,13 @@ final class StayCrawlService
         ], true);
     }
 
-    public function resetItemForRerun(StayCrawlItem $item, string $rerun): StayCrawlItem
+    /**
+     * @param  string  $from  basic|gallery|rooms|rooms_modals (chỉ áp dụng khi improve)
+     */
+    public function resetItemForRerun(StayCrawlItem $item, string $rerun, string $from = 'basic'): StayCrawlItem
     {
+        $from = StayCrawlEnricher::normalizeFrom($from);
+
         if ($rerun === 'replace' && $item->service_id) {
             $service = Service::query()->withTrashed()->find($item->service_id);
             if ($service) {
@@ -593,6 +1142,27 @@ final class StayCrawlService
             }
             $item->service_id = null;
         }
+
+        if ($rerun === 'improve' && $from !== 'basic') {
+            $result = $this->enricher->resetFrom($item, $from);
+            if ($result['ok']) {
+                $job = $item->job;
+                if ($job && $job->status === StayCrawlJob::STATUS_DONE) {
+                    $job->status = StayCrawlJob::STATUS_READY;
+                    $job->error = null;
+                    $meta = is_array($job->meta) ? $job->meta : [];
+                    $meta['rerun'] = 'improve';
+                    $meta['rerun_from'] = $result['from'];
+                    $job->meta = $meta;
+                    $job->save();
+                }
+
+                return $item->fresh(['job', 'service']) ?? $item;
+            }
+            // Chưa có draft → fallback full basic
+            $from = 'basic';
+        }
+
         $item->status = StayCrawlItem::STATUS_QUEUED;
         $item->raw_html = null;
         $item->extracted_html = null;

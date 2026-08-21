@@ -52,6 +52,7 @@ autourasia-clone-docs/
 | `14-ai-system-prompts.md` | **AI** — dịch trang, enrich chương trình, registry prompt + usage |
 | `15-pricing.md` | **Bảng giá chi tiết** — đa chiều (ngày × tuỳ chọn × đối tượng khách × promo), quote booking-ready |
 | `16-accommodation-stays.md` | **Lưu trú** — UI, admin, AI, crawler Booking.com |
+| `17-stay-crawl-vps-aapanel.md` | **VPS aaPanel** — cài Node/Chrome/Puppeteer + `.env` để crawler Booking chạy ổn (vitravel.net) |
 | `gcs-standard.md` | Chuẩn GCS đa dự án |
 
 ## Trạng thái triển khai (2026-07)
@@ -66,6 +67,7 @@ autourasia-clone-docs/
 - **Bảng giá chi tiết:** morph trên package/service — ngày/khoảng/năm × tuỳ chọn × đối tượng khách (admin quản, không hardcode) × khuyến mãi. Docs [`15-pricing.md`](15-pricing.md). `price_from` vẫn là giá “từ” listing. Quote `PriceTableService::quote()` sẵn sàng booking (chưa checkout).
 - **Docs DB:** `07-database-architecture.md` + §18–19 trong `03-data-models.md` + **`11-multi-project-architecture.md`** + **`15-pricing.md`**.
 - **Deploy VPS (aaPanel):** [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) + mẫu trong `docs/deploy/`.
+- **Stay crawler trên VPS:** [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md) (Node 20+, `scripts/stay-crawl` npm ci, Chrome headless, proxy).
 
 ### Lệnh khởi tạo (máy dev)
 

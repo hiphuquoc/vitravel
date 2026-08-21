@@ -43,10 +43,12 @@ MySQL: một database · nhiều project_id
 | PHP | **8.3** (extension: `bcmath`, `ctype`, `curl`, `dom`, `fileinfo`, `json`, `mbstring`, `openssl`, `pdo_mysql`, `tokenizer`, `xml`, `zip`, `gd`/`imagick`, `intl`) |
 | MySQL / MariaDB | 8.0+ / 10.6+ |
 | Composer | 2.x (CLI) |
-| Node.js | **20+** (chỉ cần khi build Vite / admin trên server) |
+| Node.js | **20+** (build Vite / admin; **bắt buộc** nếu chạy stay crawler Booking trên VPS) |
 | Redis | tuỳ chọn (cache/queue); mặc định app dùng `database` |
 
-Trong aaPanel: **App Store → PHP 8.3 → Install extensions** như trên. Bật `disable_functions` đủ lỏng cho `proc_open` / `putenv` nếu Composer/artisan báo thiếu.
+Trong aaPanel: **App Store → PHP 8.3 → Install extensions** như trên. Bật `disable_functions` đủ lỏng cho `proc_open` / `putenv` / `shell_exec` nếu Composer/artisan báo thiếu (crawler spawn Node + worker `stay-crawl:work` cũng cần các hàm này).
+
+**Stay crawler (Booking.com / Chrome):** sau khi Laravel lên, làm thêm Node + `scripts/stay-crawl` + lib Chrome theo [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
 
 ### 1.2 Thư mục đề xuất
 
@@ -375,6 +377,9 @@ php artisan migrate --force
 # Nếu đổi front:
 npm ci && npm run build
 
+# Nếu đổi scripts/stay-crawl (package-lock) — xem docs/17-stay-crawl-vps-aapanel.md:
+# cd scripts/stay-crawl && sudo -u www npm ci && cd ../..
+
 php artisan optimize:clear
 php artisan config:cache
 php artisan route:cache
@@ -383,6 +388,8 @@ php artisan view:cache
 php artisan queue:restart
 chown -R www:www storage bootstrap/cache
 ```
+
+Cài lần đầu / kiểm tra crawler Booking trên VPS: [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
 
 Admin có thay đổi UI:
 

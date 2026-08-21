@@ -452,21 +452,13 @@ class SampleData
                 return $base;
             }
 
-            $amenities = array_values(array_filter(
-                is_array($attrs['amenities'] ?? null) ? $attrs['amenities'] : [],
-                fn ($a) => filled($a),
-            ));
+            $amenities = \App\Support\StayFacilities::stringList($attrs['amenities'] ?? null);
+            $sections = \App\Support\StayFacilities::resolvePublicSections($attrs);
             $rooms = array_map(function (array $opt) use ($row) {
                 return \App\Support\StayFacilities::mapRoom($opt, $row['currency'] ?? 'VND', function ($amount, $cur) {
                     return self::formatMoney($amount, $cur);
                 });
             }, is_array($row['options'] ?? null) ? $row['options'] : []);
-
-            $nearby = is_array($attrs['nearby'] ?? null) ? $attrs['nearby'] : [];
-            $highlightBadges = \App\Support\StayFacilities::stringList($attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null);
-            if ($highlightBadges === []) {
-                $highlightBadges = array_slice($amenities, 0, 6);
-            }
 
             $base['isStay'] = true;
             $base['propertyType'] = $propertyType;
@@ -474,18 +466,13 @@ class SampleData
             $base['address'] = (string) ($attrs['address'] ?? '');
             $base['checkIn'] = (string) ($attrs['check_in'] ?? '15:00');
             $base['checkOut'] = (string) ($attrs['check_out'] ?? '12:00');
-            $base['amenities'] = $amenities;
-            $base['highlightBadges'] = $highlightBadges;
-            $base['amenityGroups'] = \App\Support\StayFacilities::displayGroups(
-                $amenities,
-                is_array($attrs['amenity_groups'] ?? null) ? $attrs['amenity_groups'] : null,
+            $base['amenities'] = [];
+            $base['highlightBadges'] = \App\Support\StayFacilities::stringList(
+                $attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null,
             );
-            $base['nearby'] = $nearby;
-            $base['nearbyGroups'] = \App\Support\StayFacilities::nearbyGroups(
-                $nearby,
-                is_array($attrs['nearby_groups'] ?? null) ? $attrs['nearby_groups'] : null,
-            );
-            $base['reviewScores'] = \App\Support\StayFacilities::reviewScores($attrs);
+            $base['amenityGroups'] = $sections['amenityGroups'];
+            $base['nearbyGroups'] = $sections['nearbyGroups'];
+            $base['reviewScores'] = $sections['reviewScores'];
             $base['rooms'] = $rooms;
             $base['policies'] = [
                 'check_in' => $base['checkIn'],
@@ -502,7 +489,9 @@ class SampleData
                     : (string) ($attrs['payment_cards'] ?? ''),
                 'id_required' => (string) ($attrs['id_required_policy'] ?? ''),
             ];
-            $base['featuredQuote'] = $base['quote'];
+            $base['featuredQuote'] = ($row['cluster'] ?? '') === 'stay'
+                ? ['text' => '', 'author' => '']
+                : $base['quote'];
 
             return $base;
         }, $rows);

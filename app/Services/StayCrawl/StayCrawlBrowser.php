@@ -24,9 +24,10 @@ final class StayCrawlBrowser
     }
 
     /**
-     * @return array{ok: bool, status: int, html: string, pack: array<string, mixed>, final_url: string, blocked: bool, reason: ?string, driver: string}
+     * @param  array{mode?: string, skip_html?: bool, room_index?: int|null, download_images?: bool}  $options
+     * @return array{ok: bool, status: int, html: string, pack: array<string, mixed>, final_url: string, blocked: bool, reason: ?string, driver: string, images_dir: ?string}
      */
-    public function fetch(string $url, bool $useProxy = false): array
+    public function fetch(string $url, bool $useProxy = false, array $options = []): array
     {
         if (! $this->isReady()) {
             throw new RuntimeException(
@@ -49,14 +50,50 @@ final class StayCrawlBrowser
         chmod($inputFile, 0664);
         chmod($outputFile, 0664);
 
+        $mode = (string) ($options['mode'] ?? 'basic');
+        $wantDownload = in_array($mode, ['gallery', 'room'], true)
+            && ($options['download_images'] ?? true);
+        $imagesDir = null;
+        if ($wantDownload) {
+            $imagesDir = $tmp.DIRECTORY_SEPARATOR.'stay_crawl_img_'.bin2hex(random_bytes(8));
+            mkdir($imagesDir, 0775, true);
+        }
+
         $payload = [
             'url' => $url,
             'timeout' => (int) config('stay.crawl.browser_timeout', 90) * 1000,
             'proxy' => $useProxy ? $this->proxyConfig() : null,
+            'mode' => $mode,
+            'skip_html' => (bool) ($options['skip_html'] ?? false),
+            'room_index' => isset($options['room_index']) ? (int) $options['room_index'] : null,
+            'room_name' => (string) ($options['room_name'] ?? ''),
+            'room_hash' => (string) ($options['room_hash'] ?? ''),
+            'download_images' => $wantDownload,
+            'images_dir' => $imagesDir,
+            'max_images' => (int) ($options['max_images'] ?? config('stay.crawl.max_images', 120)),
+            'download_concurrency' => (int) ($options['download_concurrency'] ?? config('stay.crawl.download_concurrency', 8)),
+            'headless' => array_key_exists('headless', $options)
+                ? (bool) $options['headless']
+                : (bool) config('stay.crawl.headless', true),
+            'slow_mo' => (int) ($options['slow_mo'] ?? config('stay.crawl.slow_mo', 0)),
         ];
         file_put_contents($inputFile, json_encode($payload, JSON_UNESCAPED_SLASHES));
 
         $timeout = max(60, (int) config('stay.crawl.browser_timeout', 180)) + 40;
+        // Gallery download can take longer (N images over Chrome session).
+        if ($wantDownload) {
+            $timeout += min(300, (int) ceil(((int) $payload['max_images']) * 1.5));
+        }
+
+        // Nhả SingletonLock nếu Chrome bước trước chết bất thường (hay gặp sau basic → gallery).
+        $profileDir = storage_path('app/stay-crawl-chrome-profile');
+        foreach (['SingletonLock', 'SingletonSocket', 'SingletonCookie', 'lockfile'] as $lockName) {
+            $lockPath = $profileDir.DIRECTORY_SEPARATOR.$lockName;
+            if (is_file($lockPath) || is_link($lockPath)) {
+                @unlink($lockPath);
+            }
+        }
+
         $process = new Process(
             [$node, $this->scriptPath(), $inputFile, $outputFile],
             base_path('scripts/stay-crawl'),
@@ -98,23 +135,48 @@ final class StayCrawlBrowser
             }
 
             $status = (int) ($decoded['status_code'] ?? 0);
+            $hasPayload = $html !== '' || $pack !== [];
 
             return [
-                'ok' => $html !== '' && $status < 500,
-                'status' => $status ?: ($html !== '' ? 200 : 0),
+                'ok' => $hasPayload && $status < 500,
+                'status' => $status ?: ($hasPayload ? 200 : 0),
                 'html' => $html,
                 'pack' => $pack,
                 'final_url' => (string) ($decoded['final_url'] ?? $url),
                 'blocked' => $status === 403 || $status === 429,
-                'reason' => $html === '' ? 'empty_html' : null,
+                'reason' => $hasPayload ? null : 'empty_html',
                 'driver' => 'browser',
+                'images_dir' => $imagesDir,
             ];
+        } catch (\Throwable $e) {
+            $this->cleanupImagesDir($imagesDir);
+            throw $e;
         } finally {
             @unlink($inputFile);
             @unlink($outputFile);
             @unlink($outputFile.'.html');
             @unlink($outputFile.'.pack.json');
         }
+    }
+
+    public function cleanupImagesDir(?string $dir): void
+    {
+        if ($dir === null || $dir === '' || ! is_dir($dir)) {
+            return;
+        }
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST,
+        );
+        foreach ($files as $file) {
+            $path = $file->getPathname();
+            if ($file->isDir()) {
+                @rmdir($path);
+            } else {
+                @unlink($path);
+            }
+        }
+        @rmdir($dir);
     }
 
     /** @return array{host: string, port: int|string, username: ?string, password: ?string}|null */

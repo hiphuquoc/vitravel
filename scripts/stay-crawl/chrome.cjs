@@ -1,23 +1,34 @@
 /**
  * Chrome launch — cùng kiểu hoptackinhdoanh.dev (user-like, optional proxy).
  * Không hardcode proxy credentials.
+ *
+ * WSL: không gọi chrome.exe (lỗi vsock UtilBindVsockAnyPort). Dùng Chrome Linux + DISPLAY (WSLg).
  */
 const fs = require('fs');
 const path = require('path');
 
+function isWsl() {
+    if (process.env.WSL_DISTRO_NAME) return true;
+    try {
+        const v = fs.readFileSync('/proc/version', 'utf8');
+        return /microsoft|wsl/i.test(v);
+    } catch {
+        return false;
+    }
+}
+
 function getChromePath() {
-    // Env override (VPS có Chrome custom path)
     if (process.env.STAY_CRAWL_CHROME && fs.existsSync(process.env.STAY_CRAWL_CHROME)) {
-        return process.env.STAY_CRAWL_CHROME;
+        if (!/\.exe$/i.test(process.env.STAY_CRAWL_CHROME) || !isWsl()) {
+            return process.env.STAY_CRAWL_CHROME;
+        }
     }
 
-    // Puppeteer cached Chrome (download khi npm install — ưu tiên vì không bị snap)
     const puppeteerChrome = findPuppeteerChrome();
     if (puppeteerChrome) {
         return puppeteerChrome;
     }
 
-    // System Chrome (NON-snap) — snap chromium trên Ubuntu không hoạt động trong headless/WSL
     const systemPaths = [
         '/usr/bin/google-chrome-stable',
         '/usr/bin/google-chrome',
@@ -26,7 +37,6 @@ function getChromePath() {
     ];
     for (const chromePath of systemPaths) {
         if (fs.existsSync(chromePath)) {
-            // Kiểm tra snap: nếu là symlink vào /snap → bỏ qua
             try {
                 const real = fs.realpathSync(chromePath);
                 if (real.includes('/snap/')) continue;
@@ -37,7 +47,6 @@ function getChromePath() {
         }
     }
 
-    // Fallback: null → Puppeteer tự tìm bundled Chrome
     return null;
 }
 
@@ -76,52 +85,112 @@ function getCrashDumpsDir() {
     return crashDumpsDir;
 }
 
-function getChromeArgs(proxyServer = null) {
+function getBaseUserDataDir() {
+    const fromEnv = process.env.STAY_CRAWL_USER_DATA_DIR;
+    const dir = fromEnv && fromEnv.trim()
+        ? fromEnv.trim()
+        : path.resolve(__dirname, '../../storage/app/stay-crawl-chrome-profile');
+    try {
+        fs.mkdirSync(dir, { recursive: true });
+        return dir;
+    } catch {
+        const fallback = path.join(process.env.HOME || '/tmp', '.cache', 'vitravel-stay-crawl-chrome');
+        try {
+            fs.mkdirSync(fallback, { recursive: true });
+        } catch {
+            // ignore
+        }
+        return fallback;
+    }
+}
+
+/** Xóa SingletonLock — bước gallery/rooms sau basic dễ kẹt nếu Chrome trước chưa nhả profile. */
+function clearProfileLocks(dir) {
+    if (!dir) return;
+    for (const name of ['SingletonLock', 'SingletonSocket', 'SingletonCookie', 'lockfile']) {
+        try {
+            fs.unlinkSync(path.join(dir, name));
+        } catch {
+            // ignore
+        }
+    }
+}
+
+function getUserDataDir({ ephemeral = false } = {}) {
+    const base = getBaseUserDataDir();
+    if (!ephemeral && process.env.STAY_CRAWL_EPHEMERAL_PROFILE !== '1') {
+        clearProfileLocks(base);
+        return base;
+    }
+    const unique = path.join(base, 'run-' + process.pid + '-' + Date.now());
+    try {
+        fs.mkdirSync(unique, { recursive: true });
+    } catch {
+        // ignore
+    }
+    return unique;
+}
+
+function getChromeArgs(proxyServer = null, { headed = false } = {}) {
     const args = [
         '--no-sandbox',
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
-        '--disable-gpu',
         '--crash-dumps-dir=' + getCrashDumpsDir(),
-        '--disable-breakpad',
-        '--disable-crash-reporter',
-        '--disable-extensions',
-        '--disable-background-networking',
-        '--disable-background-timer-throttling',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-component-extensions-with-background-pages',
-        '--disable-features=TranslateUI,AutomationControlled',
-        '--disable-ipc-flooding-protection',
-        '--disable-renderer-backgrounding',
-        '--disable-blink-features=AutomationControlled',
-        '--force-color-profile=srgb',
-        '--metrics-recording-only',
-        '--mute-audio',
+        '--disable-infobars',
+        '--no-default-browser-check',
         '--no-first-run',
-        '--password-store=basic',
-        '--use-mock-keychain',
-        '--window-size=1600,1000',
+        '--disable-blink-features=AutomationControlled',
         '--lang=vi-VN',
+        '--window-size=1600,1000',
     ];
+    // Headed + GPU: skeleton Booking hay kẹt nếu --disable-gpu (WSLg vẫn render được).
+    if (!headed) {
+        args.push('--disable-gpu');
+    }
+    if (headed) {
+        args.push('--start-maximized');
+        args.push('--window-position=40,40');
+    }
     if (proxyServer) {
         args.push(`--proxy-server=${proxyServer}`);
     }
     return args;
 }
 
-function getLaunchOptions({ proxyServer = null, timeout = 60000 } = {}) {
+function getLaunchOptions({
+    proxyServer = null,
+    timeout = 60000,
+    headed = false,
+    slowMo = 0,
+    ephemeralProfile = false,
+} = {}) {
+    const chromePath = getChromePath();
+    const env = { ...process.env };
+    if (headed && isWsl() && !env.DISPLAY) {
+        env.DISPLAY = ':0';
+    }
     const launchOptions = {
-        headless: true,
-        args: getChromeArgs(proxyServer),
+        headless: headed ? false : true,
+        args: getChromeArgs(proxyServer, { headed }),
+        ignoreDefaultArgs: ['--enable-automation'],
         timeout,
         ignoreHTTPSErrors: true,
-        defaultViewport: { width: 1600, height: 1000 },
+        defaultViewport: headed ? null : { width: 1600, height: 1000, deviceScaleFactor: 1 },
+        slowMo: headed ? Math.max(25, Number(slowMo) || 50) : Number(slowMo) || 0,
+        userDataDir: getUserDataDir({ ephemeral: ephemeralProfile }),
+        env,
     };
-    const chromePath = getChromePath();
     if (chromePath) {
         launchOptions.executablePath = chromePath;
     }
     return launchOptions;
 }
 
-module.exports = { getChromePath, getLaunchOptions };
+module.exports = {
+    getChromePath,
+    getLaunchOptions,
+    isWsl,
+    clearProfileLocks,
+    getBaseUserDataDir,
+};

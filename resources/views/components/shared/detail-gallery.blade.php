@@ -102,10 +102,14 @@
                     loading="eager"
                     fetchpriority="high"
                     class="detail-gallery__cover"
+                    referrerpolicy="no-referrer"
                 />
                 <span class="detail-gallery__zoom" aria-hidden="true">
                     <x-icon name="search" class="size-5" />
                 </span>
+                @if ($catalogCount > 1)
+                    <span class="detail-gallery__count" aria-hidden="true">{{ $catalogCount }} ảnh</span>
+                @endif
             </button>
         @else
             <div class="detail-gallery__cover-btn detail-gallery__cover-btn--static">
@@ -134,6 +138,7 @@
                                 preset="gallery"
                                 :alt="$title"
                                 class="detail-gallery__thumb-img"
+                                referrerpolicy="no-referrer"
                             />
                             @if ($showMore)
                                 <span class="detail-gallery__more" aria-hidden="true">

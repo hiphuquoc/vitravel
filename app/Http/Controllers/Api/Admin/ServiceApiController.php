@@ -13,6 +13,7 @@ use App\Models\ServiceCategory;
 use App\Models\ServiceOption;
 use App\Models\ServiceOptionTranslation;
 use App\Models\ServiceTranslation;
+use App\Services\HtmlCacheService;
 use App\Services\MediaService;
 use App\Services\PriceTableService;
 use App\Services\ViewDataService;
@@ -126,6 +127,9 @@ class ServiceApiController extends Controller
             'property_types' => $cluster === Service::CLUSTER_STAY
                 ? collect(config('stay.property_types', []))->map(fn ($label, $value) => ['value' => $value, 'label' => $label])->values()->all()
                 : [],
+            'deal_labels' => $cluster === Service::CLUSTER_STAY
+                ? collect(\App\Support\StayRateCopy::dealLabels())->map(fn ($label, $value) => ['value' => (string) $value, 'label' => (string) $label])->values()->all()
+                : [],
             'statuses' => [
                 ['value' => 'draft', 'label' => 'Nháp'],
                 ['value' => 'published', 'label' => 'Xuất bản'],
@@ -175,6 +179,171 @@ class ServiceApiController extends Controller
         return ApiResponse::success(null, 'Đã xóa sản phẩm dịch vụ');
     }
 
+    public function storeOption(Request $request, int $id): JsonResponse
+    {
+        $service = Service::query()->findOrFail($id);
+        $this->assertStayService($service);
+        try {
+            $validated = $request->validate($this->stayOptionRules(true));
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+        $locale = (string) ($validated['locale'] ?? $request->string('locale', 'vi')->toString() ?: 'vi');
+        $option = $this->upsertStayOption($service, $validated, $locale, null);
+
+        return ApiResponse::success([
+            'option' => $this->serializeStayOption($option->fresh(['translations']) ?? $option, $locale),
+        ], 'Đã tạo hạng phòng');
+    }
+
+    public function updateOption(Request $request, int $id, int $optionId): JsonResponse
+    {
+        $service = Service::query()->findOrFail($id);
+        $this->assertStayService($service);
+        try {
+            $validated = $request->validate($this->stayOptionRules(true));
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+        $locale = (string) ($validated['locale'] ?? $request->string('locale', 'vi')->toString() ?: 'vi');
+        $option = $this->upsertStayOption($service, $validated, $locale, $optionId);
+
+        return ApiResponse::success([
+            'option' => $this->serializeStayOption($option->fresh(['translations']) ?? $option, $locale),
+        ], 'Đã cập nhật hạng phòng');
+    }
+
+    public function duplicateOption(Request $request, int $id, int $optionId): JsonResponse
+    {
+        $service = Service::query()->findOrFail($id);
+        $this->assertStayService($service);
+        $locale = $request->string('locale', 'vi')->toString() ?: 'vi';
+        $source = ServiceOption::query()
+            ->where('service_id', $service->id)
+            ->with('translations')
+            ->findOrFail($optionId);
+
+        $row = $this->serializeStayOption($source, $locale);
+        unset($row['id']);
+        $row['name'] = trim((string) ($row['name'] ?? '')).' (bản sao)';
+        $code = trim((string) ($row['code'] ?? ''));
+        if ($code !== '') {
+            $row['code'] = Str::limit($code.'-copy', 64, '');
+        }
+
+        $option = $this->upsertStayOption($service, $row, $locale, null);
+
+        return ApiResponse::success([
+            'option' => $this->serializeStayOption($option->fresh(['translations']) ?? $option, $locale),
+        ], 'Đã sao chép hạng phòng');
+    }
+
+    public function destroyOption(int $id, int $optionId): JsonResponse
+    {
+        $service = Service::query()->findOrFail($id);
+        $this->assertStayService($service);
+        ServiceOption::query()
+            ->where('service_id', $service->id)
+            ->whereKey($optionId)
+            ->delete();
+
+        return ApiResponse::success(null, 'Đã xóa hạng phòng');
+    }
+
+    private function assertStayService(Service $service): void
+    {
+        if ($service->cluster !== Service::CLUSTER_STAY) {
+            throw ValidationException::withMessages([
+                'cluster' => ['Chỉ áp dụng cho dịch vụ lưu trú.'],
+            ]);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function stayOptionRules(bool $requireName): array
+    {
+        return [
+            'locale' => 'nullable|string|max:12',
+            'code' => 'nullable|string|max:64',
+            'name' => ($requireName ? 'required' : 'nullable').'|string|max:255',
+            'description' => 'nullable|string|max:8000',
+            'price_from' => 'nullable|numeric|min:0',
+            'capacity' => 'nullable|integer|min:1|max:40',
+            'bed_label' => 'nullable|string|max:240',
+            'size_sqm' => 'nullable|integer|min:1|max:9999',
+            'view' => 'nullable|string|max:240',
+            'amenities' => 'nullable',
+            'unit_type' => 'nullable|string|max:64',
+            'bathroom_count' => 'nullable|integer|min:0|max:20',
+            'bedroom_count' => 'nullable|integer|min:0|max:20',
+            'smoking' => 'nullable|string|max:120',
+            'highlights' => 'nullable',
+            'beds' => 'nullable|array',
+            'amenity_groups' => 'nullable|array',
+            'photos' => 'nullable|array',
+            'beds_json' => 'nullable|string',
+            'amenity_groups_json' => 'nullable|string',
+            'photos_json' => 'nullable|string',
+            'rate_options' => 'nullable|array',
+            'rate_options_json' => 'nullable|string',
+            'comfort_score' => 'nullable|numeric|min:0|max:10',
+            'comfort_reviews' => 'nullable|integer|min:0',
+            'scarcity' => 'nullable|string|max:240',
+            'scarcity_active' => 'nullable|boolean',
+            'deal_key' => 'nullable|string|max:64',
+            'room_id' => 'nullable|string|max:64',
+            'hash' => 'nullable|string|max:64',
+            'crawl_dates' => 'nullable|array',
+            'crawl_dates_json' => 'nullable|string',
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $row
+     */
+    private function upsertStayOption(Service $service, array $row, string $locale, ?int $optionId): ServiceOption
+    {
+        $name = trim((string) ($row['name'] ?? ''));
+        if ($name === '') {
+            throw ValidationException::withMessages(['name' => ['Tên hạng phòng bắt buộc.']]);
+        }
+
+        $option = $optionId
+            ? ServiceOption::query()->where('service_id', $service->id)->findOrFail($optionId)
+            : new ServiceOption(['service_id' => $service->id]);
+
+        $sort = $option->exists
+            ? (int) $option->sort
+            : (int) ($service->options()->max('sort') ?? -1) + 1;
+
+        $option->fill([
+            'code' => $row['code'] ?? $option->code,
+            'price_from' => $row['price_from'] ?? null,
+            'capacity' => $row['capacity'] ?? null,
+            'sort' => $sort,
+            'attrs' => $this->mergeStayOptionAttrs(is_array($option->attrs) ? $option->attrs : [], $row),
+        ]);
+        $option->save();
+
+        $langId = Language::idByCode($locale);
+        if ($langId) {
+            ServiceOptionTranslation::query()->updateOrCreate(
+                ['service_option_id' => $option->id, 'language_id' => $langId],
+                [
+                    'name' => $name,
+                    'description' => $row['description'] ?? null,
+                    'amenities' => is_array($row['amenities'] ?? null)
+                        ? array_values(array_filter(array_map(static fn ($v) => trim((string) $v), $row['amenities'])))
+                        : $this->linesToArray(is_string($row['amenities'] ?? null) ? $row['amenities'] : null),
+                ],
+            );
+        }
+
+        return $option;
+    }
+
     private function save(Request $request): JsonResponse
     {
         $locale = $request->string('locale', 'vi')->toString() ?: 'vi';
@@ -221,7 +390,7 @@ class ServiceApiController extends Controller
                 'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
                 'cover_media_id' => 'nullable|integer|exists:media,id',
                 'remove_cover' => 'nullable|boolean',
-                'gallery_media_ids' => 'nullable|array|max:40',
+                'gallery_media_ids' => 'nullable|array|max:120',
                 'gallery_media_ids.*' => 'integer|exists:media,id',
                 'attrs' => 'nullable|array',
                 'options' => 'nullable|array|max:24',
@@ -247,6 +416,17 @@ class ServiceApiController extends Controller
                 'options.*.beds_json' => 'nullable|string',
                 'options.*.amenity_groups_json' => 'nullable|string',
                 'options.*.photos_json' => 'nullable|string',
+                'options.*.rate_options' => 'nullable|array',
+                'options.*.rate_options_json' => 'nullable|string',
+                'options.*.comfort_score' => 'nullable|numeric|min:0|max:10',
+                'options.*.comfort_reviews' => 'nullable|integer|min:0',
+            'options.*.scarcity' => 'nullable|string|max:240',
+            'options.*.scarcity_active' => 'nullable|boolean',
+            'options.*.deal_key' => 'nullable|string|max:64',
+            'options.*.room_id' => 'nullable|string|max:64',
+                'options.*.hash' => 'nullable|string|max:64',
+                'options.*.crawl_dates' => 'nullable|array',
+                'options.*.crawl_dates_json' => 'nullable|string',
             ] + PriceTableService::validationRules());
         } catch (ValidationException $e) {
             return ApiResponse::fromValidation($e);
@@ -308,7 +488,10 @@ class ServiceApiController extends Controller
             if (array_key_exists('attrs', $validated)) {
                 $incoming = $this->normalizeAttrs($validated['attrs'], $cluster);
                 $existing = is_array($service->attrs) ? $service->attrs : [];
-                $fill['attrs'] = $incoming === null ? $existing : array_merge($existing, $incoming);
+                $merged = $incoming === null ? $existing : array_merge($existing, $incoming);
+                $fill['attrs'] = $cluster === Service::CLUSTER_STAY
+                    ? \App\Support\StayFacilities::normalizeStayAttrs($merged)
+                    : $merged;
             }
             $service->fill($fill);
             $service->save();
@@ -364,10 +547,10 @@ class ServiceApiController extends Controller
             );
 
             if (array_key_exists('gallery_media_ids', $validated)) {
-                app(MediaService::class)->syncGalleryMediaIds(
-                    $service,
-                    is_array($validated['gallery_media_ids']) ? $validated['gallery_media_ids'] : [],
-                );
+                $galleryIds = is_array($validated['gallery_media_ids']) ? $validated['gallery_media_ids'] : [];
+                if ($cluster !== Service::CLUSTER_STAY || $galleryIds !== []) {
+                    app(MediaService::class)->syncGalleryMediaIds($service, $galleryIds);
+                }
             }
 
             if (isset($validated['price_table']) && is_array($validated['price_table'])) {
@@ -390,6 +573,8 @@ class ServiceApiController extends Controller
         } catch (\InvalidArgumentException $e) {
             return ApiResponse::error($e->getMessage(), 'INVALID_PRICE_PERIOD', 422);
         }
+
+        app(HtmlCacheService::class)->clearAll();
 
         return ApiResponse::success(
             $this->serializeDetail($service, $locale),
@@ -439,6 +624,8 @@ class ServiceApiController extends Controller
     {
         $t = $service->translation($locale);
         $seo = $service->seoEntry?->translation($locale);
+        $stayAttrs = is_array($service->attrs) ? $service->attrs : [];
+        $stayPhotos = is_array($stayAttrs['photos'] ?? null) ? $stayAttrs['photos'] : [];
 
         return array_merge($this->serialize($service, $locale), [
             'service_category_id' => $service->service_category_id,
@@ -456,13 +643,16 @@ class ServiceApiController extends Controller
             'review_count' => $service->review_count,
             'star_rating' => $service->star_rating,
             'discount_badge' => $service->discount_badge,
-            'attrs' => is_array($service->attrs) ? $service->attrs : [],
+            'attrs' => $stayAttrs,
             'options' => $service->cluster === Service::CLUSTER_STAY
                 ? $this->serializeStayOptions($service, $locale)
                 : [],
             'translated_locales' => $this->translatedLocaleCodes($service, 'title'),
             'cover' => app(MediaService::class)->adminMediaPayload($service->coverMedia(), 'card'),
-            'gallery' => app(MediaService::class)->adminGalleryPayload($service, 'card'),
+            'gallery' => $service->cluster === Service::CLUSTER_STAY
+                ? app(MediaService::class)->adminStayGalleryPayload($service, 'card')
+                : app(MediaService::class)->adminGalleryPayload($service, 'card'),
+            'gallery_count' => $service->cluster === Service::CLUSTER_STAY ? count($stayPhotos) : null,
             'price_table' => app(PriceTableService::class)->adminPayload($service, $locale),
             'seo' => [
                 'slug' => $seo?->slug,
@@ -501,7 +691,7 @@ class ServiceApiController extends Controller
             return $attrs === [] ? null : $attrs;
         }
 
-        $out = $attrs;
+        $out = \App\Support\StayFacilities::normalizeStayAttrs($attrs);
         if (isset($out['amenities']) && is_string($out['amenities'])) {
             $out['amenities'] = $this->linesToArray($out['amenities']);
         }
@@ -513,15 +703,6 @@ class ServiceApiController extends Controller
         }
         if (isset($out['payment_cards']) && is_string($out['payment_cards'])) {
             $out['payment_cards'] = $this->linesToArray($out['payment_cards']);
-        }
-        foreach (['amenity_groups', 'nearby_groups', 'review_scores'] as $jsonKey) {
-            if (! isset($out[$jsonKey]) || ! is_string($out[$jsonKey])) {
-                continue;
-            }
-            $decoded = json_decode($out[$jsonKey], true);
-            if (is_array($decoded)) {
-                $out[$jsonKey] = $decoded;
-            }
         }
 
         return $out === [] ? null : $out;
@@ -583,6 +764,79 @@ class ServiceApiController extends Controller
         }
         if (is_array($photos)) {
             $patch['photos'] = $photos;
+        }
+
+        $rates = $row['rate_options'] ?? null;
+        if (! is_array($rates) && array_key_exists('rate_options_json', $row)) {
+            $raw = trim((string) $row['rate_options_json']);
+            if ($raw !== '') {
+                $decoded = json_decode($raw, true);
+                $rates = is_array($decoded) ? $decoded : null;
+            }
+        }
+        if (is_array($rates)) {
+            $patch['rate_options'] = $rates;
+        }
+
+        if (array_key_exists('comfort_score', $row)) {
+            $patch['comfort_score'] = $row['comfort_score'] !== null && $row['comfort_score'] !== ''
+                ? (float) $row['comfort_score']
+                : null;
+        }
+        if (array_key_exists('comfort_reviews', $row)) {
+            $patch['comfort_reviews'] = $row['comfort_reviews'] !== null && $row['comfort_reviews'] !== ''
+                ? (int) $row['comfort_reviews']
+                : null;
+        }
+        if (array_key_exists('scarcity', $row)) {
+            $patch['scarcity'] = $row['scarcity'] !== '' ? $row['scarcity'] : null;
+        }
+        if (array_key_exists('scarcity_active', $row)) {
+            $patch['scarcity_active'] = filter_var($row['scarcity_active'], FILTER_VALIDATE_BOOLEAN);
+            if ($patch['scarcity_active']) {
+                unset($patch['scarcity']);
+            }
+        }
+        if (array_key_exists('deal_key', $row)) {
+            $dealKey = trim((string) $row['deal_key']);
+            $patch['deal_key'] = $dealKey !== '' ? $dealKey : null;
+            // Đồng bộ nhãn ưu đãi xuống từng rate nếu admin đổi select phòng.
+            $existingRates = is_array($rates) ? $rates : (is_array($existing['rate_options'] ?? null) ? $existing['rate_options'] : []);
+            if ($existingRates !== [] && $patch['deal_key']) {
+                foreach ($existingRates as &$er) {
+                    if (is_array($er)) {
+                        $er['deal_key'] = $patch['deal_key'];
+                    }
+                }
+                unset($er);
+                $rates = $existingRates;
+            }
+        }
+        foreach (['room_id', 'hash'] as $key) {
+            if (array_key_exists($key, $row)) {
+                $patch[$key] = $row[$key] !== '' ? $row[$key] : null;
+            }
+        }
+        $crawlDates = $row['crawl_dates'] ?? null;
+        if (! is_array($crawlDates) && array_key_exists('crawl_dates_json', $row)) {
+            $raw = trim((string) $row['crawl_dates_json']);
+            if ($raw !== '') {
+                $decoded = json_decode($raw, true);
+                $crawlDates = is_array($decoded) ? $decoded : null;
+            }
+        }
+        if (is_array($crawlDates)) {
+            $patch['crawl_dates'] = $crawlDates;
+        }
+        if (is_array($rates)) {
+            $dates = is_array($patch['crawl_dates'] ?? null)
+                ? $patch['crawl_dates']
+                : (is_array($existing['crawl_dates'] ?? null) ? $existing['crawl_dates'] : null);
+            $patch['rate_options'] = \App\Support\StayRateCopy::enrichRateOptions(
+                $rates,
+                $dates,
+                (string) ($patch['deal_key'] ?? $existing['deal_key'] ?? \App\Support\StayRateCopy::DEFAULT_DEAL_KEY),
+            );
         }
 
         return array_filter(
@@ -650,34 +904,53 @@ class ServiceApiController extends Controller
     /** @return list<array<string, mixed>> */
     private function serializeStayOptions(Service $service, string $locale): array
     {
-        return $service->options->map(function (ServiceOption $opt) use ($locale) {
-            $t = $opt->translation($locale);
-            $attrs = is_array($opt->attrs) ? $opt->attrs : [];
+        return $service->options->map(
+            fn (ServiceOption $opt) => $this->serializeStayOption($opt, $locale),
+        )->values()->all();
+    }
 
-            return [
-                'id' => $opt->id,
-                'code' => $opt->code,
-                'name' => $t?->name ?? '',
-                'description' => $t?->description ?? '',
-                'price_from' => $opt->price_from,
-                'capacity' => $opt->capacity,
-                'bed_label' => $attrs['bed'] ?? $attrs['bed_label'] ?? '',
-                'size_sqm' => $attrs['size_sqm'] ?? null,
-                'view' => $attrs['view'] ?? '',
-                'unit_type' => $attrs['unit_type'] ?? '',
-                'bathroom_count' => $attrs['bathroom_count'] ?? null,
-                'bedroom_count' => $attrs['bedroom_count'] ?? null,
-                'smoking' => $attrs['smoking'] ?? '',
-                'highlights' => $this->arrayToLines($attrs['highlights'] ?? null),
-                'beds_json' => ! empty($attrs['beds']) ? json_encode($attrs['beds'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '',
-                'amenity_groups_json' => ! empty($attrs['amenity_groups'])
-                    ? json_encode($attrs['amenity_groups'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-                    : '',
-                'photos_json' => ! empty($attrs['photos'])
-                    ? json_encode($attrs['photos'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-                    : '',
-                'amenities' => $this->arrayToLines($t?->amenities),
-            ];
-        })->values()->all();
+    /** @return array<string, mixed> */
+    private function serializeStayOption(ServiceOption $opt, string $locale): array
+    {
+        $t = $opt->translation($locale);
+        $attrs = is_array($opt->attrs) ? $opt->attrs : [];
+
+        return [
+            'id' => $opt->id,
+            'code' => $opt->code,
+            'name' => $t?->name ?? '',
+            'description' => $t?->description ?? '',
+            'price_from' => $opt->price_from,
+            'capacity' => $opt->capacity,
+            'bed_label' => $attrs['bed'] ?? $attrs['bed_label'] ?? '',
+            'size_sqm' => $attrs['size_sqm'] ?? null,
+            'view' => $attrs['view'] ?? '',
+            'unit_type' => $attrs['unit_type'] ?? '',
+            'bathroom_count' => $attrs['bathroom_count'] ?? null,
+            'bedroom_count' => $attrs['bedroom_count'] ?? null,
+            'smoking' => $attrs['smoking'] ?? '',
+            'highlights' => $this->arrayToLines($attrs['highlights'] ?? null),
+            'beds_json' => ! empty($attrs['beds']) ? json_encode($attrs['beds'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '',
+            'amenity_groups_json' => ! empty($attrs['amenity_groups'])
+                ? json_encode($attrs['amenity_groups'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+                : '',
+            'photos_json' => ! empty($attrs['photos'])
+                ? json_encode($attrs['photos'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+                : '',
+            'rate_options_json' => ! empty($attrs['rate_options'])
+                ? json_encode($attrs['rate_options'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+                : '',
+            'comfort_score' => $attrs['comfort_score'] ?? null,
+            'comfort_reviews' => $attrs['comfort_reviews'] ?? null,
+            'scarcity' => $attrs['scarcity'] ?? '',
+            'scarcity_active' => \App\Support\StayRateCopy::scarcityActive($attrs),
+            'deal_key' => $attrs['deal_key'] ?? \App\Support\StayRateCopy::DEFAULT_DEAL_KEY,
+            'room_id' => isset($attrs['room_id']) ? (string) $attrs['room_id'] : '',
+            'hash' => isset($attrs['hash']) ? (string) $attrs['hash'] : '',
+            'crawl_dates_json' => ! empty($attrs['crawl_dates'])
+                ? json_encode($attrs['crawl_dates'], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
+                : '',
+            'amenities' => $this->arrayToLines($t?->amenities),
+        ];
     }
 }

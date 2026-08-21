@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Models\StayCrawlItem;
 use App\Models\StayCrawlJob;
 use App\Services\StayCrawl\StayCrawlFetcher;
+use App\Services\StayCrawl\StayCrawlEnricher;
 use App\Services\StayCrawl\StayCrawlService;
 use App\Support\ProjectContext;
 use App\Support\StayBookingUrl;
@@ -40,6 +41,7 @@ class StayCrawlCommand extends Command
         {--ignore-robots : Bỏ qua robots.txt (mặc định crawler Chrome cũng bỏ)}
         {--proxy : Fetch qua proxy (STAY_CRAWL_PROXY_*)}
         {--rerun= : improve|replace khi URL đã cào}
+        {--from=basic : Khi --rerun=improve: basic|gallery|rooms|rooms_modals}
         {--instructions= : Hướng dẫn thêm cho AI}';
 
     protected $description = 'Crawler lưu trú Booking.com: list → detail → map HTML → draft service';
@@ -207,22 +209,54 @@ class StayCrawlCommand extends Command
             return self::FAILURE;
         }
         if (in_array($rerun, ['improve', 'replace'], true) && $already) {
-            $crawl->resetItemForRerun($item, $rerun);
+            $from = (string) $this->option('from');
+            $crawl->resetItemForRerun($item, $rerun, $from !== '' ? $from : 'basic');
             $item->refresh();
+            if ($rerun === 'improve' && StayCrawlEnricher::normalizeFrom($from) !== 'basic' && $item->status === StayCrawlItem::STATUS_IMPORTED) {
+                $this->info("Cải thiện từ khúc: ".StayCrawlEnricher::normalizeFrom($from));
+                $steps = 0;
+                while ($crawl->itemNeedsEnrich($item) && $steps < 80) {
+                    $step = $crawl->enrichNext($item, $useProxy);
+                    $this->line($step['message']);
+                    $item = $step['item'];
+                    $steps++;
+                }
+                if ($item->service_id) {
+                    $this->info('Xong enrich — service #'.$item->service_id);
+
+                    return self::SUCCESS;
+                }
+            }
         }
         $this->info("Ingest #{$item->id} {$item->source_url}");
-        $item = $crawl->crawlDetail($item, $html, $respectRobots, true, $useProxy);
+        $item = $crawl->ingestRemaining(
+            $item,
+            $this->categoryId(),
+            (string) $this->option('locale'),
+            $html,
+            $respectRobots,
+            (bool) $this->option('dry-run'),
+            $useProxy,
+        );
         if ($item->status === StayCrawlItem::STATUS_BLOCKED) {
             $this->error('Bị chặn: '.$item->error);
             $this->line('Lưu trang Booking (Save as HTML) rồi: php artisan stay:crawl ingest --item='.$item->id.' --file=hotel.html --project=…');
 
             return self::FAILURE;
         }
-        if ($item->status === StayCrawlItem::STATUS_EXTRACTED) {
-            $item = $crawl->mapProcess($item);
+        $steps = 0;
+        while ($crawl->itemNeedsEnrich($item) && $steps < 40) {
+            $step = $crawl->enrichNext($item, $useProxy);
+            $this->line($step['message']);
+            $item = $step['item'];
+            $steps++;
         }
-        $service = $crawl->importItem($item, $this->categoryId(), (string) $this->option('locale'), (bool) $this->option('dry-run'));
-        $this->info("Draft service #{$service->id} code={$service->code}");
+        if (! $item->service_id) {
+            $this->error($item->error ?: 'Ingest thất bại.');
+
+            return self::FAILURE;
+        }
+        $this->info("Draft service #{$item->service_id}");
 
         return self::SUCCESS;
     }

@@ -33,7 +33,7 @@ Thư mục seed **file** cho system prompt. Runtime ưu tiên đọc bảng `ai_
 | `enrich_listing_faq` | enrich | Listing — FAQ |
 | `crawl_stay_extract` | crawl | *(legacy CLI)* HTML Booking → JSON — ingest/admin dùng `StayHtmlMapper` |
 | `enrich_stay_meta` | enrich | Lưu trú — meta + SEO |
-| `enrich_stay_property` | enrich | Lưu trú — content / highlights / phòng |
+| `enrich_stay_property` | enrich | Lưu trú — bài giới thiệu SEO HTML (chỉ content) |
 | `enrich_stay_faq` | enrich | Lưu trú — FAQ |
 
 Chi tiết sản phẩm: [`docs/14-ai-system-prompts.md`](../../docs/14-ai-system-prompts.md).

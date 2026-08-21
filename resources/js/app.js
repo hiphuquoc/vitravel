@@ -578,8 +578,35 @@ Alpine.data('stayRooms', (rooms = []) => ({
     open: false,
     index: 0,
     photo: 0,
+    /** Random 1–5 mỗi lần tải trang (ổn định trong session trang; HTML cache vẫn được). */
+    scarcityRolls: {},
+    init() {
+        (this.rooms || []).forEach((room, i) => {
+            if (room?.scarcityActive) {
+                this.scarcityRolls[i] = this.rollScarcity();
+            }
+        });
+    },
+    rollScarcity() {
+        const min = 1;
+        const max = 5;
+        return min + Math.floor(Math.random() * (max - min + 1));
+    },
+    scarcityText(i) {
+        const room = this.rooms[i];
+        if (!room?.scarcityActive) return '';
+        if (this.scarcityRolls[i] == null) {
+            this.scarcityRolls[i] = this.rollScarcity();
+        }
+        const n = this.scarcityRolls[i];
+        const tpl = room.scarcityTemplate || 'Chúng tôi còn {n} phòng';
+        return String(tpl).replace(/\{n\}/g, String(n));
+    },
     get room() {
         return this.rooms[this.index] || null;
+    },
+    get photoCount() {
+        return this.room?.photos?.length || 0;
     },
     show(i, photoIndex = 0) {
         this.index = i;
@@ -591,6 +618,14 @@ Alpine.data('stayRooms', (rooms = []) => ({
     close() {
         this.open = false;
         document.body.classList.remove('stay-room-lock');
+    },
+    nextPhoto() {
+        if (this.photoCount < 2) return;
+        this.photo = (this.photo + 1) % this.photoCount;
+    },
+    prevPhoto() {
+        if (this.photoCount < 2) return;
+        this.photo = (this.photo - 1 + this.photoCount) % this.photoCount;
     },
     destroy() {
         document.body.classList.remove('stay-room-lock');

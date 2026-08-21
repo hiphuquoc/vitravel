@@ -8,7 +8,7 @@ use App\Services\AI\Concerns\StripsAiCitations;
 use RuntimeException;
 
 /**
- * AI xây dựng trang chi tiết lưu trú (cluster stay) — 3 luồng: meta / property / faq.
+ * AI xây dựng trang chi tiết lưu trú (cluster stay) — 3 luồng: meta / property (chỉ content) / faq.
  */
 final class StayEnrichService
 {
@@ -139,14 +139,86 @@ final class StayEnrichService
         return $stage;
     }
 
-    /** @param  array<string, mixed>  $fields */
+    /**
+     * Context gửi AI — property nhận đủ facts khách sạn (read-only); output chỉ content.
+     *
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
     private function contextForStage(array $fields, string $stage): array
     {
         if ($stage === self::STAGE_META) {
             return ['title' => trim((string) ($fields['title'] ?? ''))];
         }
 
+        if ($stage === self::STAGE_PROPERTY) {
+            return $this->propertyContext($fields);
+        }
+
         return $fields;
+    }
+
+    /**
+     * @param  array<string, mixed>  $fields
+     * @return array<string, mixed>
+     */
+    private function propertyContext(array $fields): array
+    {
+        $attrs = is_array($fields['attrs'] ?? null) ? $fields['attrs'] : [];
+        $options = is_array($fields['options'] ?? null) ? $fields['options'] : [];
+
+        $roomSummaries = [];
+        foreach ($options as $opt) {
+            if (! is_array($opt)) {
+                continue;
+            }
+            $name = trim((string) ($opt['name'] ?? ''));
+            if ($name === '') {
+                continue;
+            }
+            $roomSummaries[] = array_filter([
+                'name' => $name,
+                'capacity' => $opt['capacity'] ?? null,
+                'size_sqm' => $opt['size_sqm'] ?? null,
+                'view' => $opt['view'] ?? null,
+                'bed_label' => $opt['bed_label'] ?? null,
+                'amenities' => is_array($opt['amenities'] ?? null)
+                    ? array_values(array_slice(array_map('strval', $opt['amenities']), 0, 8))
+                    : null,
+            ], static fn ($v) => $v !== null && $v !== '' && $v !== []);
+        }
+
+        return array_filter([
+            'title' => trim((string) ($fields['title'] ?? '')),
+            'location_label' => trim((string) ($fields['location_label'] ?? '')),
+            'star_rating' => $fields['star_rating'] ?? null,
+            'price_from' => $fields['price_from'] ?? null,
+            'currency' => $fields['currency'] ?? null,
+            'seo_title' => $fields['seo_title'] ?? null,
+            'seo_description' => $fields['seo_description'] ?? null,
+            'property_type' => $attrs['property_type'] ?? null,
+            'address' => $attrs['address'] ?? null,
+            'check_in' => $attrs['check_in'] ?? null,
+            'check_out' => $attrs['check_out'] ?? null,
+            'highlight_badges' => $attrs['highlight_badges'] ?? null,
+            'amenities' => $attrs['amenities'] ?? null,
+            'amenity_groups' => $attrs['amenity_groups'] ?? null,
+            'nearby_groups' => $attrs['nearby_groups'] ?? null,
+            'review_scores' => $attrs['review_scores'] ?? null,
+            'cancellation_policy' => $attrs['cancellation_policy'] ?? null,
+            'child_policy' => $attrs['child_policy'] ?? null,
+            'extra_bed_policy' => $attrs['extra_bed_policy'] ?? null,
+            'age_restriction' => $attrs['age_restriction'] ?? null,
+            'pet_policy' => $attrs['pet_policy'] ?? null,
+            'smoking_policy' => $attrs['smoking_policy'] ?? null,
+            'payment_policy' => $attrs['payment_policy'] ?? null,
+            'payment_cards' => $attrs['payment_cards'] ?? null,
+            'id_required_policy' => $attrs['id_required_policy'] ?? null,
+            'rooms' => $roomSummaries !== [] ? $roomSummaries : null,
+            'content_existing' => trim((string) ($fields['content'] ?? '')) !== ''
+                ? '(đã có bản nháp — viết lại mới, đừng copy)'
+                : null,
+        ], static fn ($v) => $v !== null && $v !== '' && $v !== []);
     }
 
     /** @return list<string> */
@@ -158,8 +230,7 @@ final class StayEnrichService
                 'seo_slug', 'seo_title', 'seo_description',
             ],
             self::STAGE_PROPERTY => [
-                'content', 'highlights',
-                'attrs', 'options',
+                'content',
             ],
             self::STAGE_FAQ => ['faqs'],
             default => [],
@@ -195,44 +266,18 @@ Chỉ các key:
   "seo_title": "string ≤ ~60",
   "seo_description": "string ≤ ~160"
 }
-CẤM content, faqs, options, attrs amenities.
+CẤM content, faqs, options, attrs, amenities.
 TXT;
         }
 
         if ($stage === self::STAGE_PROPERTY) {
             return <<<'TXT'
+Chỉ một key:
 {
-  "content": "string HTML: 4–6 đoạn p, h2/h3, ul — mô tả chỗ nghỉ, không bịa giá",
-  "highlights": "string — mỗi ý một dòng (6–10 ý USP, không thêm tiện ích mới)",
-  "attrs": {
-    "property_type": "hotel|resort|villa|homestay|apartment|boutique",
-    "check_in": "15:00",
-    "check_out": "12:00",
-    "amenities": ["… giữ nguyên label nguồn"],
-    "amenity_groups": {},
-    "nearby": [{"name": "Sân bay", "distance": "20 phút", "category": "transport"}],
-    "cancellation_policy": "string",
-    "child_policy": "string",
-    "pet_policy": "string",
-    "payment_policy": "string",
-    "id_required_policy": "string"
-  },
-  "options": [
-    {
-      "code": "string",
-      "name": "string — tên hạng phòng (giữ nguyên nếu nguồn có)",
-      "description": "string — viết lại hay, không thêm tiện ích",
-      "price_from": 0,
-      "capacity": 2,
-      "bed_label": "1 giường king",
-      "size_sqm": 45,
-      "view": "Hướng biển",
-      "amenities": ["Ban công", "Bồn tắm"],
-      "photos": [{"url": "https://…", "alt": "…"}]
-    }
-  ]
+  "content": "string HTML DÀI (~700–1200 từ): p/h2/h3/ul/ol/strong + 2–3 <figure><img src=\"https://placehold.co/1200x675?text=…\" alt=\"…\" loading=\"lazy\" /><figcaption>…</figcaption></figure> xen giữa các mục"
 }
-Giữ chính xác số liệu / tiện ích / ảnh nếu input đã có — chỉ viết lại mô tả. CẤM inclusions, exclusions, notes, seo_*, faqs.
+CẤM attrs, options, faqs, seo_*, summary, highlights, inclusions, exclusions, notes.
+HTML cho phép: p, br, strong, em, u, ul, ol, li, h2, h3, blockquote, figure, figcaption, img.
 TXT;
         }
 
@@ -246,6 +291,7 @@ TXT;
     /** @param  array<string, mixed>  $source @param  array<string, mixed>  $ai */
     private function mergePreferringAi(array $source, array $ai, string $stage): array
     {
+        unset($source);
         $out = [];
         foreach ($ai as $key => $aiVal) {
             if ($aiVal === null) {
@@ -255,14 +301,11 @@ TXT;
                 $out['faqs'] = $this->normalizeFaqs($aiVal);
                 continue;
             }
-            if ($key === 'options' && is_array($aiVal)) {
-                $src = is_array($source['options'] ?? null) ? $source['options'] : [];
-                $out['options'] = $this->mergeOptions($src, $aiVal);
+            // Property: chỉ nhận content — bỏ qua attrs/options nếu model vẫn trả.
+            if ($stage === self::STAGE_PROPERTY && $key !== 'content') {
                 continue;
             }
-            if ($key === 'attrs' && is_array($aiVal)) {
-                $src = is_array($source['attrs'] ?? null) ? $source['attrs'] : [];
-                $out['attrs'] = array_merge($src, $aiVal);
+            if (in_array($key, ['attrs', 'options'], true)) {
                 continue;
             }
             if ($key === 'highlights') {
@@ -294,50 +337,20 @@ TXT;
         return $out;
     }
 
-    /** @param  list<mixed>  $source @param  list<mixed>  $ai */
-    private function mergeOptions(array $source, array $ai): array
-    {
-        $out = [];
-        foreach ($ai as $i => $cell) {
-            if (! is_array($cell)) {
-                continue;
-            }
-            $old = is_array($source[$i] ?? null) ? $source[$i] : [];
-            if (($cell['code'] ?? '') === '' && ($old['code'] ?? '') !== '') {
-                $cell['code'] = $old['code'];
-            }
-            if (! isset($cell['price_from']) && isset($old['price_from'])) {
-                $cell['price_from'] = $old['price_from'];
-            }
-            if (! isset($cell['capacity']) && isset($old['capacity'])) {
-                $cell['capacity'] = $old['capacity'];
-            }
-            foreach (['photos', 'photos_json', 'beds', 'beds_json', 'amenity_groups', 'amenity_groups_json', 'unit_type'] as $keep) {
-                if ((empty($cell[$keep]) || $cell[$keep] === []) && ! empty($old[$keep])) {
-                    $cell[$keep] = $old[$keep];
-                }
-            }
-            if (is_array($old['attrs'] ?? null) && is_array($cell['attrs'] ?? null)) {
-                $cell['attrs'] = array_merge($old['attrs'], $cell['attrs']);
-            } elseif (empty($cell['attrs']) && ! empty($old['attrs'])) {
-                $cell['attrs'] = $old['attrs'];
-            }
-            $out[] = $cell;
-        }
-
-        return $out;
-    }
-
     /** @param  array<string, mixed>  $fields */
     private function sanitize(array $fields, string $stage): array
     {
+        unset($stage);
         foreach (['title', 'location_label', 'featured_quote_text', 'featured_quote_author', 'seo_title'] as $k) {
             if (isset($fields[$k]) && is_string($fields[$k])) {
-                $fields[$k] = mb_substr(trim($fields[$k]), 0, $k === 'seo_description' ? 320 : 255);
+                $fields[$k] = mb_substr(trim($fields[$k]), 0, 255);
             }
         }
         if (isset($fields['seo_description']) && is_string($fields['seo_description'])) {
             $fields['seo_description'] = mb_substr(trim($fields['seo_description']), 0, 320);
+        }
+        if (isset($fields['content']) && is_string($fields['content'])) {
+            $fields['content'] = trim($fields['content']);
         }
         foreach (['highlights'] as $k) {
             if (array_key_exists($k, $fields)) {

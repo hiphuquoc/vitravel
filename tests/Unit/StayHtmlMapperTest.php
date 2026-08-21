@@ -27,10 +27,11 @@ class StayHtmlMapperTest extends TestCase
         $this->assertEqualsWithDelta(10.1834, $fields['attrs']['lat'], 0.001);
         $this->assertContains('Hồ bơi ngoài trời', $fields['attrs']['amenities']);
         $this->assertContains('WiFi miễn phí', $fields['attrs']['amenities']);
-        $this->assertContains('Câu cá', $fields['highlights']);
-        $this->assertSame(7.5, $fields['attrs']['review_scores']['cleanliness']);
-        $this->assertSame(8.3, $fields['attrs']['review_scores']['wifi']);
-        $this->assertArrayNotHasKey('total', $fields['attrs']['review_scores']);
+        $this->assertContains('Câu cá', $fields['attrs']['highlight_badges'] ?? []);
+        $scoresByTag = collect($fields['attrs']['review_scores'] ?? [])->keyBy('tag');
+        $this->assertSame(7.5, (float) ($scoresByTag['cleanliness']['score'] ?? 0));
+        $this->assertSame(8.3, (float) ($scoresByTag['wifi']['score'] ?? 0));
+        $this->assertArrayNotHasKey('total', $scoresByTag->all());
         $this->assertGreaterThanOrEqual(2, count($fields['options']));
         $names = array_column($fields['options'], 'name');
         $this->assertContains('Phòng Superior Giường Đôi', $names);
@@ -41,18 +42,26 @@ class StayHtmlMapperTest extends TestCase
         $this->assertSame('14:00', $fields['attrs']['check_in']);
         $this->assertSame('12:00', $fields['attrs']['check_out']);
         $this->assertNotEmpty($fields['attrs']['photos']);
-        $this->assertStringContainsString('hồ bơi ngoài trời', mb_strtolower((string) $fields['summary']));
+        $this->assertStringContainsString('hồ bơi ngoài trời', mb_strtolower(strip_tags((string) ($fields['content'] ?? ''))));
         $this->assertContains('Vòi sen', $fields['attrs']['amenity_groups']['bathroom'] ?? []);
         $this->assertContains('Lò sưởi ngoài trời', $fields['attrs']['amenity_groups']['outdoor'] ?? []);
         $this->assertContains('Bếp chung', $fields['attrs']['amenity_groups']['kitchen'] ?? []);
         $this->assertContains('Bình chữa cháy', $fields['attrs']['amenity_groups']['safety'] ?? []);
         $this->assertStringContainsString('Wi-fi', (string) ($fields['attrs']['amenity_groups']['media'][0] ?? ''));
         $this->assertStringContainsString('đỗ xe', mb_strtolower((string) ($fields['attrs']['amenity_groups']['parking'][0] ?? '')));
-        $nearbyNames = array_column($fields['attrs']['nearby'] ?? [], 'name');
-        $this->assertContains('Coi Nguon Museum', $nearbyNames);
-        $this->assertContains('Nhà hàng Hiên - Charcoal Kitchen', $nearbyNames);
-        $this->assertContains('Bãi Trường', $nearbyNames);
-        $museum = collect($fields['attrs']['nearby'])->firstWhere('name', 'Coi Nguon Museum');
+        $this->assertArrayNotHasKey('nearby', $fields['attrs']);
+        $allNearbyNames = [];
+        foreach ($fields['attrs']['nearby_groups'] ?? [] as $items) {
+            foreach (is_array($items) ? $items : [] as $place) {
+                if (is_array($place) && ! empty($place['name'])) {
+                    $allNearbyNames[] = $place['name'];
+                }
+            }
+        }
+        $this->assertContains('Coi Nguon Museum', $allNearbyNames);
+        $this->assertContains('Nhà hàng Hiên - Charcoal Kitchen', $allNearbyNames);
+        $this->assertContains('Bãi Trường', $allNearbyNames);
+        $museum = collect($fields['attrs']['nearby_groups']['landmark'] ?? [])->firstWhere('name', 'Coi Nguon Museum');
         $this->assertSame('1,6 km', $museum['distance'] ?? null);
         $this->assertSame('landmark', $museum['category'] ?? null);
         $this->assertNotEmpty($fields['attrs']['nearby_groups']['beach'] ?? []);
@@ -206,7 +215,123 @@ HTML;
         $this->assertGreaterThanOrEqual(6, count($fields['options']));
         $this->assertSame(93, $fields['review_count']);
         $this->assertNotEmpty($fields['attrs']['photos'] ?? []);
-        $this->assertGreaterThanOrEqual(4, count($fields['attrs']['nearby'] ?? []));
+        $this->assertGreaterThanOrEqual(4, count($fields['attrs']['nearby_groups'] ?? []));
         $this->assertGreaterThanOrEqual(3, count($fields['attrs']['amenity_groups'] ?? []));
+    }
+
+    public function test_map_rooms_from_pack_keeps_photos_and_amenities(): void
+    {
+        $rooms = (new StayHtmlMapper)->mapRoomsFromPack([[
+            'name' => 'Phòng Deluxe',
+            'description' => 'Phòng rộng, máy lạnh',
+            'size_sqm' => 28,
+            'amenities' => ['Máy sấy tóc', 'WiFi'],
+            'amenity_groups' => ['Phòng tắm' => ['Vòi sen']],
+            'photos' => [['url' => 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/555.jpg', 'alt' => 'Giường']],
+        ]]);
+
+        $this->assertCount(1, $rooms);
+        $this->assertSame('Phòng Deluxe', $rooms[0]['name']);
+        $this->assertContains('Máy sấy tóc', $rooms[0]['amenities']);
+        $this->assertNotEmpty($rooms[0]['attrs']['photos'] ?? []);
+        $this->assertContains('Vòi sen', $rooms[0]['attrs']['amenity_groups']['bathroom'] ?? []);
+    }
+
+    public function test_maps_modern_policies_html_from_chrome_pack(): void
+    {
+        $html = '<html><body><h2 class="pp-header__title">Test Stay</h2></body></html>';
+        $policiesHtml = <<<'HTML'
+<div id="vt-policies">
+  <div data-vt-policy><h3>Nhận phòng</h3><div>Từ 14:00 - 15:00. Khách được yêu cầu xuất trình giấy tờ tùy thân có ảnh.</div></div>
+  <div data-vt-policy><h3>Trả phòng</h3><div>Từ 11:30 - 12:00</div></div>
+  <div data-vt-policy><h3>Vật nuôi</h3><div>Vật nuôi không được phép.</div></div>
+  <div data-vt-policy><h3>Trẻ em và giường</h3><div>Phù hợp cho tất cả trẻ em. Có giường phụ nếu yêu cầu — VND 300.000/người/đêm.</div></div>
+</div>
+HTML;
+        $fields = (new StayHtmlMapper)->map(
+            $html,
+            'https://www.booking.com/hotel/vn/test.vi.html',
+            [],
+            ['policies_html' => $policiesHtml],
+        );
+
+        $this->assertSame('Từ 14:00 - 15:00', (string) ($fields['attrs']['check_in'] ?? ''));
+        $this->assertSame('Từ 11:30 - 12:00', (string) ($fields['attrs']['check_out'] ?? ''));
+        $this->assertStringContainsString('Vật nuôi không được phép', (string) ($fields['attrs']['pet_policy'] ?? ''));
+        $this->assertStringContainsString('trẻ em', mb_strtolower((string) ($fields['attrs']['child_policy'] ?? '')));
+        $this->assertStringContainsString('giấy tờ', mb_strtolower((string) ($fields['attrs']['id_required_policy'] ?? '')));
+    }
+
+    public function test_maps_booking_policies_section_without_gluing_or_swapping_times(): void
+    {
+        $policiesHtml = (string) file_get_contents(base_path('tests/Fixtures/stay-crawl/policies-section.html'));
+        $fields = (new StayHtmlMapper)->map(
+            '<html><body><h2 class="pp-header__title">La Limone</h2></body></html>',
+            'https://www.booking.com/hotel/vn/la-limone.vi.html',
+            [],
+            ['policies_html' => $policiesHtml],
+        );
+
+        $this->assertSame('Từ 14:00 - 15:00', (string) ($fields['attrs']['check_in'] ?? ''));
+        $this->assertSame('Từ 11:30 - 12:00', (string) ($fields['attrs']['check_out'] ?? ''));
+        $this->assertStringNotContainsString('Trả phòng', (string) ($fields['attrs']['check_in'] ?? ''));
+        $this->assertStringNotContainsString('14:00', (string) ($fields['attrs']['check_out'] ?? ''));
+
+        $child = (string) ($fields['attrs']['child_policy'] ?? '');
+        $this->assertStringContainsString('Từ 12 tuổi trở lên', $child);
+        $this->assertStringContainsString('Có giường phụ nếu yêu cầu', $child);
+        $this->assertStringNotContainsString('trở lênCó', $child);
+        $this->assertStringNotContainsString('đêmGiá', $child);
+        $this->assertStringNotContainsString('sẵn.Tất cả', $child);
+
+        $this->assertStringContainsString('không được phép', mb_strtolower((string) ($fields['attrs']['pet_policy'] ?? '')));
+        $this->assertStringContainsString('Visa', (string) ($fields['attrs']['payment_policy'] ?? ''));
+        $this->assertStringContainsString('Tiền mặt', (string) ($fields['attrs']['payment_policy'] ?? ''));
+    }
+
+    public function test_maps_hprt_table_rate_options_and_crawl_dates(): void
+    {
+        $html = (string) file_get_contents(base_path('tests/Fixtures/stay-crawl/hprt-table.html'));
+        $dates = [
+            'checkin' => '2026-09-07',
+            'checkout' => '2026-09-09',
+            'nights' => 2,
+        ];
+        $rooms = (new StayHtmlMapper)->mapRoomsFromHprtHtml($html, $dates);
+
+        $this->assertCount(2, $rooms);
+        $superior = collect($rooms)->firstWhere('attrs.room_id', '589108801');
+        $villa = collect($rooms)->firstWhere('attrs.room_id', '589108809');
+        $this->assertNotNull($superior);
+        $this->assertNotNull($villa);
+        $this->assertSame('bk-589108801', $superior['code']);
+        $this->assertSame('#RD589108801', $superior['attrs']['hash'] ?? null);
+        $this->assertSame(28, $superior['attrs']['size_sqm'] ?? null);
+        $this->assertCount(2, $superior['attrs']['rate_options'] ?? []);
+        $blockIds = array_column($superior['attrs']['rate_options'], 'block_id');
+        $this->assertContains('111AAA', $blockIds);
+        $this->assertContains('111BBB', $blockIds);
+        $withBreakfast = collect($superior['attrs']['rate_options'])->firstWhere('block_id', '111BBB');
+        $this->assertTrue((bool) ($withBreakfast['breakfast']['included'] ?? false));
+        $this->assertSame(1000000.0, (float) $superior['price_from']);
+        $this->assertSame('2026-09-07', $superior['attrs']['crawl_dates']['checkin'] ?? null);
+        $this->assertSame(2, $villa['attrs']['crawl_dates']['nights'] ?? null);
+        $this->assertCount(2, $villa['attrs']['rate_options'] ?? []);
+        $this->assertSame(2500000.0, (float) $villa['price_from']);
+    }
+
+    public function test_rooms_from_pack_prefers_room_id_code(): void
+    {
+        $rooms = (new StayHtmlMapper)->mapRoomsFromPack([[
+            'name' => 'Phòng Superior Giường Đôi',
+            'room_id' => '589108801',
+            'hash' => '#RD589108801',
+            'size_sqm' => 28,
+            'amenities' => ['Ban công'],
+        ]]);
+
+        $this->assertSame('bk-589108801', $rooms[0]['code']);
+        $this->assertSame('589108801', $rooms[0]['attrs']['room_id'] ?? null);
+        $this->assertSame('#RD589108801', $rooms[0]['attrs']['hash'] ?? null);
     }
 }

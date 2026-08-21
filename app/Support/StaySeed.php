@@ -74,11 +74,14 @@ final class StaySeed
                 ? $attrs['id_required_policy']
                 : 'CCCD/hộ chiếu bản gốc khi check-in — tên khách khớp booking. Khách nước ngoài mang hộ chiếu.';
 
-            if (empty($attrs['nearby']) && $location !== '') {
-                $attrs['nearby'] = [
-                    ['name' => $location, 'distance' => 'Khu vực chỗ nghỉ', 'icon' => 'map-pin'],
+            if (empty($attrs['nearby_groups']) && $location !== '') {
+                $attrs['nearby_groups'] = [
+                    'other' => [
+                        ['name' => $location, 'distance' => 'Khu vực chỗ nghỉ', 'icon' => 'map-pin'],
+                    ],
                 ];
             }
+            unset($attrs['nearby']);
         }
 
         $row['attrs'] = $attrs;

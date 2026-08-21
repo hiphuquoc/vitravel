@@ -17,9 +17,9 @@ final class StayCrawlFetcher
     public function __construct(private readonly StayCrawlBrowser $browser) {}
 
     /**
-     * @return array{ok: bool, status: int, html: string, final_url: string, blocked: bool, reason: ?string, driver: string}
+     * @return array{ok: bool, status: int, html: string, pack: array<string, mixed>, final_url: string, blocked: bool, reason: ?string, driver: string}
      */
-    public function fetch(string $url, bool $respectRobots = false, bool $useProxy = false): array
+    public function fetch(string $url, bool $respectRobots = false, bool $useProxy = false, array $options = []): array
     {
         $driver = (string) config('stay.crawl.driver', 'browser');
 
@@ -39,6 +39,7 @@ final class StayCrawlFetcher
                 'blocked' => true,
                 'reason' => 'robots_disallow',
                 'driver' => 'http',
+                'images_dir' => null,
             ];
         }
 
@@ -49,8 +50,8 @@ final class StayCrawlFetcher
 
         if ($driver !== 'http') {
             try {
-                $result = $this->browser->fetch($url, $useProxy);
-                if ($result['html'] !== '') {
+                $result = $this->browser->fetch($url, $useProxy, $options);
+                if ($result['html'] !== '' || ($result['pack'] ?? []) !== []) {
                     return $result;
                 }
             } catch (RuntimeException $e) {
@@ -108,6 +109,7 @@ final class StayCrawlFetcher
             'blocked' => $blocked,
             'reason' => $blocked ? 'http_'.$status : null,
             'driver' => 'http',
+            'images_dir' => null,
         ];
     }
 

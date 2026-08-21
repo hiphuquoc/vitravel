@@ -1058,6 +1058,63 @@ class MediaService
         ])->values()->all();
     }
 
+    /**
+     * Gallery admin cho chỗ nghỉ — chỉ media_attachments (GCS), đồng bộ từ gallery_media_ids nếu cần.
+     *
+     * @return list<array{id: int, media: array<string, mixed>|null}>
+     */
+    public function adminStayGalleryPayload(Model $model, string $variant = 'card'): array
+    {
+        $this->hydrateStayGalleryAttachments($model);
+
+        return $this->adminGalleryPayload($model, $variant);
+    }
+
+    /**
+     * Gắn lại gallery attachments từ media_id đã upload (attrs.gallery_media_ids / attrs.photos).
+     */
+    public function hydrateStayGalleryAttachments(Model $model): void
+    {
+        if (! method_exists($model, 'mediaAttachments')) {
+            return;
+        }
+
+        $attrs = is_array($model->attrs ?? null) ? $model->attrs : [];
+        $photos = is_array($attrs['photos'] ?? null) ? $attrs['photos'] : [];
+        $mediaIds = is_array($attrs['gallery_media_ids'] ?? null)
+            ? array_values(array_filter(array_map('intval', $attrs['gallery_media_ids'])))
+            : [];
+
+        if ($mediaIds === []) {
+            $mediaIds = array_values(array_filter(array_map(
+                fn ($photo) => is_array($photo) ? (int) ($photo['media_id'] ?? 0) : 0,
+                $photos,
+            )));
+        }
+
+        if ($mediaIds === []) {
+            return;
+        }
+
+        $attachedCount = $model->relationLoaded('mediaAttachments')
+            ? $model->mediaAttachments->where('role', 'gallery')->count()
+            : $model->mediaAttachments()->where('role', 'gallery')->count();
+
+        if ($attachedCount >= count($mediaIds)) {
+            return;
+        }
+
+        $this->syncGalleryMediaIds($model, $mediaIds);
+        $model->unsetRelation('mediaAttachments');
+    }
+
+    private function normalizeStayPhotoUrl(string $url): string
+    {
+        $path = parse_url($url, PHP_URL_PATH) ?: $url;
+
+        return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
+    }
+
     /** Gắn / thay / xóa ảnh trên cột FK (banner_media_id, …). */
     public function syncDirectMediaId(Model $model, string $column, ?int $mediaId, bool $remove = false): void
     {

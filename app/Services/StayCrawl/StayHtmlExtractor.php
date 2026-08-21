@@ -380,4 +380,62 @@ final class StayHtmlExtractor
 
         return $blob;
     }
+
+    /**
+     * Extract gallery images from gallery page HTML (fetched via ?activeTab=photosGallery).
+     * Parses data-testid="gallery-grid-photo-action-{id}" buttons and img tags within the gallery grid.
+     *
+     * @return list<array{url: string, alt: string}>
+     */
+    public function extractGalleryImages(string $html): array
+    {
+        if (trim($html) === '') {
+            return [];
+        }
+
+        $max = (int) config('stay.crawl.max_images', 120);
+        $seen = [];
+        $out = [];
+
+        $push = function (string $id, string $alt = '') use (&$out, &$seen, $max): void {
+            if ($id === '' || isset($seen[$id]) || count($out) >= $max) {
+                return;
+            }
+            $seen[$id] = true;
+            $out[] = [
+                'url' => 'https://cf.bstatic.com/xdata/images/hotel/max1024x768/' . $id . '.jpg',
+                'alt' => trim($alt),
+            ];
+        };
+
+        // Strategy 1: Extract image IDs from data-testid attributes (most reliable)
+        if (preg_match_all('/data-testid="gallery-grid-photo-action-(\d+)"/', $html, $matches)) {
+            foreach ($matches[1] as $imageId) {
+                $alt = '';
+                // Try to find alt text from the button's aria-label
+                $pattern = '/data-testid="gallery-grid-photo-action-' . preg_quote($imageId, '/') . '"[^>]*aria-label="([^"]*?)"/';
+                if (preg_match($pattern, $html, $altMatch)) {
+                    $alt = html_entity_decode($altMatch[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                }
+                // If no aria-label, try img alt near this ID
+                if ($alt === '') {
+                    $imgPattern = '/gallery-grid-photo-action-' . preg_quote($imageId, '/') . '.*?alt="([^"]*?)"/s';
+                    if (preg_match($imgPattern, $html, $imgAltMatch)) {
+                        $alt = html_entity_decode($imgAltMatch[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    }
+                }
+                $push($imageId, $alt);
+            }
+        }
+
+        // Strategy 2: Extract from img src URLs within gallery (catches any missed by strategy 1)
+        if (preg_match_all('#/xdata/images/hotel/(?:max\d+(?:x\d+)?|square\d+)/(\d+)\.jpe?g#i', $html, $urlMatches)) {
+            foreach ($urlMatches[1] as $photoId) {
+                $push($photoId);
+            }
+        }
+
+        return $out;
+    }
+
 }

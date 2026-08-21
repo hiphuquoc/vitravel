@@ -1,0 +1,106 @@
+{
+  "amenity_groups": {
+    "popular": [
+      "Hồ bơi ngoài trời",
+      "Xe đưa đón sân bay",
+      "Phòng không hút thuốc",
+      "WiFi miễn phí",
+      "Dịch vụ phòng",
+      "Nhà hàng",
+      "Phòng gia đình",
+      "Lễ tân 24 giờ",
+      "Điều hòa nhiệt độ",
+      "Bữa sáng",
+      "Bàn bán tour",
+      "Giữ hành lí",
+      "Tủ khóa"
+    ],
+    "outdoor": [
+      "Lò sưởi ngoài trời",
+      "Sân thượng / hiên",
+      "Sân vườn",
+      "Cho thuê xe đạp",
+      "Lặn",
+      "Ca-nô",
+      "Câu cá"
+    ],
+    "kitchen": ["Bếp chung"],
+    "dining": ["Nhà hàng"],
+    "media": ["Wi-fi có ở các khu vực công cộng và ."],
+    "parking": ["Không có chỗ đỗ xe."],
+    "general": [
+      "Có xuất hóa đơn",
+      "Tủ khóa",
+      "Dịch vụ trợ giúp đặc biệt",
+      "Giữ hành lí",
+      "Bàn bán tour",
+      "Lễ tân 24 giờ",
+      "Dọn phòng hàng ngày",
+      "Giặt ủi",
+      "Dịch vụ đưa đón",
+      "Cửa hàng tạp hóa (trong khuôn viên)",
+      "Khu vực xem TV/sảnh chung",
+      "Khu vực cho phép hút thuốc",
+      "Điều hòa nhiệt độ",
+      "Phòng cách âm",
+      "Xe đưa đón sân bay",
+      "Phòng không hút thuốc",
+      "Dịch vụ phòng"
+    ],
+    "family": ["Phòng gia đình", "Trò chơi Board games/giải đố"],
+    "business": ["Fax/photocopy"],
+    "safety": [
+      "Bình chữa cháy",
+      "Hệ thống CCTV bên ngoài chỗ nghỉ",
+      "Hệ thống CCTV trong khu vực chung",
+      "Ổ khóa"
+    ],
+    "pool_beach": [
+      "Mở cửa quanh năm",
+      "Dành cho mọi độ tuổi",
+      "Ghế/ghế dài tắm nắng"
+    ],
+    "wellness": ["Ghế/ghế dài tắm nắng"],
+    "other": ["Tiếng Anh", "Tiếng Việt"]
+  },
+  "nearby": [
+    {
+      "name": "Coi Nguon Museum",
+      "distance": "1,6 km",
+      "category": "landmark"
+    },
+    {
+      "name": "Sân bay Quốc tế Phú Quốc",
+      "distance": "9 km",
+      "category": "transport"
+    }
+  ],
+  "nearby_groups": {
+    "landmark": [
+      {
+        "name": "Coi Nguon Museum",
+        "distance": "1,6 km",
+        "category": "landmark"
+      },
+      {
+        "name": "Nhà tù Phú Quốc",
+        "distance": "9 km",
+        "category": "landmark"
+      }
+    ],
+    "beach": [
+      {
+        "name": "Bãi Trường",
+        "distance": "1 km",
+        "category": "beach"
+      }
+    ],
+    "transport": [
+      {
+        "name": "Sân bay Quốc tế Phú Quốc",
+        "distance": "9 km",
+        "category": "transport"
+      }
+    ]
+  }
+}

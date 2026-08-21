@@ -23,6 +23,7 @@
 /public/storage
 /storage/*.key
 /storage/app/gcs-credentials.json
+/storage/app/stay-crawl-chrome-profile
 /storage/app/credentials.json
 /storage/pail
 /vendor

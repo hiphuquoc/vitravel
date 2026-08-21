@@ -2299,6 +2299,22 @@
         opacity: 1;
     }
 
+    .detail-gallery__count {
+        position: absolute;
+        left: 0.85rem;
+        bottom: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: #fff;
+        background: rgb(15 23 42 / 0.62);
+        backdrop-filter: blur(6px);
+        pointer-events: none;
+    }
+
     .detail-gallery__grid--coverOnly .detail-gallery__cover-btn {
         height: clamp(14rem, 42vw, 26rem);
     }
@@ -2334,9 +2350,11 @@
         }
 
         .detail-gallery__thumbs[data-count="3"],
-        .detail-gallery__thumbs[data-count="4"] {
+        .detail-gallery__thumbs[data-count="4"],
+        .detail-gallery__thumbs[data-count="5"],
+        .detail-gallery__thumbs[data-count="6"] {
             grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
+            grid-template-rows: repeat(3, 1fr);
         }
 
         .detail-gallery__thumbs[data-count="3"] .detail-gallery__thumb:first-child {
@@ -8297,6 +8315,14 @@ body.is-mobileNavOpen {
     box-shadow: 0 24px 60px rgba(34, 42, 27, 0.45);
 }
 
+.vt-videos-lightbox__stage:has(.vt-videos-lightbox__photo) {
+    aspect-ratio: auto;
+    min-height: min(72vh, 720px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .vt-videos-lightbox__frame {
     position: absolute;
     inset: 0;
@@ -8382,18 +8408,23 @@ body.is-mobileNavOpen {
     margin: 0;
     width: 100%;
     height: 100%;
+    min-height: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 1rem;
 }
 
 .vt-videos-lightbox__frame--photo {
+    position: relative;
+    inset: auto;
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: min(78vh, 900px);
+    max-height: min(68vh, 680px);
     object-fit: contain;
     background: transparent;
+    margin: auto;
 }
 
 .vt-videos-lightbox__photo-ph {
