@@ -43,15 +43,32 @@ Laravel đọc `.env` → `config/stay.php` → `StayCrawlBrowser` **truyền** 
 - `shell_exec` / `exec` (spawn worker `stay-crawl:work` qua `nohup`)
 - `pcntl_*` (tuỳ chọn)
 
-### 1.2 Timeout & memory
+## 1.3 open_basedir (aaPanel — hay gặp)
 
-- PHP-FPM: `max_execution_time` ≥ **300**
-- `memory_limit` ≥ **256M** (khuyến nghị **512M**)
+PHP-FPM thường chỉ cho phép:
 
-```bash
-sudo -u www php -r 'echo "proc_open=".(function_exists("proc_open")?"ok":"MISSING").PHP_EOL;'
-sudo -u www which php && sudo -u www php -v
+```text
+/www/wwwroot/vitravel.net/:/tmp/
 ```
+
+Khi đó `is_executable('/usr/bin/node')` **lỗi** dù CLI chạy OK → admin báo không gọi được `/stay-crawls/status`.
+
+**Cách 1 (khuyến nghị — đã hỗ trợ trong code):** đặt trong `.env` rồi `config:cache`:
+
+```env
+STAY_CRAWL_NODE=/usr/bin/node
+STAY_CRAWL_CHROME=/home/www/.cache/puppeteer/chrome/linux-…/chrome-linux64/chrome
+```
+
+Code **tin** `STAY_CRAWL_NODE` (không gọi `is_executable` ngoài open_basedir). Process `proc_open` vẫn chạy `/usr/bin/node` bình thường.
+
+**Cách 2:** nới open_basedir trong aaPanel → site → PHP → `open_basedir`, thêm:
+
+```text
+/www/wwwroot/vitravel.net/:/tmp/:/usr/bin/node:/usr/bin:/home/www/.cache/puppeteer/
+```
+
+(Hoặc tắt open_basedir trên site này nếu chấp nhận được.)
 
 ---
 
@@ -290,6 +307,7 @@ chown -R www:www storage bootstrap/cache
 
 | Triệu chứng | Việc kiểm |
 |-------------|-----------|
+| Nút crawler / lỗi `open_basedir` + `is_executable(/usr/bin/node)` | Đặt `STAY_CRAWL_NODE=/usr/bin/node` (bắt buộc trên aaPanel). Deploy bản Laravel có fix tin `.env`. Tuỳ chọn: nới `open_basedir` thêm `/usr/bin` + `/home/www/.cache/puppeteer/` |
 | Nút «Bắt đầu crawler» xám / không chạy | Admin hiện lý do dưới form. Thường `browser_ready=false` vì PHP không thấy Node → `STAY_CRAWL_NODE=…` + `config:cache`. Kiểm tra API: `GET /api/v1/admin/stay-crawls/status` |
 | `EACCES` `npm ci` / `node_modules` | `rm -rf scripts/stay-crawl/node_modules` rồi `chown -R www:www scripts/stay-crawl` + `mkdir -p /home/www/.npm && chown www:www /home/www/.npm` |
 | `rsync` No such file `/home/phupv/...` | Chrome chưa tải dưới user đó — bỏ copy; dùng `sudo -u www npm ci` |

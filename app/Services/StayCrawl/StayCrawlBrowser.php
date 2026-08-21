@@ -244,16 +244,21 @@ final class StayCrawlBrowser
     public function findNode(): ?string
     {
         $configured = trim((string) config('stay.crawl.node_bin', ''));
+        // .env tuyệt đối: tin tưởng — is_executable() bị open_basedir aaPanel chặn (/usr/bin ngoài allowed).
+        if ($configured !== '' && str_starts_with($configured, '/')) {
+            return $configured;
+        }
+
         $candidates = array_values(array_filter([
-            $configured,
+            $configured !== '' ? $configured : null,
             '/usr/bin/node',
             '/usr/local/bin/node',
             '/opt/nodejs/bin/node',
             '/www/server/nodejs/bin/node',
         ]));
 
-        // aaPanel: /www/server/nodejs/v20.x.x/bin/node
-        foreach (glob('/www/server/nodejs/*/bin/node') ?: [] as $path) {
+        // aaPanel: /www/server/nodejs/v20.x.x/bin/node (glob cũng có thể bị open_basedir)
+        foreach (@glob('/www/server/nodejs/*/bin/node') ?: [] as $path) {
             $candidates[] = $path;
         }
 
@@ -263,19 +268,82 @@ final class StayCrawlBrowser
                 continue;
             }
             $seen[$path] = true;
-            if (is_executable($path)) {
+            if ($this->binaryUsable($path)) {
                 return $path;
             }
         }
 
-        $which = trim((string) shell_exec('command -v node 2>/dev/null'));
-        if ($which !== '' && is_executable($which)) {
+        $which = trim((string) @shell_exec('command -v node 2>/dev/null'));
+        if ($which !== '' && $this->binaryUsable($which)) {
             return $which;
+        }
+
+        // open_basedir: không kiểm tra được /usr/bin/node → vẫn trả candidate mặc định Linux
+        if ($this->openBasedirActive() && is_file(base_path('scripts/stay-crawl/browser.cjs'))) {
+            return '/usr/bin/node';
         }
 
         Log::warning('StayCrawlBrowser: không tìm thấy node');
 
         return null;
+    }
+
+    /**
+     * Kiểm tra binary chạy được. Với open_basedir, is_executable() ngoài allowed path
+     * ném warning / luôn false dù file tồn tại (aaPanel: chỉ /www/wwwroot/site + /tmp).
+     */
+    private function binaryUsable(string $path): bool
+    {
+        if ($path === '' || ! str_starts_with($path, '/')) {
+            return false;
+        }
+
+        $ok = false;
+        set_error_handler(static fn () => true);
+        try {
+            $ok = is_executable($path);
+        } finally {
+            restore_error_handler();
+        }
+        if ($ok) {
+            return true;
+        }
+
+        if (! $this->openBasedirActive()) {
+            return false;
+        }
+
+        // Path nằm ngoài open_basedir → PHP không đọc được; tin path hệ thống / nodejs aaPanel.
+        if ($this->pathInsideOpenBasedir($path)) {
+            return false;
+        }
+
+        return str_ends_with($path, '/node')
+            || str_contains($path, '/nodejs/')
+            || str_contains($path, '/chrome');
+    }
+
+    private function openBasedirActive(): bool
+    {
+        $basedir = (string) ini_get('open_basedir');
+
+        return $basedir !== '';
+    }
+
+    private function pathInsideOpenBasedir(string $path): bool
+    {
+        $basedir = (string) ini_get('open_basedir');
+        if ($basedir === '') {
+            return true;
+        }
+        foreach (explode(PATH_SEPARATOR, $basedir) as $root) {
+            $root = rtrim(trim($root), "/\\");
+            if ($root !== '' && (str_starts_with($path, $root.'/') || $path === $root)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return array{ready: bool, node: ?string, puppeteer: bool, script: bool, hint: ?string} */
@@ -290,7 +358,10 @@ final class StayCrawlBrowser
         if (! $ready) {
             $parts = [];
             if ($node === null) {
-                $parts[] = 'Không tìm thấy Node — đặt STAY_CRAWL_NODE=/path/to/node trong .env rồi config:cache';
+                $parts[] = 'Không tìm thấy Node — đặt STAY_CRAWL_NODE=/usr/bin/node trong .env rồi config:cache'
+                    .($this->openBasedirActive()
+                        ? ' (open_basedir đang bật: PHP không is_executable được /usr/bin — bắt buộc STAY_CRAWL_NODE).'
+                        : '');
             }
             if (! $puppeteer) {
                 $parts[] = 'Chưa npm ci: cd scripts/stay-crawl && sudo -u www npm ci';
