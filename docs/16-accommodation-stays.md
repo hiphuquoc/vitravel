@@ -225,12 +225,12 @@ Chạy lại URL đã có: API `409 STAY_CRAWL_EXISTS` + modal. **Cải thiện*
 | `rooms` | Bỏ gallery; `rooms_list` (HPRT/rate) → modal phòng |
 | `rooms_modals` | Giữ hash/`rooms_total`; chỉ scrape lại từng modal |
 
-**Xóa sạch** (`rerun=replace`) xóa service + SEO + options + FAQ rồi cào mới. CLI: `--rerun=improve|replace --from=gallery`.
+**Xóa sạch** (`rerun=replace`) và **admin xóa chỗ nghỉ** dùng chung `ServicePurgeService::purge()`: force-delete service + options/FAQ/SEO/bảng giá/reviews/featured + **orphan media trên GCS** (gallery/cover attachments **và** `attrs.photos` / ảnh hạng phòng chỉ có `media_id`) + clear HTML cache theo `slug_full`. Không soft-delete chỗ nghỉ (tránh rác). CLI: `--rerun=improve|replace --from=gallery`.
 
 | Chế độ | URL | Hành vi |
 |--------|-----|---------|
 | **1 chỗ nghỉ (test)** | `…/hotel/{cc}/{slug}.html` | Job 1 item → fetch → map HTML → import. Dùng để chỉnh selector. |
-| **Danh mục / list** | `searchresults…` / city / region | Chrome lấy list URL (phân trang `offset`, tối đa `max_pages` ≤ 80), xếp hàng item, rồi **worker nền** `stay-crawl:work` lần lượt chạy cùng pipeline URL đơn. |
+| **Danh mục / list** | `searchresults…` / city / region | Chrome (cùng header/UA/ngày crawl với hotel): **scroll lazy-load** + click **«Tải thêm kết quả»** đến khi nút mất → `pack.hotel_urls` + HTML; tuỳ chọn phân trang `offset` thêm (`max_pages`). Worker nền `stay-crawl:work` lần lượt pipeline URL đơn. |
 
 Cùng form: danh mục lưu trú, HTML dump tuỳ chọn, proxy. Danh mục truyền `url` + `max_pages` (mặc định 1; admin list nên ≥ vài trang).
 
@@ -261,8 +261,9 @@ Env / config (`config/stay.php` → `crawl`):
 
 | Key | Mặc định | Ý nghĩa |
 |-----|----------|---------|
-| `STAY_CRAWL_LIST_MAX_PAGES` | 80 | Trần hạn trang listing |
+| `STAY_CRAWL_LIST_MAX_PAGES` | 80 | Trần hạn trang listing (offset bổ sung sau load-more) |
 | `STAY_CRAWL_LIST_PAGE_SIZE` | 25 | Bước `offset` Booking |
+| `STAY_CRAWL_LIST_BROWSER_EXTRA_SEC` | 240 | Cộng timeout Chrome khi listing (nhiều lần «Tải thêm») |
 | `STAY_CRAWL_WORKER_SLEEP_MS` | 400 | Nghỉ giữa các bước worker |
 | `STAY_CRAWL_WORKER_STALE_SEC` | 900 | Heartbeat chết (phải > 1 bước Chrome gallery) |
 | `STAY_CRAWL_DELAY_MS` | 450 | Delay HTTP fallback |

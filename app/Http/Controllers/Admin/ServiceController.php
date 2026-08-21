@@ -11,6 +11,7 @@ use App\Models\Country;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\ServiceTranslation;
+use App\Services\ServicePurgeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -315,10 +316,17 @@ class ServiceController extends Controller
     {
         $service = Service::query()->findOrFail($request->integer('id'));
         $cluster = $service->cluster;
-        $service->delete();
+
+        if ($service->cluster === Service::CLUSTER_STAY) {
+            app(ServicePurgeService::class)->purge($service);
+        } else {
+            $service->delete();
+        }
 
         return redirect()
             ->route('admin.services.list', ['cluster' => $cluster])
-            ->with('success', 'Đã xóa sản phẩm dịch vụ thành công.');
+            ->with('success', $cluster === Service::CLUSTER_STAY
+                ? 'Đã xóa chỗ nghỉ (kèm media & quan hệ).'
+                : 'Đã xóa sản phẩm dịch vụ thành công.');
     }
 }

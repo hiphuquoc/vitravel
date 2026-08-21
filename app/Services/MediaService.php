@@ -363,22 +363,26 @@ class MediaService
             return;
         }
 
-        $disk = Storage::disk($media->disk);
-        $paths = [$media->path];
-
-        foreach (($media->meta['variants'] ?? []) as $variant) {
-            if (! empty($variant['path'])) {
-                $paths[] = $variant['path'];
-            }
-        }
-
-        foreach (array_unique($paths) as $path) {
-            if ($disk->exists($path)) {
-                $disk->delete($path);
-            }
-        }
-
+        $this->deleteMediaFiles($media);
         $media->delete();
+    }
+
+    /**
+     * Xóa file trên disk (GCS/local) + hard-delete row media (không để soft-delete rác).
+     * Dùng khi purge chỗ nghỉ / crawler replace.
+     */
+    public function destroyMedia(?Media $media): void
+    {
+        if (! $media) {
+            return;
+        }
+
+        $this->deleteMediaFiles($media);
+        if (method_exists($media, 'forceDelete')) {
+            $media->forceDelete();
+        } else {
+            $media->delete();
+        }
     }
 
     /**
@@ -395,6 +399,40 @@ class MediaService
         }
 
         $this->deleteMedia($media);
+    }
+
+    /**
+     * Orphan → xóa file GCS + forceDelete row (purge stay / replace crawl).
+     */
+    public function destroyMediaIfOrphan(?Media $media): void
+    {
+        if (! $media) {
+            return;
+        }
+
+        if ($this->mediaIsReferenced((int) $media->id)) {
+            return;
+        }
+
+        $this->destroyMedia($media);
+    }
+
+    private function deleteMediaFiles(Media $media): void
+    {
+        $disk = Storage::disk($media->disk);
+        $paths = [$media->path];
+
+        foreach (($media->meta['variants'] ?? []) as $variant) {
+            if (! empty($variant['path'])) {
+                $paths[] = $variant['path'];
+            }
+        }
+
+        foreach (array_unique($paths) as $path) {
+            if ($disk->exists($path)) {
+                $disk->delete($path);
+            }
+        }
     }
 
     private function mediaIsReferenced(int $mediaId): bool

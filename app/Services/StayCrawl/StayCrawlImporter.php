@@ -15,6 +15,7 @@ use App\Models\ServiceTranslation;
 use App\Models\StayCrawlItem;
 use App\Services\HtmlCacheService;
 use App\Services\SeoService;
+use App\Services\ServicePurgeService;
 use App\Support\StayBookingUrl;
 use App\Support\StayFacilities;
 use App\Support\StaySeed;
@@ -24,7 +25,10 @@ use RuntimeException;
 
 final class StayCrawlImporter
 {
-    public function __construct(private readonly SeoService $seo) {}
+    public function __construct(
+        private readonly SeoService $seo,
+        private readonly ServicePurgeService $purger,
+    ) {}
 
     /**
      * @param  array<string, mixed>  $fields  AI / normalized payload
@@ -310,33 +314,13 @@ final class StayCrawlImporter
     }
 
     /**
-     * Xóa hết chỗ nghỉ đã import từ crawler (SEO, FAQ, hạng phòng, bản dịch) — không soft-delete rác.
+     * Xóa hết chỗ nghỉ (SEO, FAQ, hạng phòng, media GCS orphan) — dùng chung với admin DELETE.
+     *
+     * @see ServicePurgeService::purge()
      */
     public function purgeCrawledService(Service $service): void
     {
-        DB::transaction(function () use ($service) {
-            $service->load(['options', 'faqs.translations', 'seoEntry.translations']);
-            foreach ($service->options as $option) {
-                $option->translations()->delete();
-                $option->delete();
-            }
-            foreach ($service->faqs as $faq) {
-                $faq->translations()->delete();
-                $faq->delete();
-            }
-            $service->translations()->delete();
-            $service->mediaAttachments()->delete();
-            $price = $service->priceTable;
-            if ($price) {
-                $price->delete();
-            }
-            if ($seo = $service->seoEntry) {
-                $seo->translations()->delete();
-                $seo->delete();
-            }
-            StayCrawlItem::query()->where('service_id', $service->id)->update(['service_id' => null]);
-            $service->forceDelete();
-        });
+        $this->purger->purge($service);
     }
 
     /**

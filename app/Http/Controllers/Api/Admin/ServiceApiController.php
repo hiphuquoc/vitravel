@@ -16,6 +16,7 @@ use App\Models\ServiceTranslation;
 use App\Services\HtmlCacheService;
 use App\Services\MediaService;
 use App\Services\PriceTableService;
+use App\Services\ServicePurgeService;
 use App\Services\ViewDataService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -174,7 +175,16 @@ class ServiceApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Service::query()->findOrFail($id)->delete();
+        $service = Service::query()->findOrFail($id);
+
+        // Chỗ nghỉ: xóa cứng + GCS/media/relations (cùng pipeline crawler rerun=replace).
+        if ($service->cluster === Service::CLUSTER_STAY) {
+            app(ServicePurgeService::class)->purge($service);
+
+            return ApiResponse::success(null, 'Đã xóa chỗ nghỉ (kèm media & quan hệ)');
+        }
+
+        $service->delete();
 
         return ApiResponse::success(null, 'Đã xóa sản phẩm dịch vụ');
     }

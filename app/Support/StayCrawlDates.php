@@ -60,7 +60,7 @@ final class StayCrawlDates
         ];
     }
 
-    /** Gắn (hoặc ghi đè) query ngày/khách vào URL hotel Booking. */
+    /** Gắn (hoặc ghi đè) query ngày/khách vào URL hotel **hoặc listing** Booking. */
     public static function applyToUrl(string $url, ?CarbonImmutable $now = null): string
     {
         $parts = parse_url($url);

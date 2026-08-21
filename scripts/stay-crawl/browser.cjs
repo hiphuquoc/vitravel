@@ -2,11 +2,12 @@
  * Mở Booking.com bằng Chrome (Puppeteer) — chờ JS render như người dùng.
  *
  * Usage: node browser.cjs <input.json> <output.json>
- * input: { url, mode?: basic|gallery|rooms_list|room, room_index?: number,
+ * input: { url, mode?: basic|gallery|rooms_list|room|list, room_index?: number,
  *          skip_html?: boolean, download_images?: boolean, images_dir?: string,
  *          max_images?: number, proxy?, timeout? }
  * output: { pack, final_url, status_code } | { error }
  *         pack.photos[] giữ url nguồn; khi download_images=true thêm local_path (file trên disk).
+ *         listing: pack.hotel_urls[] + debug.load_more_* (cùng header/UA với hotel detail).
  */
 const fs = require('fs');
 const path = require('path');
@@ -178,7 +179,9 @@ async function main() {
             concurrency: Math.max(1, Number(input.download_concurrency) || 8),
         };
         const isHotel = /\/hotel\/[a-z]{2}\//i.test(url);
-        let gotoUrl = isHotel ? withStayDates(url) : url;
+        const isListing = !isHotel || mode === 'list';
+        // Cùng ngày/khách + lang với hotel detail — listing thiếu checkin hay ra skeleton / card mỏng.
+        let gotoUrl = withStayDates(url);
         if (isHotel && mode === 'gallery') {
             gotoUrl = withActiveTab(gotoUrl, 'photosGallery');
         }
@@ -197,13 +200,13 @@ async function main() {
 
         await dismissConsent(page);
         await waitForBooking(page, url, timeout);
-        await waitForBookingApis(net, 5500);
+        await waitForBookingApis(net, isListing ? 8000 : 5500);
         await waitQuiet(page, 350);
 
         let pack;
-        if (!isHotel) {
-            await scrollToBottom(page, url);
-            pack = { photos: [], rooms: [], facilities_html: '', policies_html: '', debug: { listing: true, mode } };
+        if (isListing) {
+            const expandDebug = await expandListingResults(page);
+            pack = await collectListingPack(page, expandDebug);
         } else if (mode === 'gallery') {
             pack = await collectGalleryPack(page, downloadOpts);
         } else if (mode === 'rooms_list') {
@@ -394,7 +397,11 @@ function attachNetworkProbe(page) {
     const track = (url, status, type) => {
         const u = String(url || '');
         const isGraphql = /\/dml\/graphql|\/dml\/|graphql/i.test(u);
-        const isDoc = type === 'document' || /booking\.com\/hotel\//i.test(u);
+        const isDoc =
+            type === 'document' ||
+            /booking\.com\/hotel\//i.test(u) ||
+            /booking\.com\/searchresults/i.test(u) ||
+            /booking\.com\/(?:city|region|district|landmark)\//i.test(u);
         if (status === 403 || status === 429 || /challenge|captcha/i.test(u)) {
             stats.challenge = true;
         }
@@ -482,7 +489,18 @@ function withStayDates(url) {
         if (!/booking\.com$/i.test(u.hostname) && !/\.booking\.com$/i.test(u.hostname)) {
             return url;
         }
-        if (!u.pathname.includes('/hotel/')) {
+        const path = String(u.pathname || '').toLowerCase();
+        const isHotelPath = /\/hotel\/[a-z]{2}\//i.test(path);
+        const isListingPath =
+            path.includes('searchresults') ||
+            path.includes('/city/') ||
+            path.includes('/region/') ||
+            path.includes('/district/') ||
+            path.includes('/landmark/') ||
+            path.includes('/place/') ||
+            path.includes('/airport/') ||
+            path.includes('/country/');
+        if (!isHotelPath && !isListingPath) {
             return url;
         }
         const dates = computeStayCrawlDates();
@@ -530,27 +548,15 @@ async function waitQuiet(page, idleMs = 700) {
 }
 
 async function scrollToBottom(page, url) {
-    const isListing = !/\/hotel\/[a-z]{2}\//i.test(url);
+    // Chỉ dùng cho hotel detail — listing dùng expandListingResults (scroll + «Tải thêm kết quả»).
     let prevHeight = 0;
     let stable = 0;
-    const max = isListing ? 24 : 16;
+    const max = 16;
     for (let i = 0; i < max; i++) {
         await page.evaluate(() => {
             window.scrollBy({ top: Math.round(window.innerHeight * 0.9), behavior: 'smooth' });
         });
-        await sleep(isListing ? 280 : 240);
-        if (isListing) {
-            await page.evaluate(() => {
-                const btns = document.querySelectorAll('button');
-                for (const b of btns) {
-                    const t = (b.textContent || '').toLowerCase();
-                    if (t.includes('load more') || t.includes('xem thêm') || t.includes('show more')) {
-                        b.click();
-                        break;
-                    }
-                }
-            });
-        }
+        await sleep(240);
         const info = await page.evaluate(() => ({
             height: document.body.scrollHeight,
             atBottom: window.innerHeight + window.scrollY >= document.body.scrollHeight - 120,
@@ -564,17 +570,255 @@ async function scrollToBottom(page, url) {
         prevHeight = info.height;
     }
     await waitQuiet(page, 450);
-    if (!isListing) {
+    await page.evaluate(() => {
+        const el =
+            document.querySelector('[data-testid="property-facilities-block-container"]') ||
+            document.querySelector('[data-testid="PropertySectionsBelowRoomsTable-wrapper"]') ||
+            document.querySelector('.hp--popular_facilities') ||
+            document.querySelector('[data-testid="property-most-popular-facilities-wrapper"]');
+        if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+    await sleep(400);
+}
+
+/** Nút infinite-scroll Booking: «Tải thêm kết quả» / Load more results — phải click đến khi mất. */
+async function listingMetrics(page) {
+    return page.evaluate(() => {
+        const cards = document.querySelectorAll(
+            '[data-testid="property-card"], [data-testid="property-card-container"], [data-testid="sr-property-card"]',
+        ).length;
+        const hotelLinks = document.querySelectorAll('a[href*="/hotel/"]').length;
+        return {
+            height: document.body.scrollHeight,
+            atBottom: window.innerHeight + window.scrollY >= document.body.scrollHeight - 160,
+            cards: Math.max(cards, 0),
+            hotel_links: hotelLinks,
+        };
+    });
+}
+
+async function clickListingLoadMore(page) {
+    return page.evaluate(() => {
+        const match = (text) => {
+            const t = String(text || '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .toLowerCase();
+            if (!t || t.length > 80) return false;
+            return (
+                t.includes('tải thêm kết quả') ||
+                t.includes('load more results') ||
+                t.includes('show more results') ||
+                t.includes('xem thêm kết quả') ||
+                t.includes('hiển thị thêm kết quả') ||
+                (t.includes('tải thêm') && t.includes('kết quả')) ||
+                (t.includes('load more') && (t.includes('result') || t.includes('propert'))) ||
+                t === 'load more' ||
+                t === 'tải thêm'
+            );
+        };
+        const nodes = document.querySelectorAll('button, a[role="button"], [role="button"]');
+        for (const el of nodes) {
+            if (!(el instanceof HTMLElement)) continue;
+            if (el.disabled || el.getAttribute('aria-disabled') === 'true') continue;
+            const style = window.getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden') continue;
+            const label = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+            if (!match(label)) continue;
+            el.scrollIntoView({ block: 'center', inline: 'nearest' });
+            el.click();
+            return true;
+        }
+        return false;
+    });
+}
+
+async function listingHasLoadMore(page) {
+    return page.evaluate(() => {
+        const match = (text) => {
+            const t = String(text || '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .toLowerCase();
+            if (!t || t.length > 80) return false;
+            return (
+                t.includes('tải thêm kết quả') ||
+                t.includes('load more results') ||
+                t.includes('show more results') ||
+                t.includes('xem thêm kết quả') ||
+                t.includes('hiển thị thêm kết quả') ||
+                (t.includes('tải thêm') && t.includes('kết quả')) ||
+                (t.includes('load more') && (t.includes('result') || t.includes('propert'))) ||
+                t === 'load more' ||
+                t === 'tải thêm'
+            );
+        };
+        const nodes = document.querySelectorAll('button, a[role="button"], [role="button"]');
+        for (const el of nodes) {
+            if (!(el instanceof HTMLElement)) continue;
+            if (el.disabled || el.getAttribute('aria-disabled') === 'true') continue;
+            const style = window.getComputedStyle(el);
+            if (style.display === 'none' || style.visibility === 'hidden') continue;
+            const label = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim();
+            if (match(label)) return true;
+        }
+        return false;
+    });
+}
+
+/**
+ * Listing Booking: scroll lazy-load + click «Tải thêm kết quả» đến khi nút biến mất và DOM ổn định.
+ */
+async function expandListingResults(page) {
+    const debug = {
+        scrolls: 0,
+        load_more_clicks: 0,
+        cards_start: 0,
+        cards_end: 0,
+        hotel_links_end: 0,
+        stopped: null,
+        rounds: 0,
+    };
+    const start = await listingMetrics(page);
+    debug.cards_start = start.cards;
+
+    const maxRounds = 90;
+    let stagnant = 0;
+
+    for (let round = 0; round < maxRounds; round++) {
+        debug.rounds = round + 1;
+        const before = await listingMetrics(page);
+
+        if (await clickListingLoadMore(page)) {
+            debug.load_more_clicks += 1;
+            stagnant = 0;
+            await waitQuiet(page, 900);
+            await sleep(700);
+            continue;
+        }
+
         await page.evaluate(() => {
-            const el =
-                document.querySelector('[data-testid="property-facilities-block-container"]') ||
-                document.querySelector('[data-testid="PropertySectionsBelowRoomsTable-wrapper"]') ||
-                document.querySelector('.hp--popular_facilities') ||
-                document.querySelector('[data-testid="property-most-popular-facilities-wrapper"]');
-            if (el) el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            window.scrollBy({ top: Math.round(window.innerHeight * 0.92), behavior: 'smooth' });
         });
-        await sleep(400);
+        debug.scrolls += 1;
+        await sleep(380);
+
+        if (await clickListingLoadMore(page)) {
+            debug.load_more_clicks += 1;
+            stagnant = 0;
+            await waitQuiet(page, 900);
+            await sleep(700);
+            continue;
+        }
+
+        const after = await listingMetrics(page);
+        const grew =
+            after.cards > before.cards ||
+            after.hotel_links > before.hotel_links ||
+            after.height > before.height + 40;
+
+        if (grew) {
+            stagnant = 0;
+            continue;
+        }
+
+        stagnant += 1;
+        const stillHasBtn = await listingHasLoadMore(page);
+        if (!stillHasBtn && after.atBottom && stagnant >= 3) {
+            debug.stopped = 'exhausted';
+            break;
+        }
+        if (stillHasBtn && stagnant >= 2) {
+            // Nút còn nhưng click fail (overlay) — thử lại click thô.
+            await page.evaluate(() => {
+                const btns = document.querySelectorAll('button');
+                for (const b of btns) {
+                    const t = (b.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
+                    if (t.includes('tải thêm kết quả') || t.includes('load more results')) {
+                        b.scrollIntoView({ block: 'center' });
+                        b.click();
+                        break;
+                    }
+                }
+            });
+            await waitQuiet(page, 800);
+            await sleep(600);
+        }
+        if (stagnant >= 8) {
+            debug.stopped = stillHasBtn ? 'load_more_stuck' : 'stagnant';
+            break;
+        }
     }
+
+    // Cuối cùng: còn nút thì click đến khi hết (an toàn).
+    for (let i = 0; i < 40; i++) {
+        if (!(await clickListingLoadMore(page))) {
+            break;
+        }
+        debug.load_more_clicks += 1;
+        await waitQuiet(page, 900);
+        await sleep(650);
+    }
+
+    const end = await listingMetrics(page);
+    debug.cards_end = end.cards;
+    debug.hotel_links_end = end.hotel_links;
+    if (!debug.stopped) {
+        debug.stopped = (await listingHasLoadMore(page)) ? 'max_rounds' : 'complete';
+    }
+    await waitQuiet(page, 500);
+    return debug;
+}
+
+async function collectListingPack(page, expandDebug) {
+    const hotelUrls = await page.evaluate(() => {
+        const out = [];
+        const seen = {};
+        const push = (href) => {
+            if (!href) return;
+            try {
+                const u = new URL(href, location.origin);
+                if (!/\/hotel\/[a-z]{2}\/[^/]+\.html/i.test(u.pathname)) return;
+                u.hash = '';
+                // Bỏ tracking query nhưng giữ path; canonicalize phía PHP.
+                const key = u.origin + u.pathname.replace(/\.(en-gb|en-us|vi|fr|de)(\.html)$/i, '$2').toLowerCase();
+                if (seen[key]) return;
+                seen[key] = true;
+                out.push(u.origin + u.pathname + (u.search || ''));
+            } catch {
+                // ignore
+            }
+        };
+        const sels = [
+            '[data-testid="property-card"] a[href*="/hotel/"]',
+            '[data-testid="property-card-container"] a[href*="/hotel/"]',
+            '[data-testid="title-link"]',
+            'a[data-testid="title-link"]',
+            'a[href*="/hotel/"][data-testid]',
+            'a[href*="booking.com/hotel/"]',
+            'a[href^="/hotel/"]',
+        ];
+        for (const sel of sels) {
+            document.querySelectorAll(sel).forEach((a) => push(a.href || a.getAttribute('href')));
+        }
+        document.querySelectorAll('a[href*="/hotel/"]').forEach((a) => push(a.href || a.getAttribute('href')));
+        return out;
+    });
+
+    return {
+        photos: [],
+        rooms: [],
+        hotel_urls: hotelUrls,
+        facilities_html: '',
+        policies_html: '',
+        crawl_dates: computeStayCrawlDates(),
+        debug: {
+            listing: true,
+            mode: 'list',
+            ...(expandDebug || {}),
+            hotel_url_count: hotelUrls.length,
+        },
+    };
 }
 
 const ROOM_NAME_SEL =
@@ -690,6 +934,7 @@ function slimPack(pack) {
     return {
         photos: pack?.photos || [],
         rooms,
+        hotel_urls: Array.isArray(pack?.hotel_urls) ? pack.hotel_urls : [],
         room_index: pack?.room_index ?? null,
         room_hash: pack?.room_hash ?? null,
         facilities_html: pack?.facilities_html || '',

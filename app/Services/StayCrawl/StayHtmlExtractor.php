@@ -48,6 +48,10 @@ final class StayHtmlExtractor
         $canonical = $this->canonicalFrom($xpath, $og, $sourceUrl);
         $images = $xpath ? $this->images($xpath, $canonical) : [];
         $hotelUrls = StayBookingUrl::extractHotelUrlsFromHtml($html, $canonical);
+        $fromPack = $this->hotelUrlsFromStayPack($html);
+        if ($fromPack !== []) {
+            $hotelUrls = array_values(array_unique(array_merge($fromPack, $hotelUrls)));
+        }
         $sections = $xpath ? $this->sections($xpath) : [];
 
         $extracted = $this->composeExtractedHtml($canonical, $og, $jsonLd, $sections, $images);
@@ -438,4 +442,30 @@ final class StayHtmlExtractor
         return $out;
     }
 
+    /**
+     * @return list<string>
+     */
+    private function hotelUrlsFromStayPack(string $html): array
+    {
+        if (! preg_match('/id="vt-stay-pack"[^>]*>(.*?)<\/script>/si', $html, $m)) {
+            $tail = substr($html, -500000);
+            if (! preg_match('/id="vt-stay-pack"[^>]*>(.*?)<\/script>/si', $tail, $m)) {
+                return [];
+            }
+        }
+        $json = html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $pack = json_decode($json, true);
+        if (! is_array($pack) || ! is_array($pack['hotel_urls'] ?? null)) {
+            return [];
+        }
+        $out = [];
+        foreach ($pack['hotel_urls'] as $url) {
+            if (! is_string($url) || $url === '') {
+                continue;
+            }
+            $out[] = StayBookingUrl::canonicalize($url);
+        }
+
+        return array_values(array_unique(array_filter($out)));
+    }
 }

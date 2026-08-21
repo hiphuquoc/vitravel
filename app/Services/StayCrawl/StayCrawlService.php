@@ -12,6 +12,7 @@ use App\Models\StayCrawlJob;
 use App\Models\StayCrawlSource;
 use App\Support\ProjectContext;
 use App\Support\StayBookingUrl;
+use App\Support\StayCrawlDates;
 use RuntimeException;
 
 final class StayCrawlService
@@ -70,7 +71,7 @@ final class StayCrawlService
         $pages = max(1, min($maxPages, $maxCap));
         $urls = [];
         $seen = [];
-        $current = $job->list_url;
+        $current = StayCrawlDates::applyToUrl($job->list_url);
         $meta = is_array($job->meta) ? $job->meta : [];
         $meta['list'] = [
             'max_pages' => $pages,
@@ -78,27 +79,43 @@ final class StayCrawlService
             'pages_done' => 0,
             'offset' => StayBookingUrl::searchOffset($current),
             'stopped_reason' => null,
+            'load_more' => null,
         ];
         $job->meta = $meta;
         $job->save();
 
         try {
             for ($page = 1; $page <= $pages; $page++) {
+                $pack = [];
                 if ($html !== null && $page === 1) {
                     $body = $html;
                     $finalUrl = $current;
                 } else {
-                    $fetch = $this->fetcher->fetch($current, $respectRobots, $useProxy);
+                    $fetch = $this->fetcher->fetch($current, $respectRobots, $useProxy, [
+                        'mode' => 'list',
+                    ]);
                     if (! $fetch['ok'] && $fetch['html'] === '') {
                         throw new RuntimeException($fetch['reason'] ?? 'Fetch list thất bại');
                     }
                     $body = $fetch['html'];
                     $finalUrl = $fetch['final_url'] ?: $current;
+                    $pack = is_array($fetch['pack'] ?? null) ? $fetch['pack'] : [];
                 }
 
                 $extracted = $this->extractor->extract($body, $finalUrl);
+                $fromPack = [];
+                foreach (is_array($pack['hotel_urls'] ?? null) ? $pack['hotel_urls'] : [] as $u) {
+                    if (is_string($u) && $u !== '') {
+                        $fromPack[] = $u;
+                    }
+                }
+                $hotelUrls = array_values(array_unique(array_merge(
+                    $fromPack,
+                    is_array($extracted['hotel_urls'] ?? null) ? $extracted['hotel_urls'] : [],
+                )));
+
                 $newOnPage = 0;
-                foreach ($extracted['hotel_urls'] as $url) {
+                foreach ($hotelUrls as $url) {
                     $canon = StayBookingUrl::canonicalize($url);
                     if (isset($seen[$canon])) {
                         continue;
@@ -115,6 +132,18 @@ final class StayCrawlService
                 $listMeta['offset'] = StayBookingUrl::searchOffset($current);
                 $listMeta['last_page_new'] = $newOnPage;
                 $listMeta['urls_queued'] = count($seen);
+                $listMeta['pack_urls'] = count($fromPack);
+                $listMeta['html_urls'] = count($extracted['hotel_urls'] ?? []);
+                if (is_array($pack['debug'] ?? null)) {
+                    $listMeta['load_more'] = [
+                        'clicks' => $pack['debug']['load_more_clicks'] ?? null,
+                        'scrolls' => $pack['debug']['scrolls'] ?? null,
+                        'stopped' => $pack['debug']['stopped'] ?? null,
+                        'cards_end' => $pack['debug']['cards_end'] ?? null,
+                        'hotel_url_count' => $pack['debug']['hotel_url_count'] ?? null,
+                        'network_hint' => $pack['debug']['network']['hint'] ?? null,
+                    ];
+                }
                 $meta['list'] = $listMeta;
                 $job->meta = $meta;
                 $job->pages_crawled = $page;
@@ -122,6 +151,20 @@ final class StayCrawlService
                 $job->save();
 
                 $html = null;
+
+                // Một trang Chrome đã scroll + «Tải thêm» hết → thường đủ; offset chỉ bổ sung nếu còn max_pages.
+                $loadMoreDone = in_array(
+                    (string) ($pack['debug']['stopped'] ?? ''),
+                    ['complete', 'exhausted'],
+                    true,
+                );
+                if ($loadMoreDone && $page === 1 && count($fromPack) > 0) {
+                    $listMeta['stopped_reason'] = 'chrome_load_more_complete';
+                    $meta['list'] = $listMeta;
+                    $job->meta = $meta;
+                    $job->save();
+                    // Vẫn cho phép trang offset tiếp nếu admin yêu cầu max_pages > 1
+                }
 
                 if ($page >= $pages) {
                     break;
@@ -142,7 +185,7 @@ final class StayCrawlService
                     $job->save();
                     break;
                 }
-                $current = $next;
+                $current = StayCrawlDates::applyToUrl($next);
             }
 
             $urls = array_values(array_unique($urls));

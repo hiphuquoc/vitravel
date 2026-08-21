@@ -59,11 +59,17 @@ final class StayCrawlBrowser
             mkdir($imagesDir, 0775, true);
         }
 
+        $browserTimeoutSec = max(60, (int) config('stay.crawl.browser_timeout', 180));
+        $isListingUrl = $mode === 'list' || ! preg_match('#/hotel/[a-z]{2}/#i', $url);
+        if ($isListingUrl) {
+            $browserTimeoutSec += max(60, (int) config('stay.crawl.list_browser_extra_sec', 240));
+        }
+
         $payload = [
             'url' => $url,
-            'timeout' => (int) config('stay.crawl.browser_timeout', 90) * 1000,
+            'timeout' => $browserTimeoutSec * 1000,
             'proxy' => $useProxy ? $this->proxyConfig() : null,
-            'mode' => $mode,
+            'mode' => $isListingUrl ? 'list' : $mode,
             'skip_html' => (bool) ($options['skip_html'] ?? false),
             'room_index' => isset($options['room_index']) ? (int) $options['room_index'] : null,
             'room_name' => (string) ($options['room_name'] ?? ''),
@@ -79,7 +85,7 @@ final class StayCrawlBrowser
         ];
         file_put_contents($inputFile, json_encode($payload, JSON_UNESCAPED_SLASHES));
 
-        $timeout = max(60, (int) config('stay.crawl.browser_timeout', 180)) + 40;
+        $timeout = $browserTimeoutSec + 40;
         // Gallery download can take longer (N images over Chrome session).
         if ($wantDownload) {
             $timeout += min(300, (int) ceil(((int) $payload['max_images']) * 1.5));

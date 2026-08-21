@@ -212,6 +212,8 @@ return [
         /** Listing category: số trang offset tối đa (mỗi trang ~list_page_size URL). */
         'list_max_pages' => (int) env('STAY_CRAWL_LIST_MAX_PAGES', 80),
         'list_page_size' => (int) env('STAY_CRAWL_LIST_PAGE_SIZE', 25),
+        /** Cộng thêm giây Process timeout khi crawl listing (scroll + «Tải thêm kết quả»). */
+        'list_browser_extra_sec' => (int) env('STAY_CRAWL_LIST_BROWSER_EXTRA_SEC', 240),
         /** Worker stay-crawl:work — nghỉ giữa các bước processNext (ms). */
         'worker_sleep_ms' => (int) env('STAY_CRAWL_WORKER_SLEEP_MS', 400),
         /** Heartbeat worker quá hạn → coi chết (phải > thời gian 1 bước Chrome gallery/phòng). */
