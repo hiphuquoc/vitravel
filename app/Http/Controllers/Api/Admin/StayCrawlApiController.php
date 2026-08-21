@@ -196,25 +196,33 @@ final class StayCrawlApiController extends Controller
         $job = $result['job'];
         $autoWork = ! \App\Support\StayBookingUrl::isHotelPage($validated['url'])
             || $job->items()->count() > 1;
+        $queued = ['dispatched' => 0, 'item_ids' => []];
         if ($autoWork && $job->items()->count() > 0) {
-            $this->crawl->spawnWorker($job->fresh() ?? $job, [
-                'locale' => 'vi',
-                'useProxy' => $this->useProxyFlag($validated),
-                'respectRobots' => $this->respectRobotsFlag($validated),
-            ]);
+            $queued = $this->crawl->dispatchItemQueue(
+                $job->fresh() ?? $job,
+                'vi',
+                $this->useProxyFlag($validated),
+                $this->respectRobotsFlag($validated),
+            );
             $job = $job->fresh() ?? $job;
         }
 
         $items = $job->items()->with('service.seoEntry.translations')->latest('id')->limit(80)->get();
+        $queueName = (string) config('stay.crawl.queue', 'default');
 
         return ApiResponse::success([
             'job' => $this->mapJob($job->loadCount('items')),
             'urls' => $result['urls'],
             'items' => $items->map(fn (StayCrawlItem $i) => $this->mapItem($i))->values(),
             'worker' => data_get($job->meta, 'worker'),
+            'queue' => data_get($job->meta, 'queue'),
+            'queued' => $queued,
             'worker_hint' => $autoWork
-                ? 'Worker nền đang chạy (stay-crawl:work). Có thể đóng tab — resume bằng API work/resume hoặc CLI.'
-                : 'Gọi process-next (hoặc work) để cào tiếp từng bước.',
+                ? 'Đã đẩy từng URL vào Laravel queue (ProcessStayCrawlItemJob). Chạy Supervisor/queue:work — sống sót sau reboot. Có thể đóng tab.'
+                : 'Gọi process-next để cào từng bước (hotel đơn).',
+            'queue_hint' => $autoWork
+                ? 'php artisan queue:work --queue='.$queueName.' --sleep=3 --tries=3 --timeout=1200'
+                : null,
         ], 'Đã lấy danh sách chỗ nghỉ — đang tạo trang con');
     }
 
@@ -240,7 +248,9 @@ final class StayCrawlApiController extends Controller
         if ($this->crawl->isWorkerAlive($job)) {
             $busyMsg = $this->crawl->isWorkerPaused($job)
                 ? 'Worker đang tạm dừng (paused) — gọi resume để tiếp tục'
-                : 'Worker nền đang chạy (stay-crawl:work) — không cần poll process-next';
+                : (data_get($job->meta, 'worker.mode') === 'laravel_queue'
+                    ? 'Laravel queue đang xử lý từng URL — không cần poll process-next (cần queue:work / Supervisor)'
+                    : 'Worker nền đang chạy (stay-crawl:work) — không cần poll process-next');
 
             return $this->stepResponse($this->crawl->httpStepSnapshot($job), $locale, $busyMsg);
         }
@@ -283,12 +293,14 @@ final class StayCrawlApiController extends Controller
         ]);
 
         $fresh = $job->fresh() ?? $job;
+        $queueName = (string) config('stay.crawl.queue', 'default');
 
         return ApiResponse::success([
             'job' => $this->mapJob($fresh),
             'worker' => data_get($fresh->meta, 'worker'),
-            'worker_hint' => 'php artisan stay-crawl:work '.$fresh->id.' --proxy',
-        ], 'Đã bật worker nền');
+            'queue' => data_get($fresh->meta, 'queue'),
+            'worker_hint' => 'php artisan queue:work --queue='.$queueName.' --timeout=1200',
+        ], 'Đã đẩy URL còn lại vào Laravel queue');
     }
 
     public function pauseWork(int $id): JsonResponse

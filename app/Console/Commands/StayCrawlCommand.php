@@ -35,7 +35,7 @@ class StayCrawlCommand extends Command
         {--category= : service_categories.id}
         {--locale=vi}
         {--limit=8 : Số item xử lý mỗi lần}
-        {--max-pages=1}
+        {--max-pages=1 : (deprecated) bỏ qua — listing luôn tải đủ Chrome load-more}
         {--dry-run : Import không ghi DB}
         {--keep-html : Lưu raw_html}
         {--ignore-robots : Bỏ qua robots.txt (mặc định crawler Chrome cũng bỏ)}
@@ -89,7 +89,15 @@ class StayCrawlCommand extends Command
             $job = $crawl->enqueueList($url, $this->categoryId(), $useProxy);
         }
         $this->info("Job #{$job->id} — {$job->list_url}");
-        $result = $crawl->crawlList($job, $html, $respectRobots, (int) $this->option('max-pages'), $useProxy);
+        // max-pages deprecated — crawlList luôn tải đủ listing.
+        $result = $crawl->crawlList($job, $html, $respectRobots, 1, $useProxy);
+        $this->info('URLs: '.count($result['urls']).' — đẩy queue nếu có queue:work');
+        $crawl->dispatchItemQueue(
+            $result['job'],
+            (string) $this->option('locale'),
+            $useProxy,
+            $respectRobots,
+        );
         $this->info('Tìm thấy '.$result['job']->items_found.' URL chỗ nghỉ (đã lưu source_url).');
         foreach (array_slice($result['urls'], 0, 20) as $u) {
             $this->line('  '.$u);

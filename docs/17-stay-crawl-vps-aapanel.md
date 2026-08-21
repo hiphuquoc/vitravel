@@ -40,7 +40,7 @@ Laravel đọc `.env` → `config/stay.php` → `StayCrawlBrowser` **truyền** 
 
 - `proc_open`
 - `putenv`
-- `shell_exec` / `exec` (spawn worker `stay-crawl:work` qua `nohup`)
+- `shell_exec` / `exec` (spawn Chrome step / CLI dự phòng; listing chính dùng Laravel queue)
 - `pcntl_*` (tuỳ chọn)
 
 ## 1.3 open_basedir (aaPanel — hay gặp)
@@ -279,11 +279,16 @@ sudo -u www php artisan stay:crawl ingest \
   --category=ID_DANH_MUC
 ```
 
-Listing / worker:
+Listing / queue (sau khi admin «Cào danh mục»):
 
 ```bash
-sudo -u www php artisan stay-crawl:work {jobId}
-tail -f storage/logs/stay-crawl-work-{jobId}.log
+# Bắt buộc: worker Laravel queue (Supervisor — xem docs/deploy/supervisor-laravel-worker.ini.example)
+sudo -u www php artisan queue:work database --sleep=3 --tries=3 --timeout=1200
+
+# Theo dõi jobs
+sudo -u www php artisan queue:failed
+# (tuỳ chọn) CLI cũ theo jobId:
+# sudo -u www php artisan stay-crawl:work {jobId}
 ```
 
 ---
@@ -315,7 +320,8 @@ chown -R www:www storage bootstrap/cache
 | `NO_CHROME` / Failed to launch | `STAY_CRAWL_CHROME` + `sudo -u www test -x …` |
 | Thiếu `.so` | apt libs mục 4 |
 | Skeleton / GraphQL 403 | Proxy residential |
-| Worker không spawn | `shell_exec` / `nohup`; log `storage/logs/stay-crawl-work-*.log` |
+| Queue không chạy / job treo | Supervisor `queue:work`, `QUEUE_CONNECTION=database`, `--timeout=1200`; `php artisan queue:failed` |
+| Worker không spawn (CLI cũ) | `shell_exec` / `nohup`; log `storage/logs/stay-crawl-work-*.log` |
 
 ---
 

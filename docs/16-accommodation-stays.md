@@ -240,18 +240,18 @@ Chạy lại URL đã có: API `409 STAY_CRAWL_EXISTS` + modal. **Cải thiện*
 | Chế độ | URL | Hành vi |
 |--------|-----|---------|
 | **1 chỗ nghỉ (test)** | `…/hotel/{cc}/{slug}.html` | Job 1 item → fetch → map HTML → import. Dùng để chỉnh selector. |
-| **Danh mục / list** | `searchresults…` / city / region | Chrome (cùng header/UA/ngày crawl với hotel): **scroll lazy-load** + click **«Tải thêm kết quả»** đến khi nút mất → `pack.hotel_urls` + HTML; tuỳ chọn phân trang `offset` thêm (`max_pages`). Worker nền `stay-crawl:work` lần lượt pipeline URL đơn. |
+| **Danh mục / list** | `searchresults…` / city / region | Chrome: **scroll** + **«Tải thêm kết quả»** đến hết → `pack.hotel_urls`. **Không** cấu hình số trang — mặc định tải đủ. Mỗi URL → `ProcessStayCrawlItemJob` (Laravel queue, cùng pipeline crawler đơn). |
 
-Cùng form: danh mục lưu trú, HTML dump tuỳ chọn, proxy. Danh mục truyền `url` + `max_pages` (mặc định 1; admin list nên ≥ vài trang).
+Cùng form: danh mục lưu trú, HTML dump tuỳ chọn, proxy. Listing không còn `max_pages` trên UI.
 
 API:
 
 | Endpoint | Việc |
 |----------|------|
-| `POST /stay-crawls/from-category` | List → queue; **tự spawn worker** nếu list / nhiều item |
-| `POST …/jobs/{id}/process-next` | 1 bước (admin poll) — nếu worker đang chạy → `busy` + thông báo, không spawn trùng |
-| `POST …/jobs/{id}/work` / `resume` | Bật / resume worker nền |
-| `POST …/jobs/{id}/pause` | Tạm dừng (xong bước hiện tại rồi nghỉ) |
+| `POST /stay-crawls/from-category` | List → xếp hàng URL; **đẩy Laravel queue** từng item nếu list / nhiều item |
+| `POST …/jobs/{id}/process-next` | 1 bước (admin poll / hotel đơn) — nếu queue/worker đang chạy → `busy` |
+| `POST …/jobs/{id}/work` / `resume` | Đẩy lại các URL còn lại vào queue |
+| `POST …/jobs/{id}/pause` | Tạm dừng (meta pause — worker CLI cũ; queue bỏ qua item khi resume theo trạng thái) |
 | `POST /stay-crawls/items/{id}/map` | Map lại HTML |
 
 Quyền `services.*`.
@@ -260,27 +260,28 @@ Quyền `services.*`.
 
 Một request HTTP / poll tab admin **không** chịu được chạy nhiều ngày. Luồng bền:
 
-1. `from-category` lấy hết (hoặc tới `max_pages`) URL → status job `ready`, item `queued`.
-2. Tự chạy `php artisan stay-crawl:work {jobId}` (nohup) — lặp `processNext` đến hết.
-3. **Pause:** API `pause` hoặc tạo file `storage/app/stay-crawl-pause-{jobId}` (meta `worker.paused=true`).
-4. **Resume:** API `work`/`resume` hoặc xoá file pause + chạy lại `stay-crawl:work` nếu heartbeat chết.
-5. **Dừng đột ngột (kill / reboot):** item giữ trạng thái giữa chừng (queued / enrich dở); chạy lại `stay-crawl:work {id}` — tiếp tục từ item còn lại. Log: `storage/logs/stay-crawl-work-{id}.log`.
-6. Admin có thể đóng tab; poll chỉ để xem tiến độ (`last_step`, `worker_alive`).
+1. `from-category` tải **đủ** listing (Chrome load-more) → item `queued`, status job `ready`.
+2. Tự `ProcessStayCrawlItemJob::dispatch` từng URL → cần **Supervisor `queue:work`** (`QUEUE_CONNECTION=database`, `--timeout=1200`).
+3. Mỗi job = pipeline crawler đơn (fetch → draft → gallery → phòng). `WithoutOverlapping(stay-crawl-chrome)` → một Chrome tại một thời điểm.
+4. **Resume:** API `work`/`resume` đẩy lại item còn việc (unique theo `item_id`).
+5. **Reboot / mất điện:** job còn trong bảng `jobs` / item giữ trạng thái; bật lại Supervisor → tiếp tục. Không phụ thuộc tab admin hay `nohup stay-crawl:work`.
+6. CLI cũ `stay-crawl:work {id}` vẫn dùng được thủ công nếu cần.
 
 Env / config (`config/stay.php` → `crawl`):
 
 | Key | Mặc định | Ý nghĩa |
 |-----|----------|---------|
 | `STAY_CRAWL_DRIVER` | `browser` | Chrome/Puppeteer (không dùng HTTP làm đường chính) |
+| `STAY_CRAWL_QUEUE` | `default` | Tên queue cho `ProcessStayCrawlItemJob` |
 | `STAY_CRAWL_HEADLESS` | `true` | VPS luôn `true` |
 | `STAY_CRAWL_CHROME` | *(auto)* | Binary Chrome; truyền sang Node. VPS: path `www` đọc được |
 | `STAY_CRAWL_NODE` | *(PATH)* | Binary Node nếu `www` không có trên PATH |
 | `STAY_CRAWL_USER_DATA_DIR` | `storage/app/stay-crawl-chrome-profile` | Profile Chrome |
 | `STAY_CRAWL_BROWSER_TIMEOUT` | 240 | Timeout 1 phiên Chrome (giây) |
-| `STAY_CRAWL_LIST_MAX_PAGES` | 80 | Trần hạn trang listing (offset bổ sung sau load-more) |
-| `STAY_CRAWL_LIST_PAGE_SIZE` | 25 | Bước `offset` Booking |
+| `STAY_CRAWL_LIST_OFFSET_EXTRA_PAGES` | 0 | Offset after Chrome load-more (usually 0) |
+| `STAY_CRAWL_LIST_PAGE_SIZE` | 25 | Bước `offset` Booking (chỉ khi extra pages > 0) |
 | `STAY_CRAWL_LIST_BROWSER_EXTRA_SEC` | 240 | Cộng timeout Chrome khi listing (nhiều lần «Tải thêm») |
-| `STAY_CRAWL_WORKER_SLEEP_MS` | 400 | Nghỉ giữa các bước worker |
+| `STAY_CRAWL_WORKER_SLEEP_MS` | 400 | Nghỉ giữa các bước CLI `stay-crawl:work` |
 | `STAY_CRAWL_WORKER_STALE_SEC` | 900 | Heartbeat chết (phải > 1 bước Chrome gallery) |
 | `STAY_CRAWL_DELAY_MS` | 450 | Delay HTTP fallback |
 | `STAY_CRAWL_PROXY_*` | — | Proxy residential; form admin cần có `HOST` |
@@ -310,11 +311,10 @@ php artisan stay:crawl ingest "https://www.booking.com/hotel/vn/….html" --proj
 # Fetch vẫn chặn → Save As HTML:
 php artisan stay:crawl ingest --item=3 --file=/tmp/hotel.html --project=phuquoc
 
-# Listing → xếp hàng URL (max-pages) rồi worker lần lượt
-php artisan stay:crawl list "https://www.booking.com/searchresults.html?ss=Phu+Quoc" --project=phuquoc --category=12 --max-pages=20
-php artisan stay-crawl:work {jobId} --proxy
-# Pause CLI: touch storage/app/stay-crawl-pause-{jobId}
-# Resume: rm file đó (worker đang chạy) hoặc chạy lại stay-crawl:work
+# Listing → xếp hàng URL (tải đủ) rồi Laravel queue từng URL
+php artisan stay:crawl list "https://www.booking.com/searchresults.html?ss=Phu+Quoc" --project=phuquoc --category=12
+php artisan queue:work database --timeout=1200
+# (tuỳ chọn) CLI cũ: php artisan stay-crawl:work {jobId} --proxy
 
 php artisan stay:crawl detail --job=1 --project=phuquoc --limit=5
 php artisan stay:crawl map --job=1 --project=phuquoc
@@ -339,7 +339,8 @@ php artisan test --filter=StayFacilitiesPublicPhotoTest
 | `StayHtmlMapper` | Tách schema stay từ HTML (không AI). Payload lưu `ai_json`, status `ai_done` |
 | `StayCrawlFetcher` | Điều phối Chrome (mặc định) / HTTP fallback |
 | `StayCrawlBrowser` | Puppeteer `browser.cjs` + thư mục tạm ảnh (`images_dir`); truyền `STAY_CRAWL_CHROME` từ `.env` sang Node |
-| `StayCrawlWorkCommand` | Worker nền `stay-crawl:work` — lặp bước, pause/resume, heartbeat |
+| `ProcessStayCrawlItemJob` | Queue: 1 URL = pipeline crawler đơn |
+| `StayCrawlWorkCommand` | CLI dự phòng `stay-crawl:work` (không bắt buộc nếu có `queue:work`) |
 | `StayBookingUrl` | Canonical URL + offset phân trang listing |
 | `StayCrawlEnricher` | Gallery / rooms_list / room — import media, cleanup tmp |
 | `StayCrawlImageImporter` | Ưu tiên `local_path` (Chrome) → upload GCS; fallback HTTP; giữ `source_url` |

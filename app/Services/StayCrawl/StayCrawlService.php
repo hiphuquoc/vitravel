@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\StayCrawl;
 
 use App\Exceptions\StayCrawlAlreadyExistsException;
+use App\Jobs\ProcessStayCrawlItemJob;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\StayCrawlItem;
@@ -61,14 +62,22 @@ final class StayCrawlService
     /**
      * @return array{job: StayCrawlJob, urls: list<string>}
      */
+    /**
+     * Lấy đủ URL từ listing (Chrome scroll + «Tải thêm kết quả»).
+     * Không dùng max_pages từ UI — mặc định 1 phiên Chrome đầy đủ.
+     * Offset trang chỉ khi config stay.crawl.list_offset_extra_pages > 0 (legacy).
+     *
+     * @return array{job: StayCrawlJob, urls: list<string>}
+     */
     public function crawlList(StayCrawlJob $job, ?string $html = null, bool $respectRobots = false, int $maxPages = 1, bool $useProxy = false): array
     {
         $job->status = StayCrawlJob::STATUS_CRAWLING;
         $job->save();
 
         $pageSize = max(10, min(50, (int) config('stay.crawl.list_page_size', 25)));
-        $maxCap = max(1, (int) config('stay.crawl.list_max_pages', 80));
-        $pages = max(1, min($maxPages, $maxCap));
+        // UI không còn «số trang» — luôn 1 lần Chrome load-more đủ; offset phụ chỉ qua config.
+        $extraOffsetPages = max(0, (int) config('stay.crawl.list_offset_extra_pages', 0));
+        $pages = 1 + $extraOffsetPages;
         $urls = [];
         $seen = [];
         $current = StayCrawlDates::applyToUrl($job->list_url);
@@ -80,6 +89,7 @@ final class StayCrawlService
             'offset' => StayBookingUrl::searchOffset($current),
             'stopped_reason' => null,
             'load_more' => null,
+            'mode' => 'full_load_more',
         ];
         $job->meta = $meta;
         $job->save();
@@ -152,18 +162,22 @@ final class StayCrawlService
 
                 $html = null;
 
-                // Một trang Chrome đã scroll + «Tải thêm» hết → thường đủ; offset chỉ bổ sung nếu còn max_pages.
                 $loadMoreDone = in_array(
                     (string) ($pack['debug']['stopped'] ?? ''),
                     ['complete', 'exhausted'],
                     true,
                 );
-                if ($loadMoreDone && $page === 1 && count($fromPack) > 0) {
-                    $listMeta['stopped_reason'] = 'chrome_load_more_complete';
+                if ($page === 1 && ($loadMoreDone || count($fromPack) > 0 || $newOnPage > 0)) {
+                    $listMeta['stopped_reason'] = $loadMoreDone
+                        ? 'chrome_load_more_complete'
+                        : 'chrome_list_page';
                     $meta['list'] = $listMeta;
                     $job->meta = $meta;
                     $job->save();
-                    // Vẫn cho phép trang offset tiếp nếu admin yêu cầu max_pages > 1
+                    // Mặc định dừng sau 1 phiên Chrome đầy đủ (không offset thêm).
+                    if ($extraOffsetPages <= 0) {
+                        break;
+                    }
                 }
 
                 if ($page >= $pages) {
@@ -510,6 +524,7 @@ final class StayCrawlService
             return ['job' => $job->fresh() ?? $job, 'urls' => [StayBookingUrl::canonicalize($url)]];
         }
 
+        // max_pages UI đã bỏ — crawlList luôn tải đủ listing (Chrome load-more).
         $result = $this->crawlList($job, $html, $respectRobots, $maxPages, $useProxy);
         if ($result['urls'] === [] && $job->items()->count() === 0) {
             $job->status = StayCrawlJob::STATUS_FAILED;
@@ -520,6 +535,181 @@ final class StayCrawlService
         $this->applyRerunToJob($result['job']->fresh() ?? $result['job'], $rerun, $from);
 
         return $result;
+    }
+
+    /**
+     * Pipeline crawler đơn cho 1 item: ingest + mọi bước enrich đến xong / fail / blocked.
+     */
+    public function processItemFully(
+        StayCrawlItem $item,
+        string $locale = 'vi',
+        bool $useProxy = false,
+        bool $respectRobots = false,
+    ): StayCrawlItem {
+        $job = $item->job;
+        if (! $job) {
+            throw new RuntimeException('Item không gắn stay_crawl_job.');
+        }
+        if ($job->service_category_id) {
+            $this->requireStayCategory((int) $job->service_category_id);
+        }
+        $useProxy = $useProxy || (bool) data_get($job->meta, 'use_proxy', false);
+
+        $guard = 0;
+        $retriedFailed = false;
+        while ($guard++ < 120) {
+            $item = $item->fresh(['job', 'service.seoEntry.translations']) ?? $item;
+
+            if ($this->itemNeedsEnrich($item)) {
+                $this->enrichNext($item, $useProxy);
+                continue;
+            }
+
+            if (in_array($item->status, [
+                StayCrawlItem::STATUS_QUEUED,
+                StayCrawlItem::STATUS_EXTRACTED,
+                StayCrawlItem::STATUS_AI_DONE,
+                StayCrawlItem::STATUS_FETCHED,
+                StayCrawlItem::STATUS_FAILED,
+            ], true)) {
+                if ($item->status === StayCrawlItem::STATUS_FAILED) {
+                    if ($retriedFailed) {
+                        break;
+                    }
+                    $retriedFailed = true;
+                }
+                $item = $this->ingestRemaining(
+                    $item,
+                    $job->service_category_id,
+                    $locale,
+                    null,
+                    $respectRobots,
+                    false,
+                    $useProxy,
+                );
+                if (in_array($item->status, [
+                    StayCrawlItem::STATUS_BLOCKED,
+                    StayCrawlItem::STATUS_FAILED,
+                ], true) && ! $this->itemNeedsEnrich($item)) {
+                    break;
+                }
+                continue;
+            }
+
+            break;
+        }
+
+        return $item->fresh(['job', 'service.seoEntry.translations']) ?? $item;
+    }
+
+    /**
+     * Đưa từng URL của job vào Laravel queue (ProcessStayCrawlItemJob).
+     *
+     * @return array{dispatched: int, item_ids: list<int>}
+     */
+    public function dispatchItemQueue(
+        StayCrawlJob $job,
+        string $locale = 'vi',
+        bool $useProxy = false,
+        bool $respectRobots = false,
+    ): array {
+        $useProxy = $useProxy || (bool) data_get($job->meta, 'use_proxy', false);
+        $ids = [];
+
+        foreach ($job->items()->orderBy('id')->cursor() as $item) {
+            /** @var StayCrawlItem $item */
+            $needs = in_array($item->status, [
+                StayCrawlItem::STATUS_QUEUED,
+                StayCrawlItem::STATUS_EXTRACTED,
+                StayCrawlItem::STATUS_AI_DONE,
+                StayCrawlItem::STATUS_FETCHED,
+                StayCrawlItem::STATUS_FAILED,
+            ], true) || $this->itemNeedsEnrich($item);
+            if (! $needs) {
+                continue;
+            }
+            ProcessStayCrawlItemJob::dispatch(
+                (int) $item->id,
+                $locale,
+                $useProxy,
+                $respectRobots,
+            );
+            $ids[] = (int) $item->id;
+        }
+
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['queue'] = [
+            'dispatched_at' => now()->toIso8601String(),
+            'dispatched' => count($ids),
+            'driver' => (string) config('queue.default'),
+            'queue' => (string) config('stay.crawl.queue', 'default'),
+            'hint' => 'php artisan queue:work --queue='.config('stay.crawl.queue', 'default'),
+        ];
+        $meta['worker'] = array_merge(is_array($meta['worker'] ?? null) ? $meta['worker'] : [], [
+            'running' => true,
+            'mode' => 'laravel_queue',
+            'paused' => false,
+            'heartbeat_at' => now()->toIso8601String(),
+            'message' => 'Đã đẩy '.count($ids).' URL vào queue — chạy queue:work / Supervisor',
+        ]);
+        $job->meta = $meta;
+        $job->save();
+
+        return ['dispatched' => count($ids), 'item_ids' => $ids];
+    }
+
+    /** @param  array<string, mixed>  $patch */
+    public function touchQueueMeta(StayCrawlJob $job, array $patch = []): void
+    {
+        $job->refresh();
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $q = is_array($meta['queue'] ?? null) ? $meta['queue'] : [];
+        $meta['queue'] = array_merge($q, $patch, [
+            'last_at' => now()->toIso8601String(),
+        ]);
+        $w = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $meta['worker'] = array_merge($w, [
+            'running' => true,
+            'mode' => 'laravel_queue',
+            'heartbeat_at' => now()->toIso8601String(),
+            'phase' => $patch['phase'] ?? ($w['phase'] ?? 'queue'),
+            'message' => $patch['message'] ?? ($w['message'] ?? null),
+            'item_id' => $patch['item_id'] ?? ($w['item_id'] ?? null),
+        ]);
+        $job->meta = $meta;
+        $job->save();
+    }
+
+    public function refreshJobCompletion(StayCrawlJob $job): void
+    {
+        $job->refresh();
+        $remaining = $this->remainingCount($job);
+        if ($remaining === 0) {
+            $job->status = StayCrawlJob::STATUS_DONE;
+            $meta = is_array($job->meta) ? $job->meta : [];
+            $w = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+            $meta['worker'] = array_merge($w, [
+                'running' => false,
+                'stop_reason' => 'completed',
+                'heartbeat_at' => now()->toIso8601String(),
+                'message' => 'Queue hoàn tất',
+            ]);
+            $job->meta = $meta;
+            $job->save();
+
+            return;
+        }
+
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $w = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $meta['worker'] = array_merge($w, [
+            'running' => true,
+            'mode' => 'laravel_queue',
+            'heartbeat_at' => now()->toIso8601String(),
+            'remaining' => $remaining,
+        ]);
+        $job->meta = $meta;
+        $job->save();
     }
 
     /**
@@ -623,6 +813,12 @@ final class StayCrawlService
         if (! (bool) data_get($job->meta, 'worker.running', false)) {
             return false;
         }
+
+        // Laravel queue: còn URL cần xử lý → coi như “busy” (tránh process-next spawn Chrome trùng).
+        if (data_get($job->meta, 'worker.mode') === 'laravel_queue') {
+            return $this->remainingCount($job) > 0;
+        }
+
         $hb = (string) data_get($job->meta, 'worker.heartbeat_at', '');
         if ($hb === '') {
             return true;
@@ -716,9 +912,13 @@ final class StayCrawlService
             @unlink($pauseFile);
         }
 
-        if (! $this->isWorkerAlive($job)) {
-            $this->spawnWorker($job, $opts);
-        }
+        // Ưu tiên Laravel queue (bền sau reboot). CLI stay-crawl:work vẫn dùng được thủ công.
+        $this->dispatchItemQueue(
+            $job->fresh() ?? $job,
+            (string) ($opts['locale'] ?? 'vi'),
+            (bool) ($opts['useProxy'] ?? false),
+            (bool) ($opts['respectRobots'] ?? false),
+        );
     }
 
     /**

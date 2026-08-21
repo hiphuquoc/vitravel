@@ -213,11 +213,15 @@ return [
             return filter_var($raw, FILTER_VALIDATE_BOOLEAN);
         })(),
         'slow_mo' => (int) env('STAY_CRAWL_SLOW_MO', 0),
-        /** Listing category: số trang offset tối đa (mỗi trang ~list_page_size URL). */
+        /** Listing: trang offset bổ sung sau 1 phiên Chrome load-more (mặc định 0 = chỉ tải đủ 1 lần). */
+        'list_offset_extra_pages' => (int) env('STAY_CRAWL_LIST_OFFSET_EXTRA_PAGES', 0),
+        /** @deprecated Dùng list_offset_extra_pages; giữ để tương thích env cũ. */
         'list_max_pages' => (int) env('STAY_CRAWL_LIST_MAX_PAGES', 80),
         'list_page_size' => (int) env('STAY_CRAWL_LIST_PAGE_SIZE', 25),
         /** Cộng thêm giây Process timeout khi crawl listing (scroll + «Tải thêm kết quả»). */
         'list_browser_extra_sec' => (int) env('STAY_CRAWL_LIST_BROWSER_EXTRA_SEC', 240),
+        /** Queue name cho ProcessStayCrawlItemJob (Supervisor queue:work). */
+        'queue' => env('STAY_CRAWL_QUEUE', 'default'),
         /** Worker stay-crawl:work — nghỉ giữa các bước processNext (ms). */
         'worker_sleep_ms' => (int) env('STAY_CRAWL_WORKER_SLEEP_MS', 400),
         /** Heartbeat worker quá hạn → coi chết (phải > thời gian 1 bước Chrome gallery/phòng). */
