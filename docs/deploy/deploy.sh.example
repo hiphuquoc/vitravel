@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 # Deploy nhanh trên VPS (Laravel). Chạy bằng user có quyền ghi code + www.
 # Usage: bash deploy.sh
+# APP_DIR=/www/wwwroot/vitravel.net BUILD_STAY_CRAWL=1 bash deploy.sh
 set -euo pipefail
 
-APP_DIR="${APP_DIR:-/www/wwwroot/vitravel}"
+APP_DIR="${APP_DIR:-/www/wwwroot/vitravel.net}"
 ADMIN_DIR="${ADMIN_DIR:-/www/wwwroot/admin.vitravel}"
 WWW_USER="${WWW_USER:-www}"
 BUILD_ADMIN="${BUILD_ADMIN:-0}"
 BUILD_VITE="${BUILD_VITE:-0}"
+BUILD_STAY_CRAWL="${BUILD_STAY_CRAWL:-0}"
 
 cd "$APP_DIR"
 
@@ -36,6 +38,15 @@ if [[ "$BUILD_ADMIN" == "1" && -d "$ADMIN_DIR" ]]; then
     # Nếu Nginx root = ADMIN_DIR/out thì không cần ADMIN_PUBLIC_DIR
     # export ADMIN_PUBLIC_DIR="$ADMIN_DIR/out"
     npm run build
+  )
+fi
+
+# Stay crawler Puppeteer (docs/17-stay-crawl-vps-aapanel.md) — BUILD_STAY_CRAWL=1 khi đổi package-lock
+if [[ "$BUILD_STAY_CRAWL" == "1" && -f "$APP_DIR/scripts/stay-crawl/package.json" ]]; then
+  echo "==> stay-crawl npm ci (user $WWW_USER)"
+  (
+    cd "$APP_DIR/scripts/stay-crawl"
+    sudo -u "$WWW_USER" npm ci
   )
 fi
 

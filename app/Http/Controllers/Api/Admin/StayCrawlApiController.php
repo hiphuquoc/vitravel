@@ -26,14 +26,21 @@ final class StayCrawlApiController extends Controller
 
     public function status(): JsonResponse
     {
+        $ready = $this->browser->readiness();
+
         return ApiResponse::success([
             'driver' => (string) config('stay.crawl.driver', 'browser'),
-            'browser_ready' => $this->browser->isReady(),
+            'browser_ready' => $ready['ready'],
+            'node_bin' => $ready['node'],
+            'puppeteer_installed' => $ready['puppeteer'],
+            'script_ok' => $ready['script'],
+            'ready_hint' => $ready['hint'],
             'proxy_configured' => $this->browser->proxyConfigured(),
             'proxy_enabled_default' => (bool) config('stay.crawl.proxy.enabled', false),
             'headless' => (bool) config('stay.crawl.headless', true),
             'headed' => ! (bool) config('stay.crawl.headless', true),
             'slow_mo' => (int) config('stay.crawl.slow_mo', 0),
+            'chrome_bin' => trim((string) config('stay.crawl.chrome_bin', '')) ?: null,
         ]);
     }
 

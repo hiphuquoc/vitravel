@@ -48,18 +48,31 @@ MySQL: một database · nhiều project_id
 
 Trong aaPanel: **App Store → PHP 8.3 → Install extensions** như trên. Bật `disable_functions` đủ lỏng cho `proc_open` / `putenv` / `shell_exec` nếu Composer/artisan báo thiếu (crawler spawn Node + worker `stay-crawl:work` cũng cần các hàm này).
 
-**Stay crawler (Booking.com / Chrome):** sau khi Laravel lên, làm thêm Node + `scripts/stay-crawl` + lib Chrome theo [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
+**Stay crawler (Booking.com / Chrome):** sau khi Laravel lên, làm thêm Node + `scripts/stay-crawl` + lib Chrome + `STAY_CRAWL_*` theo [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md) (path mẫu: `/www/wwwroot/vitravel.net`).
+
+Tóm tắt lệnh (user `www`):
+
+```bash
+cd /www/wwwroot/vitravel.net/scripts/stay-crawl && sudo -u www npm ci
+# .env: STAY_CRAWL_HEADLESS=true
+#       STAY_CRAWL_CHROME=/www/.cache/puppeteer/chrome/linux-…/chrome-linux64/chrome
+php artisan config:cache
+```
 
 ### 1.2 Thư mục đề xuất
 
 ```text
-/www/wwwroot/vitravel/              ← Laravel (git clone)
-/www/wwwroot/vitravel/public/       ← Nginx root (các domain public)
+/www/wwwroot/vitravel.net/          ← Laravel prod (tên folder aaPanel; hoặc vitravel/)
+/www/wwwroot/vitravel.net/public/   ← Nginx root (các domain public)
 /www/wwwroot/admin.vitravel/        ← Next admin (git clone)
 /www/wwwroot/admin.vitravel/out/    ← Nginx root admin.vitravel.net (sau npm run build)
 ```
 
-Sau cutover có thể xóa bản cũ: `rm -rf /www/wwwroot/vitravel/public/he-thong`.
+Mẫu Nginx/Supervisor trong repo dùng `/www/wwwroot/vitravel/` — trên server thật **đổi cho khớp** folder (vd. `vitravel.net`).
+
+Sau cutover có thể xóa bản cũ: `rm -rf /www/wwwroot/vitravel.net/public/he-thong`.
+
+**Stay crawler (Puppeteer/Chrome):** cài bằng user `www`, set `STAY_CRAWL_CHROME` trỏ binary `www` đọc được — chi tiết lệnh + `.env`: [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
 
 ---
 
@@ -379,6 +392,7 @@ npm ci && npm run build
 
 # Nếu đổi scripts/stay-crawl (package-lock) — xem docs/17-stay-crawl-vps-aapanel.md:
 # cd scripts/stay-crawl && sudo -u www npm ci && cd ../..
+# Nhớ STAY_CRAWL_CHROME trỏ binary mà user www thực thi được (không dùng /home/<ssh-user>/.cache nếu www không đọc được).
 
 php artisan optimize:clear
 php artisan config:cache
@@ -389,7 +403,7 @@ php artisan queue:restart
 chown -R www:www storage bootstrap/cache
 ```
 
-Cài lần đầu / kiểm tra crawler Booking trên VPS: [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
+Cài lần đầu / kiểm tra crawler Booking trên VPS: [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md) (`/www/wwwroot/vitravel.net`, Puppeteer, `STAY_CRAWL_CHROME`).
 
 Admin có thay đổi UI:
 

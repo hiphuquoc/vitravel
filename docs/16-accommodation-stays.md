@@ -167,7 +167,17 @@ AI chỉ dùng sau khi đã có draft: **AI lưu trú** trên form chỗ nghỉ 
 
 Booking.com gần như không trả HTML cho HTTP bot. Crawler mặc định dùng **Chrome** (`scripts/stay-crawl/browser.cjs`). **Xem thao tác trên màn hình:** `STAY_CRAWL_HEADLESS=false`. Trên **WSL không dùng chrome.exe** (lỗi vsock); dùng Chrome Linux trong distro + cửa sổ WSLg (`DISPLAY=:0`). Nếu không có WSLg, crawler tự fallback headless. VPS để `STAY_CRAWL_HEADLESS=true`. Proxy bật trên form admin hoặc `--proxy` (env `STAY_CRAWL_PROXY_*`). HTML dump (Save As) vẫn dùng được khi Chrome/captcha chặn.
 
-**Cài môi trường VPS aaPanel (vitravel.net):** Node 20+, `npm ci` trong `scripts/stay-crawl`, lib Chrome, `.env` headless/proxy, smoke test — [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
+**Cài môi trường VPS aaPanel (vitravel.net):** [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md) — Node 20+, `sudo -u www npm ci` trong `scripts/stay-crawl`, lib Chrome, `.env` (`STAY_CRAWL_HEADLESS`, `STAY_CRAWL_CHROME` path `www` đọc được, proxy). Laravel truyền `STAY_CRAWL_CHROME` sang process Node qua `StayCrawlBrowser`.
+
+```bash
+# Path prod mẫu
+cd /www/wwwroot/vitravel.net/scripts/stay-crawl && sudo -u www npm ci
+# .env
+# STAY_CRAWL_HEADLESS=true
+# STAY_CRAWL_CHROME=/www/.cache/puppeteer/chrome/linux-…/chrome-linux64/chrome
+# Không trỏ /home/phupv/.cache/... trừ khi www execute được
+php artisan config:cache
+```
 
 **Skeleton** (cuộn được nhưng gallery / phòng / tiện ích / xung quanh không hydrate): trên WSL máy nhà **không bắt buộc proxy** (cùng IP với Chrome Windows). Thường do fingerprint Puppeteer — header `sec-ch-ua` giả đụng Client Hints Chrome thật, hoặc fallback headless (UA `HeadlessChrome`). Log `pack.debug.network.hint`: `fingerprint_or_lazy` = Chrome/Puppeteer; `proxy_or_ip` = GraphQL 403/429 (cần proxy residential, nhất là VPS); `api_ok_wait_dom` = API OK. `.env` chưa có `STAY_CRAWL_PROXY_HOST` thì công tắc proxy trên form không chạy.
 
@@ -261,12 +271,21 @@ Env / config (`config/stay.php` → `crawl`):
 
 | Key | Mặc định | Ý nghĩa |
 |-----|----------|---------|
+| `STAY_CRAWL_DRIVER` | `browser` | Chrome/Puppeteer (không dùng HTTP làm đường chính) |
+| `STAY_CRAWL_HEADLESS` | `true` | VPS luôn `true` |
+| `STAY_CRAWL_CHROME` | *(auto)* | Binary Chrome; truyền sang Node. VPS: path `www` đọc được |
+| `STAY_CRAWL_NODE` | *(PATH)* | Binary Node nếu `www` không có trên PATH |
+| `STAY_CRAWL_USER_DATA_DIR` | `storage/app/stay-crawl-chrome-profile` | Profile Chrome |
+| `STAY_CRAWL_BROWSER_TIMEOUT` | 240 | Timeout 1 phiên Chrome (giây) |
 | `STAY_CRAWL_LIST_MAX_PAGES` | 80 | Trần hạn trang listing (offset bổ sung sau load-more) |
 | `STAY_CRAWL_LIST_PAGE_SIZE` | 25 | Bước `offset` Booking |
 | `STAY_CRAWL_LIST_BROWSER_EXTRA_SEC` | 240 | Cộng timeout Chrome khi listing (nhiều lần «Tải thêm») |
 | `STAY_CRAWL_WORKER_SLEEP_MS` | 400 | Nghỉ giữa các bước worker |
 | `STAY_CRAWL_WORKER_STALE_SEC` | 900 | Heartbeat chết (phải > 1 bước Chrome gallery) |
 | `STAY_CRAWL_DELAY_MS` | 450 | Delay HTTP fallback |
+| `STAY_CRAWL_PROXY_*` | — | Proxy residential; form admin cần có `HOST` |
+
+VPS aaPanel (lệnh đầy đủ): [`17-stay-crawl-vps-aapanel.md`](17-stay-crawl-vps-aapanel.md).
 
 ### Tối ưu thời gian Chrome (URL đơn)
 
@@ -319,7 +338,7 @@ php artisan test --filter=StayFacilitiesPublicPhotoTest
 | `StayHtmlExtractor` | JSON-LD Hotel, Open Graph, section `data-testid`, ảnh bstatic, list `/hotel/{cc}/{slug}.html` |
 | `StayHtmlMapper` | Tách schema stay từ HTML (không AI). Payload lưu `ai_json`, status `ai_done` |
 | `StayCrawlFetcher` | Điều phối Chrome (mặc định) / HTTP fallback |
-| `StayCrawlBrowser` | Puppeteer `browser.cjs` + thư mục tạm ảnh (`images_dir`) |
+| `StayCrawlBrowser` | Puppeteer `browser.cjs` + thư mục tạm ảnh (`images_dir`); truyền `STAY_CRAWL_CHROME` từ `.env` sang Node |
 | `StayCrawlWorkCommand` | Worker nền `stay-crawl:work` — lặp bước, pause/resume, heartbeat |
 | `StayBookingUrl` | Canonical URL + offset phân trang listing |
 | `StayCrawlEnricher` | Gallery / rooms_list / room — import media, cleanup tmp |

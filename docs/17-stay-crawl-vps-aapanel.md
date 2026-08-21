@@ -4,14 +4,16 @@
 > Deploy Laravel/admin chung: [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md).  
 > Luồng sản phẩm / schema: [`16-accommodation-stays.md`](16-accommodation-stays.md).
 
-**Giả định path** (đổi nếu site bạn khác):
+**Path site (vitravel.net):**
 
 ```text
-/www/wwwroot/vitravel/          ← Laravel (vitravel.net + multi-domain)
-User chạy PHP-FPM / CLI:        www   (mặc định aaPanel)
+/www/wwwroot/vitravel.net/          ← Laravel (document root = public/)
+User PHP-FPM / CLI crawl:           www   (mặc định aaPanel)
 ```
 
 Crawler = **PHP** spawn **Node** → **Puppeteer** → **Chrome headless**. Thiếu Node/Chrome/lib/`proc_open`/proxy → skeleton HTML, timeout, hoặc worker chết giữa chừng.
+
+Laravel đọc `.env` → `config/stay.php` → `StayCrawlBrowser` **truyền** `STAY_CRAWL_CHROME` / `STAY_CRAWL_USER_DATA_DIR` sang process Node (không cần export thủ công trong PHP-FPM).
 
 ---
 
@@ -21,12 +23,12 @@ Crawler = **PHP** spawn **Node** → **Puppeteer** → **Chrome headless**. Thi�
 |------|------|
 | 1 | PHP 8.3: `proc_open`, `putenv`, `shell_exec` **không** bị `disable_functions` |
 | 2 | Node.js **20+** trên PATH của user `www` |
-| 3 | `cd scripts/stay-crawl && npm ci` (cài Puppeteer + tải Chrome) |
+| 3 | `cd scripts/stay-crawl && sudo -u www npm ci` (Chrome cache thuộc **www**, không phải user SSH khác) |
 | 4 | Lib hệ thống cho Chrome (fonts, `nss`, `atk`, …) |
-| 5 | `.env` VPS: headless + timeout + (khuyến nghị) proxy residential |
-| 6 | Quyền ghi: `storage/`, profile Chrome, cache Puppeteer |
+| 5 | `.env`: `STAY_CRAWL_HEADLESS=true` + `STAY_CRAWL_CHROME=…` (binary **www đọc được**) |
+| 6 | Quyền ghi: `storage/`, profile Chrome |
 | 7 | Smoke test CLI một URL hotel |
-| 8 | RAM ≥ **2 GB trống** khi crawl (gallery + nhiều phòng) |
+| 8 | RAM ≥ **2 GB trống** khi crawl |
 
 ---
 
@@ -34,95 +36,120 @@ Crawler = **PHP** spawn **Node** → **Puppeteer** → **Chrome headless**. Thi�
 
 ### 1.1 Extension / disable_functions
 
-**App Store → PHP 8.3 → Disable functions** — bỏ (hoặc không liệt kê) các hàm crawler cần:
+**App Store → PHP 8.3 → Disable functions** — bỏ (hoặc không liệt kê):
 
 - `proc_open`
 - `putenv`
 - `shell_exec` / `exec` (spawn worker `stay-crawl:work` qua `nohup`)
-- `pcntl_*` (tuỳ chọn; worker CLI bắt signal dừng)
+- `pcntl_*` (tuỳ chọn)
 
-Không đủ thì admin bấm crawl sẽ báo lỗi kiểu *không tìm thấy node* / *Crawler Chrome không trả JSON* / worker không spawn.
+### 1.2 Timeout & memory
 
-### 1.2 Timeout & memory (CLI + FPM)
-
-Crawl một chỗ nghỉ (basic + gallery + từng phòng) có thể **vài–nhiều phút**.
-
-- PHP-FPM: `max_execution_time` ≥ **300** (hoặc tách: chỉ tăng pool dùng cho admin API nếu tách được).
-- CLI (worker): mặc định thường không giới hạn — ổn.
-- `memory_limit` ≥ **256M** (khuyến nghị **512M** khi map HTML lớn).
+- PHP-FPM: `max_execution_time` ≥ **300**
+- `memory_limit` ≥ **256M** (khuyến nghị **512M**)
 
 ```bash
-# Kiểm tra CLI
 sudo -u www php -r 'echo "proc_open=".(function_exists("proc_open")?"ok":"MISSING").PHP_EOL;'
-sudo -u www which php
-sudo -u www php -v
+sudo -u www which php && sudo -u www php -v
 ```
 
 ---
 
 ## 2. Node.js 20+
 
-aaPanel → **App Store → Node.js** (hoặc nvm / NodeSource). Cần binary mà user **`www`** gọi được:
-
 ```bash
 sudo -u www bash -lc 'node -v && which node'
-# Kỳ vọng: v20.x hoặc cao hơn
 ```
 
-Nếu `www` không thấy `node` (PATH khác root):
+Nếu thiếu:
 
-```bash
-# Ví dụ path aaPanel / nvm — chỉnh đúng máy bạn
-NODE_BIN=$(command -v node || true)
-# Ghi vào .env Laravel:
-# STAY_CRAWL_NODE=/www/server/nodejs/v20.x.x/bin/node
+```env
+STAY_CRAWL_NODE=/www/server/nodejs/v20.xx.x/bin/node
 ```
 
-Hoặc symlink vào `/usr/bin/node` (StayCrawlBrowser cũng dò `/usr/bin/node`, `/usr/local/bin/node`, `/opt/nodejs/bin/node`).
+(hoặc symlink `/usr/bin/node`).
 
 ---
 
-## 3. Cài Puppeteer + Chrome (bắt buộc)
+## 3. Cài Puppeteer + Chrome (khuyến nghị — user `www`)
 
-Chạy **đúng user `www`** để cache Chrome nằm dưới home của user FPM (không cài bằng root rồi để `www` không đọc được).
+**Quan trọng:** đừng cài Chrome bằng user SSH `phupv` rồi trỏ `STAY_CRAWL_CHROME=/home/phupv/.cache/...` nếu PHP chạy user `www` — `www` thường **không đọc** `/home/phupv/`.
+
+Nếu `sudo -u www npm ci` báo `EACCES` trên `node_modules` — thư mục đang thuộc **root** (hoặc user SSH). Sửa quyền trước:
 
 ```bash
-cd /www/wwwroot/vitravel
+cd /www/wwwroot/vitravel.net
 
-# Quyền thư mục app (một lần / sau git pull)
-chown -R www:www storage bootstrap/cache scripts/stay-crawl
-chmod -R ug+rwX storage bootstrap/cache
+# Xóa cache npm hỏng / node_modules thuộc root rồi giao cho www
+rm -rf scripts/stay-crawl/node_modules
+mkdir -p /home/www/.npm /www/.cache/puppeteer
+chown -R www:www storage bootstrap/cache scripts/stay-crawl /home/www/.npm /www/.cache
+chmod -R ug+rwX storage bootstrap/cache scripts/stay-crawl
 
-cd /www/wwwroot/vitravel/scripts/stay-crawl
+cd /www/wwwroot/vitravel.net/scripts/stay-crawl
 sudo -u www npm ci
 ```
 
-`npm ci` tải **Chrome for Testing** vào cache Puppeteer, thường:
+Chrome for Testing thường nằm:
 
 ```text
-/www/.cache/puppeteer/chrome/.../chrome-linux64/chrome
-# hoặc /home/www/.cache/puppeteer/...  (tuỳ HOME của www)
+/www/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome
+# hoặc /home/www/.cache/puppeteer/...  (HOME của www)
 ```
 
-Kiểm tra:
+Kiểm tra path thật sau `npm ci`:
 
 ```bash
-sudo -u www bash -lc '
-  node -e "const c=require(\"./chrome.cjs\"); console.log(c.getChromePath()||\"NO_CHROME\");"
-'
-# Chạy trong scripts/stay-crawl
+sudo -u www bash -lc 'ls -la /www/.cache/puppeteer/chrome 2>/dev/null; ls -la /home/www/.cache/puppeteer/chrome 2>/dev/null; find /www /home/www -path "*puppeteer/chrome/*/chrome-linux64/chrome" 2>/dev/null | head'
+cd /www/wwwroot/vitravel.net/scripts/stay-crawl
+sudo -u www bash -lc 'node -e "const c=require(\"./chrome.cjs\"); console.log(c.getChromePath()||\"NO_CHROME\");"'
 ```
 
-Nếu `NO_CHROME`: cài Chrome hệ thống (mục 4) hoặc set `STAY_CRAWL_CHROME`.
+Ghi path in ra vào `.env` (ví dụ):
+
+```env
+STAY_CRAWL_CHROME=/home/www/.cache/puppeteer/chrome/linux-142.0.7444.175/chrome-linux64/chrome
+```
+
+### 3.1 Nếu đã có Chrome dưới `/home/phupv/.cache/...`
+
+Chỉ chạy khi **file nguồn tồn tại**:
+
+```bash
+ls /home/phupv/.cache/puppeteer/chrome/   # phải thấy linux-…
+
+# Nếu thư mục linux-142… không có → bỏ qua copy; dùng Chrome do `sudo -u www npm ci` vừa tải.
+```
+
+Copy (tạo đích trước — tránh `mkdir failed: No such file`):
+
+```bash
+SRC_VER=$(ls /home/phupv/.cache/puppeteer/chrome | head -1)   # vd. linux-142.0.7444.175
+test -d "/home/phupv/.cache/puppeteer/chrome/$SRC_VER/chrome-linux64" || { echo "Không có Chrome nguồn"; exit 1; }
+
+mkdir -p /www/.cache/puppeteer/chrome
+rsync -a "/home/phupv/.cache/puppeteer/chrome/$SRC_VER" /www/.cache/puppeteer/chrome/
+chown -R www:www /www/.cache/puppeteer
+
+# .env:
+# STAY_CRAWL_CHROME=/www/.cache/puppeteer/chrome/${SRC_VER}/chrome-linux64/chrome
+```
+
+**Cách B:** nới quyền home (kém an toàn) — chỉ khi nguồn tồn tại:
+
+```bash
+chmod o+x /home/phupv /home/phupv/.cache /home/phupv/.cache/puppeteer
+chmod -R o+rX /home/phupv/.cache/puppeteer/chrome
+sudo -u www test -x /home/phupv/.cache/puppeteer/chrome/*/chrome-linux64/chrome && echo OK
+```
+
+**Cách C:** cài `google-chrome-stable` → `STAY_CRAWL_CHROME=/usr/bin/google-chrome-stable`.
 
 ---
 
 ## 4. Thư viện hệ thống + (tuỳ chọn) Google Chrome
 
-Puppeteer Chrome cần shared libraries. Trên Ubuntu/Debian (aaPanel thường dựa Ubuntu):
-
 ```bash
-# Cập nhật + deps tối thiểu cho Chrome headless
 apt-get update
 apt-get install -y \
   ca-certificates fonts-liberation fonts-noto-color-emoji \
@@ -132,191 +159,152 @@ apt-get install -y \
   xdg-utils
 ```
 
-Tên gói có thể lệch theo phiên bản (ví dụ `libasound2t64`). Nếu Chrome crash lúc launch, xem log lỗi `.so` thiếu rồi `apt-cache search` tương ứng.
+(Trên Ubuntu mới có thể là `libasound2t64`.)
 
-**Tuỳ chọn — Chrome ổn định hệ thống** (song song / fallback):
+Tuỳ chọn Chrome hệ thống:
 
 ```bash
-# Google Chrome stable (không dùng snap — crawler bỏ qua binary /snap/)
 curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" \
   > /etc/apt/sources.list.d/google-chrome.list
 apt-get update && apt-get install -y google-chrome-stable
-
-which google-chrome-stable
-# /usr/bin/google-chrome-stable
 ```
 
-Trong `.env` (nếu muốn cố định):
+Script crawler đã bật `--no-sandbox` / `--disable-dev-shm-usage`.
 
-```env
-STAY_CRAWL_CHROME=/usr/bin/google-chrome-stable
+Smoke launch:
+
+```bash
+sudo -u www bash -lc '
+  CHROME=/www/.cache/puppeteer/chrome/linux-142.0.7444.175/chrome-linux64/chrome
+  "$CHROME" --headless --no-sandbox --disable-gpu --dump-dom https://example.com | head -c 200
+'
 ```
-
-> Lưu ý: biến `STAY_CRAWL_CHROME` được **Node** đọc từ môi trường process. Khi crawl từ PHP-FPM, Process kế thừa env FPM — thường **không** có biến trong `.env` Laravel. Cách chắc:
->
-> 1. Dựa vào Chrome Puppeteer cache / `/usr/bin/google-chrome*` (không cần env), **hoặc**
-> 2. Export trong pool PHP-FPM / `env` aaPanel, **hoặc**
-> 3. Chạy worker bằng CLI `sudo -u www` (CLI load `.env` Laravel; vẫn cần export nếu Node không nhận — ưu tiên path hệ thống).
-
-Script đã bật `--no-sandbox` / `--disable-dev-shm-usage` (phù hợp VPS Docker/LXC/`/dev/shm` nhỏ).
 
 ---
 
-## 5. Cấu hình `.env` trên VPS
-
-Trong `/www/wwwroot/vitravel/.env` (sau đó `php artisan config:cache`):
+## 5. Biến `.env` mẫu (`/www/wwwroot/vitravel.net/.env`)
 
 ```env
-# ── Stay crawler (VPS) ──
+# ── Stay crawler (VPS vitravel.net) ──
 STAY_CRAWL_DRIVER=browser
 STAY_CRAWL_HEADLESS=true
 STAY_CRAWL_SLOW_MO=0
 STAY_CRAWL_BROWSER_TIMEOUT=240
-# STAY_CRAWL_NODE=/usr/bin/node
-# STAY_CRAWL_CHROME=/usr/bin/google-chrome-stable
+STAY_CRAWL_LIST_BROWSER_EXTRA_SEC=240
 
-# Proxy residential — mạnh khuyến nghị trên IP datacenter VPS
+# Node (bỏ trống nếu /usr/bin/node OK). aaPanel thường cần path đầy đủ:
+# STAY_CRAWL_NODE=/www/server/nodejs/v20.20.2/bin/node
+
+# Chrome — PHẢI là path mà user www thực thi được
+STAY_CRAWL_CHROME=/www/.cache/puppeteer/chrome/linux-142.0.7444.175/chrome-linux64/chrome
+# hoặc: STAY_CRAWL_CHROME=/usr/bin/google-chrome-stable
+
+# Profile (mặc định storage/app/stay-crawl-chrome-profile)
+# STAY_CRAWL_USER_DATA_DIR=/www/wwwroot/vitravel.net/storage/app/stay-crawl-chrome-profile
+
+# Proxy residential (IP datacenter hay bị Booking chặn hydrate)
 STAY_CRAWL_PROXY=false
 STAY_CRAWL_PROXY_HOST=
 STAY_CRAWL_PROXY_PORT=
 STAY_CRAWL_PROXY_USER=
 STAY_CRAWL_PROXY_PASS=
-
-# Worker listing (tuỳ chỉnh)
-# STAY_CRAWL_WORKER_SLEEP_MS=400
-# STAY_CRAWL_WORKER_STALE_SEC=900
-# STAY_CRAWL_LIST_MAX_PAGES=80
 ```
 
-| Biến | VPS nên đặt |
-|------|-------------|
-| `STAY_CRAWL_HEADLESS` | `true` (không có màn hình) |
-| `STAY_CRAWL_BROWSER_TIMEOUT` | ≥ `240` (giây; gallery/phòng chậm) |
-| `STAY_CRAWL_PROXY_*` | Điền host/port/user/pass proxy **residential** nếu Booking trả skeleton / GraphQL 403–429 |
-| `STAY_CRAWL_PROXY` | `false` mặc định; bật trên form admin / `--proxy` khi đã có `STAY_CRAWL_PROXY_HOST` |
+| Biến | Vai trò |
+|------|---------|
+| `STAY_CRAWL_CHROME` | Binary Chrome (Puppeteer `executablePath`) |
+| `STAY_CRAWL_NODE` | Binary Node nếu không có trên PATH của `www` |
+| `STAY_CRAWL_HEADLESS` | `true` trên VPS |
+| `STAY_CRAWL_BROWSER_TIMEOUT` | Timeout 1 phiên Chrome (giây) |
+| `STAY_CRAWL_LIST_BROWSER_EXTRA_SEC` | Cộng thêm khi crawl listing (scroll + «Tải thêm») |
+| `STAY_CRAWL_USER_DATA_DIR` | Profile Chrome persistent |
+| `STAY_CRAWL_PROXY_*` | Proxy; form admin bật `--proxy` chỉ chạy khi có `HOST` |
 
-Profile Chrome mặc định: `storage/app/stay-crawl-chrome-profile` (user `www` phải ghi được).
+Áp dụng:
 
 ```bash
-cd /www/wwwroot/vitravel
+cd /www/wwwroot/vitravel.net
 sudo -u www mkdir -p storage/app/stay-crawl-chrome-profile storage/app/tmp storage/logs
-chown -R www:www storage/app/stay-crawl-chrome-profile
+chown -R www:www storage
 php artisan config:clear
 php artisan config:cache
 ```
 
-**GCS / media:** crawl tải ảnh qua phiên Chrome rồi upload disk `MEDIA_DISK` — cấu hình GCS theo [`gcs-standard.md`](gcs-standard.md) (cùng `.env` site).
+**GCS:** [`gcs-standard.md`](gcs-standard.md) — crawl upload ảnh qua `MEDIA_DISK=gcs`.
 
 ---
 
 ## 6. Proxy (ổn định trên VPS)
 
-IP datacenter thường bị Booking hạn chế hydrate (gallery / phòng / GraphQL). Máy nhà thường ổn hơn vì IP “residential”.
-
-1. Thuê proxy HTTP(S) residential (host:port + auth).
-2. Điền `STAY_CRAWL_PROXY_*` trong `.env`.
-3. Trên admin **Lưu trú → Crawler** bật proxy, hoặc CLI `--proxy`.
-4. Log gợi ý: `pack.debug.network.hint` = `proxy_or_ip` → cần proxy; `fingerprint_or_lazy` → Chrome/Puppeteer/DOM.
-
-Không có `STAY_CRAWL_PROXY_HOST` thì công tắc proxy trên form **không chạy**.
+IP datacenter thường bị Booking hạn chế. Điền `STAY_CRAWL_PROXY_*`, bật proxy trên admin / CLI `--proxy`.  
+Log: `pack.debug.network.hint` = `proxy_or_ip` → cần proxy.
 
 ---
 
-## 7. Smoke test (nên chạy trước khi dùng admin)
+## 7. Smoke test
 
 ```bash
-cd /www/wwwroot/vitravel
+cd /www/wwwroot/vitravel.net
 
-# 1) Node + Chrome path
-sudo -u www bash -lc 'cd scripts/stay-crawl && node -e "console.log(require(\"./chrome.cjs\").getChromePath())"'
+sudo -u www bash -lc 'cd scripts/stay-crawl && node -e "
+  process.env.STAY_CRAWL_CHROME=process.env.STAY_CRAWL_CHROME||\"\";
+  console.log(require(\"./chrome.cjs\").getChromePath()||\"NO_CHROME\");
+"'
 
-# 2) Một hotel (đổi URL / project / category cho đúng DB)
+# Export tạm từ .env rồi test:
+export STAY_CRAWL_CHROME=/www/.cache/puppeteer/chrome/linux-142.0.7444.175/chrome-linux64/chrome
+sudo -u www -E bash -lc 'cd /www/wwwroot/vitravel.net/scripts/stay-crawl && node -e "console.log(require(\"./chrome.cjs\").getChromePath())"'
+
 sudo -u www php artisan stay:crawl ingest \
   "https://www.booking.com/hotel/vn/EXAMPLE.html" \
   --project=vitravel \
-  --category=ID_DANH_MUC_LUU_TRU
-
-# Có proxy:
-# … --proxy
+  --category=ID_DANH_MUC
 ```
 
-Thành công: job/item có HTML + pack (tiện ích / phòng / ảnh), không chỉ skeleton.
-
-Worker listing (sau khi admin tạo job list hoặc CLI `stay:crawl list`):
+Listing / worker:
 
 ```bash
 sudo -u www php artisan stay-crawl:work {jobId}
-# hoặc --proxy
-
-# Log
 tail -f storage/logs/stay-crawl-work-{jobId}.log
-
-# Pause / resume
-touch storage/app/stay-crawl-pause-{jobId}
-rm -f storage/app/stay-crawl-pause-{jobId}
-# Nếu heartbeat chết: chạy lại stay-crawl:work {jobId}
 ```
-
-Admin list/multi-item sẽ **tự `nohup` spawn** `stay-crawl:work` — cần `shell_exec` + quyền ghi `storage/logs/`.
 
 ---
 
-## 8. Deploy lặp lại (sau `git pull`)
-
-Thêm vào quy trình deploy Laravel (cùng [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) §10):
+## 8. Deploy lặp lại
 
 ```bash
-cd /www/wwwroot/vitravel
+cd /www/wwwroot/vitravel.net
 git pull --ff-only
 composer install --no-dev --optimize-autoloader
 php artisan migrate --force
-
-# Khi package.json / lock crawler đổi:
 cd scripts/stay-crawl && sudo -u www npm ci && cd ../..
-
-php artisan optimize:clear
-php artisan config:cache
+php artisan optimize:clear && php artisan config:cache
 php artisan queue:restart
+chown -R www:www storage bootstrap/cache
 ```
 
-Không cần rebuild Vite chỉ vì crawler.
-
 ---
 
-## 9. Tài nguyên & vận hành ổn định
-
-| Khuyến nghị | Lý do |
-|-------------|--------|
-| ≥ 2 GB RAM trống khi crawl | Chrome + Node + PHP cùng lúc |
-| Không chạy 2 worker crawl song song trên cùng profile | `SingletonLock` / tranh profile |
-| `STAY_CRAWL_WORKER_STALE_SEC` ≥ 900 | Một bước gallery có thể > vài phút |
-| Dọn `storage/app/tmp/stay_crawl_img_*` nếu đầy đĩa | Ảnh tạm trước khi lên GCS |
-| Xóa lock kẹt: file trong `storage/app/stay-crawl-chrome-profile/Singleton*` | Chrome chết bất thường |
-
-Queue Supervisor (`queue:work`) **không** thay worker crawl — crawl dùng `stay-crawl:work` / spawn riêng. Vẫn cần Supervisor cho queue AI/mail khác.
-
----
-
-## 10. Lỗi thường gặp
+## 9. Lỗi thường gặp
 
 | Triệu chứng | Việc kiểm |
 |-------------|-----------|
-| *không tìm thấy node* | `STAY_CRAWL_NODE` + `sudo -u www which node` |
-| *Crawler Chrome không trả JSON* / thiếu `.so` | `npm ci` lại; cài lib mục 4; thử `google-chrome-stable --headless --dump-dom https://example.com` |
-| Skeleton / thiếu phòng–gallery | Proxy residential; xem `pack.debug.network.hint` |
-| Worker admin không chạy nền | `shell_exec` / `nohup`; đọc `storage/logs/stay-crawl-work-*.log` |
-| Permission denied profile/cache | `chown www:www` `storage` + `scripts/stay-crawl` + `~www/.cache/puppeteer` |
-| Ảnh không lên site | GCS credentials + `MEDIA_DISK=gcs`; log importer |
-| Timeout giữa gallery | Tăng `STAY_CRAWL_BROWSER_TIMEOUT`; giảm tải song song; proxy ổn định hơn |
+| Nút «Bắt đầu crawler» xám / không chạy | Admin hiện lý do dưới form. Thường `browser_ready=false` vì PHP không thấy Node → `STAY_CRAWL_NODE=…` + `config:cache`. Kiểm tra API: `GET /api/v1/admin/stay-crawls/status` |
+| `EACCES` `npm ci` / `node_modules` | `rm -rf scripts/stay-crawl/node_modules` rồi `chown -R www:www scripts/stay-crawl` + `mkdir -p /home/www/.npm && chown www:www /home/www/.npm` |
+| `rsync` No such file `/home/phupv/...` | Chrome chưa tải dưới user đó — bỏ copy; dùng `sudo -u www npm ci` |
+| `chown …/www/.cache/puppeteer` No such file | `mkdir -p /www/.cache/puppeteer` trước |
+| `NO_CHROME` / Failed to launch | `STAY_CRAWL_CHROME` + `sudo -u www test -x …` |
+| Thiếu `.so` | apt libs mục 4 |
+| Skeleton / GraphQL 403 | Proxy residential |
+| Worker không spawn | `shell_exec` / `nohup`; log `storage/logs/stay-crawl-work-*.log` |
 
 ---
 
-## 11. Liên kết nhanh
+## 10. Liên kết
 
 | Tài liệu | Nội dung |
 |----------|----------|
-| [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) | Nginx, `.env` site, cron, Supervisor queue |
-| [`16-accommodation-stays.md`](16-accommodation-stays.md) | Pipeline crawl, API admin, CLI đầy đủ |
-| [`gcs-standard.md`](gcs-standard.md) | Disk media khi import ảnh |
-| Admin | **Lưu trú → Crawler Booking.com** trên `admin.vitravel.net` + header `X-Project-Code` |
+| [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) | Nginx, cron, Supervisor |
+| [`16-accommodation-stays.md`](16-accommodation-stays.md) | Pipeline crawl / API |
+| [`gcs-standard.md`](gcs-standard.md) | Media GCS |

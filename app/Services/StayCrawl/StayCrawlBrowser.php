@@ -15,12 +15,7 @@ final class StayCrawlBrowser
 {
     public function isReady(): bool
     {
-        return $this->findNode() !== null
-            && is_file($this->scriptPath())
-            && (
-                is_dir(base_path('scripts/stay-crawl/node_modules/puppeteer'))
-                || is_dir(base_path('scripts/stay-crawl/node_modules/puppeteer-core'))
-            );
+        return $this->readiness()['ready'];
     }
 
     /**
@@ -103,7 +98,7 @@ final class StayCrawlBrowser
         $process = new Process(
             [$node, $this->scriptPath(), $inputFile, $outputFile],
             base_path('scripts/stay-crawl'),
-            null,
+            $this->nodeProcessEnv(),
             null,
             $timeout,
         );
@@ -207,17 +202,68 @@ final class StayCrawlBrowser
         return $this->proxyConfig() !== null;
     }
 
+    /**
+     * Đưa biến .env Laravel sang process Node (FPM/CLI không export sẵn STAY_CRAWL_*).
+     *
+     * @return array<string, string>
+     */
+    private function nodeProcessEnv(): array
+    {
+        $env = [];
+        foreach ($_SERVER as $key => $value) {
+            if (is_string($key) && is_string($value) && $key !== '' && $key !== 'argv') {
+                $env[$key] = $value;
+            }
+        }
+        foreach ($_ENV as $key => $value) {
+            if (is_string($key) && is_string($value)) {
+                $env[$key] = $value;
+            }
+        }
+
+        $chrome = trim((string) config('stay.crawl.chrome_bin', ''));
+        if ($chrome !== '') {
+            $env['STAY_CRAWL_CHROME'] = $chrome;
+        }
+        $userData = trim((string) config('stay.crawl.user_data_dir', ''));
+        if ($userData !== '') {
+            $env['STAY_CRAWL_USER_DATA_DIR'] = $userData;
+        }
+        $node = trim((string) config('stay.crawl.node_bin', ''));
+        if ($node !== '') {
+            $env['STAY_CRAWL_NODE'] = $node;
+        }
+        // HOME của www — Puppeteer cache / crash dumps
+        if (empty($env['HOME'])) {
+            $env['HOME'] = '/www';
+        }
+
+        return $env;
+    }
+
     public function findNode(): ?string
     {
         $configured = trim((string) config('stay.crawl.node_bin', ''));
-        $candidates = array_filter([
+        $candidates = array_values(array_filter([
             $configured,
             '/usr/bin/node',
             '/usr/local/bin/node',
             '/opt/nodejs/bin/node',
-        ]);
+            '/www/server/nodejs/bin/node',
+        ]));
+
+        // aaPanel: /www/server/nodejs/v20.x.x/bin/node
+        foreach (glob('/www/server/nodejs/*/bin/node') ?: [] as $path) {
+            $candidates[] = $path;
+        }
+
+        $seen = [];
         foreach ($candidates as $path) {
-            if (is_string($path) && $path !== '' && is_executable($path)) {
+            if (! is_string($path) || $path === '' || isset($seen[$path])) {
+                continue;
+            }
+            $seen[$path] = true;
+            if (is_executable($path)) {
                 return $path;
             }
         }
@@ -230,6 +276,38 @@ final class StayCrawlBrowser
         Log::warning('StayCrawlBrowser: không tìm thấy node');
 
         return null;
+    }
+
+    /** @return array{ready: bool, node: ?string, puppeteer: bool, script: bool, hint: ?string} */
+    public function readiness(): array
+    {
+        $node = $this->findNode();
+        $script = is_file($this->scriptPath());
+        $puppeteer = is_dir(base_path('scripts/stay-crawl/node_modules/puppeteer'))
+            || is_dir(base_path('scripts/stay-crawl/node_modules/puppeteer-core'));
+        $ready = $node !== null && $script && $puppeteer;
+        $hint = null;
+        if (! $ready) {
+            $parts = [];
+            if ($node === null) {
+                $parts[] = 'Không tìm thấy Node — đặt STAY_CRAWL_NODE=/path/to/node trong .env rồi config:cache';
+            }
+            if (! $puppeteer) {
+                $parts[] = 'Chưa npm ci: cd scripts/stay-crawl && sudo -u www npm ci';
+            }
+            if (! $script) {
+                $parts[] = 'Thiếu scripts/stay-crawl/browser.cjs';
+            }
+            $hint = implode(' ', $parts);
+        }
+
+        return [
+            'ready' => $ready,
+            'node' => $node,
+            'puppeteer' => $puppeteer,
+            'script' => $script,
+            'hint' => $hint,
+        ];
     }
 
     private function scriptPath(): string

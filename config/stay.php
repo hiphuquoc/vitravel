@@ -198,6 +198,10 @@ return [
         'driver' => env('STAY_CRAWL_DRIVER', 'browser'),
         'browser_timeout' => (int) env('STAY_CRAWL_BROWSER_TIMEOUT', 240),
         'node_bin' => env('STAY_CRAWL_NODE', ''),
+        /** Đường dẫn binary Chrome/Chromium — truyền sang Node (process.env.STAY_CRAWL_CHROME). */
+        'chrome_bin' => env('STAY_CRAWL_CHROME', ''),
+        /** Profile Chrome persistent (mặc định storage/app/stay-crawl-chrome-profile). */
+        'user_data_dir' => env('STAY_CRAWL_USER_DATA_DIR', ''),
         /** false = mở cửa sổ Chrome trên màn hình (xem thao tác). VPS để true. */
         'headless' => (static function () {
             $raw = env('STAY_CRAWL_HEADLESS', true);

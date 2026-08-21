@@ -56,4 +56,4 @@ Headless admin: repo **`admin.vitravel.dev`** (Next.js).
 - Build: `cd admin.vitravel.dev && npm ci && npm run build`
 - Legacy `/he-thong/*` trên Laravel redirect → `ADMIN_APP_URL` (`routes/admin.php`)
 - **Deploy VPS aaPanel:** [`docs/13-deploy-aapanel-vps.md`](docs/13-deploy-aapanel-vps.md) (Nginx public + admin / `.env` / Supervisor)
-- **Stay crawler trên VPS:** [`docs/17-stay-crawl-vps-aapanel.md`](docs/17-stay-crawl-vps-aapanel.md) (Node/Chrome/`scripts/stay-crawl`)
+- **Stay crawler trên VPS:** [`docs/17-stay-crawl-vps-aapanel.md`](docs/17-stay-crawl-vps-aapanel.md) — path `/www/wwwroot/vitravel.net`, Node + `scripts/stay-crawl` (`sudo -u www npm ci`), `STAY_CRAWL_CHROME` / `STAY_CRAWL_HEADLESS` (Chrome phải nằm chỗ user `www` đọc được, không dùng `/home/<ssh>/.cache` nếu FPM là `www`)
