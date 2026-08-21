@@ -137,8 +137,6 @@ function getChromeArgs(proxyServer = null, { headed = false } = {}) {
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--crash-dumps-dir=' + getCrashDumpsDir(),
-        '--disable-crash-reporter',
-        '--disable-breakpad',
         '--disable-infobars',
         '--no-default-browser-check',
         '--no-first-run',
