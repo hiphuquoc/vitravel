@@ -267,7 +267,7 @@ class TeamMemberApiController extends Controller
             );
 
             $hubSeo = $this->seoService()->ensureHub('team_hub', $locale);
-            $parentId = $validated['seo_parent_id'] ?? $hubSeo->id;
+            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
             $slug = filled($validated['seo_slug'] ?? null)
                 ? Str::slug((string) $validated['seo_slug'])
                 : Str::slug($validated['name']);

@@ -70,7 +70,7 @@ class BlogCategoryController extends Controller
             ['guide_hub', 'blog_category'],
             $category?->seoEntry?->id,
         );
-        $defaultParentId = $category?->seoEntry?->parent_id ?: $hubSeo->id;
+        $defaultParentId = $category ? $category->seoEntry?->parent_id : $hubSeo->id;
         $title = $category ? 'Chỉnh sửa chuyên mục' : 'Thêm chuyên mục mới';
 
         return view('admin.blog-category.view', compact(
@@ -102,7 +102,7 @@ class BlogCategoryController extends Controller
 
         $category = DB::transaction(function () use ($request, $validated, $locale) {
             $hubSeo = $this->seoService()->ensureGuideHub($locale);
-            $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: $hubSeo->id;
+            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
             $seoSlug = Str::slug((string) ($validated['seo_slug'] ?? $validated['slug']));
 
             $category = isset($validated['id'])

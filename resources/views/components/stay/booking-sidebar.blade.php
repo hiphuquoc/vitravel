@@ -77,9 +77,9 @@
             @endif
         </div>
 
-        <p class="stay-book__trust">
-            <x-icon name="shield" class="size-3.5" />
-            Xác nhận nhanh · Không phí ẩn
+        <p class="detail-book__trust">
+            <x-icon name="shield" class="size-4" />
+            Đảm bảo chất lượng &amp; hỗ trợ tận tâm
         </p>
     </div>
 </aside>

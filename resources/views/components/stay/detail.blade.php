@@ -103,7 +103,7 @@
     :kicker="$service['propertyTypeLabel'] ?? null"
     :star-rating="$service['starRating'] ?? null"
     :location="$address"
-    :thumb-slots="6"
+    :thumb-slots="4"
 />
 
 <div @class(['detail-body', 'detail-body--plain' => count($tabs) < 2]) @if (count($sectionIds) > 1) x-data="scrollSpy(@js($sectionIds))" @endif>
@@ -139,10 +139,7 @@
                                         </dt>
                                         <dd class="stay-facts-grid__value">
                                             @if (! empty($fact['isStar']))
-                                                <span class="detail-facts__stars">
-                                                    <x-shared.stars :rating="$fact['value']" />
-                                                    <span>{{ $fact['value'] }} sao</span>
-                                                </span>
+                                                <x-stay.star-rating :rating="$fact['value']" size="md" />
                                             @else
                                                 {{ $fact['value'] }}
                                             @endif

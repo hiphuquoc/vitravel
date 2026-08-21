@@ -126,8 +126,8 @@ trait ManagesTranslations
             return [
                 'id' => (int) $entry->id,
                 'label' => $hasLocale && $slugFull !== ''
-                    ? $title.' — '.$slugFull
-                    : ($title.($hasLocale ? '' : ' — (chưa có bản dịch '.$locale.')')),
+                    ? $slugFull
+                    : ($slugFull !== '' ? $slugFull : ($title . ($hasLocale ? '' : ' — (chưa có bản dịch ' . $locale . ')'))),
                 'slug_full' => $slugFull,
                 'reference_id' => $entry->reference_id !== null ? (int) $entry->reference_id : null,
                 'has_locale' => (bool) $hasLocale,

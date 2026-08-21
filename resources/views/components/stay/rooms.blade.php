@@ -30,10 +30,7 @@
                                     referrerpolicy="no-referrer"
                                 />
                                 @if ($morePhotosCount > 0)
-                                    <span class="stay-hprt__photo-badge">
-                                        <x-icon name="image" class="size-3.5" />
-                                        <span>+{{ $morePhotosCount }} ảnh</span>
-                                    </span>
+                                    <span class="stay-hprt__photo-badge">+{{ $morePhotosCount }} ảnh</span>
                                 @endif
                             </div>
                         @endif
@@ -473,11 +470,13 @@
 
                 <footer class="stay-room-modal__foot" x-show="room && room.priceFormatted">
                     <div class="stay-room-modal__foot-price">
-                        <span class="kicker">Giá từ</span>
-                        <strong x-text="room.priceFormatted"></strong>
-                        <span>/ đêm</span>
+                        <span class="stay-room-modal__foot-from">Giá từ</span>
+                        <strong class="stay-room-modal__foot-amount" x-text="room.priceFormatted"></strong>
+                        <span class="stay-room-modal__foot-unit">/ đêm</span>
                     </div>
-                    <button type="button" class="btn-primary" @click.stop="bookRoom(room ? room.name : '')">Đặt phòng</button>
+                    <button type="button" class="btn-primary stay-room-modal__foot-cta" @click.stop="bookRoom(room ? room.name : '')">
+                        <span>Đặt phòng</span>
+                    </button>
                 </footer>
             </div>
         </div>

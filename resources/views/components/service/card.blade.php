@@ -5,7 +5,28 @@
 
 @php
     $clusterIcon = $item['clusterIcon'] ?? 'briefcase';
+    $isStay = ($item['cluster'] ?? '') === 'stay' || ! empty($item['isStay']);
     $cardHighlights = ! empty($item['highlights']) ? array_slice($item['highlights'], 0, 3) : [];
+    
+    // Duration badge or room count for stays
+    $mediaBadge = null;
+    $mediaBadgeIcon = 'calendar';
+    if ($isStay) {
+        $roomsCount = $item['roomsCount'] ?? (is_array($item['rooms'] ?? null) ? count($item['rooms']) : 0);
+        $totalRooms = $item['totalRooms'] ?? null;
+        if ($roomsCount > 0) {
+            $mediaBadge = $roomsCount . ' hạng phòng';
+            $mediaBadgeIcon = 'bed';
+        } elseif ($totalRooms > 0) {
+            $mediaBadge = $totalRooms . ' phòng';
+            $mediaBadgeIcon = 'building';
+        }
+    } elseif (! empty($item['duration'])) {
+        $mediaBadge = $item['duration'];
+        $mediaBadgeIcon = 'calendar';
+    }
+
+    $propertyTypeLabel = $item['propertyTypeLabel'] ?? null;
 @endphp
 
 {{-- Card ngang dịch vụ: ảnh trái ~40%, nội dung phải --}}
@@ -33,10 +54,10 @@
                     {{ $item['badge'] }}
                 </span>
             @endif
-            @if (! empty($item['duration']))
+            @if ($mediaBadge !== null)
                 <span class="tour-card-duration">
-                    <x-icon name="calendar" class="tour-card-duration__icon" />
-                    {{ $item['duration'] }}
+                    <x-icon :name="$mediaBadgeIcon" class="tour-card-duration__icon" />
+                    {{ $mediaBadge }}
                 </span>
             @endif
         </a>
@@ -47,14 +68,17 @@
                     <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $item['title'] }}</a>
                 </h3>
 
-                @if (! empty($item['starRating']))
-                    <div class="mt-1 flex flex-wrap items-center gap-2">
-                        <x-shared.stars :rating="$item['starRating']" />
-                        <span class="text-sm font-semibold text-ink">{{ $item['starRating'] }} sao</span>
-                    </div>
-                @else
-                    <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount']" />
-                @endif
+                <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                    @if ($isStay && filled($propertyTypeLabel))
+                        <span class="stay-property-type-pill">{{ $propertyTypeLabel }}</span>
+                    @endif
+                    @if (! empty($item['starRating']))
+                        <x-stay.star-rating :rating="$item['starRating']" size="sm" />
+                    @endif
+                    @if (! empty($item['rating']))
+                        <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount'] ?? 0" />
+                    @endif
+                </div>
 
                 @if (! empty($item['places']))
                     <p class="tour-card-places">
@@ -104,8 +128,18 @@
                 <div class="card-footer-row card-footer-row--price">
                     @if (! empty($item['priceFormatted']))
                         <div class="tour-card-price">
-                            <span class="tour-card-price__label">Từ</span>
-                            <span class="tour-card-price__value">{{ $item['priceFormatted'] }}</span>
+                            <span class="tour-card-price__label">Giá từ</span>
+                            <span class="tour-card-price__value">
+                                {{ $item['priceFormatted'] }}
+                                @if (! empty($item['priceUnitLabel']))
+                                    <span class="text-xs font-normal text-muted">{{ $item['priceUnitLabel'] }}</span>
+                                @endif
+                            </span>
+                        </div>
+                    @else
+                        <div class="tour-card-price">
+                            <span class="tour-card-price__label">Giá từ</span>
+                            <span class="tour-card-price__value text-base">Liên hệ</span>
                         </div>
                     @endif
 

@@ -51,7 +51,7 @@ class CruiseTypeController extends Controller
 
         $seoTranslation = $type?->seoEntry?->translation($locale);
         $parents = $this->seoService()->parentOptions('cruises_hub');
-        $defaultParentId = $type?->seoEntry?->parent_id ?: $hubSeo->id;
+        $defaultParentId = $type ? $type->seoEntry?->parent_id : $hubSeo->id;
 
         return view('admin.cruise-type.view', [
             'type' => $type,
@@ -107,7 +107,7 @@ class CruiseTypeController extends Controller
         $type = DB::transaction(function () use ($request, $validated) {
             $locale = $request->string('language', 'vi')->toString() ?: 'vi';
             $hubSeo = $this->seoService()->ensureCruisesHub($locale);
-            $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: $hubSeo->id;
+            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
             $seoSlug = $validated['seo_slug'] ?? $validated['slug'];
 
             $type = isset($validated['id'])

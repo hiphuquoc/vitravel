@@ -4,7 +4,8 @@
     $qi = view_data()->quickInquiry();
     $qiTitle = $qi['title'] ?? 'Gửi lời nhắn cho chúng tôi';
     $qiBody = $qi['body'] ?? $qi['subtitle'] ?? 'Bạn chưa chắc nên đi đâu, đi mùa nào, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.';
-    $qiHasErrors = $errors->hasAny(['name', 'email', 'phone', 'address', 'message']);
+    $qiErrors = $errors ?? session('errors');
+    $qiHasErrors = $qiErrors ? $qiErrors->hasAny(['name', 'email', 'phone', 'address', 'message']) : false;
     $qiSuccess = session('success') === 'quick_inquiry';
 @endphp
 @unless ($qi['hidden'] ?? false)
@@ -102,19 +103,19 @@
                                         <label for="qi-name" class="vt-letter__label">Tôi là <span class="text-primary-600">*</span></label>
                                         <input id="qi-name" name="name" type="text" required autocomplete="name" x-ref="firstInput"
                                             value="{{ old('name') }}" class="vt-letter__line" placeholder="Họ và tên của bạn">
-                                        @error('name')<p class="vt-letter__error">{{ $message }}</p>@enderror
+                                        @if(($errors ?? null)?->has('name')) @php $message = $errors->first('name'); @endphp<p class="vt-letter__error">{{ $message }}</p>@endif
                                     </div>
                                     <div class="vt-letter__field">
                                         <label for="qi-email" class="vt-letter__label">Email <span class="text-primary-600">*</span></label>
                                         <input id="qi-email" name="email" type="email" required autocomplete="email"
                                             value="{{ old('email') }}" class="vt-letter__line" placeholder="ban@email.com">
-                                        @error('email')<p class="vt-letter__error">{{ $message }}</p>@enderror
+                                        @if(($errors ?? null)?->has('email')) @php $message = $errors->first('email'); @endphp<p class="vt-letter__error">{{ $message }}</p>@endif
                                     </div>
                                     <div class="vt-letter__field">
                                         <label for="qi-phone" class="vt-letter__label">Liên hệ qua <span class="text-primary-600">*</span></label>
                                         <input id="qi-phone" name="phone" type="tel" required autocomplete="tel"
                                             value="{{ old('phone') }}" class="vt-letter__line" placeholder="+84 ...">
-                                        @error('phone')<p class="vt-letter__error">{{ $message }}</p>@enderror
+                                        @if(($errors ?? null)?->has('phone')) @php $message = $errors->first('phone'); @endphp<p class="vt-letter__error">{{ $message }}</p>@endif
                                     </div>
                                     <div class="vt-letter__field">
                                         <label for="qi-address" class="vt-letter__label">Đang ở</label>

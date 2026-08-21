@@ -99,11 +99,9 @@ class ServiceCategoryController extends Controller
 
         $seoTranslation = $category?->seoEntry?->translation($locale);
         $parents = $hubKey
-            ? $this->seoService()->parentOptions($hubKey)
-            : $this->seoService()->parentOptions([
-                'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub',
-            ]);
-        $defaultParentId = $category?->seoEntry?->parent_id ?: $hubSeo?->id;
+            ? $this->seoService()->parentOptions($hubKey, null, $cluster)
+            : $this->seoService()->parentOptions([$hubKey], null, $cluster);
+        $defaultParentId = $category ? $category->seoEntry?->parent_id : $hubSeo?->id;
 
         $clusterOptions = collect($clusters)->mapWithKeys(
             fn (array $cfg, string $key) => [$key => $cfg['label'] ?? $key]
@@ -169,7 +167,9 @@ class ServiceCategoryController extends Controller
             $cluster = $validated['cluster'];
             $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
             $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
-            $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: ($hubSeo?->id ?? null);
+            $parentId = $request->has('seo_parent_id')
+                ? ((int) $request->input('seo_parent_id') ?: null)
+                : ($hubSeo?->id ?? null);
             $seoSlug = $validated['seo_slug'] ?? $validated['slug'];
 
             $category = isset($validated['id'])

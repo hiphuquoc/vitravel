@@ -86,10 +86,8 @@ class ServiceCategoryApiController extends Controller
             : null;
         $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
         $parents = $hubKey
-            ? $this->seoService()->parentOptions($hubKey)
-            : $this->seoService()->parentOptions([
-                'trains_hub', 'ferries_hub', 'flights_hub', 'stays_hub', 'experiences_hub', 'extras_hub',
-            ]);
+            ? $this->seoService()->parentOptions($hubKey, null, $cluster)
+            : $this->seoService()->parentOptions([$hubKey], null, $cluster);
 
         return ApiResponse::success([
             'languages' => Language::adminOptions(),
@@ -185,7 +183,7 @@ class ServiceCategoryApiController extends Controller
             $cluster = $validated['cluster'];
             $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
             $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
-            $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: ($hubSeo?->id ?? null);
+            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : ($hubSeo?->id ?? null);
             $seoSlug = $validated['seo_slug'] ?? $validated['slug'];
 
             $category = isset($validated['id'])

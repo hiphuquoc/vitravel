@@ -127,7 +127,7 @@ class ServiceController extends Controller
         $seoTranslation = $service?->seoEntry?->translation($locale);
 
         $parentTypes = array_values(array_filter(['service_category', $hubKey]));
-        $parents = $this->seoService()->parentOptions($parentTypes);
+        $parents = $this->seoService()->parentOptions($parentTypes, null, $cluster);
 
         $defaultParentId = $service?->seoEntry?->parent_id
             ?: ($service?->category?->seoEntry?->id ?: $hubSeo?->id);

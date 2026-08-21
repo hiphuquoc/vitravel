@@ -19,9 +19,8 @@
     $parentSlugMap = ['' => ''];
     foreach ($parents as $parentEntry) {
         $trans = $parentEntry->translation($language) ?? $parentEntry->translation(default_locale());
-        $label = ($trans?->title ?: ($trans?->seo_title ?: ('#'.$parentEntry->id)));
         $slugFull = $trans?->slug_full ?? '';
-        $parentOptions[$parentEntry->id] = $label.($slugFull ? ' — '.$slugFull : '');
+        $parentOptions[$parentEntry->id] = $slugFull !== '' ? $slugFull : ($trans?->title ?: ($trans?->seo_title ?: ('#'.$parentEntry->id)));
         $parentSlugMap[(string) $parentEntry->id] = $slugFull;
     }
 

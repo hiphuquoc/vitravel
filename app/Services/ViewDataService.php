@@ -103,10 +103,6 @@ class ViewDataService
 
     public function country(string $slug): ?array
     {
-        if (! Country::query()->exists()) {
-            return SampleData::country($slug);
-        }
-
         $ids = $this->languageIdChain();
         if ($ids === []) {
             return null;
@@ -118,7 +114,15 @@ class ViewDataService
             ->whereHas('translations', fn ($q) => $q->whereIn('language_id', $ids)->where('slug', $slug))
             ->first();
 
-        return $country ? $this->mapCountry($country) : null;
+        if (! $country) {
+            $country = Country::withoutGlobalScope('project')
+                ->active()
+                ->with(['translations' => fn ($q) => $q->withoutGlobalScope('project'), 'banner', 'listingBanner'])
+                ->whereHas('translations', fn ($q) => $q->withoutGlobalScope('project')->whereIn('language_id', $ids)->where('slug', $slug))
+                ->first();
+        }
+
+        return $country ? $this->mapCountry($country) : SampleData::country($slug);
     }
 
     public function travelStyles(): array
@@ -1703,6 +1707,16 @@ class ViewDataService
             ->withCount(['services' => fn ($q) => $q->published()])
             ->first();
 
+        if (! $cat) {
+            $cat = ServiceCategory::withoutGlobalScope('project')
+                ->active()
+                ->forCluster($cluster)
+                ->where('slug', $slug)
+                ->with(['banner', 'cover', 'seoEntry.translations'])
+                ->withCount(['services' => fn ($q) => $q->withoutGlobalScope('project')->published()])
+                ->first();
+        }
+
         if ($cat) {
             return $this->mapServiceCategory($cat);
         }
@@ -1713,7 +1727,7 @@ class ViewDataService
     /** @return list<array<string, mixed>> */
     public function services(?string $cluster = null): array
     {
-        $query = Service::query()
+        $query = Service::withoutGlobalScope('project')
             ->published()
             ->with([
                 'translations', 'category', 'country.translations',
@@ -1729,22 +1743,28 @@ class ViewDataService
             $query->forCluster($cluster);
         }
 
-        if (! Service::query()->published()->when($cluster, fn ($q) => $q->forCluster($cluster))->exists()) {
+        $res = $query->get();
+        if ($res->isEmpty()) {
             return SampleData::services($cluster);
         }
 
-        return $query->get()->map(fn (Service $s) => $this->mapService($s))->values()->all();
+        return $res->map(fn (Service $s) => $this->mapService($s))->values()->all();
     }
 
     public function service(string $slug, ?string $cluster = null): ?array
     {
         $preview = app()->environment('local') && request()?->boolean('preview');
-        $query = Service::query()
+        $query = Service::withoutGlobalScope('project')
             ->when(! $preview, fn ($q) => $q->published())
             ->with([
-                'translations', 'category', 'country.translations',
-                'seoEntry.translations', 'faqs.translations',
-                'options.translations',
+                'translations' => fn ($q) => $q->withoutGlobalScope('project'),
+                'category' => fn ($q) => $q->withoutGlobalScope('project'),
+                'country.translations',
+                'seoEntry' => fn ($q) => $q->withoutGlobalScope('project'),
+                'seoEntry.translations' => fn ($q) => $q->withoutGlobalScope('project'),
+                'faqs.translations',
+                'options' => fn ($q) => $q->withoutGlobalScope('project'),
+                'options.translations' => fn ($q) => $q->withoutGlobalScope('project'),
                 'mediaAttachments.media',
                 'priceTable.variants.translations',
                 'priceTable.periods.rates',
@@ -1755,7 +1775,8 @@ class ViewDataService
         }
 
         $matches = $query->get()->filter(function (Service $s) use ($slug) {
-            $seoSlug = $s->seoEntry?->translation($this->locale())?->slug;
+            $seoSlug = $s->seoEntry?->translation($this->locale())?->slug
+                ?? $s->seoEntry?->translations->first()?->slug;
 
             return $seoSlug === $slug || $s->code === $slug;
         });
@@ -1820,9 +1841,12 @@ class ViewDataService
      */
     protected function mapService(Service $service): array
     {
-        $translation = $service->translation($this->locale());
-        $seoTranslation = $service->seoEntry?->translation($this->locale());
-        $category = $service->category;
+        $translation = $service->translation($this->locale())
+            ?? $service->translations()->withoutGlobalScope('project')->first();
+        $seoTranslation = $service->seoEntry?->translation($this->locale())
+            ?? $service->seoEntry()->withoutGlobalScope('project')->first()?->translations()->withoutGlobalScope('project')->first();
+        $category = $service->category
+            ?? $service->category()->withoutGlobalScope('project')->first();
         $cfg = config("services_catalog.clusters.{$service->cluster}", []);
 
         $highlights = $translation?->highlights ?? [];
@@ -1923,7 +1947,12 @@ class ViewDataService
         $payload['highlights'] = [];
         $payload['propertyType'] = $propertyType;
         $payload['propertyTypeLabel'] = config("stay.property_types.{$propertyType}") ?? ucfirst($propertyType);
-        $payload['address'] = (string) ($attrs['address'] ?? '');
+        $fullAddress = (string) ($attrs['address'] ?? '');
+        $payload['address'] = $fullAddress;
+        if (filled($fullAddress)) {
+            $payload['location'] = $fullAddress;
+            $payload['places'] = [$fullAddress];
+        }
         $payload['checkIn'] = (string) ($attrs['check_in'] ?? '15:00');
         $payload['checkOut'] = (string) ($attrs['check_out'] ?? '12:00');
         $payload['amenities'] = [];
@@ -1936,7 +1965,34 @@ class ViewDataService
         $payload['attrs'] = $attrs;
         $payload['totalRooms'] = isset($attrs['total_rooms']) ? (int) $attrs['total_rooms'] : null;
         $payload['languages'] = is_array($attrs['languages'] ?? null) ? $attrs['languages'] : [];
-        $payload['rooms'] = $this->mapStayRooms($service);
+        $rooms = $this->mapStayRooms($service);
+        $payload['rooms'] = $rooms;
+        $payload['roomsCount'] = count($rooms);
+
+        // Tính giá thấp nhất (Giá từ) dựa trên tất cả các options / hạng phòng
+        $lowestPrice = null;
+        foreach ($rooms as $rm) {
+            $rPrice = $rm['priceFrom'] ?? ($rm['price_from'] ?? null);
+            if ($rPrice !== null && (float) $rPrice > 0) {
+                if ($lowestPrice === null || (float) $rPrice < $lowestPrice) {
+                    $lowestPrice = (float) $rPrice;
+                }
+            }
+            // Check rateOptions if any
+            foreach ($rm['rateOptions'] ?? [] as $rate) {
+                $rtPrice = $rate['price'] ?? ($rate['priceTotal'] ?? null);
+                if ($rtPrice !== null && (float) $rtPrice > 0) {
+                    if ($lowestPrice === null || (float) $rtPrice < $lowestPrice) {
+                        $lowestPrice = (float) $rtPrice;
+                    }
+                }
+            }
+        }
+
+        if ($lowestPrice !== null && $lowestPrice > 0) {
+            $payload['priceFrom'] = $lowestPrice;
+            $payload['priceFormatted'] = $this->formatMoney($lowestPrice, $service->currency ?? 'VND');
+        }
         $payload['policies'] = [
             'check_in' => $payload['checkIn'],
             'check_out' => $payload['checkOut'],

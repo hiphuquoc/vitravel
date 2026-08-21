@@ -123,8 +123,11 @@ class RoutingController extends Controller
             ?: abort(404);
 
         $cluster = $service?->cluster;
-        $categorySlug = $service?->category?->slug
+        
+        $cat = $service?->category()->withoutGlobalScope('project')->first();
+        $categorySlug = $cat?->slug
             ?? $entry->parent?->translation($locale)?->slug
+            ?? $entry->parent?->translations()->withoutGlobalScope('project')->first()?->slug
             ?? null;
 
         if (! $cluster) {

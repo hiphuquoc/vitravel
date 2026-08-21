@@ -59,7 +59,7 @@ class TeamMemberController extends Controller
 
         $hubSeo = $this->seoService()->ensureHub('team_hub', $locale);
         $parents = $this->seoService()->parentOptions('team_hub');
-        $defaultParentId = $member?->seoEntry?->parent_id ?? $hubSeo->id;
+        $defaultParentId = $member ? $member->seoEntry?->parent_id : $hubSeo->id;
         $seoTranslation = $member?->seoEntry?->translation($locale);
 
         $languages = $this->activeLanguages();
@@ -176,7 +176,7 @@ class TeamMemberController extends Controller
                 $this->syncDirectCover($member, 'avatar_media_id', $request, config('media.team'));
 
                 $hubSeo = $this->seoService()->ensureHub('team_hub', $locale);
-                $parentId = $validated['seo_parent_id'] ?? $hubSeo->id;
+                $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
                 $slug = filled($validated['seo_slug'] ?? null)
                     ? Str::slug((string) $validated['seo_slug'])
                     : Str::slug((string) $validated['name']);

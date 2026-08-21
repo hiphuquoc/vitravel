@@ -68,12 +68,8 @@ final class ProjectSeed
             }
         }
 
-        throw new RuntimeException(
-            "Project seed profile chưa được chọn.\n"
-            .'Chạy `php artisan project:seed {profile}` (vd: vitravel, hicatba), '
-            .'hoặc ProjectSeed::useProfile() / set ProjectContext trước khi đọc seed. '
-            .'Không dùng PROJECT_SEED trong .env — xem project/README.md.'
-        );
+        $defaultProject = config('project.default_code') ?: 'vitravel';
+        return (string) $defaultProject;
     }
 
     /**

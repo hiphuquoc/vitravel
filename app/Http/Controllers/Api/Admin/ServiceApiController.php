@@ -99,7 +99,7 @@ class ServiceApiController extends Controller
         $hubKey = $clusters[$cluster]['hub_key'] ?? null;
         $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
         $parentTypes = array_values(array_filter(['service_category', $hubKey]));
-        $parents = $this->seoService()->parentOptions($parentTypes);
+        $parents = $this->seoService()->parentOptions($parentTypes, null, $cluster);
 
         $categories = ServiceCategory::query()
             ->forCluster($cluster)

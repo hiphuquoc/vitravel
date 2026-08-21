@@ -80,7 +80,6 @@
 
     $sidebarMeta = array_values(array_filter([
         ['icon' => 'calendar', 'label' => 'Thời lượng', 'value' => $service['duration'] ?? null],
-        ['icon' => 'tag', 'label' => 'Mã', 'value' => $service['code'] ?? null],
         ['icon' => 'map-pin', 'label' => 'Vị trí', 'value' => $service['location'] ?? null],
     ], fn ($row) => filled($row['value'] ?? null)));
 
@@ -139,10 +138,7 @@
                                     </dt>
                                     <dd>
                                         @if (! empty($attr['isStar']))
-                                            <span class="detail-facts__stars">
-                                                <x-shared.stars :rating="$attr['value']" />
-                                                <span>{{ $attr['value'] }} sao</span>
-                                            </span>
+                                            <x-stay.star-rating :rating="$attr['value']" size="md" />
                                         @else
                                             {{ $attr['value'] }}
                                         @endif
@@ -192,27 +188,91 @@
             @endif
         </div>
 
+        @php
+            $cluster = $service['cluster'] ?? 'other';
+            $hasPriceTable = ! empty($service['priceTable']['periods']);
+
+            // Context-aware labels & CTA matching user intent
+            $sidebarConfig = match($cluster) {
+                'experience' => [
+                    'aria' => 'Đặt vé & trải nghiệm',
+                    'primaryLabel' => $hasPriceTable ? 'Chọn vé đặt ngay' : 'Đặt vé trải nghiệm',
+                    'primaryShort' => 'Đặt vé',
+                    'primaryHref' => $hasPriceTable ? '#bang-gia' : locale_route('contact'),
+                    'primaryIcon' => 'ticket',
+                    'secondaryLabel' => 'Tư vấn nhanh',
+                    'secondaryHref' => locale_route('contact'),
+                    'priceHint' => 'Giá vé chính thức · Xác nhận tức thì',
+                    'fallbackPrice' => 'Liên hệ đặt vé',
+                ],
+                'flight' => [
+                    'aria' => 'Đặt vé máy bay',
+                    'primaryLabel' => $hasPriceTable ? 'Xem bảng giá vé' : 'Tư vấn đặt vé',
+                    'primaryShort' => 'Đặt vé',
+                    'primaryHref' => $hasPriceTable ? '#bang-gia' : locale_route('contact'),
+                    'primaryIcon' => 'plane',
+                    'secondaryLabel' => 'Hỗ trợ hành trình',
+                    'secondaryHref' => locale_route('contact'),
+                    'priceHint' => 'Hỗ trợ giữ chỗ & xuất vé 24/7',
+                    'fallbackPrice' => 'Liên hệ báo giá vé',
+                ],
+                'train' => [
+                    'aria' => 'Đặt vé tàu hỏa',
+                    'primaryLabel' => $hasPriceTable ? 'Xem giá vé tàu' : 'Đặt vé tàu',
+                    'primaryShort' => 'Đặt vé',
+                    'primaryHref' => $hasPriceTable ? '#bang-gia' : locale_route('contact'),
+                    'primaryIcon' => 'train',
+                    'secondaryLabel' => 'Hỏi lịch trình',
+                    'secondaryHref' => locale_route('contact'),
+                    'priceHint' => 'Vé điện tử gửi ngay qua SMS/Email',
+                    'fallbackPrice' => 'Liên hệ kiểm tra vé',
+                ],
+                'ferry' => [
+                    'aria' => 'Đặt vé tàu cao tốc',
+                    'primaryLabel' => $hasPriceTable ? 'Xem giá vé tàu' : 'Đặt vé tàu cao tốc',
+                    'primaryShort' => 'Đặt vé',
+                    'primaryHref' => $hasPriceTable ? '#bang-gia' : locale_route('contact'),
+                    'primaryIcon' => 'ship',
+                    'secondaryLabel' => 'Hỏi lịch tàu',
+                    'secondaryHref' => locale_route('contact'),
+                    'priceHint' => 'Đảm bảo có vé · Không xếp hàng',
+                    'fallbackPrice' => 'Liên hệ đặt vé tàu',
+                ],
+                default => [
+                    'aria' => 'Đặt dịch vụ',
+                    'primaryLabel' => $hasPriceTable ? 'Xem bảng giá' : 'Đặt dịch vụ ngay',
+                    'primaryShort' => 'Đặt ngay',
+                    'primaryHref' => $hasPriceTable ? '#bang-gia' : locale_route('contact'),
+                    'primaryIcon' => 'calendar',
+                    'secondaryLabel' => 'Tư vấn chi tiết',
+                    'secondaryHref' => locale_route('contact'),
+                    'priceHint' => 'Giá minh bạch · Hỗ trợ trọn gói',
+                    'fallbackPrice' => 'Liên hệ đặt dịch vụ',
+                ],
+            };
+        @endphp
+
         <x-shared.detail-booking-sidebar
-            aria-label="Đặt dịch vụ"
+            :aria-label="$sidebarConfig['aria']"
             :price="$sidebarPrice"
             price-label="Giá từ"
-            price-hint="Giá tham khảo — báo giá chính xác trong 24h"
-            fallback-price="Nhận báo giá trong 24h"
+            :price-hint="$sidebarConfig['priceHint']"
+            :fallback-price="$sidebarConfig['fallbackPrice']"
             :meta-items="$sidebarMeta"
             :badge="$service['badge'] ?? null"
-            :primary-href="locale_route('customize')"
-            primary-label="Thiết kế hành trình"
-            primary-label-short="Tư vấn"
-            primary-icon="route"
-            :secondary-href="locale_route('contact')"
-            secondary-label="Liên hệ tư vấn"
+            :primary-href="$sidebarConfig['primaryHref']"
+            :primary-label="$sidebarConfig['primaryLabel']"
+            :primary-label-short="$sidebarConfig['primaryShort']"
+            :primary-icon="$sidebarConfig['primaryIcon']"
+            :secondary-href="$sidebarConfig['secondaryHref']"
+            :secondary-label="$sidebarConfig['secondaryLabel']"
             secondary-icon="mail"
             :whatsapp="$waPhone !== '' ? $waPhone : null"
             :usps="[
-                ['icon' => 'expert', 'label' => 'Đặt qua chuyên gia bản địa'],
-                ['icon' => 'value', 'label' => 'Giá minh bạch, không phí ẩn'],
-                ['icon' => 'support', 'label' => 'Hỗ trợ 24/7 suốt hành trình'],
+                ['icon' => 'check', 'label' => 'Xác nhận nhanh chóng'],
+                ['icon' => 'shield', 'label' => 'Giá minh bạch, không phí ẩn'],
             ]"
+            trust="Đảm bảo chất lượng & hỗ trợ tận tâm"
         />
     </div>
 </div>

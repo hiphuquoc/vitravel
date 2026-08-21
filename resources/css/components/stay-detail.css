@@ -351,7 +351,7 @@
 }
 
 .stay-hprt__name {
-    color: var(--color-primary-700, #455f2c);
+    color: var(--color-accent-500, #d9704f);
     font-weight: 700;
     background: none;
     border: 0;
@@ -456,8 +456,10 @@
 }
 
 .stay-hprt__price s {
-    color: #c13515;
+    color: var(--color-muted, #817d6e);
     font-size: var(--fs-meta);
+    font-weight: 400;
+    text-decoration: line-through;
 }
 
 .stay-hprt__price-now {
@@ -465,7 +467,7 @@
     font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.15;
-    color: var(--color-ink, #272b23);
+    color: var(--color-accent-500, #d9704f);
 }
 
 .stay-hprt__price-now--quote {
@@ -596,7 +598,7 @@
 
 .stay-hprt__tip:hover,
 .stay-hprt__tip:focus-visible {
-    color: var(--color-primary-700, #455f2c);
+    color: var(--color-accent-500, #d9704f);
     outline: none;
 }
 
@@ -665,27 +667,43 @@ body.stay-room-lock {
     display: grid;
     grid-template-columns: 1fr;
     justify-items: center;
-    padding: 0 clamp(0.75rem, 3.5vw, 2.75rem);
+    padding: 0;
+}
+
+@media (min-width: 769px) {
+    .stay-room-modal {
+        padding: clamp(1rem, 2.5vh, 2rem) clamp(1rem, 3vw, 2.5rem);
+        align-items: center;
+    }
 }
 
 .stay-room-modal__backdrop {
     position: absolute;
     inset: 0;
-    background: rgb(39 43 35 / 0.45);
+    background: rgb(39 43 35 / 0.55);
+    backdrop-filter: blur(2px);
 }
 
 .stay-room-modal__panel {
     position: relative;
     z-index: 1;
-    width: min(72rem, 100%);
+    width: 100%;
     height: 100%;
     max-height: 100dvh;
     display: flex;
     flex-direction: column;
     background: #fff;
     border-radius: 0;
-    box-shadow: 0 0 0 1px rgb(39 43 35 / 0.06), 0 18px 48px rgb(39 43 35 / 0.18);
+    box-shadow: 0 0 0 1px rgb(39 43 35 / 0.06), 0 18px 48px rgb(39 43 35 / 0.22);
     overflow: hidden;
+}
+
+@media (min-width: 769px) {
+    .stay-room-modal__panel {
+        width: min(72rem, 100%);
+        height: min(54rem, calc(100dvh - 3rem));
+        border-radius: 0.85rem;
+    }
 }
 
 .stay-room-modal__enter {
@@ -915,7 +933,7 @@ body.stay-room-lock {
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--color-primary-700, #455f2c);
+    color: var(--color-accent-500, #d9704f);
 }
 
 .stay-room-modal__facts-grid {
@@ -950,7 +968,7 @@ body.stay-room-lock {
     height: 2rem;
     border-radius: 0.55rem;
     background: color-mix(in srgb, var(--color-primary-100, #e8f0d4) 80%, #fff);
-    color: var(--color-primary-700, #455f2c);
+    color: var(--color-accent-500, #d9704f);
 }
 
 .stay-room-modal__fact-icon svg {
@@ -1059,49 +1077,162 @@ body.stay-room-lock {
     color: var(--color-primary-600, #567834);
 }
 
+.stay-room-modal__body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.stay-room-modal__body--solo {
+    grid-template-columns: 1fr;
+}
+
+.stay-room-modal__gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
+    padding: var(--space-card);
+    border-right: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+    overflow: hidden;
+}
+
 .stay-room-modal__foot {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    padding: 0.85rem 1.25rem;
+    padding: 0.75rem var(--space-card);
     border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
     background: #fff;
+    flex-shrink: 0;
 }
 
 .stay-room-modal__foot-price {
     display: flex;
-    flex-wrap: wrap;
     align-items: baseline;
     gap: 0.3rem;
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-.stay-room-modal__foot-price strong {
+.stay-room-modal__foot-from {
+    font-size: var(--fs-kicker);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted, #817d6e);
+    flex-shrink: 0;
+}
+
+.stay-room-modal__foot-amount {
     font-family: var(--font-display);
     font-size: var(--fs-detail-price);
     font-weight: 700;
-    color: var(--color-primary-700, #455f2c);
+    color: var(--color-accent-500, #d9704f);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-@media (max-width: 900px) {
-    .stay-room-modal__body {
-        grid-template-columns: 1fr;
+.stay-room-modal__foot-unit {
+    font-size: var(--fs-meta);
+    color: var(--color-ink-soft, #514f45);
+    flex-shrink: 0;
+}
+
+.stay-room-modal__foot-cta {
+    flex-shrink: 0;
+    min-width: 7.5rem;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* Responsive Modal Behavior (Docs 04-design-system.md: BP-MD <= 768px / BP-SM <= 567px) */
+@media (max-width: 768px) {
+    .stay-room-modal {
+        padding: 0; /* Fullscreen on mobile */
+        height: 100%;
     }
 
+    .stay-room-modal__panel {
+        height: 100dvh;
+        max-height: 100dvh;
+        border-radius: 0;
+        border: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .stay-room-modal__body {
+        display: block; /* Normal block flow with smooth native scrolling */
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-x: hidden;
+        overflow-y: scroll; /* Force vertical scrolling on container */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+
+    /* Un-stick / un-fix gallery on mobile so entire body flows together */
     .stay-room-modal__gallery {
+        padding: 0.75rem 0.85rem 0.5rem;
         border-right: 0;
         border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+        overflow: visible;
+    }
+
+    .stay-room-modal__hero {
+        aspect-ratio: 16 / 10;
+    }
+
+    .stay-room-modal__detail {
+        min-height: auto;
+        overflow: visible;
+        padding: 0.95rem 0.85rem 2rem;
     }
 
     .stay-room-modal__amenity-list {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 767px) {
-    .stay-room-modal {
-        padding: 0 0.5rem;
+    /* Mobile Single Line Price + Button Footer */
+    .stay-room-modal__foot {
+        flex-shrink: 0;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        padding: 0.65rem 0.85rem;
+        box-shadow: 0 -4px 16px rgba(39, 43, 35, 0.08);
+    }
+
+    .stay-room-modal__foot-from {
+        display: none; /* Bỏ text 'Giá từ' ở giao diện nhỏ */
+    }
+
+    .stay-room-modal__foot-price {
+        gap: 0.2rem;
+    }
+
+    .stay-room-modal__foot-amount {
+        font-size: 1.15rem;
+        max-width: 10rem;
+    }
+
+    .stay-room-modal__foot-unit {
+        font-size: 0.75rem;
+    }
+
+    .stay-room-modal__foot-cta {
+        min-width: 6.25rem;
+        padding: 0.5rem 0.85rem;
+        font-size: var(--fs-body);
     }
 
     .stay-hprt__tip::after {
@@ -1415,4 +1546,87 @@ body.stay-room-lock {
 .stay-toast-leave-end {
     opacity: 0;
     transform: translateY(0.5rem) scale(0.95);
+}
+/* Stay star rating component (Hạng sao khách sạn) */
+.stay-star-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0.45rem;
+    background: color-mix(in srgb, #f59e0b 8%, #fff);
+    border: 1px solid color-mix(in srgb, #f59e0b 32%, transparent);
+    border-radius: 0.35rem;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.stay-star-rating__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.05rem;
+}
+
+.stay-star-rating__icon {
+    display: inline-block;
+    color: #f59e0b; /* Amber gold */
+    filter: drop-shadow(0 1px 1px rgba(245, 158, 11, 0.25));
+}
+
+.stay-star-rating__badge {
+    font-size: var(--fs-kicker);
+    font-weight: 700;
+    color: #b45309;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.stay-star-rating--sm {
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.28rem;
+    gap: 0.25rem;
+}
+.stay-star-rating--sm .stay-star-rating__icon {
+    width: 0.825rem;
+    height: 0.825rem;
+}
+.stay-star-rating--sm .stay-star-rating__badge {
+    font-size: 0.7rem;
+}
+
+.stay-star-rating--md {
+    padding: 0.18rem 0.5rem;
+}
+.stay-star-rating--md .stay-star-rating__icon {
+    width: 0.975rem;
+    height: 0.975rem;
+}
+.stay-star-rating--md .stay-star-rating__badge {
+    font-size: var(--fs-kicker);
+}
+
+.stay-star-rating--lg {
+    padding: 0.25rem 0.65rem;
+}
+.stay-star-rating--lg .stay-star-rating__icon {
+    width: 1.15rem;
+    height: 1.15rem;
+}
+.stay-star-rating--lg .stay-star-rating__badge {
+    font-size: var(--fs-meta);
+}
+/* Stay property type pill in cards (Khách sạn, Resort, Villa...) */
+.stay-property-type-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.12rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-primary-800, #3a4e27);
+    background: color-mix(in srgb, var(--color-primary-100, #e9efd6) 80%, #fff);
+    border: 1px solid color-mix(in srgb, var(--color-primary-300, #b5cb86) 60%, transparent);
+    border-radius: 0.35rem;
+    line-height: 1.2;
+    vertical-align: middle;
 }

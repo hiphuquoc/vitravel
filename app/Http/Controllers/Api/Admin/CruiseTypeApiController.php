@@ -170,7 +170,7 @@ class CruiseTypeApiController extends Controller
             $type->save();
 
             $hubSeo = $this->seoService()->ensureCruisesHub($locale);
-            $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: $hubSeo->id;
+            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
             $ratingStar = $validated['rating_aggregate_star'] ?? null;
             $ratingCount = $validated['rating_aggregate_count'] ?? null;
 

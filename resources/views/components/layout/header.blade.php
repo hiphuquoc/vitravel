@@ -2,6 +2,7 @@
     $destinations = view_data()->countries();
     $cruiseTypes = view_data()->cruiseTypes();
     $guideCountries = array_values(array_filter($destinations, fn ($c) => $c['slug'] !== 'tour-ket-hop'));
+    $blogCategories = view_data()->blogCategories();
     $searchDestinations = array_map(fn ($c) => [
         'name' => $c['name'],
         'slug' => $c['slug'],
@@ -469,101 +470,67 @@
                     aria-label="Danh mục chương trình và cẩm nang">
                     <div class="header-more-panel__card">
                         <div class="header-more-panel__scroll vt-scrollbar">
-                            @if (count($destinations) > 0)
-                                <div class="nav-panel-group">
-                                    <p class="nav-panel-group__title">{{ $toursNav['label'] ?? 'Tour trọn gói' }}</p>
-                                    <a href="{{ locale_route('tours.hub') }}" class="nav-panel-link">Tất cả tour</a>
-                                    @foreach ($destinations as $c)
-                                        <a href="{{ locale_route('tours.index', $c['slug']) }}" class="nav-panel-link">
-                                            <span class="nav-panel-item-row">
-                                                <span>{{ tour_listing_label($c['name'] ?? '') }}</span>
-                                                <x-shared.count-badge :count="$c['tourCount'] ?? 0" />
-                                            </span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
-                            @if (count($cruiseTypes) > 0)
-                                <div class="nav-panel-group">
-                                    <p class="nav-panel-group__title">{{ $cruiseNav['label'] ?? 'Du thuyền' }}</p>
-                                    <a href="{{ locale_route('cruises.hub') }}" class="nav-panel-link">{{ $cruiseNav['all_label'] ?? 'Tất cả du thuyền' }}</a>
-                                    @foreach ($cruiseTypes as $t)
-                                        <a href="{{ locale_route('cruises.index', $t['slug']) }}" class="nav-panel-link">
-                                            <span class="nav-panel-item-row">
-                                                <span>{{ $t['name'] }}</span>
-                                                <x-shared.count-badge :count="$t['count'] ?? 0" />
-                                            </span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
-                            @foreach ($serviceClusters as $sc)
-                                @if (in_array($sc['code'] ?? '', ['train', 'flight'], true))
-                                    @continue
-                                @endif
-                                @php $svcCats = $serviceCatsByCluster[$sc['code']] ?? []; @endphp
-                                @if (count($svcCats) === 0 && ! (($sc['code'] ?? '') === 'other' && ($transportHub || $flightHub)))
-                                    @continue
-                                @endif
-                                <div class="nav-panel-group">
-                                    <p class="nav-panel-group__title">{{ $sc['nav_label'] }}</p>
-                                    <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="nav-panel-link">
-                                        Tất cả {{ strtolower($sc['nav_label']) }}
-                                    </a>
-                                    @if (($sc['code'] ?? '') === 'other')
-                                        @if ($transportHub)
-                                            <a href="{{ locale_route('services.hub', ['cluster' => $transportCluster]) }}" class="nav-panel-link">
-                                                <span class="nav-panel-item-row">
-                                                    <span>{{ $transportNavLabel }}</span>
-                                                    <x-shared.count-badge :count="$trainServiceCount" />
-                                                </span>
-                                            </a>
-                                        @endif
-                                        @if ($flightHub)
-                                            <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="nav-panel-link">
-                                                <span class="nav-panel-item-row">
-                                                    <span>Vé máy bay</span>
-                                                    <x-shared.count-badge :count="$flightServiceCount" />
-                                                </span>
-                                            </a>
-                                        @endif
-                                    @endif
-                                    @foreach ($svcCats as $cat)
-                                        <a href="{{ locale_route('services.index', ['cluster' => $sc['code'], 'category' => $cat['slug']]) }}" class="nav-panel-link">
-                                            <span class="nav-panel-item-row">
-                                                <span>{{ $cat['name'] }}</span>
-                                                @if (($cat['count'] ?? 0) > 0)
-                                                    <x-shared.count-badge :count="$cat['count']" />
-                                                @endif
-                                            </span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endforeach
                             <div class="nav-panel-group">
                                 <p class="nav-panel-group__title">{{ $nav['about_group'] ?? ('Về '.$brandName) }}</p>
-                                <a href="{{ locale_route('about') }}" class="nav-panel-link">Về chúng tôi</a>
-                                <a href="{{ locale_route('contact') }}" class="nav-panel-link">Liên hệ</a>
+                                <a href="{{ locale_route('about') }}" class="nav-panel-link">
+                                    <span class="nav-panel-item-row">
+                                        <span>Về chúng tôi</span>
+                                    </span>
+                                </a>
+                                <a href="{{ locale_route('contact') }}" class="nav-panel-link">
+                                    <span class="nav-panel-item-row">
+                                        <span>Liên hệ</span>
+                                    </span>
+                                </a>
                                 @if (Route::has('team'))
-                                    <a href="{{ locale_route('team') }}" class="nav-panel-link">Đội ngũ</a>
+                                    <a href="{{ locale_route('team') }}" class="nav-panel-link">
+                                        <span class="nav-panel-item-row">
+                                            <span>Đội ngũ</span>
+                                        </span>
+                                    </a>
                                 @endif
                                 @if (Route::has('reviews'))
-                                    <a href="{{ locale_route('reviews') }}" class="nav-panel-link">Cảm nhận khách hàng</a>
+                                    <a href="{{ locale_route('reviews') }}" class="nav-panel-link">
+                                        <span class="nav-panel-item-row">
+                                            <span>Cảm nhận khách hàng</span>
+                                        </span>
+                                    </a>
+                                @endif
+                                @if (Route::has('videos') || Route::has('gallery'))
+                                    @if (Route::has('gallery'))
+                                        <a href="{{ locale_route('gallery') }}" class="nav-panel-link">
+                                            <span class="nav-panel-item-row">
+                                                <span>Thư viện ảnh</span>
+                                            </span>
+                                        </a>
+                                    @endif
+                                    @if (Route::has('videos'))
+                                        <a href="{{ locale_route('videos') }}" class="nav-panel-link">
+                                            <span class="nav-panel-item-row">
+                                                <span>Video trải nghiệm</span>
+                                            </span>
+                                        </a>
+                                    @endif
                                 @endif
                             </div>
+
                             <div class="nav-panel-group">
-                                <p class="nav-panel-group__title">Cẩm nang</p>
-                                <a href="{{ locale_route('guide.index') }}" class="nav-panel-link">Tất cả bài viết</a>
-                                @foreach ($guideCountries as $c)
-                                    <a href="{{ locale_route('guide.country', ['country' => $c['slug']]) }}" class="nav-panel-link">
-                                        Cẩm nang {{ $c['name'] }}
+                                <p class="nav-panel-group__title">Blogs</p>
+                                <a href="{{ locale_route('guide.index') }}" class="nav-panel-link">
+                                    <span class="nav-panel-item-row">
+                                        <span class="font-medium text-primary-700">Tất cả bài viết</span>
+                                    </span>
+                                </a>
+                                @foreach ($blogCategories as $bCat)
+                                    <a href="{{ locale_route('guide.category', ['category' => $bCat['slug']]) }}" class="nav-panel-link">
+                                        <span class="nav-panel-item-row">
+                                            <span>{{ $bCat['name'] }}</span>
+                                            @if (($bCat['count'] ?? 0) > 0)
+                                                <x-shared.count-badge :count="$bCat['count']" />
+                                            @endif
+                                        </span>
                                     </a>
                                 @endforeach
-                            </div>
-                            <div class="nav-panel-group">
-                                <p class="nav-panel-group__title">Thư viện</p>
-                                <a href="{{ locale_route('videos') }}" class="nav-panel-link">Video</a>
-                                <a href="{{ locale_route('gallery') }}" class="nav-panel-link">Ảnh</a>
                             </div>
                         </div>
                     </div>
@@ -586,112 +553,142 @@
     </header>
 </div>
 
-    {{-- Overlay ngoài header (tránh backdrop-filter khóa position:fixed vào khung header) --}}
+    {{-- ── Site search modal / UX-Redesigned ── --}}
     <div x-cloak x-show="searchOpen" class="site-search" role="dialog" aria-modal="true" aria-label="Tìm kiếm"
         @keydown.escape.window="closeSearch()">
         <div class="site-search__backdrop" @click="closeSearch()" x-show="searchOpen"
-            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150"
+            x-transition:enter="transition ease-out duration-250" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
 
         <div class="site-search__panel" x-show="searchOpen"
-            x-transition:enter="transition ease-out duration-250"
-            x-transition:enter-start="opacity-0 max-lg:translate-y-full lg:-translate-y-3"
-            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-300"
+            x-transition:enter-start="opacity-0 max-lg:translate-y-full lg:scale-95 lg:-translate-y-4"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0"
             x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100 translate-y-0"
-            x-transition:leave-end="opacity-0 max-lg:translate-y-full lg:-translate-y-2"
+            x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+            x-transition:leave-end="opacity-0 max-lg:translate-y-full lg:scale-95 lg:-translate-y-2"
             @click.stop>
-            <div class="site-search__sheet-head">
-                <div class="site-search__handle" aria-hidden="true"></div>
-                <div class="site-search__sheet-title-row">
-                    <div>
-                        <h2 class="site-search__sheet-title item-title">Tìm kiếm</h2>
-                        <p class="site-search__sheet-sub">{{ $cruiseNav['search_hint'] ?? 'Tour, điểm đến, du thuyền, cẩm nang…' }}</p>
+
+            {{-- Form tìm kiếm chính dạng Spotlight --}}
+            <div class="site-search__header">
+                <form action="{{ locale_route('search') }}" method="get" class="site-search-bar" role="search"
+                    @submit="if (!(q || '').trim()) { $event.preventDefault(); }">
+                    <div class="site-search-bar__icon-wrap">
+                        <x-icon name="search" class="site-search-bar__icon size-5" />
                     </div>
-                    <button type="button" class="site-search__sheet-close" @click="closeSearch()" aria-label="Đóng tìm kiếm">
+                    <input type="search" name="q" x-model="q" x-ref="searchInput"
+                        placeholder="{{ $cruiseNav['search_placeholder'] ?? 'Tìm điểm đến, tour trọn gói, khách sạn, cẩm nang…' }}"
+                        class="site-search-bar__input" autocomplete="off" enterkeyhint="search">
+                    
+                    <button type="button" class="site-search-bar__clear" x-show="q.length" @click="q = ''; $refs.searchInput.focus()"
+                        aria-label="Xóa từ khóa">
+                        <x-icon name="close" class="size-4" />
+                    </button>
+                    <button type="submit" class="site-search-bar__submit" aria-label="Tìm kiếm">
+                        <span>Tìm kiếm</span>
+                        <x-icon name="arrow-right" class="size-4" />
+                    </button>
+                    <button type="button" class="site-search-bar__close-btn" @click="closeSearch()" aria-label="Đóng">
                         <x-icon name="close" class="size-5" />
                     </button>
-                </div>
+                </form>
             </div>
 
-            <form action="{{ locale_route('search') }}" method="get" class="site-search-bar" role="search"
-                @submit="if (!(q || '').trim()) { $event.preventDefault(); }">
-                <x-icon name="search" class="site-search-bar__icon size-5" />
-                <input type="search" name="q" x-model="q" x-ref="searchInput"
-                    placeholder="{{ $cruiseNav['search_placeholder'] ?? 'Tìm tour, điểm đến, du thuyền, bài viết…' }}"
-                    class="site-search-bar__input" autocomplete="off" enterkeyhint="search">
-                <button type="button" class="site-search-bar__clear" x-show="q.length" @click="q = ''; $refs.searchInput.focus()"
-                    aria-label="Xóa từ khóa">
-                    <x-icon name="close" class="size-4" />
-                </button>
-                <button type="submit" class="btn-primary-sm site-search-bar__submit">
-                    <x-icon name="search" class="size-5 shrink-0" />
-                    <span>Tìm kiếm</span>
-                </button>
-                <button type="button" class="site-search-bar__close" @click="closeSearch()" aria-label="Đóng tìm kiếm">
-                    <x-icon name="close" class="size-5" />
-                </button>
-            </form>
-
-            <div class="site-search__scroll">
+            {{-- Nội dung kết quả tìm kiếm thông minh --}}
+            <div class="site-search__scroll vt-scrollbar">
                 <div class="site-search__body">
+                    {{-- Cột Điểm đến / Tuyến nổi bật --}}
                     <div class="site-search__col">
-                        <p class="site-search__label">Điểm đến</p>
+                        <div class="site-search__col-head">
+                            <span class="site-search__col-icon"><x-icon name="map-pin" class="size-3.5" /></span>
+                            <span class="site-search__label">Điểm đến &amp; Khu vực</span>
+                        </div>
                         <ul class="site-search__list">
                             <template x-for="d in filteredDestinations" :key="d.slug">
                                 <li>
-                                    <a :href="d.url" class="site-search__item" @click="closeSearch()">
-                                        <span class="site-search__item-icon"><x-icon name="map-pin" class="size-4" /></span>
-                                        <span class="min-w-0 flex-1">
-                                            <span class="site-search__item-title" x-text="d.name"></span>
-                                            <span class="site-search__item-meta" x-text="d.tagline"></span>
+                                    <a :href="d.url" class="site-search__item group" @click="closeSearch()">
+                                        <div class="site-search__item-avatar">
+                                            <x-icon name="map-pin" class="size-4" />
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="site-search__item-title" x-text="d.name"></div>
+                                            <div class="site-search__item-meta" x-text="d.tagline || 'Khám phá hành trình'"></div>
+                                        </div>
+                                        <span class="site-search__item-badge" x-show="d.count > 0">
+                                            <span x-text="d.count"></span> tour
                                         </span>
-                                        <span class="site-search__item-count" x-text="d.count"></span>
                                     </a>
                                 </li>
                             </template>
                         </ul>
                         <template x-if="filteredDestinations.length === 0">
-                            <p class="site-search__empty">Không có điểm đến khớp.</p>
+                            <div class="site-search__empty">
+                                <x-icon name="info" class="size-4 opacity-60" />
+                                <span>Không có điểm đến phù hợp</span>
+                            </div>
                         </template>
                     </div>
 
+                    {{-- Cột Tour / Trải nghiệm gợi ý --}}
                     <div class="site-search__col">
-                        <p class="site-search__label" x-text="qNorm ? 'Tour gợi ý' : 'Tour nổi bật'"></p>
+                        <div class="site-search__col-head">
+                            <span class="site-search__col-icon"><x-icon name="compass" class="size-3.5" /></span>
+                            <span class="site-search__label" x-text="qNorm ? 'Hành trình gợi ý' : 'Hành trình được yêu thích'"></span>
+                        </div>
                         <ul class="site-search__list">
                             <template x-for="t in filteredTours" :key="t.url">
                                 <li>
-                                    <a :href="t.url" class="site-search__item" @click="closeSearch()">
-                                        <span class="site-search__item-icon"><x-icon name="compass" class="size-4" /></span>
-                                        <span class="min-w-0 flex-1">
-                                            <span class="site-search__item-title" x-text="t.title"></span>
-                                            <span class="site-search__item-meta" x-text="[t.country, t.duration].filter(Boolean).join(' · ')"></span>
-                                        </span>
-                                        <x-icon name="arrow-right" class="size-4 shrink-0 text-muted" />
+                                    <a :href="t.url" class="site-search__item group" @click="closeSearch()">
+                                        <div class="site-search__item-avatar site-search__item-avatar--tour">
+                                            <x-icon name="route" class="size-4" />
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="site-search__item-title group-hover:text-primary-700" x-text="t.title"></div>
+                                            <div class="site-search__item-meta" x-text="[t.country, t.duration].filter(Boolean).join(' · ')"></div>
+                                        </div>
+                                        <x-icon name="arrow-right" class="site-search__item-arrow size-4" />
                                     </a>
                                 </li>
                             </template>
                         </ul>
                         <template x-if="filteredTours.length === 0">
-                            <p class="site-search__empty">Không có tour khớp — nhấn Enter để tìm toàn site.</p>
+                            <div class="site-search__empty">
+                                <x-icon name="info" class="size-4 opacity-60" />
+                                <span>Không có tour khớp — Nhấn Enter để tìm toàn bộ hệ thống</span>
+                            </div>
                         </template>
                     </div>
                 </div>
 
-                <div class="site-search__footer" x-show="!qNorm && keywords.length">
-                    <p class="site-search__label">Từ khóa phổ biến</p>
-                    <div class="flex flex-wrap gap-2">
+                {{-- Footer: Từ khóa phổ biến --}}
+                <div class="site-search__keywords" x-show="!qNorm && keywords.length">
+                    <div class="site-search__keywords-label">
+                        <x-icon name="sparkles" class="size-3.5 text-accent-500" />
+                        <span>Xu hướng tìm kiếm:</span>
+                    </div>
+                    <div class="site-search__chips">
                         <template x-for="kw in keywords" :key="kw">
                             <a :href="'{{ locale_route('search') }}?q=' + encodeURIComponent(kw)"
-                                class="site-search-chip site-search-chip--soft" x-text="kw" @click="closeSearch()"></a>
+                                class="site-search-chip" @click="closeSearch()">
+                                <x-icon name="search" class="size-3 text-muted" />
+                                <span x-text="kw"></span>
+                            </a>
                         </template>
                     </div>
                 </div>
+            </div>
 
-                <p class="site-search__hint">
-                    Nhấn <kbd>Enter</kbd> để xem tất cả kết quả · <kbd>Esc</kbd> để đóng · <kbd>/</kbd> để mở nhanh
-                </p>
+            {{-- Footer shortcuts bar --}}
+            <div class="site-search__footer-bar">
+                <div class="site-search__shortcut">
+                    <span>Nhấn <kbd>↵ Enter</kbd> để tìm kiếm</span>
+                    <span>·</span>
+                    <span><kbd>Esc</kbd> để đóng</span>
+                </div>
+                <div class="site-search__brand-mark">
+                    <span>{{ $brandName }}</span>
+                </div>
             </div>
         </div>
     </div>

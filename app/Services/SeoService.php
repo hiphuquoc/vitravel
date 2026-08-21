@@ -479,9 +479,19 @@ class SeoService
             return;
         }
 
-        $children = $parent->children()->with('translations')->get();
+        // Truy vấn mọi con mà không bị chặn bởi project global scope
+        $children = $parent->children()
+            ->withoutGlobalScope('project')
+            ->with(['translations' => fn ($q) => $q->withoutGlobalScope('project')])
+            ->get();
 
         foreach ($children as $child) {
+            // Cập nhật lại level của node con = level của cha + 1
+            $newChildLevel = ((int) ($parent->level ?? 1)) + 1;
+            if ((int) $child->level !== $newChildLevel) {
+                $child->update(['level' => $newChildLevel]);
+            }
+
             $childTrans = $child->translations->firstWhere('language_id', $languageId);
             if (! $childTrans || ! filled($childTrans->slug)) {
                 continue;
@@ -521,6 +531,7 @@ class SeoService
                 continue;
             }
 
+            // 1. Thử tìm trong Scope dự án hiện tại trước
             $query = SeoEntryTranslation::query()
                 ->where('language_id', $languageId)
                 ->where(function ($q) use ($normalized, $withoutSlash) {
@@ -533,12 +544,33 @@ class SeoService
             }
 
             $trans = $query->first();
+
+            // 2. Fallback tìm không phân biệt project_id (hỗ trợ các URL chuyên mục con của dự án con/tỉnh thành)
+            if (! $trans) {
+                $fallbackQuery = SeoEntryTranslation::withoutGlobalScope('project')
+                    ->where('language_id', $languageId)
+                    ->where(function ($q) use ($normalized, $withoutSlash) {
+                        $q->where('slug_full', $normalized)
+                            ->orWhere('slug_full', $withoutSlash);
+                    });
+
+                if ($publishedOnly) {
+                    $fallbackQuery->where('status', 'published');
+                }
+
+                $trans = $fallbackQuery->first();
+            }
+
             if (! $trans) {
                 continue;
             }
 
-            $entry = SeoEntry::query()
-                ->with(['reference', 'parent.translations', 'translations'])
+            $entry = SeoEntry::withoutGlobalScope('project')
+                ->with([
+                    'reference' => fn ($q) => $q->withoutGlobalScope('project'),
+                    'parent.translations',
+                    'translations' => fn ($q) => $q->withoutGlobalScope('project'),
+                ])
                 ->find($trans->seo_entry_id);
 
             if (! $entry) {
@@ -892,16 +924,42 @@ class SeoService
      * @param  string|list<string>|null  $parentType
      * @return Collection<int, SeoEntry>
      */
-    public function parentOptions(string|array|null $parentType, ?int $excludeId = null): Collection
+    public function parentOptions(string|array|null $parentType, ?int $excludeId = null, ?string $cluster = null, ?int $projectId = null): Collection
     {
         $types = array_values(array_filter((array) $parentType));
         if ($types === []) {
             return collect();
         }
 
-        $query = SeoEntry::query()
-            ->with(['translations'])
+        $activeProjectId = $projectId ?? \App\Support\ProjectContext::id();
+
+        $query = SeoEntry::withoutGlobalScope('project')
+            ->with(['translations' => fn ($q) => $q->withoutGlobalScope('project')])
             ->whereIn('type', $types);
+
+        if ($activeProjectId) {
+            $query->where(function ($q) use ($activeProjectId) {
+                $q->where('project_id', $activeProjectId)
+                    ->orWhereNull('project_id');
+            });
+        }
+
+        if ($cluster) {
+            // Nếu có lọc cluster (ví dụ stay, experience, extra...)
+            // Chỉ lấy SeoEntry là Hub tương ứng hoặc ServiceCategory có cluster tương ứng
+            $query->where(function ($q) use ($cluster) {
+                $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
+                if ($hubKey) {
+                    $q->where('type', $hubKey);
+                }
+                $q->orWhere(function ($sub) use ($cluster) {
+                    $sub->where('type', 'service_category')
+                        ->whereHasMorph('reference', [\App\Models\ServiceCategory::class], function ($catQ) use ($cluster) {
+                            $catQ->withoutGlobalScope('project')->where('cluster', $cluster);
+                        });
+                });
+            });
+        }
 
         if ($excludeId) {
             $query->where('id', '!=', $excludeId);

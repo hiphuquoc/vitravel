@@ -54,7 +54,7 @@
 
     $sidebarMeta = array_values(array_filter([
         ['icon' => 'calendar', 'label' => 'Thời lượng', 'value' => $item['duration'] ?? null],
-        ['icon' => 'tag', 'label' => 'Mã', 'value' => $item['tourCode'] ?? null],
+        ['icon' => 'map-pin', 'label' => 'Khởi hành', 'value' => $item['start'] ?? null],
     ], fn ($row) => filled($row['value'] ?? null)));
 
     $sidebarPrice = (! empty($item['priceFrom']) && (float) $item['priceFrom'] > 0)
@@ -244,22 +244,24 @@
             :aria-label="'Đặt '.($isCruise ? 'du thuyền' : 'tour')"
             :price="$sidebarPrice"
             price-label="Giá từ"
-            price-hint="Giá tham khảo / khách — báo giá chính xác trong 24h"
-            fallback-price="Nhận báo giá trong 24h"
+            price-unit="/ khách"
+            :price-hint="$isCruise ? 'Giá trọn gói hải trình & cabin' : 'Giá trọn gói lịch trình tiêu chuẩn'"
+            fallback-price="Liên hệ đặt tour"
             :meta-items="$sidebarMeta"
             :badge="$item['badge'] ?? null"
-            :primary-href="route('customize')"
-            primary-label="Yêu cầu báo giá"
-            primary-label-short="Báo giá"
-            primary-icon="sparkles"
+            :primary-href="$hasPriceTable ? '#bang-gia' : locale_route('customize')"
+            :primary-label="$isCruise ? 'Đặt du thuyền ngay' : 'Đặt tour ngay'"
+            :primary-label-short="$isCruise ? 'Đặt tàu' : 'Đặt tour'"
+            primary-icon="calendar"
+            :secondary-href="locale_route('customize')"
+            secondary-label="Yêu cầu lịch riêng"
+            secondary-icon="route"
             :whatsapp="$waPhone !== '' ? $waPhone : null"
             :usps="[
-                ['icon' => 'expert', 'label' => 'Chuyên gia bản địa thiết kế riêng'],
-                ['icon' => 'refund', 'label' => 'Cam kết hoàn tiền minh bạch'],
-                ['icon' => 'value', 'label' => 'Giá trị vượt trội, không phí ẩn'],
-                ['icon' => 'support', 'label' => 'Hỗ trợ 24/7 suốt hành trình'],
+                ['icon' => 'shield', 'label' => 'Bảo hiểm & dịch vụ trọn gói'],
+                ['icon' => 'check', 'label' => 'Khởi hành đúng hẹn, giá minh bạch'],
             ]"
-            trust="Được đề xuất trên TripAdvisor"
+            trust="Đảm bảo chất lượng & hỗ trợ tận tâm"
         />
     </div>
 </div>
