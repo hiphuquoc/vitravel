@@ -845,8 +845,8 @@ final class StayCrawlService
 
         $php = $this->phpCliBinary();
         $artisan = base_path('artisan');
-        $setsid = $this->safeIsExecutable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
-        $nohup = $this->safeIsExecutable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
+        $setsid = is_executable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
+        $nohup = is_executable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
         $parts = array_values(array_filter([
             $setsid,
             $nohup,
@@ -1084,8 +1084,8 @@ final class StayCrawlService
 
         $php = $this->phpCliBinary();
         $artisan = base_path('artisan');
-        $setsid = $this->safeIsExecutable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
-        $nohup = $this->safeIsExecutable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
+        $setsid = is_executable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
+        $nohup = is_executable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
         $parts = array_values(array_filter([
             $setsid,
             $nohup,
@@ -1121,31 +1121,6 @@ final class StayCrawlService
         );
     }
 
-    /**
-     * Wrapper an toàn cho is_executable() — tránh lỗi open_basedir trên aaPanel/cPanel.
-     * Khi bị chặn, fallback dùng shell `test -x`.
-     */
-    private function safeIsExecutable(string $path): bool
-    {
-        if ($path === '') {
-            return false;
-        }
-
-        // Suppress open_basedir warning
-        $result = @is_executable($path);
-        if ($result) {
-            return true;
-        }
-
-        // Nếu open_basedir chặn, fallback qua shell
-        $check = @shell_exec('test -x ' . escapeshellarg($path) . ' && echo 1 2>/dev/null');
-        if (trim((string) $check) === '1') {
-            return true;
-        }
-
-        return false;
-    }
-
     private function phpCliBinary(): string
     {
         $candidates = array_filter([
@@ -1156,7 +1131,7 @@ final class StayCrawlService
             PHP_SAPI === 'cli' ? PHP_BINARY : '',
         ]);
         foreach ($candidates as $path) {
-            if (is_string($path) && $path !== '' && $this->safeIsExecutable($path) && ! str_contains($path, 'php-fpm')) {
+            if (is_string($path) && $path !== '' && is_executable($path) && ! str_contains($path, 'php-fpm')) {
                 return $path;
             }
         }

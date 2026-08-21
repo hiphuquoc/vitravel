@@ -72,10 +72,9 @@ final class StayCrawlImporter
         return DB::transaction(function () use ($item, $row, $categoryId, $locale, $existing, $strategy) {
             $service = $existing ?? new Service;
             $service->fill($this->serviceFill($row, $categoryId, $existing));
-            if ($strategy !== 'improve' || ! $existing) {
-                $service->status = 'draft';
-                $service->published_at = null;
-            }
+            // Cào xong mặc định publish (public); improve giữ published_at cũ nếu đã có.
+            $service->status = 'published';
+            $service->published_at = $existing?->published_at ?? $service->published_at ?? now();
             $service->save();
 
             $langId = Language::idByCode($locale);
@@ -114,7 +113,7 @@ final class StayCrawlImporter
                 'description' => $row['seo_description'] ?? ($row['content'] ?? $row['title']),
                 'seo_title' => $row['seo_title'] ?? $row['title'],
                 'seo_description' => $row['seo_description'] ?? ($row['content'] ?? $row['title']),
-                'status' => ($strategy === 'improve' && $existing?->status === 'published') ? 'published' : 'draft',
+                'status' => 'published',
                 'parent_id' => $this->seoParentIdForCategory($categoryId, $locale),
                 'reclaim_slug_full' => true,
             ], 'service');
@@ -199,7 +198,7 @@ final class StayCrawlImporter
             'rating' => $row['rating'] ?? $existing?->rating ?? 0,
             'review_count' => $row['review_count'] ?? $existing?->review_count ?? 0,
             'star_rating' => $row['star_rating'] ?? $existing?->star_rating,
-            'status' => $existing?->status ?? 'draft',
+            'status' => $existing?->status ?? 'published',
             'attrs' => $row['attrs'] ?? [],
         ];
     }
