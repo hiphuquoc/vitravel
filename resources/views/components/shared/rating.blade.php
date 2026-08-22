@@ -1,10 +1,12 @@
-@props([
+﻿@props([
     'rating' => 0,
     'count' => null,
 ])
 
 @php
-    $rating = (float) $rating;
+    $rawRating = (float) $rating;
+    $rating = $rawRating > 5.0 ? round($rawRating / 2, 1) : $rawRating;
+
     $label = match (true) {
         $rating >= 4.5 => 'Xuất sắc',
         $rating >= 4.0 => 'Rất tốt',
@@ -16,7 +18,7 @@
 @endphp
 
 {{-- Điểm số + sao tip bo tròn nhẹ + nhãn + lượt đánh giá (một style dùng chung mọi nơi) --}}
-<span {{ $attributes->merge(['class' => 'rating']) }}>
+<span {{ $attributes->merge(['class' => 'rating']) }} title="Đánh giá {{ number_format($rating, 1) }}/5">
     <span class="rating-badge">
         {{ $rating > 0 ? number_format($rating, 1) : '—' }}
     </span>

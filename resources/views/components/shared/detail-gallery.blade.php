@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'title',
     'coverSrc' => null,
     'coverSrcset' => null,
@@ -21,7 +21,7 @@
         }
         $path = parse_url($url, PHP_URL_PATH) ?: $url;
 
-        return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
+        return preg_replace('/(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
     };
 
     $coverNorm = $normUrl($coverSrc);
@@ -155,26 +155,43 @@
     @if ($showTitleCard)
         <div class="card detail-title-card">
             @if (count($breadcrumbs) > 0)
-                <x-layout.breadcrumb :items="$breadcrumbs" class="breadcrumb--page" />
+                <x-layout.breadcrumb :items="$breadcrumbs" class="breadcrumb--page mb-2.5" />
             @endif
+
             <div class="detail-title-card__main">
-                @if (filled($kicker))
-                    <p class="kicker detail-title-card__kicker">{{ $kicker }}</p>
-                @endif
-                <h1 class="detail-title-card__h1">{{ $title }}</h1>
-                @if (filled($starRating) || filled($location) || $rating !== null)
+                <div class="detail-title-card__header-group">
+                    {{-- Hàng 1: Badge Phân loại + Hạng sao --}}
+                    @if (filled($kicker) || filled($starRating))
+                        <div class="detail-title-card__tags">
+                            @if (filled($kicker))
+                                <span class="stay-property-type-pill">{{ $kicker }}</span>
+                            @endif
+                            @if (filled($starRating))
+                                <x-stay.star-rating :rating="$starRating" size="sm" />
+                            @endif
+                        </div>
+                    @endif
+
+                    {{-- Hàng 2: Tiêu đề H1 sạch sẽ, vừa vặn, chuẩn font dự án --}}
+                    <h1 class="detail-title-card__h1">{{ $title }}</h1>
+                </div>
+
+                {{-- Hàng 3: Rating + Vị trí tự nhiên, liền mạch --}}
+                @if (filled($location) || $rating !== null)
                     <div class="detail-title-card__meta">
                         @if ($rating !== null)
-                            <x-shared.rating :rating="$rating" :count="$reviewCount ?? 0" class="detail-title-card__rating" />
+                            <div class="detail-title-card__rating-wrap">
+                                <x-shared.rating :rating="$rating" :count="$reviewCount ?? 0" class="detail-title-card__rating" />
+                            </div>
                         @endif
-                        @if (filled($starRating))
-                            <x-stay.star-rating :rating="$starRating" size="md" />
-                        @endif
+
                         @if (filled($location))
-                            <span class="detail-title-card__meta-item">
-                                <x-icon name="map-pin" class="size-4" />
-                                <span>{{ $location }}</span>
-                            </span>
+                            <div class="detail-title-card__location">
+                                <span class="detail-title-card__pin-icon">
+                                    <x-icon name="map-pin" class="size-4" />
+                                </span>
+                                <span class="detail-title-card__address">{{ $location }}</span>
+                            </div>
                         @endif
                     </div>
                 @endif

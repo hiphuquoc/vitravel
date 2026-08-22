@@ -32,14 +32,14 @@
 {{-- Card ngang dịch vụ: ảnh trái ~40%, nội dung phải --}}
 <article {{ $attributes->merge(['class' => 'card group overflow-hidden transition hover:shadow-(--shadow-card-hover)']) }}>
     <div class="grid sm:grid-cols-[40%_1fr]">
-        <a href="{{ $href }}" class="relative block overflow-hidden" aria-hidden="true" tabindex="-1">
+        <a href="{{ $href }}" class="relative block h-52 sm:h-full min-h-[13rem] sm:min-h-[16rem] overflow-hidden" aria-hidden="true" tabindex="-1">
             @if (! empty($item['image']))
                 <x-img
                     :src="$item['image']"
                     :srcset="$item['imageSrcset'] ?? null"
                     preset="card-wide"
                     :alt="$item['title']"
-                    class="tour-card-media tour-card-media--wide transition duration-500 group-hover:scale-105"
+                    class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
             @else
                 <x-ph
@@ -64,21 +64,26 @@
 
         <div class="card-body flex flex-col">
             <div class="card-inner flex-1">
+                @if (($isStay && filled($propertyTypeLabel)) || ! empty($item['starRating']))
+                    <div class="flex items-center gap-2 mb-1">
+                        @if ($isStay && filled($propertyTypeLabel))
+                            <span class="stay-property-type-pill">{{ $propertyTypeLabel }}</span>
+                        @endif
+                        @if (! empty($item['starRating']))
+                            <x-stay.star-rating :rating="$item['starRating']" size="sm" />
+                        @endif
+                    </div>
+                @endif
+
                 <h3 class="tour-card-title item-title">
                     <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $item['title'] }}</a>
                 </h3>
 
-                <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
-                    @if ($isStay && filled($propertyTypeLabel))
-                        <span class="stay-property-type-pill">{{ $propertyTypeLabel }}</span>
-                    @endif
-                    @if (! empty($item['starRating']))
-                        <x-stay.star-rating :rating="$item['starRating']" size="sm" />
-                    @endif
-                    @if (! empty($item['rating']))
+                @if (! empty($item['rating']))
+                    <div class="mt-2 flex flex-wrap items-center gap-1.5">
                         <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount'] ?? 0" />
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 @if (! empty($item['places']))
                     <p class="tour-card-places">

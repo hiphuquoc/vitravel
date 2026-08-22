@@ -67,10 +67,6 @@
         $tabs['phong'] = 'Hạng phòng';
         $sectionIds[] = 'phong';
     }
-    if ($bodyHtml !== '') {
-        $tabs['gioi-thieu'] = 'Giới thiệu';
-        $sectionIds[] = 'gioi-thieu';
-    }
     if ($nearbyGroups !== []) {
         $tabs['vi-tri'] = 'Vị trí';
         $sectionIds[] = 'vi-tri';
@@ -177,7 +173,7 @@
                         @endif
 
                         @if ($bodyHtml !== '')
-                            <div id="gioi-thieu" class="stay-about-section" x-data="{ expanded: false }">
+                            <div class="stay-about-section" x-data="{ expanded: false }">
                                 <div class="stay-section-subhead">
                                     <div class="stay-facts-grid__label">
                                         <x-icon name="info" class="size-4 text-primary-600 shrink-0" />

@@ -63,21 +63,26 @@
     </a>
     <div class="card-body flex flex-1 flex-col">
         <div class="card-inner flex-1">
+            @if (($isStay && filled($propertyTypeLabel)) || ! empty($item['starRating']))
+                <div class="flex items-center gap-2 mb-1">
+                    @if ($isStay && filled($propertyTypeLabel))
+                        <span class="stay-property-type-pill">{{ $propertyTypeLabel }}</span>
+                    @endif
+                    @if (! empty($item['starRating']))
+                        <x-stay.star-rating :rating="$item['starRating']" size="sm" />
+                    @endif
+                </div>
+            @endif
+
             <h3 class="tour-card-title item-title">
                 <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $item['title'] }}</a>
             </h3>
 
-            <div class="mt-1.5 flex flex-wrap items-center gap-1.5">
-                @if ($isStay && filled($propertyTypeLabel))
-                    <span class="stay-property-type-pill">{{ $propertyTypeLabel }}</span>
-                @endif
-                @if (! empty($item['starRating']))
-                    <x-stay.star-rating :rating="$item['starRating']" size="sm" />
-                @endif
-                @if (! empty($item['rating']))
+            @if (! empty($item['rating']))
+                <div class="mt-2 flex flex-wrap items-center gap-1.5">
                     <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount'] ?? 0" />
-                @endif
-            </div>
+                </div>
+            @endif
 
             @if (! empty($item['location']))
                 <p class="tour-card-places line-clamp-2">

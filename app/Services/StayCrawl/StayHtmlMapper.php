@@ -146,7 +146,7 @@ final class StayHtmlMapper
         ];
         foreach ($candidates as $raw) {
             $t = $this->clean((string) $raw);
-            $t = preg_replace('/\s*[|,].*(Booking\.com|Phú Quốc).*$/iu', '', $t) ?? $t;
+            $t = preg_replace('/\s*[|,].*(Booking\.com|Phú Quốc|\(cập nhật|cập nhật giá).*$/iu', '', $t) ?? $t;
             if ($t !== '' && ! str_contains(mb_strtolower($t), 'booking.com')) {
                 return $t;
             }
@@ -161,7 +161,7 @@ final class StayHtmlMapper
         if (! is_string($text) || $text === '') {
             $text = $this->firstText($xpath, '//*[@data-testid="PropertyHeaderAddressDesktop-wrapper"]');
         }
-        $text = preg_replace('/Sau khi đặt phòng.*$/u', '', $text) ?? $text;
+        $text = preg_replace('/(Vị trí|Sau khi đặt phòng|Được khách đánh giá|–?\s*Vị trí tốt).*$/iu', '', $text) ?? $text;
         $text = preg_replace('/–?\s*Vị trí tốt.*$/u', '', $text) ?? $text;
         $text = $this->clean($text);
 
