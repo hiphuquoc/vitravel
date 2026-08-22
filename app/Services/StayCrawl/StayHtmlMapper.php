@@ -158,7 +158,7 @@ final class StayHtmlMapper
     private function address(?DOMXPath $xpath): ?string
     {
         $text = $this->firstText($xpath, '//*[@data-testid="PropertyHeaderAddressDesktop-wrapper"]//button');
-        if ($text === '') {
+        if (! is_string($text) || $text === '') {
             $text = $this->firstText($xpath, '//*[@data-testid="PropertyHeaderAddressDesktop-wrapper"]');
         }
         $text = preg_replace('/Sau khi đặt phòng.*$/u', '', $text) ?? $text;
@@ -1173,7 +1173,19 @@ final class StayHtmlMapper
         $pagePolicies = $this->policiesFromXpath($xpath);
         $out = array_merge($pagePolicies, $out);
         foreach ($out as $key => $value) {
-            if ($this->isJunkPolicyText((string) $value)) {
+            if ($key === '_sections') {
+                if (is_array($value)) {
+                    $out['_sections'] = array_values(array_filter(
+                        $value,
+                        fn ($sec) => is_array($sec) && isset($sec['body']) && ! $this->isJunkPolicyText((string) $sec['body'])
+                    ));
+                    if (empty($out['_sections'])) {
+                        unset($out['_sections']);
+                    }
+                }
+                continue;
+            }
+            if (! is_string($value) || $this->isJunkPolicyText($value)) {
                 unset($out[$key]);
             }
         }
@@ -1526,9 +1538,9 @@ final class StayHtmlMapper
         return rtrim($text, " \t.;");
     }
 
-    private function isJunkPolicyText(string $text): bool
+    private function isJunkPolicyText(mixed $text): bool
     {
-        if ($text === '') {
+        if (! is_string($text) || $text === '') {
             return true;
         }
         if (str_contains($text, '{') || str_contains($text, '}') || str_contains($text, '\\u')) {
