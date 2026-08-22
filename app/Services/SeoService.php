@@ -606,11 +606,14 @@ class SeoService
         $locale ??= app()->getLocale();
 
         // Alias dự án 1 điểm đến (zones) → shape CMS (countries)
-        if ($routeName === 'guide.zone') {
+        if (in_array($routeName, ['guide.zone', 'guide.category'], true)) {
             $routeName = 'guide.country';
         }
         if (isset($params['zone']) && ! isset($params['country'])) {
             $params['country'] = $params['zone'];
+        }
+        if (isset($params['category']) && ! isset($params['country'])) {
+            $params['country'] = $params['category'];
         }
 
         return match ($routeName) {

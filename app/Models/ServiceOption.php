@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ServiceOption extends Model
 {
@@ -37,5 +38,13 @@ class ServiceOption extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    /** @return BelongsToMany<StayAmenity> */
+    public function stayAmenities(): BelongsToMany
+    {
+        return $this->belongsToMany(StayAmenity::class, 'stay_amenity_service_option')
+            ->withPivot(['sort'])
+            ->orderByPivot('sort');
     }
 }

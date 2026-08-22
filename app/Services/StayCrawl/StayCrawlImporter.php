@@ -16,6 +16,7 @@ use App\Models\StayCrawlItem;
 use App\Services\HtmlCacheService;
 use App\Services\SeoService;
 use App\Services\ServicePurgeService;
+use App\Services\StayTaxonomyService;
 use App\Support\StayBookingUrl;
 use App\Support\StayFacilities;
 use App\Support\StaySeed;
@@ -28,6 +29,7 @@ final class StayCrawlImporter
     public function __construct(
         private readonly SeoService $seo,
         private readonly ServicePurgeService $purger,
+        private readonly StayTaxonomyService $taxonomy,
     ) {}
 
     /**
@@ -123,9 +125,22 @@ final class StayCrawlImporter
             $item->imported_at = now();
             $item->save();
 
+            // Đồng bộ Tags Tiện ích & Địa danh lân cận từ attrs
+            $serviceAttrs = is_array($service->attrs) ? $service->attrs : [];
+            $this->taxonomy->syncServiceTaxonomies($service, $serviceAttrs, $locale);
+
+            // Đồng bộ tiện ích phòng cho từng hạng phòng
+            foreach ($service->options as $opt) {
+                $optAttrs = is_array($opt->attrs) ? $opt->attrs : [];
+                $roomAmenities = \App\Support\StayFacilities::stringList($optAttrs['amenities'] ?? null);
+                if ($roomAmenities !== []) {
+                    $this->taxonomy->syncOptionAmenities($opt, $roomAmenities, $locale);
+                }
+            }
+
             app(HtmlCacheService::class)->clearAll();
 
-            return $service->fresh(['options', 'faqs', 'seoEntry.translations']);
+            return $service->fresh(['options', 'faqs', 'seoEntry.translations', 'stayAmenities.translations', 'stayPlaces.translations']);
         });
     }
 

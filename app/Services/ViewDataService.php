@@ -1939,6 +1939,8 @@ class ViewDataService
             // Crawl overlay chỉ để hiển thị — không được làm rơi trang public.
         }
         $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
+        // Ưu tiên dữ liệu từ relations (StayTaxonomyService), fallback JSON attrs
+        $taxonomyData = app(\App\Services\StayTaxonomyService::class)->resolvePublicData($service, $this->locale());
         $sections = \App\Support\StayFacilities::resolvePublicSections($attrs);
 
         $payload['isStay'] = true;
@@ -1956,11 +1958,15 @@ class ViewDataService
         $payload['checkIn'] = (string) ($attrs['check_in'] ?? '15:00');
         $payload['checkOut'] = (string) ($attrs['check_out'] ?? '12:00');
         $payload['amenities'] = [];
-        $payload['highlightBadges'] = \App\Support\StayFacilities::stringList(
-            $attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null,
-        );
-        $payload['amenityGroups'] = $sections['amenityGroups'];
-        $payload['nearbyGroups'] = $sections['nearbyGroups'];
+        $payload['highlightBadges'] = ! empty($taxonomyData['highlightBadges'])
+            ? $taxonomyData['highlightBadges']
+            : \App\Support\StayFacilities::stringList($attrs['highlight_badges'] ?? $attrs['most_popular'] ?? null);
+        $payload['amenityGroups'] = ! empty($taxonomyData['amenityGroups'])
+            ? $taxonomyData['amenityGroups']
+            : $sections['amenityGroups'];
+        $payload['nearbyGroups'] = ! empty($taxonomyData['nearbyGroups'])
+            ? $taxonomyData['nearbyGroups']
+            : $sections['nearbyGroups'];
         $payload['reviewScores'] = $sections['reviewScores'];
         $payload['attrs'] = $attrs;
         $payload['totalRooms'] = isset($attrs['total_rooms']) ? (int) $attrs['total_rooms'] : null;

@@ -11,6 +11,7 @@ use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -97,5 +98,21 @@ class Service extends Model
     public function hubKey(): ?string
     {
         return config("services_catalog.clusters.{$this->cluster}.hub_key");
+    }
+
+    /** @return BelongsToMany<StayAmenity> */
+    public function stayAmenities(): BelongsToMany
+    {
+        return $this->belongsToMany(StayAmenity::class, 'stay_amenity_service')
+            ->withPivot(['is_popular', 'sort'])
+            ->orderByPivot('sort');
+    }
+
+    /** @return BelongsToMany<StayPlace> */
+    public function stayPlaces(): BelongsToMany
+    {
+        return $this->belongsToMany(StayPlace::class, 'stay_place_service')
+            ->withPivot(['distance_meters', 'sort'])
+            ->orderByPivot('sort');
     }
 }

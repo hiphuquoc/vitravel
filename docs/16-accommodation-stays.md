@@ -44,6 +44,27 @@ Mở rộng item trong key `services` khi `cluster` = `stay`:
 | `attrs.child_policy` / `extra_bed_policy` / `age_restriction` | Trẻ em, giường phụ, tuổi tối thiểu |
 | `attrs.pet_policy` / `smoking_policy` | Thú cưng / hút thuốc (property) |
 | `attrs.payment_policy` / `payment_cards` | Thanh toán + `string[]` thẻ (Visa, Mastercard…) |
+
+### Hệ thống Tags Tiện ích & Địa danh (v2 — relational)
+
+Từ phiên bản hiện tại, tiện ích nổi bật / tiện ích nhóm / tiện ích phòng và địa danh lân cận **không còn lưu text cứng** trong JSON `attrs` nữa, mà được chuẩn hoá thành hệ thống Tags quan hệ (relational taxonomy):
+
+| Bảng | Vai trò |
+|---|---|
+| `stay_amenities` + `stay_amenity_translations` | Tags Tiện ích chuẩn hoá, phân nhóm bằng `group_key` (linh động — bất kỳ key nào crawler trả về đều tự tạo) |
+| `stay_amenity_service` | Pivot nhiều-nhiều Khách sạn ↔ Tiện ích, có `is_popular` (highlight) và `sort` |
+| `stay_amenity_service_option` | Pivot nhiều-nhiều Hạng phòng ↔ Tiện ích phòng, có `sort` |
+| `stay_places` + `stay_place_translations` | Tags Địa danh chuẩn hoá, phân loại bằng `category` (beach, landmark, dining, nature, transport, other...) |
+| `stay_place_service` | Pivot nhiều-nhiều Khách sạn ↔ Địa danh, có `distance_meters` (int, đơn vị mét) và `sort` |
+
+**Luồng xử lý:**
+1. Crawler extract JSON → `StayCrawlImporter` gọi `StayTaxonomyService::syncServiceTaxonomies()`.
+2. Service tự động tra cứu **case-insensitive** (so sánh `LOWER(name)`): tag đã có → gắn relation; tag mới → tạo mới + gắn.
+3. Khoảng cách lân cận lưu dạng **mét (int)** bằng `StayDistance::parseMeters()`. Hiển thị quy đổi thông minh bằng `StayDistance::format()` (< 1km → "500 m", ≥ 1km → "1,6 km").
+4. Public view ưu tiên đọc từ relations (`StayTaxonomyService::resolvePublicData()`), fallback JSON `attrs` nếu chưa backfill.
+5. JSON `attrs` vẫn được giữ nguyên (backward-compatible) — không xoá.
+
+**Group keys linh động:** `group_key` trong `stay_amenities` và `category` trong `stay_places` **không bị giới hạn enum cứng**. Khi crawler trả về nhóm mới chưa từng có (ví dụ `coworking`, `rooftop`...), hệ thống tự động tạo tag với group đó. Label hiển thị lấy từ `config/stay.php` nếu có, fallback `ucfirst(str_replace('_', ' ', $key))`
 | `attrs.id_required_policy` | Giấy tờ check-in |
 | `content` | HTML «Về chỗ nghỉ» (AI được viết) |
 | `options[]` | Hạng phòng — xem schema overlay bên dưới |

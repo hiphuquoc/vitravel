@@ -279,7 +279,7 @@ if (! function_exists('locale_route')) {
     {
         if (! is_array($parameters) && is_string($parameters)) {
             $params = match ($name) {
-                'tours.index', 'guide.country', 'guide.zone' => ['country' => $parameters],
+                'tours.index', 'guide.country', 'guide.zone', 'guide.category' => ['country' => $parameters],
                 'cruises.index' => ['type' => $parameters],
                 default => [$parameters],
             };
@@ -289,6 +289,9 @@ if (! function_exists('locale_route')) {
 
         if (isset($params['zone']) && ! isset($params['country'])) {
             $params['country'] = $params['zone'];
+        }
+        if (isset($params['category']) && ! isset($params['country'])) {
+            $params['country'] = $params['category'];
         }
 
         // Chuỗi rỗng ≠ đủ tham số cho route SEO (tránh UrlGenerationException).
@@ -311,13 +314,13 @@ if (! function_exists('locale_route')) {
         $seoNames = [
             'tours.hub', 'tours.index', 'tours.show',
             'cruises.hub', 'cruises.index', 'cruises.show',
-            'guide.index', 'guide.country', 'guide.zone', 'guide.show',
+            'guide.index', 'guide.country', 'guide.zone', 'guide.category', 'guide.show',
             'services.hub', 'services.index', 'services.show',
         ];
 
         try {
             $path = route($name, $params === [] ? $parameters : $params, false);
-        } catch (\Illuminate\Routing\Exceptions\UrlGenerationException $e) {
+        } catch (\Illuminate\Routing\Exceptions\UrlGenerationException | \Symfony\Component\Routing\Exception\RouteNotFoundException $e) {
             if (in_array($name, $seoNames, true)) {
                 return $absolute ? url('/') : '/';
             }
