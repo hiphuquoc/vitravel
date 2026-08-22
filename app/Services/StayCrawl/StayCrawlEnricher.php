@@ -228,7 +228,7 @@ final class StayCrawlEnricher
             // HTTP fallback failed — use whatever browser gave us
         }
 
-        $photos = array_slice($this->mergeGalleryPhotos($browserPhotos, $httpPhotos), 0, 45);
+        $photos = $this->mergeGalleryPhotos($browserPhotos, $httpPhotos);
         $service = Service::query()->find($item->service_id);
         if (! $service) {
             $this->browser->cleanupImagesDir($imagesDir);
@@ -452,7 +452,7 @@ final class StayCrawlEnricher
                     // Modal không mang rate_options — không xoá rates đã import từ HPRT.
                     unset($option['attrs']['rate_options']);
                 }
-                $photos = array_slice(is_array($option['photos'] ?? null) ? $option['photos'] : [], 0, 12);
+                $photos = is_array($option['photos'] ?? null) ? $option['photos'] : [];
                 if ($photos === [] && is_array($option['attrs']['photos'] ?? null)) {
                     $photos = $option['attrs']['photos'];
                 }
@@ -641,7 +641,7 @@ final class StayCrawlEnricher
             if ($byUrl === []) {
                 continue;
             }
-            $photos = array_slice(is_array($option['photos'] ?? null) ? $option['photos'] : [], 0, 12);
+            $photos = is_array($option['photos'] ?? null) ? $option['photos'] : [];
             if ($photos === [] && is_array($option['attrs']['photos'] ?? null)) {
                 $photos = $option['attrs']['photos'];
             }

@@ -171,7 +171,7 @@ async function main() {
         const skipHtml = Boolean(input.skip_html);
         const downloadImages = input.download_images === true || input.download_images === 1 || input.download_images === 'true';
         const imagesDir = String(input.images_dir || '').trim();
-        const maxImages = Math.max(1, Number(input.max_images) || 120);
+        const maxImages = Math.max(1, Number(input.max_images) || 10000);
         const downloadOpts = {
             downloadImages: downloadImages && imagesDir !== '',
             imagesDir,
@@ -1107,7 +1107,7 @@ async function collectOneRoomPack(page, index, fallbackName = '', downloadOpts =
                     page,
                     normalizePhotoList(rooms[0].photos),
                     roomDir,
-                    Math.min(downloadOpts.maxImages || 40, 40),
+                    (downloadOpts.maxImages || 10000),
                     downloadOpts.concurrency || 6,
                 );
                 rooms[0].photos = dl.photos;
@@ -1351,7 +1351,7 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
             page,
             data.photos,
             roomDir,
-            Math.min(downloadOpts.maxImages || 40, 40),
+            (downloadOpts.maxImages || 10000),
             downloadOpts.concurrency || 6,
         );
         data.photos = dl.photos;
@@ -1435,7 +1435,7 @@ async function scrapeRoomFromTable(page, wantId, wantHash, nameHint = '') {
 }
 
 
-async function downloadPhotoList(page, photos, imagesDir, max = 120, concurrency = 8) {
+async function downloadPhotoList(page, photos, imagesDir, max = 10000, concurrency = 8) {
     const list = normalizePhotoList(Array.isArray(photos) ? photos : []);
     const limit = Math.min(list.length, Math.max(1, max));
     fs.mkdirSync(imagesDir, { recursive: true });
@@ -2173,7 +2173,7 @@ async function expandRoomModal(page, wantRoomId = '') {
                 || document.querySelector('.hprt-lightbox')
                 || document.querySelector('[data-testid="rp-content"]');
             if (!root) return;
-            const re = /xem thêm|show more|t?t c? ti?n|all amenities/i;
+            const re = /xem thï¿½m|show more|t?t c? ti?n|all amenities/i;
             for (const el of root.querySelectorAll('button, a, [role="button"]')) {
                 const t = (el.textContent || '').replace(/\s+/g, ' ').trim();
                 if (t.length < 80 && re.test(t)) {
@@ -2280,7 +2280,7 @@ async function scrapeRoomModal(page, fallbackName, wantRoomId = '') {
 
             const items = [...ul.querySelectorAll('li')]
                 .map((li) => (li.innerText || li.textContent || '').replace(/\s+/g, ' ').trim())
-                .filter((t) => t && t.length < 120 && !/xem thêm|show more/i.test(t));
+                .filter((t) => t && t.length < 120 && !/xem thï¿½m|show more/i.test(t));
 
             if (items.length) {
                 if (!amenity_groups[heading]) amenity_groups[heading] = [];
