@@ -20,10 +20,10 @@
     $staySections = \App\Support\StayFacilities::resolvePublicSections($stayAttrs);
     $payloadAmenity = is_array($service['amenityGroups'] ?? null) ? $service['amenityGroups'] : [];
     $payloadNearbyGroups = is_array($service['nearbyGroups'] ?? null) ? $service['nearbyGroups'] : [];
-    $amenityGroups = count($payloadAmenity) > count($staySections['amenityGroups'])
+    $amenityGroups = ! empty($payloadAmenity)
         ? $payloadAmenity
         : $staySections['amenityGroups'];
-    $nearbyGroups = count($payloadNearbyGroups) > count($staySections['nearbyGroups'])
+    $nearbyGroups = ! empty($payloadNearbyGroups)
         ? $payloadNearbyGroups
         : $staySections['nearbyGroups'];
     $reviewScores = $staySections['reviewScores'] !== []

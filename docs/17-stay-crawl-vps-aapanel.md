@@ -43,6 +43,45 @@ Laravel đọc `.env` → `config/stay.php` → `StayCrawlBrowser` **truyền** 
 - `shell_exec` / `exec` (spawn Chrome step / CLI dự phòng; listing chính dùng Laravel queue)
 - `pcntl_*` (tuỳ chọn)
 
+## 1.2 Cấu hình Nginx & PHP-FPM Timeout (Phòng ngừa ngắt kết nối 60s)
+
+Mặc định Nginx và PHP-FPM trên nhiều VPS thường đặt `fastcgi_read_timeout` là **60s**. Dù mã nguồn crawler đã được tối ưu bất đồng bộ hoàn toàn (khởi tạo job và poll trạng thái chỉ mất **< 0.5s**), việc cấu hình timeout dài ở tầng Nginx/PHP là lớp phòng vệ dự phòng quan trọng cho các tác vụ xuất/nhập dữ liệu nặng.
+
+### Nginx (aaPanel: WebSite → Site Settings → Config):
+Thêm các dòng sau vào khối `location ~ [^/]\.php(/|$)` hoặc `location ~ \.php$`:
+
+```nginx
+    fastcgi_read_timeout 600s;
+    fastcgi_send_timeout 600s;
+    fastcgi_connect_timeout 60s;
+```
+
+Nếu chạy qua reverse proxy (Node.js/Next.js/Cloudflare):
+```nginx
+    proxy_read_timeout 600s;
+    proxy_send_timeout 600s;
+```
+
+Sau đó reload Nginx:
+```bash
+sudo nginx -t && sudo nginx -s reload
+# hoặc trên aaPanel: App Store → Nginx → Reload
+```
+
+### PHP-FPM (aaPanel: App Store → PHP 8.3 → Settings):
+- **Configuration (php.ini)**:
+  ```ini
+  max_execution_time = 300
+  max_input_time = 300
+  ```
+- **FPM Profile (php-fpm.conf / www.conf)**:
+  ```ini
+  request_terminate_timeout = 600
+  ```
+- Sau đó **Restart PHP-FPM**.
+
+---
+
 ## 1.3 open_basedir (aaPanel — hay gặp)
 
 PHP-FPM thường chỉ cho phép:

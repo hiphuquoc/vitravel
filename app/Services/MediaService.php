@@ -404,6 +404,89 @@ class MediaService
     /**
      * Orphan â†’ xÃ³a file GCS + forceDelete row (purge stay / replace crawl).
      */
+    /**
+     * Bulk destroy orphan media (xóa file và DB theo lô, không l?p N query).
+     *
+     * @param list<int> $mediaIds
+     */
+    public function destroyOrphanMediaBatch(array $mediaIds): void
+    {
+        $mediaIds = array_values(array_unique(array_filter(
+            array_map('intval', $mediaIds),
+            fn (int $id) => $id > 0,
+        )));
+
+        if ($mediaIds === []) {
+            return;
+        }
+
+        // 1. Tìm các media_id dang du?c reference ? MediaAttachment
+        $referenced = MediaAttachment::query()
+            ->whereIn('media_id', $mediaIds)
+            ->pluck('media_id')
+            ->map('intval')
+            ->toArray();
+        $referencedSet = array_flip($referenced);
+
+        // 2. Tìm các media_id dang du?c reference ? foreign key tables
+        foreach ($this->mediaForeignKeys() as [$table, $column]) {
+            if (! Schema::hasTable($table) || ! Schema::hasColumn($table, $column)) {
+                continue;
+            }
+            $hits = DB::table($table)
+                ->whereIn($column, $mediaIds)
+                ->pluck($column)
+                ->map('intval')
+                ->toArray();
+            foreach ($hits as $hid) {
+                $referencedSet[$hid] = true;
+            }
+        }
+
+        // 3. L?c ra các media_id th?c s? m? côi (orphan)
+        $orphanIds = [];
+        foreach ($mediaIds as $id) {
+            if (! isset($referencedSet[$id])) {
+                $orphanIds[] = $id;
+            }
+        }
+
+        if ($orphanIds === []) {
+            return;
+        }
+
+        // 4. L?y Media models và gom paths theo disk d? delete theo batch
+        $medias = Media::query()->withTrashed()->whereIn('id', $orphanIds)->get();
+        $pathsByDisk = [];
+
+        foreach ($medias as $media) {
+            $diskName = $media->disk ?: $this->defaultDisk();
+            $pathsByDisk[$diskName] ??= [];
+            if (! empty($media->path)) {
+                $pathsByDisk[$diskName][] = $media->path;
+            }
+            foreach (($media->meta['variants'] ?? []) as $variant) {
+                if (! empty($variant['path'])) {
+                    $pathsByDisk[$diskName][] = $variant['path'];
+                }
+            }
+        }
+
+        foreach ($pathsByDisk as $diskName => $paths) {
+            try {
+                $disk = Storage::disk($diskName);
+                $uniquePaths = array_values(array_unique($paths));
+                if ($uniquePaths !== []) {
+                    $disk->delete($uniquePaths);
+                }
+            } catch (\Throwable) {
+                // ignore
+            }
+        }
+
+        // 5. Force delete các b?n ghi Media trong DB
+        Media::query()->withTrashed()->whereIn('id', $orphanIds)->forceDelete();
+    }
     public function destroyMediaIfOrphan(?Media $media): void
     {
         if (! $media) {

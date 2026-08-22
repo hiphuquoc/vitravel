@@ -1142,6 +1142,89 @@ async function collectOneRoomPack(page, index, fallbackName = '', downloadOpts =
  * Mở modal phòng: vào trang hotel → click link #RD… trên bảng phòng.
  * goto(url#RD…) thường không mở SPA overlay Booking.
  */
+async function openPhotosGallery(page) {
+    const already = await page.$('[data-testid="gallery-modal-grid"]');
+    if (already) {
+        return true;
+    }
+
+    const galleryTriggerSels = [
+        '[data-testid="property-gallery"] button',
+        '[data-testid="property-gallery"] img',
+        '[data-testid="property-gallery"]',
+        'button[data-testid="property-gallery-grid-button"]',
+        '[data-testid="image-carousel-wrapper"] button',
+        '[data-testid="image-carousel-wrapper"]',
+        '.bh-photo-grid button',
+        '.bh-photo-grid img',
+        '.bh-photo-grid',
+        '#photo_wrapper button',
+        '#photo_wrapper img',
+        '#photo_wrapper',
+        '[data-testid="hero-banner"] button',
+        '[data-testid="hero-banner"] img',
+        'button[data-testid="gallery-side-reviews-button"]',
+        '[data-testid="photo-grid-wrapper"] button',
+        '[data-testid="photo-grid-wrapper]',
+    ];
+
+    for (const sel of galleryTriggerSels) {
+        try {
+            const el = await page.$(sel);
+            if (el) {
+                await el.evaluate((node) => node.scrollIntoView({ block: 'center' }));
+                await sleep(200);
+                await el.click();
+                await sleep(500);
+                if (await page.$('[data-testid="gallery-modal-grid"]')) {
+                    return true;
+                }
+            }
+        } catch {
+            // ignore
+        }
+    }
+
+    await clickByText(page, 'thư viện ảnh|all chỗ|xem tất cả hợnh|xem tất cả ảnh|all photos|see all photos|photos|xem thêm ảnh');
+    await sleep(500);
+    if (await page.$('[data-testid="gallery-modal-grid"]')) {
+        return true;
+    }
+
+    try {
+        const u = new URL(page.url());
+        if (u.searchParams.get('activeTab') !== 'photosGallery') {
+            u.searchParams.set('activeTab', 'photosGallery');
+            await page.goto(u.toString(), { waitUntil: 'domcontentloaded', timeout: 45000 });
+            await dismissConsent(page);
+            await sleep(500);
+        }
+    } catch {
+        // ignore
+    }
+
+    for (let attempt = 0; attempt < 3; attempt++) {
+        if (await page.$('[data-testid="gallery-modal-grid"]')) {
+            return true;
+        }
+        try {
+            const gridBtn = await page.$('[data-testid="return-to-grid-button"]');
+            if (gridBtn) await gridBtn.click();
+        } catch {
+            // ignore
+        }
+        await clickByText(page, 'thư viện ảnh|xem tất cả ảnh|all photos|photos');
+        await sleep(350);
+    }
+
+    try {
+        await page.waitForSelector('[data-testid="gallery-modal-grid"]', { timeout: 10000 });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
 async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug = {}) {
     const h = hash.startsWith('#') ? hash : '#' + hash;
     const id = h.replace(/^#/, '');
@@ -1158,30 +1241,42 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
     await sleep(350);
 
     let clicked = await page.evaluate((targetHash, targetId, nameHint) => {
-        const wantId = String(targetId || '').toLowerCase();
-        const links = [...document.querySelectorAll('a[data-testid="rt-name-link"], a[href*="#RD"], a[href^="#RD"]')];
-        const match =
-            links.find((a) => {
-                const href = String(a.getAttribute('href') || '');
-                return href === targetHash || href.endsWith(targetHash) || (wantId && href.includes(wantId));
-            }) ||
-            links.find((a) => {
-                const row = a.closest('[id^="RD"], tr[id^="RD"], [data-block-id^="RD"]');
-                const rid = (row?.id || row?.getAttribute('data-block-id') || '').toLowerCase();
-                return rid && rid === wantId;
-            }) ||
-            (nameHint
-                ? links.find((a) =>
-                    (a.innerText || '')
-                        .replace(/\s+/g, ' ')
-                        .trim()
-                        .toLowerCase()
-                        .includes(String(nameHint).toLowerCase().slice(0, 24)),
-                )
-                : null);
+        const wantId = String(targetId || '').toLowerCase().replace(/^#?rd/i, '');
+        const links = [...document.querySelectorAll(
+            'a[data-testid="rt-name-link"], a[data-room-id], a[data-block-id], a[href*="#RD"], a[class*="hprt-roomtype-link"], a[href^="#RD"], a[id^="room_type_id"]',
+        )];
+
+        let match = links.find((a) => {
+            const href = String(a.getAttribute('href') || '');
+            const roomId = String(a.getAttribute('data-room-id') || '').toLowerCase();
+            const elId = String(a.getAttribute('id') || '').toLowerCase();
+            return href === targetHash || href.endsWith(targetHash) ||
+                (wantId && (href.includes(wantId) || roomId === wantId || elId.includes(wantId)));
+        });
+
+        if (!match) {
+            match = links.find((a) => {
+                const row = a.closest('[id^="RD"], tr[id^="RD"], [data-block-id], th[class*="hprt-table-cell-roomtype"]');
+                const rid = (row ? (row.id || row.getAttribute('data-block-id') || row.getAttribute('data-room-id') || '') : '').toLowerCase();
+                return wantId && rid.includes(wantId);
+            });
+        }
+
+        if (!match && nameHint) {
+            const hint = String(nameHint).toLowerCase().trim().slice(0, 24);
+            match = links.find((a) => {
+                const text = (a.innerText || a.closest('th')?.innerText || '').replace(/\s+/g, ' ').trim().toLowerCase();
+                return text.includes(hint);
+            });
+        }
+
         if (!match) return false;
         match.scrollIntoView({ block: 'center' });
-        match.click();
+        try {
+            match.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+        } catch {
+            match.click();
+        }
         return true;
     }, h, id, fallbackName || '');
     debug.room_clicked = clicked;
@@ -1203,12 +1298,16 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
             const want = String(nameHint || '').toLowerCase();
             if (!want) return false;
             const els = [...document.querySelectorAll(sel)];
-            const el = els.find((n) =>
-                (n.innerText || '').replace(/\s+/g, ' ').trim().toLowerCase().includes(want.slice(0, 28)),
+            const el = els.find((node) =>
+                (node.innerText || '').replace(/\s+/g, ' ').trim().toLowerCase().includes(want.slice(0, 28)),
             );
             if (!el) return false;
             el.scrollIntoView({ block: 'center' });
-            el.click();
+            try {
+                el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+            } catch {
+                el.click();
+            }
             return true;
         }, fallbackName, ROOM_NAME_SEL);
         debug.name_clicked = clicked;
@@ -1218,27 +1317,32 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
         }
     }
 
-    if (!opened) {
-        return null;
+    let data = null;
+    if (opened) {
+        try {
+            await page.waitForSelector('[data-testid="rp-content"]', { timeout: 12000 });
+        } catch {
+            // modal có thể thiếu wrapper nhưng vẫn có dữ Liệu
+        }
+        await expandRoomModal(page);
+        try {
+            await page.waitForSelector(
+                '[data-testid="roomPagePhotos"] [style*="background-image"], [data-testid="roomPagePhotos"] img, [data-testid="rp-facilities"] li',
+                { timeout: 10000 },
+            );
+        } catch {
+            // ignore
+        }
+        data = await scrapeRoomModal(page, fallbackName);
+    } else {
+        data = await scrapeRoomFromTable(page, id, h, fallbackName);
+        debug.fallback_table = Boolean(data);
     }
-    try {
-        await page.waitForSelector('[data-testid="rp-content"]', { timeout: 12000 });
-    } catch {
-        // modal có thể thiếu wrapper nhưng vẫn có dữ liệu
-    }
-    await expandRoomModal(page);
-    try {
-        await page.waitForSelector(
-            '[data-testid="roomPagePhotos"] [style*="background-image"], [data-testid="roomPagePhotos"] img, [data-testid="rp-facilities"] li',
-            { timeout: 10000 },
-        );
-    } catch {
-        // ignore
-    }
-    let data = await scrapeRoomModal(page, fallbackName);
+
     if (!data) {
         return null;
     }
+
     data.photos = normalizePhotoList(data.photos);
     if (downloadOpts.downloadImages && data.photos.length) {
         const roomDir = path.join(downloadOpts.imagesDir, 'room-' + h.replace(/[^a-zA-Z0-9]/g, ''));
@@ -1260,19 +1364,77 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
     }
     debug.room_photos = data.photos?.length || 0;
     debug.room_amenities = data.amenities?.length || 0;
-    debug.open_via = clicked ? 'link_click' : 'hash';
+    debug.open_via = opened ? (clicked ? 'link_click' : 'hash') : 'data_table_fallback';
     data.hash = h;
-    const idMatch = id.match(/^RD(\d+)$/i) || id.match(/(\d{6,})/);
+    const idMatch = id.match(/^RD([0-9]+)/) || id.match(/([0-9]{5,})/);
     if (idMatch) {
         data.room_id = idMatch[1];
     }
     return data;
 }
 
-/**
- * Tải ảnh qua phiên Chrome (cookie + URL có chữ ký ?k=).
- * Song song theo batch để ~100 ảnh không quá chậm.
- */
+async function scrapeRoomFromTable(page, wantId, wantHash, nameHint = '') {
+    return page.evaluate((targetId, targetHash, name) => {
+        const want = String(targetId || '').toLowerCase().replace(/^#?rd/i, '');
+        let th = null;
+
+        if (want) {
+            th = document.querySelector(`th[id*="${want}"]`) 
+                || document.querySelector(`tr[data-block-id*="${want}"] th[class*="hprt"]`)
+                || document.querySelector(`a[href*="${wantHash}"]`)?.closest('th')
+                || document.querySelector(`a[id*="${want}"]`)?.closest('th');
+        }
+
+        if (!th && name) {
+            const allTh = [...document.querySelectorAll('th[class*="hprt-table-cell-roomtype"]')];
+            th = allTh.find((els) => (els.innerText || '').toLowerCase().includes(String(name).toLowerCase().slice(0, 24)));
+        }
+
+        if (!th) return null;
+
+        const textOf = (sel) => (th.querySelector(sel)?.innerText || '').replace(/\s+/g, ' ').trim();
+        const roomName = textOf('a[data-testid="rt-name-link"], a.hprt-roomtype-link', '[data-testid="rt-name-link"]') || name || 'variant';
+
+        const beds = [...th.querySelectorAll('[class*="rt-bed-type"]')]
+            .map((el) => el.innerText.replace(/\s+/g, ' ').trim())
+            .filter((t) => t && t.length < 80);
+
+        const facilities = [...th.querySelectorAll('[class*="hprt-facilities-facility"]')]
+            .map((el) => el.innerText.replace(/\s+/g, ' ').trim())
+            .filter((t) => t && t.length < 80);
+
+        const photos = [];
+        const seen = {};
+        th.querySelectorAll('img[src], img[data-lazy-src], img[data-high-res]').forEach((img) => {
+            let url = img.getAttribute('data-high-res') || img.getAttribute('data-lazy-src') || img.src || '';
+            url = url.replace(/\/hotel\/(pssus|max\d+|square\d+)\//, '/hotel/max1024x768/');
+            if (!url || !itemIsHotelPhoto(url)) return;
+            const idm = url.match(/\/(\d+)\.jpe?g/i);
+            const key = idm ? idm[1] : url.split('?')[0];
+            if (seen[key]) return;
+            seen[key] = true;
+            photos.push({
+                url,
+                alt: roomName
+            });
+        });
+
+        function itemIsHotelPhoto(s) {
+            return s && s.includes('/xdata/images/hotel/');
+        }
+
+        return {
+            name: roomName,
+            bed: beds.join(', '),
+            beds: beds,
+            amenities: [...new Set([...beds, ...facilities])],
+            highlights: facilities,
+            photos,
+        };
+    }, wantId, wantHash, nameHint);
+}
+
+
 async function downloadPhotoList(page, photos, imagesDir, max = 120, concurrency = 8) {
     const list = normalizePhotoList(Array.isArray(photos) ? photos : []);
     const limit = Math.min(list.length, Math.max(1, max));
@@ -1490,6 +1652,10 @@ async function clickByText(page, pattern) {
 async function closeDialog(page) {
     try {
         await page.evaluate(() => {
+            const hprtClose = document.querySelector('.rt-lightbox-reviews-container-close, .b_nha_hotel_small_images ~ button, .hprt-lightbox .modal-mask-closeBtn, [data-modal-close]');
+            if (hprtClose) {
+                hprtClose.click();
+            }
             const roomDlg = [...document.querySelectorAll('[role="dialog"]')].find((d) =>
                 d.querySelector('[data-testid="rp-content"]'),
             );
@@ -1585,27 +1751,50 @@ async function openPhotosGallery(page) {
     if (already) {
         return true;
     }
-    try {
-        const wrap = await page.$('#photo_wrapper');
-        if (wrap) {
-            await wrap.evaluate((el) => el.scrollIntoView({ block: 'center' }));
-            await sleep(200);
-            await wrap.click();
-        }
-    } catch {
+
+    const galleryTriggerSels = [
+        '[data-testid="property-gallery"] button',
+        '[data-testid="property-gallery"] img',
+        '[data-testid="property-gallery"]',
+        'button[data-testid="property-gallery-grid-button"]',
+        '[data-testid="image-carousel-wrapper"] button',
+        '[data-testid="image-carousel-wrapper"]',
+        '.bh-photo-grid button',
+        '.bh-photo-grid img',
+        '.bh-photo-grid',
+        '#photo_wrapper button',
+        '#photo_wrapper img',
+        '#photo_wrapper',
+        '[data-testid="hero-banner"] button',
+        '[data-testid="hero-banner"] img',
+        'button[data-testid="gallery-side-reviews-button"]',
+        '[data-testid="photo-grid-wrapper"] button',
+        '[data-testid="photo-grid-wrapper"]',
+    ];
+
+    for (const sel of galleryTriggerSels) {
         try {
-            await page.evaluate(() => {
-                const wrap = document.querySelector('#photo_wrapper');
-                if (wrap) wrap.click();
-            });
+            const el = await page.$(sel);
+            if (el) {
+                await el.evaluate((node) => node.scrollIntoView({ block: 'center' }));
+                awaitsleep(200);
+                await el.click();
+                await sleep(500);
+                if (await page.$('[data-testid="gallery-modal-grid"]')) {
+                    return true;
+                }
+            }
         } catch {
             // ignore
         }
     }
+
+    await clickByText(page, 'thư viện ảnh|xem tất cả hợnh|xem tất cả ảnh|all photos|see all photos|photos|xem thêm ảnh');
     await sleep(500);
     if (await page.$('[data-testid="gallery-modal-grid"]')) {
         return true;
     }
+
     try {
         const u = new URL(page.url());
         if (u.searchParams.get('activeTab') !== 'photosGallery') {
@@ -1617,6 +1806,7 @@ async function openPhotosGallery(page) {
     } catch {
         // ignore
     }
+
     for (let attempt = 0; attempt < 3; attempt++) {
         if (await page.$('[data-testid="gallery-modal-grid"]')) {
             return true;
@@ -1627,9 +1817,10 @@ async function openPhotosGallery(page) {
         } catch {
             // ignore
         }
-        await clickByText(page, 'thư viện ảnh|xem tất cả ảnh|all photos');
+        await clickByText(page, 'thư viện ảnh|xem tất cả ảnh|all photos|photos');
         await sleep(350);
     }
+
     try {
         await page.waitForSelector('[data-testid="gallery-modal-grid"]', { timeout: 10000 });
         return true;
@@ -1944,131 +2135,213 @@ async function clickRoomAt(page, index) {
     }
 }
 
-async function waitForRoomDetail(page, timeout = 12000) {
+async function waitForRoomDetail(page, timeout = 8000, wantRoomId = '') {
     const deadline = Date.now() + timeout;
-    const sels = [
-        '[data-testid="rp-content"]',
-        '[data-testid="rp-room-title"]',
-        '[data-testid="roomPagePhotos"]',
-        '[role="dialog"][aria-label*="Thêm thông tin"]',
-        '[role="dialog"][aria-label*="More information"]',
-        '[role="dialog"] [data-testid="rp-facilities"]',
-    ];
+    const wantId = String(wantRoomId || '').replace(/^#?rd/i, '').toLowerCase();
     while (Date.now() < deadline) {
-        for (const sel of sels) {
-            try {
-                if (await page.$(sel)) return true;
-            } catch {
-                // ignore
+        const found = await page.evaluate((targetId) => {
+            if (targetId) {
+                const targetModal = document.querySelector('#blocktoggleRD' + targetId)
+                    || document.querySelector('[data-room-id="' + targetId + '"].hprt-lightbox')
+                    || document.querySelector('[data-room-id="' + targetId + '"].room-lightbox-container');
+                if (targetModal && (targetModal.style.display !== 'none' || targetModal.offsetWidth > 0 || targetModal.offsetHeight > 0)) {
+                    return true;
+                }
             }
-        }
+            const activeModal = [...document.querySelectorAll('.hprt-lightbox, .room-lightbox-container, [role="dialog"]')].find((el) => {
+                const style = window.getComputedStyle(el);
+                return style && style.display !== 'none' && style.visibility !== 'hidden' && (el.offsetWidth > 0 || el.offsetHeight > 0);
+            });
+            if (activeModal) return true;
+            return Boolean(document.querySelector('[data-testid="rp-content"], [data-testid="rp-room-title"], #hp_rt_room_gallery_modal_room_name, .rt-lightbox-title'));
+        }, wantId);
+
+        if (found) return true;
         await sleep(250);
     }
     return false;
 }
 
-async function expandRoomModal(page) {
+async function expandRoomModal(page, wantRoomId = '') {
     try {
-        await page.evaluate(() => {
-            const dialog = [...document.querySelectorAll('[role="dialog"]')].find((d) =>
-                d.querySelector('[data-testid="rp-content"]'),
-            );
-            const root = dialog || document.querySelector('[data-testid="rp-content"]');
+        await page.evaluate((targetId) => {
+            const root = (targetId ? (document.querySelector('#blocktoggleRD' + targetId) || document.querySelector('[data-room-id="' + targetId + '"]')) : null)
+                || [...document.querySelectorAll('.hprt-lightbox, .room-lightbox-container, [role="dialog"]')].find((el) => {
+                    const style = window.getComputedStyle(el);
+                    return style && style.display !== 'none' && (el.offsetWidth > 0 || el.offsetHeight > 0);
+                })
+                || document.querySelector('.hprt-lightbox')
+                || document.querySelector('[data-testid="rp-content"]');
             if (!root) return;
-            const re = /xem thêm|show more|tất cả tiện|all amenities/i;
+            const re = /xem th�m|show more|t?t c? ti?n|all amenities/i;
             for (const el of root.querySelectorAll('button, a, [role="button"]')) {
                 const t = (el.textContent || '').replace(/\s+/g, ' ').trim();
-                if (t.length < 80 && re.test(t)) el.click();
+                if (t.length < 80 && re.test(t)) {
+                    try { el.click(); } catch {}
+                }
             }
-            const photos = root.querySelector('[data-testid="roomPagePhotos"]');
+            const photos = root.querySelector('[data-testid="roomPagePhotos"], .hprt-lightbox-gallery-container');
             if (photos) {
                 const hit = photos.querySelector('button, [role="button"], [style*="background-image"]');
-                if (hit) hit.click();
+                if (hit) {
+                    try { hit.click(); } catch {}
+                }
             }
-        });
+        }, String(wantRoomId || '').replace(/^#?rd/i, ''));
     } catch {
         // ignore
     }
-    await sleep(600);
+    await sleep(250);
 }
 
-async function scrapeRoomModal(page, fallbackName) {
-    return page.evaluate((nameFallback) => {
-            const dialog = [...document.querySelectorAll('[role="dialog"]')].find((d) =>
-                d.querySelector('[data-testid="rp-content"], [data-testid="rp-facilities"], [data-testid="roomPagePhotos"], [data-testid="rp-room-title"]'),
-            );
-            const root =
-                dialog?.querySelector('[data-testid="rp-content"]') ||
-                document.querySelector('[data-testid="rp-content"]') ||
-                dialog ||
-                document.querySelector('[data-testid="roomPagePhotos"]')?.closest('[role="dialog"]') ||
-                document.body;
-            if (!root) return null;
-            const textOf = (sel) => (root.querySelector(sel)?.innerText || '').replace(/\s+/g, ' ').trim();
-            const name = textOf('[data-testid="rp-room-title"]') || nameFallback;
-            const sizeText = textOf('[data-testid="rp-room-size"]') || textOf('[data-testid="room-size-icon"]');
-            const sizeMatch = sizeText.match(/(\d+)\s*m/i);
-            const description = textOf('[data-testid="rp-description"]');
-            const bed = (root.querySelector('[data-testid="bed-icon-double-bed"], [data-testid^="bed-icon"]')
-                ?.closest('div')
-                ?.innerText || '').replace(/\s+/g, ' ').trim();
-            const smokingWrap = root.querySelector('[data-testid="rp-smoking-policy"]');
-            const smoking = (smokingWrap?.parentElement?.innerText || smokingWrap?.innerText || '')
-                .replace(/\s+/g, ' ')
-                .trim();
-            const highlights = [...root.querySelectorAll('[data-testid="rp-highlights-test"] [data-testid="property-unit-facility-badge-icon"]')]
-                .map((el) => (el.innerText || '').replace(/\s+/g, ' ').trim())
-                .filter((t) => t && t.length < 80);
-            const amenity_groups = {};
-            const amenities = [];
-            root.querySelectorAll('[data-testid="rp-facilities"]').forEach((ul) => {
-                const heading = (ul.closest('section')?.querySelector('h2')?.innerText || 'Tiện nghi')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-                const items = [...ul.querySelectorAll('li')]
-                    .map((li) => (li.innerText || '').replace(/\s+/g, ' ').trim())
-                    .filter((t) => t && t.length < 120);
+async function scrapeRoomModal(page, fallbackName, wantRoomId = '') {
+    const wantId = String(wantRoomId || '').replace(/^#?rd/i, '');
+    return page.evaluate((nameFallback, targetId) => {
+        let root = null;
+        if (targetId) {
+            root = document.querySelector('#blocktoggleRD' + targetId)
+                || document.querySelector('[data-room-id="' + targetId + '"].hprt-lightbox')
+                || document.querySelector('[data-room-id="' + targetId + '"].room-lightbox-container');
+        }
+        if (!root) {
+            root = [...document.querySelectorAll('.hprt-lightbox, .room-lightbox-container, [role="dialog"]')].find((el) => {
+                const style = window.getComputedStyle(el);
+                return style && style.display !== 'none' && (el.offsetWidth > 0 || el.offsetHeight > 0);
+            })
+            || document.querySelector('.hprt-lightbox[style*="display: block"]')
+            || document.querySelector('.hprt-lightbox')
+            || document.querySelector('[data-testid="rp-content"]')
+            || document.querySelector('[role="dialog"]');
+        }
+        if (!root) return null;
+
+        const textOf = (sel) => (root.querySelector(sel)?.innerText || root.querySelector(sel)?.textContent || '').replace(/\s+/g, ' ').trim();
+        const name = textOf('[data-testid="rp-room-title"]') 
+            || textOf('#hp_rt_room_gallery_modal_room_name') 
+            || textOf('.rt-lightbox-title') 
+            || textOf('h1')
+            || nameFallback;
+
+        const sizeText = textOf('[data-testid="rp-room-size"]') 
+            || textOf('[data-testid="room-size-icon"]')
+            || textOf('.hprt-facilities-facility[data-name-en="room size"]')
+            || textOf('[data-name-en="roomsize"]');
+        const sizeMatch = (sizeText || textOf('.hprt-facilities-facility')).match(/(\d+)\s*m/i);
+
+        let description = textOf('[data-testid="rp-description"]');
+        if (!description) {
+            const rightCol = root.querySelector('.hprt-lightbox-right-container') || root;
+            const descP = [...rightCol.querySelectorAll('p')].find(p => {
+                const txt = (p.innerText || p.textContent || '').trim();
+                return txt.length > 20 && !p.classList.contains('hprt-lightbox-title') && !p.getAttribute('data-name-en');
+            });
+            if (descP) {
+                description = (descP.innerText || descP.textContent || '').replace(/\s+/g, ' ').trim();
+            }
+        }
+
+        let bed = (root.querySelector('[data-testid="bed-icon-double-bed"], [data-testid^="bed-icon"]')
+            ?.closest('div')
+            ?.innerText || '').replace(/\s+/g, ' ').trim();
+        if (!bed) {
+            bed = textOf('.bedroom_bed_type') || textOf('.hprt-roomtype-bed');
+        }
+
+        const smokingWrap = root.querySelector('[data-testid="rp-smoking-policy"], .policy-section');
+        const smoking = (smokingWrap?.parentElement?.innerText || smokingWrap?.innerText || '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        const highlights = [...root.querySelectorAll('[data-testid="rp-highlights-test"] [data-testid="property-unit-facility-badge-icon"], .hprt-facilities-facility .bui-badge, .hprt-facilities-facility')]
+            .map((el) => (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim())
+            .filter((t) => t && t.length < 80 && !t.includes('\n'));
+
+        const amenity_groups = {};
+        const amenities = [];
+        root.querySelectorAll('ul.hprt-lightbox-list, ul[data-testid="rp-facilities"]').forEach((ul) => {
+            let heading = '';
+            let prev = ul.previousElementSibling;
+            while (prev) {
+                if (prev.matches('h2, h3, .hprt-lightbox-title')) {
+                    heading = (prev.innerText || prev.textContent || '').trim();
+                    break;
+                }
+                const innerH = prev.querySelector('h2, h3, .hprt-lightbox-title');
+                if (innerH) {
+                    heading = (innerH.innerText || innerH.textContent || '').trim();
+                    break;
+                }
+                prev = prev.previousElementSibling;
+            }
+            if (!heading) {
+                heading = ul.closest('section')?.querySelector('h2')?.innerText?.trim() || 'Ti?n nghi';
+            }
+            heading = heading.replace(/:$/, '').trim();
+
+            const items = [...ul.querySelectorAll('li')]
+                .map((li) => (li.innerText || li.textContent || '').replace(/\s+/g, ' ').trim())
+                .filter((t) => t && t.length < 120 && !/xem th�m|show more/i.test(t));
+
+            if (items.length) {
                 if (!amenity_groups[heading]) amenity_groups[heading] = [];
                 amenity_groups[heading].push(...items);
                 amenities.push(...items);
-            });
-            const photos = [];
-            const seen = {};
-            const pushPhoto = (url, alt) => {
-                if (!url || !/\/xdata\/images\/hotel\//.test(url)) return;
-                url = String(url).replace(/&amp;/g, '&');
-                const idm = url.match(/\/(\d+)\.jpe?g/i);
-                const key = idm ? idm[1] : url.split('?')[0];
-                if (seen[key]) return;
-                seen[key] = true;
-                photos.push({ url, alt: alt || name });
-            };
-            const photoRoot = root.querySelector('[data-testid="roomPagePhotos"]') || root;
-            photoRoot.querySelectorAll('[style*="background-image"]').forEach((el) => {
-                const m = (el.getAttribute('style') || '').match(/url\(["']?([^"')]+)/);
-                if (m) pushPhoto(m[1], name);
-            });
-            photoRoot.querySelectorAll('img').forEach((img) => {
-                pushPhoto(img.currentSrc || img.src, img.alt || name);
-            });
-            root.querySelectorAll('[data-testid^="gallery-grid-photo-action-"], [data-testid^="gallery-photo-thumb-"]').forEach((btn) => {
-                const img = btn.querySelector('img');
-                if (img?.currentSrc) pushPhoto(img.currentSrc, name);
-                else if (img?.src) pushPhoto(img.src, name);
-            });
-            return {
-                name,
-                text: (root.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 1500),
-                description,
-                size_sqm: sizeMatch ? Number(sizeMatch[1]) : null,
-                bed,
-                smoking,
-                highlights,
-                amenity_groups,
-                amenities: [...new Set(amenities)],
-                photos,
-            };
-        }, fallbackName);
+            }
+        });
+
+        highlights.forEach((h) => {
+            if (h && !amenities.includes(h)) amenities.push(h);
+        });
+
+        const photos = [];
+        const seen = {};
+        const pushPhoto = (url, alt) => {
+            if (!url || !/\/xdata\/images\/hotel\//.test(url)) return;
+            url = String(url).replace(/&amp;/g, '&');
+            url = url.replace(/\/hotel\/(?:max\d+|square\d+)\//, '/hotel/max1024x768/');
+            const idm = url.match(/\/(\d+)\.jpe?g/i);
+            const key = idm ? idm[1] : url.split('?')[0];
+            if (seen[key]) return;
+            seen[key] = true;
+            photos.push({ url, alt: alt || name });
+        };
+
+        const photoRoot = root.querySelector('[data-testid="roomPagePhotos"], .hprt-lightbox-gallery-container, .hprt-lightbox-left-container') || root;
+        photoRoot.querySelectorAll('[style*="background-image"]').forEach((el) => {
+            const m = (el.getAttribute('style') || '').match(/url\(["']?([^"')]+)/);
+            if (m) pushPhoto(m[1], name);
+        });
+        root.querySelectorAll('style').forEach((st) => {
+            const matches = (st.textContent || '').matchAll(/url\(['"]?([^'")]+)['"]?\)/gi);
+            for (const match of matches) {
+                if (match[1]) pushPhoto(match[1], name);
+            }
+        });
+        photoRoot.querySelectorAll('img').forEach((img) => {
+            const src = img.getAttribute('data-lazy') 
+                || img.getAttribute('data-lazy-src') 
+                || img.getAttribute('src')
+                || img.currentSrc;
+            if (src) pushPhoto(src, img.alt || name);
+        });
+        root.querySelectorAll('[data-testid^="gallery-grid-photo-action-"], [data-testid^="gallery-photo-thumb-"], .hprt-lightbox-gallery-thumbs a, [data-testid^="gallery-"]').forEach((btn) => {
+            const img = btn.querySelector('img');
+            const src = img?.getAttribute('data-lazy') || img?.getAttribute('src') || img?.currentSrc;
+            if (src) pushPhoto(src, name);
+        });
+
+        return {
+            name,
+            description,
+            size_sqm: sizeMatch ? Number(sizeMatch[1]) : null,
+            bed,
+            smoking,
+            highlights: [...new Set(highlights)],
+            amenity_groups,
+            amenities: [...new Set(amenities)],
+            photos,
+        };
+    }, fallbackName, wantId);
 }
 
 function writeJson(outputPath, data) {

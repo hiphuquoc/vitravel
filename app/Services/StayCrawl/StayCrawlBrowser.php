@@ -78,7 +78,7 @@ final class StayCrawlBrowser
                 : (bool) config('stay.crawl.headless', true),
             'slow_mo' => (int) ($options['slow_mo'] ?? config('stay.crawl.slow_mo', 0)),
         ];
-        file_put_contents($inputFile, json_encode($payload, JSON_UNESCAPED_SLASHES));
+        file_put_contents($inputFile, json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE));
 
         $timeout = $browserTimeoutSec + 40;
         // Gallery download can take longer (N images over Chrome session).

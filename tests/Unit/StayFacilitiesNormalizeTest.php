@@ -77,7 +77,7 @@ class StayFacilitiesNormalizeTest extends TestCase
     {
         $groups = ['popular' => ['Hồ bơi ngoài trời', 'WiFi miễn phí']];
         $nearbyGroups = [
-            'landmark' => [['name' => 'Coi Nguon Museum', 'distance' => '1,6 km', 'category' => 'landmark']],
+            'landmark' => [['name' => 'Coi Nguon Museum', 'distance' => '1,6 km', 'icon' => 'compass', 'category' => 'landmark']],
         ];
 
         $attrs = StayFacilities::normalizeStayAttrs([

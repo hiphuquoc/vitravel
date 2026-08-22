@@ -228,7 +228,7 @@ final class StayCrawlEnricher
             // HTTP fallback failed — use whatever browser gave us
         }
 
-        $photos = $this->mergeGalleryPhotos($browserPhotos, $httpPhotos);
+        $photos = array_slice($this->mergeGalleryPhotos($browserPhotos, $httpPhotos), 0, 45);
         $service = Service::query()->find($item->service_id);
         if (! $service) {
             $this->browser->cleanupImagesDir($imagesDir);
@@ -413,9 +413,28 @@ final class StayCrawlEnricher
         ]);
         $pack = is_array($fetch['pack'] ?? null) ? $fetch['pack'] : [];
         $imagesDir = isset($fetch['images_dir']) ? (string) $fetch['images_dir'] : null;
-        $mapped = $this->mapper->mapRoomsFromPack(is_array($pack['rooms'] ?? null) ? $pack['rooms'] : []);
+                $rawRooms = is_array($pack['rooms'] ?? null) ? $pack['rooms'] : [];
+        if ($rawRooms === [] && is_array($pack['room'] ?? null)) {
+            $rawRooms = [$pack['room']];
+        }
+        $mapped = $this->mapper->mapRoomsFromPack($rawRooms);
         // Giữ local_path từ pack Chrome (mapRoomsFromPack có thể chỉ copy url/alt).
-        $mapped = $this->overlayPackPhotoLocals($mapped, is_array($pack['rooms'] ?? null) ? $pack['rooms'] : []);
+        $mapped = $this->overlayPackPhotoLocals($mapped, $rawRooms);
+
+        // Nếu Chrome không trả màt room, fallback lấy trực tiếp từ raw_html (bảng HPRT đã cào)
+        if ($mapped === [] && filled($item->raw_html)) {
+            $htmlRooms = $this->mapper->mapRoomsFromHprtHtml($item->raw_html);
+            foreach ($htmlRooms as $hr) {
+                $hrId = (string) ($hr['attrs']['room_id'] ?? '');
+                $hrCode = (string) ($hr['code'] ?? '');
+                if (($roomId !== '' && ($hrId === $roomId || $hrCode === 'bk-'.$roomId)) ||
+                    ($fallbackName !== '' && str_contains(mb_strtolower((string) ($hr['name'] ?? '')), mb_strtolower($fallbackName)))) {
+                    $mapped = [$hr];
+                    break;
+                }
+            }
+        }
+        
         $service = Service::query()->find($item->service_id);
         if (! $service) {
             $this->browser->cleanupImagesDir($imagesDir);
@@ -433,7 +452,7 @@ final class StayCrawlEnricher
                     // Modal không mang rate_options — không xoá rates đã import từ HPRT.
                     unset($option['attrs']['rate_options']);
                 }
-                $photos = is_array($option['photos'] ?? null) ? $option['photos'] : [];
+                $photos = array_slice(is_array($option['photos'] ?? null) ? $option['photos'] : [], 0, 12);
                 if ($photos === [] && is_array($option['attrs']['photos'] ?? null)) {
                     $photos = $option['attrs']['photos'];
                 }
@@ -459,6 +478,11 @@ final class StayCrawlEnricher
                     );
                     $option['attrs'] = is_array($option['attrs'] ?? null) ? $option['attrs'] : [];
                     $option['attrs']['photos'] = $option['photos'];
+                }
+                $optAmenities = is_array($option['amenities'] ?? null) ? $option['amenities'] : [];
+                $option['attrs'] = is_array($option['attrs'] ?? null) ? $option['attrs'] : [];
+                if (! empty($optAmenities)) {
+                    $option['attrs']['amenities'] = $optAmenities;
                 }
                 $this->importer->overlayRoom($service, $option, 'vi');
                 $ok++;
@@ -617,7 +641,7 @@ final class StayCrawlEnricher
             if ($byUrl === []) {
                 continue;
             }
-            $photos = is_array($option['photos'] ?? null) ? $option['photos'] : [];
+            $photos = array_slice(is_array($option['photos'] ?? null) ? $option['photos'] : [], 0, 12);
             if ($photos === [] && is_array($option['attrs']['photos'] ?? null)) {
                 $photos = $option['attrs']['photos'];
             }

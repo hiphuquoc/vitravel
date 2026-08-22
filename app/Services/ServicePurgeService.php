@@ -110,10 +110,7 @@ final class ServicePurgeService
             fn (int $id) => $id > 0,
         )));
 
-        foreach ($mediaIds as $mediaId) {
-            $row = Media::query()->withTrashed()->find($mediaId);
-            $this->media->destroyMediaIfOrphan($row);
-        }
+        $this->media->destroyOrphanMediaBatch($mediaIds);
 
         $cache = app(HtmlCacheService::class);
         foreach (array_unique($cacheKeys) as $key) {

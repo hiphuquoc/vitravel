@@ -53,6 +53,10 @@ final class StayCrawlImporter
             ?: '';
         $existingId = $item->service_id;
         $existing = $existingId ? Service::query()->find($existingId) : null;
+        if (! $existing && $slug !== '') {
+            $baseCode = 'bk-'.$slug;
+            $existing = Service::query()->where('code', $baseCode)->first();
+        }
         $code = $existing?->code ?: $this->uniqueCode('bk-'.($slug ?: Str::slug($title)));
         if ($existing) {
             $code = $existing->code;
@@ -243,17 +247,22 @@ final class StayCrawlImporter
             ]);
             $option->save();
             $keep[] = $option->id;
+            $optAmenities = is_array($opt['amenities'] ?? null)
+                ? array_values(array_filter(array_map('strval', $opt['amenities'])))
+                : StayFacilities::stringList($opt['amenities'] ?? ($opt['attrs']['amenities'] ?? null));
+
             if ($langId) {
                 ServiceOptionTranslation::query()->updateOrCreate(
                     ['service_option_id' => $option->id, 'language_id' => $langId],
                     [
                         'name' => $name,
                         'description' => $opt['description'] ?? null,
-                        'amenities' => is_array($opt['amenities'] ?? null)
-                            ? array_values(array_filter(array_map('strval', $opt['amenities'])))
-                            : StayFacilities::stringList($opt['amenities'] ?? null),
+                        'amenities' => $optAmenities,
                     ],
                 );
+            }
+            if (! empty($optAmenities)) {
+                $this->taxonomy->syncOptionAmenities($option, $optAmenities, $locale);
             }
             $sort++;
         }

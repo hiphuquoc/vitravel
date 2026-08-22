@@ -764,16 +764,14 @@ final class StayFacilities
         if ($url === '') {
             return false;
         }
-        $host = (string) parse_url($url, PHP_URL_HOST);
-        $host = mb_strtolower($host);
-        if ($host !== '' && (str_contains($host, 'bstatic.com') || str_contains($host, 'booking.com'))) {
+        if (str_contains($url, 'bstatic.com')) {
             return false;
         }
 
         return preg_match('#^https?://#i', $url) === 1 || str_starts_with($url, '/');
     }
 
-    /** Đếm ảnh đã gắn media (đã upload GCS) — dùng chọn bản attrs giàu hơn. */
+    /** Dem anh da gan media (da upload GCS) */
     public static function countMediaBackedPhotos(mixed $photos): int
     {
         if (! is_array($photos)) {
