@@ -46,6 +46,10 @@ final class StayTaxonomyService
         if ($name === '') {
             throw new \InvalidArgumentException('Amenity name cannot be empty');
         }
+        $groupKey = mb_substr(trim($groupKey), 0, 120);
+        if ($groupKey === '') {
+            $groupKey = 'general';
+        }
 
         $cacheKey = mb_strtolower($name) . '|' . $groupKey;
         if (isset($this->amenityCache[$cacheKey])) {
