@@ -96,6 +96,7 @@ final class ProcessStayCrawlItemJob implements ShouldQueue
             }
             throw $e;
         } finally {
+            $crawl->removeItemActive($job, $this->itemId);
             $crawl->refreshJobCompletion($job->fresh() ?? $job);
         }
     }

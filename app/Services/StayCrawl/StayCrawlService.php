@@ -693,6 +693,15 @@ final class StayCrawlService
             ];
         }
 
+        // Lọc bỏ các worker đã cũ > 10 phút
+        $nowTs = time();
+        foreach ($activeWorkers as $k => $aw) {
+            $ts = ! empty($aw['updated_at']) ? strtotime($aw['updated_at']) : 0;
+            if ($nowTs - $ts > 600) {
+                unset($activeWorkers[$k]);
+            }
+        }
+
         $meta['worker'] = array_merge($w, [
             'running' => true,
             'mode' => 'laravel_queue',
@@ -700,6 +709,23 @@ final class StayCrawlService
             'phase' => $patch['phase'] ?? ($w['phase'] ?? 'queue'),
             'message' => $patch['message'] ?? ($w['message'] ?? null),
             'item_id' => $patch['item_id'] ?? ($w['item_id'] ?? null),
+            'active_items' => $activeWorkers,
+            'active_count' => count($activeWorkers),
+        ]);
+        $job->meta = $meta;
+        $job->save();
+    }
+
+    public function removeItemActive(StayCrawlJob $job, int $itemId): void
+    {
+        $job->refresh();
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $w = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        $activeWorkers = is_array($w['active_items'] ?? null) ? $w['active_items'] : [];
+        unset($activeWorkers[(string) $itemId]);
+
+        $meta['worker'] = array_merge($w, [
+            'heartbeat_at' => now()->toIso8601String(),
             'active_items' => $activeWorkers,
             'active_count' => count($activeWorkers),
         ]);

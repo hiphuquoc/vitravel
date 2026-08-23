@@ -41,7 +41,7 @@
                 <template x-if="active !== null && activeItem?.type !== 'image' && activeItem?.provider === 'file' && activeItem?.embedUrl">
                     <video class="vt-videos-lightbox__frame" :src="activeItem.embedUrl" controls autoplay playsinline></video>
                 </template>
-                {{-- Ảnh --}}
+                {{-- Ảnh lớn: CHỈ TẢI ĐÚNG 1 ẢNH ĐANG XEM QUA activeItem.src --}}
                 <template x-if="active !== null && (activeItem?.type === 'image' || (!activeItem?.embedUrl && activeItem?.src))">
                     <figure class="vt-videos-lightbox__photo">
                         <template x-if="activeItem?.src">
@@ -51,6 +51,7 @@
                                 :srcset="activeItem.srcset || null"
                                 :alt="activeItem.title || ''"
                                 sizes="(max-width: 1024px) 94vw, 1100px"
+                                decoding="async"
                             >
                         </template>
                         <template x-if="!activeItem?.src">
