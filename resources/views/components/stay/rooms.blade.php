@@ -163,7 +163,7 @@
             @endforeach
         </div>
 
-        {{-- MODAL PHÒNG CHUẨN ĐÚNG CẤU TRÚC CSS GỐC, KHÔNG CÓ THẺ LẺ Ở NGOÀI TRÁNH VỠ LAYOUT --}}
+        {{-- MODAL PHÒNG CHUẨN 100% CẤU TRÚC CSS GỐC (.stay-room-modal__detail) --}}
         <div
             class="stay-room-modal"
             x-cloak
@@ -201,13 +201,13 @@
                     x-show="room"
                     :class="room && room.photos && room.photos.length ? '' : 'stay-room-modal__body--solo'"
                 >
-                    {{-- Cột Gallery ảnh bên trái: CHỈ TẢI ẢNH KHI MODAL ĐƯỢC MỞ (open === true) --}}
+                    {{-- Cột Gallery ảnh bên trái: CHỈ TẢI ẢNH KHI MODAL MỞ (open === true) --}}
                     <div class="stay-room-modal__gallery" x-show="room && room.photos && room.photos.length">
                         <div class="stay-room-modal__hero">
                             <template x-if="open && room && room.photos && room.photos[photo]">
                                 <img
                                     :src="room.photos[photo].url"
-                                    :alt="room.photos[photo].alt || room.name || ''"
+                                    :alt="room.photos[photo].alt || (room ? room.name : '')"
                                     referrerpolicy="no-referrer"
                                     decoding="async"
                                 />
@@ -237,10 +237,10 @@
                             </span>
                         </div>
 
-                        {{-- Dải ảnh thu nhỏ bên dưới: Chỉ render khi mở modal --}}
-                        <div class="stay-room-modal__strip" x-show="photoCount > 1">
+                        {{-- Dải ảnh thu nhỏ bên dưới: Dùng đúng class .stay-room-modal__thumbs .vt-scrollbar của CSS gốc --}}
+                        <div class="stay-room-modal__thumbs vt-scrollbar" x-show="photoCount > 1">
                             <template x-if="open">
-                                <div style="display: flex; gap: 0.5rem; width: 100%; overflow-x: auto;">
+                                <div style="display: flex; gap: 0.5rem; width: 100%;">
                                     <template x-for="(p, pi) in (room ? (room.photos || []) : [])" :key="pi">
                                         <button
                                             type="button"
@@ -263,8 +263,8 @@
                         </div>
                     </div>
 
-                    {{-- Cột Thông tin chi tiết bên phải --}}
-                    <div class="stay-room-modal__content">
+                    {{-- Cột Thông tin chi tiết bên phải: Dùng đúng class .stay-room-modal__detail .vt-scrollbar của CSS gốc --}}
+                    <div class="stay-room-modal__detail vt-scrollbar" x-ref="roomDetail">
                         <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
 
                         <div class="stay-room-modal__facts">

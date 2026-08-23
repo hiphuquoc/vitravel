@@ -626,7 +626,16 @@ Alpine.data('stayRooms', (rooms = []) => ({
         this.photo = Number.isInteger(photoIndex) ? photoIndex : 0;
         this.open = true;
         document.body.classList.add('stay-room-lock');
-        this.$nextTick(() => this.$refs.roomClose?.focus());
+        this.$nextTick(() => {
+            this.$refs.roomClose?.focus();
+            if (this.$refs.roomDetail) {
+                this.$refs.roomDetail.scrollTop = 0;
+            }
+            const modalBody = document.querySelector('.stay-room-modal__detail');
+            if (modalBody) {
+                modalBody.scrollTop = 0;
+            }
+        });
     },
     close() {
         this.open = false;
