@@ -10,7 +10,6 @@ use App\Models\StayCrawlJob;
 use App\Services\StayCrawl\StayCrawlService;
 use App\Support\ProjectContext;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -20,11 +19,13 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Xử lý 1 URL chỗ nghỉ (cùng pipeline crawler: fetch → map → draft → gallery → phòng).
- * Cho phép chạy song song đa luồng (2, 3, 4 worker) — mỗi worker bốc 1 item khác nhau chạy đồng thời.
- * WithoutOverlapping được đánh theo itemId để tránh 2 worker cùng bốc 1 khách sạn, nhưng các khách sạn khác nhau chạy song song 100%.
+ * Xử lý 1 URL chỗ nghỉ qua Supervisor (fetch → map → draft → gallery → phòng).
+ * Thiết kế an toàn 100% cho đa luồng Supervisor (2, 4, 8 cores):
+ * - Không implement ShouldBeUnique tĩnh ở cấp class (tránh xung đột lock khi dispatch lại).
+ * - Sử dụng WithoutOverlapping theo 'stay-item-proc-'.$this->itemId với release(10) và expireAfter(1800).
+ * - Ghi nhận active worker độc lập cho từng item vào Job Meta để không bị ghi đè.
  */
-final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
+final class ProcessStayCrawlItemJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -33,9 +34,6 @@ final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
     public int $tries = 3;
 
     public int $backoff = 30;
-
-    /** Tránh dispatch trùng cùng item khi resume. */
-    public int $uniqueFor = 1800;
 
     public function __construct(
         public int $itemId,
@@ -46,18 +44,12 @@ final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
         $this->onQueue((string) config('stay.crawl.queue', 'default'));
     }
 
-    public function uniqueId(): string
-    {
-        return 'stay-crawl-item-'.$this->itemId;
-    }
-
     /** @return list<object> */
     public function middleware(): array
     {
-        // Khóa riêng cho từng item để các worker bốc các item khác nhau chạy song song không phải chờ nhau
         return [
-            (new WithoutOverlapping('stay-crawl-item-lock-'.$this->itemId))
-                ->releaseAfter(30)
+            (new WithoutOverlapping('stay-item-proc-'.$this->itemId))
+                ->releaseAfter(10)
                 ->expireAfter(1800),
         ];
     }
@@ -78,6 +70,11 @@ final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
 
         $useProxy = $this->useProxy || (bool) data_get($job->meta, 'use_proxy', false);
         @set_time_limit(0);
+
+        // Cập nhật trạng thái item sang running / crawling
+        $item->status = StayCrawlItem::STATUS_FETCHED;
+        $item->error = null;
+        $item->save();
 
         $crawl->touchQueueMeta($job, [
             'item_id' => $item->id,
@@ -116,8 +113,13 @@ final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
             'error' => $e?->getMessage(),
         ]);
         $item = StayCrawlItem::query()->with('job')->find($this->itemId);
-        if ($item?->job) {
-            app(StayCrawlService::class)->refreshJobCompletion($item->job);
+        if ($item) {
+            $item->status = StayCrawlItem::STATUS_FAILED;
+            $item->error = $e?->getMessage() ?? 'Job thất bại sau số lần thử lại';
+            $item->save();
+            if ($item->job) {
+                app(StayCrawlService::class)->refreshJobCompletion($item->job);
+            }
         }
     }
 

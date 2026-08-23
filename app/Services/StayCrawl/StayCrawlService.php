@@ -676,6 +676,16 @@ final class StayCrawlService
             'last_at' => now()->toIso8601String(),
         ]);
         $w = is_array($meta['worker'] ?? null) ? $meta['worker'] : [];
+        
+        $activeWorkers = is_array($w['active_items'] ?? null) ? $w['active_items'] : [];
+        if (! empty($patch['item_id'])) {
+            $activeWorkers[(string) $patch['item_id']] = [
+                'item_id' => $patch['item_id'],
+                'updated_at' => now()->toIso8601String(),
+                'message' => $patch['message'] ?? 'Đang xử lý',
+            ];
+        }
+
         $meta['worker'] = array_merge($w, [
             'running' => true,
             'mode' => 'laravel_queue',
@@ -683,6 +693,8 @@ final class StayCrawlService
             'phase' => $patch['phase'] ?? ($w['phase'] ?? 'queue'),
             'message' => $patch['message'] ?? ($w['message'] ?? null),
             'item_id' => $patch['item_id'] ?? ($w['item_id'] ?? null),
+            'active_items' => $activeWorkers,
+            'active_count' => count($activeWorkers),
         ]);
         $job->meta = $meta;
         $job->save();
