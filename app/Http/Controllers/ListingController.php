@@ -80,9 +80,25 @@ class ListingController extends Controller
 
     public function related(Request $request): JsonResponse
     {
-        $kind = $request->input('kind', 'tour') === 'cruise' ? 'cruise' : 'tour';
+        $kind = (string) $request->input('kind', 'tour');
         $exclude = (string) $request->input('exclude', '');
         $limit = max(1, min(6, (int) $request->input('limit', 3)));
+
+        if ($kind === 'service' || $kind === 'stay') {
+            $cluster = (string) $request->input('cluster', 'stay');
+            $category = (string) $request->input('category', '');
+            $categoryId = $request->filled('category_id') ? (int) $request->input('category_id') : null;
+            $serviceId = $request->filled('service_id') ? (int) $request->input('service_id') : null;
+
+            if ($categoryId) {
+                $items = $this->data->relatedServicesForCategory($cluster, $categoryId, $serviceId, $limit);
+            } else {
+                $cat = $category !== '' ? $this->data->serviceCategory($cluster, $category) : null;
+                $catId = $cat['id'] ?? null;
+                $items = $catId ? $this->data->relatedServicesForCategory($cluster, $catId, $serviceId, $limit) : [];
+            }
+            return $this->cardsResponse($items, 'service', 'compact');
+        }
 
         if ($kind === 'cruise') {
             $type = (string) $request->input('type', '');

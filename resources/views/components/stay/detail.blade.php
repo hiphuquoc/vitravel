@@ -294,20 +294,50 @@
     </div>
 </div>
 
-@if (count($related) > 0)
-    <section class="container-site section-band--sm" aria-label="Chỗ nghỉ liên quan">
-        <x-shared.section-heading title="Chỗ nghỉ liên quan" />
-        <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
-            @foreach ($related as $item)
-                @php
-                    $relatedHref = locale_route('services.show', [
-                        'cluster' => $item['cluster'] ?? $service['cluster'],
-                        'category' => $item['categorySlug'],
-                        'slug' => $item['slug'],
-                    ]);
-                @endphp
-                <x-service.card-compact :item="$item" :href="$relatedHref" />
-            @endforeach
-        </div>
-    </section>
-@endif
+{{-- Chỗ nghỉ liên quan: Tải ngầm Lazy/AJAX khi người dùng cuộn gần tới (Zero Server First-Render Overhead) --}}
+<section
+    class="container-site section-band--sm"
+    aria-label="Chỗ nghỉ liên quan"
+    x-data="{
+        loaded: false,
+        html: '',
+        loading: false,
+        init() {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && !this.loaded && !this.loading) {
+                    this.fetchRelated();
+                }
+            }, { rootMargin: '300px' });
+            observer.observe(this.$el);
+        },
+        async fetchRelated() {
+            this.loading = true;
+            try {
+                const params = new URLSearchParams({
+                    kind: 'service',
+                    cluster: '{{ $service['cluster'] ?? 'stay' }}',
+                    category_id: '{{ $service['categoryId'] ?? '' }}',
+                    service_id: '{{ $service['id'] ?? '' }}',
+                    limit: 3
+                });
+                const res = await fetch(`{{ route('api.listings.related') }}?${params.toString()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.html && data.count > 0) {
+                        this.html = data.html;
+                        this.loaded = true;
+                    }
+                }
+            } catch (e) {
+                console.warn('Could not load related stays', e);
+            } finally {
+                this.loading = false;
+            }
+        }
+    }"
+    x-show="loaded"
+    x-cloak
+>
+    <x-shared.section-heading title="Chỗ nghỉ liên quan" />
+    <div x-html="html"></div>
+</section>
