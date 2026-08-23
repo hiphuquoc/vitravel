@@ -1,4 +1,4 @@
-﻿@props([
+@props([
     'title',
     'coverSrc' => null,
     'coverSrcset' => null,
@@ -103,6 +103,7 @@
                     fetchpriority="high"
                     class="detail-gallery__cover"
                     referrerpolicy="no-referrer"
+                    decoding="async"
                 />
                 <span class="detail-gallery__zoom" aria-hidden="true">
                     <x-icon name="search" class="size-5" />
@@ -137,6 +138,8 @@
                                 :srcset="$thumb['srcset'] ?? null"
                                 preset="gallery"
                                 :alt="$title"
+                                loading="lazy"
+                                decoding="async"
                                 class="detail-gallery__thumb-img"
                                 referrerpolicy="no-referrer"
                             />
@@ -199,5 +202,6 @@
         </div>
     @endif
 
+    {{-- Lightbox được gắn deferred x-teleport body và chỉ render khi active !== null --}}
     <x-shared.media-lightbox />
 </section>
