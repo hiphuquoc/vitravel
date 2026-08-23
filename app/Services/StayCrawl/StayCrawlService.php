@@ -636,6 +636,13 @@ final class StayCrawlService
             if (! $needs && $onlyItem === null) {
                 continue;
             }
+            
+            // Đánh dấu rõ ràng trạng thái QUEUED trên database ngay khi đẩy vào queue
+            $item->status = StayCrawlItem::STATUS_QUEUED;
+            $item->error = null;
+            $item->blocked_reason = null;
+            $item->save();
+
             ProcessStayCrawlItemJob::dispatch(
                 (int) $item->id,
                 $locale,
