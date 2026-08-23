@@ -56,27 +56,27 @@
     $tabs = [];
     $sectionIds = [];
     if ($hasOverview) {
-        $tabs['tong-quan'] = 'Tổng quan';
+        $tabs['tong-quan'] = ['label' => 'Tổng quan', 'icon' => 'info'];
         $sectionIds[] = 'tong-quan';
     }
     if ($amenityGroups !== []) {
-        $tabs['tien-ich'] = 'Tiện ích';
+        $tabs['tien-ich'] = ['label' => 'Tiện ích', 'icon' => 'sparkles'];
         $sectionIds[] = 'tien-ich';
     }
     if ($rooms !== []) {
-        $tabs['phong'] = 'Hạng phòng';
+        $tabs['phong'] = ['label' => 'Hạng phòng & Giá', 'icon' => 'bed'];
         $sectionIds[] = 'phong';
     }
     if ($nearbyGroups !== []) {
-        $tabs['vi-tri'] = 'Vị trí';
+        $tabs['vi-tri'] = ['label' => 'Vị trí', 'icon' => 'map-pin'];
         $sectionIds[] = 'vi-tri';
     }
     if ($policyRows !== []) {
-        $tabs['chinh-sach'] = 'Quy tắc chung';
+        $tabs['chinh-sach'] = ['label' => 'Quy tắc chung', 'icon' => 'shield'];
         $sectionIds[] = 'chinh-sach';
     }
     if (! empty($service['faqs'])) {
-        $tabs['faq'] = 'FAQ';
+        $tabs['faq'] = ['label' => 'Câu hỏi thường gặp', 'icon' => 'help-circle'];
         $sectionIds[] = 'faq';
     }
 
@@ -105,21 +105,26 @@
 <div @class(['detail-body', 'detail-body--plain' => count($tabs) < 2]) @if (count($sectionIds) > 1) x-data="scrollSpy(@js($sectionIds))" @endif>
     @if (count($tabs) > 1)
         <nav class="detail-tabs" aria-label="Điều hướng trong trang">
-            <div class="container-site detail-tabs__inner">
-                @foreach ($tabs as $id => $label)
-                    <a href="#{{ $id }}"
-                        class="detail-tabs__link"
-                        @if (count($sectionIds) > 1)
-                            :class="active === '{{ $id }}' ? 'is-active' : ''"
-                        @endif>
-                        {{ $label }}
-                    </a>
-                @endforeach
+            <div class="container-site">
+                <div class="detail-tabs__wrapper">
+                    <div class="detail-tabs__inner">
+                        @foreach ($tabs as $id => $tabData)
+                            <a href="#{{ $id }}"
+                                class="detail-tabs__link"
+                                @if (count($sectionIds) > 1)
+                                    :class="active === '{{ $id }}' ? 'is-active' : ''"
+                                @endif>
+                                <x-icon :name="$tabData['icon']" class="detail-tabs__icon size-4 shrink-0" />
+                                <span>{{ $tabData['label'] }}</span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </nav>
     @endif
 
-    <div class="container-site detail-layout section-band--sm">
+    <div class="container-site detail-layout">
         <div class="min-w-0 detail-stack">
             @if ($hasOverview || $bodyHtml !== '')
                 <section id="tong-quan" class="detail-section" aria-label="Tổng quan">

@@ -381,6 +381,10 @@ const mediaLightboxFactory = (items = []) => ({
         document.body.classList.remove('stay-room-lock');
     },
     openViewer(index) {
+        // Trên mobile (<= 768px), grid 1 cột to rõ đã là chế độ xem trọn vẹn, không cần mở viewer full nữa
+        if (window.innerWidth <= 768) {
+            return;
+        }
         this.viewerActive = Number.isInteger(index) ? index : 0;
         this.active = this.viewerActive;
     },

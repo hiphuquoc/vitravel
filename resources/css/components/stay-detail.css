@@ -1171,18 +1171,17 @@ body.stay-room-lock {
     }
 
     .stay-room-modal__body {
-        display: block; /* Normal block flow with smooth native scrolling */
+        display: block;
         flex: 1 1 auto;
         min-height: 0;
         overflow-x: hidden;
-        overflow-y: scroll; /* Force vertical scrolling on container */
+        overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
     }
 
-    /* Un-stick / un-fix gallery on mobile so entire body flows together */
     .stay-room-modal__gallery {
-        padding: 0.75rem 0.85rem 0.5rem;
+        padding: 1rem 1rem 0.75rem 1rem;
         border-right: 0;
         border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
         overflow: visible;
@@ -1194,8 +1193,20 @@ body.stay-room-lock {
 
     .stay-room-modal__detail {
         min-height: auto;
-        overflow: visible;
-        padding: 0.95rem 0.85rem 2rem;
+        overflow: visible !important;
+        padding: 0 !important;
+    }
+
+    .stay-room-modal__detail-head {
+        padding: 1rem 1rem 0.75rem 1rem !important;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .stay-room-modal__scrollable {
+        overflow: visible !important;
+        padding: 1rem 1rem 2.5rem 1rem !important;
+        height: auto !important;
+        min-height: auto !important;
     }
 
     .stay-room-modal__amenity-list {

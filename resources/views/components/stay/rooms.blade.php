@@ -346,13 +346,13 @@
                         </div>
                     </div>
 
-                    <div class="stay-room-modal__detail" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
-                        {{-- Phần Cố định trên cùng: Tiêu đề + Kicker + Thẻ tags (KHÔNG bị thanh cuộn chèn) --}}
-                        <div style="padding: 1.25rem 1.5rem 0.85rem 1.5rem; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; background: #fff;">
-                            <p class="kicker" style="margin-bottom: 0.25rem;" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></p>
-                            <h2 class="stay-room-modal__title" style="margin: 0 0 0.5rem 0; font-size: 1.35rem; line-height: 1.3; color: var(--color-ink, #1e293b);" x-text="room ? room.name : ''"></h2>
+                    <div class="stay-room-modal__detail">
+                        {{-- Header thông tin phòng: Cố định trên desktop, cuộn tự nhiên trên mobile --}}
+                        <div class="stay-room-modal__detail-head">
+                            <p class="kicker" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></p>
+                            <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
 
-                            <ul class="stay-hprt__tags stay-room-modal__tags" style="margin: 0;" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
+                            <ul class="stay-hprt__tags stay-room-modal__tags" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
                                 <template x-for="(tag, ti) in (room ? (room.displayTags || room.highlights || []) : [])" :key="'tag-' + ti">
                                     <li class="stay-hprt__tag">
                                         <x-icon name="check" class="size-3.5" />
@@ -362,8 +362,8 @@
                             </ul>
                         </div>
 
-                        {{-- Phần Cuộn riêng biệt bên dưới: Từ Thông số phòng, Tiện ích, Mô tả đổ xuống --}}
-                        <div class="stay-room-modal__scrollable vt-scrollbar" x-ref="roomDetail" style="flex: 1 1 auto; overflow-y: auto; padding: 1.25rem 1.5rem 2rem 1.5rem;">
+                        {{-- Vùng nội dung chi tiết: Cuộn riêng trên desktop, cuộn chung toàn box trên mobile --}}
+                        <div class="stay-room-modal__scrollable vt-scrollbar" x-ref="roomDetail">
 
                         <div class="stay-room-modal__facts" x-show="room">
                             <p class="stay-room-modal__facts-kicker">Thông số phòng</p>
