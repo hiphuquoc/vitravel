@@ -112,7 +112,7 @@ final class StayCrawlApiController extends Controller
         $item->save();
 
         if ($item->job) {
-            $this->crawl->dispatchItemQueue($item->job, $item);
+            $this->crawl->dispatchItemQueue($item->job, 'vi', false, false, $item);
         }
 
         return ApiResponse::success([
@@ -134,7 +134,7 @@ final class StayCrawlApiController extends Controller
             $item->error = null;
             $item->blocked_reason = null;
             $item->save();
-            $this->crawl->dispatchItemQueue($job, $item);
+            $this->crawl->dispatchItemQueue($job, 'vi', false, false, $item);
             $retriedCount++;
         }
 

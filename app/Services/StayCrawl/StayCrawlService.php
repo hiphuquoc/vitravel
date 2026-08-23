@@ -614,11 +614,16 @@ final class StayCrawlService
         string $locale = 'vi',
         bool $useProxy = false,
         bool $respectRobots = false,
+        ?StayCrawlItem $onlyItem = null,
     ): array {
         $useProxy = $useProxy || (bool) data_get($job->meta, 'use_proxy', false);
         $ids = [];
 
-        foreach ($job->items()->orderBy('id')->cursor() as $item) {
+        $itemsQuery = $onlyItem !== null
+            ? collect([$onlyItem])
+            : $job->items()->orderBy('id')->cursor();
+
+        foreach ($itemsQuery as $item) {
             /** @var StayCrawlItem $item */
             $needs = in_array($item->status, [
                 StayCrawlItem::STATUS_QUEUED,
@@ -626,8 +631,9 @@ final class StayCrawlService
                 StayCrawlItem::STATUS_AI_DONE,
                 StayCrawlItem::STATUS_FETCHED,
                 StayCrawlItem::STATUS_FAILED,
+                StayCrawlItem::STATUS_BLOCKED,
             ], true) || $this->itemNeedsEnrich($item);
-            if (! $needs) {
+            if (! $needs && $onlyItem === null) {
                 continue;
             }
             ProcessStayCrawlItemJob::dispatch(
@@ -1369,18 +1375,19 @@ final class StayCrawlService
         if ($done->isEmpty()) {
             return;
         }
-        if ($rerun === null) {
-            throw new StayCrawlAlreadyExistsException(
-                'Một số chỗ nghỉ trong danh sách đã cào. Chọn Cải thiện, Xóa sạch rồi cào lại, hoặc hủy.',
-                $this->existingPayload($done),
-            );
+        
+        // Nếu người dùng chọn cào lại / cải thiện thì reset các item đã xong
+        if ($rerun === 'replace' || $rerun === 'improve') {
+            foreach ($done as $item) {
+                $this->resetItemForRerun($item, $rerun, $from);
+            }
         }
-        foreach ($done as $item) {
-            $this->resetItemForRerun($item, $rerun, $from);
-        }
+        // Mặc định hoặc rerun === null/skip: Giữ nguyên các khách sạn đã cào trước đó, không xóa/đè
+        
         $meta = is_array($job->meta) ? $job->meta : [];
         $meta['rerun'] = $rerun;
         $meta['rerun_from'] = $rerun === 'improve' ? StayCrawlEnricher::normalizeFrom($from) : null;
+        $meta['skipped_existing_count'] = $done->count();
         $job->meta = $meta;
         if ($job->status === StayCrawlJob::STATUS_DONE) {
             $job->status = StayCrawlJob::STATUS_READY;
