@@ -272,9 +272,14 @@
                     class="stay-room-modal__close"
                     x-ref="roomClose"
                     @click="close()"
-                    aria-label="Đóng"
+                    aria-label="Đóng chi tiết phòng"
+                    style="position: absolute; top: 0.85rem; right: 0.85rem; z-index: 20; display: flex; align-items: center; justify-content: center; width: 2.15rem; height: 2.15rem; border-radius: 999px; border: 1px solid #e2e8f0; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.06);"
+                    onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a'; this.style.transform='scale(1.05)'"
+                    onmouseout="this.style.background='rgba(255,255,255,0.9)'; this.style.color='#475569'; this.style.transform='scale(1)'"
                 >
-                    <x-icon name="close" class="size-5" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
                 </button>
 
                 <div
@@ -341,18 +346,24 @@
                         </div>
                     </div>
 
-                    <div class="stay-room-modal__detail vt-scrollbar">
-                        <p class="kicker" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></p>
-                        <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
+                    <div class="stay-room-modal__detail" style="display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                        {{-- Phần Cố định trên cùng: Tiêu đề + Kicker + Thẻ tags (KHÔNG bị thanh cuộn chèn) --}}
+                        <div style="padding: 1.25rem 1.5rem 0.85rem 1.5rem; border-bottom: 1px solid #f1f5f9; flex-shrink: 0; background: #fff;">
+                            <p class="kicker" style="margin-bottom: 0.25rem;" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></p>
+                            <h2 class="stay-room-modal__title" style="margin: 0 0 0.5rem 0; font-size: 1.35rem; line-height: 1.3; color: var(--color-ink, #1e293b);" x-text="room ? room.name : ''"></h2>
 
-                        <ul class="stay-hprt__tags stay-room-modal__tags" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
-                            <template x-for="(tag, ti) in (room ? (room.displayTags || room.highlights || []) : [])" :key="'tag-' + ti">
-                                <li class="stay-hprt__tag">
-                                    <x-icon name="check" class="size-3.5" />
-                                    <span x-text="typeof tag === 'string' ? tag : (tag.label || '')"></span>
-                                </li>
-                            </template>
-                        </ul>
+                            <ul class="stay-hprt__tags stay-room-modal__tags" style="margin: 0;" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
+                                <template x-for="(tag, ti) in (room ? (room.displayTags || room.highlights || []) : [])" :key="'tag-' + ti">
+                                    <li class="stay-hprt__tag">
+                                        <x-icon name="check" class="size-3.5" />
+                                        <span x-text="typeof tag === 'string' ? tag : (tag.label || '')"></span>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
+
+                        {{-- Phần Cuộn riêng biệt bên dưới: Từ Thông số phòng, Tiện ích, Mô tả đổ xuống --}}
+                        <div class="stay-room-modal__scrollable vt-scrollbar" x-ref="roomDetail" style="flex: 1 1 auto; overflow-y: auto; padding: 1.25rem 1.5rem 2rem 1.5rem;">
 
                         <div class="stay-room-modal__facts" x-show="room">
                             <p class="stay-room-modal__facts-kicker">Thông số phòng</p>
@@ -471,6 +482,7 @@
                                 </ul>
                             </section>
                         </template>
+                        </div>
                     </div>
                 </div>
 

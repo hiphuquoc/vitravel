@@ -488,8 +488,19 @@ Alpine.data('listingGrid', (opts = {}) => ({
     _abort: null,
 
     init() {
-        // Đợi Alpine gắn x-ref trước khi fetch
-        this.$nextTick(() => this.fetchResults());
+        // Tối ưu hóa tải lười (Lazy Fetch): Nếu là danh sách dưới đáy (ví dụ related), chỉ fetch khi cuộn gần tới (350px)
+        const isRelated = this.fixedParams && (this.fixedParams.exclude || this.endpoint.includes('related'));
+        if (isRelated && 'IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    observer.disconnect();
+                    this.fetchResults();
+                }
+            }, { rootMargin: '350px' });
+            observer.observe(this.$el);
+        } else {
+            this.$nextTick(() => this.fetchResults());
+        }
     },
 
     toggleFilter(group, value) {
