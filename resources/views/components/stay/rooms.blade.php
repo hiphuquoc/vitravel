@@ -17,8 +17,10 @@
                         : (! empty($room['highlights']) ? $room['highlights'] : []);
                     $allRates = $room['rateOptions'] ?? [];
                     $hasFallbackRate = $allRates === [] && ! empty($room['priceFormatted']);
+                    $guests = max(1, min(4, (int) ($room['maxGuests'] ?? 2)));
                 @endphp
                 <article class="stay-hprt stay-hprt--clickable" @click="handleCardClick($event, {{ $i }})">
+                    {{-- Cột trái: Thông tin phòng & Ảnh --}}
                     <div class="stay-hprt__room">
                         @if (filled($firstPhoto))
                             <div class="stay-hprt__thumb-wrapper">
@@ -72,31 +74,32 @@
                         </button>
                     </div>
 
+                    {{-- Cột phải: Bảng giá theo đúng cấu trúc CSS gốc .stay-hprt__rates, .stay-hprt__rate, .stay-hprt__offer --}}
                     <div class="stay-hprt__rates">
                         @if ($hasFallbackRate)
-                            <div class="stay-rate">
-                                <div class="stay-rate__col stay-rate__col--cond">
-                                    <p class="stay-rate__title">Giá phòng tiêu chuẩn</p>
-                                    <p class="stay-rate__included">
-                                        <x-icon name="check" class="size-3.5 text-success" />
+                            <div class="stay-hprt__rate">
+                                <div class="stay-hprt__conds">
+                                    <strong style="font-size: 0.95rem; color: var(--color-ink, #272b23);">Giá tiêu chuẩn</strong>
+                                    <p class="stay-hprt__cond stay-hprt__cond--good">
+                                        <x-icon name="check" class="size-3.5" />
                                         <span>Đã bao gồm thuế &amp; phí</span>
                                     </p>
+                                    <div class="stay-hprt__meta-row" style="margin-top: 0.25rem;">
+                                        <span class="stay-guests" title="Sức chứa {{ $guests }} khách">
+                                            @for ($g = 0; $g < min(4, $guests); $g++)
+                                                <x-icon name="user" class="size-3.5 text-ink-soft" />
+                                            @endfor
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="stay-rate__col stay-rate__col--guests">
-                                    <span class="stay-guests" title="Sức chứa tiêu chuẩn">
-                                        @for ($g = 0; $g < max(1, min(4, (int) ($room['maxGuests'] ?? 2))); $g++)
-                                            <x-icon name="user" class="size-3.5" />
-                                        @endfor
-                                    </span>
-                                </div>
-                                <div class="stay-rate__col stay-rate__col--price">
-                                    <div class="stay-rate__price-block">
-                                        <strong class="stay-rate__amount">{{ $room['priceFormatted'] }}</strong>
-                                        <span class="stay-rate__unit">/ đêm</span>
+                                <div class="stay-hprt__offer">
+                                    <div class="stay-hprt__price">
+                                        <span class="stay-hprt__price-now">{{ $room['priceFormatted'] }}</span>
+                                        <span class="stay-hprt__price-unit">/ đêm</span>
                                     </div>
                                     <button
                                         type="button"
-                                        class="btn-primary stay-rate__cta"
+                                        class="btn-primary stay-hprt__cta"
                                         @click.stop="bookRoom('{{ addslashes($room['name']) }}')"
                                     >
                                         <span>Đặt phòng</span>
@@ -106,50 +109,51 @@
                         @else
                             @foreach ($allRates as $rate)
                                 @php
-                                    $guests = max(1, (int) ($rate['guests'] ?? ($room['maxGuests'] ?? 2)));
+                                    $rateGuests = max(1, (int) ($rate['guests'] ?? $guests));
                                     $price = $rate['priceFormatted'] ?? (! empty($rate['price']) ? number_format((float) $rate['price'], 0, ',', '.').' ₫' : null);
                                 @endphp
-                                <div class="stay-rate">
-                                    <div class="stay-rate__col stay-rate__col--cond">
-                                        <p class="stay-rate__title">{{ $rate['name'] ?? 'Giá tiêu chuẩn' }}</p>
+                                <div class="stay-hprt__rate">
+                                    <div class="stay-hprt__conds">
+                                        <strong style="font-size: 0.95rem; color: var(--color-ink, #272b23);">{{ $rate['name'] ?? 'Giá tiêu chuẩn' }}</strong>
                                         @if (! empty($rate['mealPlan']))
-                                            <p class="stay-rate__meal">
-                                                <x-icon name="utensils" class="size-3.5 text-success" />
+                                            <p class="stay-hprt__cond stay-hprt__cond--good">
+                                                <x-icon name="utensils" class="size-3.5" />
                                                 <span>{{ $rate['mealPlan'] }}</span>
                                             </p>
                                         @endif
                                         @if (! empty($rate['cancellation']))
-                                            <p class="stay-rate__cancel">
-                                                <x-icon name="check" class="size-3.5 text-success" />
+                                            <p class="stay-hprt__cond stay-hprt__cond--good">
+                                                <x-icon name="check" class="size-3.5" />
                                                 <span>{{ $rate['cancellation'] }}</span>
                                             </p>
                                         @endif
                                         @if (! empty($rate['payment']))
-                                            <p class="stay-rate__payment">{{ $rate['payment'] }}</p>
+                                            <p class="stay-hprt__cond">
+                                                <x-icon name="info" class="size-3.5" />
+                                                <span>{{ $rate['payment'] }}</span>
+                                            </p>
                                         @endif
+                                        <div class="stay-hprt__meta-row" style="margin-top: 0.25rem;">
+                                            <span class="stay-guests" title="Tối đa {{ $rateGuests }} khách">
+                                                @for ($g = 0; $g < min(4, $rateGuests); $g++)
+                                                    <x-icon name="user" class="size-3.5 text-ink-soft" />
+                                                @endfor
+                                                @if ($rateGuests > 4)
+                                                    <span style="font-size: 0.75rem; font-weight: 600; margin-left: 2px;">+{{ $rateGuests - 4 }}</span>
+                                                @endif
+                                            </span>
+                                        </div>
                                     </div>
-
-                                    <div class="stay-rate__col stay-rate__col--guests">
-                                        <span class="stay-guests" title="Tối đa {{ $guests }} khách">
-                                            @for ($g = 0; $g < min(4, $guests); $g++)
-                                                <x-icon name="user" class="size-3.5" />
-                                            @endfor
-                                            @if ($guests > 4)
-                                                <span class="stay-guests__count">+{{ $guests - 4 }}</span>
-                                            @endif
-                                        </span>
-                                    </div>
-
-                                    <div class="stay-rate__col stay-rate__col--price">
+                                    <div class="stay-hprt__offer">
                                         @if (filled($price))
-                                            <div class="stay-rate__price-block">
-                                                <strong class="stay-rate__amount">{{ $price }}</strong>
-                                                <span class="stay-rate__unit">/ đêm</span>
+                                            <div class="stay-hprt__price">
+                                                <span class="stay-hprt__price-now">{{ $price }}</span>
+                                                <span class="stay-hprt__price-unit">/ đêm</span>
                                             </div>
                                         @endif
                                         <button
                                             type="button"
-                                            class="btn-primary stay-rate__cta"
+                                            class="btn-primary stay-hprt__cta"
                                             @click.stop="bookRoom('{{ addslashes($room['name']) }} - {{ addslashes($rate['name'] ?? '') }}')"
                                         >
                                             <span>Đặt phòng</span>
@@ -163,7 +167,7 @@
             @endforeach
         </div>
 
-        {{-- MODAL PHÒNG CHUẨN 100% CẤU TRÚC CSS GỐC (.stay-room-modal__detail) --}}
+        {{-- MODAL PHÒNG CHUẨN 100% CẤU TRÚC: NÚT CLOSE ĐẶT RIÊNG KHÔNG CHỒNG LÊN DETAIL & SCROLLBAR --}}
         <div
             class="stay-room-modal"
             x-cloak
@@ -186,6 +190,7 @@
                 x-transition:leave-start="stay-room-modal__leave-start"
                 x-transition:leave-end="stay-room-modal__leave-end"
             >
+                {{-- Nút Close được định vị gọn gàng ở góc trên cùng --}}
                 <button
                     type="button"
                     class="stay-room-modal__close"
@@ -237,7 +242,7 @@
                             </span>
                         </div>
 
-                        {{-- Dải ảnh thu nhỏ bên dưới: Dùng đúng class .stay-room-modal__thumbs .vt-scrollbar của CSS gốc --}}
+                        {{-- Dải ảnh thu nhỏ bên dưới --}}
                         <div class="stay-room-modal__thumbs vt-scrollbar" x-show="photoCount > 1">
                             <template x-if="open">
                                 <div style="display: flex; gap: 0.5rem; width: 100%;">
@@ -263,9 +268,11 @@
                         </div>
                     </div>
 
-                    {{-- Cột Thông tin chi tiết bên phải: Dùng đúng class .stay-room-modal__detail .vt-scrollbar của CSS gốc --}}
+                    {{-- Cột Thông tin chi tiết bên phải: Thêm padding-right tránh đè lên nút Close --}}
                     <div class="stay-room-modal__detail vt-scrollbar" x-ref="roomDetail">
-                        <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
+                        <div style="padding-right: 2.75rem;">
+                            <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
+                        </div>
 
                         <div class="stay-room-modal__facts">
                             <ul class="stay-room-modal__fact-list">
