@@ -331,49 +331,76 @@ Alpine.data('demoForm', () => ({
 const mediaLightboxFactory = (items = []) => ({
     items,
     playlist: [],
+    drawerOpen: false,
+    viewerActive: null,
     active: null,
     get activeItem() {
-        return this.active === null ? null : this.playlist[this.active] ?? null;
+        return this.viewerActive === null ? null : this.items[this.viewerActive] ?? null;
     },
     get activeLabel() {
-        if (this.active === null || ! this.playlist.length) return '';
-        const n = String(this.active + 1).padStart(2, '0');
-        const total = String(this.playlist.length).padStart(2, '0');
+        if (this.viewerActive === null || ! this.items.length) return '';
+        const n = String(this.viewerActive + 1).padStart(2, '0');
+        const total = String(this.items.length).padStart(2, '0');
 
         return `${n} / ${total}`;
     },
-    open(index) {
-        const item = this.items[index];
-        if (! item) {
-            return;
+    // Trả về danh sách thumbnail có cửa sổ trượt căn giữa xung quanh active item (Windowed Thumbnails)
+    get visibleThumbnails() {
+        if (! this.items.length) return [];
+        const total = this.items.length;
+        const current = this.viewerActive ?? 0;
+        const windowSize = 13; // Hiển thị 13 ảnh thumbnail kích thước gọn gàng
+        const half = Math.floor(windowSize / 2);
+        
+        let start = Math.max(0, current - half);
+        let end = Math.min(total, start + windowSize);
+        if (end - start < windowSize) {
+            start = Math.max(0, end - windowSize);
         }
-
-        if (Array.isArray(item.slides) && item.slides.length > 0) {
-            this.playlist = item.slides;
-            this.active = 0;
-        } else {
-            this.playlist = this.items;
-            this.active = index;
+        
+        const result = [];
+        for (let i = start; i < end; i++) {
+            result.push({
+                index: i,
+                item: this.items[i],
+                isActive: i === current
+            });
         }
-
-        document.documentElement.style.overflow = 'hidden';
+        return result;
+    },
+    open(index = 0) {
+        this.drawerOpen = true;
+        this.viewerActive = null;
+        this.active = null;
+        document.body.classList.add('stay-room-lock');
     },
     close() {
+        this.drawerOpen = false;
+        this.viewerActive = null;
         this.active = null;
-        this.playlist = [];
-        document.documentElement.style.overflow = '';
+        document.body.classList.remove('stay-room-lock');
+    },
+    openViewer(index) {
+        this.viewerActive = Number.isInteger(index) ? index : 0;
+        this.active = this.viewerActive;
+    },
+    closeViewer() {
+        this.viewerActive = null;
+        this.active = null;
+    },
+    selectViewer(idx) {
+        this.viewerActive = idx;
+        this.active = idx;
     },
     prev() {
-        if (! this.playlist.length) {
-            return;
-        }
-        this.active = (this.active - 1 + this.playlist.length) % this.playlist.length;
+        if (! this.items.length) return;
+        this.viewerActive = (this.viewerActive - 1 + this.items.length) % this.items.length;
+        this.active = this.viewerActive;
     },
     next() {
-        if (! this.playlist.length) {
-            return;
-        }
-        this.active = (this.active + 1) % this.playlist.length;
+        if (! this.items.length) return;
+        this.viewerActive = (this.viewerActive + 1) % this.items.length;
+        this.active = this.viewerActive;
     },
 });
 

@@ -84,6 +84,7 @@
     aria-label="Thư viện ảnh"
     x-data="mediaLightbox(@js($lightboxItems))"
 >
+    {{-- 5 ẢNH ĐẦU TIÊN TẢI THEO CHẾ ĐỘ BACKGROUND IMAGE (NHANH, MƯỢT, KHÔNG LÀM HỎNG GIAO DIỆN) --}}
     <div @class([
         'detail-gallery__grid',
         'detail-gallery__grid--coverOnly' => $coverOnly,
@@ -92,19 +93,10 @@
             <button
                 type="button"
                 class="detail-gallery__cover-btn"
-                @click="open({{ (int) $coverIndex }})"
-                aria-label="Xem ảnh lớn: {{ $title }}"
+                @click="open(0)"
+                aria-label="Xem thư viện ảnh: {{ $title }}"
+                style="background-image: url('{{ $coverSrc }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
             >
-                <img
-                    src="{{ $coverSrc }}"
-                    @if(filled($coverSrcset)) srcset="{{ $coverSrcset }}" @endif
-                    alt="{{ $title }}"
-                    loading="eager"
-                    fetchpriority="high"
-                    decoding="async"
-                    class="detail-gallery__cover"
-                    referrerpolicy="no-referrer"
-                />
                 <span class="detail-gallery__zoom" aria-hidden="true">
                     <x-icon name="search" class="size-5" />
                 </span>
@@ -125,6 +117,7 @@
                         $lbIndex = $thumbBaseIndex + $i;
                         $isLast = $i === $thumbCount - 1;
                         $showMore = $isLast && $moreCount > 0;
+                        $thumbBg = $thumb['src'] ?? '';
                     @endphp
                     <div class="detail-gallery__thumb" role="listitem">
                         <button
@@ -132,16 +125,8 @@
                             class="detail-gallery__thumb-btn"
                             @click="open({{ $lbIndex }})"
                             aria-label="{{ $showMore ? ('Xem thêm '.$moreCount.' ảnh') : ('Xem ảnh '.($i + 2)) }}"
+                            style="background-image: url('{{ $thumbBg }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
                         >
-                            <img
-                                src="{{ $thumb['src'] }}"
-                                @if(!empty($thumb['srcset'])) srcset="{{ $thumb['srcset'] }}" @endif
-                                alt="{{ $title }}"
-                                loading="lazy"
-                                decoding="async"
-                                class="detail-gallery__thumb-img"
-                                referrerpolicy="no-referrer"
-                            />
                             @if ($showMore)
                                 <span class="detail-gallery__more" aria-hidden="true">
                                     +{{ $moreCount }}
@@ -201,6 +186,6 @@
         </div>
     @endif
 
-    {{-- Lightbox được gắn deferred x-teleport body và chỉ render khi active !== null --}}
-    <x-shared.media-lightbox />
+    {{-- DRAWER GRID FULLHEIGHT VÀ SLIDER LIGHTBOX 2 GIAI ĐOẠN --}}
+    <x-shared.media-lightbox :title="$title" />
 </section>
