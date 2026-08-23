@@ -233,7 +233,7 @@ final class StayCrawlImporter
             if ($name === '') {
                 continue;
             }
-            $code = trim((string) ($opt['code'] ?? '')) ?: Str::slug($name);
+            $code = trim((string) ($opt['code'] ?? '')) ?: Str::limit(Str::slug($name), 120, '');
             $option = $this->findOption($service, $name, $code);
             $mergedAttrs = is_array($opt['attrs'] ?? null) ? $opt['attrs'] : [];
             if ($option->exists && is_array($option->attrs)) {
