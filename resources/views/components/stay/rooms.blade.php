@@ -5,7 +5,7 @@
 @if ($rooms !== [])
     <section id="phong" class="detail-section" aria-label="Hạng phòng" x-data="stayRooms(@js($rooms))">
         <h2 class="detail-section__title">Hạng phòng &amp; giá</h2>
-        <div class="stay-rooms" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        <div class="stay-rooms">
             @foreach ($rooms as $i => $room)
                 @php
                     $photos = is_array($room['photos'] ?? null) ? array_values(array_filter($room['photos'])) : [];
@@ -17,10 +17,8 @@
                         : (! empty($room['highlights']) ? $room['highlights'] : []);
                     $allRates = $room['rateOptions'] ?? [];
                     $hasFallbackRate = $allRates === [] && ! empty($room['priceFormatted']);
-                    $guests = max(1, min(4, (int) ($room['maxGuests'] ?? 2)));
                 @endphp
                 <article class="stay-hprt stay-hprt--clickable" @click="handleCardClick($event, {{ $i }})">
-                    {{-- Cột trái: Thông tin phòng & Ảnh --}}
                     <div class="stay-hprt__room">
                         @if (filled($firstPhoto))
                             <div class="stay-hprt__thumb-wrapper">
@@ -29,7 +27,6 @@
                                     alt="{{ $room['name'] }}"
                                     class="stay-hprt__thumb"
                                     loading="lazy"
-                                    decoding="async"
                                     referrerpolicy="no-referrer"
                                 />
                                 @if ($morePhotosCount > 0)
@@ -53,124 +50,201 @@
                             </p>
                         @endif
 
+                        <div class="stay-hprt__meta">
+                            @if (! empty($room['capacity']))
+                                <div class="stay-hprt__meta-row">
+                                    <x-icon name="users" class="size-3.5" />
+                                    <span>Sức chứa: {{ $room['capacity'] }} người lớn</span>
+                                </div>
+                            @endif
+                            @if (! empty($room['bedLabel']))
+                                <div class="stay-hprt__meta-row">
+                                    <x-icon name="bed" class="size-3.5" />
+                                    <span>{{ $room['bedLabel'] }}</span>
+                                </div>
+                            @endif
+                            @if (! empty($room['view']))
+                                <div class="stay-hprt__meta-row">
+                                    <x-icon name="eye" class="size-3.5" />
+                                    <span>{{ $room['view'] }}</span>
+                                </div>
+                            @endif
+                            @if (! empty($room['smoking']))
+                                @php
+                                    $smokeAllowed = $room['smokingAllowed'] ?? null;
+                                    $smokeMod = $smokeAllowed === true
+                                        ? 'stay-hprt__smoke--allowed'
+                                        : ($smokeAllowed === false ? 'stay-hprt__smoke--free' : 'stay-hprt__smoke--neutral');
+                                    $smokeIcon = $smokeAllowed === false ? 'ban' : ($smokeAllowed === true ? 'alert' : 'info');
+                                @endphp
+                                <div @class(['stay-hprt__meta-row', 'stay-hprt__smoke', $smokeMod])>
+                                    <x-icon :name="$smokeIcon" class="size-3.5" />
+                                    <span>{{ $room['smoking'] }}</span>
+                                </div>
+                            @endif
+                        </div>
+
                         @if ($displayTags !== [])
-                            <ul class="stay-hprt__tags" style="margin-top: 0.5rem;">
-                                @foreach (array_slice($displayTags, 0, 5) as $tag)
-                                    <li class="stay-hprt__tag">
-                                        <x-icon name="check" class="size-3.5" />
-                                        <span>{{ $tag }}</span>
-                                    </li>
+                            <ul class="stay-hprt__tags">
+                                @foreach ($displayTags as $tag)
+                                    @php
+                                        $tagLabel = is_string($tag) ? $tag : (string) ($tag['label'] ?? '');
+                                        $tagIcon = $tagLabel !== ''
+                                            ? view_data()->stayAmenityIcon($tagLabel)
+                                            : 'check';
+                                    @endphp
+                                    @if ($tagLabel !== '')
+                                        <li class="stay-hprt__tag">
+                                            <x-icon :name="$tagIcon" class="size-3.5" />
+                                            <span>{{ $tagLabel }}</span>
+                                        </li>
+                                    @endif
                                 @endforeach
                             </ul>
                         @endif
-
-                        <button
-                            type="button"
-                            class="stay-hprt__more-link"
-                            style="margin-top: 0.75rem; display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.85rem; font-weight: 600; color: var(--color-ink-soft, #514f45); background: none; border: 0; padding: 0; cursor: pointer;"
-                            @click.stop="show({{ $i }})"
-                        >
-                            <span>Xem chi tiết phòng &amp; tiện ích</span>
-                            <x-icon name="chevron-right" class="size-3.5" />
-                        </button>
                     </div>
 
-                    {{-- Cột phải: Bảng giá căn chuẩn hoàn hảo 3 cột (Loại giá & Điều kiện | Sức chứa | Giá & Đặt phòng) --}}
-                    <div class="stay-hprt__rates" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                        @if ($hasFallbackRate)
-                            <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(4rem, auto) minmax(10rem, 1fr); align-items: center; gap: 1rem; padding: 1.1rem 1.25rem; border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 85%, #7aa7d9);">
-                                <div>
-                                    <strong style="display: block; font-size: 0.95rem; color: var(--color-ink, #272b23);">Giá tiêu chuẩn</strong>
-                                    <p style="margin: 0.35rem 0 0; font-size: 0.825rem; color: #16a34a; display: flex; align-items: center; gap: 0.3rem;">
-                                        <x-icon name="check" class="size-3.5" />
-                                        <span>Đã bao gồm thuế &amp; phí</span>
-                                    </p>
-                                </div>
-                                <div style="display: flex; align-items: center; justify-content: center;">
-                                    <span class="stay-guests" title="Sức chứa {{ $guests }} khách" style="display: flex; gap: 0.2rem;">
-                                        @for ($g = 0; $g < min(4, $guests); $g++)
-                                            <x-icon name="user" class="size-4 text-ink-soft" />
-                                        @endfor
-                                    </span>
-                                </div>
-                                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                                    <div style="text-align: right;">
-                                        <span style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #d9704f;">{{ $room['priceFormatted'] }}</span>
-                                        <span style="font-size: 0.8rem; color: var(--color-muted, #817d6e); display: block;">/ đêm</span>
-                                    </div>
-                                    <button
-                                        type="button"
-                                        class="btn-primary"
-                                        style="padding: 0.45rem 1.25rem; font-size: 0.88rem;"
-                                        @click.stop="bookRoom('{{ addslashes($room['name']) }}')"
-                                    >
-                                        <span>Đặt phòng</span>
-                                    </button>
-                                </div>
-                            </div>
-                        @else
-                            @foreach ($allRates as $rIdx => $rate)
-                                @php
-                                    $rateGuests = max(1, (int) ($rate['guests'] ?? $guests));
-                                    $price = $rate['priceFormatted'] ?? (! empty($rate['price']) ? number_format((float) $rate['price'], 0, ',', '.').' ₫' : null);
-                                @endphp
-                                <div style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(4rem, auto) minmax(10rem, 1fr); align-items: center; gap: 1rem; padding: 1.1rem 1.25rem; @if($rIdx > 0) border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 85%, #7aa7d9); @endif">
-                                    <div>
-                                        <strong style="display: block; font-size: 0.95rem; color: var(--color-ink, #272b23);">{{ $rate['name'] ?? 'Giá tiêu chuẩn' }}</strong>
-                                        @if (! empty($rate['mealPlan']))
-                                            <p style="margin: 0.35rem 0 0; font-size: 0.825rem; color: #16a34a; display: flex; align-items: center; gap: 0.3rem;">
-                                                <x-icon name="utensils" class="size-3.5" />
-                                                <span>{{ $rate['mealPlan'] }}</span>
-                                            </p>
+                    <div class="stay-hprt__rates">
+                        @forelse ($allRates as $rate)
+                            @php
+                                $priceNow = $rate['priceFormatted'] ?? null;
+                                if (! filled($priceNow)) {
+                                    $priceNow = $rate['priceTotalFormatted'] ?? null;
+                                }
+                                $isNonRefundable = ($rate['cancellationRefundable'] ?? null) === false
+                                    || (
+                                        filled($rate['cancellationTitle'] ?? null)
+                                        && preg_match('/không\s+hoàn|non[\s-]?refund/ui', (string) $rate['cancellationTitle'])
+                                    );
+                            @endphp
+                            <div class="stay-hprt__rate">
+                                <div class="stay-hprt__price">
+                                    @if (! empty($rate['priceStrikeFormatted']))
+                                        <s>{{ $rate['priceStrikeFormatted'] }}</s>
+                                    @endif
+                                    @if (filled($priceNow))
+                                        <div class="stay-hprt__price-now">{{ $priceNow }}</div>
+                                        @if (! empty($rate['priceFormatted']))
+                                            <span class="stay-hprt__price-unit">/ đêm</span>
                                         @endif
-                                        @if (! empty($rate['cancellation']))
-                                            <p style="margin: 0.25rem 0 0; font-size: 0.825rem; color: #16a34a; display: flex; align-items: center; gap: 0.3rem;">
-                                                <x-icon name="check" class="size-3.5" />
-                                                <span>{{ $rate['cancellation'] }}</span>
-                                            </p>
-                                        @endif
-                                        @if (! empty($rate['payment']))
-                                            <p style="margin: 0.25rem 0 0; font-size: 0.825rem; color: var(--color-ink-soft, #514f45); display: flex; align-items: center; gap: 0.3rem;">
-                                                <x-icon name="info" class="size-3.5" />
-                                                <span>{{ $rate['payment'] }}</span>
-                                            </p>
-                                        @endif
-                                    </div>
-                                    <div style="display: flex; align-items: center; justify-content: center;">
-                                        <span class="stay-guests" title="Tối đa {{ $rateGuests }} khách" style="display: flex; gap: 0.2rem;">
-                                            @for ($g = 0; $g < min(4, $rateGuests); $g++)
-                                                <x-icon name="user" class="size-4 text-ink-soft" />
-                                            @endfor
-                                            @if ($rateGuests > 4)
-                                                <span style="font-size: 0.75rem; font-weight: 600; margin-left: 2px;">+{{ $rateGuests - 4 }}</span>
+                                    @endif
+                                    @if (! empty($rate['taxesIncluded']))
+                                        <p class="stay-hprt__tax">Đã bao gồm thuế và phí</p>
+                                    @endif
+                                    @if (! empty($rate['savePercent']) || ! empty($rate['dealLabel']))
+                                        <div class="stay-hprt__deals">
+                                            @if (! empty($rate['savePercent']))
+                                                <span class="stay-hprt__deal stay-hprt__deal--save">Tiết kiệm {{ (int) $rate['savePercent'] }}%</span>
                                             @endif
-                                        </span>
-                                    </div>
-                                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                                        @if (filled($price))
-                                            <div style="text-align: right;">
-                                                <span style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #d9704f;">{{ $price }}</span>
-                                                <span style="font-size: 0.8rem; color: var(--color-muted, #817d6e); display: block;">/ đêm</span>
+                                            @if (! empty($rate['dealLabel']))
+                                                <span class="stay-hprt__deal">{{ $rate['dealLabel'] }}</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="stay-hprt__offer">
+                                    <div class="stay-hprt__conds">
+                                        @php
+                                            $meals = array_values(array_filter(array_map(
+                                                static fn ($m) => trim((string) $m),
+                                                $rate['mealsDetail'] ?? [],
+                                            )));
+                                            $breakfastRaw = trim((string) ($rate['breakfastLabel'] ?? ''));
+                                            $breakfastIncluded = ! empty($rate['breakfastIncluded']);
+                                            if ($breakfastIncluded) {
+                                                $breakfastShow = mb_strlen($breakfastRaw) <= 34 && $breakfastRaw !== ''
+                                                    ? $breakfastRaw
+                                                    : 'Bao gồm bữa sáng';
+                                                $breakfastTipParts = [];
+                                                if ($breakfastRaw !== '' && $breakfastRaw !== $breakfastShow) {
+                                                    $breakfastTipParts[] = $breakfastRaw;
+                                                }
+                                                $breakfastTipParts = array_merge($breakfastTipParts, $meals);
+                                            } elseif ($breakfastRaw !== '') {
+                                                $breakfastShow = preg_match('/^(.+?)\s*[—\-|]\s*.+/u', $breakfastRaw, $bm)
+                                                    ? trim($bm[1]).' (trả thêm)'
+                                                    : \Illuminate\Support\Str::limit($breakfastRaw, 36, '…');
+                                                $breakfastTipParts = array_merge(
+                                                    $breakfastRaw !== $breakfastShow ? [$breakfastRaw] : [],
+                                                    $meals,
+                                                );
+                                            } else {
+                                                $breakfastShow = 'Chỉ phòng';
+                                                $breakfastTipParts = $meals;
+                                            }
+                                            $breakfastTip = implode(' · ', array_values(array_unique(array_filter($breakfastTipParts))));
+
+                                            $cancelRaw = trim((string) ($rate['cancellationTitle'] ?? ''));
+                                            $cancelDesc = trim((string) ($rate['cancellationDescription'] ?? ''));
+                                            $cancelShow = $cancelRaw;
+                                            $cancelTip = $cancelDesc !== '' && $cancelDesc !== $cancelShow ? $cancelDesc : '';
+
+                                            $prepayRaw = trim((string) ($rate['prepaymentTitle'] ?? ''));
+                                            $prepayDesc = trim((string) ($rate['prepaymentDescription'] ?? ''));
+                                            $prepayShow = $prepayRaw;
+                                            $prepayTip = $prepayDesc !== '' && $prepayDesc !== $prepayShow ? $prepayDesc : '';
+                                        @endphp
+
+                                        <div @class(['stay-hprt__cond', 'stay-hprt__cond--good' => $breakfastIncluded])>
+                                            <x-icon name="coffee" class="size-3.5" />
+                                            <span class="stay-hprt__cond-text">{{ $breakfastShow }}</span>
+                                            <x-stay.rate-tip :tip="$breakfastTip" label="Chi tiết bữa sáng" />
+                                        </div>
+
+                                        @if ($cancelShow !== '')
+                                            <div @class(['stay-hprt__cond', 'stay-hprt__cond--bad' => $isNonRefundable])>
+                                                <x-icon :name="$isNonRefundable ? 'x-mark' : 'check'" class="size-3.5" />
+                                                <span class="stay-hprt__cond-text">{{ $cancelShow }}</span>
+                                                <x-stay.rate-tip :tip="$cancelTip" label="Chi tiết hủy phòng" />
                                             </div>
                                         @endif
-                                        <button
-                                            type="button"
-                                            class="btn-primary"
-                                            style="padding: 0.45rem 1.25rem; font-size: 0.88rem;"
-                                            @click.stop="bookRoom('{{ addslashes($room['name']) }} - {{ addslashes($rate['name'] ?? '') }}')"
-                                        >
-                                            <span>Đặt phòng</span>
-                                        </button>
+
+                                        @if ($prepayShow !== '')
+                                            <div class="stay-hprt__cond">
+                                                <x-icon name="check" class="size-3.5" />
+                                                <span class="stay-hprt__cond-text">{{ $prepayShow }}</span>
+                                                <x-stay.rate-tip :tip="$prepayTip" label="Chi tiết thanh toán" />
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <button type="button" class="btn-primary stay-hprt__cta" @click.stop="bookRoom('{{ addslashes($room['name']) }}')">Đặt phòng</button>
+                                </div>
+                            </div>
+                        @empty
+                            @if ($hasFallbackRate)
+                                <div class="stay-hprt__rate">
+                                    <div class="stay-hprt__price">
+                                        <div class="stay-hprt__price-now">{{ $room['priceFormatted'] }}</div>
+                                        <span class="stay-hprt__price-unit">/ đêm</span>
+                                    </div>
+                                    <div class="stay-hprt__offer">
+                                        <div class="stay-hprt__conds"></div>
+                                        <button type="button" class="btn-primary stay-hprt__cta" @click.stop="bookRoom('{{ addslashes($room['name']) }}')">Đặt phòng</button>
                                     </div>
                                 </div>
-                            @endforeach
-                        @endif
+                            @else
+                                <div class="stay-hprt__rate">
+                                    <div class="stay-hprt__price">
+                                        <div class="stay-hprt__price-now stay-hprt__price-now--quote">Liên hệ báo giá</div>
+                                    </div>
+                                    <div class="stay-hprt__offer">
+                                        <div class="stay-hprt__conds">
+                                            <div class="stay-hprt__cond">
+                                                <x-icon name="check" class="size-3.5" />
+                                                <span>Chưa có bảng giá cố định cho hạng này</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-primary stay-hprt__cta" @click.stop="bookRoom('{{ addslashes($room['name']) }}')">Đặt phòng</button>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforelse
                     </div>
                 </article>
             @endforeach
         </div>
 
-        {{-- MODAL PHÒNG CHUẨN ĐẸP 100% KHÔNG BỊ ĐÈ CLOSE / SCROLLBAR --}}
         <div
             class="stay-room-modal"
             x-cloak
@@ -208,13 +282,12 @@
                     x-show="room"
                     :class="room && room.photos && room.photos.length ? '' : 'stay-room-modal__body--solo'"
                 >
-                    {{-- Cột Gallery ảnh bên trái: CHỈ TẢI ẢNH KHI MODAL MỞ (open === true) --}}
                     <div class="stay-room-modal__gallery" x-show="room && room.photos && room.photos.length">
                         <div class="stay-room-modal__hero">
                             <template x-if="open && room && room.photos && room.photos[photo]">
                                 <img
                                     :src="room.photos[photo].url"
-                                    :alt="room.photos[photo].alt || (room ? room.name : '')"
+                                    :alt="(room.photos[photo] && room.photos[photo].alt) || (room ? room.name : '')"
                                     referrerpolicy="no-referrer"
                                     decoding="async"
                                 />
@@ -237,32 +310,30 @@
                                     >
                                         <x-icon name="chevron-right" class="size-5" />
                                     </button>
+                                    <div class="stay-room-modal__dots" aria-hidden="true">
+                                        <template x-for="(_, di) in (room ? room.photos : [])" :key="'dot-' + di">
+                                            <button
+                                                type="button"
+                                                class="stay-room-modal__dot"
+                                                :class="di === photo ? 'is-active' : ''"
+                                                @click="photo = di"
+                                            ></button>
+                                        </template>
+                                    </div>
                                 </div>
                             </template>
-                            <span class="stay-room-modal__counter" x-show="photoCount > 1">
-                                <span x-text="photo + 1"></span>/<span x-text="photoCount"></span>
-                            </span>
                         </div>
-
-                        {{-- Dải ảnh thu nhỏ bên dưới --}}
-                        <div class="stay-room-modal__thumbs vt-scrollbar" x-show="photoCount > 1">
+                        <div class="stay-room-modal__thumbs vt-scrollbar" x-show="open && room && room.photos && room.photos.length > 1">
                             <template x-if="open">
-                                <div style="display: flex; gap: 0.5rem; width: 100%;">
-                                    <template x-for="(p, pi) in (room ? (room.photos || []) : [])" :key="pi">
+                                <div style="display: contents;">
+                                    <template x-for="(p, pi) in (room ? room.photos : [])" :key="pi">
                                         <button
                                             type="button"
                                             class="stay-room-modal__thumb"
-                                            :class="{ 'is-active': pi === photo }"
+                                            :class="pi === photo ? 'is-active' : ''"
                                             @click="photo = pi"
-                                            :aria-label="'Ảnh ' + (pi + 1)"
                                         >
-                                            <img
-                                                :src="p.url"
-                                                :alt="p.alt || (room ? room.name : '')"
-                                                loading="lazy"
-                                                decoding="async"
-                                                referrerpolicy="no-referrer"
-                                            />
+                                            <img :src="p.url" :alt="p.alt || room.name" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
                                         </button>
                                     </template>
                                 </div>
@@ -270,33 +341,41 @@
                         </div>
                     </div>
 
-                    {{-- Cột Thông tin chi tiết bên phải --}}
-                    <div class="stay-room-modal__detail vt-scrollbar" x-ref="roomDetail">
-                        <div style="padding-right: 2.75rem;">
-                            <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
-                        </div>
+                    <div class="stay-room-modal__detail vt-scrollbar">
+                        <p class="kicker" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></p>
+                        <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
 
-                        <div class="stay-room-modal__facts">
-                            <ul class="stay-room-modal__fact-list">
-                                <template x-if="room && room.area">
+                        <ul class="stay-hprt__tags stay-room-modal__tags" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
+                            <template x-for="(tag, ti) in (room ? (room.displayTags || room.highlights || []) : [])" :key="'tag-' + ti">
+                                <li class="stay-hprt__tag">
+                                    <x-icon name="check" class="size-3.5" />
+                                    <span x-text="typeof tag === 'string' ? tag : (tag.label || '')"></span>
+                                </li>
+                            </template>
+                        </ul>
+
+                        <div class="stay-room-modal__facts" x-show="room">
+                            <p class="stay-room-modal__facts-kicker">Thông số phòng</p>
+                            <ul class="stay-room-modal__facts-grid">
+                                <template x-if="room && room.sizeSqm">
                                     <li class="stay-room-modal__fact">
                                         <span class="stay-room-modal__fact-icon" aria-hidden="true">
                                             <x-icon name="maximize" class="size-4" />
                                         </span>
                                         <span class="stay-room-modal__fact-copy">
                                             <span class="stay-room-modal__fact-label">Diện tích</span>
-                                            <strong x-text="room.area"></strong>
+                                            <strong><span x-text="room.sizeSqm"></span> m²</strong>
                                         </span>
                                     </li>
                                 </template>
-                                <template x-if="room && room.maxGuests">
+                                <template x-if="room && room.capacity">
                                     <li class="stay-room-modal__fact">
                                         <span class="stay-room-modal__fact-icon" aria-hidden="true">
-                                            <x-icon name="user" class="size-4" />
+                                            <x-icon name="users" class="size-4" />
                                         </span>
                                         <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Khách tối đa</span>
-                                            <strong x-text="room.maxGuests + ' người lớn'"></strong>
+                                            <span class="stay-room-modal__fact-label">Sức chứa</span>
+                                            <strong><span x-text="room.capacity"></span> người lớn</strong>
                                         </span>
                                     </li>
                                 </template>
