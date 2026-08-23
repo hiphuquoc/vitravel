@@ -347,7 +347,41 @@ chown -R www:www storage bootstrap/cache
 
 ---
 
-## 9. Lỗi thường gặp
+## 9. Xử lý sự cố & Tiến trình bị kẹt / treo
+
+### A. Dừng tiến trình kẹt (Kill hanging crawler/chrome processes)
+Nếu crawler hoặc Chrome bị kẹt do timeout, chiếm dụng CPU/RAM hoặc giữ lock:
+
+```bash
+# 1. Diệt toàn bộ tiến trình Chrome & Stay crawl đang chạy ngầm
+pkill -9 -f "chrome-linux64/chrome" 2>/dev/null
+pkill -9 -f "stay:crawl" 2>/dev/null
+pkill -9 -f "stay_crawl" 2>/dev/null
+pkill -9 -f "stay-crawl" 2>/dev/null
+
+# 2. Xóa các file tmp crawler bị rác
+rm -rf storage/app/tmp/stay_crawl_* 2>/dev/null
+```
+
+### B. Câu lệnh chẩn đoán & kiểm tra nhanh môi trường (Diagnostics)
+Chạy khối lệnh sau để rà soát toàn bộ trạng thái crawler:
+
+```bash
+# Kiểm tra các tiến trình đang chạy
+ps aux | grep -E 'stay:crawl|chrome|puppeteer|artisan' | grep -v grep
+
+# Kiểm tra Node và đường dẫn Chrome
+which node nodejs google-chrome google-chrome-stable chromium-browser 2>/dev/null
+node -v 2>/dev/null
+ls -la $(grep 'STAY_CRAWL_CHROME' .env | cut -d '=' -f2) 2>/dev/null
+
+# Xem 30 dòng log lỗi gần nhất của crawler / Laravel
+tail -n 30 storage/logs/laravel.log
+```
+
+---
+
+## 10. Lỗi thường gặp
 
 | Triệu chứng | Việc kiểm |
 |-------------|-----------|
@@ -364,10 +398,17 @@ chown -R www:www storage bootstrap/cache
 
 ---
 
-## 10. Liên kết
+## 11. Liên kết
 
 | Tài liệu | Nội dung |
 |----------|----------|
 | [`13-deploy-aapanel-vps.md`](13-deploy-aapanel-vps.md) | Nginx, cron, Supervisor |
 | [`16-accommodation-stays.md`](16-accommodation-stays.md) | Pipeline crawl / API |
 | [`gcs-standard.md`](gcs-standard.md) | Media GCS |
+
+
+## 6. Luồng Crawler Danh mục Bất đồng bộ & Stream Real-time
+
+1. **Background Listing Worker**: "php artisan stay-crawl:list {jobId}" chạy tiến trình Chrome nền độc lập, hỗ trợ cào danh mục lớn lên tới 90 rounds mà không phụ thuộc timeout HTTP.
+2. **Stream Sidecar**: Tiến độ cuộn trang và các URL mới tìm thấy được ghi nhận liên tục vào "storage/app/tmp/stay_list_stream_{jobId}.json" và lưu vào database tức thời.
+3. **Queue Xử lý Song song**: Các item mới được dispatch ngay vào hàng đợi "php artisan queue:work" để enrich hình ảnh, tiện ích và phòng song song.

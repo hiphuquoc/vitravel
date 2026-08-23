@@ -245,6 +245,19 @@ final class StayCrawlApiController extends Controller
         $html = $validated['html'] ?? null;
         $html = is_string($html) && $html !== '' ? $html : null;
 
+        // 1. Nếu tiến trình cào danh sách (listing) đang chạy nền: Đồng bộ stream URLs và trả về ngay
+        $listSync = $this->crawl->syncListProgressFromStream($job);
+        if ($listSync['running']) {
+            $msg = $listSync['message'] ?: 'Đang tải danh sách chỗ nghỉ từ Booking.com (Chrome realtime)…';
+            $snap = $this->crawl->httpStepSnapshot($job);
+            $snap['phase'] = 'listing';
+            $snap['message'] = $msg;
+            $snap['busy'] = true;
+            $snap['stream'] = $listSync['stream'];
+            $snap['urls_found'] = $listSync['urls_found'];
+            return $this->stepResponse($snap, $locale, $msg);
+        }
+
         if ($this->crawl->isWorkerAlive($job)) {
             $busyMsg = $this->crawl->isWorkerPaused($job)
                 ? 'Worker đang tạm dừng (paused) — gọi resume để tiếp tục'

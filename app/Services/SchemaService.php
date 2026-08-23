@@ -203,10 +203,10 @@ class SchemaService
             '@type' => 'FAQPage',
             'mainEntity' => array_values(array_map(fn (array $faq) => [
                 '@type' => 'Question',
-                'name' => $faq['q'],
+                'name' => apply_site_brand($faq['q'] ?? ''),
                 'acceptedAnswer' => [
                     '@type' => 'Answer',
-                    'text' => $faq['a'],
+                    'text' => apply_site_brand($faq['a'] ?? ''),
                 ],
             ], $faqs)),
         ];

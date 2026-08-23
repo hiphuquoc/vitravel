@@ -205,8 +205,57 @@ async function main() {
 
         let pack;
         if (isListing) {
-            const expandDebug = await expandListingResults(page);
+            const progressStreamPath = input.progress_stream_path || (outputPath + '.stream.json');
+            const streamSeen = {};
+            const emitStreamProgress = (evt) => {
+                try {
+                    const snap = {
+                        timestamp: new Date().toISOString(),
+                        ...evt
+                    };
+                    fs.writeFileSync(progressStreamPath, JSON.stringify(snap));
+                } catch (e) {
+                    // ignore write error
+                }
+            };
+            emitStreamProgress({ phase: 'listing_init', message: 'Đã mở trang danh mục, bắt đầu tải kết quả…', urls_count: 0, urls: [] });
+            
+            const expandDebug = await expandListingResults(page, async (roundInfo) => {
+                try {
+                    const batchUrls = await collectListingUrlsOnly(page);
+                    const newFound = [];
+                    for (const u of batchUrls) {
+                        const key = u.split('?')[0].toLowerCase();
+                        if (!streamSeen[key]) {
+                            streamSeen[key] = true;
+                            newFound.push(u);
+                        }
+                    }
+                    emitStreamProgress({
+                        phase: 'listing_scroll',
+                        round: roundInfo.round,
+                        scrolls: roundInfo.scrolls,
+                        load_more_clicks: roundInfo.load_more_clicks,
+                        cards_count: roundInfo.cards_count,
+                        urls_count: Object.keys(streamSeen).length,
+                        new_urls: newFound,
+                        urls: Object.keys(streamSeen),
+                        message: 'Đang tải danh sách: ' + Object.keys(streamSeen).length + ' chỗ nghỉ (cuộn ' + roundInfo.scrolls + ', click ' + roundInfo.load_more_clicks + ')'
+                    });
+                } catch (err) {
+                    // ignore
+                }
+            });
             pack = await collectListingPack(page, expandDebug);
+            emitStreamProgress({
+                phase: 'listing_done',
+                stopped: expandDebug.stopped,
+                scrolls: expandDebug.scrolls,
+                load_more_clicks: expandDebug.load_more_clicks,
+                urls_count: pack.hotel_urls.length,
+                urls: pack.hotel_urls,
+                message: 'Đã hoàn tất lấy danh sách (' + pack.hotel_urls.length + ' URL chỗ nghỉ)'
+            });
         } else if (mode === 'gallery') {
             pack = await collectGalleryPack(page, downloadOpts);
         } else if (mode === 'rooms_list') {
@@ -669,7 +718,7 @@ async function listingHasLoadMore(page) {
 /**
  * Listing Booking: scroll lazy-load + click «Tải thêm kết quả» đến khi nút biến mất và DOM ổn định.
  */
-async function expandListingResults(page) {
+async function expandListingResults(page, onProgress = null) {
     const debug = {
         scrolls: 0,
         load_more_clicks: 0,
@@ -717,6 +766,14 @@ async function expandListingResults(page) {
             after.hotel_links > before.hotel_links ||
             after.height > before.height + 40;
 
+        if (onProgress && (round % 2 === 0 || grew || debug.load_more_clicks > 0)) {
+            await onProgress({
+                round: round + 1,
+                scrolls: debug.scrolls,
+                load_more_clicks: debug.load_more_clicks,
+                cards_count: after.cards
+            });
+        }
         if (grew) {
             stagnant = 0;
             continue;
@@ -768,6 +825,42 @@ async function expandListingResults(page) {
     }
     await waitQuiet(page, 500);
     return debug;
+}
+
+
+async function collectListingUrlsOnly(page) {
+    return page.evaluate(() => {
+        const out = [];
+        const seen = {};
+        const push = (href) => {
+            if (!href) return;
+            try {
+                const u = new URL(href, location.origin);
+                if (!/\/hotel\/[a-z]{2}\/[^/]+\.html/i.test(u.pathname)) return;
+                u.hash = '';
+                const key = u.origin + u.pathname.replace(/\.(en-gb|en-us|vi|fr|de)(\.html)$/i, '$2').toLowerCase();
+                if (seen[key]) return;
+                seen[key] = true;
+                out.push(u.origin + u.pathname + (u.search || ''));
+            } catch {
+                // ignore
+            }
+        };
+        const sels = [
+            '[data-testid="property-card"] a[href*="/hotel/"]',
+            '[data-testid="property-card-container"] a[href*="/hotel/"]',
+            '[data-testid="title-link"]',
+            'a[data-testid="title-link"]',
+            'a[href*="/hotel/"][data-testid]',
+            'a[href*="booking.com/hotel/"]',
+            'a[href^="/hotel/"]',
+        ];
+        for (const sel of sels) {
+            document.querySelectorAll(sel).forEach((a) => push(a.href || a.getAttribute('href')));
+        }
+        document.querySelectorAll('a[href*="/hotel/"]').forEach((a) => push(a.href || a.getAttribute('href')));
+        return out;
+    });
 }
 
 async function collectListingPack(page, expandDebug) {

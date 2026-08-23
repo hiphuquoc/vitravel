@@ -177,9 +177,9 @@
                 </div>
 
                 {{-- Hàng 3: Rating + Vị trí tự nhiên, liền mạch --}}
-                @if (filled($location) || $rating !== null)
+                @if (filled($location) || (! empty($rating) && (float) $rating > 0))
                     <div class="detail-title-card__meta">
-                        @if ($rating !== null)
+                        @if (! empty($rating) && (float) $rating > 0)
                             <div class="detail-title-card__rating-wrap">
                                 <x-shared.rating :rating="$rating" :count="$reviewCount ?? 0" class="detail-title-card__rating" />
                             </div>

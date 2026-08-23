@@ -101,8 +101,10 @@ final class StayCrawlService
                     $body = $html;
                     $finalUrl = $current;
                 } else {
+                    $streamFile = data_get($job->meta, 'stream_file') ?: storage_path('app/tmp/stay_list_stream_'.$job->id.'.json');
                     $fetch = $this->fetcher->fetch($current, $respectRobots, $useProxy, [
                         'mode' => 'list',
+                        'progress_stream_path' => $streamFile,
                     ]);
                     if (! $fetch['ok'] && $fetch['html'] === '') {
                         throw new RuntimeException($fetch['reason'] ?? 'Fetch list thất bại');
@@ -1475,4 +1477,185 @@ final class StayCrawlService
             })->values()->all(),
         ];
     }
+
+    /**
+     * Khởi chạy tiến trình Chrome cào danh sách listing ở background (tránh Nginx 60s timeout).
+     */
+    public function spawnListProcess(StayCrawlJob $job, array $opts = []): void
+    {
+        $htmlFile = '';
+        $html = $opts['html'] ?? null;
+        if (is_string($html) && $html !== '') {
+            $dir = storage_path('app/tmp');
+            if (! is_dir($dir)) {
+                mkdir($dir, 0775, true);
+            }
+            $htmlFile = $dir.'/stay_list_'.$job->id.'.html';
+            file_put_contents($htmlFile, $html);
+        }
+
+        $php = $this->phpCliBinary();
+        $artisan = base_path('artisan');
+        $setsid = $this->safeIsExecutable('/usr/bin/setsid') ? '/usr/bin/setsid' : '';
+        $nohup = $this->safeIsExecutable('/usr/bin/nohup') ? '/usr/bin/nohup' : 'nohup';
+        $parts = array_values(array_filter([
+            $setsid,
+            $nohup,
+            escapeshellarg($php),
+            escapeshellarg($artisan),
+            'stay-crawl:list',
+            (string) $job->id,
+            '--locale='.escapeshellarg((string) ($opts['locale'] ?? 'vi')),
+        ]));
+        if (! empty($opts['useProxy'])) {
+            $parts[] = '--proxy';
+        }
+        if (! empty($opts['respectRobots'])) {
+            $parts[] = '--respect-robots';
+        }
+        if ($htmlFile !== '') {
+            $parts[] = '--html-file='.escapeshellarg($htmlFile);
+        }
+        if (! empty($opts['maxPages'])) {
+            $parts[] = '--max-pages='.(int) $opts['maxPages'];
+        }
+
+        $log = storage_path('logs/stay-crawl-list-'.$job->id.'.log');
+        $stamp = now()->toIso8601String();
+        @file_put_contents(
+            $log,
+            "{$stamp} SPAWN stay-crawl:list {$job->id} php={$php}
+",
+            FILE_APPEND,
+        );
+        $cmd = 'cd '.escapeshellarg(base_path()).' && '.implode(' ', $parts)
+            .' >> '.escapeshellarg($log).' 2>&1 < /dev/null & echo $!';
+        $pid = trim((string) shell_exec($cmd));
+        @file_put_contents(
+            $log,
+            "{$stamp} SPAWN_PID=".($pid !== '' ? $pid : 'unknown')."
+",
+            FILE_APPEND,
+        );
+
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['list_process'] = [
+            'running' => true,
+            'pid' => $pid !== '' ? (int) $pid : null,
+            'started_at' => now()->toIso8601String(),
+            'log' => 'storage/logs/stay-crawl-list-'.$job->id.'.log',
+        ];
+        $job->meta = $meta;
+        $job->status = StayCrawlJob::STATUS_CRAWLING;
+        $job->save();
+    }
+
+    /**
+     * Cào listing ở background và stream URL trực tiếp vào database ngay khi tìm thấy.
+     */
+    public function crawlListBackground(
+        StayCrawlJob $job,
+        ?string $html = null,
+        bool $respectRobots = false,
+        int $maxPages = 1,
+        bool $useProxy = false,
+    ): array {
+        $streamFile = storage_path('app/tmp/stay_list_stream_'.$job->id.'.json');
+        @unlink($streamFile);
+
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['stream_file'] = $streamFile;
+        $job->meta = $meta;
+        $job->save();
+
+        try {
+            $result = $this->crawlList($job, $html, $respectRobots, $maxPages, $useProxy);
+            $fresh = $result['job']->fresh() ?? $result['job'];
+            $meta = is_array($fresh->meta) ? $fresh->meta : [];
+            $meta['list_process']['running'] = false;
+            $meta['list_process']['finished_at'] = now()->toIso8601String();
+            $fresh->meta = $meta;
+            $fresh->status = StayCrawlJob::STATUS_READY;
+            $fresh->save();
+
+            // Tự động đẩy queue để xử lý song song các URLs đã tìm thấy
+            $this->dispatchItemQueue($fresh, 'vi', $useProxy, $respectRobots);
+
+            return $result;
+        } catch (\Throwable $e) {
+            $this->failListStep($job->fresh() ?? $job, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function failListStep(StayCrawlJob $job, string $error): void
+    {
+        $job->refresh();
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $meta['list_process']['running'] = false;
+        $meta['list_process']['error'] = $error;
+        $job->meta = $meta;
+        $job->status = StayCrawlJob::STATUS_FAILED;
+        $job->error = $error;
+        $job->save();
+    }
+
+    /**
+     * Đồng bộ tiến độ stream từ file sidecar của Chrome Node script vào DB realtime.
+     */
+    public function syncListProgressFromStream(StayCrawlJob $job): array
+    {
+        $streamFile = storage_path('app/tmp/stay_list_stream_'.$job->id.'.json');
+        $running = (bool) data_get($job->meta, 'list_process.running', false);
+
+        // Kiểm tra xem process có bị treo quá 15 phút không
+        if ($running) {
+            $started = (string) data_get($job->meta, 'list_process.started_at', '');
+            if ($started !== '' && (time() - strtotime($started)) > 900) {
+                $running = false;
+                $this->failListStep($job, 'Tiến trình cào danh sách vượt quá thời gian tối đa (15 phút).');
+            }
+        }
+
+        $streamData = null;
+        if (is_file($streamFile)) {
+            $raw = @file_get_contents($streamFile);
+            if (is_string($raw) && $raw !== '') {
+                $streamData = @json_decode($raw, true);
+            }
+        }
+
+        if (is_array($streamData)) {
+            // Nạp URL mới vào database theo thời gian thực
+            $urls = is_array($streamData['urls'] ?? null) ? $streamData['urls'] : [];
+            $newAdded = 0;
+            foreach ($urls as $url) {
+                if (! is_string($url) || $url === '') {
+                    continue;
+                }
+                $canon = StayBookingUrl::canonicalize($url);
+                $exists = $job->items()->where('canonical_url', $canon)->exists();
+                if (! $exists) {
+                    $this->queueHotelUrl($url, $job);
+                    $newAdded++;
+                }
+            }
+            if ($newAdded > 0) {
+                $job->items_found = $job->items()->count();
+                $job->save();
+            }
+
+            if (($streamData['phase'] ?? '') === 'listing_done') {
+                $running = false;
+            }
+        }
+
+        return [
+            'running' => $running,
+            'stream' => $streamData,
+            'urls_found' => (int) ($job->items()->count()),
+            'message' => is_array($streamData) ? ($streamData['message'] ?? null) : 'Đang khởi động Chrome…',
+        ];
+    }
+
 }

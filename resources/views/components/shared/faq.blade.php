@@ -14,13 +14,13 @@
                         <button type="button" @click="open = open === {{ $loop->index }} ? null : {{ $loop->index }}"
                             class="faq-item__trigger"
                             :aria-expanded="open === {{ $loop->index }}">
-                            {{ $faq['q'] }}
+                            {{ apply_site_brand($faq['q'] ?? '') }}
                             <x-icon name="chevron-down" class="size-4 shrink-0 transition"
                                 ::class="open === {{ $loop->index }} && 'rotate-180 text-primary-600'" />
                         </button>
                     </h3>
                     <div x-show="open === {{ $loop->index }}" x-collapse x-cloak>
-                        <p class="body-text faq-item__answer">{{ $faq['a'] }}</p>
+                        <p class="body-text faq-item__answer">{{ apply_site_brand($faq['a'] ?? '') }}</p>
                     </div>
                 </div>
             @endforeach

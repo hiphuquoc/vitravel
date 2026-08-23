@@ -396,3 +396,11 @@ Cùng shape public/admin: `title`, `content`, `star_rating`, `price_from`, `attr
 - [14-ai-system-prompts.md](14-ai-system-prompts.md) — prompt enrich + crawl
 - [10-admin-console-api.md](10-admin-console-api.md) — API admin
 - `project/README.md` — key `services`
+
+
+### 4.2. Khởi chạy từ Danh mục (POST /stay-crawls/from-category) — Chế độ Bất đồng bộ Cao cấp
+
+- Khi cào danh mục (Listing URL Booking.com), hệ thống **khởi tạo job bất đồng bộ ngay lập tức** (trả về trong < 200ms) để loại trừ triệt để tình trạng Nginx/PHP-FPM cắt kết nối quá 60s.
+- Chrome Puppeteer mở background qua lệnh "php artisan stay-crawl:list {jobId}", thực hiện scroll + bấm «Tải thêm kết quả».
+- **Streaming Live thời gian thực**: Cứ mỗi chu kỳ scroll tìm thấy khách sạn mới, Chrome ghi stream trực tiếp vào hệ thống. API processNext / Polling sẽ đẩy trực tiếp số lượng URL, metrics scroll, click tải thêm ra màn hình Terminal Log mà không làm treo hay tắt modal.
+- Mỗi URL được tìm thấy tự động đẩy ngay vào Laravel Queue ProcessStayCrawlItemJob hoặc pipeline để chạy song song.

@@ -77,6 +77,7 @@ final class StayCrawlBrowser
                 ? (bool) $options['headless']
                 : (bool) config('stay.crawl.headless', true),
             'slow_mo' => (int) ($options['slow_mo'] ?? config('stay.crawl.slow_mo', 0)),
+            'progress_stream_path' => (string) ($options['progress_stream_path'] ?? ''),
         ];
         file_put_contents($inputFile, json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE));
 

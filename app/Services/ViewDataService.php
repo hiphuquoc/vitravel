@@ -487,8 +487,8 @@ class ViewDataService
             'banner' => $cover,
             'bannerSrcset' => $category->coverSrcset(),
             'faqs' => $category->faqs->where('is_active', true)->map(fn (Faq $faq) => [
-                'q' => $faq->question,
-                'a' => $faq->answer,
+                'q' => apply_site_brand($faq->question),
+                'a' => apply_site_brand($faq->answer),
             ])->values()->all(),
         ];
     }
@@ -1901,8 +1901,8 @@ class ViewDataService
             'content' => $translation?->content ?? '',
             'attrs' => is_array($service->attrs) ? $service->attrs : [],
             'faqs' => $service->faqs->where('is_active', true)->map(fn (Faq $faq) => [
-                'q' => $faq->question,
-                'a' => $faq->answer,
+                'q' => apply_site_brand($faq->question),
+                'a' => apply_site_brand($faq->answer),
             ])->values()->all(),
             'quote' => $this->serviceQuote($service, $translation),
             'styles' => [],
@@ -2837,8 +2837,8 @@ class ViewDataService
             'exclusions' => $translation?->exclusions ?? [],
             'notes' => $translation?->notes ?? [],
             'faqs' => $package->faqs->where('is_active', true)->map(fn (Faq $faq) => [
-                'q' => $faq->question,
-                'a' => $faq->answer,
+                'q' => apply_site_brand($faq->question),
+                'a' => apply_site_brand($faq->answer),
             ])->values()->all(),
             'gallery' => $this->mapGalleryAttachments($package),
             'galleryCount' => $this->galleryAttachmentCount($package),
@@ -2899,8 +2899,8 @@ class ViewDataService
             'imageDetailSrcset' => $article->coverSrcset(),
             'content' => is_array($content) ? $content : [],
             'faqs' => $article->faqs->where('is_active', true)->map(fn (Faq $faq) => [
-                'q' => $faq->question,
-                'a' => $faq->answer,
+                'q' => apply_site_brand($faq->question),
+                'a' => apply_site_brand($faq->answer),
             ])->values()->all(),
             'gallery' => $article->mediaAttachments
                 ->where('role', 'gallery')
