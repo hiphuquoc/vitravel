@@ -1725,6 +1725,33 @@ class ViewDataService
     }
 
     /** @return list<array<string, mixed>> */
+    
+    /**
+     * Lấy 3 dịch vụ liên quan cùng danh mục với truy vấn giới hạn (Zero overhead).
+     */
+    public function relatedServicesForCategory(string $cluster, ?int $categoryId, ?int $excludeServiceId = null, int $limit = 3): array
+    {
+        if (! $categoryId) {
+            return [];
+        }
+
+        $query = \App\Models\Service::withoutGlobalScope('project')
+            ->published()
+            ->where('service_category_id', $categoryId)
+            ->where('cluster', $cluster)
+            ->when($excludeServiceId, fn ($q) => $q->where('id', '!=', $excludeServiceId))
+            ->with([
+                'translations', 'category', 'seoEntry.translations',
+                'mediaAttachments.media',
+                'priceTable.periods.rates',
+            ])
+            ->orderBy('sort')
+            ->orderByDesc('id')
+            ->limit($limit);
+
+        return $query->get()->map(fn (\App\Models\Service $s) => $this->mapService($s))->values()->all();
+    }
+
     public function services(?string $cluster = null): array
     {
         $query = Service::withoutGlobalScope('project')

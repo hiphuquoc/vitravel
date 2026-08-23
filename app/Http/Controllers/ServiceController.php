@@ -134,12 +134,10 @@ class ServiceController extends Controller
                 abort(404);
             }
 
-            $related = array_values(array_filter(
-                $this->data->services($cluster),
-                fn ($s) => ($s['slug'] ?? '') !== $slug
-                    && ($s['categorySlug'] ?? '') === $category
-            ));
-            $related = array_slice($related, 0, 3);
+            // Tối ưu hóa truy vấn: Chỉ lấy đúng 3 dịch vụ liên quan cùng danh mục thay vì map toàn bộ hàng trăm dịch vụ
+            $catId = $service['categoryId'] ?? null;
+            $serviceId = $service['id'] ?? null;
+            $related = $this->data->relatedServicesForCategory($cluster, $catId, $serviceId, 3);
 
             return view('pages.services.show', [
                 'cluster' => $cluster,
