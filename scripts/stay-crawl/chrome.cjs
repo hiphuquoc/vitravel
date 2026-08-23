@@ -1,11 +1,11 @@
 /**
- * Chrome launch — cùng kiểu hoptackinhdoanh.dev (user-like, optional proxy).
- * Không hardcode proxy credentials.
- *
- * WSL: không gọi chrome.exe (lỗi vsock UtilBindVsockAnyPort). Dùng Chrome Linux + DISPLAY (WSLg).
+ * Chrome launch — tối ưu đa luồng (Multi-worker & Multi-process safe).
+ * Tự động cấp phát profile riêng biệt theo Process PID / Token để không bao giờ bị đụng độ SingletonLock.
+ * Tự động tạo thư mục tạm nếu /www/.local hoặc HOME bị chặn quyền.
  */
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 function isWsl() {
     if (process.env.WSL_DISTRO_NAME) return true;
@@ -14,6 +14,28 @@ function isWsl() {
         return /microsoft|wsl/i.test(v);
     } catch {
         return false;
+    }
+}
+
+function ensureWritableDir(preferredPath, fallbackPath) {
+    try {
+        if (!fs.existsSync(preferredPath)) {
+            fs.mkdirSync(preferredPath, { recursive: true });
+        }
+        // Test write permission
+        const testFile = path.join(preferredPath, '.perm_test_' + process.pid);
+        fs.writeFileSync(testFile, '1');
+        fs.unlinkSync(testFile);
+        return preferredPath;
+    } catch {
+        try {
+            if (!fs.existsSync(fallbackPath)) {
+                fs.mkdirSync(fallbackPath, { recursive: true });
+            }
+            return fallbackPath;
+        } catch {
+            return os.tmpdir();
+        }
     }
 }
 
@@ -51,60 +73,50 @@ function getChromePath() {
 }
 
 function findPuppeteerChrome() {
-    const homeDir = process.env.HOME || '/root';
-    const cacheDir = path.join(homeDir, '.cache', 'puppeteer', 'chrome');
-    if (!fs.existsSync(cacheDir)) return null;
+    const candidateHomes = [
+        process.env.HOME,
+        '/home/phupv',
+        '/root',
+        '/tmp',
+    ].filter(Boolean);
 
-    try {
-        const versions = fs.readdirSync(cacheDir).sort().reverse();
-        for (const ver of versions) {
-            const candidates = [
-                path.join(cacheDir, ver, 'chrome-linux64', 'chrome'),
-                path.join(cacheDir, ver, 'chrome-linux', 'chrome'),
-            ];
-            for (const p of candidates) {
-                if (fs.existsSync(p)) return p;
+    for (const h of candidateHomes) {
+        const cacheDir = path.join(h, '.cache', 'puppeteer', 'chrome');
+        if (!fs.existsSync(cacheDir)) continue;
+        try {
+            const versions = fs.readdirSync(cacheDir).sort().reverse();
+            for (const ver of versions) {
+                const candidates = [
+                    path.join(cacheDir, ver, 'chrome-linux64', 'chrome'),
+                    path.join(cacheDir, ver, 'chrome-linux', 'chrome'),
+                ];
+                for (const p of candidates) {
+                    if (fs.existsSync(p)) return p;
+                }
             }
+        } catch {
+            // ignore
         }
-    } catch {
-        // ignore
     }
     return null;
 }
 
 function getCrashDumpsDir() {
-    const homeDir = process.env.HOME || '/tmp';
-    const crashDumpsDir = path.join(homeDir, '.chrome-crash-dumps');
-    try {
-        if (!fs.existsSync(crashDumpsDir)) {
-            fs.mkdirSync(crashDumpsDir, { recursive: true });
-        }
-    } catch {
-        // ignore
-    }
-    return crashDumpsDir;
+    const preferred = path.join(process.env.HOME || '/tmp', '.chrome-crash-dumps');
+    const fallback = path.join(os.tmpdir(), 'chrome-crash-dumps');
+    return ensureWritableDir(preferred, fallback);
 }
 
 function getBaseUserDataDir() {
     const fromEnv = process.env.STAY_CRAWL_USER_DATA_DIR;
-    const dir = fromEnv && fromEnv.trim()
+    const preferred = fromEnv && fromEnv.trim()
         ? fromEnv.trim()
         : path.resolve(__dirname, '../../storage/app/stay-crawl-chrome-profile');
-    try {
-        fs.mkdirSync(dir, { recursive: true });
-        return dir;
-    } catch {
-        const fallback = path.join(process.env.HOME || '/tmp', '.cache', 'vitravel-stay-crawl-chrome');
-        try {
-            fs.mkdirSync(fallback, { recursive: true });
-        } catch {
-            // ignore
-        }
-        return fallback;
-    }
+    const fallback = path.join(os.tmpdir(), 'stay-crawl-chrome-profile');
+    return ensureWritableDir(preferred, fallback);
 }
 
-/** Xóa SingletonLock — bước gallery/rooms sau basic dễ kẹt nếu Chrome trước chưa nhả profile. */
+/** Xóa SingletonLock trong thư mục profile */
 function clearProfileLocks(dir) {
     if (!dir) return;
     for (const name of ['SingletonLock', 'SingletonSocket', 'SingletonCookie', 'lockfile']) {
@@ -116,19 +128,25 @@ function clearProfileLocks(dir) {
     }
 }
 
+/**
+ * Mỗi process / worker được cấp 1 profile riêng biệt (theo PID và Worker token)
+ * để hỗ trợ chạy đồng thời 2, 4, 8 luồng Supervisor mà không bao giờ bị xung đột SingletonLock.
+ */
 function getUserDataDir({ ephemeral = false } = {}) {
     const base = getBaseUserDataDir();
-    if (!ephemeral && process.env.STAY_CRAWL_EPHEMERAL_PROFILE !== '1') {
-        clearProfileLocks(base);
-        return base;
-    }
-    const unique = path.join(base, 'run-' + process.pid + '-' + Date.now());
+    // Luôn phân nhánh thư mục profile theo process PID để đa luồng chạy độc lập 100%
+    const unique = path.join(base, 'proc-' + process.pid);
     try {
-        fs.mkdirSync(unique, { recursive: true });
+        if (!fs.existsSync(unique)) {
+            fs.mkdirSync(unique, { recursive: true });
+        }
+        clearProfileLocks(unique);
+        return unique;
     } catch {
-        // ignore
+        const tmpUnique = path.join(os.tmpdir(), 'chrome-prof-' + process.pid + '-' + Date.now());
+        fs.mkdirSync(tmpUnique, { recursive: true });
+        return tmpUnique;
     }
-    return unique;
 }
 
 function getChromeArgs(proxyServer = null, { headed = false } = {}) {
@@ -143,10 +161,11 @@ function getChromeArgs(proxyServer = null, { headed = false } = {}) {
         '--no-default-browser-check',
         '--no-first-run',
         '--disable-blink-features=AutomationControlled',
+        '--disable-features=Translate,OptimizationHints,MediaRouter',
+        '--disable-component-update',
         '--lang=vi-VN',
         '--window-size=1600,1000',
     ];
-    // Headed + GPU: skeleton Booking hay kẹt nếu --disable-gpu (WSLg vẫn render được).
     if (!headed) {
         args.push('--disable-gpu');
     }
@@ -169,6 +188,13 @@ function getLaunchOptions({
 } = {}) {
     const chromePath = getChromePath();
     const env = { ...process.env };
+    
+    // Đảm bảo các biến môi trường cấu hình Linux/Chrome không bị lỗi permission
+    const tempDir = os.tmpdir();
+    if (!env.XDG_CONFIG_HOME) env.XDG_CONFIG_HOME = path.join(tempDir, '.config');
+    if (!env.XDG_DATA_HOME) env.XDG_DATA_HOME = path.join(tempDir, '.local', 'share');
+    if (!env.XDG_CACHE_HOME) env.XDG_CACHE_HOME = path.join(tempDir, '.cache');
+
     if (headed && isWsl() && !env.DISPLAY) {
         env.DISPLAY = ':0';
     }

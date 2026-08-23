@@ -20,18 +20,19 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Xử lý 1 URL chỗ nghỉ (cùng pipeline crawler đơn: fetch → map → draft → gallery → phòng).
- * Queue database + Supervisor → sống sót sau reboot; WithoutOverlapping tránh nhiều Chrome cùng lúc.
+ * Xử lý 1 URL chỗ nghỉ (cùng pipeline crawler: fetch → map → draft → gallery → phòng).
+ * Cho phép chạy song song đa luồng (2, 3, 4 worker) — mỗi worker bốc 1 item khác nhau chạy đồng thời.
+ * WithoutOverlapping được đánh theo itemId để tránh 2 worker cùng bốc 1 khách sạn, nhưng các khách sạn khác nhau chạy song song 100%.
  */
 final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $timeout = 1200;
+    public int $timeout = 1800;
 
     public int $tries = 3;
 
-    public int $backoff = 45;
+    public int $backoff = 30;
 
     /** Tránh dispatch trùng cùng item khi resume. */
     public int $uniqueFor = 1800;
@@ -53,10 +54,11 @@ final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
     /** @return list<object> */
     public function middleware(): array
     {
+        // Khóa riêng cho từng item để các worker bốc các item khác nhau chạy song song không phải chờ nhau
         return [
-            (new WithoutOverlapping('stay-crawl-chrome'))
-                ->releaseAfter(45)
-                ->expireAfter(1500),
+            (new WithoutOverlapping('stay-crawl-item-lock-'.$this->itemId))
+                ->releaseAfter(30)
+                ->expireAfter(1800),
         ];
     }
 
@@ -80,7 +82,7 @@ final class ProcessStayCrawlItemJob implements ShouldBeUnique, ShouldQueue
         $crawl->touchQueueMeta($job, [
             'item_id' => $item->id,
             'phase' => 'queue',
-            'message' => 'Queue đang xử lý #'.$item->id,
+            'message' => 'Worker đang xử lý khách sạn #'.$item->id,
         ]);
 
         try {

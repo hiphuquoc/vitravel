@@ -175,6 +175,8 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('/stay-crawls/items/{id}/map', [StayCrawlApiController::class, 'mapProcess'])->whereNumber('id');
             Route::post('/stay-crawls/items/{id}/ai', [StayCrawlApiController::class, 'aiProcess'])->whereNumber('id');
             Route::post('/stay-crawls/items/{id}/import', [StayCrawlApiController::class, 'import'])->whereNumber('id');
+            Route::post('/stay-crawls/items/{id}/retry', [StayCrawlApiController::class, 'retryItem'])->whereNumber('id');
+            Route::post('/stay-crawls/jobs/{id}/retry-failed', [StayCrawlApiController::class, 'retryFailed'])->whereNumber('id');
             Route::get('/services/{id}/price-table', [PriceTableApiController::class, 'showService'])->whereNumber('id');
             Route::put('/services/{id}/price-table', [PriceTableApiController::class, 'updateService'])->whereNumber('id');
             Route::get('/services/{id}/price-quote', [PriceTableApiController::class, 'quoteService'])->whereNumber('id');

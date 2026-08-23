@@ -63,14 +63,89 @@ final class StayCrawlApiController extends Controller
         ]);
     }
 
-    public function job(int $id): JsonResponse
+    public function job(Request $request, int $id): JsonResponse
     {
         $job = StayCrawlJob::query()->withCount('items')->findOrFail($id);
-        $items = $job->items()->with('service.seoEntry.translations')->latest('id')->limit(80)->get();
+        
+        // Tự động đồng bộ tiến độ từ stream listing nếu có
+        $this->crawl->syncListProgressFromStream($job);
+        
+        $query = $job->items()->with('service.seoEntry.translations')->latest('id');
+        
+        if ($status = $request->input('status')) {
+            if ($status === 'done') {
+                $query->whereIn('status', [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_AI_DONE]);
+            } elseif ($status === 'failed') {
+                $query->whereIn('status', [StayCrawlItem::STATUS_FAILED, StayCrawlItem::STATUS_BLOCKED]);
+            } elseif ($status === 'queued') {
+                $query->whereIn('status', [StayCrawlItem::STATUS_QUEUED, StayCrawlItem::STATUS_EXTRACTED, StayCrawlItem::STATUS_FETCHED]);
+            } else {
+                $query->where('status', $status);
+            }
+        }
+
+        $limit = min(500, max(1, (int) $request->input('limit', $request->input('per_page', 250))));
+        $items = $query->limit($limit)->get();
+
+        // Thống kê nhanh theo từng nhóm trạng thái
+        $counts = [
+            'total' => $job->items()->count(),
+            'done' => $job->items()->whereIn('status', [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_AI_DONE])->count(),
+            'failed' => $job->items()->where('status', StayCrawlItem::STATUS_FAILED)->count(),
+            'blocked' => $job->items()->where('status', StayCrawlItem::STATUS_BLOCKED)->count(),
+            'queued' => $job->items()->whereIn('status', [StayCrawlItem::STATUS_QUEUED, StayCrawlItem::STATUS_EXTRACTED, StayCrawlItem::STATUS_FETCHED])->count(),
+        ];
 
         return ApiResponse::success([
             'job' => $this->mapJob($job),
             'items' => $items->map(fn (StayCrawlItem $i) => $this->mapItem($i))->values(),
+            'stats' => $counts,
+        ]);
+    }
+
+    public function retryItem(Request $request, int $id): JsonResponse
+    {
+        $item = StayCrawlItem::query()->with('job')->findOrFail($id);
+        $item->status = StayCrawlItem::STATUS_QUEUED;
+        $item->error = null;
+        $item->blocked_reason = null;
+        $item->save();
+
+        if ($item->job) {
+            $this->crawl->dispatchItemQueue($item->job, $item);
+        }
+
+        return ApiResponse::success([
+            'item' => $this->mapItem($item->fresh()),
+            'message' => 'Đã kích hoạt lại URL chỗ nghỉ vào queue',
+        ]);
+    }
+
+    public function retryFailed(Request $request, int $id): JsonResponse
+    {
+        $job = StayCrawlJob::query()->findOrFail($id);
+        $failedItems = $job->items()
+            ->whereIn('status', [StayCrawlItem::STATUS_FAILED, StayCrawlItem::STATUS_BLOCKED])
+            ->get();
+
+        $retriedCount = 0;
+        foreach ($failedItems as $item) {
+            $item->status = StayCrawlItem::STATUS_QUEUED;
+            $item->error = null;
+            $item->blocked_reason = null;
+            $item->save();
+            $this->crawl->dispatchItemQueue($job, $item);
+            $retriedCount++;
+        }
+
+        $this->crawl->touchQueueMeta($job, [
+            'phase' => 'queue',
+            'message' => "Đã kích hoạt lại {$retriedCount} URL bị lỗi vào queue",
+        ]);
+
+        return ApiResponse::success([
+            'retried_count' => $retriedCount,
+            'message' => "Đã kích hoạt lại {$retriedCount} URL lỗi vào hàng đợi",
         ]);
     }
 
