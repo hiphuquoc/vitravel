@@ -51,7 +51,7 @@
                     </button>
                 </header>
 
-                {{-- Body Drawer: Responsive Grid Skeleton (1 cột mobile -> 2 cột tablet -> 4 cột desktop) --}}
+                {{-- Body Drawer: Responsive Grid Skeleton --}}
                 <div
                     class="vt-scrollbar"
                     style="flex: 1 1 auto; height: 100%; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: clamp(0.75rem, 2vw, 1.5rem); background: #f8fafc;"
@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        {{-- 2. GIAI ĐOẠN 2: CHẾ ĐỘ XEM FULLSCREEN SLIDER ĐẲNG CẤP VỚI KHUNG RESPONSIVE TUYỆT HẢO --}}
+        {{-- 2. GIAI ĐOẠN 2: FULLSCREEN VIEWER HOÀN TOÀN KHÔNG BỊ NHẢY THUMBNAIL (THUMBNAIL STRIP CỐ ĐỊNH Ở ĐÁY) --}}
         <div
             class="vt-fullscreen-viewer"
             x-show="viewerActive !== null"
@@ -104,33 +104,32 @@
             @keydown.arrow-right.window="if (viewerActive !== null) next()"
             role="dialog"
             aria-modal="true"
-            style="position: fixed; inset: 0; z-index: 10000; display: flex; flex-direction: column; background: #07090e; color: #fff;"
+            style="position: fixed; inset: 0; z-index: 10000; width: 100vw; height: 100vh; height: 100dvh; background: #06080d; color: #fff; display: flex; flex-direction: column; overflow: hidden;"
         >
-            {{-- Top Bar: Responsive, Tiêu đề không bị tràn đè nút Close --}}
-            <header style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem clamp(0.75rem, 2vw, 1.5rem); background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 10; flex-shrink: 0; gap: 0.75rem;">
+            {{-- Top Bar Cố định: Chiều cao chuẩn 3.75rem --}}
+            <header style="height: 3.75rem; flex: 0 0 3.75rem; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(0.75rem, 2vw, 1.5rem); background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 20; gap: 0.75rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1;">
                     <button
                         type="button"
                         @click="closeViewer()"
-                        style="display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.75rem; border-radius: 0.45rem; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #e2e8f0; font-size: 0.825rem; font-weight: 500; cursor: pointer; transition: all 0.2s; flex-shrink: 0;"
+                        style="display: flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 0.45rem; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #e2e8f0; font-size: 0.825rem; font-weight: 500; cursor: pointer; transition: all 0.2s; flex-shrink: 0;"
                         onmouseover="this.style.background='rgba(255,255,255,0.16)'"
                         onmouseout="this.style.background='rgba(255,255,255,0.08)'"
                     >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="15 18 9 12 15 6"/></svg>
-                        <span class="hidden sm:inline">Tất cả ảnh</span>
-                        <span class="sm:hidden">Lưới</span>
+                        <span>Tất cả ảnh</span>
                     </button>
-                    <span style="font-size: 0.9rem; font-weight: 600; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="activeItem?.title || '{{ $title }}'"></span>
+                    <span style="font-size: 0.925rem; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" x-text="activeItem?.title || '{{ $title }}'"></span>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0;">
-                    <span style="font-size: 0.825rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 0.2rem 0.55rem; border-radius: 99px; border: 1px solid rgba(56, 189, 248, 0.2);" x-text="activeLabel"></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: #38bdf8; background: rgba(56, 189, 248, 0.12); padding: 0.25rem 0.65rem; border-radius: 99px; border: 1px solid rgba(56, 189, 248, 0.25); letter-spacing: 0.05em;" x-text="activeLabel"></span>
                     <button
                         type="button"
                         @click="close()"
                         aria-label="Đóng toàn bộ"
-                        style="display: flex; align-items: center; justify-content: center; width: 2.15rem; height: 2.15rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #fff; cursor: pointer; transition: all 0.2s;"
-                        onmouseover="this.style.background='rgba(239, 68, 68, 0.6)'"
+                        style="display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.08); color: #fff; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='rgba(239, 68, 68, 0.8)'"
                         onmouseout="this.style.background='rgba(255,255,255,0.08)'"
                     >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="16" height="16">
@@ -140,57 +139,68 @@
                 </div>
             </header>
 
-            {{-- Main Stage: Ảnh lớn ở giữa & Nút chuyển Prev / Next co giãn chuẩn mobile --}}
-            <div style="position: relative; flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 0.5rem clamp(0.5rem, 4vw, 4.5rem);">
+            {{-- Main Stage: Khung ảnh cố định tuyệt đối ở giữa (KHÔNG làm thay đổi vị trí footer) --}}
+            <main style="position: relative; flex: 1 1 auto; height: calc(100vh - 8.5rem); height: calc(100dvh - 8.5rem); min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0.75rem clamp(0.75rem, 4vw, 5rem);">
                 {{-- Nút Prev --}}
                 <button
                     type="button"
                     @click="prev()"
                     aria-label="Ảnh trước"
-                    style="position: absolute; left: clamp(0.4rem, 1.5vw, 1.25rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: clamp(2.35rem, 5vw, 3.25rem); height: clamp(2.35rem, 5vw, 3.25rem); border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 5;"
-                    onmouseover="this.style.background='rgba(56, 189, 248, 0.85)'; this.style.transform='translateY(-50%) scale(1.06)'"
-                    onmouseout="this.style.background='rgba(15, 23, 42, 0.7)'; this.style.transform='translateY(-50%) scale(1)'"
+                    style="position: absolute; left: clamp(0.75rem, 2vw, 1.5rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 10;"
+                    onmouseover="this.style.background='rgba(56, 189, 248, 0.9)'; this.style.transform='translateY(-50%) scale(1.08)'"
+                    onmouseout="this.style.background='rgba(15, 23, 42, 0.75)'; this.style.transform='translateY(-50%) scale(1)'"
                 >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
 
-                {{-- Khung Ảnh lớn --}}
-                <template x-if="viewerActive !== null && activeItem?.src">
-                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; user-select: none; padding: 0.25rem;">
-                        <img
-                            :src="activeItem.full || activeItem.src"
-                            :alt="activeItem.title || ''"
-                            style="max-width: 100%; max-height: calc(100vh - 12rem); object-fit: contain; border-radius: 0.5rem; box-shadow: 0 25px 50px rgba(0,0,0,0.9);"
-                            decoding="async"
-                            referrerpolicy="no-referrer"
-                        />
-                    </div>
-                </template>
+                {{-- Khung Ảnh lớn ở giữa với hiệu ứng Fade mượt mà --}}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; user-select: none;">
+                    <template x-for="(item, idx) in items" :key="'main-img-' + idx">
+                        <div
+                            x-show="viewerActive === idx"
+                            x-transition:enter="transition ease-out duration-250"
+                            x-transition:enter-start="opacity-0 scale-98"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-150"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-98"
+                            style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0.25rem;"
+                        >
+                            <img
+                                :src="item.full || item.src"
+                                :alt="item.title || ''"
+                                style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.95);"
+                                decoding="async"
+                                referrerpolicy="no-referrer"
+                            />
+                        </div>
+                    </template>
+                </div>
 
                 {{-- Nút Next --}}
                 <button
                     type="button"
                     @click="next()"
                     aria-label="Ảnh sau"
-                    style="position: absolute; right: clamp(0.4rem, 1.5vw, 1.25rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: clamp(2.35rem, 5vw, 3.25rem); height: clamp(2.35rem, 5vw, 3.25rem); border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 5;"
-                    onmouseover="this.style.background='rgba(56, 189, 248, 0.85)'; this.style.transform='translateY(-50%) scale(1.06)'"
-                    onmouseout="this.style.background='rgba(15, 23, 42, 0.7)'; this.style.transform='translateY(-50%) scale(1)'"
+                    style="position: absolute; right: clamp(0.75rem, 2vw, 1.5rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 10;"
+                    onmouseover="this.style.background='rgba(56, 189, 248, 0.9)'; this.style.transform='translateY(-50%) scale(1.08)'"
+                    onmouseout="this.style.background='rgba(15, 23, 42, 0.75)'; this.style.transform='translateY(-50%) scale(1)'"
                 >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 18 15 12 9 6"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><polyline points="9 18 15 12 9 6"/></svg>
                 </button>
-            </div>
+            </main>
 
-            {{-- Bottom Thumbnail Strip: Responsive, Tự động căn giữa theo ảnh đang xem --}}
+            {{-- Bottom Thumbnail Strip: Chiều cao KHÓA CỐ ĐỊNH 4.75rem (Hoàn toàn đứng yên, không nhảy vị trí) --}}
             <footer
-                style="height: clamp(3.85rem, 8vh, 4.75rem); flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 25, 0.95); border-top: 1px solid rgba(255,255,255,0.08); padding: 0 0.5rem;"
+                style="height: 4.75rem; flex: 0 0 4.75rem; width: 100%; display: flex; align-items: center; justify-content: center; background: rgba(11, 15, 25, 0.98); border-top: 1px solid rgba(255,255,255,0.08); padding: 0 1rem; z-index: 20;"
             >
-                <div style="display: flex; align-items: center; justify-content: center; gap: clamp(0.25rem, 1vw, 0.5rem); max-width: 100%; overflow-x: auto;" class="vt-scrollbar">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; max-width: 100%; overflow-x: auto; padding: 0.25rem 0;" class="vt-scrollbar">
                     <template x-for="thumb in visibleThumbnails" :key="'thumb-' + thumb.index">
                         <button
                             type="button"
                             @click="selectViewer(thumb.index)"
-                            :style="thumb.isActive ? 'border-color: #38bdf8; transform: scale(1.08); box-shadow: 0 0 10px rgba(56, 189, 248, 0.6); opacity: 1;' : 'border-color: rgba(255,255,255,0.15); opacity: 0.45;'"
-                            style="position: relative; width: clamp(3.25rem, 7vw, 4.2rem); height: clamp(2.2rem, 5vh, 2.75rem); flex: 0 0 auto; border-radius: 0.35rem; border-width: 1.5px; border-style: solid; overflow: hidden; background: #1e293b; padding: 0; cursor: pointer; transition: all 0.2s ease;"
+                            :style="thumb.isActive ? 'border-color: #38bdf8; transform: scale(1.06); box-shadow: 0 0 12px rgba(56, 189, 248, 0.7); opacity: 1;' : 'border-color: rgba(255,255,255,0.15); opacity: 0.45;'"
+                            style="position: relative; width: 4.2rem; height: 2.75rem; flex: 0 0 4.2rem; border-radius: 0.35rem; border-width: 1.5px; border-style: solid; overflow: hidden; background: #1e293b; padding: 0; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);"
                             onmouseover="if (this.style.opacity !== '1') this.style.opacity='0.85'"
                             onmouseout="if (this.style.borderColor !== 'rgb(56, 189, 248)') this.style.opacity='0.45'"
                         >
