@@ -93,7 +93,7 @@
             </div>
         </div>
 
-        {{-- 2. GIAI ĐOẠN 2: FULLSCREEN VIEWER HOÀN TOÀN KHÔNG BỊ NHẢY THUMBNAIL (THUMBNAIL STRIP CỐ ĐỊNH Ở ĐÁY) --}}
+        {{-- 2. GIAI ĐOẠN 2: FULLSCREEN VIEWER — CĂN GIỮA TUYỆT ĐỐI 100% & THUMBNAIL CỐ ĐỊNH Ở ĐÁY --}}
         <div
             class="vt-fullscreen-viewer"
             x-show="viewerActive !== null"
@@ -107,7 +107,7 @@
             style="position: fixed; inset: 0; z-index: 10000; width: 100vw; height: 100vh; height: 100dvh; background: #06080d; color: #fff; display: flex; flex-direction: column; overflow: hidden;"
         >
             {{-- Top Bar Cố định: Chiều cao chuẩn 3.75rem --}}
-            <header style="height: 3.75rem; flex: 0 0 3.75rem; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(0.75rem, 2vw, 1.5rem); background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 20; gap: 0.75rem;">
+            <header style="height: 3.75rem; flex: 0 0 3.75rem; width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(0.75rem, 2vw, 1.5rem); background: rgba(11, 15, 25, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.08); z-index: 20; gap: 0.75rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 0; flex: 1;">
                     <button
                         type="button"
@@ -139,50 +139,42 @@
                 </div>
             </header>
 
-            {{-- Main Stage: Khung ảnh cố định tuyệt đối ở giữa (KHÔNG làm thay đổi vị trí footer) --}}
-            <main style="position: relative; flex: 1 1 auto; height: calc(100vh - 8.5rem); height: calc(100dvh - 8.5rem); min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0.75rem clamp(0.75rem, 4vw, 5rem);">
+            {{-- Main Stage: Khung ảnh cố định tuyệt đối ở giữa màn hình --}}
+            <main style="position: relative; width: 100%; flex: 1 1 auto; height: calc(100vh - 8.5rem); height: calc(100dvh - 8.5rem); min-height: 0; overflow: hidden;">
                 {{-- Nút Prev --}}
                 <button
                     type="button"
                     @click="prev()"
                     aria-label="Ảnh trước"
-                    style="position: absolute; left: clamp(0.75rem, 2vw, 1.5rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 10;"
+                    style="position: absolute; left: clamp(0.75rem, 2vw, 1.75rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 10;"
                     onmouseover="this.style.background='rgba(56, 189, 248, 0.9)'; this.style.transform='translateY(-50%) scale(1.08)'"
                     onmouseout="this.style.background='rgba(15, 23, 42, 0.75)'; this.style.transform='translateY(-50%) scale(1)'"
                 >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg>
                 </button>
 
-                {{-- Khung Ảnh lớn ở giữa với hiệu ứng Fade mượt mà --}}
-                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; user-select: none;">
-                    <template x-for="(item, idx) in items" :key="'main-img-' + idx">
-                        <div
-                            x-show="viewerActive === idx"
-                            x-transition:enter="transition ease-out duration-250"
-                            x-transition:enter-start="opacity-0 scale-98"
-                            x-transition:enter-end="opacity-100 scale-100"
-                            x-transition:leave="transition ease-in duration-150"
-                            x-transition:leave-start="opacity-100 scale-100"
-                            x-transition:leave-end="opacity-0 scale-98"
-                            style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0.25rem;"
-                        >
-                            <img
-                                :src="item.full || item.src"
-                                :alt="item.title || ''"
-                                style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.95);"
-                                decoding="async"
-                                referrerpolicy="no-referrer"
-                            />
-                        </div>
-                    </template>
-                </div>
+                {{-- Khung Ảnh lớn ở giữa: Căn giữa tuyệt đối với Flexbox Center + Inset 0 --}}
+                <template x-if="viewerActive !== null && activeItem?.src">
+                    <div
+                        style="position: absolute; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 0.75rem clamp(3.5rem, 6vw, 6rem); user-select: none;"
+                    >
+                        <img
+                            :key="viewerActive"
+                            :src="activeItem.full || activeItem.src"
+                            :alt="activeItem.title || ''"
+                            style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; margin: auto; display: block; border-radius: 0.5rem; box-shadow: 0 25px 60px rgba(0,0,0,0.95); transition: opacity 0.2s ease, transform 0.2s ease;"
+                            decoding="async"
+                            referrerpolicy="no-referrer"
+                        />
+                    </div>
+                </template>
 
                 {{-- Nút Next --}}
                 <button
                     type="button"
                     @click="next()"
                     aria-label="Ảnh sau"
-                    style="position: absolute; right: clamp(0.75rem, 2vw, 1.5rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 10;"
+                    style="position: absolute; right: clamp(0.75rem, 2vw, 1.75rem); top: 50%; transform: translateY(-50%); display: flex; align-items: center; justify-content: center; width: 3.25rem; height: 3.25rem; border-radius: 999px; border: 1px solid rgba(255,255,255,0.15); background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); color: #fff; cursor: pointer; transition: all 0.2s; z-index: 10;"
                     onmouseover="this.style.background='rgba(56, 189, 248, 0.9)'; this.style.transform='translateY(-50%) scale(1.08)'"
                     onmouseout="this.style.background='rgba(15, 23, 42, 0.75)'; this.style.transform='translateY(-50%) scale(1)'"
                 >
