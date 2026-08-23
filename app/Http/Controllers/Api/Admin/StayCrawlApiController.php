@@ -105,11 +105,18 @@ final class StayCrawlApiController extends Controller
 
     public function retryItem(Request $request, int $id): JsonResponse
     {
-        $item = StayCrawlItem::query()->with('job')->findOrFail($id);
-        $item->status = StayCrawlItem::STATUS_QUEUED;
-        $item->error = null;
-        $item->blocked_reason = null;
-        $item->save();
+        $item = StayCrawlItem::query()->with(['job', 'service'])->findOrFail($id);
+        $rerun = $request->input('rerun'); // 'replace' | 'improve'
+        $from = $request->input('from', 'basic'); // 'basic' | 'gallery' | 'rooms' | 'rooms_modals'
+
+        if ($rerun === 'replace' || $rerun === 'improve') {
+            $this->crawl->resetItemForRerun($item, $rerun, $from);
+        } else {
+            $item->status = StayCrawlItem::STATUS_QUEUED;
+            $item->error = null;
+            $item->blocked_reason = null;
+            $item->save();
+        }
 
         if ($item->job) {
             $this->crawl->dispatchItemQueue($item->job, 'vi', false, false, $item);
@@ -117,7 +124,22 @@ final class StayCrawlApiController extends Controller
 
         return ApiResponse::success([
             'item' => $this->mapItem($item->fresh()),
-            'message' => 'Đã kích hoạt lại URL chỗ nghỉ vào queue',
+            'message' => 'Đã đưa khách sạn vào hàng đợi xử lý',
+        ]);
+    }
+
+    public function resetItemStatus(Request $request, int $id): JsonResponse
+    {
+        $item = StayCrawlItem::query()->findOrFail($id);
+        $status = $request->input('status', StayCrawlItem::STATUS_QUEUED);
+        $item->status = $status;
+        $item->error = null;
+        $item->blocked_reason = null;
+        $item->save();
+
+        return ApiResponse::success([
+            'item' => $this->mapItem($item->fresh()),
+            'message' => 'Đã đặt lại trạng thái khách sạn',
         ]);
     }
 
