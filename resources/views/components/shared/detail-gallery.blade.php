@@ -54,6 +54,7 @@
     $catalogCount = max((int) $galleryCount, count($uniqueThumbs) + (filled($coverSrc) ? 1 : 0));
     $moreCount = max(0, $catalogCount - $shown);
 
+    // Chuẩn bị danh sách Lightbox gọn nhẹ
     $lightboxItems = [];
     if (filled($coverSrc)) {
         $lightboxItems[] = [
@@ -94,16 +95,15 @@
                 @click="open({{ (int) $coverIndex }})"
                 aria-label="Xem ảnh lớn: {{ $title }}"
             >
-                <x-img
-                    :src="$coverSrc"
-                    :srcset="$coverSrcset"
-                    preset="detail"
-                    :alt="$title"
+                <img
+                    src="{{ $coverSrc }}"
+                    @if(filled($coverSrcset)) srcset="{{ $coverSrcset }}" @endif
+                    alt="{{ $title }}"
                     loading="eager"
                     fetchpriority="high"
+                    decoding="async"
                     class="detail-gallery__cover"
                     referrerpolicy="no-referrer"
-                    decoding="async"
                 />
                 <span class="detail-gallery__zoom" aria-hidden="true">
                     <x-icon name="search" class="size-5" />
@@ -133,11 +133,10 @@
                             @click="open({{ $lbIndex }})"
                             aria-label="{{ $showMore ? ('Xem thêm '.$moreCount.' ảnh') : ('Xem ảnh '.($i + 2)) }}"
                         >
-                            <x-img
-                                :src="$thumb['src']"
-                                :srcset="$thumb['srcset'] ?? null"
-                                preset="gallery"
-                                :alt="$title"
+                            <img
+                                src="{{ $thumb['src'] }}"
+                                @if(!empty($thumb['srcset'])) srcset="{{ $thumb['srcset'] }}" @endif
+                                alt="{{ $title }}"
                                 loading="lazy"
                                 decoding="async"
                                 class="detail-gallery__thumb-img"
