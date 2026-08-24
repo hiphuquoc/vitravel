@@ -87,6 +87,9 @@ final class StayCrawlBrowser
             $timeout += min(300, (int) ceil(((int) $payload['max_images']) * 1.5));
         }
 
+        // Tự động quét dọn các thư mục proc-* Chrome cũ không còn sử dụng
+        $this->sweepStaleProfiles();
+
         // Nhả SingletonLock nếu Chrome bước trước chết bất thường (hay gặp sau basic → gallery).
         $profileDir = storage_path('app/stay-crawl-chrome-profile');
         foreach (['SingletonLock', 'SingletonSocket', 'SingletonCookie', 'lockfile'] as $lockName) {
@@ -158,6 +161,51 @@ final class StayCrawlBrowser
             @unlink($outputFile);
             @unlink($outputFile.'.html');
             @unlink($outputFile.'.pack.json');
+        }
+    }
+
+    /**
+     * Tự động dọn dẹp các thư mục proc-* Chrome cũ hơn 10 phút.
+     */
+    public function sweepStaleProfiles(): void
+    {
+        $profileDir = storage_path('app/stay-crawl-chrome-profile');
+        if (! is_dir($profileDir)) {
+            return;
+        }
+        $now = time();
+        $dirs = glob($profileDir . DIRECTORY_SEPARATOR . 'proc-*', GLOB_ONLYDIR);
+        if (is_array($dirs)) {
+            foreach ($dirs as $dir) {
+                $mtime = filemtime($dir);
+                if ($mtime !== false && ($now - $mtime > 600)) {
+                    $this->cleanupDir($dir);
+                }
+            }
+        }
+    }
+
+    public function cleanupDir(?string $dir): void
+    {
+        if ($dir === null || $dir === '' || ! is_dir($dir)) {
+            return;
+        }
+        try {
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST,
+            );
+            foreach ($files as $file) {
+                $path = $file->getPathname();
+                if ($file->isDir()) {
+                    @rmdir($path);
+                } else {
+                    @unlink($path);
+                }
+            }
+            @rmdir($dir);
+        } catch (\Throwable) {
+            // ignore
         }
     }
 

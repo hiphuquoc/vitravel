@@ -83,7 +83,7 @@ async function main() {
     const outputPath = process.argv[3];
     if (!inputPath || !outputPath) {
         writeJson(outputPath || null, { error: 'Thiếu input/output JSON' });
-        process.exit(1);
+        try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(1);
     }
 
     let input;
@@ -91,13 +91,13 @@ async function main() {
         input = JSON.parse(fs.readFileSync(inputPath, 'utf8'));
     } catch (e) {
         writeJson(outputPath, { error: 'Không đọc được input JSON: ' + e.message });
-        process.exit(1);
+        try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(1);
     }
 
     const url = String(input.url || '').trim();
     if (!url.startsWith('http')) {
         writeJson(outputPath, { error: 'URL không hợp lệ' });
-        process.exit(1);
+        try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(1);
     }
 
     const timeout = Math.max(20000, Number(input.timeout) || 90000);
@@ -111,7 +111,7 @@ async function main() {
         writeJson(outputPath, {
             error: 'Chưa cài Puppeteer. Chạy: cd scripts/stay-crawl && npm ci',
         });
-        process.exit(1);
+        try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(1);
     }
 
     const { getLaunchOptions, clearProfileLocks, getBaseUserDataDir } = require('./chrome.cjs');
@@ -129,6 +129,7 @@ async function main() {
         }));
         try {
             clearProfileLocks(getBaseUserDataDir());
+            activeUserDataDir = launchOptions.userDataDir;
             browser = await launchOnce();
         } catch (launchError) {
             const msg = String(launchError && launchError.message ? launchError.message : launchError);
@@ -311,7 +312,7 @@ async function main() {
             if (!html || html.trim().length < 200) {
                 await browser.close();
                 writeJson(outputPath, { error: 'HTML rỗng sau khi Chrome render', final_url: finalUrl, status_code: statusCode });
-                process.exit(1);
+                try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(1);
             }
             fs.writeFileSync(outputPath + '.html', html);
         }
@@ -332,7 +333,7 @@ async function main() {
             html_sidecar: html !== '',
             mode,
         });
-        process.exit(0);
+        try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(0);
     } catch (error) {
         if (browser) {
             try {
@@ -342,7 +343,7 @@ async function main() {
             }
         }
         writeJson(outputPath, { error: error.message || String(error) });
-        process.exit(1);
+        try { cleanupUserDataDir(launchOptions.userDataDir); } catch {} process.exit(1);
     }
 }
 

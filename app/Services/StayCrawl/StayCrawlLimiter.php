@@ -47,7 +47,7 @@ final class StayCrawlLimiter
             }
         }
 
-        return self::runWithSlotLocks($callback, $maxConcurrent, $blockSeconds, $lockTtlSeconds, $onRusyCallback);
+        return self::runWithSlotLocks($callback, $maxConcurrent, $blockSeconds, $lockTtlSeconds, $onBusyCallback);
     }
 
     private static function runWithSlotLocks(

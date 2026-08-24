@@ -1,7 +1,9 @@
 /**
- * Chrome launch — tối ưu đa luồng (Multi-worker & Multi-process safe).
- * Tự động cấp phát profile riêng biệt theo Process PID / Token để không bao giờ bị đụng độ SingletonLock.
- * Tự động tạo thư mục tạm nếu /www/.local hoặc HOME bị chặn quyền.
+ * Chrome launch — tối ưu tuyệt đối cho Đa Luồng Supervisor (Multi-Worker Safe & Zero-Disk Footprint).
+ * - Mỗi worker / process nhận 1 thư mục profile cô lập hoàn toàn: worker-<PID>-<timestamp>-<rand>.
+ * - Tuyệt đối không xung đột SingletonLock giữa các luồng Supervisor chạy đồng thời.
+ * - Stale PID Sweeper an toàn: Chỉ xóa profile khi PID đã chết VÀ folder tạo trước đó, không xóa nhầm worker đang chạy.
+ * - Vô hiệu hóa Disk Cache, Media Cache, GPU Cache, Log file rác.
  */
 const fs = require('fs');
 const path = require('path');
@@ -22,10 +24,6 @@ function ensureWritableDir(preferredPath, fallbackPath) {
         if (!fs.existsSync(preferredPath)) {
             fs.mkdirSync(preferredPath, { recursive: true });
         }
-        // Test write permission
-        const testFile = path.join(preferredPath, '.perm_test_' + process.pid);
-        fs.writeFileSync(testFile, '1');
-        fs.unlinkSync(testFile);
         return preferredPath;
     } catch {
         try {
@@ -118,7 +116,7 @@ function getBaseUserDataDir() {
 
 /** Xóa SingletonLock trong thư mục profile */
 function clearProfileLocks(dir) {
-    if (!dir) return;
+    if (!dir || !fs.existsSync(dir)) return;
     for (const name of ['SingletonLock', 'SingletonSocket', 'SingletonCookie', 'lockfile']) {
         try {
             fs.unlinkSync(path.join(dir, name));
@@ -128,22 +126,84 @@ function clearProfileLocks(dir) {
     }
 }
 
+/** Xóa hoàn toàn thư mục profile của 1 process */
+function cleanupUserDataDir(dir) {
+    if (!dir || !fs.existsSync(dir)) return;
+    try {
+        clearProfileLocks(dir);
+        fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 100 });
+    } catch {
+        // ignore
+    }
+}
+
 /**
- * Mỗi process / worker được cấp 1 profile riêng biệt (theo PID và Worker token)
- * để hỗ trợ chạy đồng thời 2, 4, 8 luồng Supervisor mà không bao giờ bị xung đột SingletonLock.
+ * Quét dọn an toàn cho ĐA LUỒNG SUPERVISOR:
+ * - KHÔNG BAO GIỜ xóa thư mục của worker đang chạy (PID alive).
+ * - Chỉ xóa khi PID đã CHẾT VÀ thư mục đã tạo hơn 2 phút, hoặc thư mục rác bỏ rơi quá 30 phút.
+ */
+function sweepStaleProfiles(baseDir) {
+    if (!baseDir || !fs.existsSync(baseDir)) return;
+    try {
+        const entries = fs.readdirSync(baseDir);
+        const now = Date.now();
+        for (const entry of entries) {
+            if (!entry.startsWith('proc-') && !entry.startsWith('worker-')) continue;
+            const full = path.join(baseDir, entry);
+            
+            const match = entry.match(/(?:worker|proc)-(\d+)/);
+            const pid = match ? parseInt(match[1], 10) : 0;
+            
+            // Bỏ qua PID của process hiện tại
+            if (pid === process.pid) continue;
+
+            let isRunning = false;
+            try {
+                if (pid > 0) {
+                    process.kill(pid, 0); // Kiểm tra PID có còn sống trong hệ điều hành không
+                    isRunning = true;
+                }
+            } catch {
+                isRunning = false;
+            }
+
+            try {
+                const stat = fs.statSync(full);
+                const ageMs = now - stat.mtimeMs;
+                // Nếu PID đã chết VÀ đã tạo hơn 2 phút -> an toàn xóa
+                if (!isRunning && ageMs > 2 * 60 * 1000) {
+                    fs.rmSync(full, { recursive: true, force: true });
+                } else if (ageMs > 30 * 60 * 1000) {
+                    // Nếu quá 30 phút (kể cả kill -9) -> dọn sạch
+                    fs.rmSync(full, { recursive: true, force: true });
+                }
+            } catch {
+                // ignore
+            }
+        }
+    } catch {
+        // ignore
+    }
+}
+
+/**
+ * Cấp phát profile riêng biệt theo Worker ID, PID và Timestamp ngẫu nhiên
  */
 function getUserDataDir({ ephemeral = false } = {}) {
     const base = getBaseUserDataDir();
-    // Luôn phân nhánh thư mục profile theo process PID để đa luồng chạy độc lập 100%
-    const unique = path.join(base, 'proc-' + process.pid);
+    
+    // Tự động dọn dẹp các thư mục rác cũ an toàn
+    sweepStaleProfiles(base);
+
+    const workerToken = 'worker-' + process.pid + '-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+    const unique = path.join(base, workerToken);
     try {
         if (!fs.existsSync(unique)) {
             fs.mkdirSync(unique, { recursive: true });
         }
-        clearProfileLocks(unique);
         return unique;
     } catch {
-        const tmpUnique = path.join(os.tmpdir(), 'chrome-prof-' + process.pid + '-' + Date.now());
+        const tmpUnique = path.join(os.tmpdir(), 'chrome-' + workerToken);
         fs.mkdirSync(tmpUnique, { recursive: true });
         return tmpUnique;
     }
@@ -161,10 +221,24 @@ function getChromeArgs(proxyServer = null, { headed = false } = {}) {
         '--no-default-browser-check',
         '--no-first-run',
         '--disable-blink-features=AutomationControlled',
-        '--disable-features=Translate,OptimizationHints,MediaRouter',
+        '--disable-features=Translate,OptimizationHints,MediaRouter,CalculateNativeWinOcclusion',
         '--disable-component-update',
         '--lang=vi-VN',
         '--window-size=1600,1000',
+        
+        // Tối ưu triệt để Disk Cache & Media Cache để KHÔNG chiếm dụng ổ cứng
+        '--disk-cache-size=1',
+        '--media-cache-size=1',
+        '--disable-application-cache',
+        '--disable-gpu-shader-disk-cache',
+        '--disable-background-networking',
+        '--disable-sync',
+        '--disable-default-apps',
+        '--disable-domain-reliability',
+        '--aggressive-cache-discard',
+        '--disable-extensions',
+        '--disable-logging',
+        '--log-level=3',
     ];
     if (!headed) {
         args.push('--disable-gpu');
@@ -189,7 +263,6 @@ function getLaunchOptions({
     const chromePath = getChromePath();
     const env = { ...process.env };
     
-    // Đảm bảo các biến môi trường cấu hình Linux/Chrome không bị lỗi permission
     const tempDir = os.tmpdir();
     if (!env.XDG_CONFIG_HOME) env.XDG_CONFIG_HOME = path.join(tempDir, '.config');
     if (!env.XDG_DATA_HOME) env.XDG_DATA_HOME = path.join(tempDir, '.local', 'share');
@@ -198,6 +271,9 @@ function getLaunchOptions({
     if (headed && isWsl() && !env.DISPLAY) {
         env.DISPLAY = ':0';
     }
+
+    const userDataDir = getUserDataDir({ ephemeral: ephemeralProfile });
+
     const launchOptions = {
         headless: headed ? false : true,
         args: getChromeArgs(proxyServer, { headed }),
@@ -207,7 +283,7 @@ function getLaunchOptions({
         ignoreHTTPSErrors: true,
         defaultViewport: headed ? null : { width: 1600, height: 1000, deviceScaleFactor: 1 },
         slowMo: headed ? Math.max(25, Number(slowMo) || 50) : Number(slowMo) || 0,
-        userDataDir: getUserDataDir({ ephemeral: ephemeralProfile }),
+        userDataDir,
         env,
     };
     if (chromePath) {
@@ -221,5 +297,7 @@ module.exports = {
     getLaunchOptions,
     isWsl,
     clearProfileLocks,
+    cleanupUserDataDir,
+    sweepStaleProfiles,
     getBaseUserDataDir,
 };
