@@ -231,7 +231,9 @@ return [
         /** Cộng thêm giây Process timeout khi crawl listing (scroll + «Tải thêm kết quả»). */
         'list_browser_extra_sec' => (int) env('STAY_CRAWL_LIST_BROWSER_EXTRA_SEC', 240),
         /** Queue name cho ProcessStayCrawlItemJob (Supervisor queue:work). */
-        'queue' => env('STAY_CRAWL_QUEUE', 'default'),
+        'queue' => env('STAY_CRAWL_QUEUE', 'crawler'),
+        /** Gioi han toi da so luong cao Chrome dong thoi tren toan server. */
+        'max_concurrent_crawlers' => (int) env('STAY_CRAWL_MAX_CONCURRENT', 3),
         /** Worker stay-crawl:work — nghỉ giữa các bước processNext (ms). */
         'worker_sleep_ms' => (int) env('STAY_CRAWL_WORKER_SLEEP_MS', 400),
         /** Heartbeat worker quá hạn → coi chết (phải > thời gian 1 bước Chrome gallery/phòng). */

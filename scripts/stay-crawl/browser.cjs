@@ -637,7 +637,7 @@ async function scrollToBottom(page, url) {
         prevHeight = info.height;
     }
     await waitQuiet(page, 450);
-    await page.evaluate(() => {
+    await safeEval(page, () => {
         const el =
             document.querySelector('[data-testid="property-facilities-block-container"]') ||
             document.querySelector('[data-testid="PropertySectionsBelowRoomsTable-wrapper"]') ||
@@ -650,7 +650,7 @@ async function scrollToBottom(page, url) {
 
 /** Nút infinite-scroll Booking: «Tải thêm kết quả» / Load more results — phải click đến khi mất. */
 async function listingMetrics(page) {
-    return page.evaluate(() => {
+    return safeEval(page, () => {
         const cards = document.querySelectorAll(
             '[data-testid="property-card"], [data-testid="property-card-container"], [data-testid="sr-property-card"]',
         ).length;
@@ -665,7 +665,7 @@ async function listingMetrics(page) {
 }
 
 async function clickListingLoadMore(page) {
-    return page.evaluate(() => {
+    return safeEval(page, () => {
         const match = (text) => {
             const t = String(text || '')
                 .replace(/\s+/g, ' ')
@@ -701,7 +701,7 @@ async function clickListingLoadMore(page) {
 }
 
 async function listingHasLoadMore(page) {
-    return page.evaluate(() => {
+    return safeEval(page, () => {
         const match = (text) => {
             const t = String(text || '')
                 .replace(/\s+/g, ' ')
@@ -764,7 +764,7 @@ async function expandListingResults(page, onProgress = null) {
             continue;
         }
 
-        await page.evaluate(() => {
+        await safeEval(page, () => {
             window.scrollBy({ top: Math.round(window.innerHeight * 0.92), behavior: 'smooth' });
         });
         debug.scrolls += 1;
@@ -805,7 +805,7 @@ async function expandListingResults(page, onProgress = null) {
         }
         if (stillHasBtn && stagnant >= 2) {
             // Nút còn nhưng click fail (overlay) — thử lại click thô.
-            await page.evaluate(() => {
+            await safeEval(page, () => {
                 const btns = document.querySelectorAll('button');
                 for (const b of btns) {
                     const t = (b.textContent || '').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -847,7 +847,7 @@ async function expandListingResults(page, onProgress = null) {
 
 
 async function collectListingUrlsOnly(page) {
-    return page.evaluate(() => {
+    return safeEval(page, () => {
         const out = [];
         const seen = {};
         const push = (href) => {
@@ -882,7 +882,7 @@ async function collectListingUrlsOnly(page) {
 }
 
 async function collectListingPack(page, expandDebug) {
-    const hotelUrls = await page.evaluate(() => {
+    const hotelUrls = await safeEval(page, () => {
         const out = [];
         const seen = {};
         const push = (href) => {
@@ -940,7 +940,7 @@ async function scrollUntilRooms(page) {
     for (let i = 0; i < 14; i++) {
         const found = await page.$$eval(ROOM_NAME_SEL, (els) => els.length).catch(() => 0);
         if (found > 0) {
-            await page.evaluate((sel) => {
+            await safeEval(page, (sel) => {
                 const el =
                     document.querySelector(sel) ||
                     document.querySelector('#rooms_table') ||
@@ -951,7 +951,7 @@ async function scrollUntilRooms(page) {
             await sleep(500);
             return;
         }
-        await page.evaluate(() => {
+        await safeEval(page, () => {
             window.scrollBy({ top: Math.round(window.innerHeight * 0.8), behavior: 'smooth' });
         });
         await sleep(300);
@@ -1058,7 +1058,7 @@ function slimPack(pack) {
 }
 
 async function expandAllFacilities(page) {
-    await page.evaluate(() => {
+    await safeEval(page, () => {
         const el =
             document.querySelector('[data-testid="property-facilities-block-container"]') ||
             document.querySelector('.hp--popular_facilities') ||
@@ -1187,7 +1187,7 @@ async function collectRoomsListPack(page) {
 }
 
 async function collectHprtHtml(page) {
-    return page.evaluate(() => {
+    return safeEval(page, () => {
         const t = document.querySelector('#hprt-table, table.hprt-table');
         return t ? t.outerHTML : '';
     }).catch(() => '');
@@ -1351,7 +1351,7 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
     await scrollRoomsIntoView(page);
     await sleep(350);
 
-    let clicked = await page.evaluate((targetHash, targetId, nameHint) => {
+    let clicked = await safeEval(page, (targetHash, targetId, nameHint) => {
         const wantId = String(targetId || '').toLowerCase().replace(/^#?rd/i, '');
         const links = [...document.querySelectorAll(
             'a[data-testid="rt-name-link"], a[data-room-id], a[data-block-id], a[href*="#RD"], a[class*="hprt-roomtype-link"], a[href^="#RD"], a[id^="room_type_id"]',
@@ -1393,7 +1393,7 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
     debug.room_clicked = clicked;
 
     if (!clicked) {
-        await page.evaluate((target) => {
+        await safeEval(page, (target) => {
             window.location.hash = target;
         }, h);
         debug.room_hash_set = true;
@@ -1405,7 +1405,7 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
     debug.room_modal = opened;
 
     if (!opened && fallbackName) {
-        clicked = await page.evaluate((nameHint, sel) => {
+        clicked = await safeEval(page, (nameHint, sel) => {
             const want = String(nameHint || '').toLowerCase();
             if (!want) return false;
             const els = [...document.querySelectorAll(sel)];
@@ -1485,7 +1485,7 @@ async function openRoomByHash(page, hash, fallbackName, downloadOpts = {}, debug
 }
 
 async function scrapeRoomFromTable(page, wantId, wantHash, nameHint = '') {
-    return page.evaluate((targetId, targetHash, name) => {
+    return safeEval(page, (targetId, targetHash, name) => {
         const want = String(targetId || '').toLowerCase().replace(/^#?rd/i, '');
         let th = null;
 
@@ -1631,7 +1631,7 @@ async function downloadPhotoList(page, photos, imagesDir, max = 10000, concurren
 /** Fallback: fetch trong context trang (cookie + CORS như trình duyệt). */
 async function fetchImageInPage(page, url, referer) {
     try {
-        const bytes = await page.evaluate(async (imgUrl, ref) => {
+        const bytes = await safeEval(page, async (imgUrl, ref) => {
             const res = await fetch(imgUrl, {
                 credentials: 'include',
                 headers: { Accept: 'image/*', Referer: ref },
@@ -1649,7 +1649,7 @@ async function fetchImageInPage(page, url, referer) {
 }
 
 async function scrollRoomsIntoView(page) {
-    await page.evaluate((sel) => {
+    await safeEval(page, (sel) => {
         const el =
             document.querySelector(sel) ||
             document.querySelector('#rooms_table') ||
@@ -1662,7 +1662,7 @@ async function scrollRoomsIntoView(page) {
 }
 
 async function listRoomNames(page) {
-    return page.evaluate((sel) => {
+    return safeEval(page, (sel) => {
         const els = [...document.querySelectorAll(sel)];
         const seen = {};
         const out = [];
@@ -1802,7 +1802,7 @@ async function collectGalleryPhotos(page) {
     let last = 0;
     let stable = 0;
     for (let i = 0; i < 25; i++) {
-        const info = await page.evaluate(() => {
+        const info = await safeEval(page, () => {
             const grid =
                 document.querySelector('[data-testid="gallery-modal-grid"]') ||
                 document.querySelector('[data-testid="GalleryGridViewModal-wrapper"]');
@@ -1832,7 +1832,7 @@ async function collectGalleryPhotos(page) {
         await sleep(250);
     }
 
-    const photos = normalizePhotoList(await page.evaluate(() => {
+    const photos = normalizePhotoList(await safeEval(page, () => {
         const out = [];
         const push = (raw, alt) => {
             const url = String(raw || '').replace(/&amp;/g, '&');
@@ -1941,7 +1941,7 @@ async function openPhotosGallery(page) {
 }
 
 async function collectFacilitiesHtml(page) {
-    await page.evaluate(() => {
+    await safeEval(page, () => {
         const el =
             document.querySelector('#hp_facilities_box') ||
             document.querySelector('[data-testid="property-facilities-block-container"]') ||
@@ -2157,7 +2157,7 @@ async function collectRoomModals(page, debug = {}, startIndex = 0, limit = 16) {
     const rooms = [];
     for (let i = startIndex; i < max; i++) {
         debug.rooms_clicked = i + 1;
-        const name = await page.evaluate((idx, sel) => {
+        const name = await safeEval(page, (idx, sel) => {
             const els = [...document.querySelectorAll(sel)];
             const el = els[idx];
             if (!el) return '';
@@ -2233,7 +2233,7 @@ async function clickRoomAt(page, index) {
             await el.click({ delay: 40 });
             return true;
         } catch {
-            await page.evaluate((idx, sel) => {
+            await safeEval(page, (idx, sel) => {
                 const nodes = [...document.querySelectorAll(sel)];
                 const node = nodes[idx];
                 if (!node) return;
@@ -2250,7 +2250,7 @@ async function waitForRoomDetail(page, timeout = 8000, wantRoomId = '') {
     const deadline = Date.now() + timeout;
     const wantId = String(wantRoomId || '').replace(/^#?rd/i, '').toLowerCase();
     while (Date.now() < deadline) {
-        const found = await page.evaluate((targetId) => {
+        const found = await safeEval(page, (targetId) => {
             if (targetId) {
                 const targetModal = document.querySelector('#blocktoggleRD' + targetId)
                     || document.querySelector('[data-room-id="' + targetId + '"].hprt-lightbox')
@@ -2275,7 +2275,7 @@ async function waitForRoomDetail(page, timeout = 8000, wantRoomId = '') {
 
 async function expandRoomModal(page, wantRoomId = '') {
     try {
-        await page.evaluate((targetId) => {
+        await safeEval(page, (targetId) => {
             const root = (targetId ? (document.querySelector('#blocktoggleRD' + targetId) || document.querySelector('[data-room-id="' + targetId + '"]')) : null)
                 || [...document.querySelectorAll('.hprt-lightbox, .room-lightbox-container, [role="dialog"]')].find((el) => {
                     const style = window.getComputedStyle(el);
@@ -2307,7 +2307,7 @@ async function expandRoomModal(page, wantRoomId = '') {
 
 async function scrapeRoomModal(page, fallbackName, wantRoomId = '') {
     const wantId = String(wantRoomId || '').replace(/^#?rd/i, '');
-    return page.evaluate((nameFallback, targetId) => {
+    return safeEval(page, (nameFallback, targetId) => {
         let root = null;
         if (targetId) {
             root = document.querySelector('#blocktoggleRD' + targetId)

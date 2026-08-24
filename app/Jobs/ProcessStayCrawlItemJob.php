@@ -7,6 +7,7 @@ namespace App\Jobs;
 use App\Models\Project;
 use App\Models\StayCrawlItem;
 use App\Models\StayCrawlJob;
+use App\Services\StayCrawl\StayCrawlLimiter;
 use App\Services\StayCrawl\StayCrawlService;
 use App\Support\ProjectContext;
 use Illuminate\Bus\Queueable;
@@ -18,10 +19,10 @@ use Illuminate\Support\Facades\Log;
 use Throwable;
 
 /**
- * Xử lý 1 URL chỗ nghỉ qua Supervisor (fetch → map → draft → gallery → phòng).
- * Tối ưu tuyệt đối cho đa luồng Supervisor (3, 4, 8 cores):
- * - Loại bỏ hoàn toàn WithoutOverlapping middleware tĩnh ở cấp application để tránh va chạm lock cache/redis giữa các worker.
- * - Kiểm tra optimistic locking trực tiếp trên model StayCrawlItem trong database để không 2 worker nào bốc cùng 1 item.
+ * Xu ly 1 URL cho nghi qua Supervisor (fetch -> map -> draft -> gallery -> phong).
+ * Toi uu tuyet doi cho da luong Supervisor:
+ * - Su dung StayCrawlLimiter khong che cung so luong thuc thi (co Redis dung Redis Funnel, khong co Redis tu dong fallback sang Cache Slot Lock).
+ * - Kiem tra optimistic locking truc tiep tren model StayCrawlItem trong database.
  */
 final class ProcessStayCrawlItemJob implements ShouldQueue
 {
@@ -39,18 +40,18 @@ final class ProcessStayCrawlItemJob implements ShouldQueue
         public bool $useProxy = false,
         public bool $respectRobots = false,
     ) {
-        $this->onQueue((string) config('stay.crawl.queue', 'default'));
+        $this->onQueue((string) config('stay.crawl.queue', 'crawler'));
     }
 
     public function handle(StayCrawlService $crawl): void
     {
-        // Optimistic check: Nếu item đã hoàn tất hoặc không tồn tại thì skip
+        // Optimistic check: Neu item da hoan tat hoac khong ton tai thi skip
         $item = StayCrawlItem::query()->with(['job.category'])->find($this->itemId);
         if (! $item || ! $item->job) {
             return;
         }
 
-        // Nếu item đã có trang hoàn tất rồi và không có nhu cầu enrich thì bỏ qua
+        // Neu item da co trang hoan tat roi va khong co nhu cau enrich thi bo qua
         if ($item->status === StayCrawlItem::STATUS_IMPORTED && ! $crawl->itemNeedsEnrich($item)) {
             return;
         }
@@ -65,40 +66,52 @@ final class ProcessStayCrawlItemJob implements ShouldQueue
         $useProxy = $this->useProxy || (bool) data_get($job->meta, 'use_proxy', false);
         @set_time_limit(0);
 
-        // Chuyển trạng thái item sang FETCHED (đang xử lý) ngay tức thì
-        $item->status = StayCrawlItem::STATUS_FETCHED;
-        $item->error = null;
-        $item->save();
-
-        $crawl->touchQueueMeta($job, [
-            'item_id' => $item->id,
-            'phase' => 'queue',
-            'message' => 'Worker đang xử lý khách sạn #'.$item->id,
-        ]);
-
-        try {
-            $crawl->processItemFully(
-                $item,
-                $this->locale,
-                $useProxy,
-                $this->respectRobots,
-            );
-        } catch (Throwable $e) {
-            Log::error('ProcessStayCrawlItemJob failed', [
-                'item_id' => $this->itemId,
-                'error' => $e->getMessage(),
-            ]);
-            $item->refresh();
-            if ($item->status !== StayCrawlItem::STATUS_BLOCKED) {
-                $item->status = StayCrawlItem::STATUS_FAILED;
-                $item->error = $e->getMessage();
+        // Khong che so luong xu ly chrome dong thoi an toan
+        StayCrawlLimiter::run(
+            function () use ($item, $job, $crawl, $useProxy) {
+                // Chuyen trang thai item sang FETCHED (dang xu ly) ngay tuc thi
+                $item->status = StayCrawlItem::STATUS_FETCHED;
+                $item->error = null;
                 $item->save();
+
+                $crawl->touchQueueMeta($job, [
+                    'item_id' => $item->id,
+                    'phase' => 'queue',
+                    'message' => 'Worker dang xu ly khach san #' . $item->id,
+                ]);
+
+                try {
+                    $crawl->processItemFully(
+                        $item,
+                        $this->locale,
+                        $useProxy,
+                        $this->respectRobots,
+                    );
+                } catch (Throwable $e) {
+                    Log::error('ProcessStayCrawlItemJob failed', [
+                        'item_id' => $item->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                    $item->refresh();
+                    if ($item->status !== StayCrawlItem::STATUS_BLOCKED) {
+                        $item->status = StayCrawlItem::STATUS_FAILED;
+                        $item->error = $e->getMessage();
+                        $item->save();
+                    }
+                    throw $e;
+                } finally {
+                    $crawl->removeItemActive($job, $this->itemId);
+                    $crawl->refreshJobCompletion($job->fresh() ?? $job);
+                }
+            },
+            max(1, (int) config('stay.crawl.max_concurrent_crawlers', 3)),
+            60,
+            600,
+            function () {
+                // Neu he thong dang qua tai khong lay duoc slot, release lai vao queue sau 15 seconds
+                return $this->release(15);
             }
-            throw $e;
-        } finally {
-            $crawl->removeItemActive($job, $this->itemId);
-            $crawl->refreshJobCompletion($job->fresh() ?? $job);
-        }
+        );
     }
 
     public function failed(?Throwable $e): void
@@ -110,7 +123,7 @@ final class ProcessStayCrawlItemJob implements ShouldQueue
         $item = StayCrawlItem::query()->with('job')->find($this->itemId);
         if ($item) {
             $item->status = StayCrawlItem::STATUS_FAILED;
-            $item->error = $e?->getMessage() ?? 'Job thất bại sau số lần thử lại';
+            $item->error = $e?->getMessage() ?? 'Job that bai sau so lan thu lai';
             $item->save();
             if ($item->job) {
                 app(StayCrawlService::class)->refreshJobCompletion($item->job);
