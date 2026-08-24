@@ -60,6 +60,24 @@ function normalizePhotoList(photos) {
     return out;
 }
 
+
+async function safeEval(page, fn, ...args) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            if (page.isClosed()) return null;
+            return await page.evaluate(fn, ...args);
+        } catch (err) {
+            const msg = String(err && err.message ? err.message : err);
+            if (/detached Frame|Target closed|Session closed|Execution context was destroyed/i.test(msg)) {
+                await sleep(300 + attempt * 200);
+                continue;
+            }
+            throw err;
+        }
+    }
+    return null;
+}
+
 async function main() {
     const inputPath = process.argv[2];
     const outputPath = process.argv[3];
@@ -602,14 +620,14 @@ async function scrollToBottom(page, url) {
     let stable = 0;
     const max = 16;
     for (let i = 0; i < max; i++) {
-        await page.evaluate(() => {
+        await safeEval(page, () => {
             window.scrollBy({ top: Math.round(window.innerHeight * 0.9), behavior: 'smooth' });
         });
         await sleep(240);
-        const info = await page.evaluate(() => ({
+        const info = (await safeEval(page, () => ({
             height: document.body.scrollHeight,
             atBottom: window.innerHeight + window.scrollY >= document.body.scrollHeight - 120,
-        }));
+        }))) || { height: 0, atBottom: true };
         if (info.height === prevHeight && info.atBottom) {
             stable++;
             if (stable >= 2) break;
@@ -956,7 +974,7 @@ async function expandHotelBlocks(page, url) {
         return;
     }
     try {
-        await page.evaluate(() => {
+        await safeEval(page, () => {
             const re = /tất cả tiện nghi|all facilities|xem thêm tiện|show more amenities|tiện nghi chỗ nghỉ/i;
             for (const el of document.querySelectorAll('button, a, [role="button"]')) {
                 const t = (el.textContent || '').replace(/\s+/g, ' ').trim();
@@ -1706,7 +1724,7 @@ function mergePhotoLists(...lists) {
 }
 
 async function harvestHotelPhotos(page) {
-    const raw = await page.evaluate(() => {
+    const raw = await safeEval(page, () => {
         const out = [];
         const push = (rawUrl, alt) => {
             const url = String(rawUrl || '').replace(/&amp;/g, '&');
@@ -1725,7 +1743,7 @@ async function harvestHotelPhotos(page) {
 
 async function clickByText(page, pattern) {
     try {
-        return await page.evaluate((source) => {
+        return await safeEval(page, (source) => {
             const re = new RegExp(source, 'i');
             const nodes = document.querySelectorAll('button, a, [role="button"], [role="tab"]');
             for (const el of nodes) {
@@ -1744,7 +1762,7 @@ async function clickByText(page, pattern) {
 
 async function closeDialog(page) {
     try {
-        await page.evaluate(() => {
+        await safeEval(page, () => {
             const hprtClose = document.querySelector('.rt-lightbox-reviews-container-close, .b_nha_hotel_small_images ~ button, .hprt-lightbox .modal-mask-closeBtn, [data-modal-close]');
             if (hprtClose) {
                 hprtClose.click();
@@ -1939,7 +1957,7 @@ async function collectFacilitiesHtml(page) {
     } catch {
         // ignore
     }
-    return page.evaluate(() => {
+    return (await safeEval(page, () => {
         const groups = [];
         const seen = new Set();
         const pushGroup = (n) => {
@@ -1970,7 +1988,7 @@ async function collectFacilitiesHtml(page) {
 }
 
 async function collectPoliciesHtml(page) {
-    await page.evaluate(() => {
+    await safeEval(page, () => {
         document.querySelector('#policies, section#policies')?.scrollIntoView({ block: 'center' });
     });
     await sleep(400);
@@ -1987,7 +2005,7 @@ async function collectPoliciesHtml(page) {
     } catch {
         // ignore
     }
-    return page.evaluate(() => {
+    return (await safeEval(page, () => {
         /** Text with separators between block nodes (Booking often glues adjacent divs). */
         const blockText = (el) => {
             if (!el) return '';
