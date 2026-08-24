@@ -1,25 +1,21 @@
 <?php
 
-$origins = array_values(array_filter(array_map(
+$envOrigins = array_values(array_filter(array_map(
     'trim',
     explode(',', (string) env('CORS_ALLOWED_ORIGINS', ''))
 )));
 
 $adminApp = rtrim((string) env('ADMIN_APP_URL', ''), '/');
 if ($adminApp !== '') {
-    $origins[] = $adminApp;
+    $envOrigins[] = $adminApp;
 }
 
-$origins = array_values(array_unique(array_filter($origins)));
-
-if ($origins === []) {
-    $origins = [
-        'http://localhost:3100',
-        'http://127.0.0.1:3100',
-        'https://admin.vitravel.dev',
-        'https://admin.vitravel.net',
-    ];
-}
+$origins = array_values(array_unique(array_filter(array_merge([
+    'http://localhost:3100',
+    'http://127.0.0.1:3100',
+    'https://admin.vitravel.dev',
+    'https://admin.vitravel.net',
+], $envOrigins))));
 
 return [
 
@@ -30,7 +26,7 @@ return [
     'allowed_origins' => $origins,
 
     'allowed_origins_patterns' => [
-        '#^https://(www\.)?admin\.[a-z0-9.-]+$#i',
+        '#^https?://(www\.)?admin\.[a-z0-9.-]+(:[0-9]+)?$#i',
     ],
 
     'allowed_headers' => ['*'],
