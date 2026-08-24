@@ -46,11 +46,41 @@ final class StayCrawlApiController extends Controller
 
     public function jobs(Request $request): JsonResponse
     {
-        $q = StayCrawlJob::query()->withCount('items')->latest('id');
+        $q = StayCrawlJob::query()
+            ->with(['category:id,name'])
+            ->withCount([
+                'items',
+                'items as done_items_count' => fn ($iq) => $iq->whereIn('status', [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_AI_DONE]),
+                'items as failed_items_count' => fn ($iq) => $iq->whereIn('status', [StayCrawlItem::STATUS_FAILED, StayCrawlItem::STATUS_BLOCKED]),
+                'items as queued_items_count' => fn ($iq) => $iq->whereIn('status', [StayCrawlItem::STATUS_QUEUED, StayCrawlItem::STATUS_EXTRACTED, StayCrawlItem::STATUS_FETCHED]),
+            ])
+            ->latest('id');
+
         if ($catId = (int) $request->input('service_category_id')) {
             $q->where('service_category_id', $catId);
         }
-        $per = min(50, max(1, (int) $request->input('per_page', 20)));
+
+        if ($status = (string) $request->input('status', '')) {
+            if ($status !== 'all' && $status !== '') {
+                $q->where('status', $status);
+            }
+        }
+
+        if ($search = trim((string) $request->input('search', ''))) {
+            $q->where(function ($sq) use ($search) {
+                if (is_numeric($search)) {
+                    $sq->where('id', (int) $search);
+                } else {
+                    $sq->where('list_url', 'like', "%{$search}%")
+                       ->orWhere('canonical_url', 'like', "%{$search}%")
+                       ->orWhereHas('category', function ($cq) use ($search) {
+                           $cq->where('name', 'like', "%{$search}%");
+                       });
+                }
+            });
+        }
+
+        $per = min(100, max(1, (int) $request->input('per_page', 20)));
         $paginator = $q->paginate($per);
 
         return ApiResponse::success([
@@ -58,6 +88,7 @@ final class StayCrawlApiController extends Controller
             'meta' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
             ],
         ]);
@@ -168,6 +199,24 @@ final class StayCrawlApiController extends Controller
             'message' => "Đã kích hoạt lại {$retriedCount} URL lỗi vào hàng đợi",
         ]);
     }
+
+    public function deleteJob(int $id): JsonResponse
+    {
+        $job = StayCrawlJob::findOrFail($id);
+        $job->items()->delete();
+        $job->delete();
+
+        return ApiResponse::success(null, 'Đã xóa job crawler #' . $id . ' và các khách sạn liên quan.');
+    }
+
+    public function deleteItem(int $id): JsonResponse
+    {
+        $item = StayCrawlItem::findOrFail($id);
+        $item->delete();
+
+        return ApiResponse::success(null, 'Đã xóa mục crawler #' . $id . '.');
+    }
+
 
     public function items(Request $request): JsonResponse
     {
@@ -609,6 +658,16 @@ final class StayCrawlApiController extends Controller
             'items_found' => $job->items_found,
             'items_count' => $job->items_count ?? null,
             'service_category_id' => $job->service_category_id,
+            'category' => ($job->relationLoaded('category') && $job->category) ? [
+                'id' => $job->category->id,
+                'name' => $job->category->name,
+            ] : null,
+            'stats' => [
+                'total' => (int) ($job->items_count ?? 0),
+                'done' => (int) ($job->done_items_count ?? 0),
+                'failed' => (int) ($job->failed_items_count ?? 0),
+                'queued' => (int) ($job->queued_items_count ?? 0),
+            ],
             'error' => $job->error,
             'rerun' => data_get($job->meta, 'rerun'),
             'rerun_from' => data_get($job->meta, 'rerun_from'),
@@ -617,6 +676,7 @@ final class StayCrawlApiController extends Controller
             'worker_alive' => $this->crawl->isWorkerAlive($job),
             'worker_paused' => $this->crawl->isWorkerPaused($job),
             'created_at' => $job->created_at?->toIso8601String(),
+            'updated_at' => $job->updated_at?->toIso8601String(),
         ];
     }
 
