@@ -152,10 +152,8 @@ final class StayCrawlApiController extends Controller
 
         $retriedCount = 0;
         foreach ($failedItems as $item) {
-            $item->status = StayCrawlItem::STATUS_QUEUED;
-            $item->error = null;
-            $item->blocked_reason = null;
-            $item->save();
+            // Xoa sach du lieu / service loi truoc do de cao lai tu dau (replace mode)
+            $this->crawl->resetItemForRerun($item, 'replace', 'basic');
             $this->crawl->dispatchItemQueue($job, 'vi', false, false, $item);
             $retriedCount++;
         }
