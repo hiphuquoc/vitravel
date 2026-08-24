@@ -484,10 +484,15 @@ Alpine.data('listingGrid', (opts = {}) => ({
     ),
     syncUrl: Boolean(opts.syncUrl),
     debounceMs: opts.debounceMs ?? 220,
+    perPage: Number(opts.perPage || opts.params?.per_page || 5),
+    page: 1,
+    hasMore: false,
     loading: true,
+    loadingMore: false,
     count: null,
     error: null,
     drawer: false,
+    _sentinelObserver: null,
     _timer: null,
     _abort: null,
 
@@ -503,8 +508,34 @@ Alpine.data('listingGrid', (opts = {}) => ({
             }, { rootMargin: '350px' });
             observer.observe(this.$el);
         } else {
-            this.$nextTick(() => this.fetchResults());
+            this.$nextTick(() => {
+                this.fetchResults();
+                this.setupSentinelObserver();
+            });
         }
+    },
+
+    setupSentinelObserver() {
+        if (! ('IntersectionObserver' in window)) return;
+        if (this._sentinelObserver) {
+            this._sentinelObserver.disconnect();
+        }
+        this._sentinelObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                if (! this.loading && ! this.loadingMore && this.hasMore) {
+                    this.loadMore();
+                }
+            }
+        }, {
+            rootMargin: '380px 0px',
+            threshold: 0,
+        });
+
+        this.$nextTick(() => {
+            if (this.$refs.sentinel) {
+                this._sentinelObserver.observe(this.$refs.sentinel);
+            }
+        });
     },
 
     toggleFilter(group, value) {
@@ -557,11 +588,18 @@ Alpine.data('listingGrid', (opts = {}) => ({
         if (! this.endpoint) return;
 
         this.loading = true;
+        this.loadingMore = false;
         this.error = null;
+        this.page = 1;
+        this.hasMore = false;
+
         if (this._abort) this._abort.abort();
         this._abort = new AbortController();
 
         const q = this.buildQuery();
+        q.set('page', '1');
+        q.set('per_page', String(this.perPage));
+
         if (this.syncUrl) {
             const url = new URL(window.location.href);
             [...url.searchParams.keys()].forEach((k) => {
@@ -587,6 +625,9 @@ Alpine.data('listingGrid', (opts = {}) => ({
             if (! res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             this.count = data.count ?? 0;
+            this.hasMore = Boolean(data.has_more);
+            this.page = 1;
+
             await this.$nextTick();
             if (this.$refs.results) {
                 const host = this.$refs.results;
@@ -611,6 +652,55 @@ Alpine.data('listingGrid', (opts = {}) => ({
             console.error(e);
         } finally {
             this.loading = false;
+            this.$nextTick(() => this.setupSentinelObserver());
+        }
+    },
+
+    async loadMore() {
+        if (this.loading || this.loadingMore || ! this.hasMore || ! this.endpoint) return;
+
+        this.loadingMore = true;
+        this.error = null;
+        const targetPage = this.page + 1;
+
+        const q = this.buildQuery();
+        q.set('page', String(targetPage));
+        q.set('per_page', String(this.perPage));
+        q.set('is_append', '1');
+
+        try {
+            const res = await fetch(`${this.endpoint}?${q.toString()}`, {
+                headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin',
+            });
+            if (! res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+
+            this.count = data.count ?? this.count;
+            this.hasMore = Boolean(data.has_more);
+            this.page = targetPage;
+
+            await this.$nextTick();
+            if (this.$refs.results && data.html) {
+                const host = this.$refs.results;
+                const mount = host.querySelector('[data-listing-mount]') || host;
+                const container = mount.querySelector('[data-listing-container]') || mount.querySelector('.site-stack, .grid') || mount;
+
+                const temp = document.createElement('div');
+                temp.innerHTML = data.html;
+
+                const newNodes = Array.from(temp.children);
+                newNodes.forEach((node) => {
+                    container.appendChild(node);
+                    if (window.Alpine?.initTree) {
+                        window.Alpine.initTree(node);
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Error loading more listing items:', e);
+        } finally {
+            this.loadingMore = false;
         }
     },
 }));

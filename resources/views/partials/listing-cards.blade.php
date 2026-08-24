@@ -6,12 +6,44 @@
         'service' => 'service',
         default => 'tour',
     };
+    $isAppend = (bool) ($isAppend ?? false);
     /** Số card trong 1 hàng desktop — vượt ngưỡng thì dùng snap-carousel dùng chung. */
     $gridCap = (int) ($gridCap ?? 3);
-    $useCarousel = $variant === 'compact' && count($items) > $gridCap;
+    $useCarousel = $variant === 'compact' && count($items) > $gridCap && ! $isAppend;
 @endphp
 
-@if (count($items) === 0)
+@if ($isAppend)
+    @foreach ($items as $item)
+        @php
+            $href = !empty($item['slugFull'])
+                ? url('/' . ltrim($item['slugFull'], '/'))
+                : match ($kind) {
+                    'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
+                    'service' => locale_route('services.show', [
+                        'cluster' => $item['cluster'],
+                        'category' => $item['categorySlug'],
+                        'slug' => $item['slug'],
+                    ]),
+                    default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
+                };
+        @endphp
+        <div class="listing-card-animate" data-listing-item>
+            @if ($kind === 'service')
+                @if ($variant === 'compact')
+                    <x-service.card-compact :item="$item" :href="$href" />
+                @else
+                    <x-service.card :item="$item" :href="$href" />
+                @endif
+            @else
+                @if ($variant === 'compact')
+                    <x-tour.card-compact :item="$item" :href="$href" />
+                @else
+                    <x-tour.card :item="$item" :href="$href" />
+                @endif
+            @endif
+        </div>
+    @endforeach
+@elseif (count($items) === 0)
     <div class="card listing-empty">
         <x-icon :name="match ($kind) { 'cruise' => 'cruise', 'service' => 'briefcase', default => 'compass' }" class="size-10 text-muted" />
         <p class="font-semibold">Không tìm thấy kết quả khớp bộ lọc.</p>
@@ -37,7 +69,7 @@
                             default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                         };
                 @endphp
-                <div class="snap-carousel__item" role="listitem">
+                <div class="snap-carousel__item listing-card-animate" role="listitem" data-listing-item>
                     @if ($kind === 'service')
                         <x-service.card-compact :item="$item" :href="$href" />
                     @else
@@ -59,7 +91,7 @@
         </button>
     </div>
 @elseif ($variant === 'compact')
-    <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
+    <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3" data-listing-container>
         @foreach ($items as $item)
             @php
                 $href = !empty($item['slugFull'])
@@ -74,15 +106,17 @@
                         default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                     };
             @endphp
-            @if ($kind === 'service')
-                <x-service.card-compact :item="$item" :href="$href" />
-            @else
-                <x-tour.card-compact :item="$item" :href="$href" />
-            @endif
+            <div class="listing-card-animate" data-listing-item>
+                @if ($kind === 'service')
+                    <x-service.card-compact :item="$item" :href="$href" />
+                @else
+                    <x-tour.card-compact :item="$item" :href="$href" />
+                @endif
+            </div>
         @endforeach
     </div>
 @else
-    <div class="site-stack">
+    <div class="site-stack" data-listing-container>
         @foreach ($items as $item)
             @php
                 $href = !empty($item['slugFull'])
@@ -97,11 +131,13 @@
                         default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                     };
             @endphp
-            @if ($kind === 'service')
-                <x-service.card :item="$item" :href="$href" />
-            @else
-                <x-tour.card :item="$item" :href="$href" />
-            @endif
+            <div class="listing-card-animate" data-listing-item>
+                @if ($kind === 'service')
+                    <x-service.card :item="$item" :href="$href" />
+                @else
+                    <x-tour.card :item="$item" :href="$href" />
+                @endif
+            </div>
         @endforeach
     </div>
 @endif

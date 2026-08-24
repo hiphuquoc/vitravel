@@ -2,6 +2,7 @@
     /** @var array<string, mixed> $listing */
     $listing = \App\Support\ListingChrome::make(is_array($listing ?? null) ? $listing : []);
     $title = (string) ($listing['title'] ?? '');
+    $perPage = (int) ($listing['perPage'] ?? 5);
 @endphp
 
 <x-layout.page-header
@@ -19,6 +20,7 @@
         'params' => $listing['endpointParams'],
         'syncUrl' => (bool) $listing['syncUrl'],
         'filters' => $listing['filterDefaults'],
+        'perPage' => $perPage,
     ]))">
     <x-tour.filter-sidebar
         :durations="$listing['durations']"
@@ -48,7 +50,39 @@
         <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
 
         <div class="listing-results" x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-            <x-tour.listing-skeleton :count="(int) $listing['skeletonCount']" variant="wide" />
+            <x-tour.listing-skeleton :count="(int) ($listing['skeletonCount'] ?? 5)" variant="wide" />
+        </div>
+
+        {{-- Sentinel quan sát cuộn vô tận (IntersectionObserver) --}}
+        <div x-ref="sentinel" class="listing-sentinel h-4 w-full pointer-events-none" aria-hidden="true"></div>
+
+        {{-- Loading indicator khi cuộn tải tiếp 5 khách sạn --}}
+        <div x-show="loadingMore" x-cloak class="listing-loading-more site-mt">
+            <div class="flex flex-col items-center justify-center gap-2.5 py-6 text-center">
+                <div class="flex items-center gap-2">
+                    <span class="inline-block size-2 rounded-full bg-primary-600 animate-bounce" style="animation-delay: 0ms"></span>
+                    <span class="inline-block size-2 rounded-full bg-primary-600 animate-bounce" style="animation-delay: 150ms"></span>
+                    <span class="inline-block size-2 rounded-full bg-primary-600 animate-bounce" style="animation-delay: 300ms"></span>
+                </div>
+                <p class="text-xs font-medium text-muted">Đang tải thêm {{ $listing['unitLabel'] }}...</p>
+            </div>
+        </div>
+
+        {{-- Thông báo khi đã hiển thị hết danh sách --}}
+        <div x-show="!loading && !loadingMore && !hasMore && count > 5" x-cloak class="listing-end-notice site-mt">
+            <div class="flex items-center justify-center gap-3 py-6 text-center text-xs text-muted">
+                <span class="h-px w-12 bg-line sm:w-20"></span>
+                <span>Đã hiển thị tất cả <strong class="text-ink font-semibold" x-text="count"></strong> {{ $listing['unitLabel'] }}</span>
+                <span class="h-px w-12 bg-line sm:w-20"></span>
+            </div>
+        </div>
+
+        {{-- Nút bấm thủ công dự phòng khi cần --}}
+        <div x-show="!loading && !loadingMore && hasMore" x-cloak class="listing-load-more-btn site-mt text-center">
+            <button type="button" @click="loadMore()" class="btn-outline">
+                <span>Xem thêm {{ $listing['unitLabel'] }}</span>
+                <x-icon name="arrow-down" class="size-4" />
+            </button>
         </div>
 
         @if (! empty($listing['ratingMeta']))

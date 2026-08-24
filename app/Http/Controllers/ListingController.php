@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * JSON endpoints for tour/cruise grids (filter + skeleton fetch).
+ * JSON endpoints for tour/cruise/service grids (filter + skeleton + progressive infinite scroll fetch).
  * Listing pages still SSR ItemList schema separately.
  */
 class ListingController extends Controller
@@ -17,15 +17,21 @@ class ListingController extends Controller
     public function tours(Request $request): JsonResponse
     {
         $tours = $this->filterTours($this->data->tours(), $request);
+        $page = $request->filled('page') ? max(1, (int) $request->input('page')) : null;
+        $perPage = $request->filled('per_page') ? max(1, min(100, (int) $request->input('per_page'))) : ($page ? 5 : null);
+        $isAppend = $request->boolean('is_append', ($page ?? 1) > 1);
 
-        return $this->cardsResponse($tours, 'tour', $request->input('variant', 'wide'));
+        return $this->cardsResponse($tours, 'tour', $request->input('variant', 'wide'), $page, $perPage, $isAppend);
     }
 
     public function cruises(Request $request): JsonResponse
     {
         $cruises = $this->filterCruises($this->data->cruises(), $request);
+        $page = $request->filled('page') ? max(1, (int) $request->input('page')) : null;
+        $perPage = $request->filled('per_page') ? max(1, min(100, (int) $request->input('per_page'))) : ($page ? 5 : null);
+        $isAppend = $request->boolean('is_append', ($page ?? 1) > 1);
 
-        return $this->cardsResponse($cruises, 'cruise', $request->input('variant', 'wide'));
+        return $this->cardsResponse($cruises, 'cruise', $request->input('variant', 'wide'), $page, $perPage, $isAppend);
     }
 
     public function featuredTours(Request $request): JsonResponse
@@ -54,7 +60,7 @@ class ListingController extends Controller
     {
         $cluster = (string) $request->input('cluster', 'train');
         if ($cluster === '' || ! config("services_catalog.clusters.{$cluster}")) {
-            return response()->json(['count' => 0, 'html' => ''], 404);
+            return response()->json(['count' => 0, 'html' => '', 'has_more' => false], 404);
         }
 
         $limit = max(1, min(12, (int) $request->input('limit', 3)));
@@ -70,12 +76,15 @@ class ListingController extends Controller
     {
         $cluster = (string) $request->input('cluster', '');
         if ($cluster === '' || ! config("services_catalog.clusters.{$cluster}")) {
-            return response()->json(['count' => 0, 'html' => ''], 404);
+            return response()->json(['count' => 0, 'html' => '', 'has_more' => false], 404);
         }
 
         $services = $this->filterServices($this->data->servicesForHub($cluster), $request);
+        $page = $request->filled('page') ? max(1, (int) $request->input('page')) : null;
+        $perPage = $request->filled('per_page') ? max(1, min(100, (int) $request->input('per_page'))) : ($page ? 5 : null);
+        $isAppend = $request->boolean('is_append', ($page ?? 1) > 1);
 
-        return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'));
+        return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'), $page, $perPage, $isAppend);
     }
 
     public function related(Request $request): JsonResponse
@@ -126,20 +135,41 @@ class ListingController extends Controller
     /**
      * @param  array<int, array<string, mixed>>  $items
      */
-    protected function cardsResponse(array $items, string $kind, string $variant): JsonResponse
-    {
+    protected function cardsResponse(
+        array $items,
+        string $kind,
+        string $variant,
+        ?int $page = null,
+        ?int $perPage = null,
+        bool $isAppend = false
+    ): JsonResponse {
+        $totalCount = count($items);
         $variant = $variant === 'compact' ? 'compact' : 'wide';
         $layout = $variant === 'compact' ? 'grid' : 'stack';
 
+        if ($page !== null && $perPage !== null && $perPage > 0) {
+            $offset = ($page - 1) * $perPage;
+            $pagedItems = array_slice($items, $offset, $perPage);
+            $hasMore = ($offset + count($pagedItems)) < $totalCount;
+        } else {
+            $pagedItems = $items;
+            $hasMore = false;
+        }
+
         $html = view('partials.listing-cards', [
-            'items' => $items,
+            'items' => $pagedItems,
             'kind' => $kind,
             'variant' => $variant,
             'layout' => $layout,
+            'isAppend' => $isAppend,
+            'offset' => ($page && $perPage) ? ($page - 1) * $perPage : 0,
         ])->render();
 
         return response()->json([
-            'count' => count($items),
+            'count' => $totalCount,
+            'page' => $page ?? 1,
+            'per_page' => $perPage ?? $totalCount,
+            'has_more' => $hasMore,
             'html' => $html,
         ]);
     }

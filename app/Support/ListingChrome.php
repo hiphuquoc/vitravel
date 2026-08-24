@@ -86,7 +86,8 @@ final class ListingChrome
             'schemaItems' => [],
             'schemaName' => '',
             'ratingMeta' => null,
-            'skeletonCount' => 4,
+            'skeletonCount' => 5,
+            'perPage' => 5,
             'syncUrl' => true,
         ];
 
