@@ -217,6 +217,8 @@ final class StayTaxonomyService
         }
 
         // Sync pivot
+        
+        ksort($amenityPivot);
         $service->stayAmenities()->sync($amenityPivot);
     }
 
@@ -261,6 +263,8 @@ final class StayTaxonomyService
         }
 
         // Sync pivot
+        
+        ksort($placePivot);
         $service->stayPlaces()->sync($placePivot);
     }
 
@@ -284,6 +288,8 @@ final class StayTaxonomyService
             $amenity = $this->findOrCreateAmenity($name, 'room', false, $locale);
             $pivot[$amenity->id] = ['sort' => $sort++];
         }
+        
+        ksort($pivot);
         $option->stayAmenities()->sync($pivot);
     }
 

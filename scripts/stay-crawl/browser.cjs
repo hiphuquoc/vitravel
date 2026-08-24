@@ -164,7 +164,7 @@ async function main() {
             'Accept-Language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
         });
         await applyChromeIdentity(page);
-        await page.evaluateOnNewDocument(installStealth, process.platform === 'linux');
+        try { await page.evaluateOnNewDocument(installStealth, process.platform === 'linux'); } catch (e) {}
         const net = attachNetworkProbe(page);
 
         const mode = String(input.mode || 'basic').toLowerCase();
