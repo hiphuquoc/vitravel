@@ -1957,7 +1957,7 @@ async function collectFacilitiesHtml(page) {
     } catch {
         // ignore
     }
-    return (await safeEval(page, () => {
+    return await safeEval(page, () => {
         const groups = [];
         const seen = new Set();
         const pushGroup = (n) => {
@@ -2005,7 +2005,7 @@ async function collectPoliciesHtml(page) {
     } catch {
         // ignore
     }
-    return (await safeEval(page, () => {
+    return await safeEval(page, () => {
         /** Text with separators between block nodes (Booking often glues adjacent divs). */
         const blockText = (el) => {
             if (!el) return '';
