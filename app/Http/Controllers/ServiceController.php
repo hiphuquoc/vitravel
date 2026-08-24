@@ -18,7 +18,6 @@ class ServiceController extends Controller
             $this->assertCluster($cluster);
             $hub = $this->data->serviceHub($cluster);
             $categories = $this->data->serviceCategoriesForHub($cluster);
-            $services = $this->data->servicesForHub($cluster);
             $filterCategories = array_values(array_filter(
                 $categories,
                 fn ($cat) => ((int) ($cat['count'] ?? 0)) > 0 && ! empty($cat['slug'])
@@ -47,14 +46,7 @@ class ServiceController extends Controller
                 'categoryLegend' => $this->categoryLegend($cluster),
                 'faqs' => $this->data->serviceListingFaqs(),
                 'faqTitle' => 'Câu hỏi thường gặp về '.strtolower((string) ($hub['title'] ?? 'dịch vụ')),
-                'schemaItems' => collect($services)->map(fn ($s) => [
-                    'name' => $s['title'],
-                    'url' => locale_route('services.show', [
-                        'cluster' => $s['cluster'] ?? $cluster,
-                        'category' => $s['categorySlug'],
-                        'slug' => $s['slug'],
-                    ]),
-                ])->all(),
+                'schemaItems' => $this->data->serviceSchemaItems($cluster),
                 'schemaName' => seo_page_title($hub['title'] ?? 'Dịch vụ'),
             ]);
 
@@ -68,10 +60,6 @@ class ServiceController extends Controller
             $this->assertCluster($cluster);
             $cat = $this->data->serviceCategory($cluster, $category) ?? abort(404);
             $categories = $this->data->serviceCategories($cluster);
-            $services = array_values(array_filter(
-                $this->data->services($cluster),
-                fn ($s) => ($s['categorySlug'] ?? '') === $category
-            ));
             $hub = $this->data->serviceHub($cluster);
             $filterCategories = array_values(array_filter(
                 $categories,
@@ -109,14 +97,7 @@ class ServiceController extends Controller
                 'categoryLegend' => $this->categoryLegend($cluster),
                 'faqs' => $this->data->serviceListingFaqs(),
                 'faqTitle' => 'Câu hỏi thường gặp về '.strtolower($name),
-                'schemaItems' => collect($services)->map(fn ($s) => [
-                    'name' => $s['title'],
-                    'url' => locale_route('services.show', [
-                        'cluster' => $cluster,
-                        'category' => $s['categorySlug'],
-                        'slug' => $s['slug'],
-                    ]),
-                ])->all(),
+                'schemaItems' => $this->data->serviceSchemaItems($cluster, $category),
                 'schemaName' => seo_page_title($name),
                 'ratingMeta' => 'Đánh giá từ khách hàng đã chọn '.$name,
             ]);

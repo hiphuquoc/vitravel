@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CompanyProfile extends Model
 {
+    protected static ?self $memoCurrent = null;
+    protected static ?array $memoContact = null;
     use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
@@ -95,7 +97,11 @@ class CompanyProfile extends Model
 
     public static function current(): ?self
     {
-        return static::query()->with([
+        if (static::$memoCurrent !== null) {
+            return static::$memoCurrent;
+        }
+
+        return static::$memoCurrent = static::query()->with([
             'translations',
             'introImage',
             'missionImage',
@@ -177,6 +183,10 @@ class CompanyProfile extends Model
      */
     public static function contact(): array
     {
+        if (static::$memoContact !== null) {
+            return static::$memoContact;
+        }
+
         $defaults = static::seedDefaults();
         $contactCfg = is_array($defaults['contact'] ?? null) ? $defaults['contact'] : [];
         $profile = static::current();

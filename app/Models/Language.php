@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Cache;
 
 class Language extends Model
 {
+    protected static array $memoIds = [];
+    protected static ?self $memoDefault = null;
+    protected static ?int $memoDefaultId = null;
+    protected static ?string $memoDefaultCode = null;
+    protected static ?Collection $memoActive = null;
+    protected static ?Collection $memoAll = null;
     protected $fillable = [
         'code', 'name', 'name_native', 'flag', 'og_locale', 'hreflang',
         'dir', 'is_active', 'is_default', 'sort',
@@ -55,7 +61,11 @@ class Language extends Model
 
     public static function idByCode(string $code): ?int
     {
-        return Cache::remember("language:id:{$code}", 3600, function () use ($code) {
+        if (array_key_exists($code, static::$memoIds)) {
+            return static::$memoIds[$code];
+        }
+
+        return static::$memoIds[$code] = Cache::remember("language:id:{$code}", 3600, function () use ($code) {
             return static::query()->where('code', $code)->value('id');
         });
     }
@@ -73,17 +83,25 @@ class Language extends Model
 
     public static function default(): ?self
     {
+        if (static::$memoDefault !== null) {
+            return static::$memoDefault;
+        }
+
         $row = self::rememberRows('languages:default:v2', function () {
             return self::where('is_default', 1)->first()
                 ?? self::where('code', config('language.default_code', 'vi'))->first();
         });
 
-        return self::hydrate($row ?: null);
+        return static::$memoDefault = self::hydrate($row ?: null);
     }
 
     public static function defaultId(): ?int
     {
-        return Cache::remember('language:default_id', 3600, function () {
+        if (static::$memoDefaultId !== null) {
+            return static::$memoDefaultId;
+        }
+
+        return static::$memoDefaultId = Cache::remember('language:default_id', 3600, function () {
             return static::default()?->id
                 ?? static::query()->where('code', 'vi')->value('id');
         });
@@ -91,7 +109,11 @@ class Language extends Model
 
     public static function defaultCode(): string
     {
-        return Cache::remember('language:default_code', 3600, function () {
+        if (static::$memoDefaultCode !== null) {
+            return static::$memoDefaultCode;
+        }
+
+        return static::$memoDefaultCode = Cache::remember('language:default_code', 3600, function () {
             return static::default()?->code
                 ?? (string) config('language.default_code', 'vi');
         });
@@ -157,7 +179,11 @@ class Language extends Model
     /** @return Collection<int, self> */
     public static function active(): Collection
     {
-        return self::hydrateMany(
+        if (static::$memoActive !== null) {
+            return static::$memoActive;
+        }
+
+        return static::$memoActive = self::hydrateMany(
             self::rememberRows('languages:active:v2', fn () => self::where('is_active', 1)->orderBy('sort')->get())
         );
     }
@@ -171,6 +197,12 @@ class Language extends Model
 
     public static function clearCache(): void
     {
+        static::$memoIds = [];
+        static::$memoDefault = null;
+        static::$memoDefaultId = null;
+        static::$memoDefaultCode = null;
+        static::$memoActive = null;
+        static::$memoAll = null;
         self::flushCache();
         Cache::forget('language:default_id');
         Cache::forget('language:default_code');

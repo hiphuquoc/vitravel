@@ -25,15 +25,17 @@
         <div x-ref="track" class="snap-carousel" role="list">
             @foreach ($items as $item)
                 @php
-                    $href = match ($kind) {
-                        'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
-                        'service' => locale_route('services.show', [
-                            'cluster' => $item['cluster'],
-                            'category' => $item['categorySlug'],
-                            'slug' => $item['slug'],
-                        ]),
-                        default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
-                    };
+                    $href = !empty($item['slugFull'])
+                        ? url('/' . ltrim($item['slugFull'], '/'))
+                        : match ($kind) {
+                            'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
+                            'service' => locale_route('services.show', [
+                                'cluster' => $item['cluster'],
+                                'category' => $item['categorySlug'],
+                                'slug' => $item['slug'],
+                            ]),
+                            default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
+                        };
                 @endphp
                 <div class="snap-carousel__item" role="listitem">
                     @if ($kind === 'service')
@@ -60,15 +62,17 @@
     <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
         @foreach ($items as $item)
             @php
-                $href = match ($kind) {
-                    'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
-                    'service' => locale_route('services.show', [
-                        'cluster' => $item['cluster'],
-                        'category' => $item['categorySlug'],
-                        'slug' => $item['slug'],
-                    ]),
-                    default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
-                };
+                $href = !empty($item['slugFull'])
+                    ? url('/' . ltrim($item['slugFull'], '/'))
+                    : match ($kind) {
+                        'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
+                        'service' => locale_route('services.show', [
+                            'cluster' => $item['cluster'],
+                            'category' => $item['categorySlug'],
+                            'slug' => $item['slug'],
+                        ]),
+                        default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
+                    };
             @endphp
             @if ($kind === 'service')
                 <x-service.card-compact :item="$item" :href="$href" />
@@ -81,15 +85,17 @@
     <div class="site-stack">
         @foreach ($items as $item)
             @php
-                $href = match ($kind) {
-                    'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
-                    'service' => locale_route('services.show', [
-                        'cluster' => $item['cluster'],
-                        'category' => $item['categorySlug'],
-                        'slug' => $item['slug'],
-                    ]),
-                    default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
-                };
+                $href = !empty($item['slugFull'])
+                    ? url('/' . ltrim($item['slugFull'], '/'))
+                    : match ($kind) {
+                        'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
+                        'service' => locale_route('services.show', [
+                            'cluster' => $item['cluster'],
+                            'category' => $item['categorySlug'],
+                            'slug' => $item['slug'],
+                        ]),
+                        default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
+                    };
             @endphp
             @if ($kind === 'service')
                 <x-service.card :item="$item" :href="$href" />

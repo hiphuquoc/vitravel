@@ -604,6 +604,10 @@ class SeoService
     public function namedSeoPath(string $routeName, array $params = [], ?string $locale = null): ?string
     {
         $locale ??= app()->getLocale();
+        $cacheKey = $routeName . ':' . $locale . ':' . json_encode($params);
+        if (array_key_exists($cacheKey, $this->memoNamedPaths)) {
+            return $this->memoNamedPaths[$cacheKey];
+        }
 
         // Alias dự án 1 điểm đến (zones) → shape CMS (countries)
         if (in_array($routeName, ['guide.zone', 'guide.category'], true)) {
@@ -616,7 +620,7 @@ class SeoService
             $params['country'] = $params['category'];
         }
 
-        return match ($routeName) {
+        return $this->memoNamedPaths[$cacheKey] = match ($routeName) {
             'tours.hub' => $this->hubSlugFullPath('tours_hub', $locale),
             'cruises.hub' => $this->hubSlugFullPath('cruises_hub', $locale),
             'guide.index' => $this->hubSlugFullPath('guide_hub', $locale),
@@ -727,13 +731,22 @@ class SeoService
         return $this->normalizeSlugFull(implode('/', $parts));
     }
 
+    protected array $memoHubPaths = [];
+    protected array $memoNamedPaths = [];
+    protected array $memoHubEntries = [];
+
     public function hubSlugFullPath(string $hubKey, string $locale): string
     {
+        $cacheKey = $hubKey . ':' . $locale;
+        if (isset($this->memoHubPaths[$cacheKey])) {
+            return $this->memoHubPaths[$cacheKey];
+        }
+
         $entry = $this->ensureHub($hubKey, $locale);
         $full = $this->resolveEntrySlugFull($entry, $locale)
             ?? '/'.ltrim((string) (config("seo.hubs.{$hubKey}.default_slug") ?? $hubKey), '/');
 
-        return $this->normalizeSlugFull((string) $full);
+        return $this->memoHubPaths[$cacheKey] = $this->normalizeSlugFull((string) $full);
     }
 
     protected function countrySlugFullPath(?string $countrySlug, string $locale): ?string
@@ -1092,6 +1105,10 @@ class SeoService
      */
     public function ensureHub(string $hubKey, string $locale = 'vi'): SeoEntry
     {
+        $cacheKey = $hubKey . ':' . $locale;
+        if (isset($this->memoHubEntries[$cacheKey])) {
+            return $this->memoHubEntries[$cacheKey];
+        }
         $cfg = config("seo.hubs.{$hubKey}");
         if (! is_array($cfg)) {
             throw new \InvalidArgumentException("Unknown SEO hub: {$hubKey}");
