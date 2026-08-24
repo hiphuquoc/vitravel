@@ -107,11 +107,7 @@ final class StayCrawlApiController extends Controller
                 'status', 'http_status', 'blocked_reason', 'service_id',
                 'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
             ])
-            ->with([
-                'service:id,code,service_category_id',
-                'service.seoEntry:id,service_id,level,parent_id',
-                'service.seoEntry.translations:id,seo_entry_id,locale,slug_full',
-            ])
+            ->with(['service.seoEntry.translations'])
             ->latest('id');
         
         if ($status = $request->input('status')) {
@@ -189,6 +185,10 @@ final class StayCrawlApiController extends Controller
     {
         $job = StayCrawlJob::query()->findOrFail($id);
         $failedItems = $job->items()
+            ->select([
+                'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
+                'status', 'http_status', 'blocked_reason', 'service_id', 'error',
+            ])
             ->whereIn('status', [StayCrawlItem::STATUS_FAILED, StayCrawlItem::STATUS_BLOCKED])
             ->get();
 
@@ -237,11 +237,7 @@ final class StayCrawlApiController extends Controller
                 'status', 'http_status', 'blocked_reason', 'service_id',
                 'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
             ])
-            ->with([
-                'service:id,code,service_category_id',
-                'service.seoEntry:id,service_id,level,parent_id',
-                'service.seoEntry.translations:id,seo_entry_id,locale,slug_full',
-            ])
+            ->with(['service.seoEntry.translations'])
             ->latest('id');
         if ($job = $request->input('job_id')) {
             $q->where('job_id', (int) $job);
@@ -379,11 +375,7 @@ final class StayCrawlApiController extends Controller
                 'status', 'http_status', 'blocked_reason', 'service_id',
                 'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
             ])
-            ->with([
-                'service:id,code,service_category_id',
-                'service.seoEntry:id,service_id,level,parent_id',
-                'service.seoEntry.translations:id,seo_entry_id,locale,slug_full',
-            ])
+            ->with(['service.seoEntry.translations'])
             ->latest('id')
             ->limit(50)
             ->get();
