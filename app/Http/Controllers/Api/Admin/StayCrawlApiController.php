@@ -101,7 +101,18 @@ final class StayCrawlApiController extends Controller
         // Tự động đồng bộ tiến độ từ stream listing nếu có
         $this->crawl->syncListProgressFromStream($job);
         
-        $query = $job->items()->with('service.seoEntry.translations')->latest('id');
+        $query = $job->items()
+            ->select([
+                'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
+                'status', 'http_status', 'blocked_reason', 'service_id',
+                'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
+            ])
+            ->with([
+                'service:id,code,service_category_id',
+                'service.seoEntry:id,service_id,level,parent_id',
+                'service.seoEntry.translations:id,seo_entry_id,locale,slug_full',
+            ])
+            ->latest('id');
         
         if ($status = $request->input('status')) {
             if ($status === 'done') {
@@ -220,7 +231,18 @@ final class StayCrawlApiController extends Controller
 
     public function items(Request $request): JsonResponse
     {
-        $q = StayCrawlItem::query()->with('service.seoEntry.translations')->latest('id');
+        $q = StayCrawlItem::query()
+            ->select([
+                'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
+                'status', 'http_status', 'blocked_reason', 'service_id',
+                'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
+            ])
+            ->with([
+                'service:id,code,service_category_id',
+                'service.seoEntry:id,service_id,level,parent_id',
+                'service.seoEntry.translations:id,seo_entry_id,locale,slug_full',
+            ])
+            ->latest('id');
         if ($job = $request->input('job_id')) {
             $q->where('job_id', (int) $job);
         }
@@ -351,7 +373,20 @@ final class StayCrawlApiController extends Controller
             $job = $job->fresh() ?? $job;
         }
 
-        $items = $job->items()->with('service.seoEntry.translations')->latest('id')->limit(80)->get();
+        $items = $job->items()
+            ->select([
+                'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
+                'status', 'http_status', 'blocked_reason', 'service_id',
+                'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
+            ])
+            ->with([
+                'service:id,code,service_category_id',
+                'service.seoEntry:id,service_id,level,parent_id',
+                'service.seoEntry.translations:id,seo_entry_id,locale,slug_full',
+            ])
+            ->latest('id')
+            ->limit(50)
+            ->get();
         $queueName = (string) config('stay.crawl.queue', 'default');
 
         return ApiResponse::success([
