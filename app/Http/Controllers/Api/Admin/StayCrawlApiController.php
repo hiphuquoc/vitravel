@@ -7,11 +7,13 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Exceptions\StayCrawlAlreadyExistsException;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
+use App\Jobs\ProcessStayCrawlItemJob;
 use App\Models\StayCrawlItem;
 use App\Models\StayCrawlJob;
 use App\Services\StayCrawl\StayCrawlBrowser;
 use App\Services\StayCrawl\StayCrawlService;
 use App\Support\ApiResponse;
+use App\Support\StayBookingUrl;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -97,6 +99,20 @@ final class StayCrawlApiController extends Controller
     public function job(Request $request, int $id): JsonResponse
     {
         $job = StayCrawlJob::query()->withCount('items')->findOrFail($id);
+
+        // Auto-link item if single hotel crawl job has 0 items linked
+        if ($job->items_count === 0 && ! empty($job->list_url) && str_contains($job->list_url, '/hotel/')) {
+            $canon = StayBookingUrl::canonicalize($job->list_url);
+            $matchedItem = StayCrawlItem::query()
+                ->where('canonical_url', $canon)
+                ->orWhere('source_url', $job->list_url)
+                ->first();
+            if ($matchedItem) {
+                $matchedItem->job_id = $job->id;
+                $matchedItem->save();
+                $job->loadCount('items');
+            }
+        }
         
         // Tự động đồng bộ tiến độ từ stream listing nếu có
         $this->crawl->syncListProgressFromStream($job);
@@ -156,8 +172,25 @@ final class StayCrawlApiController extends Controller
             $item->save();
         }
 
+        // Đẩy thẳng vào hàng đợi Laravel Queue (bảng jobs)
+        ProcessStayCrawlItemJob::dispatch(
+            (int) $item->id,
+            'vi',
+            false,
+            false,
+        );
+
         if ($item->job) {
-            $this->crawl->dispatchItemQueue($item->job, 'vi', false, false, $item);
+            $job = $item->job;
+            if ($job->status === StayCrawlJob::STATUS_DONE) {
+                $job->status = StayCrawlJob::STATUS_READY;
+                $job->save();
+            }
+            $this->crawl->touchQueueMeta($job, [
+                'item_id' => $item->id,
+                'phase' => 'queue',
+                'message' => "Đã kích hoạt lại khách sạn #{$item->id} vào hàng đợi Laravel queue",
+            ]);
         }
 
         return ApiResponse::success([
@@ -185,24 +218,34 @@ final class StayCrawlApiController extends Controller
     {
         $job = StayCrawlJob::query()->findOrFail($id);
         $failedItems = $job->items()
-            ->select([
-                'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
-                'status', 'http_status', 'blocked_reason', 'service_id', 'error',
+            ->whereIn('status', [
+                StayCrawlItem::STATUS_FAILED,
+                StayCrawlItem::STATUS_BLOCKED,
+                StayCrawlItem::STATUS_QUEUED,
             ])
-            ->whereIn('status', [StayCrawlItem::STATUS_FAILED, StayCrawlItem::STATUS_BLOCKED])
             ->get();
 
         $retriedCount = 0;
         foreach ($failedItems as $item) {
-            // Xoa sach du lieu / service loi truoc do de cao lai tu dau (replace mode)
+            // Xóa sạch dữ liệu / service lỗi trước đó để cào lại từ đầu (replace mode)
             $this->crawl->resetItemForRerun($item, 'replace', 'basic');
-            $this->crawl->dispatchItemQueue($job, 'vi', false, false, $item);
+            ProcessStayCrawlItemJob::dispatch(
+                (int) $item->id,
+                'vi',
+                false,
+                false,
+            );
             $retriedCount++;
+        }
+
+        if ($job->status === StayCrawlJob::STATUS_DONE && $retriedCount > 0) {
+            $job->status = StayCrawlJob::STATUS_READY;
+            $job->save();
         }
 
         $this->crawl->touchQueueMeta($job, [
             'phase' => 'queue',
-            'message' => "Đã kích hoạt lại {$retriedCount} URL bị lỗi vào queue",
+            'message' => "Đã kích hoạt lại {$retriedCount} URL vào hàng đợi Laravel queue",
         ]);
 
         return ApiResponse::success([
@@ -249,27 +292,48 @@ final class StayCrawlApiController extends Controller
             'from' => 'nullable|in:basic,gallery,rooms,rooms_modals',
         ]);
 
-        $items = StayCrawlItem::whereIn('id', $validated['item_ids'])->get();
+        $items = StayCrawlItem::whereIn('id', $validated['item_ids'])->with(['job'])->get();
         $retried = 0;
-        foreach ($items as $item) {
-            $item->status = StayCrawlItem::STATUS_QUEUED;
-            $item->error = null;
-            $item->blocked_reason = null;
+        $touchedJobs = [];
 
-            if ($item->job && (! empty($validated['rerun']) || ! empty($validated['from']))) {
-                $meta = is_array($item->job->meta) ? $item->job->meta : [];
-                if (! empty($validated['rerun'])) {
-                    $meta['rerun'] = $validated['rerun'];
-                }
-                if (! empty($validated['from'])) {
-                    $meta['rerun_from'] = $validated['from'];
-                }
-                $item->job->meta = $meta;
-                $item->job->save();
+        foreach ($items as $item) {
+            $rerun = $validated['rerun'] ?? null;
+            $from = $validated['from'] ?? 'basic';
+
+            if ($rerun === 'replace' || $rerun === 'improve') {
+                $this->crawl->resetItemForRerun($item, $rerun, $from);
+            } else {
+                $item->status = StayCrawlItem::STATUS_QUEUED;
+                $item->error = null;
+                $item->blocked_reason = null;
+                $item->save();
             }
 
-            $item->save();
+            // ĐẨY TRỰC TIẾP VÀO BẢNG JOBS TRONG CƠ SỞ DỮ LIỆU
+            ProcessStayCrawlItemJob::dispatch(
+                (int) $item->id,
+                'vi',
+                false,
+                false,
+            );
+
+            if ($item->job) {
+                $job = $item->job;
+                if ($job->status === StayCrawlJob::STATUS_DONE) {
+                    $job->status = StayCrawlJob::STATUS_READY;
+                    $job->save();
+                }
+                $touchedJobs[$job->id] = $job;
+            }
+
             $retried++;
+        }
+
+        foreach ($touchedJobs as $job) {
+            $this->crawl->touchQueueMeta($job, [
+                'phase' => 'queue',
+                'message' => "Đã đẩy {$retried} khách sạn vào hàng đợi Laravel queue",
+            ]);
         }
 
         return ApiResponse::success(['retried_count' => $retried], "Đã đưa {$retried} khách sạn vào hàng đợi xử lý.");
