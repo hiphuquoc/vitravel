@@ -486,7 +486,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     debounceMs: opts.debounceMs ?? 220,
     initialLimit: Number(opts.initialLimit || 5),
     batchLimit: Number(opts.batchLimit || 10),
-    offset: 0,
+    cursor: null,
     hasMore: false,
     loading: true,
     loadingMore: false,
@@ -518,7 +518,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     setupScrollTriggers() {
-        // 1. IntersectionObserver đón đầu từ rất sớm (1000px trước khi tới đáy)
+        // 1. IntersectionObserver đón đầu từ rất xa (1800px trước khi tới đáy)
         if ('IntersectionObserver' in window) {
             if (this._sentinelObserver) {
                 this._sentinelObserver.disconnect();
@@ -530,7 +530,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
                     }
                 }
             }, {
-                rootMargin: '1000px 0px 800px 0px',
+                rootMargin: '1800px 0px 1200px 0px',
                 threshold: 0,
             });
 
@@ -541,14 +541,14 @@ Alpine.data('listingGrid', (opts = {}) => ({
             });
         }
 
-        // 2. Passive scroll listener đón đầu thêm nếu cuộn nhanh cách đáy 1200px
+        // 2. Passive scroll listener đón đầu cực sớm khi cách đáy dưới 1800px
         if (! this._scrollHandler) {
             this._scrollHandler = () => {
                 if (this.loading || this.loadingMore || ! this.hasMore || ! this.eagerLoaded) return;
                 const scrollY = window.scrollY || window.pageYOffset;
                 const viewportHeight = window.innerHeight;
                 const fullHeight = document.documentElement.scrollHeight;
-                if (fullHeight - (scrollY + viewportHeight) < 1200) {
+                if (fullHeight - (scrollY + viewportHeight) < 1800) {
                     this.loadNextBatch(this.batchLimit);
                 }
             };
@@ -608,15 +608,14 @@ Alpine.data('listingGrid', (opts = {}) => ({
         this.loadingMore = false;
         this.eagerLoaded = false;
         this.error = null;
-        this.offset = 0;
+        this.cursor = null;
         this.hasMore = false;
 
         if (this._abort) this._abort.abort();
         this._abort = new AbortController();
 
         const q = this.buildQuery();
-        // Lần đầu tải đúng 5 khách sạn hiển thị trước
-        q.set('offset', '0');
+        // Lần đầu tải 5 khách sạn đầu tiên
         q.set('limit', String(this.initialLimit));
         q.set('is_append', '0');
 
@@ -646,7 +645,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
             const data = await res.json();
             this.count = data.count ?? 0;
             this.hasMore = Boolean(data.has_more);
-            this.offset = data.next_offset ?? this.initialLimit;
+            this.cursor = data.next_cursor || data.cursor;
 
             await this.$nextTick();
             if (this.$refs.results) {
@@ -667,11 +666,11 @@ Alpine.data('listingGrid', (opts = {}) => ({
                 }
             }
 
-            // Ngay sau khi 5 khách sạn đầu tiên hiển thị ra trước -> lập tức tải thêm 10 khách sạn
-            if (this.hasMore) {
+            // Ngay sau khi 5 khách sạn render xong -> tải tiếp ngay 10 khách sạn qua con trỏ
+            if (this.hasMore && this.cursor) {
                 setTimeout(() => {
-                    this.loadNextBatch(10, { isEager: true });
-                }, 80);
+                    this.loadNextBatch(this.batchLimit, { isEager: true });
+                }, 60);
             } else {
                 this.eagerLoaded = true;
             }
@@ -685,14 +684,14 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     async loadNextBatch(limit = 10, { isEager = false } = {}) {
-        if (this.loading || this.loadingMore || ! this.hasMore || ! this.endpoint) return;
+        if (this.loading || this.loadingMore || ! this.hasMore || ! this.endpoint || ! this.cursor) return;
 
         this.loadingMore = true;
         this.error = null;
 
-        const currentOffset = this.offset;
         const q = this.buildQuery();
-        q.set('offset', String(currentOffset));
+        // Keyset Cursor Seek: gửi con trỏ tuần tự 'after'
+        q.set('after', String(this.cursor));
         q.set('limit', String(limit));
         q.set('is_append', '1');
 
@@ -706,7 +705,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
             this.count = data.count ?? this.count;
             this.hasMore = Boolean(data.has_more);
-            this.offset = data.next_offset ?? (currentOffset + limit);
+            this.cursor = data.next_cursor || data.cursor;
 
             await this.$nextTick();
             if (this.$refs.results && data.html) {

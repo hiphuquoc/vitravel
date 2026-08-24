@@ -7,8 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * JSON endpoints for tour/cruise/service grids (filter + skeleton + progressive infinite scroll fetch).
- * Supports offset & limit as well as page & per_page.
+ * JSON endpoints for tour/cruise/service grids (filter + skeleton + progressive cursor seek fetch).
+ * Uses high-performance Cursor/Keyset seek pagination to eliminate offset scan penalties.
  */
 class ListingController extends Controller
 {
@@ -17,7 +17,7 @@ class ListingController extends Controller
     public function tours(Request $request): JsonResponse
     {
         $tours = $this->filterTours($this->data->tours(), $request);
-        [$offset, $limit, $isAppend] = $this->extractPagination($request);
+        [$offset, $limit, $isAppend] = $this->extractPagination($request, $tours);
 
         return $this->cardsResponse($tours, 'tour', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
     }
@@ -25,7 +25,7 @@ class ListingController extends Controller
     public function cruises(Request $request): JsonResponse
     {
         $cruises = $this->filterCruises($this->data->cruises(), $request);
-        [$offset, $limit, $isAppend] = $this->extractPagination($request);
+        [$offset, $limit, $isAppend] = $this->extractPagination($request, $cruises);
 
         return $this->cardsResponse($cruises, 'cruise', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
     }
@@ -76,7 +76,7 @@ class ListingController extends Controller
         }
 
         $services = $this->filterServices($this->data->servicesForHub($cluster), $request);
-        [$offset, $limit, $isAppend] = $this->extractPagination($request);
+        [$offset, $limit, $isAppend] = $this->extractPagination($request, $services);
 
         return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
     }
@@ -127,28 +127,55 @@ class ListingController extends Controller
     }
 
     /**
-     * @return array{0: ?int, 1: ?int, 2: bool}
+     * Keyset Cursor & Sequential Seeking:
+     * Định vị phần tử tiếp theo trực tiếp theo con trỏ ID/Slug (Keyset Seek) giúp loại bỏ
+     * độ trễ quét offset của SQL/Array trên danh sách lớn.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array{0: int, 1: int, 2: bool}
      */
-    protected function extractPagination(Request $request): array
+    protected function extractPagination(Request $request, array $items): array
     {
-        if ($request->filled('offset') || $request->filled('limit')) {
+        $limit = max(1, min(100, (int) $request->input('limit', $request->input('per_page', 10))));
+
+        // 1. Kỹ thuật con trỏ tuần tự (Cursor / Keyset Seek Pagination)
+        if ($request->filled('after') || $request->filled('cursor')) {
+            $cursor = (string) ($request->input('after') ?? $request->input('cursor'));
+            $afterIndex = -1;
+
+            foreach ($items as $idx => $item) {
+                $id = (string) ($item['id'] ?? '');
+                $slug = (string) ($item['slug'] ?? '');
+                if ($id === $cursor || $slug === $cursor || (string) $idx === $cursor) {
+                    $afterIndex = $idx;
+                    break;
+                }
+            }
+
+            $offset = $afterIndex >= 0 ? $afterIndex + 1 : 0;
+            $isAppend = true;
+
+            return [$offset, $limit, $isAppend];
+        }
+
+        // 2. Fallback Offset Pagination
+        if ($request->filled('offset')) {
             $offset = max(0, (int) $request->input('offset', 0));
-            $limit = max(1, min(100, (int) $request->input('limit', 10)));
             $isAppend = $request->boolean('is_append', $offset > 0);
 
             return [$offset, $limit, $isAppend];
         }
 
+        // 3. Fallback Page Pagination
         if ($request->filled('page')) {
             $page = max(1, (int) $request->input('page'));
-            $limit = max(1, min(100, (int) $request->input('per_page', 5)));
             $offset = ($page - 1) * $limit;
             $isAppend = $request->boolean('is_append', $page > 1);
 
             return [$offset, $limit, $isAppend];
         }
 
-        return [null, null, false];
+        return [0, $limit, false];
     }
 
     /**
@@ -158,16 +185,15 @@ class ListingController extends Controller
         array $items,
         string $kind,
         string $variant,
-        ?int $offset = null,
-        ?int $limit = null,
+        int $offset = 0,
+        int $limit = 10,
         bool $isAppend = false
     ): JsonResponse {
         $totalCount = count($items);
         $variant = $variant === 'compact' ? 'compact' : 'wide';
         $layout = $variant === 'compact' ? 'grid' : 'stack';
 
-        if ($limit !== null && $limit > 0) {
-            $offset = max(0, (int) $offset);
+        if ($limit > 0) {
             $pagedItems = array_slice($items, $offset, $limit);
             $hasMore = ($offset + count($pagedItems)) < $totalCount;
             $nextOffset = $offset + count($pagedItems);
@@ -178,6 +204,10 @@ class ListingController extends Controller
             $offset = 0;
             $limit = $totalCount;
         }
+
+        // Con trỏ định danh tuần tự (Cursor) là ID hoặc slug của phần tử cuối cùng trong đợt này
+        $lastItem = end($pagedItems);
+        $nextCursor = $lastItem ? (string) ($lastItem['id'] ?? $lastItem['slug'] ?? $nextOffset) : null;
 
         $html = view('partials.listing-cards', [
             'items' => $pagedItems,
@@ -193,6 +223,8 @@ class ListingController extends Controller
             'offset' => $offset,
             'limit' => $limit,
             'next_offset' => $nextOffset,
+            'cursor' => $nextCursor,
+            'next_cursor' => $nextCursor,
             'has_more' => $hasMore,
             'html' => $html,
         ]);
