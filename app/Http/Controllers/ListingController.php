@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 /**
  * JSON endpoints for tour/cruise/service grids (filter + skeleton + progressive infinite scroll fetch).
- * Listing pages still SSR ItemList schema separately.
+ * Supports offset & limit as well as page & per_page.
  */
 class ListingController extends Controller
 {
@@ -17,21 +17,17 @@ class ListingController extends Controller
     public function tours(Request $request): JsonResponse
     {
         $tours = $this->filterTours($this->data->tours(), $request);
-        $page = $request->filled('page') ? max(1, (int) $request->input('page')) : null;
-        $perPage = $request->filled('per_page') ? max(1, min(100, (int) $request->input('per_page'))) : ($page ? 5 : null);
-        $isAppend = $request->boolean('is_append', ($page ?? 1) > 1);
+        [$offset, $limit, $isAppend] = $this->extractPagination($request);
 
-        return $this->cardsResponse($tours, 'tour', $request->input('variant', 'wide'), $page, $perPage, $isAppend);
+        return $this->cardsResponse($tours, 'tour', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
     }
 
     public function cruises(Request $request): JsonResponse
     {
         $cruises = $this->filterCruises($this->data->cruises(), $request);
-        $page = $request->filled('page') ? max(1, (int) $request->input('page')) : null;
-        $perPage = $request->filled('per_page') ? max(1, min(100, (int) $request->input('per_page'))) : ($page ? 5 : null);
-        $isAppend = $request->boolean('is_append', ($page ?? 1) > 1);
+        [$offset, $limit, $isAppend] = $this->extractPagination($request);
 
-        return $this->cardsResponse($cruises, 'cruise', $request->input('variant', 'wide'), $page, $perPage, $isAppend);
+        return $this->cardsResponse($cruises, 'cruise', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
     }
 
     public function featuredTours(Request $request): JsonResponse
@@ -80,11 +76,9 @@ class ListingController extends Controller
         }
 
         $services = $this->filterServices($this->data->servicesForHub($cluster), $request);
-        $page = $request->filled('page') ? max(1, (int) $request->input('page')) : null;
-        $perPage = $request->filled('per_page') ? max(1, min(100, (int) $request->input('per_page'))) : ($page ? 5 : null);
-        $isAppend = $request->boolean('is_append', ($page ?? 1) > 1);
+        [$offset, $limit, $isAppend] = $this->extractPagination($request);
 
-        return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'), $page, $perPage, $isAppend);
+        return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
     }
 
     public function related(Request $request): JsonResponse
@@ -133,27 +127,56 @@ class ListingController extends Controller
     }
 
     /**
+     * @return array{0: ?int, 1: ?int, 2: bool}
+     */
+    protected function extractPagination(Request $request): array
+    {
+        if ($request->filled('offset') || $request->filled('limit')) {
+            $offset = max(0, (int) $request->input('offset', 0));
+            $limit = max(1, min(100, (int) $request->input('limit', 10)));
+            $isAppend = $request->boolean('is_append', $offset > 0);
+
+            return [$offset, $limit, $isAppend];
+        }
+
+        if ($request->filled('page')) {
+            $page = max(1, (int) $request->input('page'));
+            $limit = max(1, min(100, (int) $request->input('per_page', 5)));
+            $offset = ($page - 1) * $limit;
+            $isAppend = $request->boolean('is_append', $page > 1);
+
+            return [$offset, $limit, $isAppend];
+        }
+
+        return [null, null, false];
+    }
+
+    /**
      * @param  array<int, array<string, mixed>>  $items
      */
     protected function cardsResponse(
         array $items,
         string $kind,
         string $variant,
-        ?int $page = null,
-        ?int $perPage = null,
+        ?int $offset = null,
+        ?int $limit = null,
         bool $isAppend = false
     ): JsonResponse {
         $totalCount = count($items);
         $variant = $variant === 'compact' ? 'compact' : 'wide';
         $layout = $variant === 'compact' ? 'grid' : 'stack';
 
-        if ($page !== null && $perPage !== null && $perPage > 0) {
-            $offset = ($page - 1) * $perPage;
-            $pagedItems = array_slice($items, $offset, $perPage);
+        if ($limit !== null && $limit > 0) {
+            $offset = max(0, (int) $offset);
+            $pagedItems = array_slice($items, $offset, $limit);
             $hasMore = ($offset + count($pagedItems)) < $totalCount;
+            $nextOffset = $offset + count($pagedItems);
         } else {
             $pagedItems = $items;
             $hasMore = false;
+            $nextOffset = $totalCount;
+            $offset = 0;
+            $limit = $totalCount;
         }
 
         $html = view('partials.listing-cards', [
@@ -162,13 +185,14 @@ class ListingController extends Controller
             'variant' => $variant,
             'layout' => $layout,
             'isAppend' => $isAppend,
-            'offset' => ($page && $perPage) ? ($page - 1) * $perPage : 0,
+            'offset' => $offset,
         ])->render();
 
         return response()->json([
             'count' => $totalCount,
-            'page' => $page ?? 1,
-            'per_page' => $perPage ?? $totalCount,
+            'offset' => $offset,
+            'limit' => $limit,
+            'next_offset' => $nextOffset,
             'has_more' => $hasMore,
             'html' => $html,
         ]);
@@ -244,7 +268,6 @@ class ListingController extends Controller
     {
         $cruises = $this->filterByDurationAndStyle($cruises, $request);
 
-        // type[] (filter sidebar) — ưu tiên; fallback type= string (related / legacy)
         if ($request->exists('type')) {
             $raw = $request->input('type');
             $types = is_array($raw)
@@ -288,7 +311,6 @@ class ListingController extends Controller
                         return true;
                     }
 
-                    // Hub "Tất cả dịch vụ": nhóm theo cluster tàu / máy bay
                     $cluster = (string) ($s['cluster'] ?? '');
                     if ($cluster !== '' && in_array('_cluster_'.$cluster, $categories, true)) {
                         return true;

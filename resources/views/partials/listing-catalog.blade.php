@@ -2,7 +2,6 @@
     /** @var array<string, mixed> $listing */
     $listing = \App\Support\ListingChrome::make(is_array($listing ?? null) ? $listing : []);
     $title = (string) ($listing['title'] ?? '');
-    $perPage = (int) ($listing['perPage'] ?? 5);
 @endphp
 
 <x-layout.page-header
@@ -20,7 +19,8 @@
         'params' => $listing['endpointParams'],
         'syncUrl' => (bool) $listing['syncUrl'],
         'filters' => $listing['filterDefaults'],
-        'perPage' => $perPage,
+        'initialLimit' => 5,
+        'batchLimit' => 10,
     ]))">
     <x-tour.filter-sidebar
         :durations="$listing['durations']"
@@ -50,13 +50,13 @@
         <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
 
         <div class="listing-results" x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-            <x-tour.listing-skeleton :count="(int) ($listing['skeletonCount'] ?? 5)" variant="wide" />
+            <x-tour.listing-skeleton :count="5" variant="wide" />
         </div>
 
-        {{-- Sentinel quan sát cuộn vô tận (IntersectionObserver) --}}
-        <div x-ref="sentinel" class="listing-sentinel h-4 w-full pointer-events-none" aria-hidden="true"></div>
+        {{-- Sentinel quan sát cuộn đón đầu từ xa (IntersectionObserver) --}}
+        <div x-ref="sentinel" class="listing-sentinel h-10 w-full pointer-events-none" aria-hidden="true"></div>
 
-        {{-- Loading indicator khi cuộn tải tiếp 5 khách sạn --}}
+        {{-- Loading indicator khi cuộn tải tiếp 10 khách sạn --}}
         <div x-show="loadingMore" x-cloak class="listing-loading-more site-mt">
             <div class="flex flex-col items-center justify-center gap-2.5 py-6 text-center">
                 <div class="flex items-center gap-2">

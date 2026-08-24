@@ -484,20 +484,22 @@ Alpine.data('listingGrid', (opts = {}) => ({
     ),
     syncUrl: Boolean(opts.syncUrl),
     debounceMs: opts.debounceMs ?? 220,
-    perPage: Number(opts.perPage || opts.params?.per_page || 5),
-    page: 1,
+    initialLimit: Number(opts.initialLimit || 5),
+    batchLimit: Number(opts.batchLimit || 10),
+    offset: 0,
     hasMore: false,
     loading: true,
     loadingMore: false,
+    eagerLoaded: false,
     count: null,
     error: null,
     drawer: false,
     _sentinelObserver: null,
+    _scrollHandler: null,
     _timer: null,
     _abort: null,
 
     init() {
-        // Tối ưu hóa tải lười (Lazy Fetch): Nếu là danh sách dưới đáy (ví dụ related), chỉ fetch khi cuộn gần tới (350px)
         const isRelated = this.fixedParams && (this.fixedParams.exclude || this.endpoint.includes('related'));
         if (isRelated && 'IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries) => {
@@ -510,32 +512,48 @@ Alpine.data('listingGrid', (opts = {}) => ({
         } else {
             this.$nextTick(() => {
                 this.fetchResults();
-                this.setupSentinelObserver();
+                this.setupScrollTriggers();
             });
         }
     },
 
-    setupSentinelObserver() {
-        if (! ('IntersectionObserver' in window)) return;
-        if (this._sentinelObserver) {
-            this._sentinelObserver.disconnect();
-        }
-        this._sentinelObserver = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                if (! this.loading && ! this.loadingMore && this.hasMore) {
-                    this.loadMore();
+    setupScrollTriggers() {
+        // 1. IntersectionObserver đón đầu từ rất sớm (1000px trước khi tới đáy)
+        if ('IntersectionObserver' in window) {
+            if (this._sentinelObserver) {
+                this._sentinelObserver.disconnect();
+            }
+            this._sentinelObserver = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting) {
+                    if (! this.loading && ! this.loadingMore && this.hasMore && this.eagerLoaded) {
+                        this.loadNextBatch(this.batchLimit);
+                    }
                 }
-            }
-        }, {
-            rootMargin: '380px 0px',
-            threshold: 0,
-        });
+            }, {
+                rootMargin: '1000px 0px 800px 0px',
+                threshold: 0,
+            });
 
-        this.$nextTick(() => {
-            if (this.$refs.sentinel) {
-                this._sentinelObserver.observe(this.$refs.sentinel);
-            }
-        });
+            this.$nextTick(() => {
+                if (this.$refs.sentinel) {
+                    this._sentinelObserver.observe(this.$refs.sentinel);
+                }
+            });
+        }
+
+        // 2. Passive scroll listener đón đầu thêm nếu cuộn nhanh cách đáy 1200px
+        if (! this._scrollHandler) {
+            this._scrollHandler = () => {
+                if (this.loading || this.loadingMore || ! this.hasMore || ! this.eagerLoaded) return;
+                const scrollY = window.scrollY || window.pageYOffset;
+                const viewportHeight = window.innerHeight;
+                const fullHeight = document.documentElement.scrollHeight;
+                if (fullHeight - (scrollY + viewportHeight) < 1200) {
+                    this.loadNextBatch(this.batchLimit);
+                }
+            };
+            window.addEventListener('scroll', this._scrollHandler, { passive: true });
+        }
     },
 
     toggleFilter(group, value) {
@@ -576,7 +594,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
             }
             values.forEach((v) => q.append(`${group}[]`, v));
         });
-        // Đồng bộ locale với trang đang xem (API không có prefix /en/…)
         const locale = document.documentElement?.lang || '';
         if (locale && ! q.has('locale')) {
             q.set('locale', locale);
@@ -589,16 +606,19 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
         this.loading = true;
         this.loadingMore = false;
+        this.eagerLoaded = false;
         this.error = null;
-        this.page = 1;
+        this.offset = 0;
         this.hasMore = false;
 
         if (this._abort) this._abort.abort();
         this._abort = new AbortController();
 
         const q = this.buildQuery();
-        q.set('page', '1');
-        q.set('per_page', String(this.perPage));
+        // Lần đầu tải đúng 5 khách sạn hiển thị trước
+        q.set('offset', '0');
+        q.set('limit', String(this.initialLimit));
+        q.set('is_append', '0');
 
         if (this.syncUrl) {
             const url = new URL(window.location.href);
@@ -626,7 +646,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
             const data = await res.json();
             this.count = data.count ?? 0;
             this.hasMore = Boolean(data.has_more);
-            this.page = 1;
+            this.offset = data.next_offset ?? this.initialLimit;
 
             await this.$nextTick();
             if (this.$refs.results) {
@@ -646,26 +666,34 @@ Alpine.data('listingGrid', (opts = {}) => ({
                     window.Alpine.initTree(mount);
                 }
             }
+
+            // Ngay sau khi 5 khách sạn đầu tiên hiển thị ra trước -> lập tức tải thêm 10 khách sạn
+            if (this.hasMore) {
+                setTimeout(() => {
+                    this.loadNextBatch(10, { isEager: true });
+                }, 80);
+            } else {
+                this.eagerLoaded = true;
+            }
         } catch (e) {
             if (e?.name === 'AbortError') return;
             this.error = 'Không tải được danh sách. Thử lại.';
             console.error(e);
         } finally {
             this.loading = false;
-            this.$nextTick(() => this.setupSentinelObserver());
         }
     },
 
-    async loadMore() {
+    async loadNextBatch(limit = 10, { isEager = false } = {}) {
         if (this.loading || this.loadingMore || ! this.hasMore || ! this.endpoint) return;
 
         this.loadingMore = true;
         this.error = null;
-        const targetPage = this.page + 1;
 
+        const currentOffset = this.offset;
         const q = this.buildQuery();
-        q.set('page', String(targetPage));
-        q.set('per_page', String(this.perPage));
+        q.set('offset', String(currentOffset));
+        q.set('limit', String(limit));
         q.set('is_append', '1');
 
         try {
@@ -678,7 +706,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
             this.count = data.count ?? this.count;
             this.hasMore = Boolean(data.has_more);
-            this.page = targetPage;
+            this.offset = data.next_offset ?? (currentOffset + limit);
 
             await this.$nextTick();
             if (this.$refs.results && data.html) {
@@ -698,10 +726,18 @@ Alpine.data('listingGrid', (opts = {}) => ({
                 });
             }
         } catch (e) {
-            console.error('Error loading more listing items:', e);
+            console.error('Error loading next batch:', e);
         } finally {
             this.loadingMore = false;
+            if (isEager) {
+                this.eagerLoaded = true;
+            }
+            this.$nextTick(() => this.setupScrollTriggers());
         }
+    },
+
+    loadMore() {
+        this.loadNextBatch(this.batchLimit);
     },
 }));
 
