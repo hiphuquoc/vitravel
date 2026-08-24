@@ -203,6 +203,7 @@ function getLaunchOptions({
         args: getChromeArgs(proxyServer, { headed }),
         ignoreDefaultArgs: ['--enable-automation'],
         timeout,
+        protocolTimeout: 180000,
         ignoreHTTPSErrors: true,
         defaultViewport: headed ? null : { width: 1600, height: 1000, deviceScaleFactor: 1 },
         slowMo: headed ? Math.max(25, Number(slowMo) || 50) : Number(slowMo) || 0,

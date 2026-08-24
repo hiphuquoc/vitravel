@@ -1783,7 +1783,7 @@ async function collectGalleryPhotos(page) {
 
     let last = 0;
     let stable = 0;
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 25; i++) {
         const info = await page.evaluate(() => {
             const grid =
                 document.querySelector('[data-testid="gallery-modal-grid"]') ||

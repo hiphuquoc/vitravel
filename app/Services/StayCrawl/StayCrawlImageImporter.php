@@ -133,22 +133,25 @@ final class StayCrawlImageImporter
             if ($tmp === false) {
                 return null;
             }
-            file_put_contents($tmp, $body);
-            $upload = new UploadedFile($tmp, Str::slug($role).'.'.$ext, $mime, UPLOAD_ERR_OK, true);
-            $media = $this->media->storeUploadedFile(
-                $upload,
-                'stays/'.($role === 'cover' ? 'cover' : 'gallery'),
-                null,
-                $slug,
-                $role,
-            );
-            if ($alt !== '') {
-                $media->alt = Str::limit($alt, 255, '');
-                $media->save();
-            }
-            @unlink($tmp);
+            try {
+                file_put_contents($tmp, $body);
+                $upload = new UploadedFile($tmp, Str::slug($role).'.'.$ext, $mime, UPLOAD_ERR_OK, true);
+                $media = $this->media->storeUploadedFile(
+                    $upload,
+                    'stays/'.($role === 'cover' ? 'cover' : 'gallery'),
+                    null,
+                    $slug,
+                    $role,
+                );
+                if ($alt !== '') {
+                    $media->alt = Str::limit($alt, 255, '');
+                    $media->save();
+                }
 
-            return $media;
+                return $media;
+            } finally {
+                @unlink($tmp);
+            }
         } catch (Throwable) {
             return null;
         }

@@ -194,7 +194,7 @@ final class StayCrawlImporter
             'star_rating' => $fields['star_rating'] ?? null,
             'price_from' => $fields['price_from'] ?? null,
             'currency' => strtoupper((string) ($fields['currency'] ?? 'VND')),
-            'rating' => $fields['rating'] ?? 0,
+            'rating' => min(9.99, (float) ($fields['rating'] ?? 0)),
             'review_count' => $fields['review_count'] ?? 0,
             'seo_slug' => $fields['seo_slug'] ?? $code,
             'seo_title' => $fields['seo_title'] ?? null,
