@@ -20,7 +20,7 @@
         'syncUrl' => (bool) $listing['syncUrl'],
         'filters' => $listing['filterDefaults'],
         'initialLimit' => 5,
-        'batchLimit' => 10,
+        'eagerLimit' => 10,\n        'scrollLimit' => 20,
     ]))">
     <x-tour.filter-sidebar
         :durations="$listing['durations']"
