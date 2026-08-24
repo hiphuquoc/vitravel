@@ -20,7 +20,8 @@
         'syncUrl' => (bool) $listing['syncUrl'],
         'filters' => $listing['filterDefaults'],
         'initialLimit' => 5,
-        'eagerLimit' => 10,\n        'scrollLimit' => 20,
+        'eagerLimit' => 10,
+        'scrollLimit' => 20,
     ]))">
     <x-tour.filter-sidebar
         :durations="$listing['durations']"
@@ -56,7 +57,7 @@
         {{-- Sentinel quan sát cuộn đón đầu từ xa (IntersectionObserver) --}}
         <div x-ref="sentinel" class="listing-sentinel h-10 w-full pointer-events-none" aria-hidden="true"></div>
 
-        {{-- Loading indicator khi cuộn tải tiếp 10 khách sạn --}}
+        {{-- Loading indicator khi cuộn tải tiếp 20 khách sạn --}}
         <div x-show="loadingMore" x-cloak class="listing-loading-more site-mt">
             <div class="flex flex-col items-center justify-center gap-2.5 py-6 text-center">
                 <div class="flex items-center gap-2">
