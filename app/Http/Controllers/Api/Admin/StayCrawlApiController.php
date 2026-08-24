@@ -228,6 +228,69 @@ final class StayCrawlApiController extends Controller
         return ApiResponse::success(null, 'Đã xóa mục crawler #' . $id . '.');
     }
 
+    public function bulkDeleteItems(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'item_ids' => 'required|array|min:1|max:500',
+            'item_ids.*' => 'integer|exists:stay_crawl_items,id',
+        ]);
+
+        $count = StayCrawlItem::whereIn('id', $validated['item_ids'])->delete();
+
+        return ApiResponse::success(['deleted_count' => $count], "Đã xóa {$count} mục khách sạn.");
+    }
+
+    public function bulkRetryItems(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'item_ids' => 'required|array|min:1|max:500',
+            'item_ids.*' => 'integer|exists:stay_crawl_items,id',
+            'rerun' => 'nullable|in:improve,replace',
+            'from' => 'nullable|in:basic,gallery,rooms,rooms_modals',
+        ]);
+
+        $items = StayCrawlItem::whereIn('id', $validated['item_ids'])->get();
+        $retried = 0;
+        foreach ($items as $item) {
+            $item->status = StayCrawlItem::STATUS_QUEUED;
+            $item->error = null;
+            $item->blocked_reason = null;
+
+            if ($item->job && (! empty($validated['rerun']) || ! empty($validated['from']))) {
+                $meta = is_array($item->job->meta) ? $item->job->meta : [];
+                if (! empty($validated['rerun'])) {
+                    $meta['rerun'] = $validated['rerun'];
+                }
+                if (! empty($validated['from'])) {
+                    $meta['rerun_from'] = $validated['from'];
+                }
+                $item->job->meta = $meta;
+                $item->job->save();
+            }
+
+            $item->save();
+            $retried++;
+        }
+
+        return ApiResponse::success(['retried_count' => $retried], "Đã đưa {$retried} khách sạn vào hàng đợi xử lý.");
+    }
+
+    public function bulkResetStatus(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'item_ids' => 'required|array|min:1|max:500',
+            'item_ids.*' => 'integer|exists:stay_crawl_items,id',
+            'status' => 'required|string|max:32',
+        ]);
+
+        $count = StayCrawlItem::whereIn('id', $validated['item_ids'])->update([
+            'status' => $validated['status'],
+        ]);
+
+        return ApiResponse::success(['updated_count' => $count], "Đã cập nhật trạng thái {$count} khách sạn.");
+    }
+
+
 
     public function items(Request $request): JsonResponse
     {

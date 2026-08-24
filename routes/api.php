@@ -180,6 +180,9 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('/stay-crawls/jobs/{id}/retry-failed', [StayCrawlApiController::class, 'retryFailed'])->whereNumber('id');
             Route::delete('/stay-crawls/jobs/{id}', [StayCrawlApiController::class, 'deleteJob'])->whereNumber('id');
             Route::delete('/stay-crawls/items/{id}', [StayCrawlApiController::class, 'deleteItem'])->whereNumber('id');
+            Route::post('/stay-crawls/items/bulk-delete', [StayCrawlApiController::class, 'bulkDeleteItems']);
+            Route::post('/stay-crawls/items/bulk-retry', [StayCrawlApiController::class, 'bulkRetryItems']);
+            Route::post('/stay-crawls/items/bulk-reset-status', [StayCrawlApiController::class, 'bulkResetStatus']);
             Route::get('/services/{id}/price-table', [PriceTableApiController::class, 'showService'])->whereNumber('id');
             Route::put('/services/{id}/price-table', [PriceTableApiController::class, 'updateService'])->whereNumber('id');
             Route::get('/services/{id}/price-quote', [PriceTableApiController::class, 'quoteService'])->whereNumber('id');
