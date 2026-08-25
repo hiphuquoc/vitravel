@@ -70,6 +70,14 @@ class Service extends Model
         return $this->belongsTo(ServiceCategory::class, 'service_category_id');
     }
 
+    /** @return BelongsToMany<ServiceCategory> */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(ServiceCategory::class, 'service_category_service')
+            ->withPivot(['sort'])
+            ->orderByPivot('sort');
+    }
+
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);

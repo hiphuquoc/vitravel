@@ -1775,7 +1775,10 @@ class ViewDataService
         }
 
         if ($categorySlug) {
-            $query->whereHas('category', fn ($q) => $q->withoutGlobalScope('project')->where('slug', $categorySlug));
+            $query->where(function ($sq) use ($categorySlug) {
+                $sq->whereHas('categories', fn ($q) => $q->withoutGlobalScope('project')->where('slug', $categorySlug))
+                   ->orWhereHas('category', fn ($q) => $q->withoutGlobalScope('project')->where('slug', $categorySlug));
+            });
         }
 
         $locale = $this->locale();
@@ -1850,7 +1853,10 @@ class ViewDataService
 
             $query->where(function ($q) use ($categorySlugs, $clusterFilters) {
                 if ($categorySlugs !== []) {
-                    $q->whereHas('category', fn ($qc) => $qc->withoutGlobalScope('project')->whereIn('slug', $categorySlugs));
+                    $q->where(function ($sq) use ($categorySlugs) {
+                        $sq->whereHas('categories', fn ($qc) => $qc->withoutGlobalScope('project')->whereIn('slug', $categorySlugs))
+                           ->orWhereHas('category', fn ($qc) => $qc->withoutGlobalScope('project')->whereIn('slug', $categorySlugs));
+                    });
                 }
                 if ($clusterFilters !== []) {
                     if ($categorySlugs !== []) {

@@ -8,6 +8,7 @@ use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -57,7 +58,15 @@ class ServiceCategory extends Model
         return app(MediaService::class)->srcset($this->cover);
     }
 
-    public function services(): HasMany
+    /** @return BelongsToMany<Service> */
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'service_category_service')
+            ->withPivot(['sort'])
+            ->orderByPivot('sort');
+    }
+
+    public function directServices(): HasMany
     {
         return $this->hasMany(Service::class);
     }

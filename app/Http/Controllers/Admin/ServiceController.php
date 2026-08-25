@@ -172,6 +172,8 @@ class ServiceController extends Controller
             'id' => 'nullable|integer|exists:services,id',
             'cluster' => ['required', 'string', Rule::in($clusters)],
             'service_category_id' => 'nullable|integer|exists:service_categories,id',
+            'service_category_ids' => 'nullable|array',
+            'service_category_ids.*' => 'integer|exists:service_categories,id',
             'country_id' => 'nullable|integer|exists:countries,id',
             'code' => 'nullable|string|max:64',
             'title' => 'required|string|max:255',
@@ -205,12 +207,25 @@ class ServiceController extends Controller
             $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
             $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
 
-            $category = ! empty($validated['service_category_id'])
-                ? ServiceCategory::query()->find($validated['service_category_id'])
+            $categoryIds = array_values(array_filter(
+                array_map('intval', (array) ($request->input('service_category_ids', [])))
+            ));
+
+            $primaryCategoryId = ! empty($validated['service_category_id'])
+                ? (int) $validated['service_category_id']
+                : ($categoryIds[0] ?? null);
+
+            if ($primaryCategoryId && ! in_array($primaryCategoryId, $categoryIds, true)) {
+                array_unshift($categoryIds, $primaryCategoryId);
+            }
+
+            $category = $primaryCategoryId
+                ? ServiceCategory::query()->find($primaryCategoryId)
                 : null;
 
             if ($category && $category->cluster !== $cluster) {
                 $category = null;
+                $primaryCategoryId = null;
             }
 
             $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: null;
@@ -235,7 +250,7 @@ class ServiceController extends Controller
             $status = $validated['status'];
             $service->fill([
                 'cluster' => $cluster,
-                'service_category_id' => $category?->id,
+                'service_category_id' => $primaryCategoryId,
                 'country_id' => $validated['country_id'] ?? null,
                 'code' => $validated['code'] ?? null,
                 'price_from' => $validated['price_from'] ?? null,
@@ -253,6 +268,15 @@ class ServiceController extends Controller
                     : null,
             ]);
             $service->save();
+
+            // Đồng bộ danh mục nhiều-nhiều (service_category_service)
+            if ($categoryIds !== []) {
+                $service->categories()->sync($categoryIds);
+            } elseif ($primaryCategoryId) {
+                $service->categories()->sync([$primaryCategoryId]);
+            } else {
+                $service->categories()->detach();
+            }
 
             $this->saveModelTranslation(
                 $service,

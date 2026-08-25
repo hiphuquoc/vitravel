@@ -1,3 +1,167 @@
+@push('headCustom')
+<style>
+.adminCatMultiSelect {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    background: #fff;
+    border: 1px solid var(--admin-gray-200, #e5e7eb);
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.adminCatMultiSelect_chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 32px;
+    align-items: center;
+}
+.adminCatMultiSelect_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    background: var(--admin-gray-50, #f9fafb);
+    border: 1px solid var(--admin-gray-300, #d1d5db);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--admin-gray-800, #1f2937);
+    transition: all 0.15s ease;
+}
+.adminCatMultiSelect_chip.is-primary {
+    background: #fefce8;
+    border-color: #fde047;
+    color: #854d0e;
+}
+.adminCatMultiSelect_chip_star {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #ca8a04;
+    background: #fef08a;
+    padding: 1px 6px;
+    border-radius: 4px;
+}
+.adminCatMultiSelect_chip_remove {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    margin-left: 2px;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+.adminCatMultiSelect_chip_remove:hover {
+    color: #ef4444;
+}
+.adminCatMultiSelect_box {
+    border: 1px solid var(--admin-gray-200, #e5e7eb);
+    border-radius: 8px;
+    background: #fafafa;
+    overflow: hidden;
+}
+.adminCatMultiSelect_searchWrap {
+    position: relative;
+    border-bottom: 1px solid var(--admin-gray-200, #e5e7eb);
+    background: #fff;
+}
+.adminCatMultiSelect_searchIcon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
+}
+.adminCatMultiSelect_searchInput {
+    width: 100%;
+    padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+    border: 0;
+    font-size: 0.8125rem;
+    outline: none;
+    background: transparent;
+}
+.adminCatMultiSelect_searchInput:focus {
+    background: #fff;
+}
+.adminCatMultiSelect_list {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 0.375rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.adminCatMultiSelect_item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4375rem 0.625rem;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.adminCatMultiSelect_item:hover {
+    background: #f3f4f6;
+}
+.adminCatMultiSelect_item.is-selected {
+    background: #eff6ff;
+}
+.adminCatMultiSelect_item_check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    flex: 1;
+    min-width: 0;
+}
+.adminCatMultiSelect_item_checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+.adminCatMultiSelect_item_name {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+.adminCatMultiSelect_item_slug {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+.adminCatMultiSelect_starBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.adminCatMultiSelect_starBtn:hover {
+    border-color: #fde047;
+    color: #ca8a04;
+}
+.adminCatMultiSelect_starBtn.is-primary {
+    background: #fefce8;
+    border-color: #fde047;
+    color: #854d0e;
+}
+.adminCatMultiSelect_starIcon {
+    width: 14px;
+    height: 14px;
+}
+</style>
+@endpush
+
 @extends('layouts.admin')
 @section('title', $title)
 @section('content')
@@ -51,14 +215,84 @@
                                     'value' => old('cluster', $service?->cluster ?? $cluster),
                                     'options' => $clusterOptions,
                                 ])
-                                @include('admin.components.formField', [
-                                    'label' => 'Danh mục',
-                                    'name' => 'service_category_id',
-                                    'type' => 'select',
-                                    'value' => old('service_category_id', $service?->service_category_id),
-                                    'options' => ['' => '— Không chọn —'] + $categoryOptions,
-                                    'tooltip' => 'Danh mục trong cùng cụm — dùng làm trang cha SEO.',
-                                ])
+                                {{-- Custom Multiple Categories Selector --}}
+                                @php
+                                    $selectedCategoryIds = old(
+                                        'service_category_ids',
+                                        $service?->relationLoaded('categories') && $service->categories->isNotEmpty()
+                                            ? $service->categories->pluck('id')->all()
+                                            : ($service?->service_category_id ? [$service->service_category_id] : [])
+                                    );
+                                    $primaryCatId = old('service_category_id', $service?->service_category_id ?? ($selectedCategoryIds[0] ?? null));
+                                @endphp
+                                <div class="adminFormField adminFormField--full" style="grid-column: 1 / -1;">
+                                    <label class="adminFormField_label">
+                                        <span>Danh mục / Khu vực lưu trú (Chọn nhiều)</span>
+                                        <span class="adminFormField_tooltip" title="Khách sạn có thể thuộc nhiều danh mục/khu vực. Danh mục có biểu tượng ngôi sao là danh mục chính (Primary) dùng làm trang cha SEO & URL.">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
+                                        </span>
+                                    </label>
+
+                                    <div class="adminCatMultiSelect" id="adminCatMultiSelect">
+                                        {{-- Dải thẻ danh mục đã chọn (Selected Chips) --}}
+                                        <div class="adminCatMultiSelect_chips" id="catChipsContainer"></div>
+
+                                        {{-- Khung tìm kiếm và danh sách chọn --}}
+                                        <div class="adminCatMultiSelect_box">
+                                            <div class="adminCatMultiSelect_searchWrap">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="adminCatMultiSelect_searchIcon">
+                                                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+                                                </svg>
+                                                <input type="text" id="catSearchInput" placeholder="Tìm nhanh danh mục..." class="adminCatMultiSelect_searchInput" autocomplete="off" />
+                                            </div>
+
+                                            <div class="adminCatMultiSelect_list" id="catOptionsList">
+                                                @foreach ($categories as $cat)
+                                                    @php
+                                                        $isSelected = in_array($cat->id, $selectedCategoryIds, false);
+                                                        $isPrimary = ((int)$primaryCatId === (int)$cat->id);
+                                                    @endphp
+                                                    <div class="adminCatMultiSelect_item {{ $isSelected ? 'is-selected' : '' }}"
+                                                         data-id="{{ $cat->id }}"
+                                                         data-name="{{ $cat->name }}"
+                                                         data-slug="{{ $cat->slug }}">
+                                                        <label class="adminCatMultiSelect_item_check">
+                                                            <input type="checkbox"
+                                                                class="adminCatMultiSelect_item_checkbox js-cat-check"
+                                                                value="{{ $cat->id }}"
+                                                                data-name="{{ $cat->name }}"
+                                                                @checked($isSelected)
+                                                            />
+                                                            <span class="adminCatMultiSelect_item_name">{{ $cat->name }}</span>
+                                                            <span class="adminCatMultiSelect_item_slug">/{{ $cat->slug }}</span>
+                                                        </label>
+
+                                                        <button type="button"
+                                                            class="adminCatMultiSelect_starBtn js-cat-primary-btn {{ $isPrimary ? 'is-primary' : '' }}"
+                                                            data-id="{{ $cat->id }}"
+                                                            title="{{ $isPrimary ? 'Danh mục chính (Primary SEO)' : 'Đặt làm danh mục chính' }}">
+                                                            <svg viewBox="0 0 24 24" fill="{{ $isPrimary ? '#eab308' : 'none' }}" stroke="{{ $isPrimary ? '#ca8a04' : 'currentColor' }}" stroke-width="2" class="adminCatMultiSelect_starIcon">
+                                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                                            </svg>
+                                                            <span class="adminCatMultiSelect_starText">{{ $isPrimary ? 'Chính' : 'Đặt chính' }}</span>
+                                                        </button>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+
+                                        {{-- Hidden inputs để submit form --}}
+                                        <input type="hidden" name="service_category_id" id="hidden_primary_cat_id" value="{{ $primaryCatId }}" />
+                                        <div id="hiddenCatInputsContainer">
+                                            @foreach ($selectedCategoryIds as $cid)
+                                                <input type="hidden" name="service_category_ids[]" value="{{ $cid }}" />
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                    @error('service_category_ids')
+                                        <p class="adminFormField_error">{{ $message }}</p>
+                                    @enderror
+                                </div>
                                 @include('admin.components.formField', [
                                     'label' => 'Tiêu đề',
                                     'name' => 'title',
@@ -243,3 +477,143 @@
     </div>
 </form>
 @endsection
+
+@push('scriptCustom')
+<script>
+(function() {
+    const container = document.getElementById('adminCatMultiSelect');
+    if (!container) return;
+
+    const chipsContainer = document.getElementById('catChipsContainer');
+    const searchInput = document.getElementById('catSearchInput');
+    const optionsList = document.getElementById('catOptionsList');
+    const hiddenPrimaryInput = document.getElementById('hidden_primary_cat_id');
+    const hiddenInputsContainer = document.getElementById('hiddenCatInputsContainer');
+
+    function getSelectedIds() {
+        const checkboxes = optionsList.querySelectorAll('.js-cat-check:checked');
+        return Array.from(checkboxes).map(cb => cb.value);
+    }
+
+    function render() {
+        const selectedCheckboxes = optionsList.querySelectorAll('.js-cat-check:checked');
+        chipsContainer.innerHTML = '';
+        hiddenInputsContainer.innerHTML = '';
+
+        let currentPrimary = hiddenPrimaryInput.value;
+        const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+        // If currentPrimary is not in selected, default to first selected
+        if (selectedIds.length > 0 && (!currentPrimary || !selectedIds.includes(String(currentPrimary)))) {
+            currentPrimary = selectedIds[0];
+            hiddenPrimaryInput.value = currentPrimary;
+        } else if (selectedIds.length === 0) {
+            currentPrimary = '';
+            hiddenPrimaryInput.value = '';
+        }
+
+        if (selectedCheckboxes.length === 0) {
+            chipsContainer.innerHTML = '<span style="color: #9ca3af; font-size: 0.8125rem; font-style: italic;">Chưa chọn danh mục nào (sẽ hiển thị ở tất cả hoặc danh mục mặc định)</span>';
+        }
+
+        selectedCheckboxes.forEach(cb => {
+            const catId = cb.value;
+            const catName = cb.dataset.name || cb.value;
+            const isPrimary = String(catId) === String(currentPrimary);
+
+            // Create chip
+            const chip = document.createElement('div');
+            chip.className = 'adminCatMultiSelect_chip' + (isPrimary ? ' is-primary' : '');
+            chip.innerHTML = `
+                <span>${catName}</span>
+                ${isPrimary ? '<span class="adminCatMultiSelect_chip_star">★ Chính</span>' : ''}
+                <button type="button" class="adminCatMultiSelect_chip_remove" data-id="${catId}" title="Bỏ chọn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 12px; height: 12px;"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+            `;
+            chipsContainer.appendChild(chip);
+
+            // Add hidden input
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'service_category_ids[]';
+            input.value = catId;
+            hiddenInputsContainer.appendChild(input);
+        });
+
+        // Update list items visual
+        optionsList.querySelectorAll('.adminCatMultiSelect_item').forEach(item => {
+            const id = item.dataset.id;
+            const isChecked = selectedIds.includes(String(id));
+            const isPrimary = String(id) === String(currentPrimary);
+
+            item.classList.toggle('is-selected', isChecked);
+
+            const starBtn = item.querySelector('.js-cat-primary-btn');
+            if (starBtn) {
+                starBtn.classList.toggle('is-primary', isPrimary);
+                starBtn.style.display = isChecked ? 'inline-flex' : 'none';
+                const starIcon = starBtn.querySelector('svg');
+                if (starIcon) {
+                    starIcon.setAttribute('fill', isPrimary ? '#eab308' : 'none');
+                    starIcon.setAttribute('stroke', isPrimary ? '#ca8a04' : 'currentColor');
+                }
+                const starText = starBtn.querySelector('.adminCatMultiSelect_starText');
+                if (starText) {
+                    starText.textContent = isPrimary ? 'Chính' : 'Đặt chính';
+                }
+            }
+        });
+    }
+
+    // Toggle checkbox
+    optionsList.addEventListener('change', function(e) {
+        if (e.target.classList.contains('js-cat-check')) {
+            render();
+        }
+    });
+
+    // Star button click (set primary)
+    optionsList.addEventListener('click', function(e) {
+        const starBtn = e.target.closest('.js-cat-primary-btn');
+        if (starBtn) {
+            e.preventDefault();
+            const catId = starBtn.dataset.id;
+            hiddenPrimaryInput.value = catId;
+            render();
+        }
+    });
+
+    // Chip remove button click
+    chipsContainer.addEventListener('click', function(e) {
+        const removeBtn = e.target.closest('.adminCatMultiSelect_chip_remove');
+        if (removeBtn) {
+            e.preventDefault();
+            const catId = removeBtn.dataset.id;
+            const cb = optionsList.querySelector(`.js-cat-check[value="${catId}"]`);
+            if (cb) {
+                cb.checked = false;
+                render();
+            }
+        }
+    });
+
+    // Search filter
+    searchInput.addEventListener('input', function() {
+        const q = this.value.toLowerCase().trim();
+        optionsList.querySelectorAll('.adminCatMultiSelect_item').forEach(item => {
+            const name = (item.dataset.name || '').toLowerCase();
+            const slug = (item.dataset.slug || '').toLowerCase();
+            if (!q || name.includes(q) || slug.includes(q)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+
+    // Initial render
+    render();
+})();
+</script>
+@endpush

@@ -222,14 +222,23 @@ final class StayCrawlService
     public function queueHotelUrl(string $url, ?StayCrawlJob $job = null, ?string $listUrl = null): StayCrawlItem
     {
         $canonical = StayBookingUrl::canonicalize($url);
-        $item = StayCrawlItem::query()->firstOrNew([
-            'project_id' => ProjectContext::id(),
-            'canonical_url' => $canonical,
-        ]);
-        if (! $item->exists) {
-            $item->source_url = $url;
-            $item->status = StayCrawlItem::STATUS_QUEUED;
+        $projectId = $job?->project_id ?: ProjectContext::id();
+
+        $query = StayCrawlItem::query();
+        if ($projectId) {
+            $query->where('project_id', $projectId);
         }
+        $item = $query->where('canonical_url', $canonical)->first();
+
+        if (! $item) {
+            $item = new StayCrawlItem([
+                'project_id' => $projectId,
+                'canonical_url' => $canonical,
+                'source_url' => $url,
+                'status' => StayCrawlItem::STATUS_QUEUED,
+            ]);
+        }
+
         if ($job) {
             $item->job_id = $job->id;
             $item->list_url = $job->list_url;
@@ -241,9 +250,40 @@ final class StayCrawlService
                 $item->error = null;
                 $item->blocked_reason = null;
             }
+
+            // TỰ ĐỘNG GÁN THÊM DANH MỤC CHO KHÁCH SẠN ĐÃ CÀO NẾU XUẤT HIỆN Ở DANH MỤC NÀY
+            if ($job->service_category_id) {
+                $service = $item->service_id
+                    ? \App\Models\Service::withoutGlobalScopes()->find($item->service_id)
+                    : null;
+
+                if (! $service) {
+                    $svcQuery = \App\Models\Service::withoutGlobalScopes()
+                        ->where('cluster', \App\Models\Service::CLUSTER_STAY);
+                    if ($projectId) {
+                        $svcQuery->where('project_id', $projectId);
+                    }
+                    $service = $svcQuery->where(function ($q) use ($canonical, $url) {
+                        $q->where('attrs->crawl->canonical_url', $canonical)
+                          ->orWhere('attrs->crawl->source_url', $url);
+                    })->first();
+                }
+
+                if ($service) {
+                    if (! $item->service_id) {
+                        $item->service_id = $service->id;
+                    }
+                    $service->categories()->syncWithoutDetaching([(int) $job->service_category_id]);
+                    if (! $service->service_category_id) {
+                        $service->service_category_id = (int) $job->service_category_id;
+                        $service->saveQuietly();
+                    }
+                }
+            }
         } elseif ($listUrl) {
             $item->list_url = $listUrl;
         }
+
         if ($item->source_url === null || $item->source_url === '') {
             $item->source_url = $url;
         }
