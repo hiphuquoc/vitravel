@@ -41,7 +41,7 @@ class ServiceController extends Controller
                 'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide', 'per_page' => 5],
                 'perPage' => 5,
                 'skeletonCount' => 5,
-                'filterDefaults' => ['category' => $categorySlugs],
+                'filterDefaults' => [],
                 'showCategoryFilter' => true,
                 'showDurationFilter' => false,
                 'showStyleFilter' => false,

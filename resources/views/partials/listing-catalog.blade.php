@@ -2,6 +2,52 @@
     /** @var array<string, mixed> $listing */
     $listing = \App\Support\ListingChrome::make(is_array($listing ?? null) ? $listing : []);
     $title = (string) ($listing['title'] ?? '');
+
+    $labelMap = [];
+    foreach ($listing['categories'] ?? [] as $c) {
+        if (!empty($c['slug'])) {
+            $labelMap['category:' . $c['slug']] = $c['name'] ?? $c['title'] ?? $c['slug'];
+            $labelMap[$c['slug']] = $c['name'] ?? $c['title'] ?? $c['slug'];
+        }
+    }
+    foreach ($listing['propertyTypes'] ?? [] as $pt) {
+        if (!empty($pt['slug'])) {
+            $labelMap['property_type:' . $pt['slug']] = $pt['name'] ?? $pt['slug'];
+            $labelMap[$pt['slug']] = $pt['name'] ?? $pt['slug'];
+        }
+    }
+    foreach ($listing['priceRanges'] ?? [] as $pk => $pv) {
+        $labelMap['price_range:' . $pk] = is_array($pv) ? ($pv['label'] ?? $pk) : (string)$pv;
+        $labelMap[$pk] = is_array($pv) ? ($pv['label'] ?? $pk) : (string)$pv;
+    }
+    foreach ($listing['amenities'] ?? [] as $ak => $av) {
+        $labelMap['amenity:' . $ak] = is_array($av) ? ($av['label'] ?? $ak) : (string)$av;
+        $labelMap[$ak] = is_array($av) ? ($av['label'] ?? $ak) : (string)$av;
+    }
+    foreach ($listing['stars'] ?? [] as $sk => $sv) {
+        $labelMap['star:' . $sk] = is_array($sv) ? ($sv['label'] ?? $sk) : (string)$sv;
+        $labelMap[$sk] = is_array($sv) ? ($sv['label'] ?? $sk) : (string)$sv;
+    }
+    foreach ($listing['countries'] ?? [] as $co) {
+        if (!empty($co['slug'])) {
+            $labelMap['country:' . $co['slug']] = $co['name'] ?? $co['slug'];
+            $labelMap[$co['slug']] = $co['name'] ?? $co['slug'];
+        }
+    }
+    foreach ($listing['types'] ?? [] as $t) {
+        if (!empty($t['slug'])) {
+            $labelMap['type:' . $t['slug']] = $t['name'] ?? $t['slug'];
+            $labelMap[$t['slug']] = $t['name'] ?? $t['slug'];
+        }
+    }
+    foreach ($listing['durations'] ?? [] as $dk => $dv) {
+        $labelMap['duration:' . $dk] = is_array($dv) ? ($dv['label'] ?? $dk) : (string)$dv;
+        $labelMap[$dk] = is_array($dv) ? ($dv['label'] ?? $dk) : (string)$dv;
+    }
+    foreach ($listing['styles'] ?? [] as $sk => $sv) {
+        $labelMap['style:' . $sk] = is_array($sv) ? ($sv['label'] ?? $sk) : (string)$sv;
+        $labelMap[$sk] = is_array($sv) ? ($sv['label'] ?? $sk) : (string)$sv;
+    }
 @endphp
 
 <x-layout.page-header
@@ -19,6 +65,7 @@
         'params' => $listing['endpointParams'],
         'syncUrl' => (bool) $listing['syncUrl'],
         'filters' => $listing['filterDefaults'],
+        'labelMap' => $labelMap,
         'initialLimit' => 5,
         'eagerLimit' => 10,
         'scrollLimit' => 20,
@@ -60,15 +107,23 @@
 
         <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
 
-        {{-- Dải thẻ lọc đang chọn (Active Filters Bar) --}}
-        <div x-show="hasActiveFilters" x-cloak class="listing-active-filters flex flex-wrap items-center gap-2 mb-4 p-2.5 rounded-xl bg-slate-50 border border-line/60">
-            <span class="text-xs font-semibold text-muted pl-1">Đang lọc:</span>
+        {{-- Dải thẻ lọc đang chọn (Active Filters Bar — Chuẩn Design System) --}}
+        <div x-show="hasActiveFilters" x-cloak class="listing-active-filters flex flex-wrap items-center gap-2 mb-4 p-3 rounded-xl bg-page-soft border border-line">
+            <span class="text-xs font-bold text-muted flex items-center gap-1.5 pl-1">
+                <x-icon name="filter" class="size-3.5 text-primary-600" />
+                <span>Đang lọc:</span>
+            </span>
             
             <template x-for="(vals, grp) in filters" :key="grp">
                 <template x-for="val in vals" :key="grp + '-' + val">
-                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-primary-600/30 text-xs font-medium text-ink shadow-2xs">
-                        <span x-text="val"></span>
-                        <button type="button" @click="clearFilter(grp, val)" class="text-muted hover:text-accent-600 cursor-pointer transition-colors" aria-label="Bỏ lọc">
+                    <span class="vt-chip inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-line text-xs font-semibold text-ink shadow-2xs">
+                        <span x-text="getFilterLabel(grp, val)"></span>
+                        <button
+                            type="button"
+                            @click="clearFilter(grp, val)"
+                            class="text-muted hover:text-accent-600 cursor-pointer transition-colors"
+                            aria-label="Bỏ tiêu chí lọc"
+                        >
                             <x-icon name="close" class="size-3" />
                         </button>
                     </span>
@@ -111,7 +166,7 @@
                     <div class="flex items-center gap-1.5 text-xs font-semibold text-muted">
                         <span>Đang hiển thị <strong class="text-ink font-bold" x-text="loadedCount"></strong> / <strong class="text-ink font-bold" x-text="count"></strong> {{ $listing['unitLabel'] }}</span>
                     </div>
-                    <div class="h-1.5 w-48 sm:w-64 rounded-full bg-slate-100 overflow-hidden border border-slate-200/80">
+                    <div class="h-1.5 w-48 sm:w-64 rounded-full bg-page-soft overflow-hidden border border-line">
                         <div
                             class="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500"
                             :style="'width: ' + progressPercent + '%'"

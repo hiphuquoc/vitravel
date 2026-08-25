@@ -22,7 +22,7 @@
     'unitLabel' => 'chỗ nghỉ',
 ])
 
-{{-- FAB mobile: Nút mở drawer bộ lọc cao cấp --}}
+{{-- FAB mobile: Nút mở drawer bộ lọc cao cấp cố định góc dưới --}}
 <button
     type="button"
     @click="drawer = true"
@@ -71,7 +71,7 @@
                 x-show="hasActiveFilters"
                 x-cloak
                 @click="clearAllFilters()"
-                class="text-xs font-semibold text-accent-600 hover:text-accent-700 hover:underline transition-colors"
+                class="text-xs font-semibold text-accent-600 hover:text-accent-700 hover:underline cursor-pointer transition-colors"
             >
                 Đặt lại
             </button>
@@ -91,7 +91,7 @@
                         x-show="activeFilterCount('category') > 0"
                         x-cloak
                         x-text="'(' + activeFilterCount('category') + ')'"
-                        class="text-primary-600 text-xs"
+                        class="text-primary-600 text-xs font-bold"
                     ></span>
                 </span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
@@ -110,7 +110,7 @@
                     </div>
                 @endif
 
-                <div class="max-h-60 overflow-y-auto pr-1 space-y-1.5 vt-scrollbar">
+                <div class="max-h-60 overflow-y-auto pr-1 space-y-1 vt-scrollbar">
                     @foreach ($categories as $cat)
                         @php
                             $slug = $cat['slug'] ?? '';
@@ -121,7 +121,7 @@
                             @continue
                         @endif
                         <label
-                            class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer"
+                            class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer"
                             x-show="!searchCat || @js(mb_strtolower($name)).includes(searchCat.toLowerCase())"
                         >
                             <input type="checkbox"
@@ -157,15 +157,15 @@
                         x-show="activeFilterCount('price_range') > 0"
                         x-cloak
                         x-text="'(' + activeFilterCount('price_range') + ')'"
-                        class="text-primary-600 text-xs"
+                        class="text-primary-600 text-xs font-bold"
                     ></span>
                 </span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
 
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($priceRanges as $key => $pr)
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $key }}"
@@ -198,15 +198,15 @@
                         x-show="activeFilterCount('star') > 0"
                         x-cloak
                         x-text="'(' + activeFilterCount('star') + ')'"
-                        class="text-primary-600 text-xs"
+                        class="text-primary-600 text-xs font-bold"
                     ></span>
                 </span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
 
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($stars as $key => $st)
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $key }}"
@@ -220,7 +220,7 @@
                         <span class="vt-check__text flex items-center justify-between w-full text-xs font-medium">
                             <span>{{ $st['label'] ?? $key }}</span>
                             @if (!empty($st['badge']))
-                                <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold text-[10px] border border-amber-200">{{ $st['badge'] }}</span>
+                                <span class="px-1.5 py-0.5 rounded bg-primary-100 text-primary-800 font-bold text-[10px]">{{ $st['badge'] }}</span>
                             @endif
                         </span>
                     </label>
@@ -239,19 +239,19 @@
                         x-show="activeFilterCount('property_type') > 0"
                         x-cloak
                         x-text="'(' + activeFilterCount('property_type') + ')'"
-                        class="text-primary-600 text-xs"
+                        class="text-primary-600 text-xs font-bold"
                     ></span>
                 </span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
 
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($propertyTypes as $pt)
                     @php $slug = $pt['slug'] ?? ''; @endphp
                     @if ($slug === '')
                         @continue
                     @endif
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $slug }}"
@@ -279,15 +279,15 @@
                         x-show="activeFilterCount('amenity') > 0"
                         x-cloak
                         x-text="'(' + activeFilterCount('amenity') + ')'"
-                        class="text-primary-600 text-xs"
+                        class="text-primary-600 text-xs font-bold"
                     ></span>
                 </span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
 
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($amenities as $key => $am)
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $key }}"
@@ -312,13 +312,13 @@
                 <span class="font-bold text-ink">Quốc gia / điểm đến</span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($countries as $country)
                     @php $slug = $country['slug'] ?? ''; @endphp
                     @if ($slug === '')
                         @continue
                     @endif
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $slug }}"
@@ -342,13 +342,13 @@
                 <span class="font-bold text-ink">{{ $typeLegend }}</span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($types as $cruiseType)
                     @php $slug = $cruiseType['slug'] ?? ''; @endphp
                     @if ($slug === '')
                         @continue
                     @endif
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $slug }}"
@@ -377,9 +377,9 @@
                 <span class="font-bold text-ink">Thời lượng</span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($durations as $key => $label)
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $key }}"
@@ -403,9 +403,9 @@
                 <span class="font-bold text-ink">Phong cách du lịch</span>
                 <x-icon name="chevron-down" class="size-4 text-muted transition-transform duration-200" ::class="open ? 'rotate-180' : ''" />
             </legend>
-            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1.5">
+            <div x-show="open" x-collapse class="filter-sidebar__options site-mt-sm space-y-1">
                 @foreach ($styles as $key => $label)
-                    <label class="vt-check hover:bg-slate-50/80 p-1.5 rounded-lg transition-colors cursor-pointer">
+                    <label class="vt-check hover:bg-page-soft/80 p-1.5 rounded-lg transition-colors cursor-pointer">
                         <input type="checkbox"
                             class="vt-check__input"
                             value="{{ $key }}"
@@ -429,14 +429,14 @@
             type="button"
             x-show="hasActiveFilters"
             @click="clearAllFilters()"
-            class="flex-1 py-2.5 px-3 rounded-xl border border-line text-xs font-bold text-ink text-center hover:bg-page transition-colors"
+            class="flex-1 py-2.5 px-3 rounded-xl border border-line text-xs font-bold text-ink text-center hover:bg-page-soft transition-colors cursor-pointer"
         >
             Đặt lại
         </button>
         <button
             type="button"
             @click="drawer = false"
-            class="flex-2 py-2.5 px-4 rounded-xl bg-primary-600 text-white text-xs font-bold text-center shadow-md hover:bg-primary-700 transition-colors"
+            class="flex-2 py-2.5 px-4 rounded-xl bg-primary-600 text-white text-xs font-bold text-center shadow-md hover:bg-primary-700 transition-colors cursor-pointer"
         >
             Áp dụng (<span x-text="count !== null ? count : '...'"></span> {{ $unitLabel }})
         </button>

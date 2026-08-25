@@ -475,7 +475,7 @@ Alpine.data('quickInquiry', (opts = {}) => ({
 Alpine.data('listingGrid', (opts = {}) => ({
     endpoint: opts.endpoint || '',
     fixedParams: opts.params || {},
-    filterGroups: Object.keys(opts.filters || {}),
+    labelMap: opts.labelMap || {},
     filters: Object.fromEntries(
         Object.entries(opts.filters || {}).map(([key, values]) => [
             key,
@@ -487,8 +487,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
     initialLimit: Number(opts.initialLimit || 5),
     eagerLimit: Number(opts.eagerLimit || 10),
     scrollLimit: Number(opts.scrollLimit || opts.batchLimit || 20),
-    maxScrollAutoLoads: Number(opts.maxScrollAutoLoads || 2), // Tối đa 2 lần tự cuộn ở giai đoạn 3
-    scrollAutoCount: 0, // Đếm số lần đã cuộn tự động trong phiên hiện tại
+    maxScrollAutoLoads: Number(opts.maxScrollAutoLoads || 2),
+    scrollAutoCount: 0,
     cursor: null,
     hasMore: false,
     loading: true,
@@ -497,8 +497,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     error: null,
     drawer: false,
 
-    // Phân luồng tuần tự & Khóa đồng thời (Concurrency Control & Mutex Lock)
-    // Stage: 'INITIAL' (5) -> 'EAGER' (10) -> 'SCROLL_READY' (20) -> 'COMPLETED'
+    // Stage tracking & concurrency mutex
     stage: 'INITIAL',
     _isFetching: false,
     _sentinelObserver: null,
@@ -523,6 +522,51 @@ Alpine.data('listingGrid', (opts = {}) => ({
     get remainingCount() {
         if (! this.count) return 0;
         return Math.max(0, this.count - this.loadedCount);
+    },
+
+    get hasActiveFilters() {
+        return Object.values(this.filters).some((vals) => Array.isArray(vals) && vals.length > 0);
+    },
+
+    get totalActiveFilterCount() {
+        return Object.values(this.filters).reduce((acc, vals) => acc + (Array.isArray(vals) ? vals.length : 0), 0);
+    },
+
+    activeFilterCount(group) {
+        return (this.filters[group] || []).length;
+    },
+
+    getFilterLabel(group, value) {
+        const valStr = String(value);
+        if (this.labelMap && this.labelMap[`${group}:${valStr}`]) {
+            return this.labelMap[`${group}:${valStr}`];
+        }
+        if (this.labelMap && this.labelMap[valStr]) {
+            return this.labelMap[valStr];
+        }
+        // Friendly fallback translations
+        const fallbacks = {
+            'resort': 'Resort & Nghỉ dưỡng',
+            'hotel': 'Khách sạn',
+            'villa': 'Biệt thự / Villa',
+            'boutique': 'Boutique Hotel',
+            'homestay': 'Homestay',
+            'cabin': 'Cabin nghỉ dưỡng',
+            'under_1m': 'Dưới 1 triệu',
+            '1m_2m': '1 – 2 triệu',
+            '2m_4m': '2 – 4 triệu',
+            'above_4m': 'Trên 4 triệu',
+            '5_star': '5 sao',
+            '4_star': '4 sao',
+            '3_star': '3 sao',
+            'pool': 'Hồ bơi',
+            'beach': 'Bãi biển riêng',
+            'breakfast': 'Bao gồm bữa sáng',
+            'spa': 'Spa & Massage',
+            'gym': 'Phòng Gym',
+            'shuttle': 'Đưa đón',
+        };
+        return fallbacks[valStr] || valStr;
     },
 
     init() {
@@ -553,17 +597,12 @@ Alpine.data('listingGrid', (opts = {}) => ({
         }
     },
 
-    /**
-     * Bật bộ dò cuộn đón đầu 1200px CHỈ KHI đã hoàn tất đợt 1 (5 items), đợt 2 (10 items),
-     * và chưa vượt quá số lần tự động cuộn (maxScrollAutoLoads = 2).
-     */
     enableScrollTriggers() {
         if (this.stage !== 'SCROLL_READY' || ! this.hasMore || this.requireManualClick) {
             this.disableScrollTriggers();
             return;
         }
 
-        // 1. IntersectionObserver đón đầu từ 1200px
         if ('IntersectionObserver' in window) {
             if (this._sentinelObserver) {
                 this._sentinelObserver.disconnect();
@@ -586,7 +625,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
             });
         }
 
-        // 2. Passive scroll listener đón đầu cực sớm khi cách đáy dưới 1200px
         if (! this._scrollHandler) {
             this._scrollHandler = () => {
                 if (! this.canTriggerScrollLoad()) return;
@@ -616,20 +654,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
         this.loadNextBatch(this.scrollLimit, 'MANUAL');
     },
 
-    get hasActiveFilters() {
-        return Object.values(this.filters).some((vals) => Array.isArray(vals) && vals.length > 0);
-    },
-
-    get totalActiveFilterCount() {
-        return Object.values(this.filters).reduce((acc, vals) => acc + (Array.isArray(vals) ? vals.length : 0), 0);
-    },
-
-    activeFilterCount(group) {
-        return (this.filters[group] || []).length;
-    },
-
     toggleFilter(group, value) {
-        if (! this.filters[group]) this.filters[group] = [];
+        if (! this.filters[group]) {
+            this.filters[group] = [];
+        }
         const list = this.filters[group];
         const needle = String(value);
         const i = list.findIndex((v) => String(v) === needle);
@@ -655,7 +683,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     clearAllFilters() {
-        this.filterGroups.forEach((group) => {
+        Object.keys(this.filters).forEach((group) => {
             this.filters[group] = [];
         });
         this.scheduleFetch();
@@ -663,7 +691,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
     isChecked(group, value) {
         const needle = String(value);
-
         return (this.filters[group] || []).some((v) => String(v) === needle);
     },
 
@@ -678,14 +705,18 @@ Alpine.data('listingGrid', (opts = {}) => ({
             if (v === undefined || v === null || v === '') return;
             q.set(k, String(v));
         });
-        this.filterGroups.forEach((group) => {
-            const values = this.filters[group] || [];
-            if (values.length === 0) {
-                q.append(`${group}[]`, '');
-                return;
-            }
-            values.forEach((v) => q.append(`${group}[]`, v));
+
+        // Loop over all filters and append ONLY non-empty active values
+        Object.entries(this.filters).forEach(([group, values]) => {
+            if (! Array.isArray(values) || values.length === 0) return;
+            values.forEach((v) => {
+                const s = String(v).trim();
+                if (s !== '') {
+                    q.append(`${group}[]`, s);
+                }
+            });
         });
+
         const locale = document.documentElement?.lang || '';
         if (locale && ! q.has('locale')) {
             q.set('locale', locale);
@@ -695,12 +726,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
     /**
      * GIAI ĐOẠN 1: Tải 5 khách sạn đầu tiên & hiển thị ra trước.
-     * Khóa toàn bộ scroll trigger trong giai đoạn này.
      */
     async fetchInitialBatch() {
         if (! this.endpoint) return;
 
-        // Reset toàn bộ state phân luồng
         this.stage = 'INITIAL';
         this.scrollAutoCount = 0;
         this._isFetching = true;
@@ -721,15 +750,22 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
         if (this.syncUrl) {
             const url = new URL(window.location.href);
+            const filterParamNames = ['category', 'property_type', 'price_range', 'amenity', 'star', 'duration', 'style', 'type', 'country', 'q'];
             [...url.searchParams.keys()].forEach((k) => {
-                if (/^(country|duration|style|type|category|q)(\[\])?$/.test(k)) {
+                const cleanKey = k.replace(/\[\]$/, '');
+                if (filterParamNames.includes(cleanKey)) {
                     url.searchParams.delete(k);
                 }
             });
-            this.filterGroups.forEach((group) => {
-                (this.filters[group] || []).forEach((v) => {
-                    if (v) url.searchParams.append(`${group}[]`, v);
-                });
+            Object.entries(this.filters).forEach(([group, values]) => {
+                if (Array.isArray(values)) {
+                    values.forEach((v) => {
+                        const s = String(v).trim();
+                        if (s !== '') {
+                            url.searchParams.append(`${group}[]`, s);
+                        }
+                    });
+                }
             });
             const qs = url.searchParams.toString();
             history.replaceState({}, '', url.pathname + (qs ? `?${qs}` : ''));
@@ -766,7 +802,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
                     window.Alpine.initTree(mount);
                 }
 
-                // Ghi nhận keys để chống trùng lặp
                 mount.querySelectorAll('[data-listing-item]').forEach((el) => {
                     const key = el.querySelector('a')?.getAttribute('href') || el.innerText;
                     if (key) this._loadedKeys.add(key);
@@ -796,11 +831,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
     /**
      * Tải đợt tiếp theo với cơ chế Khóa Tuần Tự (Mutex Guard) & Chống Trùng Lặp.
-     * @param {number} limit - Số lượng cần tải (10 cho Eager, 20 cho Scroll / Manual)
-     * @param {'EAGER' | 'SCROLL' | 'MANUAL'} origin - Nguồn kích hoạt
      */
     async loadNextBatch(limit = 20, origin = 'SCROLL') {
-        // Mutex Lock: Ngăn chặn tuyệt đối 2 request chạy song song
         if (this._isFetching || ! this.hasMore || ! this.endpoint || ! this.cursor) {
             return;
         }
@@ -842,7 +874,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
                 const newNodes = Array.from(temp.children);
                 newNodes.forEach((node) => {
-                    // Deduplication Guard: Kiểm tra trùng lặp trước khi chèn
                     const key = node.querySelector('a')?.getAttribute('href') || node.innerText;
                     if (! key || ! this._loadedKeys.has(key)) {
                         if (key) this._loadedKeys.add(key);
@@ -854,7 +885,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
                 });
             }
 
-            // Chuyển stage sau khi đợt EAGER hoàn tất
             if (origin === 'EAGER') {
                 this.stage = this.hasMore ? 'SCROLL_READY' : 'COMPLETED';
             } else if (! this.hasMore) {
@@ -866,7 +896,6 @@ Alpine.data('listingGrid', (opts = {}) => ({
             this.loadingMore = false;
             this._isFetching = false;
 
-            // Kích hoạt scroll trigger nếu chưa chạm ngưỡng 2 lần tự động cuộn
             if (this.requireManualClick) {
                 this.disableScrollTriggers();
             } else if (this.stage === 'SCROLL_READY' && this.hasMore) {
