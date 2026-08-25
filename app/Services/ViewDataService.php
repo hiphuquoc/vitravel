@@ -1707,15 +1707,7 @@ class ViewDataService
             ->withCount(['services' => fn ($q) => $q->published()])
             ->first();
 
-        if (! $cat) {
-            $cat = ServiceCategory::withoutGlobalScope('project')
-                ->active()
-                ->forCluster($cluster)
-                ->where('slug', $slug)
-                ->with(['banner', 'cover', 'seoEntry.translations'])
-                ->withCount(['services' => fn ($q) => $q->withoutGlobalScope('project')->published()])
-                ->first();
-        }
+
 
         if ($cat) {
             return $this->mapServiceCategory($cat);
@@ -1735,7 +1727,7 @@ class ViewDataService
             return [];
         }
 
-        $query = \App\Models\Service::withoutGlobalScope('project')
+        $query = Service::query()
             ->published()
             ->where('service_category_id', $categoryId)
             ->where('cluster', $cluster)
@@ -1759,7 +1751,7 @@ class ViewDataService
      */
     public function serviceSchemaItems(?string $cluster = null, ?string $categorySlug = null): array
     {
-        $query = Service::withoutGlobalScope('project')
+        $query = Service::query()
             ->published()
             ->with([
                 'translations:id,service_id,language_id,title',
@@ -1776,8 +1768,8 @@ class ViewDataService
 
         if ($categorySlug) {
             $query->where(function ($sq) use ($categorySlug) {
-                $sq->whereHas('categories', fn ($q) => $q->withoutGlobalScope('project')->where('slug', $categorySlug))
-                   ->orWhereHas('category', fn ($q) => $q->withoutGlobalScope('project')->where('slug', $categorySlug));
+                $sq->whereHas('categories', fn ($q) => $q->where('slug', $categorySlug))
+                   ->orWhereHas('category', fn ($q) => $q->where('slug', $categorySlug));
             });
         }
 
@@ -1829,7 +1821,7 @@ class ViewDataService
         $locale = $this->locale();
         $langId = \App\Models\Language::idByCode($locale) ?? 1;
 
-        $query = Service::withoutGlobalScope('project')
+        $query = Service::query()
             ->published();
 
         if ($cluster === 'other') {
@@ -1856,8 +1848,8 @@ class ViewDataService
             $query->where(function ($q) use ($categorySlugs, $clusterFilters) {
                 if ($categorySlugs !== []) {
                     $q->where(function ($sq) use ($categorySlugs) {
-                        $sq->whereHas('categories', fn ($qc) => $qc->withoutGlobalScope('project')->whereIn('slug', $categorySlugs))
-                           ->orWhereHas('category', fn ($qc) => $qc->withoutGlobalScope('project')->whereIn('slug', $categorySlugs));
+                        $sq->whereHas('categories', fn ($qc) => $qc->whereIn('slug', $categorySlugs))
+                           ->orWhereHas('category', fn ($qc) => $qc->whereIn('slug', $categorySlugs));
                     });
                 }
                 if ($clusterFilters !== []) {
@@ -1977,8 +1969,7 @@ class ViewDataService
         if ($search !== null && $search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('translations', function ($qt) use ($search) {
-                    $qt->withoutGlobalScope('project')
-                        ->where('title', 'like', "%{$search}%")
+                    $qt->where('title', 'like', "%{$search}%")
                         ->orWhere('location_label', 'like', "%{$search}%");
                 })->orWhere('code', 'like', "%{$search}%");
             });
@@ -2022,12 +2013,12 @@ class ViewDataService
         $items = $query
             ->withMin('options as min_option_price', 'price_from')
             ->with([
-                'translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId),
-                'category' => fn ($q) => $q->withoutGlobalScope('project')->select(['id', 'slug', 'name']),
-                'country.translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId)->select(['id', 'country_id', 'slug']),
-                'seoEntry' => fn ($q) => $q->withoutGlobalScope('project')->select(['id', 'reference_type', 'reference_id']),
-                'seoEntry.translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId)->select(['id', 'seo_entry_id', 'language_id', 'slug', 'slug_full']),
-                'mediaAttachments' => fn ($q) => $q->orderBy('sort')->with(['media' => fn ($mq) => $mq->withoutGlobalScope('project')]),
+                'translations' => fn ($q) => $q->where('language_id', $langId),
+                'category' => fn ($q) => $q->select(['id', 'slug', 'name']),
+                'country.translations' => fn ($q) => $q->where('language_id', $langId)->select(['id', 'country_id', 'slug']),
+                'seoEntry' => fn ($q) => $q->select(['id', 'reference_type', 'reference_id']),
+                'seoEntry.translations' => fn ($q) => $q->where('language_id', $langId)->select(['id', 'seo_entry_id', 'language_id', 'slug', 'slug_full']),
+                'mediaAttachments' => fn ($q) => $q->orderBy('sort')->with(['media']),
             ])
             ->select([
                 'id', 'project_id', 'cluster', 'service_category_id', 'country_id',
@@ -2193,7 +2184,7 @@ class ViewDataService
 
     public function services(?string $cluster = null): array
     {
-        $query = Service::withoutGlobalScope('project')
+        $query = Service::query()
             ->published()
             ->with([
                 'translations', 'category', 'country.translations',
@@ -2220,17 +2211,17 @@ class ViewDataService
     public function service(string $slug, ?string $cluster = null): ?array
     {
         $preview = app()->environment('local') && request()?->boolean('preview');
-        $query = Service::withoutGlobalScope('project')
+        $query = Service::query()
             ->when(! $preview, fn ($q) => $q->published())
             ->with([
-                'translations' => fn ($q) => $q->withoutGlobalScope('project'),
-                'category' => fn ($q) => $q->withoutGlobalScope('project'),
+                'translations',
+                'category',
                 'country.translations',
-                'seoEntry' => fn ($q) => $q->withoutGlobalScope('project'),
-                'seoEntry.translations' => fn ($q) => $q->withoutGlobalScope('project'),
+                'seoEntry',
+                'seoEntry.translations',
                 'faqs.translations',
-                'options' => fn ($q) => $q->withoutGlobalScope('project'),
-                'options.translations' => fn ($q) => $q->withoutGlobalScope('project'),
+                'options',
+                'options.translations',
                 'mediaAttachments.media',
                 'priceTable.variants.translations',
                 'priceTable.periods.rates',
@@ -2308,10 +2299,10 @@ class ViewDataService
     protected function mapService(Service $service, bool $isDetail = true): array
     {
         $translation = $service->translation($this->locale())
-            ?? ($service->relationLoaded('translations') ? $service->translations->first() : $service->translations()->withoutGlobalScope('project')->first());
+            ?? ($service->relationLoaded('translations') ? $service->translations->first() : $service->translations()->first());
         $seoTranslation = $service->seoEntry?->translation($this->locale())
-            ?? ($service->relationLoaded('seoEntry') ? $service->seoEntry?->translations?->first() : $service->seoEntry()->withoutGlobalScope('project')->first()?->translations()->withoutGlobalScope('project')->first());
-        $category = $service->relationLoaded('category') ? $service->category : ($service->category ?? $service->category()->withoutGlobalScope('project')->first());
+            ?? ($service->relationLoaded('seoEntry') ? $service->seoEntry?->translations?->first() : $service->seoEntry?->translations()->first());
+        $category = $service->relationLoaded('category') ? $service->category : $service->category;
         $cfg = config("services_catalog.clusters.{$service->cluster}", []);
 
         $highlights = $translation?->highlights ?? [];
