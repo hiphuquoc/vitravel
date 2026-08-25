@@ -369,6 +369,8 @@ class ServiceApiController extends Controller
                 'id' => 'nullable|integer|exists:services,id',
                 'cluster' => ['required', 'string', Rule::in($clusters)],
                 'service_category_id' => 'nullable|integer|exists:service_categories,id',
+                'service_category_ids' => 'nullable|array',
+                'service_category_ids.*' => 'integer|exists:service_categories,id',
                 'country_id' => 'nullable|integer|exists:countries,id',
                 'code' => 'nullable|string|max:64',
                 'title' => 'required|string|max:255',
@@ -448,12 +450,25 @@ class ServiceApiController extends Controller
             $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
             $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
 
-            $category = ! empty($validated['service_category_id'])
-                ? ServiceCategory::query()->find($validated['service_category_id'])
+            $categoryIds = array_values(array_filter(
+                array_map('intval', (array) ($request->input('service_category_ids', [])))
+            ));
+
+            $primaryCategoryId = ! empty($validated['service_category_id'])
+                ? (int) $validated['service_category_id']
+                : ($categoryIds[0] ?? null);
+
+            if ($primaryCategoryId && ! in_array($primaryCategoryId, $categoryIds, true)) {
+                array_unshift($categoryIds, $primaryCategoryId);
+            }
+
+            $category = $primaryCategoryId
+                ? ServiceCategory::query()->find($primaryCategoryId)
                 : null;
 
             if ($category && $category->cluster !== $cluster) {
                 $category = null;
+                $primaryCategoryId = null;
             }
 
             $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: null;
@@ -478,7 +493,7 @@ class ServiceApiController extends Controller
             $status = $validated['status'];
             $fill = [
                 'cluster' => $cluster,
-                'service_category_id' => $category?->id,
+                'service_category_id' => $primaryCategoryId,
                 'country_id' => $validated['country_id'] ?? null,
                 'code' => $validated['code'] ?? null,
                 'price_from' => $validated['price_from'] ?? null,
@@ -505,6 +520,15 @@ class ServiceApiController extends Controller
             }
             $service->fill($fill);
             $service->save();
+
+            // Đồng bộ quan hệ nhiều-nhiều categories
+            if ($categoryIds !== []) {
+                $service->categories()->sync($categoryIds);
+            } elseif ($primaryCategoryId) {
+                $service->categories()->sync([$primaryCategoryId]);
+            } else {
+                $service->categories()->detach();
+            }
 
             $this->saveModelTranslation(
                 $service,
@@ -572,6 +596,7 @@ class ServiceApiController extends Controller
             }
 
             return $service->fresh([
+                'categories',
                 'category',
                 'country.translations',
                 'translations',
@@ -637,8 +662,18 @@ class ServiceApiController extends Controller
         $stayAttrs = is_array($service->attrs) ? $service->attrs : [];
         $stayPhotos = is_array($stayAttrs['photos'] ?? null) ? $stayAttrs['photos'] : [];
 
+        $catIds = $service->relationLoaded('categories') && $service->categories->isNotEmpty()
+            ? $service->categories->pluck('id')->all()
+            : ($service->service_category_id ? [$service->service_category_id] : []);
+
         return array_merge($this->serialize($service, $locale), [
             'service_category_id' => $service->service_category_id,
+            'service_category_ids' => $catIds,
+            'categories' => $service->categories->map(fn ($c) => [
+                'id' => $c->id,
+                'name' => $c->name,
+                'slug' => $c->slug,
+            ])->values()->all(),
             'country_id' => $service->country_id,
             'location_label' => $t?->location_label,
             'summary' => $t?->summary,

@@ -96,6 +96,7 @@ class ServiceController extends Controller
         $service = $id > 0
             ? Service::query()
                 ->with([
+                    'categories',
                     'category.seoEntry.translations',
                     'country.translations',
                     'translations',
@@ -149,6 +150,7 @@ class ServiceController extends Controller
             'cluster' => $cluster,
             'clusterOptions' => $clusterOptions,
             'hubKey' => $hubKey,
+            'propertyTypeOptions' => config('stay.property_types', []),
             'title' => $service ? 'Chỉnh sửa sản phẩm dịch vụ' : 'Thêm sản phẩm dịch vụ',
         ]);
     }
@@ -174,6 +176,12 @@ class ServiceController extends Controller
             'service_category_id' => 'nullable|integer|exists:service_categories,id',
             'service_category_ids' => 'nullable|array',
             'service_category_ids.*' => 'integer|exists:service_categories,id',
+            'property_types' => 'nullable|array',
+            'property_types.*' => 'string|max:64',
+            'property_type' => 'nullable|string|max:64',
+            'checkin_from' => 'nullable|string|max:32',
+            'checkout_until' => 'nullable|string|max:32',
+            'address' => 'nullable|string|max:500',
             'country_id' => 'nullable|integer|exists:countries,id',
             'code' => 'nullable|string|max:64',
             'title' => 'required|string|max:255',
@@ -247,6 +255,30 @@ class ServiceController extends Controller
                 ? Service::query()->findOrFail($validated['id'])
                 : new Service;
 
+            $attrs = is_array($service->attrs) ? $service->attrs : [];
+            if ($cluster === Service::CLUSTER_STAY) {
+                $propertyTypes = array_values(array_filter(
+                    array_map('strval', (array) $request->input('property_types', []))
+                ));
+                $primaryPropertyType = (string) ($request->input('property_type') ?: ($propertyTypes[0] ?? ($attrs['property_type'] ?? 'hotel')));
+                if ($primaryPropertyType && ! in_array($primaryPropertyType, $propertyTypes, true)) {
+                    array_unshift($propertyTypes, $primaryPropertyType);
+                }
+                if ($propertyTypes !== []) {
+                    $attrs['property_types'] = $propertyTypes;
+                    $attrs['property_type'] = $primaryPropertyType;
+                }
+                if ($request->filled('checkin_from')) {
+                    $attrs['checkin_from'] = (string) $request->input('checkin_from');
+                }
+                if ($request->filled('checkout_until')) {
+                    $attrs['checkout_until'] = (string) $request->input('checkout_until');
+                }
+                if ($request->filled('address')) {
+                    $attrs['address'] = (string) $request->input('address');
+                }
+            }
+
             $status = $validated['status'];
             $service->fill([
                 'cluster' => $cluster,
@@ -263,6 +295,7 @@ class ServiceController extends Controller
                 'is_featured' => $request->boolean('is_featured'),
                 'is_hot_deal' => $request->boolean('is_hot_deal'),
                 'sort' => $validated['sort'] ?? 0,
+                'attrs' => $attrs,
                 'published_at' => $status === 'published'
                     ? ($service->published_at ?? now())
                     : null,

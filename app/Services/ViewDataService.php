@@ -1872,7 +1872,9 @@ class ViewDataService
         if ($propertyTypes !== []) {
             $query->where(function ($q) use ($propertyTypes) {
                 foreach ($propertyTypes as $pt) {
-                    $q->orWhere('attrs->property_type', $pt);
+                    $q->orWhere('attrs->property_type', $pt)
+                      ->orWhere('attrs->property_types', 'like', "%\"{$pt}\"%")
+                      ->orWhere('attrs', 'like', "%\"property_types\":%{$pt}%");
                 }
             });
         }
