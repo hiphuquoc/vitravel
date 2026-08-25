@@ -454,21 +454,16 @@ class ServiceApiController extends Controller
                 array_map('intval', (array) ($request->input('service_category_ids', [])))
             ));
 
-            $primaryCategoryId = ! empty($validated['service_category_id'])
-                ? (int) $validated['service_category_id']
-                : ($categoryIds[0] ?? null);
-
-            if ($primaryCategoryId && ! in_array($primaryCategoryId, $categoryIds, true)) {
-                array_unshift($categoryIds, $primaryCategoryId);
+            if ($categoryIds === [] && ! empty($validated['service_category_id'])) {
+                $categoryIds = [(int) $validated['service_category_id']];
             }
 
-            $category = $primaryCategoryId
-                ? ServiceCategory::query()->find($primaryCategoryId)
+            $category = ! empty($categoryIds[0])
+                ? ServiceCategory::query()->find($categoryIds[0])
                 : null;
 
             if ($category && $category->cluster !== $cluster) {
                 $category = null;
-                $primaryCategoryId = null;
             }
 
             $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: null;
@@ -493,7 +488,7 @@ class ServiceApiController extends Controller
             $status = $validated['status'];
             $fill = [
                 'cluster' => $cluster,
-                'service_category_id' => $primaryCategoryId,
+                'service_category_id' => $category?->id,
                 'country_id' => $validated['country_id'] ?? null,
                 'code' => $validated['code'] ?? null,
                 'price_from' => $validated['price_from'] ?? null,
@@ -524,8 +519,6 @@ class ServiceApiController extends Controller
             // Đồng bộ quan hệ nhiều-nhiều categories
             if ($categoryIds !== []) {
                 $service->categories()->sync($categoryIds);
-            } elseif ($primaryCategoryId) {
-                $service->categories()->sync([$primaryCategoryId]);
             } else {
                 $service->categories()->detach();
             }

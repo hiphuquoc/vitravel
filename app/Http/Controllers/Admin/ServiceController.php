@@ -260,13 +260,9 @@ class ServiceController extends Controller
                 $propertyTypes = array_values(array_filter(
                     array_map('strval', (array) $request->input('property_types', []))
                 ));
-                $primaryPropertyType = (string) ($request->input('property_type') ?: ($propertyTypes[0] ?? ($attrs['property_type'] ?? 'hotel')));
-                if ($primaryPropertyType && ! in_array($primaryPropertyType, $propertyTypes, true)) {
-                    array_unshift($propertyTypes, $primaryPropertyType);
-                }
                 if ($propertyTypes !== []) {
                     $attrs['property_types'] = $propertyTypes;
-                    $attrs['property_type'] = $primaryPropertyType;
+                    $attrs['property_type'] = $propertyTypes[0];
                 }
                 if ($request->filled('checkin_from')) {
                     $attrs['checkin_from'] = (string) $request->input('checkin_from');
@@ -282,7 +278,7 @@ class ServiceController extends Controller
             $status = $validated['status'];
             $service->fill([
                 'cluster' => $cluster,
-                'service_category_id' => $primaryCategoryId,
+                'service_category_id' => $category?->id,
                 'country_id' => $validated['country_id'] ?? null,
                 'code' => $validated['code'] ?? null,
                 'price_from' => $validated['price_from'] ?? null,
@@ -305,8 +301,6 @@ class ServiceController extends Controller
             // Đồng bộ danh mục nhiều-nhiều (service_category_service)
             if ($categoryIds !== []) {
                 $service->categories()->sync($categoryIds);
-            } elseif ($primaryCategoryId) {
-                $service->categories()->sync([$primaryCategoryId]);
             } else {
                 $service->categories()->detach();
             }

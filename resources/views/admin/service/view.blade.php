@@ -33,19 +33,6 @@
     color: var(--admin-gray-800, #1f2937);
     transition: all 0.15s ease;
 }
-.adminMultiSelect_chip.is-primary {
-    background: #fefce8;
-    border-color: #fde047;
-    color: #854d0e;
-}
-.adminMultiSelect_chip_star {
-    font-size: 0.6875rem;
-    font-weight: 700;
-    color: #ca8a04;
-    background: #fef08a;
-    padding: 1px 6px;
-    border-radius: 4px;
-}
 .adminMultiSelect_chip_remove {
     cursor: pointer;
     display: inline-flex;
@@ -138,33 +125,6 @@
     font-size: 0.75rem;
     color: #6b7280;
 }
-.adminMultiSelect_starBtn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #e5e7eb;
-    background: #fff;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    color: #6b7280;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-.adminMultiSelect_starBtn:hover {
-    border-color: #fde047;
-    color: #ca8a04;
-}
-.adminMultiSelect_starBtn.is-primary {
-    background: #fefce8;
-    border-color: #fde047;
-    color: #854d0e;
-}
-.adminMultiSelect_starIcon {
-    width: 14px;
-    height: 14px;
-}
 </style>
 @endpush
 
@@ -180,14 +140,12 @@
             ? $service->categories->pluck('id')->all()
             : ($service?->service_category_id ? [$service->service_category_id] : [])
     );
-    $primaryCatId = old('service_category_id', $service?->service_category_id ?? ($selectedCategoryIds[0] ?? null));
 
     // Dữ liệu loại hình lưu trú (property_types)
     $serviceAttrs = is_array($service?->attrs) ? $service->attrs : [];
     $rawPropType = $serviceAttrs['property_type'] ?? 'hotel';
     $rawPropTypes = $serviceAttrs['property_types'] ?? [$rawPropType];
     $selectedPropertyTypes = old('property_types', (array)$rawPropTypes);
-    $primaryPropertyType = old('property_type', $rawPropType ?: ($selectedPropertyTypes[0] ?? 'hotel'));
     $propertyTypeOptions = $propertyTypeOptions ?? config('stay.property_types', []);
 @endphp
 
@@ -294,13 +252,10 @@
                                     </label>
                                 </div>
 
-                                {{-- Custom Multi-Select: DANH MỤC LƯU TRÚ (SỐ NHIỀU) --}}
+                                {{-- Multi-Select: DANH MỤC LƯU TRÚ (SỐ NHIỀU) --}}
                                 <div class="adminFormField adminFormField--full" style="grid-column: 1 / -1;">
                                     <label class="adminFormField_label">
                                         <span>Danh mục / Khu vực lưu trú (Chọn nhiều)</span>
-                                        <span class="adminFormField_tooltip" title="Khách sạn có thể thuộc nhiều danh mục/khu vực. Danh mục có biểu tượng ngôi sao là danh mục chính (Primary) dùng làm trang cha SEO & URL.">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
-                                        </span>
                                     </label>
 
                                     <div class="adminMultiSelectBox" id="adminCatMultiSelect">
@@ -320,7 +275,6 @@
                                                 @foreach ($categories as $cat)
                                                     @php
                                                         $isSelected = in_array($cat->id, $selectedCategoryIds, false);
-                                                        $isPrimary = ((int)$primaryCatId === (int)$cat->id);
                                                     @endphp
                                                     <div class="adminMultiSelect_item {{ $isSelected ? 'is-selected' : '' }}"
                                                          data-id="{{ $cat->id }}"
@@ -336,23 +290,12 @@
                                                             <span class="adminMultiSelect_item_name">{{ $cat->name }}</span>
                                                             <span class="adminMultiSelect_item_slug">/{{ $cat->slug }}</span>
                                                         </label>
-
-                                                        <button type="button"
-                                                            class="adminMultiSelect_starBtn js-cat-primary-btn {{ $isPrimary ? 'is-primary' : '' }}"
-                                                            data-id="{{ $cat->id }}"
-                                                            title="{{ $isPrimary ? 'Danh mục chính (Primary SEO)' : 'Đặt làm danh mục chính' }}">
-                                                            <svg viewBox="0 0 24 24" fill="{{ $isPrimary ? '#eab308' : 'none' }}" stroke="{{ $isPrimary ? '#ca8a04' : 'currentColor' }}" stroke-width="2" class="adminMultiSelect_starIcon">
-                                                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                                            </svg>
-                                                            <span class="adminMultiSelect_starText">{{ $isPrimary ? 'Chính' : 'Đặt chính' }}</span>
-                                                        </button>
                                                     </div>
                                                 @endforeach
                                             </div>
                                         </div>
 
                                         {{-- Hidden inputs để submit form --}}
-                                        <input type="hidden" name="service_category_id" id="hidden_primary_cat_id" value="{{ $primaryCatId }}" />
                                         <div id="hiddenCatInputsContainer">
                                             @foreach ($selectedCategoryIds as $cid)
                                                 <input type="hidden" name="service_category_ids[]" value="{{ $cid }}" />
@@ -377,13 +320,10 @@
                             </div>
                             <div class="adminFormSection_body">
                                 <div class="adminFormGrid adminFormGrid--2cols">
-                                    {{-- Custom Multi-Select: LOẠI HÌNH KHÁCH SẠN (SỐ NHIỀU) --}}
+                                    {{-- Multi-Select: LOẠI HÌNH KHÁCH SẠN (SỐ NHIỀU) --}}
                                     <div class="adminFormField adminFormField--full" style="grid-column: 1 / -1;">
                                         <label class="adminFormField_label">
                                             <span>Loại hình khách sạn / Chỗ nghỉ (Chọn nhiều)</span>
-                                            <span class="adminFormField_tooltip" title="Chọn một hoặc nhiều loại hình (Resort, Khách sạn, Villa, Homestay...). Ngôi sao chỉ định loại hình đại diện chính.">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4m0-4h.01"/></svg>
-                                            </span>
                                         </label>
 
                                         <div class="adminMultiSelectBox" id="adminPropTypeMultiSelect">
@@ -403,7 +343,6 @@
                                                     @foreach ($propertyTypeOptions as $ptKey => $ptLabel)
                                                         @php
                                                             $isPtSelected = in_array((string)$ptKey, array_map('strval', $selectedPropertyTypes), false);
-                                                            $isPtPrimary = ((string)$primaryPropertyType === (string)$ptKey);
                                                         @endphp
                                                         <div class="adminMultiSelect_item {{ $isPtSelected ? 'is-selected' : '' }}"
                                                              data-id="{{ $ptKey }}"
@@ -418,23 +357,12 @@
                                                                 <span class="adminMultiSelect_item_name">{{ $ptLabel }}</span>
                                                                 <span class="adminMultiSelect_item_slug">({{ $ptKey }})</span>
                                                             </label>
-
-                                                            <button type="button"
-                                                                class="adminMultiSelect_starBtn js-pt-primary-btn {{ $isPtPrimary ? 'is-primary' : '' }}"
-                                                                data-id="{{ $ptKey }}"
-                                                                title="{{ $isPtPrimary ? 'Loại hình đại diện chính' : 'Đặt làm loại hình chính' }}">
-                                                                <svg viewBox="0 0 24 24" fill="{{ $isPtPrimary ? '#eab308' : 'none' }}" stroke="{{ $isPtPrimary ? '#ca8a04' : 'currentColor' }}" stroke-width="2" class="adminMultiSelect_starIcon">
-                                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                                                </svg>
-                                                                <span class="adminMultiSelect_starText">{{ $isPtPrimary ? 'Chính' : 'Đặt chính' }}</span>
-                                                            </button>
                                                         </div>
                                                     @endforeach
                                                 </div>
                                             </div>
 
                                             {{-- Hidden inputs loại hình để submit form --}}
-                                            <input type="hidden" name="property_type" id="hidden_primary_pt_id" value="{{ $primaryPropertyType }}" />
                                             <div id="hiddenPtInputsContainer">
                                                 @foreach ($selectedPropertyTypes as $ptVal)
                                                     <input type="hidden" name="property_types[]" value="{{ $ptVal }}" />
@@ -576,7 +504,6 @@
 @push('scriptCustom')
 <script>
 (function() {
-    // 1. SETUP MULTI-SELECT CHO DANH MỤC (CATEGORIES)
     function setupMultiSelect(config) {
         const container = document.getElementById(config.containerId);
         if (!container) return;
@@ -584,7 +511,6 @@
         const chipsContainer = document.getElementById(config.chipsContainerId);
         const searchInput = document.getElementById(config.searchInputId);
         const optionsList = document.getElementById(config.optionsListId);
-        const hiddenPrimaryInput = document.getElementById(config.hiddenPrimaryInputId);
         const hiddenInputsContainer = document.getElementById(config.hiddenInputsContainerId);
 
         function render() {
@@ -592,16 +518,7 @@
             chipsContainer.innerHTML = '';
             hiddenInputsContainer.innerHTML = '';
 
-            let currentPrimary = hiddenPrimaryInput.value;
             const selectedIds = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-            if (selectedIds.length > 0 && (!currentPrimary || !selectedIds.includes(String(currentPrimary)))) {
-                currentPrimary = selectedIds[0];
-                hiddenPrimaryInput.value = currentPrimary;
-            } else if (selectedIds.length === 0) {
-                currentPrimary = '';
-                hiddenPrimaryInput.value = '';
-            }
 
             if (selectedCheckboxes.length === 0) {
                 chipsContainer.innerHTML = `<span style="color: #9ca3af; font-size: 0.8125rem; font-style: italic;">${config.emptyText}</span>`;
@@ -610,13 +527,11 @@
             selectedCheckboxes.forEach(cb => {
                 const id = cb.value;
                 const name = cb.dataset.name || cb.value;
-                const isPrimary = String(id) === String(currentPrimary);
 
                 const chip = document.createElement('div');
-                chip.className = 'adminMultiSelect_chip' + (isPrimary ? ' is-primary' : '');
+                chip.className = 'adminMultiSelect_chip';
                 chip.innerHTML = `
                     <span>${name}</span>
-                    ${isPrimary ? '<span class="adminMultiSelect_chip_star">★ ' + config.primaryBadgeText + '</span>' : ''}
                     <button type="button" class="adminMultiSelect_chip_remove" data-id="${id}" title="Bỏ chọn">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 12px; height: 12px;"><path d="M18 6L6 18M6 6l12 12"/></svg>
                     </button>
@@ -633,39 +548,12 @@
             optionsList.querySelectorAll('.adminMultiSelect_item').forEach(item => {
                 const id = item.dataset.id;
                 const isChecked = selectedIds.includes(String(id));
-                const isPrimary = String(id) === String(currentPrimary);
-
                 item.classList.toggle('is-selected', isChecked);
-
-                const starBtn = item.querySelector(`.${config.primaryBtnClass}`);
-                if (starBtn) {
-                    starBtn.classList.toggle('is-primary', isPrimary);
-                    starBtn.style.display = isChecked ? 'inline-flex' : 'none';
-                    const starIcon = starBtn.querySelector('svg');
-                    if (starIcon) {
-                        starIcon.setAttribute('fill', isPrimary ? '#eab308' : 'none');
-                        starIcon.setAttribute('stroke', isPrimary ? '#ca8a04' : 'currentColor');
-                    }
-                    const starText = starBtn.querySelector('.adminMultiSelect_starText');
-                    if (starText) {
-                        starText.textContent = isPrimary ? config.primaryBadgeText : config.setPrimaryText;
-                    }
-                }
             });
         }
 
         optionsList.addEventListener('change', function(e) {
             if (e.target.classList.contains(config.checkboxClass)) {
-                render();
-            }
-        });
-
-        optionsList.addEventListener('click', function(e) {
-            const starBtn = e.target.closest(`.${config.primaryBtnClass}`);
-            if (starBtn) {
-                e.preventDefault();
-                const id = starBtn.dataset.id;
-                hiddenPrimaryInput.value = id;
                 render();
             }
         });
@@ -706,14 +594,10 @@
         chipsContainerId: 'catChipsContainer',
         searchInputId: 'catSearchInput',
         optionsListId: 'catOptionsList',
-        hiddenPrimaryInputId: 'hidden_primary_cat_id',
         hiddenInputsContainerId: 'hiddenCatInputsContainer',
         checkboxClass: 'js-cat-check',
-        primaryBtnClass: 'js-cat-primary-btn',
         inputName: 'service_category_ids[]',
-        primaryBadgeText: 'Chính',
-        setPrimaryText: 'Đặt chính',
-        emptyText: 'Chưa chọn danh mục nào (sẽ hiển thị ở tất cả hoặc danh mục mặc định)',
+        emptyText: 'Chưa chọn danh mục nào',
     });
 
     // Khởi tạo Loại hình lưu trú (Stay Property Types)
@@ -722,13 +606,9 @@
         chipsContainerId: 'propTypeChipsContainer',
         searchInputId: 'propTypeSearchInput',
         optionsListId: 'propTypeOptionsList',
-        hiddenPrimaryInputId: 'hidden_primary_pt_id',
         hiddenInputsContainerId: 'hiddenPtInputsContainer',
         checkboxClass: 'js-pt-check',
-        primaryBtnClass: 'js-pt-primary-btn',
         inputName: 'property_types[]',
-        primaryBadgeText: 'Loại hình chính',
-        setPrimaryText: 'Đặt chính',
         emptyText: 'Chưa chọn loại hình lưu trú nào',
     });
 })();
