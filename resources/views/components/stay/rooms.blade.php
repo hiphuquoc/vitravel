@@ -247,11 +247,11 @@
             @endforeach
         </div>
 
-        <div
+                <div
             class="stay-room-modal"
             x-cloak
             x-show="open"
-            x-transition.opacity.duration.180ms
+            x-transition.opacity.duration.200ms
             @keydown.escape.window="close()"
         >
             <div class="stay-room-modal__backdrop" @click="close()"></div>
@@ -269,26 +269,29 @@
                 x-transition:leave-start="stay-room-modal__leave-start"
                 x-transition:leave-end="stay-room-modal__leave-end"
             >
-                <button
-                    type="button"
-                    class="stay-room-modal__close"
-                    x-ref="roomClose"
-                    @click="close()"
-                    aria-label="Đóng chi tiết phòng"
-                    style="position: absolute; top: 0.85rem; right: 0.85rem; z-index: 20; display: flex; align-items: center; justify-content: center; width: 2.15rem; height: 2.15rem; border-radius: 999px; border: 1px solid #e2e8f0; background: rgba(255,255,255,0.9); backdrop-filter: blur(4px); color: #475569; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.06);"
-                    onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a'; this.style.transform='scale(1.05)'"
-                    onmouseout="this.style.background='rgba(255,255,255,0.9)'; this.style.color='#475569'; this.style.transform='scale(1)'"
-                >
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="18" height="18">
-                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
+                {{-- Header bar độc lập: Loại bỏ hoàn toàn lỗi nút close đè lên scrollbar --}}
+                <header class="stay-room-modal__top-bar">
+                    <div class="stay-room-modal__top-meta">
+                        <span class="stay-room-modal__pill" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></span>
+                        <span class="stay-room-modal__top-title" x-text="room ? room.name : ''"></span>
+                    </div>
+                    <button
+                        type="button"
+                        class="stay-room-modal__close-btn"
+                        x-ref="roomClose"
+                        @click="close()"
+                        aria-label="Đóng chi tiết phòng"
+                    >
+                        <x-icon name="close" class="size-4" />
+                    </button>
+                </header>
 
                 <div
                     class="stay-room-modal__body"
                     x-show="room"
                     :class="room && room.photos && room.photos.length ? '' : 'stay-room-modal__body--solo'"
                 >
+                    {{-- Cột trái: Thư viện ảnh & Slider cao cấp --}}
                     <div class="stay-room-modal__gallery" x-show="room && room.photos && room.photos.length">
                         <div class="stay-room-modal__hero">
                             <template x-if="open && room && room.photos && room.photos[photo]">
@@ -299,6 +302,12 @@
                                     decoding="async"
                                 />
                             </template>
+
+                            {{-- Badge đếm số thứ tự ảnh --}}
+                            <div class="stay-room-modal__counter" x-show="photoCount > 1">
+                                <span x-text="(photo + 1) + ' / ' + photoCount"></span>
+                            </div>
+
                             <template x-if="photoCount > 1">
                                 <div>
                                     <button
@@ -307,7 +316,7 @@
                                         @click="prevPhoto()"
                                         aria-label="Ảnh trước"
                                     >
-                                        <x-icon name="chevron-left" class="size-5" />
+                                        <x-icon name="chevron-left" class="size-4" />
                                     </button>
                                     <button
                                         type="button"
@@ -315,24 +324,16 @@
                                         @click="nextPhoto()"
                                         aria-label="Ảnh sau"
                                     >
-                                        <x-icon name="chevron-right" class="size-5" />
+                                        <x-icon name="chevron-right" class="size-4" />
                                     </button>
-                                    <div class="stay-room-modal__dots" aria-hidden="true">
-                                        <template x-for="(_, di) in (room ? room.photos : [])" :key="'dot-' + di">
-                                            <button
-                                                type="button"
-                                                class="stay-room-modal__dot"
-                                                :class="di === photo ? 'is-active' : ''"
-                                                @click="photo = di"
-                                            ></button>
-                                        </template>
-                                    </div>
                                 </div>
                             </template>
                         </div>
+
+                        {{-- Dải thumbnail ảnh phụ --}}
                         <div class="stay-room-modal__thumbs vt-scrollbar" x-show="open && room && room.photos && room.photos.length > 1">
                             <template x-if="open">
-                                <div style="display: contents;">
+                                <div class="stay-room-modal__thumbs-track">
                                     <template x-for="(p, pi) in (room ? room.photos : [])" :key="pi">
                                         <button
                                             type="button"
@@ -348,153 +349,161 @@
                         </div>
                     </div>
 
-                    <div class="stay-room-modal__detail">
-                        {{-- Header thông tin phòng: Cố định trên desktop, cuộn tự nhiên trên mobile --}}
-                        <div class="stay-room-modal__detail-head">
-                            <p class="kicker" x-show="room && room.unitTypeLabel" x-text="room.unitTypeLabel"></p>
+                    {{-- Cột phải: Toàn bộ thông tin chi tiết phòng (cuộn mượt mà) --}}
+                    <div class="stay-room-modal__detail vt-scrollbar" x-ref="roomDetail">
+                        <div class="stay-room-modal__header-info">
                             <h2 class="stay-room-modal__title" x-text="room ? room.name : ''"></h2>
 
-                            <ul class="stay-hprt__tags stay-room-modal__tags" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
+                            <ul class="stay-room-modal__tags" x-show="room && ((room.displayTags && room.displayTags.length) || (room.highlights && room.highlights.length))">
                                 <template x-for="(tag, ti) in (room ? (room.displayTags || room.highlights || []) : [])" :key="'tag-' + ti">
-                                    <li class="stay-hprt__tag">
-                                        <x-icon name="check" class="size-3.5" />
+                                    <li class="stay-room-modal__tag">
+                                        <x-icon name="check" class="size-3.5 text-primary-600 shrink-0" />
                                         <span x-text="typeof tag === 'string' ? tag : (tag.label || '')"></span>
                                     </li>
                                 </template>
                             </ul>
                         </div>
 
-                        {{-- Vùng nội dung chi tiết: Cuộn riêng trên desktop, cuộn chung toàn box trên mobile --}}
-                        <div class="stay-room-modal__scrollable vt-scrollbar" x-ref="roomDetail">
-
-                        <div class="stay-room-modal__facts" x-show="room">
-                            <p class="stay-room-modal__facts-kicker">Thông số phòng</p>
-                            <ul class="stay-room-modal__facts-grid">
+                        {{-- THÔNG SỐ PHÒNG (Thiết kế Card Grid hiện đại) --}}
+                        <div class="stay-room-modal__specs" x-show="room">
+                            <p class="stay-room-modal__specs-kicker">Thông số phòng</p>
+                            <div class="stay-room-modal__specs-grid">
                                 <template x-if="room && room.sizeSqm">
-                                    <li class="stay-room-modal__fact">
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                    <div class="stay-room-modal__spec-card">
+                                        <div class="stay-room-modal__spec-icon">
                                             <x-icon name="maximize" class="size-4" />
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Diện tích</span>
-                                            <strong><span x-text="room.sizeSqm"></span> m²</strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Diện tích</span>
+                                            <strong class="stay-room-modal__spec-val"><span x-text="room.sizeSqm"></span> m²</strong>
+                                        </div>
+                                    </div>
                                 </template>
                                 <template x-if="room && room.capacity">
-                                    <li class="stay-room-modal__fact">
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                    <div class="stay-room-modal__spec-card">
+                                        <div class="stay-room-modal__spec-icon">
                                             <x-icon name="users" class="size-4" />
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Sức chứa</span>
-                                            <strong><span x-text="room.capacity"></span> người lớn</strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Sức chứa</span>
+                                            <strong class="stay-room-modal__spec-val"><span x-text="room.capacity"></span> người lớn</strong>
+                                        </div>
+                                    </div>
                                 </template>
                                 <template x-if="room && room.beds && room.beds.length">
-                                    <li class="stay-room-modal__fact stay-room-modal__fact--wide">
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                    <div class="stay-room-modal__spec-card stay-room-modal__spec-card--wide">
+                                        <div class="stay-room-modal__spec-icon">
                                             <x-icon name="bed" class="size-4" />
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Giường</span>
-                                            <strong x-text="room.beds.flatMap(br => (br.items || []).map(i => i.label)).filter(Boolean).join(' · ') || room.bedLabel"></strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Loại giường</span>
+                                            <strong class="stay-room-modal__spec-val" x-text="room.beds.flatMap(br => (br.items || []).map(i => i.label)).filter(Boolean).join(' · ') || room.bedLabel"></strong>
+                                        </div>
+                                    </div>
                                 </template>
                                 <template x-if="room && (!room.beds || !room.beds.length) && room.bedLabel">
-                                    <li class="stay-room-modal__fact stay-room-modal__fact--wide">
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                    <div class="stay-room-modal__spec-card stay-room-modal__spec-card--wide">
+                                        <div class="stay-room-modal__spec-icon">
                                             <x-icon name="bed" class="size-4" />
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Giường</span>
-                                            <strong x-text="room.bedLabel"></strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Loại giường</span>
+                                            <strong class="stay-room-modal__spec-val" x-text="room.bedLabel"></strong>
+                                        </div>
+                                    </div>
                                 </template>
                                 <template x-if="room && room.view">
-                                    <li class="stay-room-modal__fact">
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                    <div class="stay-room-modal__spec-card">
+                                        <div class="stay-room-modal__spec-icon">
                                             <x-icon name="eye" class="size-4" />
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">View</span>
-                                            <strong x-text="room.view"></strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Hướng nhìn</span>
+                                            <strong class="stay-room-modal__spec-val" x-text="room.view"></strong>
+                                        </div>
+                                    </div>
                                 </template>
                                 <template x-if="room && room.bathroomCount">
-                                    <li class="stay-room-modal__fact">
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                    <div class="stay-room-modal__spec-card">
+                                        <div class="stay-room-modal__spec-icon">
                                             <x-icon name="sparkles" class="size-4" />
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Phòng tắm</span>
-                                            <strong x-text="room.bathroomCount"></strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Phòng tắm</span>
+                                            <strong class="stay-room-modal__spec-val"><span x-text="room.bathroomCount"></span> phòng</strong>
+                                        </div>
+                                    </div>
                                 </template>
                                 <template x-if="room && room.smoking">
-                                    <li
-                                        class="stay-room-modal__fact"
+                                    <div
+                                        class="stay-room-modal__spec-card"
                                         :class="{
-                                            'stay-room-modal__fact--smoke-free': room.smokingAllowed === false,
-                                            'stay-room-modal__fact--smoke-on': room.smokingAllowed === true
+                                            'stay-room-modal__spec-card--smoke-free': room.smokingAllowed === false,
+                                            'stay-room-modal__spec-card--smoke-on': room.smokingAllowed === true
                                         }"
                                     >
-                                        <span class="stay-room-modal__fact-icon" aria-hidden="true">
+                                        <div class="stay-room-modal__spec-icon">
                                             <span x-show="room.smokingAllowed === false"><x-icon name="ban" class="size-4" /></span>
                                             <span x-show="room.smokingAllowed === true"><x-icon name="alert" class="size-4" /></span>
                                             <span x-show="room.smokingAllowed !== true && room.smokingAllowed !== false"><x-icon name="info" class="size-4" /></span>
-                                        </span>
-                                        <span class="stay-room-modal__fact-copy">
-                                            <span class="stay-room-modal__fact-label">Hút thuốc</span>
-                                            <strong x-text="room.smoking"></strong>
-                                        </span>
-                                    </li>
+                                        </div>
+                                        <div class="stay-room-modal__spec-content">
+                                            <span class="stay-room-modal__spec-label">Quy định hút thuốc</span>
+                                            <strong class="stay-room-modal__spec-val" x-text="room.smoking"></strong>
+                                        </div>
+                                    </div>
                                 </template>
-                            </ul>
+                            </div>
                         </div>
 
-                        <p class="stay-room-modal__comfort" x-show="room && room.comfortScore">
-                            Giường thoải mái
-                            <strong x-text="Number(room.comfortScore).toFixed(1)"></strong>
-                            <span x-show="room.comfortReviews" x-text="' – dựa trên ' + room.comfortReviews + ' đánh giá'"></span>
-                        </p>
-
-                        <p class="stay-room-modal__desc body-text" x-show="room && room.description" x-text="room.description"></p>
-
-                        <p class="stay-room-modal__scarcity" x-show="room && room.scarcityActive" x-cloak>
-                            <x-icon name="alert" class="size-3.5" />
+                        {{-- Scarcity Banner --}}
+                        <div class="stay-room-modal__scarcity-banner" x-show="room && room.scarcityActive" x-cloak>
+                            <x-icon name="alert" class="size-4 shrink-0" />
                             <span x-text="scarcityText(index)"></span>
-                        </p>
+                        </div>
 
-                        <template x-for="g in (room ? (room.amenityGroups || []) : [])" :key="g.key">
-                            <section class="stay-room-modal__block">
-                                <h3 class="stay-panel__title" x-text="g.label"></h3>
-                                <ul class="stay-room-modal__amenity-list">
-                                    <template x-for="item in g.items" :key="item">
-                                        <li>
-                                            <x-icon name="check" class="size-3.5" />
-                                            <span x-text="item"></span>
-                                        </li>
-                                    </template>
-                                </ul>
-                            </section>
-                        </template>
+                        {{-- Comfort Rating --}}
+                        <div class="stay-room-modal__comfort-pill" x-show="room && room.comfortScore">
+                            <x-icon name="bed" class="size-4 text-primary-600" />
+                            <span>Độ thoải mái giường: <strong x-text="Number(room.comfortScore).toFixed(1)"></strong>/10</span>
+                            <span class="text-xs text-slate-500" x-show="room.comfortReviews" x-text="'(' + room.comfortReviews + ' đánh giá)'"></span>
+                        </div>
+
+                        {{-- Description --}}
+                        <div class="stay-room-modal__description" x-show="room && room.description">
+                            <p class="leading-relaxed text-slate-600 text-sm" x-text="room.description"></p>
+                        </div>
+
+                        {{-- Amenity Groups --}}
+                        <div class="stay-room-modal__amenities" x-show="room && room.amenityGroups && room.amenityGroups.length">
+                            <template x-for="g in (room ? (room.amenityGroups || []) : [])" :key="g.key">
+                                <section class="stay-room-modal__amenity-group">
+                                    <h3 class="stay-room-modal__amenity-group-title" x-text="g.label"></h3>
+                                    <ul class="stay-room-modal__amenity-grid">
+                                        <template x-for="item in g.items" :key="item">
+                                            <li>
+                                                <x-icon name="check" class="size-3.5 text-primary-600 shrink-0" />
+                                                <span x-text="item"></span>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </section>
+                            </template>
                         </div>
                     </div>
                 </div>
 
+                {{-- Footer cố định dưới đáy --}}
                 <footer class="stay-room-modal__foot" x-show="room && room.priceFormatted">
                     <div class="stay-room-modal__foot-price">
-                        <span class="stay-room-modal__foot-from">Giá từ</span>
-                        <strong class="stay-room-modal__foot-amount" x-text="room.priceFormatted"></strong>
-                        <span class="stay-room-modal__foot-unit">/ đêm</span>
+                        <span class="stay-room-modal__foot-from">Giá chỉ từ</span>
+                        <div class="stay-room-modal__foot-price-wrap">
+                            <strong class="stay-room-modal__foot-amount" x-text="room.priceFormatted"></strong>
+                            <span class="stay-room-modal__foot-unit">/ đêm</span>
+                        </div>
                     </div>
                     <button type="button" class="btn-primary stay-room-modal__foot-cta" @click.stop="bookRoom(room ? room.name : '')">
+                        <x-icon name="calendar" class="size-4" />
                         <span>Đặt phòng</span>
                     </button>
                 </footer>

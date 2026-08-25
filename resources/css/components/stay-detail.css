@@ -660,60 +660,51 @@ body.stay-room-lock {
     overflow: hidden;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   ROOM DETAIL MODAL (DRAWER) — LUXURY TRAVEL DESIGN SYSTEM
+───────────────────────────────────────────────────────────── */
+
 .stay-room-modal {
     position: fixed;
     inset: 0;
-    z-index: 80;
-    display: grid;
-    grid-template-columns: 1fr;
-    justify-items: center;
-    padding: 0;
-}
-
-@media (min-width: 769px) {
-    .stay-room-modal {
-        padding: clamp(1rem, 2.5vh, 2rem) clamp(1rem, 3vw, 2.5rem);
-        align-items: center;
-    }
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(0.75rem, 2vh, 1.5rem) clamp(0.75rem, 2.5vw, 2rem);
+    overscroll-behavior: contain;
 }
 
 .stay-room-modal__backdrop {
     position: absolute;
     inset: 0;
-    background: rgb(39 43 35 / 0.55);
-    backdrop-filter: blur(2px);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .stay-room-modal__panel {
     position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
+    z-index: 2;
+    width: min(74rem, 100%);
+    height: min(52rem, calc(100dvh - 2.5rem));
     max-height: 100dvh;
     display: flex;
     flex-direction: column;
-    background: #fff;
-    border-radius: 0;
-    box-shadow: 0 0 0 1px rgb(39 43 35 / 0.06), 0 18px 48px rgb(39 43 35 / 0.22);
+    background: #ffffff;
+    border-radius: 1.25rem;
+    box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.3), 0 0 0 1px rgba(15, 23, 42, 0.08);
     overflow: hidden;
 }
 
-@media (min-width: 769px) {
-    .stay-room-modal__panel {
-        width: min(72rem, 100%);
-        height: min(54rem, calc(100dvh - 3rem));
-        border-radius: 0.85rem;
-    }
-}
-
 .stay-room-modal__enter {
-    transition: opacity 0.2s ease, transform 0.22s ease;
+    transition: opacity 0.22s ease, transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stay-room-modal__enter-start,
 .stay-room-modal__leave-end {
     opacity: 0;
-    transform: translateY(0.6rem) scale(0.985);
+    transform: translateY(1rem) scale(0.98);
 }
 
 .stay-room-modal__enter-end,
@@ -726,51 +717,106 @@ body.stay-room-lock {
     transition: opacity 0.16s ease, transform 0.16s ease;
 }
 
-.stay-room-modal__close {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    z-index: 3;
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    padding: 0;
-    border: 1px solid var(--color-line, #ddd9c2);
-    border-radius: 999px;
-    background: #fff;
-    color: var(--color-ink, #272b23);
-    cursor: pointer;
+/* TOP HEADER BAR — Loại bỏ nút close đè lên scrollbar */
+.stay-room-modal__top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.25rem;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    flex-shrink: 0;
+    z-index: 10;
 }
 
+.stay-room-modal__top-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.stay-room-modal__pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-primary-700, #405b26);
+    background: color-mix(in srgb, var(--color-primary-100, #e8f0d4) 70%, #fff);
+    border: 1px solid color-mix(in srgb, var(--color-primary-300, #b5cb86) 60%, transparent);
+    border-radius: 0.375rem;
+    flex-shrink: 0;
+}
+
+.stay-room-modal__top-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stay-room-modal__close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.15rem;
+    height: 2.15rem;
+    border-radius: 999px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.stay-room-modal__close-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+    transform: rotate(90deg) scale(1.05);
+}
+
+/* 2-COLUMN BODY */
 .stay-room-modal__body {
-    flex: 1;
+    flex: 1 1 auto;
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    overflow: hidden;
 }
 
 .stay-room-modal__body--solo {
     grid-template-columns: 1fr;
 }
 
+/* LEFT COLUMN: GALLERY */
 .stay-room-modal__gallery {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.85rem;
     min-height: 0;
-    padding: 1rem;
-    border-right: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+    padding: 1.25rem;
+    border-right: 1px solid rgba(226, 232, 240, 0.8);
+    background: #fafafa;
     overflow: hidden;
 }
 
 .stay-room-modal__hero {
     position: relative;
-    flex: 0 0 auto;
-    aspect-ratio: 4 / 3;
-    border-radius: 0.5rem;
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 0.85rem;
     overflow: hidden;
-    background: var(--color-page-soft, #f8f6ec);
+    background: #0f172a;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .stay-room-modal__hero img {
@@ -778,79 +824,90 @@ body.stay-room-lock {
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
+}
+
+.stay-room-modal__counter {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    z-index: 5;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
 }
 
 .stay-room-modal__nav {
     position: absolute;
     top: 50%;
-    z-index: 1;
-    display: grid;
-    place-items: center;
+    transform: translateY(-50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 2.25rem;
     height: 2.25rem;
-    margin-top: -1.125rem;
-    padding: 0;
-    border: 0;
     border-radius: 999px;
-    background: rgb(255 255 255 / 0.92);
-    color: var(--color-ink, #272b23);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #ffffff;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgb(39 43 35 / 0.18);
+    transition: all 0.2s ease;
+}
+
+.stay-room-modal__nav:hover {
+    background: rgba(15, 23, 42, 0.9);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .stay-room-modal__nav--prev { left: 0.65rem; }
 .stay-room-modal__nav--next { right: 0.65rem; }
 
-.stay-room-modal__dots {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0.65rem;
-    display: flex;
-    justify-content: center;
-    gap: 0.35rem;
-}
-
-.stay-room-modal__dot {
-    width: 0.45rem;
-    height: 0.45rem;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.55);
-    cursor: pointer;
-}
-
-.stay-room-modal__dot.is-active {
-    background: #fff;
-}
-
 .stay-room-modal__thumbs {
-    display: flex;
-    gap: 0.4rem;
     flex: 0 0 auto;
     max-width: 100%;
     overflow-x: auto;
     overflow-y: hidden;
-    padding-bottom: 0.35rem;
-    overscroll-behavior-x: contain;
-    -webkit-overflow-scrolling: touch;
+    padding: 0.15rem 0 0.4rem;
+}
+
+.stay-room-modal__thumbs-track {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .stay-room-modal__thumb {
-    flex: 0 0 4rem;
-    width: 4rem;
-    height: 3rem;
+    position: relative;
+    flex: 0 0 4.5rem;
+    width: 4.5rem;
+    height: 3.25rem;
     padding: 0;
+    border-radius: 0.5rem;
     border: 2px solid transparent;
-    border-radius: 0.4rem;
     overflow: hidden;
-    background: none;
+    background: #1e293b;
     cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.6;
+}
+
+.stay-room-modal__thumb:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 
 .stay-room-modal__thumb.is-active {
+    opacity: 1;
     border-color: var(--color-primary-600, #567834);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary-500, #6b8f3f) 30%, transparent);
 }
 
 .stay-room-modal__thumb img {
@@ -860,402 +917,355 @@ body.stay-room-lock {
     display: block;
 }
 
+/* RIGHT COLUMN: DETAILS */
 .stay-room-modal__detail {
+    flex: 1 1 auto;
     min-height: 0;
-    overflow-x: hidden;
     overflow-y: auto;
-    padding: 1.15rem 1.35rem 1.5rem;
+    padding: 1.5rem 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
     overscroll-behavior: contain;
 }
 
-/* Scrollbar modal — kế thừa .vt-scrollbar, mảnh hơn thêm một chút */
-.stay-room-modal__detail.vt-scrollbar,
-.stay-room-modal__thumbs.vt-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: color-mix(in srgb, var(--color-primary-400, #93b25e) 38%, #c5c0ad) transparent;
-}
-
-.stay-room-modal__detail.vt-scrollbar::-webkit-scrollbar,
-.stay-room-modal__thumbs.vt-scrollbar::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
-}
-
-.stay-room-modal__detail.vt-scrollbar::-webkit-scrollbar-track,
-.stay-room-modal__thumbs.vt-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-    margin: 4px;
-}
-
-.stay-room-modal__detail.vt-scrollbar::-webkit-scrollbar-thumb,
-.stay-room-modal__thumbs.vt-scrollbar::-webkit-scrollbar-thumb {
-    background-color: color-mix(in srgb, var(--color-primary-400, #93b25e) 36%, #bdb8a4);
-    border-radius: 999px;
-}
-
-.stay-room-modal__detail.vt-scrollbar::-webkit-scrollbar-thumb:hover,
-.stay-room-modal__thumbs.vt-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 58%, #9e9988);
-}
-
-.stay-room-modal__detail.vt-scrollbar::-webkit-scrollbar-corner,
-.stay-room-modal__thumbs.vt-scrollbar::-webkit-scrollbar-corner {
-    background: transparent;
+.stay-room-modal__header-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
 }
 
 .stay-room-modal__title {
-    margin: 0.15rem 0 0.75rem;
     font-family: var(--font-display);
-    font-size: var(--fs-detail-title);
-    font-weight: 700;
-    line-height: 1.22;
-    letter-spacing: -0.02em;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    margin: 0;
 }
 
 .stay-room-modal__tags {
-    margin-bottom: 0.85rem;
-}
-
-.stay-room-modal__facts {
-    margin: 0 0 1rem;
-    padding: 0.85rem 0.95rem;
-    border-radius: 0.85rem;
-    background:
-        linear-gradient(145deg, color-mix(in srgb, var(--color-primary-50, #f5f8ec) 78%, #fff), #fff 58%),
-        #fff;
-    border: 1px solid color-mix(in srgb, var(--color-primary-300, #b5cb86) 42%, var(--color-line, #ddd9c2));
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
-}
-
-.stay-room-modal__facts-kicker {
-    margin: 0 0 0.65rem;
-    font-size: var(--fs-kicker);
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--color-accent-500, #d9704f);
-}
-
-.stay-room-modal__facts-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.55rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.stay-room-modal__fact {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.55rem;
-    align-items: start;
-    min-width: 0;
-    padding: 0.55rem 0.6rem;
-    border-radius: 0.65rem;
-    background: rgb(255 255 255 / 0.82);
-    border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 70%, transparent);
+.stay-room-modal__tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #334155;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
 }
 
-.stay-room-modal__fact--wide {
+/* SPECIFICATIONS / FACTS CARD GRID */
+.stay-room-modal__specs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.stay-room-modal__specs-kicker {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 0;
+}
+
+.stay-room-modal__specs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.65rem;
+}
+
+.stay-room-modal__spec-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.stay-room-modal__spec-card:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.stay-room-modal__spec-card--wide {
     grid-column: 1 / -1;
 }
 
-.stay-room-modal__fact-icon {
-    display: grid;
-    place-items: center;
-    width: 2rem;
-    height: 2rem;
+.stay-room-modal__spec-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
     border-radius: 0.55rem;
     background: color-mix(in srgb, var(--color-primary-100, #e8f0d4) 80%, #fff);
-    color: var(--color-accent-500, #d9704f);
+    color: var(--color-primary-700, #405b26);
+    flex-shrink: 0;
 }
 
-.stay-room-modal__fact-icon svg {
-    flex: none;
-}
-
-.stay-room-modal__fact-copy {
-    display: grid;
+.stay-room-modal__spec-content {
+    display: flex;
+    flex-direction: column;
     gap: 0.1rem;
     min-width: 0;
 }
 
-.stay-room-modal__fact-label {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-muted, #817d6e);
-}
-
-.stay-room-modal__fact strong {
-    font-size: var(--fs-body);
+.stay-room-modal__spec-label {
+    font-size: 0.675rem;
     font-weight: 700;
-    line-height: 1.3;
-    color: var(--color-ink, #272b23);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #64748b;
 }
 
-.stay-room-modal__fact--smoke-free {
-    border-color: color-mix(in srgb, #008009 28%, var(--color-line, #ddd9c2));
+.stay-room-modal__spec-val {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.stay-room-modal__fact--smoke-free .stay-room-modal__fact-icon {
-    background: color-mix(in srgb, #008009 12%, #fff);
-    color: #008009;
+.stay-room-modal__spec-card--smoke-free {
+    background: rgba(16, 185, 129, 0.05);
+    border-color: rgba(16, 185, 129, 0.25);
 }
 
-.stay-room-modal__fact--smoke-free strong {
-    color: #008009;
+.stay-room-modal__spec-card--smoke-free .stay-room-modal__spec-icon {
+    background: rgba(16, 185, 129, 0.15);
+    color: #059669;
 }
 
-.stay-room-modal__fact--smoke-on {
-    border-color: color-mix(in srgb, #c13515 28%, var(--color-line, #ddd9c2));
+.stay-room-modal__spec-card--smoke-free .stay-room-modal__spec-val {
+    color: #059669;
 }
 
-.stay-room-modal__fact--smoke-on .stay-room-modal__fact-icon {
-    background: color-mix(in srgb, #c13515 12%, #fff);
-    color: #c13515;
+.stay-room-modal__spec-card--smoke-on {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.25);
 }
 
-.stay-room-modal__fact--smoke-on strong {
-    color: #c13515;
+.stay-room-modal__spec-card--smoke-on .stay-room-modal__spec-icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: #dc2626;
 }
 
-.stay-room-modal__comfort,
-.stay-room-modal__desc,
-.stay-room-modal__scarcity {
-    margin: 0 0 0.75rem;
-    color: var(--color-ink-soft, #514f45);
+.stay-room-modal__spec-card--smoke-on .stay-room-modal__spec-val {
+    color: #dc2626;
 }
 
-.stay-room-modal__scarcity {
+/* SCARCITY BANNER */
+.stay-room-modal__scarcity-banner {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    color: #c13515;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 0.65rem;
+    color: #b45309;
+    font-size: 0.8rem;
     font-weight: 600;
-    font-size: var(--fs-meta);
 }
 
-@media (max-width: 640px) {
-    .stay-room-modal__facts-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .stay-room-modal__fact--wide {
-        grid-column: auto;
-    }
+/* COMFORT RATING PILL */
+.stay-room-modal__comfort-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    color: #334155;
+    width: fit-content;
 }
 
-.stay-room-modal__block {
-    margin-top: 1rem;
-    padding-top: 0.85rem;
-    border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+/* AMENITIES */
+.stay-room-modal__amenities {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 1rem;
 }
 
-.stay-room-modal__amenity-list {
+.stay-room-modal__amenity-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stay-room-modal__amenity-group-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.stay-room-modal__amenity-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.4rem 0.85rem;
+    gap: 0.4rem 1rem;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
-.stay-room-modal__amenity-list li {
+.stay-room-modal__amenity-grid li {
     display: flex;
     align-items: flex-start;
     gap: 0.4rem;
-    font-size: var(--fs-meta);
-    color: var(--color-ink-soft, #514f45);
+    font-size: 0.8rem;
+    color: #475569;
 }
 
-.stay-room-modal__amenity-list svg {
-    flex: none;
-    margin-top: 0.1rem;
-    color: var(--color-primary-600, #567834);
-}
-
-.stay-room-modal__body {
-    flex: 1;
-    min-height: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.stay-room-modal__body--solo {
-    grid-template-columns: 1fr;
-}
-
-.stay-room-modal__gallery {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    min-height: 0;
-    padding: var(--space-card);
-    border-right: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
-    overflow: hidden;
-}
-
+/* BOTTOM FIXED FOOTER */
 .stay-room-modal__foot {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.75rem var(--space-card);
-    border-top: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
-    background: #fff;
+    gap: 1rem;
+    padding: 0.85rem 1.5rem;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.03);
     flex-shrink: 0;
+    z-index: 10;
 }
 
 .stay-room-modal__foot-price {
     display: flex;
-    align-items: baseline;
-    gap: 0.3rem;
-    min-width: 0;
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
+    flex-direction: column;
+    gap: 0.1rem;
 }
 
 .stay-room-modal__foot-from {
-    font-size: var(--fs-kicker);
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    font-size: 0.675rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-muted, #817d6e);
-    flex-shrink: 0;
+    color: #64748b;
+}
+
+.stay-room-modal__foot-price-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
 }
 
 .stay-room-modal__foot-amount {
     font-family: var(--font-display);
-    font-size: var(--fs-detail-price);
-    font-weight: 700;
-    color: var(--color-accent-500, #d9704f);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--color-accent-600, #c13515);
+    line-height: 1;
 }
 
 .stay-room-modal__foot-unit {
-    font-size: var(--fs-meta);
-    color: var(--color-ink-soft, #514f45);
-    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
 }
 
 .stay-room-modal__foot-cta {
-    flex-shrink: 0;
-    min-width: 7.5rem;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    white-space: nowrap;
+    gap: 0.5rem;
+    padding: 0.65rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 14px rgba(86, 120, 52, 0.25);
+    transition: all 0.2s ease;
 }
 
-/* Responsive Modal Behavior (Docs 04-design-system.md: BP-MD <= 768px / BP-SM <= 567px) */
+.stay-room-modal__foot-cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(86, 120, 52, 0.35);
+}
+
+/* RESPONSIVE DESIGN (<= 768px) */
 @media (max-width: 768px) {
     .stay-room-modal {
-        padding: 0; /* Fullscreen on mobile */
-        height: 100%;
+        padding: 0;
+        align-items: flex-end;
     }
 
     .stay-room-modal__panel {
+        width: 100%;
         height: 100dvh;
         max-height: 100dvh;
         border-radius: 0;
-        border: 0;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
+        border: none;
+    }
+
+    .stay-room-modal__top-bar {
+        padding: 0.75rem 1rem;
     }
 
     .stay-room-modal__body {
         display: block;
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow-x: hidden;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
     }
 
     .stay-room-modal__gallery {
-        padding: 1rem 1rem 0.75rem 1rem;
-        border-right: 0;
-        border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
-        overflow: visible;
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        padding: 1rem;
     }
 
     .stay-room-modal__hero {
         aspect-ratio: 16 / 10;
+        height: auto;
     }
 
     .stay-room-modal__detail {
-        min-height: auto;
-        overflow: visible !important;
-        padding: 0 !important;
+        padding: 1rem 1rem 2rem;
+        overflow: visible;
     }
 
-    .stay-room-modal__detail-head {
-        padding: 1rem 1rem 0.75rem 1rem !important;
-        border-bottom: 1px solid #f1f5f9;
-    }
-
-    .stay-room-modal__scrollable {
-        overflow: visible !important;
-        padding: 1rem 1rem 2.5rem 1rem !important;
-        height: auto !important;
-        min-height: auto !important;
-    }
-
-    .stay-room-modal__amenity-list {
+    .stay-room-modal__specs-grid {
         grid-template-columns: 1fr;
     }
 
-    /* Mobile Single Line Price + Button Footer */
+    .stay-room-modal__amenity-grid {
+        grid-template-columns: 1fr;
+    }
+
     .stay-room-modal__foot {
-        flex-shrink: 0;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: center;
-        padding: 0.65rem 0.85rem;
-        box-shadow: 0 -4px 16px rgba(39, 43, 35, 0.08);
-    }
-
-    .stay-room-modal__foot-from {
-        display: none; /* Bỏ text 'Giá từ' ở giao diện nhỏ */
-    }
-
-    .stay-room-modal__foot-price {
-        gap: 0.2rem;
+        padding: 0.65rem 1rem;
     }
 
     .stay-room-modal__foot-amount {
-        font-size: 1.15rem;
-        max-width: 10rem;
-    }
-
-    .stay-room-modal__foot-unit {
-        font-size: 0.75rem;
+        font-size: 1.25rem;
     }
 
     .stay-room-modal__foot-cta {
-        min-width: 6.25rem;
-        padding: 0.5rem 0.85rem;
-        font-size: var(--fs-body);
-    }
-
-    .stay-hprt__tip::after {
-        right: auto;
-        left: 50%;
-        transform: translate(-50%, 0.2rem);
-        width: min(16rem, 78vw);
-    }
-
-    .stay-hprt__tip:hover::after,
-    .stay-hprt__tip:focus-visible::after {
-        transform: translate(-50%, 0);
+        padding: 0.55rem 1.15rem;
+        font-size: 0.85rem;
     }
 }
 
