@@ -1912,7 +1912,7 @@ class ViewDataService
                 'country.translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId)->select(['id', 'country_id', 'slug']),
                 'seoEntry' => fn ($q) => $q->withoutGlobalScope('project')->select(['id', 'reference_type', 'reference_id']),
                 'seoEntry.translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId)->select(['id', 'seo_entry_id', 'language_id', 'slug', 'slug_full']),
-                'mediaAttachments' => fn ($q) => $q->where('role', 'cover')->with('media'),
+                'mediaAttachments' => fn ($q) => $q->orderBy('sort')->with(['media' => fn ($mq) => $mq->withoutGlobalScope('project')]),
             ])
             ->select([
                 'id', 'project_id', 'cluster', 'service_category_id', 'country_id',
@@ -1996,12 +1996,43 @@ class ViewDataService
         $fullAddress = (string) ($attrs['address'] ?? '');
         $location = $fullAddress ?: ($translation?->location_label ?? '');
 
-        $coverMedia = $service->relationLoaded('mediaAttachments')
-            ? $service->mediaAttachments->firstWhere('role', 'cover')?->media
-            : null;
         $mediaService = app(\App\Services\MediaService::class);
-        $image = $mediaService->publicUrl($coverMedia, 'card');
-        $imageSrcset = $mediaService->srcset($coverMedia);
+        $image = null;
+        $imageSrcset = null;
+
+        // 1. Ưu tiên media attachment có role = 'cover', nếu không có fallback lấy attachment đầu tiên (gallery/photo)
+        if ($service->relationLoaded('mediaAttachments') && $service->mediaAttachments->isNotEmpty()) {
+            $coverAttachment = $service->mediaAttachments->firstWhere('role', 'cover')
+                ?? $service->mediaAttachments->first();
+            $coverMedia = $coverAttachment?->media;
+            if ($coverMedia) {
+                $image = $mediaService->publicUrl($coverMedia, 'card');
+                $imageSrcset = $mediaService->srcset($coverMedia);
+            }
+        }
+
+        // 2. Fallback: coverUrl từ model (hỗ trợ direct attachment hoặc model methods)
+        if (! filled($image)) {
+            $image = $service->coverUrl('card');
+            $imageSrcset = $service->coverSrcset();
+        }
+
+        // 3. Fallback: lấy ảnh từ JSON attrs (attrs.photos, attrs.image, attrs.cover từ crawl/seed)
+        if (! filled($image) && is_array($service->attrs)) {
+            $photos = is_array($service->attrs['photos'] ?? null) ? $service->attrs['photos'] : [];
+            if (! empty($photos)) {
+                $firstPhoto = $photos[0];
+                $rawUrl = is_string($firstPhoto) ? $firstPhoto : ($firstPhoto['url'] ?? $firstPhoto['src'] ?? null);
+                if (filled($rawUrl)) {
+                    $image = $rawUrl;
+                }
+            }
+            if (! filled($image) && filled($service->attrs['image'] ?? null)) {
+                $image = (string) $service->attrs['image'];
+            } elseif (! filled($image) && filled($service->attrs['cover'] ?? null)) {
+                $image = (string) $service->attrs['cover'];
+            }
+        }
 
         $isStay = $service->cluster === Service::CLUSTER_STAY;
 
