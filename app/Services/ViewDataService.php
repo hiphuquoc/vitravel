@@ -1815,7 +1815,11 @@ class ViewDataService
         int $offset = 0,
         int $limit = 10,
         ?string $after = null,
-        string $variant = 'wide'
+        string $variant = 'wide',
+        array $propertyTypes = [],
+        array $priceRanges = [],
+        array $amenities = [],
+        array $stars = []
     ): array {
         $locale = $this->locale();
         $langId = \App\Models\Language::idByCode($locale) ?? 1;
@@ -1829,7 +1833,7 @@ class ViewDataService
             $query->forCluster($cluster);
         }
 
-        // Lọc danh mục nếu có truyền
+        // 1. Lọc danh mục / khu vực
         if ($categories !== []) {
             $hasClusterGroups = false;
             $clusterFilters = [];
@@ -1858,7 +1862,90 @@ class ViewDataService
             });
         }
 
-        // Lọc tìm kiếm từ khóa
+        // 2. Lọc loại hình lưu trú (property_types: resort, hotel, villa, boutique, homestay...)
+        if ($propertyTypes !== []) {
+            $query->where(function ($q) use ($propertyTypes) {
+                foreach ($propertyTypes as $pt) {
+                    $q->orWhere('attrs->property_type', $pt);
+                }
+            });
+        }
+
+        // 3. Lọc khoảng giá (price_ranges: under_1m, 1m_2m, 2m_4m, above_4m)
+        if ($priceRanges !== []) {
+            $query->where(function ($q) use ($priceRanges) {
+                foreach ($priceRanges as $pr) {
+                    if ($pr === 'under_1m') {
+                        $q->orWhere(function ($sub) {
+                            $sub->where(function ($s1) {
+                                $s1->whereNotNull('price_from')->where('price_from', '<', 1000000);
+                            })->orWhereHas('options', fn ($qo) => $qo->where('price_from', '<', 1000000));
+                        });
+                    } elseif ($pr === '1m_2m') {
+                        $q->orWhere(function ($sub) {
+                            $sub->whereBetween('price_from', [1000000, 2000000])
+                                ->orWhereHas('options', fn ($qo) => $qo->whereBetween('price_from', [1000000, 2000000]));
+                        });
+                    } elseif ($pr === '2m_4m') {
+                        $q->orWhere(function ($sub) {
+                            $sub->whereBetween('price_from', [2000000, 4000000])
+                                ->orWhereHas('options', fn ($qo) => $qo->whereBetween('price_from', [2000000, 4000000]));
+                        });
+                    } elseif ($pr === 'above_4m') {
+                        $q->orWhere(function ($sub) {
+                            $sub->where('price_from', '>=', 4000000)
+                                ->orWhereHas('options', fn ($qo) => $qo->where('price_from', '>=', 4000000));
+                        });
+                    }
+                }
+            });
+        }
+
+        // 4. Lọc tiện ích nổi bật (amenities: pool, beach, breakfast, spa, gym, shuttle...)
+        if ($amenities !== []) {
+            $query->where(function ($q) use ($amenities) {
+                foreach ($amenities as $am) {
+                    $keywords = match ($am) {
+                        'pool' => ['hồ bơi', 'pool', 'hồ bơi vô cực', 'bơi'],
+                        'beach' => ['biển', 'beach', 'bãi biển', 'gần biển'],
+                        'breakfast' => ['bữa', 'breakfast', 'sáng', 'ăn'],
+                        'spa' => ['spa', 'massage', 'wellness'],
+                        'gym' => ['gym', 'fitness'],
+                        'shuttle' => ['đưa đón', 'shuttle', 'sân bay', 'xe'],
+                        default => [$am],
+                    };
+                    $q->where(function ($sub) use ($keywords) {
+                        foreach ($keywords as $kw) {
+                            $sub->orWhere('attrs', 'like', "%{$kw}%");
+                        }
+                    });
+                }
+            });
+        }
+
+        // 5. Lọc tiêu chuẩn & đánh giá (stars: 5_star, 4_star, 3_star, homestay)
+        if ($stars !== []) {
+            $query->where(function ($q) use ($stars) {
+                foreach ($stars as $st) {
+                    if ($st === '5_star' || $st === '5') {
+                        $q->orWhere('attrs', 'like', '%5 sao%')
+                            ->orWhere('attrs->property_type', 'resort');
+                    } elseif ($st === '4_star' || $st === '4') {
+                        $q->orWhere('attrs', 'like', '%4 sao%')
+                            ->orWhere('attrs->property_type', 'boutique');
+                    } elseif ($st === '3_star' || $st === '3') {
+                        $q->orWhere('attrs', 'like', '%3 sao%')
+                            ->orWhere('attrs->property_type', 'hotel');
+                    } elseif ($st === 'homestay') {
+                        $q->orWhere('attrs->property_type', 'homestay')
+                            ->orWhere('attrs->property_type', 'bungalow')
+                            ->orWhere('attrs->property_type', 'camping');
+                    }
+                }
+            });
+        }
+
+        // 6. Lọc tìm kiếm từ khóa
         if ($search !== null && $search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('translations', function ($qt) use ($search) {

@@ -8,12 +8,6 @@ namespace App\Support;
  * Chrome chuẩn cho mọi trang listing (hub / country / chủ đề tour / cruise type / service category).
  * Dùng chung public Blade + chuẩn bị payload AI.
  *
- * Canonical text/media keys (admin API aliases via ListingFields):
- * - title ← H1
- * - subtitle ← short copy under H1 (DB: tagline / description / body / intro)
- * - seoBody ← long prose below grid (DB: seo_body / seo_intro / long_form / intro)
- * - banner (+ bannerSrcset) ← hero
- *
  * @phpstan-type ListingChrome array{
  *   kind: string,
  *   title: string,
@@ -33,10 +27,18 @@ namespace App\Support;
  *   showCategoryFilter: bool,
  *   showDurationFilter: bool,
  *   showStyleFilter: bool,
+ *   showPropertyTypeFilter: bool,
+ *   showPriceRangeFilter: bool,
+ *   showAmenityFilter: bool,
+ *   showStarFilter: bool,
  *   countries: list<array<string, mixed>>,
  *   types: list<array<string, mixed>>,
  *   categories: list<array<string, mixed>>,
  *   categoryLegend: string,
+ *   propertyTypes: list<array<string, mixed>>,
+ *   priceRanges: array<string, mixed>,
+ *   amenities: array<string, mixed>,
+ *   stars: array<string, mixed>,
  *   durations: array<string, mixed>,
  *   styles: array<string, mixed>,
  *   faqs: list<array{q: string, a: string}>,
@@ -45,6 +47,7 @@ namespace App\Support;
  *   schemaName: string,
  *   ratingMeta: ?string,
  *   skeletonCount: int,
+ *   perPage: int,
  *   syncUrl: bool
  * }
  */
@@ -75,10 +78,18 @@ final class ListingChrome
             'showCategoryFilter' => false,
             'showDurationFilter' => true,
             'showStyleFilter' => true,
+            'showPropertyTypeFilter' => false,
+            'showPriceRangeFilter' => false,
+            'showAmenityFilter' => false,
+            'showStarFilter' => false,
             'countries' => [],
             'types' => [],
             'categories' => [],
             'categoryLegend' => 'Danh mục',
+            'propertyTypes' => [],
+            'priceRanges' => [],
+            'amenities' => [],
+            'stars' => [],
             'durations' => [],
             'styles' => [],
             'faqs' => [],

@@ -24,6 +24,7 @@ class ServiceController extends Controller
             ));
             $categorySlugs = array_values(array_map(fn ($cat) => (string) $cat['slug'], $filterCategories));
             $unitLabel = $hub['unitLabel'] ?? 'dịch vụ';
+            $isStay = ($cluster === 'stay');
 
             $listing = ListingChrome::make([
                 'kind' => 'service_hub',
@@ -44,8 +45,16 @@ class ServiceController extends Controller
                 'showCategoryFilter' => true,
                 'showDurationFilter' => false,
                 'showStyleFilter' => false,
+                'showPropertyTypeFilter' => $isStay,
+                'showPriceRangeFilter' => $isStay,
+                'showAmenityFilter' => $isStay,
+                'showStarFilter' => $isStay,
                 'categories' => $filterCategories,
                 'categoryLegend' => $this->categoryLegend($cluster),
+                'propertyTypes' => $isStay ? $this->stayPropertyTypes() : [],
+                'priceRanges' => $isStay ? $this->stayPriceRanges() : [],
+                'amenities' => $isStay ? $this->stayAmenities() : [],
+                'stars' => $isStay ? $this->stayStars() : [],
                 'faqs' => $this->data->serviceListingFaqs(),
                 'faqTitle' => 'Câu hỏi thường gặp về '.strtolower((string) ($hub['title'] ?? 'dịch vụ')),
                 'schemaItems' => $this->data->serviceSchemaItems($cluster),
@@ -71,6 +80,7 @@ class ServiceController extends Controller
                 array_unshift($filterCategories, $cat);
             }
             $name = (string) ($cat['title'] ?? $cat['name'] ?? '');
+            $isStay = ($cluster === 'stay');
 
             $listing = ListingChrome::make([
                 'kind' => 'service_category',
@@ -97,8 +107,16 @@ class ServiceController extends Controller
                 'showCategoryFilter' => true,
                 'showDurationFilter' => false,
                 'showStyleFilter' => false,
+                'showPropertyTypeFilter' => $isStay,
+                'showPriceRangeFilter' => $isStay,
+                'showAmenityFilter' => $isStay,
+                'showStarFilter' => $isStay,
                 'categories' => $filterCategories,
                 'categoryLegend' => $this->categoryLegend($cluster),
+                'propertyTypes' => $isStay ? $this->stayPropertyTypes() : [],
+                'priceRanges' => $isStay ? $this->stayPriceRanges() : [],
+                'amenities' => $isStay ? $this->stayAmenities() : [],
+                'stars' => $isStay ? $this->stayStars() : [],
                 'faqs' => $this->data->serviceListingFaqs(),
                 'faqTitle' => 'Câu hỏi thường gặp về '.strtolower($name),
                 'schemaItems' => $this->data->serviceSchemaItems($cluster, $category),
@@ -119,7 +137,6 @@ class ServiceController extends Controller
                 abort(404);
             }
 
-            // Tối ưu hóa truy vấn: Chỉ lấy đúng 3 dịch vụ liên quan cùng danh mục thay vì map toàn bộ hàng trăm dịch vụ
             $catId = $service['categoryId'] ?? null;
             $serviceId = $service['id'] ?? null;
             $related = $this->data->relatedServicesForCategory($cluster, $catId, $serviceId, 3);
@@ -131,6 +148,50 @@ class ServiceController extends Controller
                 'hub' => $this->data->serviceHub($cluster),
             ])->render();
         });
+    }
+
+    protected function stayPropertyTypes(): array
+    {
+        return [
+            ['slug' => 'resort', 'name' => 'Resort & Nghỉ dưỡng'],
+            ['slug' => 'hotel', 'name' => 'Khách sạn'],
+            ['slug' => 'villa', 'name' => 'Biệt thự / Villa'],
+            ['slug' => 'boutique', 'name' => 'Boutique Hotel'],
+            ['slug' => 'homestay', 'name' => 'Homestay & Bungalow'],
+            ['slug' => 'cabin', 'name' => 'Cabin & Nghỉ dưỡng'],
+        ];
+    }
+
+    protected function stayPriceRanges(): array
+    {
+        return [
+            'under_1m' => ['label' => 'Dưới 1.000.000 đ', 'sub' => 'Tiết kiệm / Homestay'],
+            '1m_2m' => ['label' => '1.000.000 đ – 2.000.000 đ', 'sub' => 'Khách sạn 3–4 sao'],
+            '2m_4m' => ['label' => '2.000.000 đ – 4.000.000 đ', 'sub' => 'Resort 4–5 sao'],
+            'above_4m' => ['label' => 'Trên 4.000.000 đ', 'sub' => 'Luxury & Private Villa'],
+        ];
+    }
+
+    protected function stayAmenities(): array
+    {
+        return [
+            'pool' => ['label' => 'Hồ bơi / Bể bơi vô cực'],
+            'beach' => ['label' => 'Bãi biển riêng / Sát biển'],
+            'breakfast' => ['label' => 'Bao gồm bữa ăn / Bữa sáng'],
+            'spa' => ['label' => 'Spa & Massage thư giãn'],
+            'gym' => ['label' => 'Phòng Gym & Fitness'],
+            'shuttle' => ['label' => 'Đưa đón bến tàu / Sân bay'],
+        ];
+    }
+
+    protected function stayStars(): array
+    {
+        return [
+            '5_star' => ['label' => '5 sao & Luxury Resort', 'badge' => '5★'],
+            '4_star' => ['label' => '4 sao cao cấp', 'badge' => '4★'],
+            '3_star' => ['label' => '3 sao tiêu chuẩn', 'badge' => '3★'],
+            'homestay' => ['label' => 'Homestay & Bungalow', 'badge' => 'Eco'],
+        ];
     }
 
     protected function assertCluster(string $cluster): void

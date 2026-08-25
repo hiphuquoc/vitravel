@@ -487,6 +487,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
     initialLimit: Number(opts.initialLimit || 5),
     eagerLimit: Number(opts.eagerLimit || 10),
     scrollLimit: Number(opts.scrollLimit || opts.batchLimit || 20),
+    maxScrollAutoLoads: Number(opts.maxScrollAutoLoads || 2), // Tối đa 2 lần tự cuộn ở giai đoạn 3
+    scrollAutoCount: 0, // Đếm số lần đã cuộn tự động trong phiên hiện tại
     cursor: null,
     hasMore: false,
     loading: true,
@@ -505,6 +507,24 @@ Alpine.data('listingGrid', (opts = {}) => ({
     _abort: null,
     _loadedKeys: new Set(),
 
+    get requireManualClick() {
+        return this.scrollAutoCount >= this.maxScrollAutoLoads;
+    },
+
+    get loadedCount() {
+        return this._loadedKeys.size;
+    },
+
+    get progressPercent() {
+        if (! this.count || this.count <= 0) return 0;
+        return Math.min(100, Math.round((this.loadedCount / this.count) * 100));
+    },
+
+    get remainingCount() {
+        if (! this.count) return 0;
+        return Math.max(0, this.count - this.loadedCount);
+    },
+
     init() {
         const isRelated = this.fixedParams && (this.fixedParams.exclude || this.endpoint.includes('related'));
         if (isRelated && 'IntersectionObserver' in window) {
@@ -522,14 +542,28 @@ Alpine.data('listingGrid', (opts = {}) => ({
         }
     },
 
+    disableScrollTriggers() {
+        if (this._sentinelObserver) {
+            this._sentinelObserver.disconnect();
+            this._sentinelObserver = null;
+        }
+        if (this._scrollHandler) {
+            window.removeEventListener('scroll', this._scrollHandler);
+            this._scrollHandler = null;
+        }
+    },
+
     /**
-     * Bật bộ dò cuộn đón đầu 2000px CHỈ KHI đã hoàn tất đợt 1 (5 items) và đợt 2 (10 items).
-     * Tuyệt đối không để scroll trigger chạy sớm làm chồng lấn dữ liệu.
+     * Bật bộ dò cuộn đón đầu 1200px CHỈ KHI đã hoàn tất đợt 1 (5 items), đợt 2 (10 items),
+     * và chưa vượt quá số lần tự động cuộn (maxScrollAutoLoads = 2).
      */
     enableScrollTriggers() {
-        if (this.stage !== 'SCROLL_READY' || ! this.hasMore) return;
+        if (this.stage !== 'SCROLL_READY' || ! this.hasMore || this.requireManualClick) {
+            this.disableScrollTriggers();
+            return;
+        }
 
-        // 1. IntersectionObserver đón đầu từ 2000px
+        // 1. IntersectionObserver đón đầu từ 1200px
         if ('IntersectionObserver' in window) {
             if (this._sentinelObserver) {
                 this._sentinelObserver.disconnect();
@@ -541,7 +575,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
                     }
                 }
             }, {
-                rootMargin: '2000px 0px 1200px 0px',
+                rootMargin: '1200px 0px 800px 0px',
                 threshold: 0,
             });
 
@@ -552,14 +586,14 @@ Alpine.data('listingGrid', (opts = {}) => ({
             });
         }
 
-        // 2. Passive scroll listener đón đầu cực sớm khi cách đáy dưới 2000px
+        // 2. Passive scroll listener đón đầu cực sớm khi cách đáy dưới 1200px
         if (! this._scrollHandler) {
             this._scrollHandler = () => {
                 if (! this.canTriggerScrollLoad()) return;
                 const scrollY = window.scrollY || window.pageYOffset;
                 const viewportHeight = window.innerHeight;
                 const fullHeight = document.documentElement.scrollHeight;
-                if (fullHeight - (scrollY + viewportHeight) < 2000) {
+                if (fullHeight - (scrollY + viewportHeight) < 1200) {
                     this.loadNextBatch(this.scrollLimit, 'SCROLL');
                 }
             };
@@ -569,11 +603,29 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
     canTriggerScrollLoad() {
         return this.stage === 'SCROLL_READY'
+            && ! this.requireManualClick
             && ! this._isFetching
             && ! this.loading
             && ! this.loadingMore
             && this.hasMore
             && Boolean(this.cursor);
+    },
+
+    loadMore() {
+        if (this.loadingMore || this._isFetching || ! this.hasMore) return;
+        this.loadNextBatch(this.scrollLimit, 'MANUAL');
+    },
+
+    get hasActiveFilters() {
+        return Object.values(this.filters).some((vals) => Array.isArray(vals) && vals.length > 0);
+    },
+
+    get totalActiveFilterCount() {
+        return Object.values(this.filters).reduce((acc, vals) => acc + (Array.isArray(vals) ? vals.length : 0), 0);
+    },
+
+    activeFilterCount(group) {
+        return (this.filters[group] || []).length;
     },
 
     toggleFilter(group, value) {
@@ -586,6 +638,26 @@ Alpine.data('listingGrid', (opts = {}) => ({
         } else {
             list.push(needle);
         }
+        this.scheduleFetch();
+    },
+
+    clearFilter(group, value) {
+        if (! this.filters[group]) return;
+        const needle = String(value);
+        this.filters[group] = this.filters[group].filter((v) => String(v) !== needle);
+        this.scheduleFetch();
+    },
+
+    clearGroup(group) {
+        if (! this.filters[group]) return;
+        this.filters[group] = [];
+        this.scheduleFetch();
+    },
+
+    clearAllFilters() {
+        this.filterGroups.forEach((group) => {
+            this.filters[group] = [];
+        });
         this.scheduleFetch();
     },
 
@@ -630,6 +702,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
         // Reset toàn bộ state phân luồng
         this.stage = 'INITIAL';
+        this.scrollAutoCount = 0;
         this._isFetching = true;
         this.loading = true;
         this.loadingMore = false;
@@ -637,10 +710,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
         this.cursor = null;
         this.hasMore = false;
         this._loadedKeys.clear();
-
-        if (this._sentinelObserver) {
-            this._sentinelObserver.disconnect();
-        }
+        this.disableScrollTriggers();
 
         if (this._abort) this._abort.abort();
         this._abort = new AbortController();
@@ -726,7 +796,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
     /**
      * Tải đợt tiếp theo với cơ chế Khóa Tuần Tự (Mutex Guard) & Chống Trùng Lặp.
-     * @param {number} limit - Số lượng cần tải (10 cho Eager, 20 cho Scroll)
+     * @param {number} limit - Số lượng cần tải (10 cho Eager, 20 cho Scroll / Manual)
      * @param {'EAGER' | 'SCROLL' | 'MANUAL'} origin - Nguồn kích hoạt
      */
     async loadNextBatch(limit = 20, origin = 'SCROLL') {
@@ -738,6 +808,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
         this._isFetching = true;
         this.loadingMore = true;
         this.error = null;
+
+        if (origin === 'SCROLL') {
+            this.scrollAutoCount++;
+        }
 
         const currentCursor = this.cursor;
         const q = this.buildQuery();
@@ -792,16 +866,12 @@ Alpine.data('listingGrid', (opts = {}) => ({
             this.loadingMore = false;
             this._isFetching = false;
 
-            // Kích hoạt scroll trigger chỉ khi đã qua giai đoạn EAGER
-            if (this.stage === 'SCROLL_READY' && this.hasMore) {
+            // Kích hoạt scroll trigger nếu chưa chạm ngưỡng 2 lần tự động cuộn
+            if (this.requireManualClick) {
+                this.disableScrollTriggers();
+            } else if (this.stage === 'SCROLL_READY' && this.hasMore) {
                 this.$nextTick(() => this.enableScrollTriggers());
             }
-        }
-    },
-
-    loadMore() {
-        if (this.stage === 'SCROLL_READY' || this.stage === 'EAGER') {
-            this.loadNextBatch(this.scrollLimit, 'MANUAL');
         }
     },
 }));

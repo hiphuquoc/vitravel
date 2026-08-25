@@ -82,13 +82,19 @@ class ListingController extends Controller
         $offset = max(0, (int) $request->input('offset', 0));
         $isAppend = $request->boolean('is_append', $after !== null || $offset > 0);
 
-        $categories = [];
-        if ($request->exists('category')) {
-            $raw = $request->input('category');
-            $categories = is_array($raw)
+        $extractArray = function (string $key) use ($request): array {
+            if (! $request->exists($key)) return [];
+            $raw = $request->input($key);
+            return is_array($raw)
                 ? array_values(array_filter(array_map('strval', $raw)))
                 : array_values(array_filter([(string) $raw]));
-        }
+        };
+
+        $categories = $extractArray('category');
+        $propertyTypes = $extractArray('property_type');
+        $priceRanges = $extractArray('price_range');
+        $amenities = $extractArray('amenity');
+        $stars = $extractArray('star');
 
         $search = $request->filled('q') ? trim((string) $request->input('q')) : null;
 
@@ -99,7 +105,11 @@ class ListingController extends Controller
             offset: $offset,
             limit: $limit,
             after: $after,
-            variant: $variant
+            variant: $variant,
+            propertyTypes: $propertyTypes,
+            priceRanges: $priceRanges,
+            amenities: $amenities,
+            stars: $stars
         );
 
         $pagedItems = $res['items'];
