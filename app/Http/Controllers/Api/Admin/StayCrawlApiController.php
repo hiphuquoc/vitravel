@@ -427,18 +427,35 @@ final class StayCrawlApiController extends Controller
         $useProxy = $this->useProxyFlag($validated);
         $job = $this->crawl->enqueueList($validated['url'], $validated['service_category_id'] ?? null, $useProxy);
         $html = $validated['html'] ?? null;
-        $result = $this->crawl->crawlList(
-            $job,
-            is_string($html) && $html !== '' ? $html : null,
-            $this->respectRobotsFlag($validated),
-            (int) ($validated['max_pages'] ?? 1),
-            $useProxy,
-        );
+        $isHotel = \App\Support\StayBookingUrl::isHotelPage($validated['url']);
+
+        if ($isHotel) {
+            $item = $this->crawl->queueHotelUrl($validated['url'], $job);
+            $this->crawl->dispatchItemQueue($job, 'vi', $useProxy, $this->respectRobotsFlag($validated), $item);
+            $job->items_found = 1;
+            $job->status = StayCrawlJob::STATUS_READY;
+            $job->save();
+
+            return ApiResponse::success([
+                'job' => $this->mapJob($job->fresh() ?? $job),
+                'urls' => [\App\Support\StayBookingUrl::canonicalize($validated['url'])],
+            ], 'Đã lưu URL chỗ nghỉ');
+        }
+
+        // Listing crawl: Spawn background process để không bị Nginx 60s timeout
+        $this->crawl->spawnListProcess($job, [
+            'locale' => 'vi',
+            'html' => is_string($html) && $html !== '' ? $html : null,
+            'useProxy' => $useProxy,
+            'respectRobots' => $this->respectRobotsFlag($validated),
+            'maxPages' => (int) ($validated['max_pages'] ?? 1),
+        ]);
 
         return ApiResponse::success([
-            'job' => $this->mapJob($result['job']),
-            'urls' => $result['urls'],
-        ], 'Đã lưu URL chỗ nghỉ từ danh mục');
+            'job' => $this->mapJob($job->fresh() ?? $job),
+            'urls' => [],
+            'async' => true,
+        ], 'Đã khởi tạo Job và chạy tiến trình cào danh sách ở background');
     }
 
     public function fromCategory(Request $request): JsonResponse
@@ -470,34 +487,56 @@ final class StayCrawlApiController extends Controller
                 ?? $request->input('from')
                 ?? $request->query('from')
                 ?? $request->header('X-Stay-Crawl-From');
-            $result = $this->crawl->startForCategory(
-                (int) $validated['service_category_id'],
-                $validated['url'],
-                is_string($html) && $html !== '' ? $html : null,
-                $this->respectRobotsFlag($validated),
-                (int) ($validated['max_pages'] ?? 1),
-                $this->useProxyFlag($validated),
-                is_string($rerun) ? $rerun : null,
-                is_string($from) ? $from : null,
-            );
+
+            $targetUrl = $validated['url'];
+            $isHotel = \App\Support\StayBookingUrl::isHotelPage($targetUrl);
+
+            if ($isHotel) {
+                $result = $this->crawl->startForCategory(
+                    (int) $validated['service_category_id'],
+                    $targetUrl,
+                    is_string($html) && $html !== '' ? $html : null,
+                    $this->respectRobotsFlag($validated),
+                    (int) ($validated['max_pages'] ?? 1),
+                    $this->useProxyFlag($validated),
+                    is_string($rerun) ? $rerun : null,
+                    is_string($from) ? $from : null,
+                );
+                $job = $result['job'];
+                $this->crawl->dispatchItemQueue(
+                    $job->fresh() ?? $job,
+                    'vi',
+                    $this->useProxyFlag($validated),
+                    $this->respectRobotsFlag($validated),
+                );
+                $job = $job->fresh() ?? $job;
+                $urls = $result['urls'];
+            } else {
+                // Listing crawl: Khởi tạo Job & chạy tiến trình background Chrome không bị timeout 60s Nginx
+                $job = $this->crawl->enqueueList(
+                    $targetUrl,
+                    (int) $validated['service_category_id'],
+                    $this->useProxyFlag($validated),
+                );
+                $meta = is_array($job->meta) ? $job->meta : [];
+                $meta['rerun'] = is_string($rerun) ? $rerun : null;
+                $meta['rerun_from'] = $rerun === 'improve' ? $from : null;
+                $job->meta = $meta;
+                $job->save();
+
+                $this->crawl->spawnListProcess($job, [
+                    'locale' => 'vi',
+                    'html' => is_string($html) && $html !== '' ? $html : null,
+                    'useProxy' => $this->useProxyFlag($validated),
+                    'respectRobots' => $this->respectRobotsFlag($validated),
+                    'maxPages' => (int) ($validated['max_pages'] ?? 1),
+                ]);
+                $urls = [];
+            }
         } catch (StayCrawlAlreadyExistsException $e) {
             return ApiResponse::error($e->getMessage(), 'STAY_CRAWL_EXISTS', 409, $e->details());
         } catch (RuntimeException $e) {
             return ApiResponse::error($e->getMessage(), 'CRAWL_LIST_FAILED', 422);
-        }
-
-        $job = $result['job'];
-        $autoWork = ! \App\Support\StayBookingUrl::isHotelPage($validated['url'])
-            || $job->items()->count() > 1;
-        $queued = ['dispatched' => 0, 'item_ids' => []];
-        if ($autoWork && $job->items()->count() > 0) {
-            $queued = $this->crawl->dispatchItemQueue(
-                $job->fresh() ?? $job,
-                'vi',
-                $this->useProxyFlag($validated),
-                $this->respectRobotsFlag($validated),
-            );
-            $job = $job->fresh() ?? $job;
         }
 
         $items = $job->items()
@@ -514,18 +553,13 @@ final class StayCrawlApiController extends Controller
 
         return ApiResponse::success([
             'job' => $this->mapJob($job->loadCount('items')),
-            'urls' => $result['urls'],
+            'urls' => $urls,
             'items' => $items->map(fn (StayCrawlItem $i) => $this->mapItem($i))->values(),
             'worker' => data_get($job->meta, 'worker'),
             'queue' => data_get($job->meta, 'queue'),
-            'queued' => $queued,
-            'worker_hint' => $autoWork
-                ? 'Đã đẩy từng URL vào Laravel queue (ProcessStayCrawlItemJob). Chạy Supervisor/queue:work — sống sót sau reboot. Có thể đóng tab.'
-                : 'Gọi process-next để cào từng bước (hotel đơn).',
-            'queue_hint' => $autoWork
-                ? 'php artisan queue:work --queue='.$queueName.' --sleep=3 --tries=3 --timeout=1200'
-                : null,
-        ], 'Đã lấy danh sách chỗ nghỉ — đang tạo trang con');
+            'async' => ! $isHotel,
+            'worker_hint' => 'php artisan queue:work --queue='.$queueName.' --timeout=1200',
+        ], 'Đã khởi chạy crawler');
     }
 
     public function processNext(Request $request, int $id): JsonResponse

@@ -1691,6 +1691,14 @@ final class StayCrawlService
         try {
             $result = $this->crawlList($job, $html, $respectRobots, $maxPages, $useProxy);
             $fresh = $result['job']->fresh() ?? $result['job'];
+            
+            $rerun = data_get($fresh->meta, 'rerun');
+            $from = data_get($fresh->meta, 'rerun_from');
+            if ($rerun) {
+                $this->applyRerunToJob($fresh, is_string($rerun) ? $rerun : null, is_string($from) ? $from : null);
+                $fresh = $fresh->fresh() ?? $fresh;
+            }
+
             $meta = is_array($fresh->meta) ? $fresh->meta : [];
             $meta['list_process']['running'] = false;
             $meta['list_process']['finished_at'] = now()->toIso8601String();
@@ -1749,6 +1757,7 @@ final class StayCrawlService
             // Nạp URL mới vào database theo thời gian thực
             $urls = is_array($streamData['urls'] ?? null) ? $streamData['urls'] : [];
             $newAdded = 0;
+            $useProxy = (bool) data_get($job->meta, 'use_proxy', false);
             foreach ($urls as $url) {
                 if (! is_string($url) || $url === '') {
                     continue;
@@ -1756,12 +1765,23 @@ final class StayCrawlService
                 $canon = StayBookingUrl::canonicalize($url);
                 $exists = $job->items()->where('canonical_url', $canon)->exists();
                 if (! $exists) {
-                    $this->queueHotelUrl($url, $job);
+                    $item = $this->queueHotelUrl($url, $job);
                     $newAdded++;
+                    // Tự động đẩy ngay vào hàng đợi để Supervisor / worker cào song song không cần đợi listing kết thúc
+                    \App\Jobs\ProcessStayCrawlItemJob::dispatch(
+                        (int) $item->id,
+                        'vi',
+                        $useProxy,
+                        false,
+                    );
                 }
             }
             if ($newAdded > 0) {
                 $job->items_found = $job->items()->count();
+                $this->touchQueueMeta($job, [
+                    'phase' => 'queue',
+                    'message' => "Đã tìm thấy {$job->items_found} chỗ nghỉ & đang xử lý trong queue",
+                ]);
                 $job->save();
             }
 

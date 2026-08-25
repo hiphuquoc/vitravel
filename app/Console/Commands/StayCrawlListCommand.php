@@ -76,11 +76,8 @@ class StayCrawlListCommand extends Command
 
     private function bindProject(StayCrawlJob $job): bool
     {
-        $projectId = (int) ($job->project_id ?: $job->category?->project_id);
-        if ($projectId <= 0) {
-            return false;
-        }
-        $project = Project::query()->find($projectId);
+        $projectId = (int) ($job->project_id ?: ($job->category?->project_id ?: 1));
+        $project = Project::query()->find($projectId) ?? Project::query()->first();
         if (! $project) {
             return false;
         }
