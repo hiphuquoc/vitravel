@@ -16,6 +16,9 @@ use App\Models\TeamMember;
 use App\Models\TourCategory;
 use App\Models\User;
 use App\Services\CurrencyManager;
+use App\Services\MediaService;
+use App\Services\SeoService;
+use App\Services\StayTaxonomyService;
 use App\Services\ViewDataService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\URL;
@@ -27,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ViewDataService::class);
         $this->app->singleton(CurrencyManager::class);
+        $this->app->singleton(SeoService::class);
+        $this->app->singleton(StayTaxonomyService::class);
+        $this->app->singleton(MediaService::class);
 
         // Avoid touch() Utime failures when PHP-FPM is not owner of compiled views (WSL).
         $this->app->singleton('blade.compiler', function ($app) {

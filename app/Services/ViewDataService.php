@@ -2502,16 +2502,30 @@ class ViewDataService
         })->values()->all();
     }
 
+    protected array $memoCrawlItems = [];
+
+    protected function stayCrawlItemForService(Service $service): ?\App\Models\StayCrawlItem
+    {
+        $id = $service->id;
+        if (array_key_exists($id, $this->memoCrawlItems)) {
+            return $this->memoCrawlItems[$id];
+        }
+
+        $itemId = (int) data_get($service->attrs, 'crawl.item_id', 0);
+        $item = $itemId > 0 ? \App\Models\StayCrawlItem::query()->find($itemId) : null;
+        if (! $item) {
+            $item = \App\Models\StayCrawlItem::query()->where('service_id', $service->id)->latest('id')->first();
+        }
+
+        return $this->memoCrawlItems[$id] = $item;
+    }
+
     /**
      * @return array<string, list<mixed>>
      */
     protected function stayCrawlRoomPhotos(Service $service): array
     {
-        $itemId = (int) data_get($service->attrs, 'crawl.item_id', 0);
-        $item = $itemId > 0 ? StayCrawlItem::query()->find($itemId) : null;
-        if (! $item) {
-            $item = StayCrawlItem::query()->where('service_id', $service->id)->latest('id')->first();
-        }
+        $item = $this->stayCrawlItemForService($service);
         if (! $item || ! is_array($item->ai_json)) {
             return [];
         }
@@ -2548,13 +2562,7 @@ class ViewDataService
      */
     protected function stayCrawlMappedAttrs(Service $service, array $attrs): array
     {
-        $itemId = (int) data_get($attrs, 'crawl.item_id', 0);
-        $item = $itemId > 0
-            ? StayCrawlItem::query()->find($itemId)
-            : null;
-        if (! $item) {
-            $item = StayCrawlItem::query()->where('service_id', $service->id)->latest('id')->first();
-        }
+        $item = $this->stayCrawlItemForService($service);
         if (! $item || ! is_array($item->ai_json)) {
             return [];
         }

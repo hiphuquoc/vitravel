@@ -85,18 +85,26 @@
     x-data="mediaLightbox(@js($lightboxItems))"
 >
     {{-- 5 ẢNH ĐẦU TIÊN TẢI THEO CHẾ ĐỘ BACKGROUND IMAGE (NHANH, MƯỢT, KHÔNG LÀM HỎNG GIAO DIỆN) --}}
-    <div @class([
+        <div @class([
         'detail-gallery__grid',
         'detail-gallery__grid--coverOnly' => $coverOnly,
     ])>
         @if ($coverSrc)
             <button
                 type="button"
-                class="detail-gallery__cover-btn"
+                class="detail-gallery__cover-btn relative overflow-hidden"
                 @click="open(0)"
                 aria-label="Xem thư viện ảnh: {{ $title }}"
-                style="background-image: url('{{ $coverSrc }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
             >
+                <img
+                    src="{{ $coverSrc }}"
+                    @if (filled($coverSrcset)) srcset="{{ $coverSrcset }}" @endif
+                    alt="{{ $title }}"
+                    loading="eager"
+                    decoding="async"
+                    fetchpriority="high"
+                    class="detail-gallery__cover-img absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
+                />
                 <span class="detail-gallery__zoom" aria-hidden="true">
                     <x-icon name="search" class="size-5" />
                 </span>
@@ -117,16 +125,27 @@
                         $lbIndex = $thumbBaseIndex + $i;
                         $isLast = $i === $thumbCount - 1;
                         $showMore = $isLast && $moreCount > 0;
-                        $thumbBg = $thumb['src'] ?? '';
+                        $thumbBg = $thumb['src'] ?? ($thumb['full'] ?? '');
+                        $thumbSrcset = $thumb['srcset'] ?? ($thumb['fullSrcset'] ?? null);
                     @endphp
                     <div class="detail-gallery__thumb" role="listitem">
                         <button
                             type="button"
-                            class="detail-gallery__thumb-btn"
+                            class="detail-gallery__thumb-btn relative overflow-hidden"
                             @click="open({{ $lbIndex }})"
                             aria-label="{{ $showMore ? ('Xem thêm '.$moreCount.' ảnh') : ('Xem ảnh '.($i + 2)) }}"
-                            style="background-image: url('{{ $thumbBg }}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
                         >
+                            @if (filled($thumbBg))
+                                <img
+                                    src="{{ $thumbBg }}"
+                                    @if (filled($thumbSrcset)) srcset="{{ $thumbSrcset }}" @endif
+                                    alt="{{ $title }} - Ảnh {{ $i + 2 }}"
+                                    loading="lazy"
+                                    decoding="async"
+                                    fetchpriority="low"
+                                    class="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
+                                />
+                            @endif
                             @if ($showMore)
                                 <span class="detail-gallery__more" aria-hidden="true">
                                     +{{ $moreCount }}

@@ -203,12 +203,18 @@
                 </section>
             @endif
 
-            @if ($amenityGroups !== [])
-                <section id="tien-ich" class="detail-section" aria-label="Tiện ích">
+                        @if ($amenityGroups !== [])
+                <section id="tien-ich" class="detail-section" aria-label="Tiện ích" x-data="{ expanded: false }">
                     <h2 class="detail-section__title">Tiện ích</h2>
                     <div class="stay-feature-flow stay-feature-flow--amenities">
-                        @foreach ($amenityGroups as $group)
-                            <article @class(['stay-feature-block', 'stay-feature-block--popular' => ($group['key'] ?? '') === 'popular'])>
+                        @foreach ($amenityGroups as $gi => $group)
+                            @php
+                                $isExtra = $gi >= 4 && ($group['key'] ?? '') !== 'popular';
+                            @endphp
+                            <article
+                                @class(['stay-feature-block', 'stay-feature-block--popular' => ($group['key'] ?? '') === 'popular'])
+                                @if ($isExtra) x-show="expanded" x-collapse x-cloak @endif
+                            >
                                 <h3 class="stay-feature-block__title">{{ $group['label'] }}</h3>
                                 <ul class="stay-amenity-grid">
                                     @foreach ($group['items'] as $item)
@@ -221,6 +227,14 @@
                             </article>
                         @endforeach
                     </div>
+                    @if (count($amenityGroups) > 4)
+                        <div class="site-mt text-center">
+                            <button type="button" class="btn-outline text-sm" @click="expanded = !expanded">
+                                <span x-text="expanded ? 'Thu gọn tiện ích' : 'Xem tất cả {{ count($amenityGroups) }} nhóm tiện ích'"></span>
+                                <x-icon name="chevron-down" class="size-4 transition-transform duration-200" ::class="expanded ? 'rotate-180' : ''" />
+                            </button>
+                        </div>
+                    @endif
                 </section>
             @endif
 

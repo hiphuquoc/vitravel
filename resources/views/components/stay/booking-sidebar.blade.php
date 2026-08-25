@@ -66,7 +66,7 @@
         @endif
 
         <div class="detail-book__actions stay-book__actions">
-            <a href="{{ $primaryHref }}" class="btn-primary w-full stay-book__cta">
+            <a href="{{ $primaryHref }}" class="btn-primary w-full stay-book__cta" @if ($primaryHref === '#phong') @click.prevent="document.getElementById('phong')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" @endif>
                 <x-icon name="calendar" class="size-4" /> Đặt phòng
             </a>
             @if ($whatsapp)
@@ -103,7 +103,7 @@
                 <x-icon name="whatsapp" class="size-5" />
             </a>
         @endif
-        <a href="{{ $primaryHref }}" class="detail-book-bar__cta">
+        <a href="{{ $primaryHref }}" class="detail-book-bar__cta" @if ($primaryHref === '#phong') @click.prevent="document.getElementById('phong')?.scrollIntoView({ behavior: 'smooth', block: 'start' })" @endif>
             <span class="detail-book-bar__cta-text">Đặt phòng</span>
         </a>
     </div>

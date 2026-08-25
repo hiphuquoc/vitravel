@@ -27,6 +27,8 @@
                                     alt="{{ $room['name'] }}"
                                     class="stay-hprt__thumb"
                                     loading="lazy"
+                                    decoding="async"
+                                    fetchpriority="low"
                                     referrerpolicy="no-referrer"
                                 />
                                 @if ($morePhotosCount > 0)
