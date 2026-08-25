@@ -75,10 +75,58 @@ class ListingController extends Controller
             return response()->json(['count' => 0, 'html' => '', 'has_more' => false], 404);
         }
 
-        $services = $this->filterServices($this->data->servicesForHub($cluster), $request);
-        [$offset, $limit, $isAppend] = $this->extractPagination($request, $services);
+        $variant = $request->input('variant', 'wide') === 'compact' ? 'compact' : 'wide';
+        $layout = $variant === 'compact' ? 'grid' : 'stack';
+        $limit = max(1, min(50, (int) $request->input('limit', $request->input('per_page', 10))));
+        $after = $request->filled('after') ? (string) $request->input('after') : null;
+        $offset = max(0, (int) $request->input('offset', 0));
+        $isAppend = $request->boolean('is_append', $after !== null || $offset > 0);
 
-        return $this->cardsResponse($services, 'service', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
+        $categories = [];
+        if ($request->exists('category')) {
+            $raw = $request->input('category');
+            $categories = is_array($raw)
+                ? array_values(array_filter(array_map('strval', $raw)))
+                : array_values(array_filter([(string) $raw]));
+        }
+
+        $search = $request->filled('q') ? trim((string) $request->input('q')) : null;
+
+        $res = $this->data->servicesForListing(
+            cluster: $cluster,
+            categories: $categories,
+            search: $search,
+            offset: $offset,
+            limit: $limit,
+            after: $after,
+            variant: $variant
+        );
+
+        $pagedItems = $res['items'];
+        $totalCount = $res['count'];
+        $nextOffset = $res['next_offset'];
+        $hasMore = $res['has_more'];
+        $nextCursor = $res['next_cursor'];
+
+        $html = view('partials.listing-cards', [
+            'items' => $pagedItems,
+            'kind' => 'service',
+            'variant' => $variant,
+            'layout' => $layout,
+            'isAppend' => $isAppend,
+            'offset' => $res['offset'],
+        ])->render();
+
+        return response()->json([
+            'count' => $totalCount,
+            'offset' => $res['offset'],
+            'limit' => $limit,
+            'next_offset' => $nextOffset,
+            'cursor' => $nextCursor,
+            'next_cursor' => $nextCursor,
+            'has_more' => $hasMore,
+            'html' => $html,
+        ]);
     }
 
     public function related(Request $request): JsonResponse

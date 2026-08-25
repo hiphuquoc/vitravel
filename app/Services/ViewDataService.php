@@ -1797,6 +1797,254 @@ class ViewDataService
         })->filter(fn ($item) => $item['name'] !== '' && $item['url'] !== '')->values()->all();
     }
 
+    /**
+     * Tối ưu hóa truy vấn listing (Card danh mục dịch vụ / lưu trú) trực tiếp bằng SQL:
+     * - Lọc SQL trực tiếp theo cluster, category, từ khóa.
+     * - Phân trang SQL (count + offset/limit/cursor), không load toàn bộ bảng vào RAM.
+     * - Eager-load chọn lọc đúng các trường tối thiểu, zero-overhead.
+     * - Tự động fallback giá từ hạng phòng options (min_option_price).
+     * - Pre-resolve slugFull và href để Blade không bị N+1 query từ locale_route.
+     *
+     * @param  array<string>  $categories
+     * @return array{count: int, items: list<array<string, mixed>>, offset: int, limit: int, next_offset: int, cursor: ?string, next_cursor: ?string, has_more: bool}
+     */
+    public function servicesForListing(
+        string $cluster,
+        array $categories = [],
+        ?string $search = null,
+        int $offset = 0,
+        int $limit = 10,
+        ?string $after = null,
+        string $variant = 'wide'
+    ): array {
+        $locale = $this->locale();
+        $langId = \App\Models\Language::idByCode($locale) ?? 1;
+
+        $query = Service::withoutGlobalScope('project')
+            ->published();
+
+        if ($cluster === 'other') {
+            $query->whereIn('cluster', ['train', 'flight', 'other']);
+        } else {
+            $query->forCluster($cluster);
+        }
+
+        // Lọc danh mục nếu có truyền
+        if ($categories !== []) {
+            $hasClusterGroups = false;
+            $clusterFilters = [];
+            $categorySlugs = [];
+
+            foreach ($categories as $cat) {
+                if (str_starts_with($cat, '_cluster_')) {
+                    $hasClusterGroups = true;
+                    $clusterFilters[] = substr($cat, 9);
+                } else {
+                    $categorySlugs[] = $cat;
+                }
+            }
+
+            $query->where(function ($q) use ($categorySlugs, $clusterFilters) {
+                if ($categorySlugs !== []) {
+                    $q->whereHas('category', fn ($qc) => $qc->withoutGlobalScope('project')->whereIn('slug', $categorySlugs));
+                }
+                if ($clusterFilters !== []) {
+                    if ($categorySlugs !== []) {
+                        $q->orWhereIn('cluster', $clusterFilters);
+                    } else {
+                        $q->whereIn('cluster', $clusterFilters);
+                    }
+                }
+            });
+        }
+
+        // Lọc tìm kiếm từ khóa
+        if ($search !== null && $search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('translations', function ($qt) use ($search) {
+                    $qt->withoutGlobalScope('project')
+                        ->where('title', 'like', "%{$search}%")
+                        ->orWhere('location_label', 'like', "%{$search}%");
+                })->orWhere('code', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderBy('sort')
+            ->orderByDesc('id');
+
+        // Định vị Cursor nếu có truyền 'after'
+        if ($after !== null && $after !== '') {
+            $allIds = (clone $query)->pluck('id', 'code')->all();
+            $pos = false;
+            if (is_numeric($after)) {
+                $pos = array_search((int) $after, array_values($allIds), true);
+            }
+            if ($pos === false && isset($allIds[$after])) {
+                $pos = array_search($allIds[$after], array_values($allIds), true);
+            }
+            if ($pos !== false) {
+                $offset = $pos + 1;
+            }
+        }
+
+        $totalCount = (clone $query)->count();
+
+        // Fallback Sample Data nếu không có dữ liệu DB
+        if ($totalCount === 0) {
+            $sampleItems = SampleData::services($cluster);
+            return [
+                'count' => count($sampleItems),
+                'items' => array_slice($sampleItems, $offset, $limit),
+                'offset' => $offset,
+                'limit' => $limit,
+                'next_offset' => $offset + min($limit, count($sampleItems)),
+                'cursor' => null,
+                'next_cursor' => null,
+                'has_more' => false,
+            ];
+        }
+
+        $items = $query
+            ->withMin('options as min_option_price', 'price_from')
+            ->with([
+                'translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId),
+                'category' => fn ($q) => $q->withoutGlobalScope('project')->select(['id', 'slug', 'name']),
+                'country.translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId)->select(['id', 'country_id', 'slug']),
+                'seoEntry' => fn ($q) => $q->withoutGlobalScope('project')->select(['id', 'reference_type', 'reference_id']),
+                'seoEntry.translations' => fn ($q) => $q->withoutGlobalScope('project')->where('language_id', $langId)->select(['id', 'seo_entry_id', 'language_id', 'slug', 'slug_full']),
+                'mediaAttachments' => fn ($q) => $q->where('role', 'cover')->with('media'),
+            ])
+            ->select([
+                'id', 'project_id', 'cluster', 'service_category_id', 'country_id',
+                'code', 'price_from', 'currency', 'rating', 'review_count',
+                'star_rating', 'discount_badge', 'is_featured', 'is_hot_deal',
+                'attrs', 'sort', 'status'
+            ])
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        $mappedItems = $items->map(fn (Service $s) => $this->mapServiceForListingCard($s, $locale))->values()->all();
+
+        $pagedCount = count($mappedItems);
+        $nextOffset = $offset + $pagedCount;
+        $hasMore = $nextOffset < $totalCount;
+        $lastItem = end($mappedItems);
+        $nextCursor = $lastItem ? (string) ($lastItem['id'] ?? $lastItem['code'] ?? $nextOffset) : null;
+
+        return [
+            'count' => $totalCount,
+            'items' => $mappedItems,
+            'offset' => $offset,
+            'limit' => $limit,
+            'next_offset' => $nextOffset,
+            'cursor' => $nextCursor,
+            'next_cursor' => $nextCursor,
+            'has_more' => $hasMore,
+        ];
+    }
+
+    /**
+     * Payload siêu nhẹ cho card danh mục dịch vụ / khách sạn:
+     * - Zero N+1: Tự tạo sẵn href & slugFull từ quan hệ SEO/category đã eager load.
+     * - Tự động fallback Giá từ: ưu tiên price_from, fallback min_option_price từ bảng room options.
+     * - Chỉ lấy đúng 3 điểm nhấn highlights, không parse toàn bộ FAQ/rich content/price tables/galleries.
+     *
+     * @param  Service  $service
+     * @param  string  $locale
+     * @return array<string, mixed>
+     */
+    public function mapServiceForListingCard(Service $service, string $locale): array
+    {
+        $translation = $service->translations->firstWhere('language_id', 1)
+            ?? ($service->relationLoaded('translations') ? $service->translations->first() : null);
+        $seoTranslation = $service->seoEntry?->translations?->firstWhere('language_id', 1)
+            ?? ($service->relationLoaded('seoEntry') ? $service->seoEntry?->translations?->first() : null);
+        $category = $service->relationLoaded('category') ? $service->category : null;
+        $cfg = config("services_catalog.clusters.{$service->cluster}", []);
+
+        $highlights = $translation?->highlights ?? [];
+        if (is_string($highlights)) {
+            $decoded = json_decode($highlights, true);
+            $highlights = is_array($decoded) ? $decoded : [];
+        }
+
+        // Tự động tính giá từ: ưu tiên giá trên Service model, nếu null/0 thì fallback giá thấp nhất từ options (min_option_price)
+        $priceFrom = $service->price_from !== null && (float) $service->price_from > 0
+            ? (float) $service->price_from
+            : ($service->min_option_price !== null && (float) $service->min_option_price > 0
+                ? (float) $service->min_option_price
+                : null);
+
+        $priceLabel = null;
+        if ($priceFrom !== null && $priceFrom > 0) {
+            $priceLabel = $this->formatMoney($priceFrom, $service->currency ?? 'VND');
+        } elseif ($priceFrom !== null && $priceFrom <= 0) {
+            $priceLabel = 'Liên hệ';
+        }
+
+        $slug = $seoTranslation?->slug ?? ($service->code ?? '');
+        $slugFull = $seoTranslation?->slug_full;
+        if (! $slugFull && $category?->slug) {
+            $hubKey = config("services_catalog.clusters.{$service->cluster}.hub_key", 'luu-tru');
+            $slugFull = '/'.ltrim((string) $hubKey, '/').'/'.$category->slug.'/'.$slug;
+        }
+        $href = $slugFull ? url('/'.ltrim($slugFull, '/')) : url('/'.($service->cluster ?? 'service').'/'.$slug);
+
+        $attrs = is_array($service->attrs) ? $service->attrs : [];
+        $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
+        $fullAddress = (string) ($attrs['address'] ?? '');
+        $location = $fullAddress ?: ($translation?->location_label ?? '');
+
+        $coverMedia = $service->relationLoaded('mediaAttachments')
+            ? $service->mediaAttachments->firstWhere('role', 'cover')?->media
+            : null;
+        $mediaService = app(\App\Services\MediaService::class);
+        $image = $mediaService->publicUrl($coverMedia, 'card');
+        $imageSrcset = $mediaService->srcset($coverMedia);
+
+        $isStay = $service->cluster === Service::CLUSTER_STAY;
+
+        return [
+            'id' => $service->id,
+            'slug' => $slug,
+            'slugFull' => $slugFull,
+            'href' => $href,
+            'code' => $service->code,
+            'title' => $translation?->title ?? $service->code,
+            'cluster' => $service->cluster,
+            'clusterLabel' => $cfg['label'] ?? $service->cluster,
+            'clusterIcon' => $cfg['icon'] ?? ($isStay ? 'building' : 'briefcase'),
+            'categorySlug' => $category?->slug ?? '',
+            'categoryName' => $category?->name ?? '',
+            'countrySlug' => $service->country?->translations?->first()?->slug ?? '',
+            'location' => $location,
+            'places' => array_values(array_filter([$location])),
+            'start' => $attrs['from'] ?? '',
+            'end' => $attrs['to'] ?? '',
+            'duration' => $this->serviceDurationLabel($service),
+            'priceFrom' => $priceFrom,
+            'currency' => $service->currency ?? 'VND',
+            'priceFormatted' => $priceLabel,
+            'priceUnitLabel' => $isStay ? '/ đêm' : null,
+            'rating' => (float) $service->rating,
+            'reviewCount' => (int) $service->review_count,
+            'starRating' => $service->star_rating,
+            'badge' => $service->discount_badge,
+            'isFeatured' => (bool) $service->is_featured,
+            'isHotDeal' => (bool) $service->is_hot_deal,
+            'image' => $image,
+            'imageSrcset' => $imageSrcset,
+            'highlights' => is_array($highlights) ? array_slice($highlights, 0, 3) : [],
+            'isStay' => $isStay,
+            'propertyType' => $propertyType,
+            'propertyTypeLabel' => config("stay.property_types.{$propertyType}") ?? ucfirst($propertyType),
+            'totalRooms' => isset($attrs['total_rooms']) ? (int) $attrs['total_rooms'] : null,
+            'roomsCount' => null,
+            'quote' => $this->serviceQuote($service, $translation),
+        ];
+    }
+
     public function services(?string $cluster = null): array
     {
         $query = Service::withoutGlobalScope('project')
@@ -2029,19 +2277,24 @@ class ViewDataService
             ? $service->options->count()
             : null;
 
-        // Giá từ: ưu tiên giá trên Service model, nếu chưa có thì tìm giá thấp nhất từ options đã load
-        if (($payload['priceFrom'] === null || $payload['priceFrom'] <= 0) && $service->relationLoaded('options')) {
-            $lowest = null;
-            foreach ($service->options as $opt) {
-                if ($opt->price_from !== null && (float) $opt->price_from > 0) {
-                    if ($lowest === null || (float) $opt->price_from < $lowest) {
-                        $lowest = (float) $opt->price_from;
+        // Giá từ: ưu tiên giá trên Service model, nếu chưa có thì tìm giá thấp nhất từ options (min_option_price) hoặc options đã load
+        if ($payload['priceFrom'] === null || $payload['priceFrom'] <= 0) {
+            if (isset($service->min_option_price) && $service->min_option_price !== null && (float) $service->min_option_price > 0) {
+                $payload['priceFrom'] = (float) $service->min_option_price;
+                $payload['priceFormatted'] = $this->formatMoney((float) $service->min_option_price, $service->currency ?? 'VND');
+            } elseif ($service->relationLoaded('options')) {
+                $lowest = null;
+                foreach ($service->options as $opt) {
+                    if ($opt->price_from !== null && (float) $opt->price_from > 0) {
+                        if ($lowest === null || (float) $opt->price_from < $lowest) {
+                            $lowest = (float) $opt->price_from;
+                        }
                     }
                 }
-            }
-            if ($lowest !== null && $lowest > 0) {
-                $payload['priceFrom'] = $lowest;
-                $payload['priceFormatted'] = $this->formatMoney($lowest, $service->currency ?? 'VND');
+                if ($lowest !== null && $lowest > 0) {
+                    $payload['priceFrom'] = $lowest;
+                    $payload['priceFormatted'] = $this->formatMoney($lowest, $service->currency ?? 'VND');
+                }
             }
         }
 

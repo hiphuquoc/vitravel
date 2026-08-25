@@ -15,17 +15,19 @@
 @if ($isAppend)
     @foreach ($items as $item)
         @php
-            $href = !empty($item['slugFull'])
-                ? url('/' . ltrim($item['slugFull'], '/'))
-                : match ($kind) {
-                    'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'], 'slug' => $item['slug']]),
-                    'service' => locale_route('services.show', [
-                        'cluster' => $item['cluster'],
-                        'category' => $item['categorySlug'],
-                        'slug' => $item['slug'],
-                    ]),
-                    default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
-                };
+            $href = !empty($item['href'])
+                ? $item['href']
+                : (!empty($item['slugFull'])
+                    ? url('/' . ltrim($item['slugFull'], '/'))
+                    : match ($kind) {
+                        'cruise' => locale_route('cruises.show', ['type' => $item['typeSlug'] ?? '', 'slug' => $item['slug'] ?? '']),
+                        'service' => locale_route('services.show', [
+                            'cluster' => $item['cluster'] ?? 'stay',
+                            'category' => $item['categorySlug'] ?? '',
+                            'slug' => $item['slug'] ?? '',
+                        ]),
+                        default => locale_route('tours.show', ['country' => $item['countrySlug'] ?? '', 'slug' => $item['slug'] ?? '']),
+                    });
         @endphp
         <div class="listing-card-animate" data-listing-item>
             @if ($kind === 'service')

@@ -269,6 +269,14 @@ final class StayCrawlImporter
         if ($prune && $keep !== []) {
             $service->options()->whereNotIn('id', $keep)->delete();
         }
+
+        // Tự động đồng bộ giá từ thấp nhất từ các phòng lên bảng services
+        $minOptionPrice = $service->options()->whereNotNull('price_from')->where('price_from', '>', 0)->min('price_from');
+        if ($minOptionPrice !== null && (float) $minOptionPrice > 0) {
+            if ($service->price_from === null || (float) $service->price_from <= 0 || (float) $minOptionPrice < (float) $service->price_from) {
+                $service->update(['price_from' => $minOptionPrice]);
+            }
+        }
     }
 
     /** @param  list<mixed>  $faqs */
