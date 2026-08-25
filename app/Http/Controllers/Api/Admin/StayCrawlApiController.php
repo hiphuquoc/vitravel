@@ -831,8 +831,14 @@ final class StayCrawlApiController extends Controller
             'rerun_from' => data_get($job->meta, 'rerun_from'),
             'list' => data_get($job->meta, 'list'),
             'worker' => data_get($job->meta, 'worker'),
-            'worker_alive' => $this->crawl->isWorkerAlive($job),
-            'worker_paused' => $this->crawl->isWorkerPaused($job),
+            'worker_alive' => (bool) (
+                data_get($job->meta, 'worker.running', false)
+                && (
+                    in_array($job->status, ['crawling', 'running', 'processing'], true)
+                    || (int) ($job->queued_items_count ?? 0) > 0
+                )
+            ),
+            'worker_paused' => (bool) data_get($job->meta, 'worker.paused', false),
             'created_at' => $job->created_at?->toIso8601String(),
             'updated_at' => $job->updated_at?->toIso8601String(),
         ];
