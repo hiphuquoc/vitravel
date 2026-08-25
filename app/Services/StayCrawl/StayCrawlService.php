@@ -252,27 +252,38 @@ final class StayCrawlService
             }
 
             // TỰ ĐỘNG GÁN THÊM DANH MỤC CHO KHÁCH SẠN ĐÃ CÀO NẾU XUẤT HIỆN Ở DANH MỤC NÀY
-            if ($job->service_category_id) {
-                $service = $item->service_id
-                    ? \App\Models\Service::withoutGlobalScopes()->find($item->service_id)
-                    : null;
+            $service = $item->service_id
+                ? \App\Models\Service::withoutGlobalScopes()->find($item->service_id)
+                : null;
 
-                if (! $service) {
-                    $svcQuery = \App\Models\Service::withoutGlobalScopes()
-                        ->where('cluster', \App\Models\Service::CLUSTER_STAY);
-                    if ($projectId) {
-                        $svcQuery->where('project_id', $projectId);
-                    }
-                    $service = $svcQuery->where(function ($q) use ($canonical, $url) {
-                        $q->where('attrs->crawl->canonical_url', $canonical)
-                          ->orWhere('attrs->crawl->source_url', $url);
-                    })->first();
+            if (! $service) {
+                $svcQuery = \App\Models\Service::withoutGlobalScopes()
+                    ->where('cluster', \App\Models\Service::CLUSTER_STAY);
+                if ($projectId) {
+                    $svcQuery->where('project_id', $projectId);
+                }
+                $service = $svcQuery->where(function ($q) use ($canonical, $url) {
+                    $q->where('attrs->crawl->canonical_url', $canonical)
+                      ->orWhere('attrs->crawl->source_url', $url);
+                })->first();
+            }
+
+            if ($service) {
+                if (! $item->service_id) {
+                    $item->service_id = $service->id;
                 }
 
-                if ($service && (int) $job->service_category_id > 0) {
-                    if (! $item->service_id) {
-                        $item->service_id = $service->id;
-                    }
+                $hasRerun = ! empty(data_get($job->meta, 'rerun'));
+                // Nếu khách sạn đã tồn tại (đã tạo trang sản phẩm) và không có cờ rerun:
+                // Đánh dấu STATUS_IMPORTED ngay lập tức, không đưa vào QUEUE cào lại để tiết kiệm tài nguyên
+                if (! $hasRerun && ($service->status === 'published' || $service->options()->exists() || $item->imported_at || $item->ai_at)) {
+                    $item->status = StayCrawlItem::STATUS_IMPORTED;
+                    $item->imported_at = $item->imported_at ?? now();
+                    $item->error = null;
+                    $item->blocked_reason = null;
+                }
+
+                if ($job->service_category_id && (int) $job->service_category_id > 0) {
                     $catId = (int) $job->service_category_id;
                     $existingCatIds = $service->categories()->withoutGlobalScope('project')->pluck('service_categories.id')->all();
                     if (! in_array($catId, $existingCatIds, true)) {
@@ -669,6 +680,11 @@ final class StayCrawlService
 
         foreach ($itemsQuery as $item) {
             /** @var StayCrawlItem $item */
+            // Bỏ qua các khách sạn đã IMPORTED (đã có trang sản phẩm, không cần cào lại)
+            if ($item->status === StayCrawlItem::STATUS_IMPORTED && $onlyItem === null) {
+                continue;
+            }
+
             $needs = in_array($item->status, [
                 StayCrawlItem::STATUS_QUEUED,
                 StayCrawlItem::STATUS_EXTRACTED,
@@ -704,12 +720,20 @@ final class StayCrawlService
             'queue' => (string) config('stay.crawl.queue', 'default'),
             'hint' => 'php artisan queue:work --queue='.config('stay.crawl.queue', 'default'),
         ];
+        
+        $isAllDone = count($ids) === 0 && $this->remainingCount($job) === 0;
+        if ($isAllDone) {
+            $job->status = StayCrawlJob::STATUS_DONE;
+        }
+
         $meta['worker'] = array_merge(is_array($meta['worker'] ?? null) ? $meta['worker'] : [], [
-            'running' => true,
+            'running' => ! $isAllDone,
             'mode' => 'laravel_queue',
             'paused' => false,
             'heartbeat_at' => now()->toIso8601String(),
-            'message' => 'Đã đẩy '.count($ids).' URL vào queue — chạy queue:work / Supervisor',
+            'message' => $isAllDone
+                ? 'Tất cả khách sạn đã có trang sản phẩm — đã tự động đồng bộ danh mục.'
+                : 'Đã đẩy '.count($ids).' URL mới vào queue — chạy queue:work / Supervisor',
         ]);
         $job->meta = $meta;
         $job->save();
