@@ -121,9 +121,13 @@ final class StayCrawlApiController extends Controller
             ->select([
                 'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
                 'status', 'http_status', 'blocked_reason', 'service_id',
-                'error', 'crawled_at', 'ai_at', 'imported_at', 'raw_json', 'ai_json',
+                'error', 'crawled_at', 'ai_at', 'imported_at',
             ])
-            ->with(['service.seoEntry.translations'])
+            ->with([
+                'service:id,code,cluster,status',
+                'service.seoEntry:id,parent_id,reference_type,reference_id',
+                'service.seoEntry.translations:id,seo_entry_id,language_id,slug,slug_full',
+            ])
             ->latest('id');
         
         if ($status = $request->input('status')) {
@@ -850,8 +854,8 @@ final class StayCrawlApiController extends Controller
             'crawled_at' => $item->crawled_at?->toIso8601String(),
             'ai_at' => $item->ai_at?->toIso8601String(),
             'imported_at' => $item->imported_at?->toIso8601String(),
-            'has_extracted' => filled($item->extracted_html),
-            'has_ai' => is_array($item->ai_json) && $item->ai_json !== [],
+            'has_extracted' => (bool) ($item->crawled_at || filled($item->extracted_html ?? null)),
+            'has_ai' => (bool) ($item->ai_at || (is_array($item->ai_json ?? null) && $item->ai_json !== [])),
             'slug_full' => $this->itemSlugFull($item),
             'enrich' => is_array($item->raw_json['enrich'] ?? null) ? $item->raw_json['enrich'] : null,
         ];

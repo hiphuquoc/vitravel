@@ -273,9 +273,13 @@ final class StayCrawlService
                     if (! $item->service_id) {
                         $item->service_id = $service->id;
                     }
-                    $service->categories()->syncWithoutDetaching([(int) $job->service_category_id]);
+                    $catId = (int) $job->service_category_id;
+                    $existingCatIds = $service->categories()->withoutGlobalScope('project')->pluck('service_categories.id')->all();
+                    if (! in_array($catId, $existingCatIds, true)) {
+                        $service->categories()->syncWithoutDetaching([$catId]);
+                    }
                     if (! $service->service_category_id) {
-                        $service->service_category_id = (int) $job->service_category_id;
+                        $service->service_category_id = $catId;
                         $service->saveQuietly();
                     }
                 }

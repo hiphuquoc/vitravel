@@ -223,6 +223,21 @@ final class StayFacilities
             unset($out['nearby_groups']);
         }
 
+        // Chuẩn hóa và chống trùng lặp property_types
+        if (isset($out['property_types'])) {
+            $types = is_array($out['property_types']) ? $out['property_types'] : (array) $out['property_types'];
+            $types = array_values(array_unique(array_filter(array_map('strval', $types))));
+            $out['property_types'] = $types;
+            if ($types !== []) {
+                $out['property_type'] = $types[0];
+            }
+        } elseif (isset($out['property_type'])) {
+            $val = trim((string) $out['property_type']);
+            if ($val !== '') {
+                $out['property_types'] = [$val];
+            }
+        }
+
         $scores = self::normalizeReviewScores($out['review_scores'] ?? null);
         if ($scores !== null) {
             $out['review_scores'] = $scores;

@@ -84,11 +84,14 @@ final class StayCrawlImporter
             $service->save();
 
             // Đồng bộ danh mục vào quan hệ nhiều-nhiều (service_category_service)
-            $catIdToSync = $categoryId ?: ($item->job?->service_category_id ?: $service->service_category_id);
-            if ($catIdToSync) {
-                $service->categories()->syncWithoutDetaching([(int) $catIdToSync]);
+            $catIdToSync = (int) ($categoryId ?: ($item->job?->service_category_id ?: $service->service_category_id));
+            if ($catIdToSync > 0) {
+                $existingCatIds = $service->categories()->withoutGlobalScope('project')->pluck('service_categories.id')->all();
+                if (! in_array($catIdToSync, $existingCatIds, true)) {
+                    $service->categories()->syncWithoutDetaching([$catIdToSync]);
+                }
                 if (! $service->service_category_id) {
-                    $service->service_category_id = (int) $catIdToSync;
+                    $service->service_category_id = $catIdToSync;
                     $service->saveQuietly();
                 }
             }

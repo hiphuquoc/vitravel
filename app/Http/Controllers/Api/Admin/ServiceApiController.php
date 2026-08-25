@@ -451,9 +451,9 @@ class ServiceApiController extends Controller
             $hubKey = config("services_catalog.clusters.{$cluster}.hub_key");
             $hubSeo = $hubKey ? $this->seoService()->ensureHub($hubKey, $locale) : null;
 
-            $categoryIds = array_values(array_filter(
+            $categoryIds = array_values(array_unique(array_filter(
                 array_map('intval', (array) ($request->input('service_category_ids', [])))
-            ));
+            )));
 
             if ($categoryIds === [] && ! empty($validated['service_category_id'])) {
                 $categoryIds = [(int) $validated['service_category_id']];
