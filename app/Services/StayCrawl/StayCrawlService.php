@@ -269,7 +269,7 @@ final class StayCrawlService
                     })->first();
                 }
 
-                if ($service) {
+                if ($service && (int) $job->service_category_id > 0) {
                     if (! $item->service_id) {
                         $item->service_id = $service->id;
                     }

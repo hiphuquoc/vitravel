@@ -74,6 +74,7 @@ class Service extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(ServiceCategory::class, 'service_category_service')
+            ->withoutGlobalScope('project')
             ->withPivot(['sort'])
             ->orderByPivot('sort');
     }

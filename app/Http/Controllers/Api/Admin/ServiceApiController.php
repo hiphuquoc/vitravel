@@ -148,6 +148,7 @@ class ServiceApiController extends Controller
 
         $service = Service::query()
             ->with([
+                'categories',
                 'category.seoEntry.translations',
                 'country.translations',
                 'translations',
@@ -657,7 +658,7 @@ class ServiceApiController extends Controller
 
         $catIds = $service->relationLoaded('categories') && $service->categories->isNotEmpty()
             ? $service->categories->pluck('id')->all()
-            : ($service->service_category_id ? [$service->service_category_id] : []);
+            : ($service->categories()->pluck('service_categories.id')->all() ?: ($service->service_category_id ? [$service->service_category_id] : []));
 
         return array_merge($this->serialize($service, $locale), [
             'service_category_id' => $service->service_category_id,
