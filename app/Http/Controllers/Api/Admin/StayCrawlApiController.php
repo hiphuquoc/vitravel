@@ -805,6 +805,95 @@ final class StayCrawlApiController extends Controller
     }
 
     /** @return array<string, mixed> */
+    public function logs(Request $request, int $id): JsonResponse
+    {
+        $job = StayCrawlJob::query()->with(['category'])->find($id);
+        if (! $job) {
+            return ApiResponse::error('Không tìm thấy job crawler', 'NOT_FOUND', 404);
+        }
+
+        $lines = [];
+
+        // 1. Đọc log file vật lý từ disk nếu có
+        $logFiles = [
+            storage_path("logs/stay-crawl-list-{$job->id}.log"),
+            storage_path("logs/stay-crawl-work-{$job->id}.log"),
+            storage_path("logs/stay-crawl-step-{$job->id}.log"),
+        ];
+        foreach ($logFiles as $lf) {
+            if (file_exists($lf)) {
+                $content = @file_get_contents($lf);
+                if (is_string($content) && $content !== '') {
+                    foreach (explode("\n", $content) as $line) {
+                        $line = trim($line);
+                        if ($line !== '') {
+                            $lines[] = $line;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 2. Tổng hợp dòng log sự kiện theo thời gian
+        $createdAt = $job->created_at ? $job->created_at->format('H:i:s') : '00:00:00';
+        $catName = $job->category?->name ? " [Danh mục: {$job->category->name}]" : '';
+        $lines[] = "[{$createdAt}] • Khởi tạo Job #{$job->id}{$catName} — URL: {$job->list_url}";
+
+        if ($job->items_found > 0) {
+            $lines[] = "[{$createdAt}] • Đã quét tìm thấy {$job->items_found} chỗ nghỉ Booking.com";
+        }
+
+        $workerMsg = data_get($job->meta, 'worker.message');
+        $workerHb = data_get($job->meta, 'worker.heartbeat_at');
+        if ($workerMsg) {
+            $hbTime = $workerHb ? date('H:i:s', strtotime($workerHb)) : $createdAt;
+            $lines[] = "[{$hbTime}] • [Worker] {$workerMsg}";
+        }
+
+        $items = $job->items()
+            ->select(['id', 'job_id', 'source_url', 'canonical_url', 'status', 'blocked_reason', 'service_id', 'error', 'crawled_at', 'ai_at', 'imported_at', 'updated_at'])
+            ->orderBy('id')
+            ->get();
+
+        foreach ($items as $it) {
+            $hotelName = $it->source_url;
+            if (preg_match('#/hotel/[a-z]{2}/([^/]+)\.html#i', $it->source_url, $m)) {
+                $hotelName = str_replace('-', ' ', $m[1]);
+            }
+            $itTime = ($it->imported_at ?? $it->ai_at ?? $it->crawled_at ?? $it->updated_at ?? $job->created_at)?->format('H:i:s') ?? $createdAt;
+
+            if (in_array($it->status, [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_AI_DONE, 'done'], true)) {
+                $svcTxt = $it->service_id ? " → Trang sản phẩm #{$it->service_id}" : '';
+                $lines[] = "[{$itTime}] ✓ Hoàn tất: {$hotelName}{$svcTxt}";
+            } elseif (in_array($it->status, [StayCrawlItem::STATUS_FAILED, StayCrawlItem::STATUS_BLOCKED], true)) {
+                $reason = $it->blocked_reason ?: ($it->error ?: 'Lỗi không xác định');
+                $lines[] = "[{$itTime}] ✗ Lỗi: {$hotelName} ({$reason})";
+            } elseif (in_array($it->status, [StayCrawlItem::STATUS_FETCHED, StayCrawlItem::STATUS_EXTRACTED, 'crawling'], true)) {
+                $lines[] = "[{$itTime}] • Đang xử lý: {$hotelName} (Bóc tách HTML / Dữ liệu)";
+            } elseif ($it->status === StayCrawlItem::STATUS_QUEUED) {
+                $lines[] = "[{$itTime}] • Đang chờ xử lý trong queue: {$hotelName}";
+            }
+        }
+
+        if ($job->status === StayCrawlJob::STATUS_DONE) {
+            $doneTime = $job->updated_at ? $job->updated_at->format('H:i:s') : $createdAt;
+            $lines[] = "[{$doneTime}] ✓ Hoàn tất toàn bộ phiên cào Job #{$job->id}";
+        }
+
+        // Loại bỏ trùng lặp và giữ lại tối đa 200 dòng gần nhất
+        $uniqueLines = array_values(array_unique($lines));
+        if (count($uniqueLines) > 200) {
+            $uniqueLines = array_slice($uniqueLines, -200);
+        }
+
+        return ApiResponse::success([
+            'job_id' => $job->id,
+            'status' => $job->status,
+            'running' => (bool) data_get($job->meta, 'worker.running', false) || in_array($job->status, ['crawling', 'running', 'processing'], true),
+            'logs' => $uniqueLines,
+        ]);
+    }
+
     private function mapJob(StayCrawlJob $job): array
     {
         return [

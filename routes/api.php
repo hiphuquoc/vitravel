@@ -167,6 +167,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('/stay-crawls/jobs/{id}/pause', [StayCrawlApiController::class, 'pauseWork'])->whereNumber('id');
             Route::post('/stay-crawls/jobs/{id}/resume', [StayCrawlApiController::class, 'resumeWork'])->whereNumber('id');
             Route::get('/stay-crawls/jobs/{id}', [StayCrawlApiController::class, 'job'])->whereNumber('id');
+            Route::get('/stay-crawls/jobs/{id}/logs', [StayCrawlApiController::class, 'logs'])->whereNumber('id');
             Route::get('/stay-crawls/items', [StayCrawlApiController::class, 'items']);
             Route::post('/stay-crawls/items', [StayCrawlApiController::class, 'enqueueHotel']);
             Route::post('/stay-crawls/ingest', [StayCrawlApiController::class, 'ingest']);

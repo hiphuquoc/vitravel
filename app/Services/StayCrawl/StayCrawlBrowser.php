@@ -284,7 +284,24 @@ final class StayCrawlBrowser
         }
         // HOME của www — Puppeteer cache / crash dumps
         if (empty($env['HOME'])) {
-            $env['HOME'] = '/www';
+            $env['HOME'] = is_dir('/home/phupv') ? '/home/phupv' : '/www';
+        }
+
+        // Tự động chuyển tiếp các biến GUI WSLg/X11 sang Node khi chạy headed (STAY_CRAWL_HEADLESS=false)
+        if (empty($env['DISPLAY'])) {
+            $env['DISPLAY'] = getenv('DISPLAY') ?: ':0';
+        }
+        if (empty($env['WAYLAND_DISPLAY'])) {
+            $env['WAYLAND_DISPLAY'] = getenv('WAYLAND_DISPLAY') ?: 'wayland-0';
+        }
+        if (empty($env['XDG_RUNTIME_DIR'])) {
+            $env['XDG_RUNTIME_DIR'] = getenv('XDG_RUNTIME_DIR') ?: (is_dir('/run/user/1000') ? '/run/user/1000' : '/tmp');
+        }
+        if (empty($env['PULSE_SERVER'])) {
+            $env['PULSE_SERVER'] = getenv('PULSE_SERVER') ?: 'unix:/mnt/wslg/PulseServer';
+        }
+        if (empty($env['WSL2_GUI_APPS_ENABLED'])) {
+            $env['WSL2_GUI_APPS_ENABLED'] = '1';
         }
 
         return $env;
