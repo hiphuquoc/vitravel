@@ -187,7 +187,7 @@ final class StayCrawlBrowser
 
     public function cleanupDir(?string $dir): void
     {
-        if ($dir === null || $dir === '' || ! is_dir($dir)) {
+        if ($dir === null || $dir === '' || ! $this->safeIsDir($dir)) {
             return;
         }
         try {
@@ -211,7 +211,7 @@ final class StayCrawlBrowser
 
     public function cleanupImagesDir(?string $dir): void
     {
-        if ($dir === null || $dir === '' || ! is_dir($dir)) {
+        if ($dir === null || $dir === '' || ! $this->safeIsDir($dir)) {
             return;
         }
         $files = new \RecursiveIteratorIterator(
@@ -284,7 +284,16 @@ final class StayCrawlBrowser
         }
         // HOME của www — Puppeteer cache / crash dumps
         if (empty($env['HOME'])) {
-            $env['HOME'] = is_dir('/home/phupv') ? '/home/phupv' : '/www';
+            $home = getenv('HOME');
+            if (is_string($home) && $home !== '' && $this->safeIsDir($home)) {
+                $env['HOME'] = $home;
+            } elseif ($this->safeIsDir('/home/phupv')) {
+                $env['HOME'] = '/home/phupv';
+            } elseif ($this->safeIsDir('/www')) {
+                $env['HOME'] = '/www';
+            } else {
+                $env['HOME'] = '/tmp';
+            }
         }
 
         // Tự động chuyển tiếp các biến GUI WSLg/X11 sang Node khi chạy headed (STAY_CRAWL_HEADLESS=false)
@@ -295,7 +304,14 @@ final class StayCrawlBrowser
             $env['WAYLAND_DISPLAY'] = getenv('WAYLAND_DISPLAY') ?: 'wayland-0';
         }
         if (empty($env['XDG_RUNTIME_DIR'])) {
-            $env['XDG_RUNTIME_DIR'] = getenv('XDG_RUNTIME_DIR') ?: (is_dir('/run/user/1000') ? '/run/user/1000' : '/tmp');
+            $xdg = getenv('XDG_RUNTIME_DIR');
+            if (is_string($xdg) && $xdg !== '' && $this->safeIsDir($xdg)) {
+                $env['XDG_RUNTIME_DIR'] = $xdg;
+            } elseif ($this->safeIsDir('/run/user/1000')) {
+                $env['XDG_RUNTIME_DIR'] = '/run/user/1000';
+            } else {
+                $env['XDG_RUNTIME_DIR'] = '/tmp';
+            }
         }
         if (empty($env['PULSE_SERVER'])) {
             $env['PULSE_SERVER'] = getenv('PULSE_SERVER') ?: 'unix:/mnt/wslg/PulseServer';
@@ -387,6 +403,30 @@ final class StayCrawlBrowser
         return str_ends_with($path, '/node')
             || str_contains($path, '/nodejs/')
             || str_contains($path, '/chrome');
+    }
+
+    /**
+     * Kiểm tra thư mục an toàn, tránh open_basedir warning/exception trên aaPanel/Production.
+     */
+    private function safeIsDir(?string $path): bool
+    {
+        if (! is_string($path) || $path === '') {
+            return false;
+        }
+
+        if (! $this->pathInsideOpenBasedir($path)) {
+            return false;
+        }
+
+        $ok = false;
+        set_error_handler(static fn () => true);
+        try {
+            $ok = is_dir($path);
+        } finally {
+            restore_error_handler();
+        }
+
+        return $ok;
     }
 
     private function openBasedirActive(): bool
