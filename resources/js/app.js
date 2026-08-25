@@ -497,6 +497,13 @@ Alpine.data('listingGrid', (opts = {}) => ({
     error: null,
     drawer: false,
 
+    // Dual Range Price Slider State
+    priceMin: Number(opts.priceMin ?? 0),
+    priceMax: Number(opts.priceMax ?? 10000000),
+    priceStep: Number(opts.priceStep ?? 100000),
+    selectedMinPrice: Number(opts.selectedMinPrice ?? opts.priceMin ?? 0),
+    selectedMaxPrice: Number(opts.selectedMaxPrice ?? opts.priceMax ?? 10000000),
+
     // Stage tracking & concurrency mutex
     stage: 'INITIAL',
     _isFetching: false,
@@ -524,12 +531,58 @@ Alpine.data('listingGrid', (opts = {}) => ({
         return Math.max(0, this.count - this.loadedCount);
     },
 
+    get isPriceFiltered() {
+        return this.selectedMinPrice > this.priceMin || this.selectedMaxPrice < this.priceMax;
+    },
+
+    get priceRangeLabel() {
+        if (! this.isPriceFiltered) return '';
+        return `${this.formatMoneyVND(this.selectedMinPrice)} – ${this.formatMoneyVND(this.selectedMaxPrice)}`;
+    },
+
+    formatMoneyVND(amount) {
+        if (! amount && amount !== 0) return '0 đ';
+        if (amount >= 1000000) {
+            const tr = amount / 1000000;
+            const str = tr % 1 === 0 ? tr.toString() : tr.toFixed(1).replace('.', ',');
+            return `${str} triệu`;
+        }
+        if (amount >= 1000) {
+            const k = amount / 1000;
+            const str = k % 1 === 0 ? k.toString() : k.toFixed(0);
+            return `${str}k đ`;
+        }
+        return new Intl.NumberFormat('vi-VN').format(amount) + ' đ';
+    },
+
+    formatFullVND(amount) {
+        return new Intl.NumberFormat('vi-VN').format(amount || 0) + ' đ';
+    },
+
+    setPriceRange(min, max) {
+        this.selectedMinPrice = Math.max(this.priceMin, Math.min(min, this.priceMax));
+        this.selectedMaxPrice = Math.min(this.priceMax, Math.max(max, this.priceMin));
+        if (this.filters.price_range) {
+            this.filters.price_range = [];
+        }
+        this.scheduleFetch();
+    },
+
+    resetPriceRange() {
+        this.selectedMinPrice = this.priceMin;
+        this.selectedMaxPrice = this.priceMax;
+        if (this.filters.price_range) {
+            this.filters.price_range = [];
+        }
+        this.scheduleFetch();
+    },
+
     get hasActiveFilters() {
-        return Object.values(this.filters).some((vals) => Array.isArray(vals) && vals.length > 0);
+        return Object.values(this.filters).some((vals) => Array.isArray(vals) && vals.length > 0) || this.isPriceFiltered;
     },
 
     get totalActiveFilterCount() {
-        return Object.values(this.filters).reduce((acc, vals) => acc + (Array.isArray(vals) ? vals.length : 0), 0);
+        return Object.values(this.filters).reduce((acc, vals) => acc + (Array.isArray(vals) ? vals.length : 0), 0) + (this.isPriceFiltered ? 1 : 0);
     },
 
     activeFilterCount(group) {
@@ -570,6 +623,17 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     init() {
+        if (this.syncUrl) {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('min_price')) {
+                const val = Number(params.get('min_price'));
+                if (! isNaN(val)) this.selectedMinPrice = Math.max(this.priceMin, val);
+            }
+            if (params.has('max_price')) {
+                const val = Number(params.get('max_price'));
+                if (! isNaN(val)) this.selectedMaxPrice = Math.min(this.priceMax, val);
+            }
+        }
         const isRelated = this.fixedParams && (this.fixedParams.exclude || this.endpoint.includes('related'));
         if (isRelated && 'IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries) => {
@@ -686,6 +750,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
         Object.keys(this.filters).forEach((group) => {
             this.filters[group] = [];
         });
+        this.selectedMinPrice = this.priceMin;
+        this.selectedMaxPrice = this.priceMax;
         this.scheduleFetch();
     },
 
@@ -716,6 +782,15 @@ Alpine.data('listingGrid', (opts = {}) => ({
                 }
             });
         });
+
+        if (this.isPriceFiltered) {
+            if (this.selectedMinPrice > this.priceMin) {
+                q.set('min_price', String(this.selectedMinPrice));
+            }
+            if (this.selectedMaxPrice < this.priceMax) {
+                q.set('max_price', String(this.selectedMaxPrice));
+            }
+        }
 
         const locale = document.documentElement?.lang || '';
         if (locale && ! q.has('locale')) {
@@ -750,7 +825,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
         if (this.syncUrl) {
             const url = new URL(window.location.href);
-            const filterParamNames = ['category', 'property_type', 'price_range', 'amenity', 'star', 'duration', 'style', 'type', 'country', 'q'];
+            const filterParamNames = ['category', 'property_type', 'price_range', 'amenity', 'star', 'duration', 'style', 'type', 'country', 'q', 'min_price', 'max_price'];
             [...url.searchParams.keys()].forEach((k) => {
                 const cleanKey = k.replace(/\[\]$/, '');
                 if (filterParamNames.includes(cleanKey)) {
@@ -767,6 +842,14 @@ Alpine.data('listingGrid', (opts = {}) => ({
                     });
                 }
             });
+            if (this.isPriceFiltered) {
+                if (this.selectedMinPrice > this.priceMin) {
+                    url.searchParams.set('min_price', String(this.selectedMinPrice));
+                }
+                if (this.selectedMaxPrice < this.priceMax) {
+                    url.searchParams.set('max_price', String(this.selectedMaxPrice));
+                }
+            }
             const qs = url.searchParams.toString();
             history.replaceState({}, '', url.pathname + (qs ? `?${qs}` : ''));
         }

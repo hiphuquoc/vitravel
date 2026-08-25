@@ -66,6 +66,9 @@
         'syncUrl' => (bool) $listing['syncUrl'],
         'filters' => $listing['filterDefaults'],
         'labelMap' => $labelMap,
+        'priceMin' => (int) ($listing['priceMin'] ?? 0),
+        'priceMax' => (int) ($listing['priceMax'] ?? 10000000),
+        'priceStep' => (int) ($listing['priceStep'] ?? 100000),
         'initialLimit' => 5,
         'eagerLimit' => 10,
         'scrollLimit' => 20,
@@ -108,23 +111,39 @@
         <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
 
         {{-- Dải thẻ lọc đang chọn (Active Filters Bar — Chuẩn Design System) --}}
-        <div x-show="hasActiveFilters" x-cloak class="listing-active-filters flex flex-wrap items-center gap-2 mb-4 p-3 rounded-xl bg-page-soft border border-line">
-            <span class="text-xs font-bold text-muted flex items-center gap-1.5 pl-1">
-                <x-icon name="filter" class="size-3.5 text-primary-600" />
+        <div x-show="hasActiveFilters" x-cloak class="listing-active-filters flex flex-wrap items-center gap-2.5 mb-5 p-3.5 rounded-2xl bg-page-soft/90 border border-line shadow-2xs">
+            <span class="text-sm font-bold text-ink flex items-center gap-1.5 pl-1 pr-1 shrink-0">
+                <x-icon name="filter" class="size-4 text-primary-600" />
                 <span>Đang lọc:</span>
             </span>
-            
+
+            {{-- Chip lọc khoảng giá kéo slider --}}
+            <template x-if="isPriceFiltered">
+                <span class="vt-chip inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-line text-sm font-medium text-ink shadow-xs hover:border-primary-300 transition-colors">
+                    <span class="text-xs text-muted font-normal">Giá:</span>
+                    <span x-text="priceRangeLabel" class="font-bold text-primary-700"></span>
+                    <button
+                        type="button"
+                        @click="resetPriceRange()"
+                        class="flex items-center justify-center size-4.5 rounded-full text-muted hover:text-accent-600 hover:bg-accent-50 cursor-pointer transition-colors"
+                        aria-label="Bỏ lọc khoảng giá"
+                    >
+                        <x-icon name="close" class="size-3.5" />
+                    </button>
+                </span>
+            </template>
+
             <template x-for="(vals, grp) in filters" :key="grp">
                 <template x-for="val in vals" :key="grp + '-' + val">
-                    <span class="vt-chip inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white border border-line text-xs font-semibold text-ink shadow-2xs">
+                    <span class="vt-chip inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-line text-sm font-medium text-ink shadow-xs hover:border-primary-300 transition-colors">
                         <span x-text="getFilterLabel(grp, val)"></span>
                         <button
                             type="button"
                             @click="clearFilter(grp, val)"
-                            class="text-muted hover:text-accent-600 cursor-pointer transition-colors"
+                            class="flex items-center justify-center size-4.5 rounded-full text-muted hover:text-accent-600 hover:bg-accent-50 cursor-pointer transition-colors"
                             aria-label="Bỏ tiêu chí lọc"
                         >
-                            <x-icon name="close" class="size-3" />
+                            <x-icon name="close" class="size-3.5" />
                         </button>
                     </span>
                 </template>
@@ -133,7 +152,7 @@
             <button
                 type="button"
                 @click="clearAllFilters()"
-                class="text-xs font-bold text-accent-600 hover:text-accent-700 hover:underline ml-auto pr-1 cursor-pointer"
+                class="text-sm font-bold text-accent-600 hover:text-accent-700 hover:underline ml-auto pr-1.5 cursor-pointer whitespace-nowrap"
             >
                 Xóa tất cả
             </button>
@@ -148,13 +167,14 @@
 
         {{-- Loading indicator nhẹ nhàng khi đang tự động cuộn tải --}}
         <div x-show="loadingMore && !requireManualClick" x-cloak class="listing-loading-more site-mt">
-            <div class="flex flex-col items-center justify-center gap-2.5 py-6 text-center">
-                <div class="flex items-center gap-2">
-                    <span class="inline-block size-2 rounded-full bg-primary-600 animate-bounce" style="animation-delay: 0ms"></span>
-                    <span class="inline-block size-2 rounded-full bg-primary-600 animate-bounce" style="animation-delay: 150ms"></span>
-                    <span class="inline-block size-2 rounded-full bg-primary-600 animate-bounce" style="animation-delay: 300ms"></span>
+            <div class="flex flex-col items-center justify-center gap-3 py-8 text-center">
+                <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-line shadow-xs text-primary-700 text-sm font-medium">
+                    <svg class="animate-spin size-4 text-primary-600" viewBox="0 0 24 24" fill="none">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                    <span>Đang tải thêm {{ $listing['unitLabel'] }}...</span>
                 </div>
-                <p class="text-xs font-medium text-muted">Đang tải thêm {{ $listing['unitLabel'] }}...</p>
             </div>
         </div>
 
@@ -163,12 +183,12 @@
             <div class="flex flex-col items-center justify-center gap-4 py-8 text-center">
                 {{-- Thanh đếm tiến trình xem danh mục trực quan --}}
                 <div class="flex flex-col items-center gap-2" x-show="count > 0">
-                    <div class="flex items-center gap-1.5 text-xs font-semibold text-muted">
+                    <div class="flex items-center gap-2 text-sm font-medium text-ink-soft">
                         <span>Đang hiển thị <strong class="text-ink font-bold" x-text="loadedCount"></strong> / <strong class="text-ink font-bold" x-text="count"></strong> {{ $listing['unitLabel'] }}</span>
                     </div>
-                    <div class="h-1.5 w-48 sm:w-64 rounded-full bg-page-soft overflow-hidden border border-line">
+                    <div class="h-2 w-52 sm:w-72 rounded-full bg-page-soft overflow-hidden border border-line p-0.5">
                         <div
-                            class="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500"
+                            class="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500 shadow-xs"
                             :style="'width: ' + progressPercent + '%'"
                         ></div>
                     </div>
@@ -179,7 +199,7 @@
                     type="button"
                     @click="loadMore()"
                     :disabled="loadingMore"
-                    class="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl font-bold text-sm text-primary-700 bg-white hover:bg-primary-50/80 border-2 border-primary-600/30 hover:border-primary-600 shadow-sm hover:shadow-md hover:shadow-primary-600/10 active:scale-[0.98] transition-all duration-200 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
+                    class="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3 rounded-xl font-bold text-sm text-primary-700 bg-white hover:bg-primary-50/80 border-2 border-primary-600/30 hover:border-primary-600 shadow-sm hover:shadow-md hover:shadow-primary-600/10 active:scale-[0.98] transition-all duration-200 disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
                 >
                     <template x-if="loadingMore">
                         <span class="flex items-center gap-2.5">
@@ -192,8 +212,8 @@
                     </template>
                     <template x-if="!loadingMore">
                         <span class="flex items-center gap-2.5">
-                            <span>Tải thêm {{ $listing['unitLabel'] }}</span>
-                            <span class="inline-flex items-center justify-center text-xs font-semibold px-2 py-0.5 rounded-full bg-primary-100/80 text-primary-700" x-show="remainingCount > 0" x-text="'+' + Math.min(20, remainingCount)"></span>
+                            <span>Xem thêm {{ $listing['unitLabel'] }}</span>
+                            <span class="inline-flex items-center justify-center text-xs font-bold px-2 py-0.5 rounded-full bg-primary-100 text-primary-800" x-show="remainingCount > 0" x-text="'+' + Math.min(20, remainingCount)"></span>
                             <x-icon name="arrow-down" class="size-4 text-primary-600 group-hover:translate-y-0.5 transition-transform duration-200" />
                         </span>
                     </template>
@@ -201,15 +221,23 @@
             </div>
         </div>
 
-        {{-- Thông báo khi đã hiển thị hết danh sách --}}
-        <div x-show="!loading && !loadingMore && !hasMore && count > 5" x-cloak class="listing-end-notice site-mt">
-            <div class="flex items-center justify-center gap-3 py-8 text-center text-xs text-muted">
-                <span class="h-px w-12 bg-line sm:w-24"></span>
-                <div class="flex items-center gap-2">
-                    <x-icon name="check" class="size-4 text-primary-600" />
-                    <span>Đã hiển thị tất cả <strong class="text-ink font-semibold" x-text="count"></strong> {{ $listing['unitLabel'] }}</span>
+        {{-- Thông báo khi đã hiển thị hết toàn bộ danh sách --}}
+        <div x-show="!loading && !loadingMore && !hasMore && count > 0" x-cloak class="listing-end-notice site-mt">
+            <div class="relative flex items-center justify-center py-8">
+                {{-- Đường kẻ mờ 2 bên --}}
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-line/80"></div>
                 </div>
-                <span class="h-px w-12 bg-line sm:w-24"></span>
+
+                {{-- Thẻ pill sang trọng nổi ở giữa --}}
+                <div class="relative inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-page-soft border border-line shadow-2xs text-sm font-medium text-ink-soft select-none">
+                    <span class="flex items-center justify-center size-5 rounded-full bg-primary-100 text-primary-700">
+                        <svg class="size-3.5 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M20 6L9 17l-5-5"/>
+                        </svg>
+                    </span>
+                    <span>Đã hiển thị toàn bộ <strong class="text-ink font-bold" x-text="count"></strong> {{ $listing['unitLabel'] }}</span>
+                </div>
             </div>
         </div>
 

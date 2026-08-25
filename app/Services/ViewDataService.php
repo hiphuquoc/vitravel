@@ -1822,7 +1822,9 @@ class ViewDataService
         array $propertyTypes = [],
         array $priceRanges = [],
         array $amenities = [],
-        array $stars = []
+        array $stars = [],
+        ?float $minPrice = null,
+        ?float $maxPrice = null
     ): array {
         $locale = $this->locale();
         $langId = \App\Models\Language::idByCode($locale) ?? 1;
@@ -1879,8 +1881,26 @@ class ViewDataService
             });
         }
 
-        // 3. Lọc khoảng giá (price_ranges: under_1m, 1m_2m, 2m_4m, above_4m)
-        if ($priceRanges !== []) {
+        // 3. Lọc khoảng giá (slider minPrice/maxPrice hoặc presets priceRanges)
+        if ($minPrice !== null || $maxPrice !== null) {
+            $query->where(function ($q) use ($minPrice, $maxPrice) {
+                $q->where(function ($sub) use ($minPrice, $maxPrice) {
+                    if ($minPrice !== null && $minPrice > 0) {
+                        $sub->where('price_from', '>=', $minPrice);
+                    }
+                    if ($maxPrice !== null && $maxPrice > 0) {
+                        $sub->where('price_from', '<=', $maxPrice);
+                    }
+                })->orWhereHas('options', function ($qo) use ($minPrice, $maxPrice) {
+                    if ($minPrice !== null && $minPrice > 0) {
+                        $qo->where('price_from', '>=', $minPrice);
+                    }
+                    if ($maxPrice !== null && $maxPrice > 0) {
+                        $qo->where('price_from', '<=', $maxPrice);
+                    }
+                });
+            });
+        } elseif ($priceRanges !== []) {
             $query->where(function ($q) use ($priceRanges) {
                 foreach ($priceRanges as $pr) {
                     if ($pr === 'under_1m') {

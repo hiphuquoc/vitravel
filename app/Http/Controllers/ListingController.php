@@ -97,6 +97,8 @@ class ListingController extends Controller
         $stars = $extractArray('star');
 
         $search = $request->filled('q') ? trim((string) $request->input('q')) : null;
+        $minPrice = $request->filled('min_price') ? (float) $request->input('min_price') : null;
+        $maxPrice = $request->filled('max_price') ? (float) $request->input('max_price') : null;
 
         $res = $this->data->servicesForListing(
             cluster: $cluster,
@@ -109,7 +111,9 @@ class ListingController extends Controller
             propertyTypes: $propertyTypes,
             priceRanges: $priceRanges,
             amenities: $amenities,
-            stars: $stars
+            stars: $stars,
+            minPrice: $minPrice,
+            maxPrice: $maxPrice
         );
 
         $pagedItems = $res['items'];
@@ -347,6 +351,19 @@ class ListingController extends Controller
             }));
         }
 
+        if ($request->filled('min_price') || $request->filled('max_price')) {
+            $minP = $request->filled('min_price') ? (float) $request->input('min_price') : null;
+            $maxP = $request->filled('max_price') ? (float) $request->input('max_price') : null;
+
+            $tours = array_values(array_filter($tours, function (array $tour) use ($minP, $maxP) {
+                $price = $tour['priceFrom'] ?? null;
+                if ($price === null) return true;
+                if ($minP !== null && $minP > 0 && $price < $minP) return false;
+                if ($maxP !== null && $maxP > 0 && $price > $maxP) return false;
+                return true;
+            }));
+        }
+
         return $tours;
     }
 
@@ -372,6 +389,19 @@ class ListingController extends Controller
                 $cruises,
                 fn (array $c) => in_array((string) ($c['typeSlug'] ?? ''), $types, true)
             ));
+        }
+
+        if ($request->filled('min_price') || $request->filled('max_price')) {
+            $minP = $request->filled('min_price') ? (float) $request->input('min_price') : null;
+            $maxP = $request->filled('max_price') ? (float) $request->input('max_price') : null;
+
+            $cruises = array_values(array_filter($cruises, function (array $cruise) use ($minP, $maxP) {
+                $price = $cruise['priceFrom'] ?? null;
+                if ($price === null) return true;
+                if ($minP !== null && $minP > 0 && $price < $minP) return false;
+                if ($maxP !== null && $maxP > 0 && $price > $maxP) return false;
+                return true;
+            }));
         }
 
         return $cruises;

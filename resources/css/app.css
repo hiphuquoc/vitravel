@@ -1868,6 +1868,64 @@
         background: var(--color-primary-50, #f5f8ec);
     }
 
+    /* ── Dual Range Price Slider ── */
+    .vt-range-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: transparent;
+        pointer-events: none;
+    }
+
+    .vt-range-thumb::-webkit-slider-thumb {
+        pointer-events: auto;
+        -webkit-appearance: none;
+        appearance: none;
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 9999px;
+        background: #ffffff;
+        border: 2.5px solid var(--color-primary-600, #557930);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .vt-range-thumb::-webkit-slider-thumb:hover {
+        transform: scale(1.18);
+        border-color: var(--color-primary-700, #455f2c);
+        box-shadow: 0 3px 8px rgba(85, 121, 48, 0.35);
+    }
+
+    .vt-range-thumb::-webkit-slider-thumb:active {
+        transform: scale(1.22);
+        border-color: var(--color-primary-700, #455f2c);
+        box-shadow: 0 0 0 4px rgba(85, 121, 48, 0.2);
+    }
+
+    .vt-range-thumb::-moz-range-thumb {
+        pointer-events: auto;
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 9999px;
+        background: #ffffff;
+        border: 2.5px solid var(--color-primary-600, #557930);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .vt-range-thumb::-moz-range-thumb:hover {
+        transform: scale(1.18);
+        border-color: var(--color-primary-700, #455f2c);
+        box-shadow: 0 3px 8px rgba(85, 121, 48, 0.35);
+    }
+
+    .vt-range-thumb::-moz-range-thumb:active {
+        transform: scale(1.22);
+        border-color: var(--color-primary-700, #455f2c);
+        box-shadow: 0 0 0 4px rgba(85, 121, 48, 0.2);
+    }
+
     /* Legacy alias — giữ class cũ nếu còn chỗ dùng */
     .filter-option {
         @apply flex cursor-pointer items-center text-ink-soft transition hover:text-ink;
@@ -2064,6 +2122,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        gap: 0.5rem;
         margin-bottom: var(--space-stack);
     }
 
@@ -2071,6 +2130,7 @@
         @apply flex items-center font-bold text-ink;
         gap: var(--space-gap-sm);
         font-size: var(--fs-body);
+        white-space: nowrap;
     }
 
     .filter-sidebar__close {

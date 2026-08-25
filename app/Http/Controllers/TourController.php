@@ -12,9 +12,6 @@ class TourController extends Controller
 
     public function __construct(protected ViewDataService $data) {}
 
-    /**
-     * Hub tất cả tour: /tours
-     */
     public function hub()
     {
         return $this->cachedHtmlResponse(function () {
@@ -23,9 +20,6 @@ class TourController extends Controller
             $countries = $this->data->countries();
             $styles = $this->data->travelStyles();
             $durations = $this->data->durationBuckets();
-            $durationKeys = array_map('strval', array_keys($durations));
-            $styleKeys = array_map('strval', array_keys($styles));
-            $countrySlugs = array_values(array_filter(array_map(fn ($c) => $c['slug'] ?? null, $countries)));
 
             $listing = ListingChrome::make([
                 'kind' => 'tours_hub',
@@ -39,11 +33,7 @@ class TourController extends Controller
                 'breadcrumbs' => [['label' => $hub['title'] ?? 'Tour']],
                 'unitLabel' => 'tour',
                 'endpoint' => route('api.listings.tours'),
-                'filterDefaults' => [
-                    'country' => $countrySlugs,
-                    'duration' => $durationKeys,
-                    'style' => $styleKeys,
-                ],
+                'filterDefaults' => [],
                 'showCountryFilter' => true,
                 'countries' => $countries,
                 'durations' => $durations,
@@ -91,8 +81,6 @@ class TourController extends Controller
                 'endpoint' => route('api.listings.tours'),
                 'filterDefaults' => [
                     'country' => [$countryData['slug']],
-                    'duration' => array_map('strval', array_keys($durations)),
-                    'style' => array_map('strval', array_keys($styles)),
                 ],
                 'showCountryFilter' => true,
                 'countries' => $countries,
@@ -147,8 +135,6 @@ class TourController extends Controller
                 'filterDefaults' => [
                     'country' => [$category['countrySlug'] ?? $country],
                     'category' => [$category['slug'] ?? $slug],
-                    'duration' => array_map('strval', array_keys($durations)),
-                    'style' => array_map('strval', array_keys($styles)),
                 ],
                 'showCountryFilter' => true,
                 'countries' => $countries,

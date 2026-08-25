@@ -20,7 +20,6 @@ class CruiseController extends Controller
             $types = $this->data->cruiseTypes();
             $styles = $this->data->travelStyles();
             $durations = $this->data->durationBuckets();
-            $typeSlugs = array_values(array_filter(array_map(fn ($t) => $t['slug'] ?? null, $types)));
 
             $listing = ListingChrome::make([
                 'kind' => 'cruises_hub',
@@ -35,11 +34,7 @@ class CruiseController extends Controller
                 'unitLabel' => 'du thuyền',
                 'endpoint' => route('api.listings.cruises'),
                 'endpointParams' => ['variant' => 'wide'],
-                'filterDefaults' => [
-                    'type' => $typeSlugs,
-                    'duration' => array_map('strval', array_keys($durations)),
-                    'style' => array_map('strval', array_keys($styles)),
-                ],
+                'filterDefaults' => [],
                 'showTypeFilter' => true,
                 'types' => $types,
                 'durations' => $durations,
@@ -88,8 +83,6 @@ class CruiseController extends Controller
                 'endpointParams' => ['variant' => 'wide'],
                 'filterDefaults' => [
                     'type' => [$typeData['slug']],
-                    'duration' => array_map('strval', array_keys($durations)),
-                    'style' => array_map('strval', array_keys($styles)),
                 ],
                 'showTypeFilter' => true,
                 'types' => $types->all(),
