@@ -503,6 +503,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     priceStep: Number(opts.priceStep ?? 100000),
     selectedMinPrice: Number(opts.selectedMinPrice ?? opts.priceMin ?? 0),
     selectedMaxPrice: Number(opts.selectedMaxPrice ?? opts.priceMax ?? 10000000),
+    sort: String(opts.sort || 'popular'),
 
     // Stage tracking & concurrency mutex
     stage: 'INITIAL',
@@ -540,6 +541,12 @@ Alpine.data('listingGrid', (opts = {}) => ({
         return `${this.formatMoneyVND(this.selectedMinPrice)} – ${this.formatMoneyVND(this.selectedMaxPrice)}`;
     },
 
+    isPricePresetActive(min, max) {
+        const lo = Number(min);
+        const hi = max === null || max === undefined ? this.priceMax : Number(max);
+        return this.selectedMinPrice === lo && this.selectedMaxPrice === hi;
+    },
+
     formatMoneyVND(amount) {
         if (! amount && amount !== 0) return '0 đ';
         if (amount >= 1000000) {
@@ -574,6 +581,13 @@ Alpine.data('listingGrid', (opts = {}) => ({
         if (this.filters.price_range) {
             this.filters.price_range = [];
         }
+        this.scheduleFetch();
+    },
+
+    setSort(value) {
+        const next = String(value || 'popular');
+        if (this.sort === next) return;
+        this.sort = next;
         this.scheduleFetch();
     },
 
@@ -623,6 +637,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     init() {
+        this.$watch('drawer', (open) => {
+            document.documentElement.classList.toggle('filter-drawer-open', Boolean(open));
+        });
+
         if (this.syncUrl) {
             const params = new URLSearchParams(window.location.search);
             if (params.has('min_price')) {
@@ -632,6 +650,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
             if (params.has('max_price')) {
                 const val = Number(params.get('max_price'));
                 if (! isNaN(val)) this.selectedMaxPrice = Math.min(this.priceMax, val);
+            }
+            if (params.has('sort')) {
+                const sort = String(params.get('sort') || '').trim();
+                if (sort !== '') this.sort = sort;
             }
         }
         const isRelated = this.fixedParams && (this.fixedParams.exclude || this.endpoint.includes('related'));
@@ -792,6 +814,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
             }
         }
 
+        if (this.sort && this.sort !== 'popular') {
+            q.set('sort', this.sort);
+        }
+
         const locale = document.documentElement?.lang || '';
         if (locale && ! q.has('locale')) {
             q.set('locale', locale);
@@ -825,7 +851,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
         if (this.syncUrl) {
             const url = new URL(window.location.href);
-            const filterParamNames = ['category', 'property_type', 'price_range', 'amenity', 'star', 'duration', 'style', 'type', 'country', 'q', 'min_price', 'max_price'];
+            const filterParamNames = ['category', 'property_type', 'price_range', 'amenity', 'star', 'duration', 'style', 'type', 'country', 'q', 'min_price', 'max_price', 'sort'];
             [...url.searchParams.keys()].forEach((k) => {
                 const cleanKey = k.replace(/\[\]$/, '');
                 if (filterParamNames.includes(cleanKey)) {
@@ -849,6 +875,9 @@ Alpine.data('listingGrid', (opts = {}) => ({
                 if (this.selectedMaxPrice < this.priceMax) {
                     url.searchParams.set('max_price', String(this.selectedMaxPrice));
                 }
+            }
+            if (this.sort && this.sort !== 'popular') {
+                url.searchParams.set('sort', this.sort);
             }
             const qs = url.searchParams.toString();
             history.replaceState({}, '', url.pathname + (qs ? `?${qs}` : ''));

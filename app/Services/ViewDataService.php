@@ -49,6 +49,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class ViewDataService
 {
+    /** @var array<int, array<string, mixed>>|null */
+    protected ?array $toursMemo = null;
+
+    /** @var array<int, array<string, mixed>>|null */
+    protected ?array $cruisesMemo = null;
+
     protected function locale(): string
     {
         return app()->getLocale();
@@ -194,11 +200,15 @@ class ViewDataService
 
     public function tours(): array
     {
-        if (! Package::query()->published()->tours()->exists()) {
-            return SampleData::tours();
+        if ($this->toursMemo !== null) {
+            return $this->toursMemo;
         }
 
-        return $this->packageQuery(Package::TYPE_TOUR)
+        if (! Package::query()->published()->tours()->exists()) {
+            return $this->toursMemo = SampleData::tours();
+        }
+
+        return $this->toursMemo = $this->packageQuery(Package::TYPE_TOUR)
             ->get()
             ->map(fn (Package $package) => $this->mapPackage($package))
             ->values()
@@ -564,11 +574,15 @@ class ViewDataService
 
     public function cruises(): array
     {
-        if (! Package::query()->published()->cruises()->exists()) {
-            return SampleData::cruises();
+        if ($this->cruisesMemo !== null) {
+            return $this->cruisesMemo;
         }
 
-        return $this->packageQuery(Package::TYPE_CRUISE)
+        if (! Package::query()->published()->cruises()->exists()) {
+            return $this->cruisesMemo = SampleData::cruises();
+        }
+
+        return $this->cruisesMemo = $this->packageQuery(Package::TYPE_CRUISE)
             ->get()
             ->map(fn (Package $package) => $this->mapPackage($package, true))
             ->values()
@@ -1816,7 +1830,8 @@ class ViewDataService
         array $amenities = [],
         array $stars = [],
         ?float $minPrice = null,
-        ?float $maxPrice = null
+        ?float $maxPrice = null,
+        string $sort = 'popular'
     ): array {
         $locale = $this->locale();
         $langId = \App\Models\Language::idByCode($locale) ?? 1;
@@ -1832,13 +1847,11 @@ class ViewDataService
 
         // 1. Lọc danh mục / khu vực
         if ($categories !== []) {
-            $hasClusterGroups = false;
-            $clusterFilters = [];
             $categorySlugs = [];
+            $clusterFilters = [];
 
             foreach ($categories as $cat) {
                 if (str_starts_with($cat, '_cluster_')) {
-                    $hasClusterGroups = true;
                     $clusterFilters[] = substr($cat, 9);
                 } else {
                     $categorySlugs[] = $cat;
@@ -1862,18 +1875,17 @@ class ViewDataService
             });
         }
 
-        // 2. Lọc loại hình lưu trú (property_types: resort, hotel, villa, boutique, homestay...)
+        // 2. Loại hình lưu trú — ưu tiên JSON path / contains (index-friendly hơn LIKE toàn attrs)
         if ($propertyTypes !== []) {
             $query->where(function ($q) use ($propertyTypes) {
                 foreach ($propertyTypes as $pt) {
                     $q->orWhere('attrs->property_type', $pt)
-                      ->orWhere('attrs->property_types', 'like', "%\"{$pt}\"%")
-                      ->orWhere('attrs', 'like', "%\"property_types\":%{$pt}%");
+                      ->orWhereJsonContains('attrs->property_types', $pt);
                 }
             });
         }
 
-        // 3. Lọc khoảng giá (slider minPrice/maxPrice hoặc presets priceRanges)
+        // 3. Khoảng giá
         if ($minPrice !== null || $maxPrice !== null) {
             $query->where(function ($q) use ($minPrice, $maxPrice) {
                 $q->where(function ($sub) use ($minPrice, $maxPrice) {
@@ -1921,51 +1933,61 @@ class ViewDataService
             });
         }
 
-        // 4. Lọc tiện ích nổi bật (amenities: pool, beach, breakfast, spa, gym, shuttle...)
+        // 4. Tiện ích — JSON contains / amenity keys trước, keyword LIKE chỉ khi cần
         if ($amenities !== []) {
             $query->where(function ($q) use ($amenities) {
                 foreach ($amenities as $am) {
                     $keywords = match ($am) {
-                        'pool' => ['hồ bơi', 'pool', 'hồ bơi vô cực', 'bơi'],
-                        'beach' => ['biển', 'beach', 'bãi biển', 'gần biển'],
-                        'breakfast' => ['bữa', 'breakfast', 'sáng', 'ăn'],
-                        'spa' => ['spa', 'massage', 'wellness'],
+                        'pool' => ['hồ bơi', 'pool', 'bơi'],
+                        'beach' => ['biển', 'beach', 'bãi biển'],
+                        'breakfast' => ['breakfast', 'bữa sáng', 'ăn sáng'],
+                        'spa' => ['spa', 'massage'],
                         'gym' => ['gym', 'fitness'],
-                        'shuttle' => ['đưa đón', 'shuttle', 'sân bay', 'xe'],
+                        'shuttle' => ['shuttle', 'đưa đón', 'sân bay'],
                         default => [$am],
                     };
-                    $q->where(function ($sub) use ($keywords) {
+
+                    $q->where(function ($sub) use ($am, $keywords) {
+                        $sub->whereJsonContains('attrs->amenities', $am)
+                            ->orWhere('attrs->amenities', 'like', '%"'.$am.'"%');
                         foreach ($keywords as $kw) {
-                            $sub->orWhere('attrs', 'like', "%{$kw}%");
+                            $sub->orWhere('attrs', 'like', '%'.$kw.'%');
                         }
                     });
                 }
             });
         }
 
-        // 5. Lọc tiêu chuẩn & đánh giá (stars: 5_star, 4_star, 3_star, homestay)
+        // 5. Hạng sao — dùng cột star_rating (index được), fallback property_type
         if ($stars !== []) {
             $query->where(function ($q) use ($stars) {
                 foreach ($stars as $st) {
                     if ($st === '5_star' || $st === '5') {
-                        $q->orWhere('attrs', 'like', '%5 sao%')
-                            ->orWhere('attrs->property_type', 'resort');
+                        $q->orWhere('star_rating', '>=', 5)
+                            ->orWhere(function ($sub) {
+                                $sub->whereNull('star_rating')->where('attrs->property_type', 'resort');
+                            });
                     } elseif ($st === '4_star' || $st === '4') {
-                        $q->orWhere('attrs', 'like', '%4 sao%')
-                            ->orWhere('attrs->property_type', 'boutique');
+                        $q->orWhere('star_rating', 4)
+                            ->orWhere(function ($sub) {
+                                $sub->whereNull('star_rating')->where('attrs->property_type', 'boutique');
+                            });
                     } elseif ($st === '3_star' || $st === '3') {
-                        $q->orWhere('attrs', 'like', '%3 sao%')
-                            ->orWhere('attrs->property_type', 'hotel');
+                        $q->orWhere('star_rating', 3)
+                            ->orWhere(function ($sub) {
+                                $sub->whereNull('star_rating')->where('attrs->property_type', 'hotel');
+                            });
                     } elseif ($st === 'homestay') {
-                        $q->orWhere('attrs->property_type', 'homestay')
-                            ->orWhere('attrs->property_type', 'bungalow')
-                            ->orWhere('attrs->property_type', 'camping');
+                        $q->orWhereIn('attrs->property_type', ['homestay', 'bungalow', 'camping'])
+                            ->orWhere(function ($sub) {
+                                $sub->whereNotNull('star_rating')->where('star_rating', '<=', 2);
+                            });
                     }
                 }
             });
         }
 
-        // 6. Lọc tìm kiếm từ khóa
+        // 6. Tìm kiếm
         if ($search !== null && $search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('translations', function ($qt) use ($search) {
@@ -1975,29 +1997,58 @@ class ViewDataService
             });
         }
 
-        $query->orderBy('sort')
-            ->orderByDesc('id');
+        $this->applyServiceListingSort($query, $sort);
 
-        // Định vị Cursor nếu có truyền 'after'
-        if ($after !== null && $after !== '') {
-            $allIds = (clone $query)->pluck('id', 'code')->all();
-            $pos = false;
-            if (is_numeric($after)) {
-                $pos = array_search((int) $after, array_values($allIds), true);
-            }
-            if ($pos === false && isset($allIds[$after])) {
-                $pos = array_search($allIds[$after], array_values($allIds), true);
-            }
-            if ($pos !== false) {
-                $offset = $pos + 1;
+        // Count trên tập đã lọc (trước keyset) — tránh pluck toàn bộ ID
+        $totalCount = (clone $query)->count();
+
+        $useKeyset = false;
+        if ($after !== null && $after !== '' && $totalCount > 0) {
+            $anchor = Service::query()
+                ->select(['id', 'sort', 'price_from', 'rating', 'star_rating', 'created_at'])
+                ->when(is_numeric($after), fn ($q) => $q->where('id', (int) $after))
+                ->when(! is_numeric($after), fn ($q) => $q->where('code', $after))
+                ->first();
+
+            if ($anchor) {
+                if ($sort === 'popular' || $sort === 'newest' || $sort === 'rating_desc') {
+                    $useKeyset = true;
+                    $this->applyServiceListingKeyset($query, $sort, $anchor);
+                    $offset = 0;
+                } else {
+                    // Sort phức tạp (giá nulls): seek bằng count hàng đứng trước — vẫn O(1) index scan, không pluck all IDs
+                    $offset = $this->serviceListingOffsetAfter($query, $sort, $anchor);
+                }
             }
         }
 
-        $totalCount = (clone $query)->count();
-
-        // Fallback Sample Data nếu không có dữ liệu DB
         if ($totalCount === 0) {
+            // Fallback SampleData chỉ khi catalog trống (bootstrap) —
+            // người dùng lọc ra 0 kết quả phải thấy đúng "không có kết quả".
+            $hasActiveFilters = $categories !== []
+                || $propertyTypes !== []
+                || $priceRanges !== []
+                || $amenities !== []
+                || $stars !== []
+                || $minPrice !== null
+                || $maxPrice !== null
+                || ($search !== null && $search !== '');
+
+            if ($hasActiveFilters) {
+                return [
+                    'count' => 0,
+                    'items' => [],
+                    'offset' => $offset,
+                    'limit' => $limit,
+                    'next_offset' => $offset,
+                    'cursor' => null,
+                    'next_cursor' => null,
+                    'has_more' => false,
+                ];
+            }
+
             $sampleItems = SampleData::services($cluster);
+
             return [
                 'count' => count($sampleItems),
                 'items' => array_slice($sampleItems, $offset, $limit),
@@ -2024,9 +2075,9 @@ class ViewDataService
                 'id', 'project_id', 'cluster', 'service_category_id', 'country_id',
                 'code', 'price_from', 'currency', 'rating', 'review_count',
                 'star_rating', 'discount_badge', 'is_featured', 'is_hot_deal',
-                'attrs', 'sort', 'status'
+                'attrs', 'sort', 'status', 'created_at',
             ])
-            ->skip($offset)
+            ->when(! $useKeyset, fn ($q) => $q->skip($offset))
             ->take($limit)
             ->get();
 
@@ -2034,7 +2085,9 @@ class ViewDataService
 
         $pagedCount = count($mappedItems);
         $nextOffset = $offset + $pagedCount;
-        $hasMore = $nextOffset < $totalCount;
+        $hasMore = $useKeyset
+            ? ($pagedCount >= $limit)
+            : ($nextOffset < $totalCount);
         $lastItem = end($mappedItems);
         $nextCursor = $lastItem ? (string) ($lastItem['id'] ?? $lastItem['code'] ?? $nextOffset) : null;
 
@@ -2048,6 +2101,91 @@ class ViewDataService
             'next_cursor' => $nextCursor,
             'has_more' => $hasMore,
         ];
+    }
+
+    /**
+     * @param  \Illuminate\Database\Eloquent\Builder<\App\Models\Service>  $query
+     */
+    protected function applyServiceListingSort($query, string $sort): void
+    {
+        match ($sort) {
+            'newest' => $query->orderByDesc('id'),
+            'price_asc' => $query->orderByRaw('price_from is null')->orderBy('price_from')->orderByDesc('id'),
+            'price_desc' => $query->orderByRaw('price_from is null')->orderByDesc('price_from')->orderByDesc('id'),
+            'rating_desc' => $query->orderByDesc('rating')->orderByDesc('id'),
+            default => $query->orderBy('sort')->orderByDesc('id'),
+        };
+    }
+
+    /**
+     * Keyset seek (popular / newest / rating) — không pluck toàn bộ ID.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<\App\Models\Service>  $query
+     */
+    protected function applyServiceListingKeyset($query, string $sort, Service $anchor): void
+    {
+        $id = (int) $anchor->id;
+
+        match ($sort) {
+            'newest' => $query->where('id', '<', $id),
+            'rating_desc' => $query->where(function ($q) use ($anchor, $id) {
+                $rating = (float) ($anchor->rating ?? 0);
+                $q->where('rating', '<', $rating)
+                    ->orWhere(function ($q2) use ($rating, $id) {
+                        $q2->where('rating', $rating)->where('id', '<', $id);
+                    });
+            }),
+            default => $query->where(function ($q) use ($anchor, $id) {
+                $sortVal = (int) ($anchor->sort ?? 0);
+                $q->where('sort', '>', $sortVal)
+                    ->orWhere(function ($q2) use ($sortVal, $id) {
+                        $q2->where('sort', $sortVal)->where('id', '<', $id);
+                    });
+            }),
+        };
+    }
+
+    /**
+     * Offset sau cursor khi sort có nulls (price) — COUNT index thay vì pluck all.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<\App\Models\Service>  $query
+     */
+    protected function serviceListingOffsetAfter($query, string $sort, Service $anchor): int
+    {
+        $id = (int) $anchor->id;
+        $before = (clone $query)->where(function ($q) use ($sort, $anchor, $id) {
+            if ($sort === 'price_asc') {
+                $price = $anchor->price_from;
+                if ($price === null) {
+                    $q->whereNotNull('price_from')
+                        ->orWhere(function ($q2) use ($id) {
+                            $q2->whereNull('price_from')->where('id', '>', $id);
+                        });
+                } else {
+                    $q->whereNotNull('price_from')->where('price_from', '<', $price)
+                        ->orWhere(function ($q2) use ($price, $id) {
+                            $q2->where('price_from', $price)->where('id', '>', $id);
+                        });
+                }
+            } elseif ($sort === 'price_desc') {
+                $price = $anchor->price_from;
+                if ($price === null) {
+                    $q->whereNotNull('price_from')
+                        ->orWhere(function ($q2) use ($id) {
+                            $q2->whereNull('price_from')->where('id', '>', $id);
+                        });
+                } else {
+                    $q->whereNotNull('price_from')->where('price_from', '>', $price)
+                        ->orWhere(function ($q2) use ($price, $id) {
+                            $q2->where('price_from', $price)->where('id', '>', $id);
+                        });
+                }
+            } else {
+                $q->where('id', '>', $id);
+            }
+        })->count();
+
+        return $before + 1;
     }
 
     /**
@@ -3305,6 +3443,7 @@ class ViewDataService
         }
 
         $data = [
+            'id' => $package->id,
             'slug' => $seoTranslation?->slug ?? '',
             'slugFull' => $seoTranslation?->slug_full ?? null,
             'title' => $translation?->title ?? '',

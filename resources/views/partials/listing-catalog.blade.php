@@ -2,6 +2,10 @@
     /** @var array<string, mixed> $listing */
     $listing = \App\Support\ListingChrome::make(is_array($listing ?? null) ? $listing : []);
     $title = (string) ($listing['title'] ?? '');
+    $selectedSort = (string) request('sort', 'popular');
+    if (! in_array($selectedSort, ['popular', 'newest', 'price_asc', 'price_desc', 'rating_desc', 'duration_asc'], true)) {
+        $selectedSort = 'popular';
+    }
 
     $labelMap = [];
     foreach ($listing['categories'] ?? [] as $c) {
@@ -69,6 +73,7 @@
         'priceMin' => (int) ($listing['priceMin'] ?? 0),
         'priceMax' => (int) ($listing['priceMax'] ?? 10000000),
         'priceStep' => (int) ($listing['priceStep'] ?? 100000),
+        'sort' => $selectedSort,
         'initialLimit' => 5,
         'eagerLimit' => 10,
         'scrollLimit' => 20,
@@ -103,29 +108,40 @@
                 <span class="listing-toolbar__count-num" x-text="count"></span>
                 <span class="listing-toolbar__count-label">{{ $listing['unitLabel'] }}</span>
             </p>
-            @if ($listing['showDurationFilter'] || $listing['showStyleFilter'] || $listing['showCountryFilter'] || $listing['showTypeFilter'])
-                <x-shared.sort-dropdown />
-            @endif
+            <div
+                class="listing-toolbar__sort"
+                @vt-select-change="if ($event.detail?.name === 'sort') setSort($event.detail.value)"
+            >
+                <x-shared.sort-dropdown
+                    :options="[
+                        ['value' => 'popular', 'label' => 'Phổ biến nhất'],
+                        ['value' => 'newest', 'label' => 'Mới nhất'],
+                        ['value' => 'price_asc', 'label' => 'Giá thấp → cao'],
+                        ['value' => 'price_desc', 'label' => 'Giá cao → thấp'],
+                        ['value' => 'rating_desc', 'label' => 'Đánh giá cao nhất'],
+                        ['value' => 'duration_asc', 'label' => 'Thời lượng ngắn → dài'],
+                    ]"
+                    :selected="$selectedSort"
+                />
+            </div>
         </div>
 
         <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
 
-        {{-- Dải thẻ lọc đang chọn (Active Filters Bar — Chuẩn Design System) --}}
-        <div x-show="hasActiveFilters" x-cloak class="listing-active-filters flex flex-wrap items-center gap-2.5 mb-5 p-3.5 rounded-2xl bg-page-soft/90 border border-line shadow-2xs">
-            <span class="text-sm font-bold text-ink flex items-center gap-1.5 pl-1 pr-1 shrink-0">
+        <div x-show="hasActiveFilters" x-cloak class="listing-active-filters">
+            <span class="listing-active-filters__label">
                 <x-icon name="filter" class="size-4 text-primary-600" />
-                <span>Đang lọc:</span>
+                <span>Đang lọc</span>
             </span>
 
-            {{-- Chip lọc khoảng giá kéo slider --}}
             <template x-if="isPriceFiltered">
-                <span class="vt-chip inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-line text-sm font-medium text-ink shadow-xs hover:border-primary-300 transition-colors">
-                    <span class="text-xs text-muted font-normal">Giá:</span>
-                    <span x-text="priceRangeLabel" class="font-bold text-primary-700"></span>
+                <span class="listing-active-filters__chip">
+                    <span class="listing-active-filters__chip-kicker">Giá</span>
+                    <span class="listing-active-filters__chip-value" x-text="priceRangeLabel"></span>
                     <button
                         type="button"
+                        class="listing-active-filters__chip-remove"
                         @click="resetPriceRange()"
-                        class="flex items-center justify-center size-4.5 rounded-full text-muted hover:text-accent-600 hover:bg-accent-50 cursor-pointer transition-colors"
                         aria-label="Bỏ lọc khoảng giá"
                     >
                         <x-icon name="close" class="size-3.5" />
@@ -135,12 +151,12 @@
 
             <template x-for="(vals, grp) in filters" :key="grp">
                 <template x-for="val in vals" :key="grp + '-' + val">
-                    <span class="vt-chip inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white border border-line text-sm font-medium text-ink shadow-xs hover:border-primary-300 transition-colors">
+                    <span class="listing-active-filters__chip">
                         <span x-text="getFilterLabel(grp, val)"></span>
                         <button
                             type="button"
+                            class="listing-active-filters__chip-remove"
                             @click="clearFilter(grp, val)"
-                            class="flex items-center justify-center size-4.5 rounded-full text-muted hover:text-accent-600 hover:bg-accent-50 cursor-pointer transition-colors"
                             aria-label="Bỏ tiêu chí lọc"
                         >
                             <x-icon name="close" class="size-3.5" />
@@ -151,8 +167,8 @@
 
             <button
                 type="button"
+                class="listing-active-filters__clear"
                 @click="clearAllFilters()"
-                class="text-sm font-bold text-accent-600 hover:text-accent-700 hover:underline ml-auto pr-1.5 cursor-pointer whitespace-nowrap"
             >
                 Xóa tất cả
             </button>

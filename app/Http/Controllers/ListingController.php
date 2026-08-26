@@ -16,7 +16,8 @@ class ListingController extends Controller
 
     public function tours(Request $request): JsonResponse
     {
-        $tours = $this->filterTours($this->data->tours(), $request);
+        $tours = $this->sortItems($this->filterTours($this->data->tours(), $request), $request);
+
         [$offset, $limit, $isAppend] = $this->extractPagination($request, $tours);
 
         return $this->cardsResponse($tours, 'tour', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
@@ -24,7 +25,8 @@ class ListingController extends Controller
 
     public function cruises(Request $request): JsonResponse
     {
-        $cruises = $this->filterCruises($this->data->cruises(), $request);
+        $cruises = $this->sortItems($this->filterCruises($this->data->cruises(), $request), $request);
+
         [$offset, $limit, $isAppend] = $this->extractPagination($request, $cruises);
 
         return $this->cardsResponse($cruises, 'cruise', $request->input('variant', 'wide'), $offset, $limit, $isAppend);
@@ -99,6 +101,7 @@ class ListingController extends Controller
         $search = $request->filled('q') ? trim((string) $request->input('q')) : null;
         $minPrice = $request->filled('min_price') ? (float) $request->input('min_price') : null;
         $maxPrice = $request->filled('max_price') ? (float) $request->input('max_price') : null;
+        $sort = $this->normalizeSort((string) $request->input('sort', 'popular'));
 
         $res = $this->data->servicesForListing(
             cluster: $cluster,
@@ -113,7 +116,8 @@ class ListingController extends Controller
             amenities: $amenities,
             stars: $stars,
             minPrice: $minPrice,
-            maxPrice: $maxPrice
+            maxPrice: $maxPrice,
+            sort: $sort,
         );
 
         $pagedItems = $res['items'];
@@ -290,6 +294,31 @@ class ListingController extends Controller
             'has_more' => $hasMore,
             'html' => $html,
         ]);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array<int, array<string, mixed>>
+     */
+    protected function sortItems(array $items, Request $request): array
+    {
+        $sort = $this->normalizeSort((string) $request->input('sort', 'popular'));
+
+        return match ($sort) {
+            'newest' => collect($items)->sortByDesc(fn (array $i) => (int) ($i['id'] ?? 0))->values()->all(),
+            'price_asc' => collect($items)->sortBy(fn (array $i) => (float) ($i['priceFrom'] ?? PHP_FLOAT_MAX))->values()->all(),
+            'price_desc' => collect($items)->sortByDesc(fn (array $i) => (float) ($i['priceFrom'] ?? 0))->values()->all(),
+            'rating_desc' => collect($items)->sortByDesc(fn (array $i) => (float) ($i['rating'] ?? 0))->values()->all(),
+            'duration_asc' => collect($items)->sortBy(fn (array $i) => (int) ($i['days'] ?? PHP_INT_MAX))->values()->all(),
+            default => $items,
+        };
+    }
+
+    protected function normalizeSort(string $sort): string
+    {
+        $allowed = ['popular', 'newest', 'price_asc', 'price_desc', 'rating_desc', 'duration_asc'];
+
+        return in_array($sort, $allowed, true) ? $sort : 'popular';
     }
 
     /**

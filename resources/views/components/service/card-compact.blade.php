@@ -26,6 +26,8 @@
     }
 
     $propertyTypeLabel = $item['propertyTypeLabel'] ?? null;
+    $starRaw = isset($item['starRating']) ? (int) round((float) $item['starRating']) : 0;
+    $showStayMediaTags = $isStay && (filled($propertyTypeLabel) || $starRaw >= 3);
 @endphp
 
 {{-- Card dọc gọn — lưới dịch vụ liên quan --}}
@@ -56,8 +58,14 @@
                     {{ $item['badge'] }}
                 </span>
             @endif
+            @if ($showStayMediaTags)
+                <x-stay.card-media-tags
+                    :property-type-label="$propertyTypeLabel"
+                    :star-rating="$item['starRating'] ?? null"
+                />
+            @endif
             @if ($mediaBadge !== null)
-                <span class="tour-card-duration">
+                <span class="tour-card-duration{{ $isStay ? ' tour-card-duration--plain' : '' }}">
                     <x-icon :name="$mediaBadgeIcon" class="tour-card-duration__icon" />
                     {{ $mediaBadge }}
                 </span>
@@ -66,17 +74,6 @@
     </a>
     <div class="card-body flex flex-1 flex-col">
         <div class="card-inner flex-1">
-            @if (($isStay && filled($propertyTypeLabel)) || ! empty($item['starRating']))
-                <div class="flex items-center gap-2 mb-1">
-                    @if ($isStay && filled($propertyTypeLabel))
-                        <span class="stay-property-type-pill">{{ $propertyTypeLabel }}</span>
-                    @endif
-                    @if (! empty($item['starRating']))
-                        <x-stay.star-rating :rating="$item['starRating']" size="sm" />
-                    @endif
-                </div>
-            @endif
-
             <h3 class="tour-card-title item-title">
                 <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $item['title'] }}</a>
             </h3>
