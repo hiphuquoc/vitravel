@@ -13,10 +13,9 @@ class HomeController extends Controller
 
     public function index()
     {
+        // Featured grids tải AJAX lazy (không SSR mapPackage nặng)
         return $this->cachedHtmlResponse(fn () => view('pages.home', [
             'countries' => $this->data->homeCountries(),
-            'featuredTours' => $this->data->featuredTours(),
-            'featuredCruises' => $this->data->featuredCruises(),
             'pills' => $this->data->heroPills(),
             'slides' => $this->data->homeSlides(),
         ])->render(), [], true);

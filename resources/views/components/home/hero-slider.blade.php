@@ -48,17 +48,6 @@
                 $isFirst = $index === 0;
                 $bgDesktop = $slide['image'] ?? null;
                 $bgMobile = $slide['imageMobile'] ?? null;
-                $firstBgStyle = null;
-                if ($isFirst && ($bgDesktop || $bgMobile)) {
-                    $parts = [];
-                    if ($bgDesktop) {
-                        $parts[] = '--hero-bg: url("'.$bgDesktop.'")';
-                    }
-                    if ($bgMobile) {
-                        $parts[] = '--hero-bg-mobile: url("'.$bgMobile.'")';
-                    }
-                    $firstBgStyle = implode('; ', $parts);
-                }
             @endphp
             <div
                 class="hero-slide {{ $isFirst ? 'is-active' : '' }}"
@@ -69,21 +58,44 @@
                 :aria-hidden="active !== {{ $index }}"
             >
                 @if ($bgDesktop || $bgMobile)
-                    <div
-                        @class([
-                            'hero-slide__media',
-                            'hero-slide__media--ready' => filled($firstBgStyle),
-                            'hero-slide__media--has-mobile' => filled($bgMobile),
-                        ])
-                        @if (filled($firstBgStyle))
-                            style="{{ $firstBgStyle }}"
+                    @if ($isFirst)
+                        {{-- Slide 0: <img> LCP-discoverable (không chỉ CSS background) --}}
+                        <div
+                            class="hero-slide__media hero-slide__media--has-img"
+                            role="img"
+                            aria-label="{{ $slide['imageAlt'] ?? '' }}"
                             data-bg-ready="1"
-                        @endif
-                        @if ($bgDesktop) data-bg="{{ $bgDesktop }}" @endif
-                        @if ($bgMobile) data-bg-mobile="{{ $bgMobile }}" @endif
-                        role="img"
-                        aria-label="{{ $slide['imageAlt'] ?? '' }}"
-                    ></div>
+                        >
+                            <picture>
+                                @if (filled($bgMobile))
+                                    <source media="(max-width: 768px)" srcset="{{ $bgMobile }}">
+                                @endif
+                                <img
+                                    class="hero-slide__img"
+                                    src="{{ $bgDesktop }}"
+                                    @if (filled($firstSrcset) && $isFirst) srcset="{{ $firstSrcset }}" @endif
+                                    sizes="100vw"
+                                    alt="{{ $slide['imageAlt'] ?? '' }}"
+                                    width="1920"
+                                    height="1080"
+                                    loading="eager"
+                                    fetchpriority="high"
+                                    decoding="async"
+                                >
+                            </picture>
+                        </div>
+                    @else
+                        <div
+                            @class([
+                                'hero-slide__media',
+                                'hero-slide__media--has-mobile' => filled($bgMobile),
+                            ])
+                            @if ($bgDesktop) data-bg="{{ $bgDesktop }}" @endif
+                            @if ($bgMobile) data-bg-mobile="{{ $bgMobile }}" @endif
+                            role="img"
+                            aria-label="{{ $slide['imageAlt'] ?? '' }}"
+                        ></div>
+                    @endif
                 @else
                     <x-ph class="h-full w-full" :label="$slide['imageAlt'] ?? 'Ảnh hero'" icon-class="size-16" />
                 @endif

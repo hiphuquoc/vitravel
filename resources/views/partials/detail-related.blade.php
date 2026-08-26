@@ -30,6 +30,8 @@
         'maxScrollAutoLoads' => 0,
         'skeletonCount' => $count,
         'cardKind' => $kind,
+        'deferUntilVisible' => true,
+        'deferRootMargin' => '400px',
     ]))"
     x-show="loading || count === null || count > 0"
 >

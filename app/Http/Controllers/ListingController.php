@@ -70,6 +70,17 @@ class ListingController extends Controller
         );
     }
 
+    public function featuredSupport(Request $request): JsonResponse
+    {
+        $limit = max(1, min(12, (int) $request->input('limit', 12)));
+
+        return $this->cardsResponse(
+            $this->data->featuredSupportServices($limit),
+            'service',
+            'compact',
+        );
+    }
+
     public function services(Request $request): JsonResponse
     {
         $cluster = (string) $request->input('cluster', '');

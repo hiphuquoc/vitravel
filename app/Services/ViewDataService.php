@@ -55,6 +55,9 @@ class ViewDataService
     /** @var array<int, array<string, mixed>>|null */
     protected ?array $cruisesMemo = null;
 
+    /** @var array<string, array<string, mixed>>|null */
+    protected ?array $homeSectionsMemo = null;
+
     protected function locale(): string
     {
         return app()->getLocale();
@@ -153,11 +156,15 @@ class ViewDataService
 
     public function homeSections(): array
     {
-        if (! HomeSection::query()->active()->exists()) {
-            return apply_site_brand_deep(SampleData::homeSections());
+        if ($this->homeSectionsMemo !== null) {
+            return $this->homeSectionsMemo;
         }
 
-        return apply_site_brand_deep(HomeSection::query()
+        if (! HomeSection::query()->active()->exists()) {
+            return $this->homeSectionsMemo = apply_site_brand_deep(SampleData::homeSections());
+        }
+
+        return $this->homeSectionsMemo = apply_site_brand_deep(HomeSection::query()
             ->active()
             ->with(['translations', 'image'])
             ->get()
@@ -228,19 +235,19 @@ class ViewDataService
 
     public function featuredTours(int $limit = 3): array
     {
+        $limit = max(1, min(12, $limit));
+        $cardWith = [
+            'package.translations',
+            'package.country.translations',
+            'package.countries.translations',
+            'package.travelStyles',
+            'package.mediaAttachments.media',
+            'package.seoEntry.translations',
+        ];
+
         $packages = HomeFeaturedTour::query()
             ->orderBy('sort')
-            ->with([
-                'package.translations',
-                'package.country.translations',
-                'package.countries.translations',
-                'package.travelStyles',
-                'package.itineraryDays.translations',
-                'package.cabinTypes.translations',
-                    'package.faqs.translations',
-                    'package.mediaAttachments.media',
-                    'package.seoEntry.translations',
-                ])
+            ->with($cardWith)
             ->get()
             ->map(fn (HomeFeaturedTour $row) => $row->package)
             ->filter(fn (?Package $package) => $package && $package->status === 'published' && $package->type === Package::TYPE_TOUR)
@@ -248,7 +255,7 @@ class ViewDataService
 
         if ($packages->isNotEmpty()) {
             return $packages
-                ->map(fn (Package $package) => $this->mapPackage($package))
+                ->map(fn (Package $package) => $this->mapPackageCard($package, false))
                 ->values()
                 ->all();
         }
@@ -258,18 +265,19 @@ class ViewDataService
 
     public function featuredCruises(int $limit = 3): array
     {
+        $limit = max(1, min(12, $limit));
+        $cardWith = [
+            'package.translations',
+            'package.country.translations',
+            'package.countries.translations',
+            'package.travelStyles',
+            'package.mediaAttachments.media',
+            'package.seoEntry.translations',
+        ];
+
         $packages = HomeFeaturedCruise::query()
             ->orderBy('sort')
-            ->with([
-                'package.translations',
-                'package.country.translations',
-                'package.travelStyles',
-                'package.itineraryDays.translations',
-                'package.cabinTypes.translations',
-                'package.faqs.translations',
-                'package.mediaAttachments.media',
-                'package.seoEntry.translations',
-            ])
+            ->with($cardWith)
             ->get()
             ->map(fn (HomeFeaturedCruise $row) => $row->package)
             ->filter(fn (?Package $package) => $package && $package->status === 'published' && $package->type === Package::TYPE_CRUISE)
@@ -277,7 +285,7 @@ class ViewDataService
 
         if ($packages->isNotEmpty()) {
             return $packages
-                ->map(fn (Package $package) => $this->mapPackage($package, true))
+                ->map(fn (Package $package) => $this->mapPackageCard($package, true))
                 ->values()
                 ->all();
         }
@@ -299,12 +307,11 @@ class ViewDataService
             return [];
         }
 
+        // Card-only — không FAQ / price table (home + listing compact)
         $with = [
             'translations', 'category', 'country.translations',
-            'seoEntry.translations', 'faqs.translations',
+            'seoEntry.translations',
             'mediaAttachments.media',
-            'priceTable.variants.translations',
-            'priceTable.periods.rates',
         ];
 
         if (HomeFeaturedSchema::hasServices()) {
@@ -322,7 +329,7 @@ class ViewDataService
 
             if ($curated->isNotEmpty()) {
                 return $curated
-                    ->map(fn (Service $s) => $this->mapService($s))
+                    ->map(fn (Service $s) => $this->mapService($s, false))
                     ->values()
                     ->all();
             }
@@ -356,9 +363,28 @@ class ViewDataService
         }
 
         return $featured
-            ->map(fn (Service $s) => $this->mapService($s))
+            ->map(fn (Service $s) => $this->mapService($s, false))
             ->values()
             ->all();
+    }
+
+    /**
+     * Có curated dịch vụ bổ trợ trên trang chủ? (không hydrate payload — chỉ check tồn tại)
+     */
+    public function hasFeaturedSupportServices(): bool
+    {
+        if (! HomeFeaturedSchema::hasServices()) {
+            return false;
+        }
+
+        $clusters = HomeFeaturedService::SUPPORT_CLUSTERS;
+
+        return HomeFeaturedService::query()
+            ->whereHas(
+                'service',
+                fn ($q) => $q->published()->whereIn('cluster', $clusters),
+            )
+            ->exists();
     }
 
     /**
@@ -374,10 +400,8 @@ class ViewDataService
 
         $with = [
             'translations', 'category', 'country.translations',
-            'seoEntry.translations', 'faqs.translations',
+            'seoEntry.translations',
             'mediaAttachments.media',
-            'priceTable.variants.translations',
-            'priceTable.periods.rates',
         ];
 
         if (! HomeFeaturedSchema::hasServices()) {
@@ -395,7 +419,7 @@ class ViewDataService
             ->map(fn (HomeFeaturedService $row) => $row->service)
             ->filter()
             ->take($limit)
-            ->map(fn (Service $s) => $this->mapService($s))
+            ->map(fn (Service $s) => $this->mapService($s, false))
             ->values()
             ->all();
     }

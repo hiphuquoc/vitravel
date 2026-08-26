@@ -513,6 +513,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
     seededBoot: Boolean(opts.seeded),
     skeletonCount: Number(opts.skeletonCount || opts.initialLimit || 5),
     cardKind: String(opts.cardKind || 'tour'),
+    deferUntilVisible: Boolean(opts.deferUntilVisible),
+    deferRootMargin: String(opts.deferRootMargin || '400px'),
 
     // Dual Range Price Slider State
     priceMin: Number(opts.priceMin ?? 0),
@@ -711,14 +713,20 @@ Alpine.data('listingGrid', (opts = {}) => ({
             this.endpoint.includes('related')
             || (this.fixedParams && (this.fixedParams.exclude || this.fixedParams.service_id || this.fixedParams.category_id))
         );
-        if (isRelated && 'IntersectionObserver' in window) {
+        const deferVisible = this.deferUntilVisible || isRelated;
+        if (deferVisible && 'IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
                     observer.disconnect();
                     this.fetchInitialBatch();
                 }
-            }, { rootMargin: '400px' });
+            }, { rootMargin: this.deferRootMargin || '400px' });
             observer.observe(this.$el);
+            return;
+        }
+        if (deferVisible) {
+            // Fallback: không IO → fetch sau frame (không chặn parse)
+            requestAnimationFrame(() => this.fetchInitialBatch());
             return;
         }
 

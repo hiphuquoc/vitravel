@@ -4,6 +4,14 @@
 @section('meta_description', seo_default_description())
 
 @section('content')
+    @php
+        /** @var array<string, array<string, mixed>> $homeSections */
+        $homeSections = view_data()->homeSections();
+        $homeSec = static function (string $key) use ($homeSections): array {
+            return $homeSections[$key] ?? view_data()->homeSection($key);
+        };
+    @endphp
+
     <x-home.hero-slider :slides="$slides" :pills="$pills" :countries="$countries" />
 
     {{-- ── 4 USP ── --}}
@@ -12,13 +20,13 @@
     </section>
 
     {{-- ── Giới thiệu công ty ── --}}
-    @php $companyIntro = view_data()->homeSection('company_intro'); @endphp
+    @php $companyIntro = $homeSec('company_intro'); @endphp
     @unless ($companyIntro['hidden'] ?? false)
         <x-shared.company-intro :section="$companyIntro" />
     @endunless
 
-    {{-- ── Tour nổi bật ── --}}
-    @php $featuredSection = view_data()->homeSection('featured_tours'); @endphp
+    {{-- ── Tour nổi bật — lazy IO, skeleton carousel đồng bộ card --}}
+    @php $featuredSection = $homeSec('featured_tours'); @endphp
     @unless ($featuredSection['hidden'] ?? false)
         <section class="cv-auto section-band" aria-label="{{ $featuredSection['title'] ?? 'Tour được yêu cầu nhiều nhất' }}">
             <div class="container-site">
@@ -27,21 +35,17 @@
                     :title="$featuredSection['title'] ?? ''"
                     :subtitle="$featuredSection['subtitle'] ?? null"
                 />
-                <div x-data="listingGrid(@js([
+                @include('partials.home-featured', [
                     'endpoint' => route('api.listings.featured-tours'),
                     'params' => ['limit' => 12],
-                ]))">
-                    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
-                    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-                        <x-tour.listing-skeleton :count="3" variant="compact" />
-                    </div>
-                </div>
+                    'kind' => 'tour',
+                ])
             </div>
         </section>
     @endunless
 
     {{-- ── Du thuyền nổi bật ── --}}
-    @php $cruisesSection = view_data()->homeSection('featured_cruises'); @endphp
+    @php $cruisesSection = $homeSec('featured_cruises'); @endphp
     @unless ($cruisesSection['hidden'] ?? false)
         <section class="cv-auto section-band" aria-label="{{ $cruisesSection['title'] ?? 'Du thuyền nổi bật' }}">
             <div class="container-site">
@@ -50,22 +54,18 @@
                     :title="$cruisesSection['title'] ?? ''"
                     :subtitle="$cruisesSection['subtitle'] ?? null"
                 />
-                <div x-data="listingGrid(@js([
+                @include('partials.home-featured', [
                     'endpoint' => route('api.listings.featured-cruises'),
                     'params' => ['limit' => 12],
-                ]))">
-                    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
-                    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-                        <x-tour.listing-skeleton :count="3" variant="compact" />
-                    </div>
-                </div>
+                    'kind' => 'cruise',
+                ])
             </div>
         </section>
     @endunless
 
-    {{-- ── Vé tàu cao tốc / phà nổi bật (train hoặc ferry theo dự án) ── --}}
+    {{-- ── Vé tàu cao tốc / phà nổi bật ── --}}
     @php
-        $trainsSection = view_data()->homeSection('featured_trains');
+        $trainsSection = $homeSec('featured_trains');
         $transportCluster = view_data()->featuredTransportCluster();
     @endphp
     @unless ($trainsSection['hidden'] ?? false)
@@ -76,23 +76,19 @@
                     :title="$trainsSection['title'] ?? ''"
                     :subtitle="$trainsSection['subtitle'] ?? null"
                 />
-                <div x-data="listingGrid(@js([
+                @include('partials.home-featured', [
                     'endpoint' => route('api.listings.featured-services'),
                     'params' => ['cluster' => $transportCluster, 'limit' => 12],
-                ]))">
-                    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
-                    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-                        <x-tour.listing-skeleton :count="3" variant="compact" />
-                    </div>
-                </div>
+                    'kind' => 'service',
+                ])
             </div>
         </section>
     @endunless
 
-    {{-- ── Dịch vụ bổ trợ: curated cards hoặc hub lưu trú / vui chơi / hỗ trợ ── --}}
+    {{-- ── Dịch vụ bổ trợ: AJAX deferred hoặc hub links ── --}}
     @php
-        $supportSection = view_data()->homeSection('support_services');
-        $supportFeatured = view_data()->featuredSupportServices(12);
+        $supportSection = $homeSec('support_services');
+        $hasSupportFeatured = view_data()->hasFeaturedSupportServices();
         $homeSoloClusters = collect(view_data()->serviceClusters())
             ->filter(fn ($c) => in_array($c['code'] ?? '', ['stay', 'experience', 'other'], true))
             ->values()
@@ -104,7 +100,7 @@
         ];
     @endphp
     @unless ($supportSection['hidden'] ?? false)
-        @if (count($supportFeatured) > 0)
+        @if ($hasSupportFeatured)
             <section class="cv-auto section-band" aria-label="{{ $supportSection['title'] ?? 'Dịch vụ bổ trợ' }}">
                 <div class="container-site">
                     <x-shared.section-heading
@@ -112,10 +108,10 @@
                         :title="$supportSection['title'] ?? ''"
                         :subtitle="$supportSection['subtitle'] ?? null"
                     />
-                    @include('partials.listing-cards', [
-                        'items' => $supportFeatured,
+                    @include('partials.home-featured', [
+                        'endpoint' => route('api.listings.featured-support'),
+                        'params' => ['limit' => 12],
                         'kind' => 'service',
-                        'variant' => 'compact',
                     ])
                 </div>
             </section>
@@ -145,23 +141,23 @@
         @endif
     @endunless
 
-    {{-- ── Điểm đến yêu thích: hero cinemascape + strip mosaic ── --}}
-    @php $destinationsSection = view_data()->homeSection('destinations'); @endphp
+    {{-- ── Điểm đến yêu thích ── --}}
+    @php $destinationsSection = $homeSec('destinations'); @endphp
     @unless ($destinationsSection['hidden'] ?? false)
         <x-home.destinations :countries="$countries" :section="$destinationsSection" />
     @endunless
 
-    {{-- ── Video trải nghiệm (ngay dưới điểm đến) ── --}}
-    @php $videosSection = view_data()->homeSection('videos'); @endphp
+    {{-- ── Video trải nghiệm ── --}}
+    @php $videosSection = $homeSec('videos'); @endphp
     @unless ($videosSection['hidden'] ?? false)
         <x-shared.video-showcase :section="$videosSection" :home-only="true" :limit="12" />
     @endunless
 
     {{-- ── Đội ngũ → đánh giá nền tảng → khách hàng kể lại ── --}}
     @php
-        $teamSection = view_data()->homeSection('team');
-        $reviewPlatformsSection = view_data()->homeSection('review_platforms');
-        $testimonialsSection = view_data()->homeSection('testimonials');
+        $teamSection = $homeSec('team');
+        $reviewPlatformsSection = $homeSec('review_platforms');
+        $testimonialsSection = $homeSec('testimonials');
     @endphp
     @unless ($teamSection['hidden'] ?? false)
         <x-shared.team-grid :team="view_data()->teamForHome()" :section="$teamSection" />

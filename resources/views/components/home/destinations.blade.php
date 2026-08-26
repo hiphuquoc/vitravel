@@ -47,6 +47,9 @@
                         :srcset="$hero['imageSrcset'] ?? null"
                         preset="hero"
                         :alt="$hero['name']"
+                        loading="lazy"
+                        decoding="async"
+                        fetchpriority="low"
                         class="vt-dest__hero-img"
                     />
                 @else

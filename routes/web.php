@@ -71,6 +71,7 @@ Route::prefix('api/listings')->name('api.listings.')->group(function () {
     Route::get('/featured-tours', [ListingController::class, 'featuredTours'])->name('featured-tours');
     Route::get('/featured-cruises', [ListingController::class, 'featuredCruises'])->name('featured-cruises');
     Route::get('/featured-services', [ListingController::class, 'featuredServices'])->name('featured-services');
+    Route::get('/featured-support', [ListingController::class, 'featuredSupport'])->name('featured-support');
     Route::get('/related', [ListingController::class, 'related'])->name('related');
 });
 

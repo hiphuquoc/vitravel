@@ -6,6 +6,7 @@ Thư mục này ghi lại kết quả đo, phần **đã sửa trong code**, và
 
 | File | Trang | Form factor |
 |------|--------|-------------|
+| [`optimize/home_desktop.json`](../../optimize/home_desktop.json) | Trang chủ | Desktop |
 | [`optimize/hotel_detail_desktop.json`](../../optimize/hotel_detail_desktop.json) | Chi tiết khách sạn / lưu trú | Desktop |
 | [`optimize/hotel_category_dekstop.json`](../../optimize/hotel_category_dekstop.json) | Hub lưu trú `/luu-tru` (danh mục) | Desktop |
 
@@ -15,12 +16,17 @@ Thư mục này ghi lại kết quả đo, phần **đã sửa trong code**, và
 
 | Doc | Phạm vi |
 |-----|---------|
+| [05-home.md](./05-home.md) | Trang chủ — hero LCP, featured lazy, skeleton carousel |
 | [01-hotel-stay-detail.md](./01-hotel-stay-detail.md) | Chi tiết lưu trú / khách sạn |
 | [02-tour-cruise-detail.md](./02-tour-cruise-detail.md) | Chi tiết tour / du thuyền |
-| [03-listing-catalog.md](./03-listing-catalog.md) | Hub / danh mục / filter listing (**có báo cáo category**) |
+| [03-listing-catalog.md](./03-listing-catalog.md) | Hub / danh mục / filter listing |
 | [04-shared-infrastructure.md](./04-shared-infrastructure.md) | TTFB, CDN, GCS, Nginx `/build`, font, HTML cache |
 
 ## Điểm số tham chiếu
+
+### Home desktop
+
+Xem chi tiết + checklist: [05-home.md](./05-home.md). Đo lại sau deploy để cập nhật bảng điểm.
 
 ### Hotel detail desktop
 
