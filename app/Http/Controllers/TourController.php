@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\RendersWithHtmlCache;
 use App\Support\ListingChrome;
+use App\Support\ListingSeed;
 use App\Services\ViewDataService;
 
 class TourController extends Controller
@@ -21,7 +22,7 @@ class TourController extends Controller
             $styles = $this->data->travelStyles();
             $durations = $this->data->durationBuckets();
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'tours_hub',
                 'title' => $hub['title'] ?? 'Tour',
                 'subtitle' => $hub['subtitle'] ?? '',
@@ -46,8 +47,7 @@ class TourController extends Controller
                 ])->all(),
                 'schemaName' => seo_page_title('Tour trọn gói'),
                 'ratingMeta' => 'Đánh giá từ khách hàng đã đi tour với '.site_brand(),
-                'skeletonCount' => 5,
-            ]);
+            ], ListingSeed::fromItems($tours, 'tour', 5)));
 
             return view('pages.tours.hub', compact('listing'))->render();
         });
@@ -64,7 +64,7 @@ class TourController extends Controller
             $name = (string) ($countryData['name'] ?? '');
             $listingTitle = tour_listing_label($name);
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'country',
                 'title' => $listingTitle,
                 'subtitle' => $countryData['subtitle'] ?? ($countryData['tagline'] ?? ''),
@@ -94,7 +94,7 @@ class TourController extends Controller
                 ])->all(),
                 'schemaName' => seo_page_title($listingTitle),
                 'ratingMeta' => 'Đánh giá từ khách hàng đã đi '.$listingTitle,
-            ]);
+            ], ListingSeed::fromItems($tours, 'tour', 5)));
 
             return view('pages.tours.index', compact('listing'))->render();
         });
@@ -113,7 +113,7 @@ class TourController extends Controller
             $durations = $this->data->durationBuckets();
             $title = tour_listing_label((string) ($category['title'] ?? $category['name'] ?? ''), prefixIfMissing: false);
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'tour_category',
                 'title' => $title,
                 'subtitle' => $category['subtitle'] ?? '',
@@ -148,7 +148,7 @@ class TourController extends Controller
                 ])->all(),
                 'schemaName' => seo_page_title($title),
                 'ratingMeta' => 'Đánh giá từ khách hàng đã chọn '.$title,
-            ]);
+            ], ListingSeed::fromItems($tours, 'tour', 5)));
 
             return view('pages.tours.category', compact('listing'))->render();
         });

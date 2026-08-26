@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\RendersWithHtmlCache;
 use App\Support\ListingChrome;
+use App\Support\ListingSeed;
 use App\Services\ViewDataService;
 
 class CruiseController extends Controller
@@ -21,7 +22,7 @@ class CruiseController extends Controller
             $styles = $this->data->travelStyles();
             $durations = $this->data->durationBuckets();
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'cruises_hub',
                 'title' => $hub['title'] ?? 'Du thuyền',
                 'subtitle' => $hub['subtitle'] ?? '',
@@ -46,7 +47,7 @@ class CruiseController extends Controller
                     'url' => locale_route('cruises.show', ['type' => $c['typeSlug'], 'slug' => $c['slug']]),
                 ])->all(),
                 'schemaName' => seo_page_title('Du thuyền'),
-            ]);
+            ], ListingSeed::fromItems($cruises, 'cruise', 5)));
 
             return view('pages.cruises.hub', compact('listing'))->render();
         });
@@ -65,7 +66,7 @@ class CruiseController extends Controller
             ));
             $name = (string) ($typeData['title'] ?? $typeData['name'] ?? '');
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'cruise_type',
                 'title' => $name,
                 'subtitle' => $typeData['subtitle'] ?? '',
@@ -96,7 +97,7 @@ class CruiseController extends Controller
                 ])->all(),
                 'schemaName' => seo_page_title($name),
                 'ratingMeta' => 'Đánh giá từ khách hàng đã chọn '.$name,
-            ]);
+            ], ListingSeed::fromItems($cruises, 'cruise', 5)));
 
             return view('pages.cruises.index', compact('listing'))->render();
         });

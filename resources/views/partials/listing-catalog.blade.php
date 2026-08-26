@@ -2,6 +2,16 @@
     /** @var array<string, mixed> $listing */
     $listing = \App\Support\ListingChrome::make(is_array($listing ?? null) ? $listing : []);
     $title = (string) ($listing['title'] ?? '');
+    $skeletonCount = max(1, min(12, (int) ($listing['skeletonCount'] ?? 5)));
+    $cardKind = match ((string) ($listing['cardKind'] ?? 'tour')) {
+        'cruise', 'service' => (string) $listing['cardKind'],
+        default => 'tour',
+    };
+    $seedHtml = trim((string) ($listing['seedHtml'] ?? ''));
+    $hasSeed = $seedHtml !== '';
+    $seedCount = $listing['seedCount'];
+    $seedCursor = $listing['seedCursor'] ?? null;
+    $seedHasMore = (bool) ($listing['seedHasMore'] ?? false);
     $selectedSort = (string) request('sort', 'popular');
     if (! in_array($selectedSort, ['popular', 'newest', 'price_asc', 'price_desc', 'rating_desc', 'duration_asc'], true)) {
         $selectedSort = 'popular';
@@ -74,9 +84,15 @@
         'priceMax' => (int) ($listing['priceMax'] ?? 10000000),
         'priceStep' => (int) ($listing['priceStep'] ?? 100000),
         'sort' => $selectedSort,
-        'initialLimit' => 5,
+        'initialLimit' => $skeletonCount,
         'eagerLimit' => 10,
         'scrollLimit' => 20,
+        'seeded' => $hasSeed,
+        'seedCount' => $hasSeed ? $seedCount : null,
+        'seedCursor' => $hasSeed ? $seedCursor : null,
+        'seedHasMore' => $hasSeed ? $seedHasMore : false,
+        'skeletonCount' => $skeletonCount,
+        'cardKind' => $cardKind,
     ]))">
     <x-tour.filter-sidebar
         :durations="$listing['durations']"
@@ -104,10 +120,16 @@
 
     <div class="min-w-0">
         <div class="listing-toolbar">
-            <p class="listing-toolbar__count" x-show="count !== null" x-cloak>
-                <span class="listing-toolbar__count-num" x-text="count"></span>
-                <span class="listing-toolbar__count-label">{{ $listing['unitLabel'] }}</span>
-            </p>
+            <div class="listing-toolbar__count-wrap">
+                <p class="listing-toolbar__count" x-show="count !== null" x-cloak>
+                    <span class="listing-toolbar__count-num" x-text="count"></span>
+                    <span class="listing-toolbar__count-label">{{ $listing['unitLabel'] }}</span>
+                </p>
+                <p class="listing-toolbar__count listing-toolbar__count--skeleton" x-show="count === null && loading" aria-hidden="true">
+                    <span class="listing-skeleton__line listing-skeleton__line--count listing-skeleton__shimmer"></span>
+                    <span class="listing-toolbar__count-label text-transparent">{{ $listing['unitLabel'] }}</span>
+                </p>
+            </div>
             <div
                 class="listing-toolbar__sort"
                 @vt-select-change="if ($event.detail?.name === 'sort') setSort($event.detail.value)"
@@ -174,8 +196,22 @@
             </button>
         </div>
 
-        <div class="listing-results" x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-            <x-tour.listing-skeleton :count="5" variant="wide" />
+        <div
+            class="listing-results"
+            x-ref="results"
+            :class="loading && !seededBoot && 'listing-results--busy'"
+            :aria-busy="loading ? 'true' : 'false'"
+        >
+            @if ($hasSeed)
+                <div data-listing-mount="1">{!! $seedHtml !!}</div>
+            @else
+                <x-tour.listing-skeleton :count="$skeletonCount" variant="wide" :kind="$cardKind" />
+            @endif
+        </div>
+
+        {{-- Markup skeleton tái dùng khi đổi bộ lọc --}}
+        <div class="hidden" x-ref="skeletonTpl" aria-hidden="true">
+            <x-tour.listing-skeleton :count="$skeletonCount" variant="wide" :kind="$cardKind" />
         </div>
 
         {{-- Sentinel quan sát cuộn đón đầu (Chỉ chạy trong 2 đợt cuộn đầu tiên của Giai đoạn 3) --}}
@@ -197,7 +233,6 @@
         {{-- KHU VỰC NÚT TẢI THÊM CAO CẤP (Hiển thị từ lần cuộn thứ 3 trở đi để tránh tải vô hạn) --}}
         <div x-show="!loading && hasMore && requireManualClick" x-cloak class="listing-load-more-section site-mt">
             <div class="flex flex-col items-center justify-center gap-4 py-8 text-center">
-                {{-- Thanh đếm tiến trình xem danh mục trực quan --}}
                 <div class="flex flex-col items-center gap-2" x-show="count > 0">
                     <div class="flex items-center gap-2 text-sm font-medium text-ink-soft">
                         <span>Đang hiển thị <strong class="text-ink font-bold" x-text="loadedCount"></strong> / <strong class="text-ink font-bold" x-text="count"></strong> {{ $listing['unitLabel'] }}</span>
@@ -210,7 +245,6 @@
                     </div>
                 </div>
 
-                {{-- Nút bấm tải thêm chuẩn Luxury UI --}}
                 <button
                     type="button"
                     @click="loadMore()"
@@ -237,15 +271,12 @@
             </div>
         </div>
 
-        {{-- Thông báo khi đã hiển thị hết toàn bộ danh sách --}}
         <div x-show="!loading && !loadingMore && !hasMore && count > 0" x-cloak class="listing-end-notice site-mt">
             <div class="relative flex items-center justify-center py-8">
-                {{-- Đường kẻ mờ 2 bên --}}
                 <div class="absolute inset-0 flex items-center" aria-hidden="true">
                     <div class="w-full border-t border-line/80"></div>
                 </div>
 
-                {{-- Thẻ pill sang trọng nổi ở giữa --}}
                 <div class="relative inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-page-soft border border-line shadow-2xs text-sm font-medium text-ink-soft select-none">
                     <span class="flex items-center justify-center size-5 rounded-full bg-primary-100 text-primary-700">
                         <svg class="size-3.5 stroke-[2.5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

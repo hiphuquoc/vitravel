@@ -278,6 +278,7 @@
 </div>
 
 @if (count($related) > 0)
+    {{-- Legacy SSR related (nếu còn truyền từ controller cũ) --}}
     <section class="container-site section-band--sm" aria-label="Dịch vụ liên quan">
         <x-shared.section-heading title="Dịch vụ liên quan" />
         <div class="grid site-gap sm:grid-cols-2 lg:grid-cols-3">
@@ -293,4 +294,19 @@
             @endforeach
         </div>
     </section>
+@else
+    @include('partials.detail-related', [
+        'title' => 'Dịch vụ liên quan',
+        'ariaLabel' => 'Dịch vụ liên quan',
+        'kind' => 'service',
+        'count' => 3,
+        'params' => [
+            'kind' => 'service',
+            'cluster' => $service['cluster'] ?? 'train',
+            'category_id' => $service['categoryId'] ?? '',
+            'category' => $service['categorySlug'] ?? '',
+            'service_id' => $service['id'] ?? '',
+            'limit' => 3,
+        ],
+    ])
 @endif

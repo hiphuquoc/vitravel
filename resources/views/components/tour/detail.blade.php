@@ -22,7 +22,7 @@
         'danh-gia' => 'Đánh giá',
         'faq' => 'FAQ',
     ];
-    $reviews = array_slice(view_data()->testimonials(), 0, 3);
+    $reviews = view_data()->testimonials(limit: 3);
 
     $coverSrc = $item['imageDetail'] ?? $item['image'] ?? null;
     $coverSrcset = $item['imageDetailSrcset'] ?? $item['imageSrcset'] ?? null;
@@ -266,23 +266,19 @@
     </div>
 </div>
 
-<section class="cv-auto container-site section-band--sm" aria-label="Hành trình tương tự"
-    x-data="listingGrid(@js([
-        'endpoint' => route('api.listings.related'),
-        'params' => [
-            'kind' => $isCruise ? 'cruise' : 'tour',
-            'type' => $item['typeSlug'] ?? '',
-            'country' => $item['countrySlug'] ?? '',
-            'exclude' => $item['slug'] ?? '',
-            'limit' => 3,
-        ],
-    ]))">
-    <x-shared.section-heading title="Hành trình tương tự bạn có thể thích" />
-    <div x-show="error" x-cloak class="listing-error site-mb" x-text="error"></div>
-    <div x-ref="results" :class="loading && 'opacity-60'" :aria-busy="loading ? 'true' : 'false'">
-        <x-tour.listing-skeleton :count="3" variant="compact" />
-    </div>
-</section>
+@include('partials.detail-related', [
+    'title' => 'Hành trình tương tự bạn có thể thích',
+    'ariaLabel' => 'Hành trình tương tự',
+    'kind' => $isCruise ? 'cruise' : 'tour',
+    'count' => 3,
+    'params' => [
+        'kind' => $isCruise ? 'cruise' : 'tour',
+        'type' => $item['typeSlug'] ?? '',
+        'country' => $item['countrySlug'] ?? '',
+        'exclude' => $item['slug'] ?? '',
+        'limit' => 3,
+    ],
+])
 
 @php
     $tripUrl = $isCruise

@@ -7,6 +7,9 @@
         default => 'tour',
     };
     $isAppend = (bool) ($isAppend ?? false);
+    /** Animate chỉ khi append / client replace — seed SSR giữ tĩnh để tránh CLS. */
+    $animate = (bool) ($animate ?? $isAppend);
+    $itemClass = $animate ? 'listing-card-animate' : 'listing-card-static';
     /** Số card trong 1 hàng desktop — vượt ngưỡng thì dùng snap-carousel dùng chung. */
     $gridCap = (int) ($gridCap ?? 3);
     $useCarousel = $variant === 'compact' && count($items) > $gridCap && ! $isAppend;
@@ -29,7 +32,7 @@
                         default => locale_route('tours.show', ['country' => $item['countrySlug'] ?? '', 'slug' => $item['slug'] ?? '']),
                     });
         @endphp
-        <div class="listing-card-animate" data-listing-item>
+        <div class="{{ $itemClass }}" data-listing-item>
             @if ($kind === 'service')
                 @if ($variant === 'compact')
                     <x-service.card-compact :item="$item" :href="$href" />
@@ -71,7 +74,7 @@
                             default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                         };
                 @endphp
-                <div class="snap-carousel__item listing-card-animate" role="listitem" data-listing-item>
+                <div class="snap-carousel__item {{ $itemClass }}" role="listitem" data-listing-item>
                     @if ($kind === 'service')
                         <x-service.card-compact :item="$item" :href="$href" />
                     @else
@@ -108,7 +111,7 @@
                         default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                     };
             @endphp
-            <div class="listing-card-animate" data-listing-item>
+            <div class="{{ $itemClass }}" data-listing-item>
                 @if ($kind === 'service')
                     <x-service.card-compact :item="$item" :href="$href" />
                 @else
@@ -133,7 +136,7 @@
                         default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                     };
             @endphp
-            <div class="listing-card-animate" data-listing-item>
+            <div class="{{ $itemClass }}" data-listing-item>
                 @if ($kind === 'service')
                     <x-service.card :item="$item" :href="$href" />
                 @else

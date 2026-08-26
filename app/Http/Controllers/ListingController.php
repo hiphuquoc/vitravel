@@ -133,6 +133,7 @@ class ListingController extends Controller
             'layout' => $layout,
             'isAppend' => $isAppend,
             'offset' => $res['offset'],
+            'animate' => true,
         ])->render();
 
         return response()->json([
@@ -166,30 +167,39 @@ class ListingController extends Controller
                 $catId = $cat['id'] ?? null;
                 $items = $catId ? $this->data->relatedServicesForCategory($cluster, $catId, $serviceId, $limit) : [];
             }
+
+            if ($items === []) {
+                return response()->json([
+                    'count' => 0,
+                    'html' => '',
+                    'has_more' => false,
+                    'cursor' => null,
+                    'next_cursor' => null,
+                ]);
+            }
+
             return $this->cardsResponse($items, 'service', 'compact');
         }
 
         if ($kind === 'cruise') {
             $type = (string) $request->input('type', '');
-            $items = array_values(array_filter(
-                $this->data->cruises(),
-                fn (array $c) => ($c['slug'] ?? '') !== $exclude
-                    && ($type === '' || ($c['typeSlug'] ?? '') === $type)
-            ));
+            $items = $this->data->relatedCruisesForDetail($exclude, $type !== '' ? $type : null, $limit);
         } else {
             $country = (string) $request->input('country', '');
-            $pool = $country !== ''
-                ? $this->data->toursByCountry($country)
-                : $this->data->tours();
-            $items = array_values(array_filter(
-                $pool,
-                fn (array $t) => ($t['slug'] ?? '') !== $exclude
-            ));
+            $items = $this->data->relatedToursForDetail($exclude, $country !== '' ? $country : null, $limit);
         }
 
-        $items = array_slice($items, 0, $limit);
+        if ($items === []) {
+            return response()->json([
+                'count' => 0,
+                'html' => '',
+                'has_more' => false,
+                'cursor' => null,
+                'next_cursor' => null,
+            ]);
+        }
 
-        return $this->cardsResponse($items, $kind, 'compact');
+        return $this->cardsResponse($items, $kind === 'cruise' ? 'cruise' : 'tour', 'compact');
     }
 
     /**
@@ -282,6 +292,7 @@ class ListingController extends Controller
             'layout' => $layout,
             'isAppend' => $isAppend,
             'offset' => $offset,
+            'animate' => true,
         ])->render();
 
         return response()->json([

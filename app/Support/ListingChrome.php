@@ -48,7 +48,12 @@ namespace App\Support;
  *   ratingMeta: ?string,
  *   skeletonCount: int,
  *   perPage: int,
- *   syncUrl: bool
+ *   syncUrl: bool,
+ *   cardKind: string,
+ *   seedHtml: string,
+ *   seedCount: ?int,
+ *   seedCursor: ?string,
+ *   seedHasMore: bool
  * }
  */
 final class ListingChrome
@@ -100,6 +105,11 @@ final class ListingChrome
             'skeletonCount' => 5,
             'perPage' => 5,
             'syncUrl' => true,
+            'cardKind' => 'tour',
+            'seedHtml' => '',
+            'seedCount' => null,
+            'seedCursor' => null,
+            'seedHasMore' => false,
         ];
 
         return array_merge($base, $overrides);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\RendersWithHtmlCache;
 use App\Support\ListingChrome;
+use App\Support\ListingSeed;
 use App\Services\ViewDataService;
 
 class ServiceController extends Controller
@@ -25,8 +26,15 @@ class ServiceController extends Controller
             $categorySlugs = array_values(array_map(fn ($cat) => (string) $cat['slug'], $filterCategories));
             $unitLabel = $hub['unitLabel'] ?? 'dịch vụ';
             $isStay = ($cluster === 'stay');
+            $seedLimit = 5;
+            $seedRes = $this->data->servicesForListing(
+                cluster: $cluster,
+                categories: [],
+                limit: $seedLimit,
+                variant: 'wide',
+            );
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'service_hub',
                 'title' => $hub['title'] ?? 'Dịch vụ',
                 'subtitle' => $hub['subtitle'] ?? '',
@@ -38,9 +46,8 @@ class ServiceController extends Controller
                 'breadcrumbs' => [['label' => $hub['navLabel'] ?? $hub['title']]],
                 'unitLabel' => $unitLabel,
                 'endpoint' => route('api.listings.services'),
-                'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide', 'per_page' => 5],
-                'perPage' => 5,
-                'skeletonCount' => 5,
+                'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide', 'per_page' => $seedLimit],
+                'perPage' => $seedLimit,
                 'filterDefaults' => [],
                 'showCategoryFilter' => true,
                 'showDurationFilter' => false,
@@ -59,7 +66,7 @@ class ServiceController extends Controller
                 'faqTitle' => 'Câu hỏi thường gặp về '.strtolower((string) ($hub['title'] ?? 'dịch vụ')),
                 'schemaItems' => $this->data->serviceSchemaItems($cluster),
                 'schemaName' => seo_page_title($hub['title'] ?? 'Dịch vụ'),
-            ]);
+            ], ListingSeed::fromServiceListing($seedRes, $seedLimit)));
 
             return view('pages.services.hub', compact('listing', 'cluster'))->render();
         });
@@ -81,8 +88,15 @@ class ServiceController extends Controller
             }
             $name = (string) ($cat['title'] ?? $cat['name'] ?? '');
             $isStay = ($cluster === 'stay');
+            $seedLimit = 5;
+            $seedRes = $this->data->servicesForListing(
+                cluster: $cluster,
+                categories: [$cat['slug'] ?? $category],
+                limit: $seedLimit,
+                variant: 'wide',
+            );
 
-            $listing = ListingChrome::make([
+            $listing = ListingChrome::make(array_merge([
                 'kind' => 'service_category',
                 'title' => $name,
                 'subtitle' => $cat['subtitle'] ?? ($cat['intro'] ?? ''),
@@ -100,9 +114,8 @@ class ServiceController extends Controller
                 ],
                 'unitLabel' => $hub['unitLabel'] ?? 'dịch vụ',
                 'endpoint' => route('api.listings.services'),
-                'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide', 'per_page' => 5],
-                'perPage' => 5,
-                'skeletonCount' => 5,
+                'endpointParams' => ['cluster' => $cluster, 'variant' => 'wide', 'per_page' => $seedLimit],
+                'perPage' => $seedLimit,
                 'filterDefaults' => ['category' => [$cat['slug'] ?? $category]],
                 'showCategoryFilter' => true,
                 'showDurationFilter' => false,
@@ -122,7 +135,7 @@ class ServiceController extends Controller
                 'schemaItems' => $this->data->serviceSchemaItems($cluster, $category),
                 'schemaName' => seo_page_title($name),
                 'ratingMeta' => 'Đánh giá từ khách hàng đã chọn '.$name,
-            ]);
+            ], ListingSeed::fromServiceListing($seedRes, $seedLimit)));
 
             return view('pages.services.index', compact('listing', 'cluster'))->render();
         });
@@ -137,14 +150,11 @@ class ServiceController extends Controller
                 abort(404);
             }
 
-            $catId = $service['categoryId'] ?? null;
-            $serviceId = $service['id'] ?? null;
-            $related = $this->data->relatedServicesForCategory($cluster, $catId, $serviceId, 3);
-
+            // Related tải AJAX + skeleton (không chặn SSR / HTML cache)
             return view('pages.services.show', [
                 'cluster' => $cluster,
                 'service' => $service,
-                'related' => $related,
+                'related' => [],
                 'hub' => $this->data->serviceHub($cluster),
             ])->render();
         });

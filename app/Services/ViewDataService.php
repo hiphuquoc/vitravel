@@ -814,27 +814,32 @@ class ViewDataService
         ];
     }
 
-    public function testimonials(bool $homeOnly = false): array
+    public function testimonials(bool $homeOnly = false, ?int $limit = null): array
     {
         if ($homeOnly && HomeFeaturedSchema::hasReviews()) {
             $curated = HomeFeaturedReview::query()
                 ->orderBy('sort')
                 ->with(['review.avatar', 'review.mediaAttachments.media', 'review.reviewable'])
                 ->whereHas('review', fn ($q) => $q->published())
+                ->when($limit, fn ($q) => $q->limit($limit))
                 ->get()
                 ->map(fn (HomeFeaturedReview $row) => $row->review)
                 ->filter();
 
             if ($curated->isNotEmpty()) {
-                return $curated
+                $mapped = $curated
                     ->map(fn (Review $review) => $this->mapReview($review))
                     ->values()
                     ->all();
+
+                return $limit ? array_slice($mapped, 0, $limit) : $mapped;
             }
         }
 
         if (! Review::query()->published()->exists()) {
-            return SampleData::testimonials();
+            $sample = SampleData::testimonials();
+
+            return $limit ? array_slice($sample, 0, $limit) : $sample;
         }
 
         $query = Review::query()
@@ -845,6 +850,10 @@ class ViewDataService
 
         if ($homeOnly && Review::query()->published()->where('show_on_home', true)->exists()) {
             $query->where('show_on_home', true);
+        }
+
+        if ($limit) {
+            $query->limit(max(1, min(24, $limit)));
         }
 
         return $query
@@ -1733,7 +1742,7 @@ class ViewDataService
     /** @return list<array<string, mixed>> */
     
     /**
-     * Lấy 3 dịch vụ liên quan cùng danh mục với truy vấn giới hạn (Zero overhead).
+     * Lấy dịch vụ liên quan cùng danh mục — card-light mapping (không attachStayPayload).
      */
     public function relatedServicesForCategory(string $cluster, ?int $categoryId, ?int $excludeServiceId = null, int $limit = 3): array
     {
@@ -1741,21 +1750,93 @@ class ViewDataService
             return [];
         }
 
+        $limit = max(1, min(12, $limit));
+
         $query = Service::query()
             ->published()
             ->where('service_category_id', $categoryId)
             ->where('cluster', $cluster)
             ->when($excludeServiceId, fn ($q) => $q->where('id', '!=', $excludeServiceId))
             ->with([
-                'translations', 'category', 'seoEntry.translations',
+                'translations',
+                'category',
+                'seoEntry.translations',
                 'mediaAttachments.media',
-                'priceTable.periods.rates',
+                'options',
             ])
             ->orderBy('sort')
             ->orderByDesc('id')
             ->limit($limit);
 
-        return $query->get()->map(fn (\App\Models\Service $s) => $this->mapService($s))->values()->all();
+        return $query->get()
+            ->map(fn (\App\Models\Service $s) => $this->mapService($s, false))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Tour liên quan (card-light) — không load itinerary/FAQ/price table.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function relatedToursForDetail(string $excludeSlug = '', ?string $countrySlug = null, int $limit = 3): array
+    {
+        return $this->relatedPackagesForDetail(Package::TYPE_TOUR, $excludeSlug, countrySlug: $countrySlug, limit: $limit);
+    }
+
+    /**
+     * Cruise liên quan (card-light).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function relatedCruisesForDetail(string $excludeSlug = '', ?string $typeSlug = null, int $limit = 3): array
+    {
+        return $this->relatedPackagesForDetail(Package::TYPE_CRUISE, $excludeSlug, typeSlug: $typeSlug, limit: $limit);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    protected function relatedPackagesForDetail(
+        string $type,
+        string $excludeSlug = '',
+        ?string $countrySlug = null,
+        ?string $typeSlug = null,
+        int $limit = 3,
+    ): array {
+        $limit = max(1, min(12, $limit));
+        $ids = $this->languageIdChain();
+
+        $query = $this->packageCardQuery($type);
+
+        if ($type === Package::TYPE_TOUR && filled($countrySlug)) {
+            $country = $this->findCountryBySlug($countrySlug);
+            if ($country) {
+                $query->where(function ($q) use ($country) {
+                    $q->where('country_id', $country->id)
+                        ->orWhereHas('countries', fn ($c) => $c->where('countries.id', $country->id));
+                });
+            }
+        }
+
+        if ($type === Package::TYPE_CRUISE && filled($typeSlug)) {
+            $query->where('cruise_type', $typeSlug);
+        }
+
+        if ($excludeSlug !== '' && $ids !== []) {
+            $query->whereDoesntHave('seoEntry.translations', fn ($q) => $q
+                ->whereIn('language_id', $ids)
+                ->where('slug', $excludeSlug));
+        }
+
+        $isCruise = $type === Package::TYPE_CRUISE;
+
+        return $query->limit($limit)->get()
+            ->map(fn (Package $package) => $this->mapPackageCard($package, $isCruise))
+            ->filter(fn (array $row) => ($row['slug'] ?? '') !== '' && ($excludeSlug === '' || ($row['slug'] ?? '') !== $excludeSlug))
+            ->take($limit)
+            ->values()
+            ->all();
     }
 
     /**
@@ -2349,6 +2430,8 @@ class ViewDataService
     public function service(string $slug, ?string $cluster = null): ?array
     {
         $preview = app()->environment('local') && request()?->boolean('preview');
+        $ids = $this->languageIdChain();
+
         $query = Service::query()
             ->when(! $preview, fn ($q) => $q->published())
             ->with([
@@ -2363,25 +2446,27 @@ class ViewDataService
                 'mediaAttachments.media',
                 'priceTable.variants.translations',
                 'priceTable.periods.rates',
-            ]);
+            ])
+            ->where(function ($q) use ($slug, $ids) {
+                $q->where('code', $slug);
+                if ($ids !== []) {
+                    $q->orWhereHas('seoEntry.translations', fn ($sq) => $sq
+                        ->whereIn('language_id', $ids)
+                        ->where('slug', $slug));
+                }
+            });
 
         if ($cluster) {
             $query->forCluster($cluster);
         }
 
-        $matches = $query->get()->filter(function (Service $s) use ($slug) {
-            $seoSlug = $s->seoEntry?->translation($this->locale())?->slug
-                ?? $s->seoEntry?->translations->first()?->slug;
-
-            return $seoSlug === $slug || $s->code === $slug;
-        });
-
-        // Nhiều bản draft trùng slug (crawl lại) — luôn ưu tiên published, rồi id mới nhất.
+        // Nhiều bản draft trùng slug (crawl lại) — ưu tiên published, rồi id mới nhất.
+        $matches = $query->orderByDesc('id')->limit(12)->get();
         $service = $matches->first(fn (Service $s) => $s->status === 'published')
-            ?? $matches->sortByDesc('id')->first();
+            ?? $matches->first();
 
         if ($service) {
-            return $this->mapService($service);
+            return $this->mapService($service, true);
         }
 
         return SampleData::service($slug, $cluster);
@@ -2458,6 +2543,8 @@ class ViewDataService
         }
 
         $payload = [
+            'id' => $service->id,
+            'categoryId' => $service->service_category_id ? (int) $service->service_category_id : null,
             'slug' => $seoTranslation?->slug ?? ($service->code ?? ''),
             'slugFull' => $seoTranslation?->slug_full ?? null,
             'code' => $service->code,
@@ -2487,22 +2574,24 @@ class ViewDataService
             'imageSrcset' => $service->coverSrcset(),
             'imageDetail' => $service->coverUrl('lg'),
             'imageDetailSrcset' => $service->coverSrcset(),
-            'summary' => $translation?->summary ?? '',
-            'highlightsIntro' => $translation?->summary ?? '',
-            'highlights' => is_array($highlights) ? $highlights : [],
-            'inclusions' => $translation?->inclusions ?? [],
-            'exclusions' => $translation?->exclusions ?? [],
-            'notes' => $translation?->notes ?? [],
-            'content' => $translation?->content ?? '',
+            'summary' => $isDetail ? ($translation?->summary ?? '') : '',
+            'highlightsIntro' => $isDetail ? ($translation?->summary ?? '') : '',
+            'highlights' => $isDetail && is_array($highlights) ? $highlights : (is_array($highlights) ? array_slice($highlights, 0, 3) : []),
+            'inclusions' => $isDetail ? ($translation?->inclusions ?? []) : [],
+            'exclusions' => $isDetail ? ($translation?->exclusions ?? []) : [],
+            'notes' => $isDetail ? ($translation?->notes ?? []) : [],
+            'content' => $isDetail ? ($translation?->content ?? '') : '',
             'attrs' => is_array($service->attrs) ? $service->attrs : [],
-            'faqs' => $service->faqs->where('is_active', true)->map(fn (Faq $faq) => [
-                'q' => apply_site_brand($faq->question),
-                'a' => apply_site_brand($faq->answer),
-            ])->values()->all(),
+            'faqs' => $isDetail
+                ? $service->faqs->where('is_active', true)->map(fn (Faq $faq) => [
+                    'q' => apply_site_brand($faq->question),
+                    'a' => apply_site_brand($faq->answer),
+                ])->values()->all()
+                : [],
             'quote' => $this->serviceQuote($service, $translation),
             'styles' => [],
-            'gallery' => $this->mapGalleryAttachments($service),
-            'galleryCount' => $this->galleryAttachmentCount($service),
+            'gallery' => $isDetail ? $this->mapGalleryAttachments($service) : [],
+            'galleryCount' => $isDetail ? $this->galleryAttachmentCount($service) : 0,
         ];
 
         $payload = $this->attachPriceTable($payload, $service, $isDetail);
@@ -3266,6 +3355,123 @@ class ViewDataService
             ]);
     }
 
+    /** Eager-load tối thiểu cho card compact / related — không itinerary/FAQ/price table. */
+    protected function packageCardQuery(string $type)
+    {
+        return Package::query()
+            ->published()
+            ->where('type', $type)
+            ->orderBy('sort')
+            ->orderByDesc('id')
+            ->with([
+                'translations',
+                'country.translations',
+                'countries.translations',
+                'travelStyles',
+                'mediaAttachments.media',
+                'seoEntry.translations',
+            ]);
+    }
+
+    /** @var array<string, string>|null */
+    protected ?array $cruiseTypeNamesMemo = null;
+
+    protected function cruiseTypeName(string $typeSlug): string
+    {
+        if ($typeSlug === '') {
+            return '';
+        }
+
+        if ($this->cruiseTypeNamesMemo === null) {
+            try {
+                $this->cruiseTypeNamesMemo = CruiseType::query()->pluck('name', 'slug')->all();
+            } catch (\Throwable) {
+                $this->cruiseTypeNamesMemo = [];
+            }
+        }
+
+        return (string) ($this->cruiseTypeNamesMemo[$typeSlug] ?? match ($typeSlug) {
+            'du-thuyen-ha-long' => 'Du thuyền Hạ Long',
+            'du-thuyen-mekong' => 'Du thuyền Mekong',
+            'du-thuyen-lan-ha' => 'Du thuyền Lan Hạ',
+            default => $typeSlug,
+        });
+    }
+
+    /**
+     * Map package → card payload (related / listing compact).
+     *
+     * @return array<string, mixed>
+     */
+    protected function mapPackageCard(Package $package, bool $isCruise = false): array
+    {
+        $translation = $package->translation($this->locale());
+        $countryTranslation = $package->country?->translation($this->locale());
+        $seoTranslation = $package->seoEntry?->translation($this->locale());
+        $places = $translation?->places_to_visit ?? [];
+        if (is_string($places)) {
+            $decoded = json_decode($places, true);
+            $places = is_array($decoded) ? $decoded : array_values(array_filter(array_map('trim', preg_split('/[\r\n,]+/', $places) ?: [])));
+        }
+
+        $seoRating = (float) ($package->seoEntry?->rating_aggregate_star ?? 0);
+        $seoCount = (int) ($package->seoEntry?->rating_aggregate_count ?? 0);
+        $pkgRating = (float) ($package->rating ?? 0);
+        $pkgCount = (int) ($package->review_count ?? 0);
+
+        $primarySlug = $countryTranslation?->slug ?? '';
+        $data = [
+            'id' => $package->id,
+            'slug' => $seoTranslation?->slug ?? '',
+            'slugFull' => $seoTranslation?->slug_full ?? null,
+            'title' => $translation?->title ?? '',
+            'countrySlug' => $primarySlug,
+            'country' => $countryTranslation?->name ?? '',
+            'tourCode' => $package->code ?? '',
+            'duration' => $this->formatDuration($package->duration_days, $package->duration_nights),
+            'days' => $package->duration_days,
+            'priceFrom' => $package->price_from !== null ? (float) $package->price_from : null,
+            'currency' => $package->currency ?? 'VND',
+            'priceFormatted' => $package->price_from !== null
+                ? $this->formatMoney((float) $package->price_from, $package->currency ?? 'VND')
+                : null,
+            'rating' => $seoRating > 0 ? $seoRating : $pkgRating,
+            'reviewCount' => $seoCount > 0 ? $seoCount : $pkgCount,
+            'badge' => $package->discount_badge,
+            'image' => $package->coverUrl('card'),
+            'imageSrcset' => $package->coverSrcset(),
+            'styles' => $package->relationLoaded('travelStyles')
+                ? $package->travelStyles->pluck('code')->all()
+                : [],
+            'quote' => [
+                'text' => $translation?->featured_quote_text ?? '',
+                'author' => $translation?->featured_quote_author ?? '',
+            ],
+            'places' => is_array($places) ? array_slice($places, 0, 4) : [],
+            'start' => $translation?->start_location ?? '',
+            'end' => $translation?->end_location ?? '',
+            'highlights' => array_values(array_slice(
+                is_array($translation?->highlight_bullets ?? null) ? $translation->highlight_bullets : [],
+                0,
+                3,
+            )),
+            'gallery' => [],
+            'galleryCount' => 0,
+            'priceTable' => null,
+        ];
+
+        if ($isCruise) {
+            $typeSlug = (string) ($package->cruise_type ?? '');
+            $data['typeSlug'] = $typeSlug;
+            $data['typeName'] = $this->cruiseTypeName($typeSlug);
+            $data['departurePort'] = $package->departure_port ?? '';
+            $data['boatClass'] = $package->boat_class ?? '';
+            $data['nightsOnBoard'] = $package->nights_on_board;
+        }
+
+        return $data;
+    }
+
     protected function articleQuery()
     {
         return Article::query()
@@ -3505,17 +3711,9 @@ class ViewDataService
         ];
 
         if ($isCruise) {
-            $typeSlug = $package->cruise_type ?? '';
-            $typeName = CruiseType::query()->where('slug', $typeSlug)->value('name')
-                ?? match ($typeSlug) {
-                    'du-thuyen-ha-long' => 'Du thuyền Hạ Long',
-                    'du-thuyen-mekong' => 'Du thuyền Mekong',
-                    'du-thuyen-lan-ha' => 'Du thuyền Lan Hạ',
-                    default => $typeSlug,
-                };
-
+            $typeSlug = (string) ($package->cruise_type ?? '');
             $data['typeSlug'] = $typeSlug;
-            $data['typeName'] = $typeName;
+            $data['typeName'] = $this->cruiseTypeName($typeSlug);
             $data['departurePort'] = $package->departure_port ?? '';
             $data['boatClass'] = $package->boat_class ?? '';
             $data['nightsOnBoard'] = $package->nights_on_board;
