@@ -25,7 +25,7 @@ export default defineConfig({
                 }),
                 // Script accent — eyebrow/điểm nhấn cảm xúc, dùng tiết chế
                 bunny('Dancing Script', {
-                    weights: [600, 700],
+                    weights: [600],
                     subsets: ['latin', 'vietnamese'],
                 }),
             ],

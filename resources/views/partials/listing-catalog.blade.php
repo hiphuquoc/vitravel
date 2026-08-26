@@ -78,7 +78,8 @@
         'endpoint' => $listing['endpoint'],
         'params' => $listing['endpointParams'],
         'syncUrl' => (bool) $listing['syncUrl'],
-        'filters' => $listing['filterDefaults'],
+        'lockedFilters' => $listing['filterDefaults'],
+        'filters' => [],
         'labelMap' => $labelMap,
         'priceMin' => (int) ($listing['priceMin'] ?? 0),
         'priceMax' => (int) ($listing['priceMax'] ?? 10000000),
@@ -93,7 +94,9 @@
         'seedHasMore' => $hasSeed ? $seedHasMore : false,
         'skeletonCount' => $skeletonCount,
         'cardKind' => $cardKind,
-    ]))">
+    ]))"
+    @vt-select-change="if ($event.detail?.name === 'sort') setSort($event.detail.value)"
+>
     <x-tour.filter-sidebar
         :durations="$listing['durations']"
         :styles="$listing['styles']"
@@ -130,10 +133,7 @@
                     <span class="listing-toolbar__count-label text-transparent">{{ $listing['unitLabel'] }}</span>
                 </p>
             </div>
-            <div
-                class="listing-toolbar__sort"
-                @vt-select-change="if ($event.detail?.name === 'sort') setSort($event.detail.value)"
-            >
+            <div class="listing-toolbar__sort">
                 <x-shared.sort-dropdown
                     :options="[
                         ['value' => 'popular', 'label' => 'Phổ biến nhất'],

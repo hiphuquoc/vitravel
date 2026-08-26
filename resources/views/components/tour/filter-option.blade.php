@@ -26,14 +26,18 @@
     @else
         x-show="expanded || {{ $idx }} < {{ $lim }}"
     @endif
-    :class="isChecked(@js($group), @js($valueStr)) && 'filter-row--on'"
+    :class="{
+        'filter-row--on': isChecked(@js($group), @js($valueStr)),
+        'filter-row--locked': isLockedFilter(@js($group), @js($valueStr)),
+    }"
 >
     <input
         type="checkbox"
         class="vt-check__input"
         value="{{ $valueStr }}"
         :checked="isChecked(@js($group), @js($valueStr))"
-        @change="toggleFilter(@js($group), @js($valueStr))"
+        :disabled="isLockedFilter(@js($group), @js($valueStr))"
+        @click.prevent="toggleFilter(@js($group), @js($valueStr))"
     >
     <span class="vt-check__box" aria-hidden="true">
         <svg class="vt-check__icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">

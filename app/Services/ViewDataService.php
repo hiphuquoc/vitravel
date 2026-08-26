@@ -2590,6 +2590,10 @@ class ViewDataService
                 : [],
             'quote' => $this->serviceQuote($service, $translation),
             'styles' => [],
+            'seoDescription' => apply_site_brand(trim((string) (
+                $seoTranslation?->seo_description
+                ?: ($translation?->summary ?? '')
+            ))),
             'gallery' => $isDetail ? $this->mapGalleryAttachments($service) : [],
             'galleryCount' => $isDetail ? $this->galleryAttachmentCount($service) : 0,
         ];
@@ -3842,9 +3846,12 @@ class ViewDataService
                 if (! filled($card['src'] ?? null)) {
                     return null;
                 }
+                $thumb = media_payload($a->media, 'thumb');
                 $full = media_payload($a->media, 'lg');
 
                 return array_merge($card, [
+                    'thumb' => $thumb['src'] ?? $card['src'],
+                    'thumbSrcset' => $thumb['srcset'] ?? ($card['srcset'] ?? null),
                     'full' => $full['src'] ?? $card['src'],
                     'fullSrcset' => $full['srcset'] ?? ($card['srcset'] ?? null),
                     'type' => 'image',
@@ -3913,6 +3920,8 @@ class ViewDataService
             $out[] = [
                 'src' => $url,
                 'srcset' => null,
+                'thumb' => $url,
+                'thumbSrcset' => null,
                 'full' => $url,
                 'fullSrcset' => null,
                 'type' => 'image',

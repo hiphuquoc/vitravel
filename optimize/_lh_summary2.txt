@@ -1,0 +1,217 @@
+
+#### unused-javascript score=0.5 display='Est savings of 1,297\xa0KiB' type=opportunity ####
+  overallSavingsMs: 0
+  overallSavingsBytes: 1327924
+  headings: ['url', 'totalBytes', 'wastedBytes']
+  [1] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/content-script.js | wastedBytes=597938 | totalBytes=772207
+  [2] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/onboarding.js | wastedBytes=368100 | totalBytes=666211
+  [3] url=chrome-extension://gfgbmghkdjckppeomloefmbphdfmokgd/assets/index.ts.js | wastedBytes=132975 | totalBytes=145145
+  [4] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/gads-scrapper.js | wastedBytes=92125 | totalBytes=141448
+  [5] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/common.js | wastedBytes=64191 | totalBytes=100983
+  [6] url=chrome-extension://gcopfpdkmpdacdmbjonfjmbnccmnjdoi/gserp.js | wastedBytes=43236 | totalBytes=71955
+  [7] url=chrome-extension://gfgbmghkdjckppeomloefmbphdfmokgd/assets/FeedbackDialog.js | wastedBytes=29359 | totalBytes=33135
+
+#### unused-css-rules score=0.5 display='Est savings of 1,165\xa0KiB' type=opportunity ####
+  overallSavingsMs: 0
+  overallSavingsBytes: 1193306
+  headings: ['url', 'totalBytes', 'wastedBytes']
+  [1] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/css/content-script.css | wastedBytes=1193306 | totalBytes=1193863
+
+#### document-latency-insight score=0 display='Est savings of 1,330\xa0ms' type=checklist ####
+  [1] 'noRedirects'
+  [2] 'serverResponseIsFast'
+  [3] 'usesCompression'
+
+#### forced-reflow-insight score=0 display=None type=list ####
+  [1] 
+  [2] 
+
+#### image-delivery-insight score=0 display='Est savings of 307\xa0KiB' type=table ####
+  headings: ['node', 'url', 'totalBytes', 'wastedBytes']
+  [1] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-4.webp | wastedBytes=97102 | totalBytes=106652 | node.selector=div.detail-gallery__thumbs > div.detail-gallery__thumb > button.detail-gallery__thumb-btn > img.absolute | node.snippet=<img src="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" srcset="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" alt="Maison Hai Homestay Hoi An - 
+      sub[1] wastedBytes=30666 | reason=Increasing the image compression factor could improve this image's download size.
+      sub[2] wastedBytes=93248 | reason=This image file is larger than it needs to be (668x683) for its displayed dimensions (293x196). Use responsive images to reduce the image download size.
+  [2] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-2.webp | wastedBytes=72424 | totalBytes=81974 | node.selector=div.detail-gallery__thumbs > div.detail-gallery__thumb > button.detail-gallery__thumb-btn > img.absolute | node.snippet=<img src="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" srcset="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" alt="Maison Hai Homestay Hoi An - Ả
+      sub[1] wastedBytes=5988 | reason=Increasing the image compression factor could improve this image's download size.
+      sub[2] wastedBytes=71671 | reason=This image file is larger than it needs to be (668x683) for its displayed dimensions (293x196). Use responsive images to reduce the image download size.
+  [3] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-1.webp | wastedBytes=68868 | totalBytes=89272 | node.selector=section.container-site > div.detail-gallery__grid > button.detail-gallery__cover-btn > img.detail-gallery__cover-img | node.snippet=<img src="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" srcset="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" alt="Maison Hai Homesta
+      sub[1] wastedBytes=68868 | reason=Increasing the image compression factor could improve this image's download size.
+  [4] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-5.webp | wastedBytes=49418 | totalBytes=56522 | node.selector=div.detail-gallery__thumbs > div.detail-gallery__thumb > button.detail-gallery__thumb-btn > img.absolute | node.snippet=<img src="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" srcset="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" alt="Maison Hai Homestay Hoi An - Ả
+      sub[1] wastedBytes=49418 | reason=This image file is larger than it needs to be (668x683) for its displayed dimensions (293x196). Use responsive images to reduce the image download size.
+  [5] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-3.webp | wastedBytes=26730 | totalBytes=30572 | node.selector=div.detail-gallery__thumbs > div.detail-gallery__thumb > button.detail-gallery__thumb-btn > img.absolute | node.snippet=<img src="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" srcset="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" alt="Maison Hai Homestay Hoi An - Ả
+      sub[1] wastedBytes=26730 | reason=This image file is larger than it needs to be (668x683) for its displayed dimensions (293x196). Use responsive images to reduce the image download size.
+
+#### lcp-breakdown-insight score=0 display=None type=list ####
+  [1] 
+  [2] selector=section.container-site > div.detail-gallery__grid > button.detail-gallery__cover-btn > img.detail-gallery__cover-img | nodeLabel=Maison Hai Homestay Hoi An | snippet=<img src="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" srcset="https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…" alt="Maison Hai Homestay Hoi An" loading="eager" decoding="async" fetchpriority="high" class="detail-gallery__cover-img absolute inset-0 h-full w-full ob
+
+#### network-dependency-tree-insight score=0 display=None type=list ####
+  [1] value={type=network-tree}
+      value.type=network-tree keys=['type', 'chains', 'longestChain']
+  [2] value={type=table}
+      value.type=table keys=['type', 'headings', 'items']
+      item[1] 
+  [3] value={type=text}
+      value.type=text keys=['type', 'value']
+
+#### cache-insight score=0.5 display='Est savings of 589\xa0KiB' type=table ####
+  headings: ['url', 'cacheLifetimeMs', 'totalBytes']
+  [1] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-4.webp | wastedBytes=42875.200000000004 | totalBytes=107188 | cacheLifetimeMs=86400000
+  [2] url=https://culaocham.net/build/assets/app-Da_RZCQn.css | wastedBytes=36249 | totalBytes=72498 | cacheLifetimeMs=43200000
+  [3] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-1.webp | wastedBytes=35821.6 | totalBytes=89554 | cacheLifetimeMs=86400000
+  [4] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-2.webp | wastedBytes=32903.200000000004 | totalBytes=82258 | cacheLifetimeMs=86400000
+  [5] url=https://culaocham.net/build/assets/dancing-script-600-normal-8nA_0nHX.woff | wastedBytes=31367 | totalBytes=31367 | cacheLifetimeMs=0
+  [6] url=https://culaocham.net/build/assets/dancing-script-600-normal-CUtcW3hj.woff2 | wastedBytes=26124 | totalBytes=26124 | cacheLifetimeMs=0
+  [7] url=https://culaocham.net/build/assets/dancing-script-700-normal-CX8AaSVl.woff2 | wastedBytes=25628 | totalBytes=25628 | cacheLifetimeMs=0
+  [8] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-5.webp | wastedBytes=22714.800000000003 | totalBytes=56787 | cacheLifetimeMs=86400000
+  [9] url=https://culaocham.net/build/assets/fraunces-700-normal-DTjk5d1Q.woff | wastedBytes=22690 | totalBytes=22690 | cacheLifetimeMs=0
+  [10] url=https://culaocham.net/build/assets/be-vietnam-pro-700-normal-DlW1Zbsh.woff2 | wastedBytes=22327 | totalBytes=22327 | cacheLifetimeMs=0
+  [11] url=https://culaocham.net/build/assets/be-vietnam-pro-600-normal-BZDkUTrt.woff2 | wastedBytes=22207 | totalBytes=22207 | cacheLifetimeMs=0
+  [12] url=https://culaocham.net/build/assets/be-vietnam-pro-500-normal-B6LVzGNe.woff2 | wastedBytes=22067 | totalBytes=22067 | cacheLifetimeMs=0
+  [13] url=https://culaocham.net/build/assets/be-vietnam-pro-400-normal-PpnXBOrz.woff2 | wastedBytes=21343 | totalBytes=21343 | cacheLifetimeMs=0
+  [14] url=https://culaocham.net/build/assets/fraunces-700-normal-CEOla-zY.woff2 | wastedBytes=18387 | totalBytes=18387 | cacheLifetimeMs=0
+  [15] url=https://culaocham.net/build/assets/fraunces-600-normal-BFCDtZfi.woff2 | wastedBytes=18271 | totalBytes=18271 | cacheLifetimeMs=0
+
+#### render-blocking-insight score=0.5 display=None type=table ####
+  headings: ['url', 'totalBytes', 'wastedMs']
+  [1] url=https://culaocham.net/build/assets/app-Da_RZCQn.css | wastedMs=80 | totalBytes=72498
+
+#### server-response-time score=0 display='Root document took 1,430\xa0ms' type=opportunity ####
+  overallSavingsMs: 1325
+  headings: ['url', 'responseTime']
+  [1] url=https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay | responseTime=1425
+MISSING: largest-contentful-paint-element
+MISSING: prioritize-lcp-image
+MISSING: lcp-lazy-loaded
+MISSING: layout-shift-elements
+
+#### unsized-images score=1 display=None type=table ####
+  headings: ['node', 'url']
+MISSING: render-blocking-resources
+MISSING: uses-responsive-images
+MISSING: modern-image-formats
+MISSING: uses-optimized-images
+MISSING: offscreen-images
+
+#### total-byte-weight score=1 display='Total size was 920\xa0KiB' type=table ####
+  headings: ['url', 'totalBytes']
+  [1] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-4.webp | totalBytes=107188
+  [2] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-1.webp | totalBytes=89554
+  [3] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-2.webp | totalBytes=82258
+  [4] url=https://culaocham.net/build/assets/app-Da_RZCQn.css | totalBytes=72498
+  [5] url=https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay | totalBytes=63856
+  [6] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-5.webp | totalBytes=56787
+  [7] url=https://culaocham.net/build/assets/dancing-script-600-normal-8nA_0nHX.woff | totalBytes=31367
+  [8] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-3.webp | totalBytes=30829
+  [9] url=https://culaocham.net/build/assets/dancing-script-600-normal-CUtcW3hj.woff2 | totalBytes=26124
+  [10] url=https://culaocham.net/build/assets/app-BEJdk124.js | totalBytes=26035
+MISSING: uses-long-cache-ttl
+MISSING: third-party-summary
+MISSING: font-display
+MISSING: dom-size
+MISSING: critical-request-chains
+
+#### bootup-time score=1 display='0.6\xa0s' type=table ####
+  headings: ['url', 'total', 'scripting', 'scriptParseCompile']
+  [1] url=https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay
+  [2] url=Unattributable
+  [3] url=https://culaocham.net/build/assets/app-BEJdk124.js
+MISSING: legacy-javascript
+MISSING: duplicated-javascript
+
+#### aria-prohibited-attr score=0 display=None type=table ####
+  headings: ['node']
+  [1] node.selector=div.detail-title-card__meta > div.detail-title-card__rating-wrap > span.rating > span.inline-flex | node.snippet=<span class="inline-flex items-center gap-0" aria-label="4.9 trên 5 sao"> | node.nodeLabel=4.9 trên 5 sao | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,2,DIV,1,DIV,0,DIV,0,SPAN,1,SPAN
+
+#### color-contrast score=0 display=None type=table ####
+  headings: ['node']
+  [1] node.selector=div.container-site > a.header-wordmark > span.header-wordmark__text > span.header-wordmark__tagline | node.snippet=<span class="header-wordmark__tagline"> | node.nodeLabel=KHU DỰ TRỮ SINH QUYỂN UNESCO | node.path=1,HTML,1,BODY,1,DIV,1,DIV,1,HEADER,0,DIV,0,A,1,SPAN,1,SPAN | subItems_count=0
+      sub[1] 
+  [2] node.selector=nav.breadcrumb > ol.breadcrumb__list > li > a.breadcrumb__link | node.snippet=<a href="https://culaocham.net" class="breadcrumb__link"> | node.nodeLabel=Trang chủ | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,0,NAV,0,OL,0,LI,0,A | subItems_count=0
+      sub[1] 
+  [3] node.selector=nav.breadcrumb > ol.breadcrumb__list > li > a.breadcrumb__link | node.snippet=<a href="https://culaocham.net/luu-tru" class="breadcrumb__link"> | node.nodeLabel=Lưu trú | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,0,NAV,0,OL,2,LI,0,A | subItems_count=0
+      sub[1] 
+  [4] node.selector=nav.breadcrumb > ol.breadcrumb__list > li > a.breadcrumb__link | node.snippet=<a href="https://culaocham.net/luu-tru/cho-nghi-nha-dan" class="breadcrumb__link"> | node.nodeLabel=Chỗ nghỉ nhà dân | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,0,NAV,0,OL,4,LI,0,A | subItems_count=0
+      sub[1] 
+  [5] node.selector=div.detail-title-card__meta > div.detail-title-card__rating-wrap > span.rating > span.rating-badge | node.snippet=<span class="rating-badge"> | node.nodeLabel=4.9 | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,2,DIV,1,DIV,0,DIV,0,SPAN,0,SPAN
+  [6] node.selector=div.detail-title-card__meta > div.detail-title-card__rating-wrap > span.rating > span.rating-count | node.snippet=<span class="rating-count"> | node.nodeLabel=(288 đánh giá) | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,2,DIV,1,DIV,0,DIV,0,SPAN,3,SPAN | subItems_count=0
+      sub[1] 
+  [7] node.selector=dl.stay-facts-grid > div.stay-facts-grid__item > dt.stay-facts-grid__label > span | node.snippet=<span> | node.nodeLabel=LOẠI HÌNH | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,0,SECTION,1,DIV,0,DL,0,DIV,0,DT,1,SPAN | subItems_count=0
+      sub[1] 
+  [8] node.selector=dl.stay-facts-grid > div.stay-facts-grid__item > dt.stay-facts-grid__label > span | node.snippet=<span> | node.nodeLabel=ĐỊA CHỈ | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,0,SECTION,1,DIV,0,DL,1,DIV,0,DT,1,SPAN | subItems_count=0
+      sub[1] 
+  [9] node.selector=dl.stay-facts-grid > div.stay-facts-grid__item > dt.stay-facts-grid__label > span | node.snippet=<span> | node.nodeLabel=NHẬN PHÒNG | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,0,SECTION,1,DIV,0,DL,2,DIV,0,DT,1,SPAN | subItems_count=0
+      sub[1] 
+  [10] node.selector=dl.stay-facts-grid > div.stay-facts-grid__item > dt.stay-facts-grid__label > span | node.snippet=<span> | node.nodeLabel=TRẢ PHÒNG | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,0,SECTION,1,DIV,0,DL,3,DIV,0,DT,1,SPAN | subItems_count=0
+      sub[1] 
+  [11] node.selector=div.stay-rooms > article.stay-hprt > div.stay-hprt__room > button.stay-hprt__name | node.snippet=<button type="button" class="stay-hprt__name" @click.stop="show(0)"> | node.nodeLabel=Phòng Superior Có Giường Cỡ King | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,2,SECTION,1,DIV,0,ARTICLE,0,DIV,1,BUTTON | subItems_count=0
+      sub[1] 
+  [12] node.selector=div.stay-hprt__rates > div.stay-hprt__rate > div.stay-hprt__price > s | node.snippet=<s> | node.nodeLabel=3,200,000 đ | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,2,SECTION,1,DIV,0,ARTICLE,1,DIV,0,DIV,0,DIV,0,S | subItems_count=0
+      sub[1] 
+  [13] node.selector=div.stay-hprt__rates > div.stay-hprt__rate > div.stay-hprt__price > span.stay-hprt__price-unit | node.snippet=<span class="stay-hprt__price-unit"> | node.nodeLabel=/ đêm | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,2,SECTION,1,DIV,0,ARTICLE,1,DIV,0,DIV,0,DIV,2,SPAN | subItems_count=0
+      sub[1] 
+  [14] node.selector=div.stay-hprt__rates > div.stay-hprt__rate > div.stay-hprt__price > p.stay-hprt__tax | node.snippet=<p class="stay-hprt__tax"> | node.nodeLabel=Đã bao gồm thuế và phí | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,2,SECTION,1,DIV,0,ARTICLE,1,DIV,0,DIV,0,DIV,3,P | subItems_count=0
+      sub[1] 
+  [15] node.selector=div.stay-rooms > article.stay-hprt > div.stay-hprt__room > button.stay-hprt__name | node.snippet=<button type="button" class="stay-hprt__name" @click.stop="show(1)"> | node.nodeLabel=Phòng Deluxe Giường Đôi/2 Giường Đơn Nhìn Ra Thành Phố | node.path=1,HTML,1,BODY,2,MAIN,1,DIV,1,DIV,0,DIV,2,SECTION,1,DIV,1,ARTICLE,0,DIV,1,BUTTON | subItems_count=0
+      sub[1] 
+
+#### label-content-name-mismatch score=0 display=None type=table ####
+  headings: ['node']
+  [1] node.selector=div.container-site > div.headerTop__actions > div.regionSwitcher > button.regionSwitcher_trigger | node.snippet=<button type="button" class="regionSwitcher_trigger" aria-haspopup="true" aria-expanded="false" aria-label="Chọn ngôn ngữ &amp; tiền tệ"> | node.nodeLabel=VI
+·
+VND | node.path=1,HTML,1,BODY,1,DIV,1,DIV,0,DIV,0,DIV,1,DIV,1,DIV,0,BUTTON
+  [2] node.selector=div.site-header > header.headerMain > div.container-site > a.header-wordmark | node.snippet=<a href="https://culaocham.net" class="header-wordmark" aria-label="culaocham.net — về trang chủ"> | node.nodeLabel=culaocham.net
+KHU DỰ TRỮ SINH QUYỂN UNESCO | node.path=1,HTML,1,BODY,1,DIV,1,DIV,1,HEADER,0,DIV,0,A
+  [3] node.selector=div.detail-gallery__grid > div.detail-gallery__thumbs > div.detail-gallery__thumb > button.detail-gallery__thumb-btn | node.snippet=<button type="button" class="detail-gallery__thumb-btn relative overflow-hidden" @click="open(4)" aria-label="Xem thêm 35 ảnh"> | node.nodeLabel=+35 | node.path=1,HTML,1,BODY,2,MAIN,0,SECTION,0,DIV,1,DIV,3,DIV,0,BUTTON
+
+#### meta-description score=0 display=None type=None ####
+
+#### inspector-issues score=0 display=None type=table ####
+  headings: ['issueType']
+  [1] subItems_count=0
+      sub[1] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-4.webp
+      sub[2] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-3.webp
+      sub[3] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-2.webp
+      sub[4] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-1.webp
+      sub[5] url=https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-5.webp
+
+=== ALL AUDIT IDS score not 1 (non-metric) with display ===
+aria-prohibited-attr | score=0 | None
+cache-insight | score=0.5 | 'Est savings of 589\xa0KiB'
+color-contrast | score=0 | None
+document-latency-insight | score=0 | 'Est savings of 1,330\xa0ms'
+forced-reflow-insight | score=0 | None
+image-delivery-insight | score=0 | 'Est savings of 307\xa0KiB'
+inspector-issues | score=0 | None
+label-content-name-mismatch | score=0 | None
+lcp-breakdown-insight | score=0 | None
+meta-description | score=0 | None
+network-dependency-tree-insight | score=0 | None
+render-blocking-insight | score=0.5 | None
+server-response-time | score=0 | 'Root document took 1,430\xa0ms'
+unused-css-rules | score=0.5 | 'Est savings of 1,165\xa0KiB'
+unused-javascript | score=0.5 | 'Est savings of 1,297\xa0KiB'
+
+=== TOP NETWORK REQUESTS (site, by transferSize) ===
+  [1] https://culaocham.net/build/assets/app-Da_RZCQn.css bytes=72498 resource=347452 mime=text/css priority=VeryHigh
+  [2] https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay bytes=63856 resource=606325 mime=text/html priority=VeryHigh
+  [3] https://culaocham.net/build/assets/dancing-script-600-normal-8nA_0nHX.woff bytes=31367 resource=31184 mime=font/woff priority=VeryHigh
+  [4] https://culaocham.net/build/assets/dancing-script-600-normal-CUtcW3hj.woff2 bytes=26124 resource=25940 mime=font/woff2 priority=High
+  [5] https://culaocham.net/build/assets/app-BEJdk124.js bytes=26035 resource=68686 mime=application/javascript priority=High
+  [6] https://culaocham.net/build/assets/dancing-script-700-normal-CX8AaSVl.woff2 bytes=25628 resource=25444 mime=font/woff2 priority=High
+  [7] https://culaocham.net/build/assets/fraunces-700-normal-DTjk5d1Q.woff bytes=22690 resource=22516 mime=font/woff priority=VeryHigh
+  [8] https://culaocham.net/build/assets/be-vietnam-pro-700-normal-DlW1Zbsh.woff2 bytes=22327 resource=22152 mime=font/woff2 priority=High
+  [9] https://culaocham.net/build/assets/be-vietnam-pro-600-normal-BZDkUTrt.woff2 bytes=22207 resource=22032 mime=font/woff2 priority=High
+  [10] https://culaocham.net/build/assets/be-vietnam-pro-500-normal-B6LVzGNe.woff2 bytes=22067 resource=21892 mime=font/woff2 priority=High
+  [11] https://culaocham.net/build/assets/be-vietnam-pro-400-normal-PpnXBOrz.woff2 bytes=21343 resource=21168 mime=font/woff2 priority=High
+  [12] https://culaocham.net/build/assets/fraunces-700-normal-CEOla-zY.woff2 bytes=18387 resource=18212 mime=font/woff2 priority=High
+  [13] https://culaocham.net/build/assets/fraunces-600-normal-BFCDtZfi.woff2 bytes=18271 resource=18096 mime=font/woff2 priority=High
+  [14] https://culaocham.net/build/assets/be-vietnam-pro-600-normal-5IO4e7bK.woff bytes=17190 resource=17016 mime=font/woff priority=VeryHigh
+  [15] https://culaocham.net/build/assets/be-vietnam-pro-500-normal-BJkVuMHw.woff bytes=17170 resource=16996 mime=font/woff priority=VeryHigh
+  [16] https://culaocham.net/build/assets/be-vietnam-pro-700-normal-C2EtzaOi.woff bytes=17082 resource=16908 mime=font/woff priority=VeryHigh
+  [17] https://culaocham.net/build/assets/be-vietnam-pro-400-normal-bXgqVju9.woff bytes=16606 resource=16432 mime=font/woff priority=VeryHigh
+  [18] https://culaocham.net/build/assets/be-vietnam-pro-700-normal-Csr0PCuG.woff2 bytes=12634 resource=12468 mime=font/woff2 priority=High
+  [19] https://culaocham.net/build/assets/be-vietnam-pro-600-normal-nyU-ZL2p.woff2 bytes=12342 resource=12176 mime=font/woff2 priority=High
+  [20] https://culaocham.net/build/assets/be-vietnam-pro-500-normal-DREgrEoJ.woff2 bytes=12338 resource=12172 mime=font/woff2 priority=High
+
+=== THIRD PARTY (non-extension) ===

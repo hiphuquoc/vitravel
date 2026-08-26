@@ -3,12 +3,16 @@
     'breadcrumbs' => [],   // truyền tiếp cho x-layout.breadcrumb
     'subtitle' => null,
     'bannerLabel' => null, // nhãn ảnh banner placeholder
-    'bannerSrc' => null,   // URL variant lg/full — first-view
+    'bannerSrc' => null,   // URL variant lg/full — first-view / LCP
     'bannerSrcset' => null,
     'bannerAlt' => null,
 ])
 
 {{-- Pattern chuẩn toàn site: banner ảnh + card trắng chứa H1/breadcrumb đè lên --}}
+@php
+    $bannerAltText = $bannerAlt ?? ('Ảnh banner: '.$title);
+@endphp
+
 @if (filled($bannerSrc))
     @push('head')
         <link rel="preload" as="image" href="{{ $bannerSrc }}"
@@ -23,15 +27,24 @@
             'page-header__banner',
             'page-header__banner--has-image' => filled($bannerSrc),
         ])
-        @if (filled($bannerSrc))
-            style="--page-header-banner-image: url(&quot;{{ $bannerSrc }}&quot;)"
-            role="img"
-            aria-label="{{ $bannerAlt ?? ('Ảnh banner: '.$title) }}"
-        @endif
     >
-        @unless (filled($bannerSrc))
+        @if (filled($bannerSrc))
+            {{-- <img> thật (không CSS background) để LCP discoverable + fetchpriority --}}
+            <img
+                class="page-header__banner-img"
+                src="{{ $bannerSrc }}"
+                @if (filled($bannerSrcset)) srcset="{{ $bannerSrcset }}" @endif
+                sizes="100vw"
+                alt="{{ $bannerAltText }}"
+                width="1920"
+                height="640"
+                loading="eager"
+                fetchpriority="high"
+                decoding="async"
+            >
+        @else
             <x-ph class="h-full w-full" :label="$bannerLabel ?? 'Ảnh banner: ' . $title" icon="photo" icon-class="size-12" />
-        @endunless
+        @endif
     </div>
     <div class="container-site">
         <div class="page-header__card-wrap">

@@ -135,10 +135,11 @@
                         ]),
                         default => locale_route('tours.show', ['country' => $item['countrySlug'], 'slug' => $item['slug']]),
                     };
+                $imagePriority = ! $animate && $loop->index < 2;
             @endphp
             <div class="{{ $itemClass }}" data-listing-item>
                 @if ($kind === 'service')
-                    <x-service.card :item="$item" :href="$href" />
+                    <x-service.card :item="$item" :href="$href" :image-priority="$imagePriority" />
                 @else
                     <x-tour.card :item="$item" :href="$href" />
                 @endif

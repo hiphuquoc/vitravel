@@ -79,25 +79,9 @@
     "file": "assets/dancing-script-600-normal-DmBNuN3D.woff",
     "src": "_dancing-script-600-normal-DmBNuN3D.woff"
   },
-  "_dancing-script-700-normal-BxaLPXNn.woff": {
-    "file": "assets/dancing-script-700-normal-BxaLPXNn.woff",
-    "src": "_dancing-script-700-normal-BxaLPXNn.woff"
-  },
-  "_dancing-script-700-normal-CX8AaSVl.woff2": {
-    "file": "assets/dancing-script-700-normal-CX8AaSVl.woff2",
-    "src": "_dancing-script-700-normal-CX8AaSVl.woff2"
-  },
-  "_dancing-script-700-normal-DHSNEjs8.woff2": {
-    "file": "assets/dancing-script-700-normal-DHSNEjs8.woff2",
-    "src": "_dancing-script-700-normal-DHSNEjs8.woff2"
-  },
-  "_dancing-script-700-normal-LI5MgW9m.woff": {
-    "file": "assets/dancing-script-700-normal-LI5MgW9m.woff",
-    "src": "_dancing-script-700-normal-LI5MgW9m.woff"
-  },
-  "_fonts-wN3-EXpw.css": {
-    "file": "assets/fonts-wN3-EXpw.css",
-    "src": "_fonts-wN3-EXpw.css"
+  "_fonts-BrFwwnxG.css": {
+    "file": "assets/fonts-BrFwwnxG.css",
+    "src": "_fonts-BrFwwnxG.css"
   },
   "_fraunces-600-normal-BFCDtZfi.woff2": {
     "file": "assets/fraunces-600-normal-BFCDtZfi.woff2",
@@ -132,7 +116,7 @@
     "src": "_fraunces-700-normal-DxawQjq2.woff"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Da_RZCQn.css",
+    "file": "assets/app-42Z34JmR.css",
     "name": "app",
     "names": [
       "app.css"
@@ -141,7 +125,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BEJdk124.js",
+    "file": "assets/app-bXH8-O0T.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true

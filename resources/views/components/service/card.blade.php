@@ -1,12 +1,15 @@
 @props([
     'item',
     'href',
+    'imagePriority' => false,
 ])
 
 @php
     $clusterIcon = $item['clusterIcon'] ?? 'briefcase';
     $isStay = ($item['cluster'] ?? '') === 'stay' || ! empty($item['isStay']);
     $cardHighlights = ! empty($item['highlights']) ? array_slice($item['highlights'], 0, 3) : [];
+    $imgLoading = $imagePriority ? 'eager' : 'lazy';
+    $imgFetchpriority = $imagePriority ? 'high' : 'low';
     
     // Duration badge or room count for stays
     $mediaBadge = null;
@@ -41,9 +44,9 @@
                     :srcset="$item['imageSrcset'] ?? null"
                     preset="card-wide"
                     :alt="$item['title']"
-                    loading="lazy"
+                    :loading="$imgLoading"
                     decoding="async"
-                    fetchpriority="low"
+                    :fetchpriority="$imgFetchpriority"
                     class="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                 />
             @else

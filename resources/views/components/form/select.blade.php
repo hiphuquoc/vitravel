@@ -62,6 +62,7 @@
 <div
     {{ $attributes->class(['vt-form-select', 'vt-form-select--required' => $required]) }}
     x-data="formSelect(@js([
+        'name' => (string) $name,
         'value' => (string) $initial,
         'label' => (string) $initialLabel,
         'options' => $items,

@@ -7,6 +7,9 @@ declare(strict_types=1);
  * Schema crawler: docs/16-accommodation-stays.md
  */
 return [
+    /** Số ảnh seed vào Alpine lightbox trên trang chi tiết (tránh HTML JSON quá lớn). */
+    'detail_lightbox_seed' => (int) env('STAY_DETAIL_LIGHTBOX_SEED', 20),
+
     'property_types' => [
         'hotel' => 'Khách sạn',
         'resort' => 'Resort',

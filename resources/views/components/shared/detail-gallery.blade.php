@@ -54,26 +54,39 @@
     $catalogCount = max((int) $galleryCount, count($uniqueThumbs) + (filled($coverSrc) ? 1 : 0));
     $moreCount = max(0, $catalogCount - $shown);
 
-    // Chuẩn bị danh sách Lightbox gọn nhẹ
+    // Chuẩn bị danh sách Lightbox gọn — chỉ seed vài chục ảnh đầu vào Alpine HTML
+    // (tránh JSON khổng lồ khi gallery 50–120 ảnh). Phần còn lại ghi trong docs/optimize.
+    $lightboxCap = max(8, min(24, (int) config('stay.detail_lightbox_seed', 20)));
     $lightboxItems = [];
     if (filled($coverSrc)) {
         $lightboxItems[] = [
             'type' => 'image',
             'src' => $coverSrc,
             'srcset' => $coverSrcset,
+            'full' => $coverSrc,
+            'fullSrcset' => $coverSrcset,
             'title' => $title,
             'caption' => null,
         ];
     }
     foreach ($uniqueThumbs as $g) {
+        $full = $g['full'] ?? $g['src'] ?? null;
+        if (! filled($full)) {
+            continue;
+        }
         $lightboxItems[] = [
             'type' => 'image',
-            'src' => $g['full'] ?? $g['src'] ?? null,
-            'srcset' => $g['fullSrcset'] ?? ($g['srcset'] ?? null),
+            // Drawer grid: ưu tiên thumb/card nhỏ
+            'src' => $g['thumb'] ?? $g['src'] ?? $full,
+            'srcset' => $g['thumbSrcset'] ?? ($g['srcset'] ?? null),
+            'full' => $full,
+            'fullSrcset' => $g['fullSrcset'] ?? ($g['srcset'] ?? null),
             'title' => $g['title'] ?? $title,
             'caption' => $g['caption'] ?? null,
         ];
     }
+    $lightboxTotal = count($lightboxItems);
+    $lightboxItems = array_slice($lightboxItems, 0, $lightboxCap);
 
     $coverIndex = filled($coverSrc) ? 0 : null;
     $thumbBaseIndex = filled($coverSrc) ? 1 : 0;
@@ -83,9 +96,11 @@
     class="container-site detail-gallery"
     aria-label="Thư viện ảnh"
     x-data="mediaLightbox(@js($lightboxItems))"
+    @if ($lightboxTotal > $lightboxCap)
+        data-gallery-truncated="{{ $lightboxTotal - $lightboxCap }}"
+    @endif
 >
-    {{-- 5 ẢNH ĐẦU TIÊN TẢI THEO CHẾ ĐỘ BACKGROUND IMAGE (NHANH, MƯỢT, KHÔNG LÀM HỎNG GIAO DIỆN) --}}
-        <div @class([
+    <div @class([
         'detail-gallery__grid',
         'detail-gallery__grid--coverOnly' => $coverOnly,
     ])>
@@ -99,10 +114,13 @@
                 <img
                     src="{{ $coverSrc }}"
                     @if (filled($coverSrcset)) srcset="{{ $coverSrcset }}" @endif
+                    sizes="{{ media_sizes('gallery-cover') }}"
                     alt="{{ $title }}"
                     loading="eager"
                     decoding="async"
                     fetchpriority="high"
+                    width="1200"
+                    height="675"
                     class="detail-gallery__cover-img absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
                 />
                 <span class="detail-gallery__zoom" aria-hidden="true">
@@ -125,24 +143,30 @@
                         $lbIndex = $thumbBaseIndex + $i;
                         $isLast = $i === $thumbCount - 1;
                         $showMore = $isLast && $moreCount > 0;
-                        $thumbBg = $thumb['src'] ?? ($thumb['full'] ?? '');
-                        $thumbSrcset = $thumb['srcset'] ?? ($thumb['fullSrcset'] ?? null);
+                        $thumbBg = $thumb['thumb'] ?? ($thumb['src'] ?? ($thumb['full'] ?? ''));
+                        $thumbSrcset = $thumb['thumbSrcset'] ?? ($thumb['srcset'] ?? ($thumb['fullSrcset'] ?? null));
+                        $thumbLabel = $showMore
+                            ? ('Xem thêm '.$moreCount.' ảnh của '.$title)
+                            : ('Xem ảnh '.($i + 2).' — '.$title);
                     @endphp
                     <div class="detail-gallery__thumb" role="listitem">
                         <button
                             type="button"
                             class="detail-gallery__thumb-btn relative overflow-hidden"
-                            @click="open({{ $lbIndex }})"
-                            aria-label="{{ $showMore ? ('Xem thêm '.$moreCount.' ảnh') : ('Xem ảnh '.($i + 2)) }}"
+                            @click="open({{ min($lbIndex, max(0, $lightboxCap - 1)) }})"
+                            aria-label="{{ $thumbLabel }}"
                         >
                             @if (filled($thumbBg))
                                 <img
                                     src="{{ $thumbBg }}"
                                     @if (filled($thumbSrcset)) srcset="{{ $thumbSrcset }}" @endif
-                                    alt="{{ $title }} - Ảnh {{ $i + 2 }}"
+                                    sizes="{{ media_sizes('gallery-thumb') }}"
+                                    alt=""
                                     loading="lazy"
                                     decoding="async"
                                     fetchpriority="low"
+                                    width="400"
+                                    height="300"
                                     class="absolute inset-0 h-full w-full object-cover transition duration-500 hover:scale-105"
                                 />
                             @endif

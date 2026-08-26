@@ -954,7 +954,7 @@
         letter-spacing: var(--header-tagline-track);
         line-height: 1.2;
         text-transform: uppercase;
-        color: var(--color-muted, #7a776c);
+        color: var(--color-ink-soft, #514f45);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1676,7 +1676,7 @@
         padding: 0;
         border-radius: 0;
         background: none;
-        color: var(--color-muted, #817d6e);
+        color: var(--color-ink-soft, #514f45);
         font-size: inherit;
         font-weight: 500;
         line-height: inherit;
@@ -2405,6 +2405,15 @@
         font-weight: 600;
     }
 
+    .filter-row--locked {
+        cursor: default;
+        opacity: 0.92;
+    }
+
+    .filter-row--locked .vt-check__input:disabled {
+        cursor: default;
+    }
+
     .filter-row__text {
         display: flex;
         align-items: center;
@@ -2426,7 +2435,7 @@
         padding: 0.05rem 0.35rem;
         border-radius: 999px;
         background: var(--color-page, #f2f0e3);
-        color: var(--color-muted, #817d6e);
+        color: var(--color-ink-soft, #514f45);
         font-variant-numeric: tabular-nums;
         font-size: 0.72rem;
         font-weight: 600;
@@ -2723,7 +2732,7 @@
 
     .filter-preset__sub {
         font-size: 0.74rem;
-        color: var(--color-muted, #817d6e);
+        color: var(--color-ink-soft, #514f45);
         line-height: 1.3;
     }
 
@@ -3171,8 +3180,15 @@
 
     /* Sort — dùng chung vt-select, gọn trong listing toolbar */
     .listing-sort {
+        position: relative;
         flex-shrink: 0;
         width: min(100%, 15.5rem);
+    }
+
+    .listing-toolbar__sort {
+        display: flex;
+        justify-content: flex-end;
+        min-width: 0;
     }
 
     .listing-sort__select {
@@ -3185,8 +3201,27 @@
         padding-bottom: 0.3rem;
     }
 
+    /* Panel sắp xếp: rộng hơn input, bung về phía trong (trái) */
     .listing-sort__select .vt-select__options {
-        z-index: 40;
+        inset-inline: auto;
+        left: auto;
+        right: 0;
+        width: max(100%, 19.5rem);
+        min-width: 19.5rem;
+        z-index: 60;
+    }
+
+    @media (max-width: 480px) {
+        .listing-sort {
+            width: 100%;
+        }
+
+        .listing-sort__select .vt-select__options {
+            left: 0;
+            right: 0;
+            width: 100%;
+            min-width: 0;
+        }
     }
 
     /* FAQ accordion */
@@ -5853,9 +5888,9 @@
         background-size: 22px 22px;
     }
 
-    /* Badge rating tròn "5.0" / "3.5" */
+    /* Badge rating tròn "5.0" / "3.5" — primary-600 đủ contrast chữ trắng (AA) */
     .rating-badge {
-        @apply inline-flex shrink-0 items-center justify-center rounded-full bg-primary-500 text-sm font-bold text-white tabular-nums;
+        @apply inline-flex shrink-0 items-center justify-center rounded-full bg-primary-600 text-sm font-bold text-white tabular-nums;
         width: var(--size-rating-badge);
         height: var(--size-rating-badge);
         font-size: clamp(0.7rem, 0.66rem + 0.12vw, 0.8125rem);
@@ -5882,7 +5917,7 @@
     }
 
     .rating-count {
-        @apply min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-muted;
+        @apply min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-sm text-ink-soft;
         font-size: clamp(0.72rem, 0.7rem + 0.08vw, 0.8125rem);
     }
 
@@ -10804,14 +10839,25 @@ body.is-mobileNavOpen {
 }
 
 .page-header__banner {
+    position: relative;
     height: 16rem;
     overflow: hidden;
     background-color: var(--color-surface-muted, #e8ebe3);
 }
 
+.page-header__banner-img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
 .page-header__banner--has-image {
-    position: relative;
-    background-image: var(--page-header-banner-image);
+    /* Legacy CSS-var fallback nếu markup cũ còn --page-header-banner-image */
+    background-image: var(--page-header-banner-image, none);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

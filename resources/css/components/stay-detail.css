@@ -88,7 +88,7 @@
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-muted, #817d6e);
+    color: var(--color-ink-soft, #514f45);
 }
 
 .stay-facts-grid__label svg {

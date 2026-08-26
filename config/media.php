@@ -101,6 +101,8 @@ return [
         'country' => '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
         'section' => '(max-width: 1024px) 100vw, 50vw',
         'gallery' => '(max-width: 768px) 50vw, 200px',
+        'gallery-thumb' => '(max-width: 640px) 45vw, (max-width: 1024px) 22vw, 280px',
+        'gallery-cover' => '(max-width: 1024px) 100vw, 70vw',
         'hero' => '100vw',
         'detail' => '(max-width: 1024px) 100vw, 70vw',
     ],

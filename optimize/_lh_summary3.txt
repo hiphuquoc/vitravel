@@ -1,0 +1,790 @@
+
+===== document-latency-insight score=0 display='Est savings of 1,330\xa0ms' =====
+{
+  "type": "checklist",
+  "items": {
+    "noRedirects": {
+      "label": "Avoids redirects",
+      "value": true
+    },
+    "serverResponseIsFast": {
+      "label": "Server responded slowly (observed 1425 ms)",
+      "value": false
+    },
+    "usesCompression": {
+      "label": "Applies text compression",
+      "value": true
+    }
+  },
+  "debugData": {
+    "type": "debugdata",
+    "redirectDuration": 0,
+    "serverResponseTime": 1425,
+    "uncompressedResponseBytes": 0,
+    "wastedBytes": 0
+  }
+}
+
+===== forced-reflow-insight score=0 display=None =====
+{
+  "type": "list",
+  "items": [
+    {
+      "type": "table",
+      "headings": [
+        {
+          "key": "source",
+          "valueType": "source-location",
+          "label": "Top function call"
+        },
+        {
+          "key": "reflowTime",
+          "valueType": "ms",
+          "granularity": 1,
+          "label": "Total reflow time"
+        }
+      ],
+      "items": [
+        {
+          "source": {
+            "type": "source-location",
+            "url": "",
+            "urlProvider": "network",
+            "line": 157,
+            "column": 39
+          },
+          "reflowTime": 38.453
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "headings": [
+        {
+          "key": "source",
+          "valueType": "source-location",
+          "label": "Source"
+        },
+        {
+          "key": "reflowTime",
+          "valueType": "ms",
+          "granularity": 1,
+          "label": "Total reflow time"
+        }
+      ],
+      "items": [
+        {
+          "source": {
+            "type": "source-location",
+            "url": "",
+            "urlProvider": "network",
+            "line": 33,
+            "column": 50
+          },
+          "reflowTime": 15.093
+        },
+        {
+          "source": {
+            "type": "source-location",
+            "url": "",
+            "urlProvider": "network",
+            "line": 40,
+            "column": 43
+          },
+          "reflowTime": 38.6
+        },
+        {
+          "source": {
+            "type": "source-location",
+            "url": "chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/content-script.js",
+            "urlProvider": "network",
+            "line": 47,
+            "column": 237721
+          },
+          "reflowTime": 0.249
+        },
+        {
+          "source": {
+            "type": "source-location",
+            "url": "chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/onboarding.js",
+            "urlProvider": "network",
+            "line": 47,
+            "column": 191356
+          },
+          "reflowTime": 0.15
+        },
+        {
+          "source": {
+            "type": "source-location",
+            "url": "chrome-extension://gfgbmghkdjckppeomloefmbphdfmokgd/assets/index.ts.js",
+            "urlProvider": "network",
+            "line": 2,
+            "column": 1780
+          },
+          "reflowTime": 0.186
+        }
+      ]
+    }
+  ]
+}
+
+===== lcp-breakdown-insight score=0 display=None =====
+{
+  "type": "list",
+  "items": [
+    {
+      "type": "table",
+      "headings": [
+        {
+          "key": "label",
+          "valueType": "text",
+          "label": "Subpart"
+        },
+        {
+          "key": "duration",
+          "valueType": "ms",
+          "label": "Duration"
+        }
+      ],
+      "items": [
+        {
+          "subpart": "timeToFirstByte",
+          "label": "Time to first byte",
+          "duration": 1467.209
+        },
+        {
+          "subpart": "resourceLoadDelay",
+          "label": "Resource load delay",
+          "duration": 29.425
+        },
+        {
+          "subpart": "resourceLoadDuration",
+          "label": "Resource load duration",
+          "duration": 3331.386
+        },
+        {
+          "subpart": "elementRenderDelay",
+          "label": "Element render delay",
+          "duration": 36.606
+        }
+      ]
+    },
+    {
+      "type": "node",
+      "lhId": "page-2-IMG",
+      "path": "1,HTML,1,BODY,2,MAIN,0,SECTION,0,DIV,0,BUTTON,0,IMG",
+      "selector": "section.container-site > div.detail-gallery__grid > button.detail-gallery__cover-btn > img.detail-gallery__cover-img",
+      "boundingRect": {
+        "top": 148,
+        "bottom": 556,
+        "left": 104,
+        "right": 980,
+        "width": 877,
+        "height": 408
+      },
+      "snippet": "<img src=\"https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…\" srcset=\"https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…\" alt=\"Maison Hai Homestay Hoi An\" loading=\"eager\" decoding=\"async\" fetchpriority=\"high\" class=\"detail-gallery__cover-img absolute inset-0 h-full w-full object-cover tran…\">",
+      "nodeLabel": "Maison Hai Homestay Hoi An"
+    }
+  ]
+}
+
+===== network-dependency-tree-insight score=0 display=None =====
+{
+  "type": "list",
+  "items": [
+    {
+      "type": "list-section",
+      "value": {
+        "type": "network-tree",
+        "chains": {
+          "FFF658E791585136D4D6315F71487F1D": {
+            "url": "https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay",
+            "navStartToEndTime": 1528,
+            "transferSize": 63856,
+            "isLongest": true,
+            "children": {
+              "19232.117": {
+                "url": "https://culaocham.net/build/assets/dancing-script-600-normal-8nA_0nHX.woff",
+                "navStartToEndTime": 2408,
+                "transferSize": 31367,
+                "isLongest": true,
+                "children": {}
+              },
+              "19232.99": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-500-normal-CfdwVo8-.woff",
+                "navStartToEndTime": 2034,
+                "transferSize": 7039,
+                "children": {}
+              },
+              "19232.105": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-700-normal-C2EtzaOi.woff",
+                "navStartToEndTime": 2034,
+                "transferSize": 17082,
+                "children": {}
+              },
+              "19232.115": {
+                "url": "https://culaocham.net/build/assets/fraunces-700-normal-DxawQjq2.woff",
+                "navStartToEndTime": 2032,
+                "transferSize": 8151,
+                "children": {}
+              },
+              "19232.103": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-600-normal-DkpCIyan.woff",
+                "navStartToEndTime": 2030,
+                "transferSize": 7035,
+                "children": {}
+              },
+              "19232.97": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-500-normal-BJkVuMHw.woff",
+                "navStartToEndTime": 2029,
+                "transferSize": 17170,
+                "children": {}
+              },
+              "19232.95": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-400-normal-BuGn0gnm.woff",
+                "navStartToEndTime": 2029,
+                "transferSize": 6723,
+                "children": {}
+              },
+              "19232.107": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-700-normal-By_5yT39.woff",
+                "navStartToEndTime": 2028,
+                "transferSize": 7047,
+                "children": {}
+              },
+              "19232.93": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-400-normal-bXgqVju9.woff",
+                "navStartToEndTime": 2028,
+                "transferSize": 16606,
+                "children": {}
+              },
+              "19232.101": {
+                "url": "https://culaocham.net/build/assets/be-vietnam-pro-600-normal-5IO4e7bK.woff",
+                "navStartToEndTime": 2027,
+                "transferSize": 17190,
+                "children": {}
+              },
+              "19232.113": {
+                "url": "https://culaocham.net/build/assets/fraunces-700-normal-DTjk5d1Q.woff",
+                "navStartToEndTime": 2027,
+                "transferSize": 22690,
+                "children": {}
+              }
+            }
+          }
+        },
+        "longestChain": {
+          "duration": 2408
+        }
+      }
+    },
+    {
+      "type": "list-section",
+      "title": "Preconnected origins",
+      "description": "[preconnect](https://developer.chrome.com/docs/lighthouse/performance/uses-rel-preconnect/) hints help the browser establish a connection earlier in the page load, saving time when the first request for that origin is made. The following are the origins that the page preconnected to.",
+      "value": {
+        "type": "table",
+        "headings": [
+          {
+            "key": "origin",
+            "valueType": "text",
+            "subItemsHeading": {
+              "key": "warning"
+            },
+            "label": "Origin"
+          },
+          {
+            "key": "source",
+            "valueType": "node",
+            "label": "Source"
+          }
+        ],
+        "items": [
+          {
+            "origin": "https://storage.googleapis.com/",
+            "source": {
+              "type": "node",
+              "lhId": "page-41-LINK",
+              "path": "1,HTML,0,HEAD,9,LINK",
+              "selector": "head > link",
+              "boundingRect": {
+                "top": 0,
+... [28 more lines] ...
+
+===== aria-prohibited-attr score=0 display=None =====
+{
+  "type": "table",
+  "headings": [
+    {
+      "key": "node",
+      "valueType": "node",
+      "subItemsHeading": {
+        "key": "relatedNode",
+        "valueType": "node"
+      },
+      "label": "Failing Elements"
+    }
+  ],
+  "items": [
+    {
+      "node": {
+        "type": "node",
+        "lhId": "1-0-SPAN",
+        "path": "1,HTML,1,BODY,2,MAIN,0,SECTION,1,DIV,2,DIV,1,DIV,0,DIV,0,SPAN,1,SPAN",
+        "selector": "div.detail-title-card__meta > div.detail-title-card__rating-wrap > span.rating > span.inline-flex",
+        "boundingRect": {
+          "top": 731,
+          "bottom": 751,
+          "left": 174,
+          "right": 276,
+          "width": 102,
+          "height": 20
+        },
+        "snippet": "<span class=\"inline-flex items-center gap-0\" aria-label=\"4.9 trên 5 sao\">",
+        "nodeLabel": "4.9 trên 5 sao",
+        "explanation": "Fix all of the following:\n  aria-label attribute cannot be used on a span with no valid role attribute."
+      }
+    }
+  ],
+  "debugData": {
+    "type": "debugdata",
+    "impact": "serious",
+    "tags": [
+      "cat.aria",
+      "wcag2a",
+      "wcag412",
+      "EN-301-549",
+      "EN-9.4.1.2",
+      "RGAAv4",
+      "RGAA-7.1.1"
+    ]
+  }
+}
+
+===== cls-culprits-insight score=1 display=None =====
+{
+  "type": "list",
+  "items": [
+    {
+      "type": "table",
+      "headings": [
+        {
+          "key": "node",
+          "valueType": "node",
+          "subItemsHeading": {
+            "key": "extra"
+          },
+          "label": "Element"
+        },
+        {
+          "key": "score",
+          "valueType": "numeric",
+          "subItemsHeading": {
+            "key": "cause",
+            "valueType": "text"
+          },
+          "granularity": 0.001,
+          "label": "Layout shift score"
+        }
+      ],
+      "items": [
+        {
+          "node": {
+            "type": "text",
+            "value": "Total"
+          },
+          "score": 0.08004041529304326
+        },
+        {
+          "node": {
+            "type": "node",
+            "lhId": "page-5-MAIN",
+            "path": "1,HTML,1,BODY,2,MAIN",
+            "selector": "body.min-h-screen > main#main-content",
+            "boundingRect": {
+              "top": 122,
+              "bottom": 9275,
+              "left": 0,
+              "right": 1499,
+              "width": 1499,
+              "height": 9153
+            },
+            "snippet": "<main id=\"main-content\">",
+            "nodeLabel": "40 ảnh\n+35\nTrang chủ\nLưu trú\nChỗ nghỉ nhà dân\nMaison Hai Homestay Hoi An\nHOMEST…"
+          },
+          "score": 0.06937958639092728
+        },
+        {
+          "node": {
+            "type": "node",
+            "lhId": "page-5-MAIN",
+            "path": "1,HTML,1,BODY,2,MAIN",
+            "selector": "body.min-h-screen > main#main-content",
+            "boundingRect": {
+              "top": 122,
+              "bottom": 9275,
+              "left": 0,
+              "right": 1499,
+              "width": 1499,
+              "height": 9153
+            },
+            "snippet": "<main id=\"main-content\">",
+            "nodeLabel": "40 ảnh\n+35\nTrang chủ\nLưu trú\nChỗ nghỉ nhà dân\nMaison Hai Homestay Hoi An\nHOMEST…"
+          },
+          "score": 0.01066082890211597
+        }
+      ]
+    }
+  ]
+}
+
+===== layout-shifts score=1 display='2 layout shifts found' =====
+{
+  "type": "table",
+  "headings": [
+    {
+      "key": "node",
+      "valueType": "node",
+      "subItemsHeading": {
+        "key": "extra"
+      },
+      "label": "Element"
+    },
+    {
+      "key": "score",
+      "valueType": "numeric",
+      "subItemsHeading": {
+        "key": "cause",
+        "valueType": "text"
+      },
+      "granularity": 0.001,
+      "label": "Layout shift score"
+    }
+  ],
+  "items": [
+    {
+      "node": {
+        "type": "node",
+        "lhId": "page-5-MAIN",
+        "path": "1,HTML,1,BODY,2,MAIN",
+        "selector": "body.min-h-screen > main#main-content",
+        "boundingRect": {
+          "top": 122,
+          "bottom": 9275,
+          "left": 0,
+          "right": 1499,
+          "width": 1499,
+          "height": 9153
+        },
+        "snippet": "<main id=\"main-content\">",
+        "nodeLabel": "40 ảnh\n+35\nTrang chủ\nLưu trú\nChỗ nghỉ nhà dân\nMaison Hai Homestay Hoi An\nHOMEST…"
+      },
+      "score": 0.06937958639092728
+    },
+    {
+      "node": {
+        "type": "node",
+        "lhId": "page-5-MAIN",
+        "path": "1,HTML,1,BODY,2,MAIN",
+        "selector": "body.min-h-screen > main#main-content",
+        "boundingRect": {
+          "top": 122,
+          "bottom": 9275,
+          "left": 0,
+          "right": 1499,
+          "width": 1499,
+          "height": 9153
+        },
+        "snippet": "<main id=\"main-content\">",
+        "nodeLabel": "40 ảnh\n+35\nTrang chủ\nLưu trú\nChỗ nghỉ nhà dân\nMaison Hai Homestay Hoi An\nHOMEST…"
+      },
+      "score": 0.01066082890211597
+    }
+  ]
+}
+
+===== non-composited-animations score=1 display='35 animated elements found' =====
+{
+  "type": "table",
+  "headings": [
+    {
+      "key": "node",
+      "valueType": "node",
+      "subItemsHeading": {
+        "key": "failureReason",
+        "valueType": "text"
+      },
+      "label": "Element"
+    },
+    {
+      "key": null,
+      "valueType": "text",
+      "subItemsHeading": {
+        "key": "animation",
+        "valueType": "text"
+      },
+      "label": "Name"
+    }
+  ],
+  "items": [
+    {
+      "node": {
+        "type": "node",
+        "lhId": "page-6-svg",
+        "path": "1,HTML,1,BODY,2,MAIN,1,DIV,0,NAV,0,DIV,0,DIV,0,DIV,0,A,0,svg",
+        "selector": "div.detail-tabs__wrapper > div.detail-tabs__inner > a.detail-tabs__link > svg.detail-tabs__icon",
+        "boundingRect": {
+          "top": 832,
+          "bottom": 849,
+          "left": 129,
+          "right": 146,
+          "width": 17,
+          "height": 17
+        },
+        "snippet": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"detail-tabs__icon size-4 shrink-0\" aria-hidden=\"true\">",
+        "nodeLabel": "div.detail-tabs__wrapper > div.detail-tabs__inner > a.detail-tabs__link > svg.detail-tabs__icon"
+      },
+      "subItems": {
+        "type": "subitems",
+        "items": [
+          {
+            "failureReason": "Unsupported CSS Property: color",
+            "animation": "color"
+          }
+        ]
+      }
+    },
+    {
+      "node": {
+        "type": "node",
+        "lhId": "page-7-A",
+        "path": "1,HTML,1,BODY,2,MAIN,1,DIV,0,NAV,0,DIV,0,DIV,0,DIV,0,A",
+        "selector": "div.container-site > div.detail-tabs__wrapper > div.detail-tabs__inner > a.detail-tabs__link",
+        "boundingRect": {
+          "top": 820,
+          "bottom": 860,
+          "left": 113,
+          "right": 246,
+          "width": 133,
+          "height": 41
+        },
+        "snippet": "<a href=\"#tong-quan\" class=\"detail-tabs__link is-active\" :class=\"active === 'tong-quan' ? 'is-active' : ''\">",
+        "nodeLabel": "Tổng quan"
+      },
+      "subItems": {
+        "type": "subitems",
+        "items": [
+          {
+            "failureReason": "Unsupported CSS Property: background-position-x",
+            "animation": "background-position-x"
+          },
+          {
+            "failureReason": "Unsupported CSS Property: font-weight",
+            "animation": "font-weight"
+          },
+          {
+            "failureReason": "Unsupported CSS Property: background-position-y",
+            "animation": "background-position-y"
+          },
+          {
+            "failureReason": "Unsupported CSS Property: box-shadow",
+            "animation": "box-shadow"
+          },
+          {
+            "failureReason": "Unsupported CSS Property: color",
+            "animation": "color"
+          }
+        ]
+      }
+    },
+    {
+      "node": {
+        "type": "node",
+        "lhId": "page-8-DIV",
+        "path": "1,HTML,1,BODY,2,MAIN,2,SECTION,2,DIV,0,DIV,0,DIV,1,DIV,0,DIV,1,DIV,1,DIV",
+        "selector": "div.card-body > div.card-inner > div.listing-skeleton__rating > div.listing-skeleton__line",
+        "boundingRect": {
+          "top": 9192,
+          "bottom": 9204,
+          "left": 231,
+          "right": 286,
+          "width": 55,
+          "height": 12
+        },
+        "snippet": "<div class=\"listing-skeleton__line listing-skeleton__line--meta listing-skeleton__shim…\">",
+        "nodeLabel": "div.card-body > div.card-inner > div.listing-skeleton__rating > div.listing-skeleton__line"
+      },
+      "subItems": {
+        "type": "subitems",
+        "items": [
+          {
+            "failureReason": "Unsupported CSS Property: background-position-x",
+            "animation": "listing-shimmer"
+          }
+        ]
+      }
+    },
+... [866 more lines] ...
+MISSING font-display
+MISSING uses-rel-preconnect
+MISSING preload-lcp-image
+
+===== lcp-discovery-insight score=1 display=None =====
+{
+  "type": "list",
+  "items": [
+    {
+      "type": "checklist",
+      "items": {
+        "priorityHinted": {
+          "label": "fetchpriority=high applied",
+          "value": true
+        },
+        "requestDiscoverable": {
+          "label": "Request is discoverable in initial document",
+          "value": true
+        },
+        "eagerlyLoaded": {
+          "label": "LCP resources should not use loading=lazy",
+          "value": true
+        }
+      }
+    },
+    {
+      "type": "node",
+      "lhId": "page-2-IMG",
+      "path": "1,HTML,1,BODY,2,MAIN,0,SECTION,0,DIV,0,BUTTON,0,IMG",
+      "selector": "section.container-site > div.detail-gallery__grid > button.detail-gallery__cover-btn > img.detail-gallery__cover-img",
+      "boundingRect": {
+        "top": 148,
+        "bottom": 556,
+        "left": 104,
+        "right": 980,
+        "width": 877,
+        "height": 408
+      },
+      "snippet": "<img src=\"https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…\" srcset=\"https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/galler…\" alt=\"Maison Hai Homestay Hoi An\" loading=\"eager\" decoding=\"async\" fetchpriority=\"high\" class=\"detail-gallery__cover-img absolute inset-0 h-full w-full object-cover tran…\">",
+      "nodeLabel": "Maison Hai Homestay Hoi An"
+    }
+  ]
+}
+
+===== bootup-time items =====
+https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay scripting=133.01200000000003 scriptParse=1.0339999999999998 total=980.9959999999998
+Unattributable scripting=4.9700000000000015 scriptParse=0 total=338.1349999999966
+https://culaocham.net/build/assets/app-BEJdk124.js scripting=118.97300000000017 scriptParse=0.201 total=126.09500000000017
+
+===== total-byte-weight =====
+107188 https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-4.webp
+89554 https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-1.webp
+82258 https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-2.webp
+72498 https://culaocham.net/build/assets/app-Da_RZCQn.css
+63856 https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay
+56787 https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-5.webp
+31367 https://culaocham.net/build/assets/dancing-script-600-normal-8nA_0nHX.woff
+30829 https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-3.webp
+26124 https://culaocham.net/build/assets/dancing-script-600-normal-CUtcW3hj.woff2
+26035 https://culaocham.net/build/assets/app-BEJdk124.js
+
+===== cache-insight cacheLifetimeMs==0 (site) =====
+ttl=0 bytes=31367 https://culaocham.net/build/assets/dancing-script-600-normal-8nA_0nHX.woff
+ttl=0 bytes=26124 https://culaocham.net/build/assets/dancing-script-600-normal-CUtcW3hj.woff2
+ttl=0 bytes=25628 https://culaocham.net/build/assets/dancing-script-700-normal-CX8AaSVl.woff2
+ttl=0 bytes=22690 https://culaocham.net/build/assets/fraunces-700-normal-DTjk5d1Q.woff
+ttl=0 bytes=22327 https://culaocham.net/build/assets/be-vietnam-pro-700-normal-DlW1Zbsh.woff2
+ttl=0 bytes=22207 https://culaocham.net/build/assets/be-vietnam-pro-600-normal-BZDkUTrt.woff2
+ttl=0 bytes=22067 https://culaocham.net/build/assets/be-vietnam-pro-500-normal-B6LVzGNe.woff2
+ttl=0 bytes=21343 https://culaocham.net/build/assets/be-vietnam-pro-400-normal-PpnXBOrz.woff2
+ttl=0 bytes=18387 https://culaocham.net/build/assets/fraunces-700-normal-CEOla-zY.woff2
+ttl=0 bytes=18271 https://culaocham.net/build/assets/fraunces-600-normal-BFCDtZfi.woff2
+ttl=0 bytes=17190 https://culaocham.net/build/assets/be-vietnam-pro-600-normal-5IO4e7bK.woff
+ttl=0 bytes=17170 https://culaocham.net/build/assets/be-vietnam-pro-500-normal-BJkVuMHw.woff
+ttl=0 bytes=17082 https://culaocham.net/build/assets/be-vietnam-pro-700-normal-C2EtzaOi.woff
+ttl=0 bytes=16606 https://culaocham.net/build/assets/be-vietnam-pro-400-normal-bXgqVju9.woff
+ttl=0 bytes=12634 https://culaocham.net/build/assets/be-vietnam-pro-700-normal-Csr0PCuG.woff2
+ttl=0 bytes=12342 https://culaocham.net/build/assets/be-vietnam-pro-600-normal-nyU-ZL2p.woff2
+ttl=0 bytes=12338 https://culaocham.net/build/assets/be-vietnam-pro-500-normal-DREgrEoJ.woff2
+ttl=0 bytes=11698 https://culaocham.net/build/assets/be-vietnam-pro-400-normal-CRcqvyg1.woff2
+ttl=0 bytes=8151 https://culaocham.net/build/assets/fraunces-700-normal-DxawQjq2.woff
+ttl=0 bytes=7047 https://culaocham.net/build/assets/be-vietnam-pro-700-normal-By_5yT39.woff
+ttl=0 bytes=7039 https://culaocham.net/build/assets/be-vietnam-pro-500-normal-CfdwVo8-.woff
+ttl=0 bytes=7035 https://culaocham.net/build/assets/be-vietnam-pro-600-normal-DkpCIyan.woff
+ttl=0 bytes=6723 https://culaocham.net/build/assets/be-vietnam-pro-400-normal-BuGn0gnm.woff
+ttl=0 bytes=6504 https://culaocham.net/build/assets/fraunces-700-normal-DH94m5DZ.woff2
+ttl=0 bytes=6440 https://culaocham.net/build/assets/fraunces-600-normal-BjlAJixd.woff2
+ttl=0 bytes=5176 https://culaocham.net/build/assets/dancing-script-600-normal-B_5hiXq4.woff2
+ttl=0 bytes=5128 https://culaocham.net/build/assets/dancing-script-700-normal-DHSNEjs8.woff2
+
+===== inspector-issues raw =====
+{
+  "type": "table",
+  "headings": [
+    {
+      "key": "issueType",
+      "valueType": "text",
+      "subItemsHeading": {
+        "key": "url",
+        "valueType": "url"
+      },
+      "label": "Issue type"
+    }
+  ],
+  "items": [
+    {
+      "issueType": "Cookie",
+      "subItems": {
+        "type": "subitems",
+        "items": [
+          {
+            "url": "https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-4.webp"
+          },
+          {
+            "url": "https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-3.webp"
+          },
+          {
+            "url": "https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-2.webp"
+          },
+          {
+            "url": "https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-1.webp"
+          },
+          {
+            "url": "https://storage.googleapis.com/vitravelnet/projects/culaocham/stays/gallery/bk-maison-hai-homestay-gallery-5.webp"
+          }
+        ]
+      }
+    }
+  ]
+}
+
+===== timing =====
+{
+  "entries": [
+    {
+      "startTime": 626.1,
+      "name": "lh:config",
+      "duration": 474,
+      "entryType": "measure"
+    },
+    {
+      "startTime": 628,
+      "name": "lh:config:resolveArtifactsToDefns",
+      "duration": 2.9,
+      "entryType": "measure"
+    },
+    {
+      "startTime": 1100.3,
+      "name": "lh:runner:gather",
+      "duration": 31236.6,
+      "entryType": "measure"
+    },
+    {
+      "startTime": 1100.7,
+      "name": "lh:driver:connect",
+      "duration": 33,
+     
+
+===== scores as percent =====
+performance: 76 (0.76)
+accessibility: 93 (0.93)
+best-practices: 96 (0.96)
+seo: 92 (0.92)

@@ -54,6 +54,7 @@ autourasia-clone-docs/
 | `16-accommodation-stays.md` | **Lưu trú** — UI, admin, AI, crawler Booking.com |
 | `17-stay-crawl-vps-aapanel.md` | **VPS aaPanel** — Node/Puppeteer/Chrome + `.env` (`STAY_CRAWL_CHROME`, path `/www/wwwroot/vitravel.net`) |
 | `gcs-standard.md` | Chuẩn GCS đa dự án |
+| [`optimize/README.md`](optimize/README.md) | **Lighthouse / performance** — hotel detail + checklist theo loại trang, phần code vs hạ tầng |
 
 ## Trạng thái triển khai (2026-07)
 

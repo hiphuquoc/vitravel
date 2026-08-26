@@ -8,7 +8,7 @@
 @endphp
 
 {{-- Hàng sao tip bo tròn nhẹ — dùng chung rating / summary / platforms --}}
-<span {{ $attributes->merge(['class' => 'inline-flex items-center gap-0', 'aria-label' => number_format((float) $rating, 1) . ' trên ' . $max . ' sao']) }}>
+<span {{ $attributes->merge(['class' => 'inline-flex items-center gap-0', 'role' => 'img', 'aria-label' => number_format((float) $rating, 1) . ' trên ' . $max . ' sao']) }}>
     @for ($i = 1; $i <= $max; $i++)
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
             class="size-[1.2rem] shrink-0 {{ $i <= $filled ? 'text-accent-500' : 'text-accent-200' }}"

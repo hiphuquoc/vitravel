@@ -317,7 +317,7 @@
     <div class="container-site headerMain__inner">
 
         {{-- Logo --}}
-        <a href="{{ locale_route('home') }}" class="header-wordmark" aria-label="{{ $brandName }} — về trang chủ">
+        <a href="{{ locale_route('home') }}" class="header-wordmark" aria-label="{{ $brandTagline !== '' ? $brandName.' — '.$brandTagline.' — về trang chủ' : $brandName.' — về trang chủ' }}">
             <span class="header-wordmark__mark" aria-hidden="true">
                 <x-icon name="compass" class="header-wordmark__icon" />
             </span>
@@ -709,7 +709,7 @@
             x-transition:leave-start="translate-x-0"
             x-transition:leave-end="translate-x-full">
             <header class="mobile-nav-drawer__head">
-                <a href="{{ locale_route('home') }}" class="header-wordmark header-wordmark--drawer" @click="closeMobileNav()" aria-label="{{ $brandName }} — về trang chủ">
+                <a href="{{ locale_route('home') }}" class="header-wordmark header-wordmark--drawer" @click="closeMobileNav()" aria-label="{{ $brandTagline !== '' ? $brandName.' — '.$brandTagline.' — về trang chủ' : $brandName.' — về trang chủ' }}">
                     <span class="header-wordmark__mark" aria-hidden="true">
                         <x-icon name="compass" class="header-wordmark__icon" />
                     </span>

@@ -48,8 +48,10 @@ server {
     location ^~ /build/ {
         try_files $uri =404;
         access_log off;
-        expires 7d;
-        add_header Cache-Control "public";
+        # Vite asset đã hash tên file → cache dài + immutable
+        expires 1y;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+        add_header Vary "Accept-Encoding";
     }
 
     location ~* /(\.env|composer\.(json|lock)|package(-lock)?\.json|artisan) {

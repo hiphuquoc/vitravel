@@ -95,10 +95,16 @@
      data-cookie-name="{{ $__cookieName }}"
      data-cookie-days="{{ $__cookieTtlDays }}">
 
+    @php
+        $__langCode = strtoupper((string) ($__currentLang->code ?? $__currentLocale));
+        $__triggerName = $isMobile
+            ? trim($__ui['choose'].($__hasCurrency ? ' '.$__currentCurrency : ''))
+            : trim($__ui['choose'].' '.$__langCode.($__hasCurrency ? ' · '.$__currentCurrency : ''));
+    @endphp
     <button type="button"
             class="{{ $__triggerClass }}"
             aria-haspopup="true" aria-expanded="false"
-            aria-label="{{ $__ui['choose'] }}">
+            aria-label="{{ $__triggerName }}">
         @if ($isMobile)
             {{-- Mobile (Hitour): flag · currency — pill compact, không hiện mã ngôn ngữ --}}
             <span class="regionSwitcher_label">
@@ -113,7 +119,7 @@
                              alt="{{ $__currentLang->name_native }}" />
                     @endif
                 @else
-                    <span class="regionSwitcher_lang">{{ strtoupper($__currentLang->code ?? $__currentLocale) }}</span>
+                    <span class="regionSwitcher_lang">{{ $__langCode }}</span>
                 @endif
                 @if ($__hasCurrency)
                     <span class="regionSwitcher_sep" aria-hidden="true">·</span>
@@ -133,7 +139,7 @@
                              alt="{{ $__currentLang->name_native }}" />
                     @endif
                 @endif
-                <span class="regionSwitcher_lang">{{ strtoupper($__currentLang->code ?? $__currentLocale) }}</span>
+                <span class="regionSwitcher_lang">{{ $__langCode }}</span>
                 @if ($__hasCurrency)
                     <span class="regionSwitcher_sep" aria-hidden="true">·</span>
                     <span class="regionSwitcher_currency_code">{{ $__currentCurrency }}</span>

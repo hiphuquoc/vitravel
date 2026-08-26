@@ -131,10 +131,11 @@ Alpine.data('stepper', (initial = 0, min = 0, max = 30) => ({
 
 /**
  * Custom select form — pattern adminCustomSelect (liendoan), single + search.
- * opts: { value, label, options: [{value,label}], placeholder?, searchable?, required? }
+ * opts: { name?, value, label, options: [{value,label}], placeholder?, searchable?, required? }
  */
 Alpine.data('formSelect', (opts = {}) => ({
     open: false,
+    name: opts.name ?? '',
     value: opts.value ?? '',
     label: opts.label ?? '',
     placeholder: opts.placeholder ?? '- Lựa chọn -',
@@ -147,6 +148,9 @@ Alpine.data('formSelect', (opts = {}) => ({
 
     init() {
         this.filtered = this.options.slice();
+        if (! this.name) {
+            this.name = this.$refs.hidden?.name || '';
+        }
         this.syncValidity();
         this.$watch('value', () => this.syncValidity());
     },
@@ -230,9 +234,11 @@ Alpine.data('formSelect', (opts = {}) => ({
         this.value = String(opt?.value ?? '');
         this.label = String(opt?.label ?? '');
         this.close();
+        const fieldName = this.name || this.$refs.hidden?.name || '';
         this.$dispatch('vt-select-change', {
-            name: this.$refs.hidden?.name,
+            name: fieldName,
             value: this.value,
+            label: this.label,
         });
     },
 }));
@@ -476,6 +482,14 @@ Alpine.data('listingGrid', (opts = {}) => ({
     endpoint: opts.endpoint || '',
     fixedParams: opts.params || {},
     labelMap: opts.labelMap || {},
+    // Context cố định của trang (country/category/type) — luôn gửi API, không clear
+    lockedFilters: Object.fromEntries(
+        Object.entries(opts.lockedFilters || opts.baseFilters || {}).map(([key, values]) => [
+            key,
+            [...(values || [])].map((v) => String(v)),
+        ]),
+    ),
+    // Bộ lọc người dùng chọn thêm
     filters: Object.fromEntries(
         Object.entries(opts.filters || {}).map(([key, values]) => [
             key,
@@ -511,15 +525,43 @@ Alpine.data('listingGrid', (opts = {}) => ({
     // Stage tracking & concurrency mutex
     stage: 'INITIAL',
     _isFetching: false,
+    _fetchGen: 0,
     _sentinelObserver: null,
     _scrollHandler: null,
     _timer: null,
     _abort: null,
+    _batchAbort: null,
     _loadedKeys: new Set(),
     _seedOpts: {
         count: opts.seedCount ?? null,
         cursor: opts.seedCursor || null,
         hasMore: Boolean(opts.seedHasMore),
+    },
+
+    /** Gộp locked + user filters (unique) theo từng group */
+    mergedFilters() {
+        const out = {};
+        const keys = new Set([
+            ...Object.keys(this.lockedFilters || {}),
+            ...Object.keys(this.filters || {}),
+        ]);
+        keys.forEach((group) => {
+            const seen = new Set();
+            const vals = [];
+            [...(this.lockedFilters[group] || []), ...(this.filters[group] || [])].forEach((v) => {
+                const s = String(v);
+                if (! s || seen.has(s)) return;
+                seen.add(s);
+                vals.push(s);
+            });
+            if (vals.length) out[group] = vals;
+        });
+        return out;
+    },
+
+    isLockedFilter(group, value) {
+        const needle = String(value);
+        return (this.lockedFilters[group] || []).some((v) => String(v) === needle);
     },
 
     get requireManualClick() {
@@ -608,7 +650,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     activeFilterCount(group) {
-        return (this.filters[group] || []).length;
+        return (this.filters[group] || []).length + (this.lockedFilters[group] || []).length;
     },
 
     getFilterLabel(group, value) {
@@ -839,11 +881,15 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     toggleFilter(group, value) {
+        const needle = String(value);
+        // Không cho bỏ tiêu chí khóa của trang (country/category/type context)
+        if (this.isLockedFilter(group, needle)) {
+            return;
+        }
         if (! this.filters[group]) {
             this.filters[group] = [];
         }
         const list = this.filters[group];
-        const needle = String(value);
         const i = list.findIndex((v) => String(v) === needle);
         if (i >= 0) {
             list.splice(i, 1);
@@ -854,6 +900,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
     },
 
     clearFilter(group, value) {
+        if (this.isLockedFilter(group, value)) return;
         if (! this.filters[group]) return;
         const needle = String(value);
         this.filters[group] = this.filters[group].filter((v) => String(v) !== needle);
@@ -877,6 +924,9 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
     isChecked(group, value) {
         const needle = String(value);
+        if ((this.lockedFilters[group] || []).some((v) => String(v) === needle)) {
+            return true;
+        }
         return (this.filters[group] || []).some((v) => String(v) === needle);
     },
 
@@ -892,14 +942,9 @@ Alpine.data('listingGrid', (opts = {}) => ({
             q.set(k, String(v));
         });
 
-        // Loop over all filters and append ONLY non-empty active values
-        Object.entries(this.filters).forEach(([group, values]) => {
-            if (! Array.isArray(values) || values.length === 0) return;
+        Object.entries(this.mergedFilters()).forEach(([group, values]) => {
             values.forEach((v) => {
-                const s = String(v).trim();
-                if (s !== '') {
-                    q.append(`${group}[]`, s);
-                }
+                q.append(`${group}[]`, v);
             });
         });
 
@@ -931,6 +976,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
 
         this.stage = 'INITIAL';
         this.scrollAutoCount = 0;
+        this._fetchGen += 1;
+        const gen = this._fetchGen;
         this._isFetching = true;
         this.loading = true;
         this.seededBoot = false;
@@ -944,7 +991,9 @@ Alpine.data('listingGrid', (opts = {}) => ({
         this.showSkeleton();
 
         if (this._abort) this._abort.abort();
+        if (this._batchAbort) this._batchAbort.abort();
         this._abort = new AbortController();
+        this._batchAbort = null;
 
         const q = this.buildQuery();
         q.set('limit', String(this.initialLimit));
@@ -959,6 +1008,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
                     url.searchParams.delete(k);
                 }
             });
+            // Chỉ sync filter người dùng — locked là context URL path
             Object.entries(this.filters).forEach(([group, values]) => {
                 if (Array.isArray(values)) {
                     values.forEach((v) => {
@@ -993,6 +1043,8 @@ Alpine.data('listingGrid', (opts = {}) => ({
             if (! res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
+            if (gen !== this._fetchGen) return;
+
             this.count = data.count ?? 0;
             this.hasMore = Boolean(data.has_more);
             this.cursor = data.next_cursor || data.cursor;
@@ -1002,10 +1054,10 @@ Alpine.data('listingGrid', (opts = {}) => ({
             this.loading = false;
             this._isFetching = false;
 
-            // GIAI ĐOẠN 2: Eager batch nền ngay sau first paint
             if (this.hasMore && this.cursor && this.eagerLimit > 0) {
                 this.stage = 'EAGER';
                 requestAnimationFrame(() => {
+                    if (gen !== this._fetchGen) return;
                     setTimeout(() => this.loadNextBatch(this.eagerLimit, 'EAGER'), 0);
                 });
             } else {
@@ -1016,6 +1068,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
             }
         } catch (e) {
             if (e?.name === 'AbortError') return;
+            if (gen !== this._fetchGen) return;
             this.error = 'Không tải được danh sách. Thử lại.';
             console.error(e);
             this.loading = false;
@@ -1031,6 +1084,7 @@ Alpine.data('listingGrid', (opts = {}) => ({
             return;
         }
 
+        const gen = this._fetchGen;
         this._isFetching = true;
         this.loadingMore = true;
         this.error = null;
@@ -1045,19 +1099,27 @@ Alpine.data('listingGrid', (opts = {}) => ({
         q.set('limit', String(limit));
         q.set('is_append', '1');
 
+        if (this._batchAbort) this._batchAbort.abort();
+        this._batchAbort = new AbortController();
+
         try {
             const res = await fetch(`${this.endpoint}?${q.toString()}`, {
                 headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 credentials: 'same-origin',
+                signal: this._batchAbort.signal,
             });
             if (! res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
+
+            if (gen !== this._fetchGen) return;
 
             this.count = data.count ?? this.count;
             this.hasMore = Boolean(data.has_more);
             this.cursor = data.next_cursor || data.cursor;
 
             await this.$nextTick();
+            if (gen !== this._fetchGen) return;
+
             if (this.$refs.results && data.html) {
                 const host = this.$refs.results;
                 const mount = host.querySelector('[data-listing-mount]') || host;
@@ -1085,15 +1147,18 @@ Alpine.data('listingGrid', (opts = {}) => ({
                 this.stage = 'COMPLETED';
             }
         } catch (e) {
+            if (e?.name === 'AbortError') return;
             console.error('Error loading next batch:', e);
         } finally {
-            this.loadingMore = false;
-            this._isFetching = false;
+            if (gen === this._fetchGen) {
+                this.loadingMore = false;
+                this._isFetching = false;
 
-            if (this.requireManualClick) {
-                this.disableScrollTriggers();
-            } else if (this.stage === 'SCROLL_READY' && this.hasMore) {
-                this.$nextTick(() => this.enableScrollTriggers());
+                if (this.requireManualClick) {
+                    this.disableScrollTriggers();
+                } else if (this.stage === 'SCROLL_READY' && this.hasMore) {
+                    this.$nextTick(() => this.enableScrollTriggers());
+                }
             }
         }
     },

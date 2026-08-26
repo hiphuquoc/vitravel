@@ -1,0 +1,166 @@
+=== CATEGORIES ===
+performance: score=0.76 title=Performance
+accessibility: score=0.93 title=Accessibility
+best-practices: score=0.96 title=Best Practices
+seo: score=0.92 title=SEO
+
+=== URL ===
+requestedUrl: https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay
+finalUrl: https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay
+fetchTime: 2026-08-26T13:26:05.701Z
+lighthouseVersion: 13.3.0
+formFactor: desktop
+
+=== METRICS ===
+first-contentful-paint: score=1 numericValue=498.947 displayValue='0.5\xa0s' title=First Contentful Paint
+largest-contentful-paint: score=0.82 numericValue=1437.4140000000007 displayValue='1.4\xa0s' title=Largest Contentful Paint
+total-blocking-time: score=0.57 numericValue=311 displayValue='310\xa0ms' title=Total Blocking Time
+cumulative-layout-shift: score=0.94 numericValue=0.08004041529304326 displayValue='0.08' title=Cumulative Layout Shift
+speed-index: score=0.52 numericValue=2226.0532887557238 displayValue='2.2\xa0s' title=Speed Index
+interactive: score=0.99 numericValue=1437.4140000000007 displayValue='1.4\xa0s' title=Time to Interactive
+max-potential-fid: score=0.55 numericValue=234 displayValue='230\xa0ms' title=Max Potential First Input Delay
+server-response-time: score=0 numericValue=1425 displayValue='Root document took 1,430\xa0ms' title=Reduce initial server response time
+
+=== PERF FAILING AUDITS (score < 1) ===
+count: 16
+--- unused-css-rules ---
+  title=Reduce unused CSS
+  score=0.5 group=diagnostics weight=0
+  displayValue='Est savings of 1,165\xa0KiB' numericValue=0
+  details_type=opportunity
+  description='Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. Learn how to reduce unused CSS.'
+--- unused-javascript ---
+  title=Reduce unused JavaScript
+  score=0.5 group=diagnostics weight=0
+  displayValue='Est savings of 1,297\xa0KiB' numericValue=0
+  details_type=opportunity
+  description='Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. Learn how to reduce unused JavaScript.'
+--- document-latency-insight ---
+  title=Document request latency
+  score=0 group=insights weight=0
+  displayValue='Est savings of 1,330\xa0ms' numericValue=None
+  details_type=checklist
+  description='Your first network request is the most important. Reduce its latency by avoiding redirects, ensuring a fast server response, and enabling text compression.'
+--- forced-reflow-insight ---
+  title=Forced reflow
+  score=0 group=insights weight=0
+  displayValue=None numericValue=None
+  details_type=list
+  description='A forced reflow occurs when JavaScript queries geometric properties (such as `offsetWidth`) after styles have been invalidated by a change to the DOM state. This can result in poor performance. Learn more about forced re'
+--- image-delivery-insight ---
+  title=Improve image delivery
+  score=0 group=insights weight=0
+  displayValue='Est savings of 307\xa0KiB' numericValue=None
+  details_type=table
+  description='Reducing the download time of images can improve the perceived load time of the page and LCP. Learn more about optimizing image size'
+--- lcp-breakdown-insight ---
+  title=LCP breakdown
+  score=0 group=insights weight=0
+  displayValue=None numericValue=None
+  details_type=list
+  description='Each subpart has specific improvement strategies. Ideally, most of the LCP time should be spent on loading the resources, not within delays.'
+--- network-dependency-tree-insight ---
+  title=Network dependency tree
+  score=0 group=insights weight=0
+  displayValue=None numericValue=None
+  details_type=list
+  description='Avoid chaining critical requests by reducing the length of chains, reducing the download size of resources, or deferring the download of unnecessary resources to improve page load.'
+--- server-response-time ---
+  title=Reduce initial server response time
+  score=0 group=hidden weight=0
+  displayValue='Root document took 1,430\xa0ms' numericValue=1425
+  details_type=opportunity
+  description='Keep the server response time for the main document short because all other requests depend on it. Learn more about the Time to First Byte metric.'
+--- cache-insight ---
+  title=Use efficient cache lifetimes
+  score=0.5 group=insights weight=0
+  displayValue='Est savings of 589\xa0KiB' numericValue=None
+  details_type=table
+  description='A long cache lifetime can speed up repeat visits to your page. Learn more about caching.'
+--- render-blocking-insight ---
+  title=Render-blocking requests
+  score=0.5 group=insights weight=0
+  displayValue=None numericValue=None
+  details_type=table
+  description="Requests are blocking the page's initial render, which may delay LCP. Deferring or inlining can move these network requests out of the critical path."
+--- speed-index ---
+  title=Speed Index
+  score=0.52 group=metrics weight=10
+  displayValue='2.2\xa0s' numericValue=2226.0532887557238
+  details_type=None
+  description='Speed Index shows how quickly the contents of a page are visibly populated. Learn more about the Speed Index metric.'
+--- max-potential-fid ---
+  title=Max Potential First Input Delay
+  score=0.55 group=hidden weight=0
+  displayValue='230\xa0ms' numericValue=234
+  details_type=None
+  description='The maximum potential First Input Delay that your users could experience is the duration of the longest task. Learn more about the Maximum Potential First Input Delay metric.'
+--- total-blocking-time ---
+  title=Total Blocking Time
+  score=0.57 group=metrics weight=30
+  displayValue='310\xa0ms' numericValue=311
+  details_type=None
+  description='Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds. Learn more about the Total Blocking Time metric.'
+--- largest-contentful-paint ---
+  title=Largest Contentful Paint
+  score=0.82 group=metrics weight=25
+  displayValue='1.4\xa0s' numericValue=1437.4140000000007
+  details_type=None
+  description='Largest Contentful Paint marks the time at which the largest text or image is painted. Learn more about the Largest Contentful Paint metric'
+--- cumulative-layout-shift ---
+  title=Cumulative Layout Shift
+  score=0.94 group=metrics weight=25
+  displayValue='0.08' numericValue=0.08004041529304326
+  details_type=debugdata
+  description='Cumulative Layout Shift measures the movement of visible elements within the viewport. Learn more about the Cumulative Layout Shift metric.'
+--- interactive ---
+  title=Time to Interactive
+  score=0.99 group=hidden weight=0
+  displayValue='1.4\xa0s' numericValue=1437.4140000000007
+  details_type=None
+  description='Time to Interactive is the amount of time it takes for the page to become fully interactive. Learn more about the Time to Interactive metric.'
+
+=== RESOURCE DETAILS (top items) ===
+
+#### unused-javascript (score=0.5 display='Est savings of 1,297\xa0KiB' type=opportunity) ####
+  [1] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/content-script.js | wastedBytes=597938 | totalBytes=772207
+  [2] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/onboarding.js | wastedBytes=368100 | totalBytes=666211
+  [3] url=chrome-extension://gfgbmghkdjckppeomloefmbphdfmokgd/assets/index.ts.js | wastedBytes=132975 | totalBytes=145145
+  [4] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/gads-scrapper.js | wastedBytes=92125 | totalBytes=141448
+  [5] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/common.js | wastedBytes=64191 | totalBytes=100983
+  [6] url=chrome-extension://gcopfpdkmpdacdmbjonfjmbnccmnjdoi/gserp.js | wastedBytes=43236 | totalBytes=71955
+  [7] url=chrome-extension://gfgbmghkdjckppeomloefmbphdfmokgd/assets/FeedbackDialog.js | wastedBytes=29359 | totalBytes=33135
+
+#### unused-css-rules (score=0.5 display='Est savings of 1,165\xa0KiB' type=opportunity) ####
+  [1] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/css/content-script.css | wastedBytes=1193306 | totalBytes=1193863
+
+#### server-response-time (score=0 display='Root document took 1,430\xa0ms' type=opportunity) ####
+  [1] url=https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay
+
+#### bootup-time (score=1 display='0.6\xa0s' type=table) ####
+  [1] url=https://culaocham.net/luu-tru/cho-nghi-nha-dan/maison-hai-homestay
+  [2] url=Unattributable
+  [3] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/content-script.js
+  [4] url=chrome-extension://jdfkmiabjpfjacifcmihfdjhpnjpiick/onboarding.js
+  [5] url=https://culaocham.net/build/assets/app-BEJdk124.js
+
+#### mainthread-work-breakdown (score=1 display='1.9\xa0s' type=table) ####
+  [1] duration=588.8839999999929 | groupLabel=Other
+  [2] duration=520.3239999999998 | groupLabel=Style & Layout
+  [3] duration=454.0509999999983 | groupLabel=Script Evaluation
+  [4] duration=260.61899999999997 | groupLabel=Script Parsing & Compilation
+  [5] duration=66.10399999999974 | groupLabel=Rendering
+  [6] duration=36.68399999999998 | groupLabel=Parse HTML & CSS
+  [7] duration=11.106000000000002 | groupLabel=Garbage Collection
+
+=== OTHER CATEGORIES FAILING ===
+[accessibility] score=0.93
+  - aria-prohibited-attr | Elements use prohibited ARIA attributes | score=0 | None
+  - color-contrast | Background and foreground colors do not have a sufficient contrast ratio. | score=0 | None
+  - label-content-name-mismatch | Elements with visible text labels do not have matching accessible names. | score=0 | None
+[best-practices] score=0.96
+  - inspector-issues | Issues were logged in the `Issues` panel in Chrome Devtools | score=0 | None
+[seo] score=0.92
+  - meta-description | Document does not have a meta description | score=0 | None
+
+=== DONE ===

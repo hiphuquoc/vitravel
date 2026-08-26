@@ -18,6 +18,7 @@
         <span
             class="stay-media-pill"
             @if ($showStar)
+                role="img"
                 aria-label="{{ ($showType ? $propertyTypeLabel . ', ' : '') . $stars . ' sao' }}"
             @endif
         >
