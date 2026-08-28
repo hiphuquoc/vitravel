@@ -20,6 +20,10 @@ php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="
 php artisan project:seed phuquoc --domain=phuquocangiang.dev --domain=phuquocangiang.com --name="Đảo Phú Quốc"
 # culaocham.net: culaocham.dev (local) + culaocham.net (prod)
 php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net --name="culaocham.net"
+# Đà Lạt: hidalat.dev (local) + hidalat.com (prod)
+php artisan project:seed hidalat --domain=hidalat.dev --domain=hidalat.com --name="Hi Đà Lạt"
+# Cần Thơ: hicantho.dev (local) + hicantho.com (prod)
+php artisan project:seed hicantho --domain=hicantho.dev --domain=hicantho.com --name="Hi Cần Thơ"
 ```
 
 | Profile | File | Domain |
@@ -29,6 +33,8 @@ php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net
 | `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` / `phuquy.net` |
 | `phuquoc` | `project/seed_phuquoc.php` | `phuquocangiang.dev` / `phuquocangiang.com` |
 | `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` / `culaocham.net` |
+| `hidalat` | `project/seed_hidalat.php` | `hidalat.dev` / `hidalat.com` |
+| `hicantho` | `project/seed_hicantho.php` | `hicantho.dev` / `hicantho.com` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
 
@@ -48,6 +54,8 @@ project/
   seed_phuquy.php           ← đảo Phú Quý (Bình Thuận): phuquy.dev / phuquy.net
   seed_phuquoc.php          ← đảo Phú Quốc (An Giang): phuquocangiang.dev / phuquocangiang.com — Đảo Phú Quốc
   seed_culaocham.php        ← Cù Lao Chàm (Quảng Nam): culaocham.dev / culaocham.net
+  seed_hidalat.php         ← Đà Lạt (Lâm Đồng): hidalat.dev / hidalat.com — Hi Đà Lạt
+  seed_hicantho.php        ← Cần Thơ (ĐBSCL): hicantho.dev / hicantho.com — Hi Cần Thơ
 ```
 
 **Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.

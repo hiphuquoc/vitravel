@@ -120,7 +120,7 @@ class MediaService
     }
 
     /**
-     * Stem SEO cho tên file: {slug}[-{role}] — an toàn path, không trùng.
+     * Stem SEO cho t�n file: {slug}[-{role}] ? an to�n path, kh�ng tr�ng.
      */
     public function buildMediaStem(?string $slug, ?string $role, ?string $originalName = null): string
     {
@@ -145,7 +145,7 @@ class MediaService
         return $base;
     }
 
-    /** Chuẩn hoá slug file: a-z0-9-, tối đa 80, không path traversal. */
+    /** Chu?n ho� slug file: a-z0-9-, t?i ?a 80, kh�ng path traversal. */
     public function normalizeMediaStem(string $raw): string
     {
         $raw = str_replace(['\\', '/', '..'], ' ', $raw);
@@ -161,7 +161,7 @@ class MediaService
     }
 
     /**
-     * Chọn stem chưa bị chiếm (file full + variants trên disk / DB, kể cả soft-delete).
+     * Ch?n stem ch?a b? chi?m (file full + variants tr�n disk / DB, k? c? soft-delete).
      */
     public function allocateUniqueMediaStem(
         string $disk,
@@ -214,7 +214,7 @@ class MediaService
                     return true;
                 }
             } catch (Throwable) {
-                // Disk lỗi tạm — coi như chưa chiếm, vòng allocate vẫn an toàn nhờ random fallback.
+                // Disk l?i t?m ? coi nh? ch?a chi?m, v�ng allocate v?n an to�n nh? random fallback.
             }
         }
 
@@ -222,7 +222,7 @@ class MediaService
     }
 
     /**
-     * Lưu file video thô (không resize) — mp4 / webm / mov / …
+     * L?u file video th� (kh�ng resize) ? mp4 / webm / mov / ?
      */
     public function storeUploadedVideo(UploadedFile $file, ?string $folder = null, ?string $disk = null): Media
     {
@@ -260,7 +260,7 @@ class MediaService
     }
 
     /**
-     * Sync video file trên cột FK (video_media_id).
+     * Sync video file tr�n c?t FK (video_media_id).
      */
     public function syncDirectVideoColumn(
         Model $model,
@@ -310,7 +310,7 @@ class MediaService
     }
 
     /**
-     * Responsive srcset string (e.g. "url1 400w, url2 800w, …").
+     * Responsive srcset string (e.g. "url1 400w, url2 800w, ?").
      *
      * @param  list<string>|null  $variants
      */
@@ -339,7 +339,7 @@ class MediaService
     }
 
     /**
-     * Payload dùng chung cho ViewData / Blade.
+     * Payload d�ng chung cho ViewData / Blade.
      *
      * @return array{src: ?string, srcset: ?string, width: ?int, height: ?int, alt: ?string, variant: string}
      */
@@ -368,8 +368,8 @@ class MediaService
     }
 
     /**
-     * Xóa file trên disk (GCS/local) + hard-delete row media (không để soft-delete rác).
-     * Dùng khi purge chỗ nghỉ / crawler replace.
+     * X�a file tr�n disk (GCS/local) + hard-delete row media (kh�ng ?? soft-delete r�c).
+     * D�ng khi purge ch? ngh? / crawler replace.
      */
     public function destroyMedia(?Media $media): void
     {
@@ -386,7 +386,7 @@ class MediaService
     }
 
     /**
-     * Chỉ xóa file khi media không còn attachment / FK nào (ảnh dùng chung thư viện).
+     * Ch? x�a file khi media kh�ng c�n attachment / FK n�o (?nh d�ng chung th? vi?n).
      */
     public function deleteMediaIfOrphan(?Media $media): void
     {
@@ -402,10 +402,10 @@ class MediaService
     }
 
     /**
-     * Orphan → xóa file GCS + forceDelete row (purge stay / replace crawl).
+     * Orphan ? x�a file GCS + forceDelete row (purge stay / replace crawl).
      */
     /**
-     * Bulk destroy orphan media (x�a file v� DB theo l�, kh�ng l?p N query).
+     * Bulk destroy orphan media (x?a file v? DB theo l?, kh?ng l?p N query).
      *
      * @param list<int> $mediaIds
      */
@@ -420,7 +420,7 @@ class MediaService
             return;
         }
 
-        // 1. T�m c�c media_id dang du?c reference ? MediaAttachment
+        // 1. T?m c?c media_id dang du?c reference ? MediaAttachment
         $referenced = MediaAttachment::query()
             ->whereIn('media_id', $mediaIds)
             ->pluck('media_id')
@@ -428,7 +428,7 @@ class MediaService
             ->toArray();
         $referencedSet = array_flip($referenced);
 
-        // 2. T�m c�c media_id dang du?c reference ? foreign key tables
+        // 2. T?m c?c media_id dang du?c reference ? foreign key tables
         foreach ($this->mediaForeignKeys() as [$table, $column]) {
             if (! Schema::hasTable($table) || ! Schema::hasColumn($table, $column)) {
                 continue;
@@ -443,7 +443,7 @@ class MediaService
             }
         }
 
-        // 3. L?c ra c�c media_id th?c s? m? c�i (orphan)
+        // 3. L?c ra c?c media_id th?c s? m? c?i (orphan)
         $orphanIds = [];
         foreach ($mediaIds as $id) {
             if (! isset($referencedSet[$id])) {
@@ -455,7 +455,7 @@ class MediaService
             return;
         }
 
-        // 4. L?y Media models v� gom paths theo disk d? delete theo batch
+        // 4. L?y Media models v? gom paths theo disk d? delete theo batch
         $medias = Media::query()->withTrashed()->whereIn('id', $orphanIds)->get();
         $pathsByDisk = [];
 
@@ -484,7 +484,7 @@ class MediaService
             }
         }
 
-        // 5. Force delete c�c b?n ghi Media trong DB
+        // 5. Force delete c?c b?n ghi Media trong DB
         Media::query()->withTrashed()->whereIn('id', $orphanIds)->forceDelete();
     }
     public function destroyMediaIfOrphan(?Media $media): void
@@ -771,7 +771,7 @@ class MediaService
             return $metaPath;
         }
 
-        // Legacy uploads without variants → full
+        // Legacy uploads without variants ? full
         return $media->path;
     }
 
@@ -998,7 +998,7 @@ class MediaService
     }
 
     /**
-     * Payload gọn cho Admin API (preview + id để gắn khi lưu entity).
+     * Payload g?n cho Admin API (preview + id ?? g?n khi l?u entity).
      *
      * @return array<string, mixed>|null
      */
@@ -1023,7 +1023,7 @@ class MediaService
     }
 
     /**
-     * Payload đầy đủ cho trang Thư viện Media.
+     * Payload ??y ?? cho trang Th? vi?n Media.
      *
      * @return array<string, mixed>
      */
@@ -1053,10 +1053,10 @@ class MediaService
         ]);
     }
 
-    /** Map path → folder key whitelist (vd. vitravel/team/... → team). */
+    /** Map path ? folder key whitelist (vd. vitravel/team/... ? team). */
     public function guessFolderKeyFromPath(string $path): string
     {
-        $path = trim(str_replace('\\', '/', $path), '/');
+        $path = $this->stripProjectPrefixFromPath($path);
         $bestKey = 'default';
         $bestLen = -1;
 
@@ -1077,7 +1077,77 @@ class MediaService
         return $bestKey;
     }
 
-    /** Gắn / thay / xóa cover (media_attachments role=cover) theo media_id đã upload. */
+    /** B? ti?n t? projects/{code}/ kh?i path l?u tr�n disk. */
+    public function stripProjectPrefixFromPath(string $path): string
+    {
+        $path = trim(str_replace('\\', '/', $path), '/');
+        $code = ProjectContext::code();
+        if ($code === null || $code === '') {
+            return $path;
+        }
+
+        $prefix = 'projects/'.$code.'/';
+        if (str_starts_with($path, $prefix)) {
+            return substr($path, strlen($prefix));
+        }
+
+        return $path;
+    }
+
+    /** Path ??y ?? (c� projects/{code}/) cho folder key admin. */
+    public function resolveAdminFolderPath(string $folderKey): ?string
+    {
+        $folders = $this->adminFolderMap();
+        $relative = $folders[$folderKey] ?? null;
+        if (! is_string($relative) || $relative === '') {
+            return null;
+        }
+
+        return $this->projectPrefixedFolder($relative);
+    }
+
+    /**
+     * Folder keys ?n kh?i view "T?t c? th? m?c".
+     *
+     * @return list<string>
+     */
+    public function adminHiddenFromAllFolderKeys(): array
+    {
+        $keys = config('media.hidden_from_all_folders', []);
+
+        return is_array($keys) ? array_values(array_filter(array_map('strval', $keys))) : [];
+    }
+
+    /**
+     * Path prefix (c� projects/{code}/) c?a c�c folder ?n ? d�ng lo?i tr? khi list "T?t c?".
+     *
+     * @return list<string>
+     */
+    public function adminHiddenFromAllPathPrefixes(): array
+    {
+        $prefixes = [];
+        foreach ($this->adminHiddenFromAllFolderKeys() as $key) {
+            $path = $this->resolveAdminFolderPath($key);
+            if (is_string($path) && $path !== '') {
+                $prefixes[] = trim(str_replace('\\', '/', $path), '/');
+            }
+        }
+
+        return array_values(array_unique($prefixes));
+    }
+
+    /** Lo?i tr? media thu?c folder ?n kh?i query th? vi?n (khi ch?a ch?n folder c? th?). */
+    public function applyHiddenFolderExclusion(\Illuminate\Database\Eloquent\Builder $query): void
+    {
+        foreach ($this->adminHiddenFromAllPathPrefixes() as $prefix) {
+            $query->where(function ($inner) use ($prefix) {
+                $inner->where('path', '!=', $prefix)
+                    ->where('path', 'not like', $prefix.'/%');
+            });
+        }
+    }
+
+    /** G?n / thay / x�a cover (media_attachments role=cover) theo media_id ?� upload. */
     public function syncCoverMediaId(Model $model, ?int $mediaId, bool $remove = false): void
     {
         if (! method_exists($model, 'mediaAttachments')) {
@@ -1126,8 +1196,8 @@ class MediaService
     }
 
     /**
-     * Đồng bộ gallery (media_attachments role=gallery) theo danh sách media_id.
-     * Xóa toàn bộ gallery cũ rồi tạo lại theo thứ tự — giữ media file (không xóa disk).
+     * ??ng b? gallery (media_attachments role=gallery) theo danh s�ch media_id.
+     * X�a to�n b? gallery c? r?i t?o l?i theo th? t? ? gi? media file (kh�ng x�a disk).
      *
      * @param  list<int|string>  $mediaIds
      */
@@ -1159,7 +1229,7 @@ class MediaService
     }
 
     /**
-     * Gallery cho Admin API — [{ id, media }].
+     * Gallery cho Admin API ? [{ id, media }].
      *
      * @return list<array{id: int, media: array<string, mixed>|null}>
      */
@@ -1180,7 +1250,7 @@ class MediaService
     }
 
     /**
-     * Gallery admin cho chỗ nghỉ — chỉ media_attachments (GCS), đồng bộ từ gallery_media_ids nếu cần.
+     * Gallery admin cho ch? ngh? ? ch? media_attachments (GCS), ??ng b? t? gallery_media_ids n?u c?n.
      *
      * @return list<array{id: int, media: array<string, mixed>|null}>
      */
@@ -1192,7 +1262,7 @@ class MediaService
     }
 
     /**
-     * Gắn lại gallery attachments từ media_id đã upload (attrs.gallery_media_ids / attrs.photos).
+     * G?n l?i gallery attachments t? media_id ?� upload (attrs.gallery_media_ids / attrs.photos).
      */
     public function hydrateStayGalleryAttachments(Model $model): void
     {
@@ -1236,7 +1306,7 @@ class MediaService
         return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
     }
 
-    /** Gắn / thay / xóa ảnh trên cột FK (banner_media_id, …). */
+    /** G?n / thay / x�a ?nh tr�n c?t FK (banner_media_id, ?). */
     public function syncDirectMediaId(Model $model, string $column, ?int $mediaId, bool $remove = false): void
     {
         $currentId = $model->{$column} ?? null;
@@ -1267,7 +1337,7 @@ class MediaService
         $this->deleteMediaIfOrphan($current);
     }
 
-    /** Giới hạn upload thực tế (KB) = min(config, PHP upload_max_filesize). */
+    /** Gi?i h?n upload th?c t? (KB) = min(config, PHP upload_max_filesize). */
     public function effectiveUploadMaxKb(): int
     {
         $configKb = (int) config('media.max_upload_kb', 5120);
@@ -1276,7 +1346,7 @@ class MediaService
         return max(100, min($configKb, $phpKb > 0 ? $phpKb : $configKb));
     }
 
-    /** Giới hạn upload video (KB) = min(config video, PHP upload_max_filesize). */
+    /** Gi?i h?n upload video (KB) = min(config video, PHP upload_max_filesize). */
     public function effectiveVideoUploadMaxKb(): int
     {
         $configKb = (int) config('media.max_video_upload_kb', 1048576);
@@ -1304,7 +1374,7 @@ class MediaService
     }
 
     /**
-     * Folder whitelist cho Admin upload (key → path config/media.php).
+     * Folder whitelist cho Admin upload (key ? path config/media.php).
      *
      * @return array<string, string>
      */
@@ -1325,6 +1395,9 @@ class MediaService
             'videos' => (string) config('media.videos', config('media.folder', 'vitravel/images')),
             'video_files' => (string) config('media.video_files', 'vitravel/video-files'),
             'company' => (string) config('media.company', config('media.folder', 'vitravel/images')),
+            'stays_crawler_gallery' => (string) config('media.stays_crawler_gallery', 'stays/crawler-gallery'),
+            'stays_crawler_room' => (string) config('media.stays_crawler_room', 'stays/crawler-room'),
+            'stays_crawler_cover' => (string) config('media.stays_crawler_cover', 'stays/crawler-cover'),
             'default' => (string) config('media.folder', 'vitravel/images'),
         ];
     }

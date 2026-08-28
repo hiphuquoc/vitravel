@@ -18,6 +18,7 @@ class MediaLibraryApiController extends Controller
     {
         $mediaService = app(MediaService::class);
         $folders = $mediaService->adminFolderMap();
+        $hiddenKeys = $mediaService->adminHiddenFromAllFolderKeys();
 
         $query = Media::query()->orderByDesc('id');
 
@@ -33,14 +34,16 @@ class MediaLibraryApiController extends Controller
 
         if ($request->filled('folder')) {
             $folderKey = $request->string('folder')->toString();
-            $folderPath = $folders[$folderKey] ?? null;
-            if (is_string($folderPath) && $folderPath !== '') {
-                $prefix = trim(str_replace('\\', '/', $folderPath), '/');
+            $prefix = $mediaService->resolveAdminFolderPath($folderKey);
+            if (is_string($prefix) && $prefix !== '') {
+                $prefix = trim(str_replace('\\', '/', $prefix), '/');
                 $query->where(function ($q) use ($prefix) {
                     $q->where('path', $prefix)
                         ->orWhere('path', 'like', $prefix.'/%');
                 });
             }
+        } else {
+            $mediaService->applyHiddenFolderExclusion($query);
         }
 
         if ($request->filled('kind')) {
@@ -78,6 +81,7 @@ class MediaLibraryApiController extends Controller
             'folders' => collect($folders)->map(fn ($path, $key) => [
                 'key' => $key,
                 'path' => $path,
+                'hidden_from_all' => in_array($key, $hiddenKeys, true),
             ])->values(),
         ]);
     }

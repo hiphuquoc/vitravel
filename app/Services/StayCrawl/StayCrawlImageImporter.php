@@ -68,6 +68,18 @@ final class StayCrawlImageImporter
         return $out;
     }
 
+    private function resolveStorageFolder(string $role): string
+    {
+        if (str_starts_with($role, 'cover')) {
+            return (string) config('media.stays_crawler_cover', 'stays/crawler-cover');
+        }
+        if (str_starts_with($role, 'room')) {
+            return (string) config('media.stays_crawler_room', 'stays/crawler-room');
+        }
+
+        return (string) config('media.stays_crawler_gallery', 'stays/crawler-gallery');
+    }
+
     private function storeLocal(string $path, string $slug, string $role, string $alt): ?Media
     {
         try {
@@ -85,7 +97,7 @@ final class StayCrawlImageImporter
             $upload = new UploadedFile($path, Str::slug($role).'.'.$ext, $mime, UPLOAD_ERR_OK, true);
             $media = $this->media->storeUploadedFile(
                 $upload,
-                'stays/'.(str_starts_with($role, 'cover') ? 'cover' : 'gallery'),
+                $this->resolveStorageFolder($role),
                 null,
                 $slug,
                 $role,
@@ -138,7 +150,7 @@ final class StayCrawlImageImporter
                 $upload = new UploadedFile($tmp, Str::slug($role).'.'.$ext, $mime, UPLOAD_ERR_OK, true);
                 $media = $this->media->storeUploadedFile(
                     $upload,
-                    'stays/'.($role === 'cover' ? 'cover' : 'gallery'),
+                    $this->resolveStorageFolder($role),
                     null,
                     $slug,
                     $role,

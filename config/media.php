@@ -35,6 +35,22 @@ return [
     'videos' => env('MEDIA_VIDEOS_FOLDER', 'vitravel/videos'),
     'video_files' => env('MEDIA_VIDEO_FILES_FOLDER', 'vitravel/video-files'),
 
+    /** Ảnh crawler khách sạn — ẩn khỏi "Tất cả thư mục" trong thư viện admin. */
+    'stays_crawler_gallery' => env('MEDIA_STAYS_CRAWLER_GALLERY', 'stays/crawler-gallery'),
+    'stays_crawler_room' => env('MEDIA_STAYS_CRAWLER_ROOM', 'stays/crawler-room'),
+    'stays_crawler_cover' => env('MEDIA_STAYS_CRAWLER_COVER', 'stays/crawler-cover'),
+
+    /**
+     * Folder keys không hiển thị khi xem "Tất cả thư mục" (chỉ thấy khi chọn đúng thư mục).
+     *
+     * @var list<string>
+     */
+    'hidden_from_all_folders' => [
+        'stays_crawler_gallery',
+        'stays_crawler_room',
+        'stays_crawler_cover',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Master image (full) — cạnh dài tối đa khi upload
