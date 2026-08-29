@@ -2624,7 +2624,7 @@ class ViewDataService
 
         $payload = $this->attachPriceTable($payload, $service, $isDetail);
 
-        if ($service->cluster === Service::CLUSTER_STAY) {
+        if ($service->cluster === Service::CLUSTER_STAY || $this->usesStayStyleListing($service)) {
             return $isDetail
                 ? $this->attachStayPayload($payload, $service, $translation)
                 : $this->attachStayListingPayload($payload, $service, $translation);
@@ -2639,6 +2639,24 @@ class ViewDataService
      * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
+    /**
+     * Experience/du thuyền cào từ Booking — dùng card kiểu lưu trú (hạng phòng, sao, …).
+     */
+    protected function usesStayStyleListing(Service $service): bool
+    {
+        if ($service->cluster !== Service::CLUSTER_EXPERIENCE) {
+            return false;
+        }
+        $attrs = is_array($service->attrs) ? $service->attrs : [];
+        if (! empty($attrs['crawl'])) {
+            return true;
+        }
+
+        return $service->relationLoaded('options')
+            ? $service->options->isNotEmpty()
+            : $service->options()->exists();
+    }
+
     /**
      * Payload siêu nhẹ cho card danh mục lưu trú / khách sạn (Không N+1 query, không parse rooms nặng).
      *

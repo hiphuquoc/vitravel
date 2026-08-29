@@ -14,6 +14,7 @@ use App\Models\StayCrawlSource;
 use App\Support\ProjectContext;
 use App\Support\StayBookingUrl;
 use App\Support\StayCrawlDates;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
 final class StayCrawlService
@@ -224,24 +225,34 @@ final class StayCrawlService
         $canonical = StayBookingUrl::canonicalize($url);
         $projectId = $job?->project_id ?: ProjectContext::id();
 
-        $query = StayCrawlItem::query();
-        if ($projectId) {
-            $query->where('project_id', $projectId);
-        }
-        $item = $query->where('canonical_url', $canonical)->first();
+        $item = DB::transaction(function () use ($canonical, $projectId, $url) {
+            $query = StayCrawlItem::query()->lockForUpdate();
+            if ($projectId) {
+                $query->where('project_id', $projectId);
+            }
 
-        if (! $item) {
-            $item = new StayCrawlItem([
+            $existing = $query->where('canonical_url', $canonical)->first();
+            if ($existing) {
+                return $existing;
+            }
+
+            return StayCrawlItem::query()->create([
                 'project_id' => $projectId,
                 'canonical_url' => $canonical,
                 'source_url' => $url,
                 'status' => StayCrawlItem::STATUS_QUEUED,
             ]);
-        }
+        });
 
         if ($job) {
-            $item->job_id = $job->id;
-            $item->list_url = $job->list_url;
+            $ownedByOther = $item->job_id && (int) $item->job_id !== (int) $job->id;
+            if ($ownedByOther) {
+                $this->linkItemToJob($job, $item);
+            } else {
+                $item->job_id = $job->id;
+                $item->list_url = $job->list_url;
+            }
+
             if (in_array($item->status, [
                 StayCrawlItem::STATUS_FAILED,
                 StayCrawlItem::STATUS_BLOCKED,
@@ -251,22 +262,7 @@ final class StayCrawlService
                 $item->blocked_reason = null;
             }
 
-            // TỰ ĐỘNG GÁN THÊM DANH MỤC CHO KHÁCH SẠN ĐÃ CÀO NẾU XUẤT HIỆN Ở DANH MỤC NÀY
-            $service = $item->service_id
-                ? \App\Models\Service::withoutGlobalScopes()->find($item->service_id)
-                : null;
-
-            if (! $service) {
-                $svcQuery = \App\Models\Service::withoutGlobalScopes()
-                    ->where('cluster', \App\Models\Service::CLUSTER_STAY);
-                if ($projectId) {
-                    $svcQuery->where('project_id', $projectId);
-                }
-                $service = $svcQuery->where(function ($q) use ($canonical, $url) {
-                    $q->where('attrs->crawl->canonical_url', $canonical)
-                      ->orWhere('attrs->crawl->source_url', $url);
-                })->first();
-            }
+            $service = $this->findExistingCrawledService($item, $canonical, $url, $projectId);
 
             if ($service) {
                 if (! $item->service_id) {
@@ -274,8 +270,6 @@ final class StayCrawlService
                 }
 
                 $hasRerun = ! empty(data_get($job->meta, 'rerun'));
-                // Nếu khách sạn đã tồn tại (đã tạo trang sản phẩm) và không có cờ rerun:
-                // Đánh dấu STATUS_IMPORTED ngay lập tức, không đưa vào QUEUE cào lại để tiết kiệm tài nguyên
                 if (! $hasRerun && ($service->status === 'published' || $service->options()->exists() || $item->imported_at || $item->ai_at)) {
                     $item->status = StayCrawlItem::STATUS_IMPORTED;
                     $item->imported_at = $item->imported_at ?? now();
@@ -283,17 +277,7 @@ final class StayCrawlService
                     $item->blocked_reason = null;
                 }
 
-                if ($job->service_category_id && (int) $job->service_category_id > 0) {
-                    $catId = (int) $job->service_category_id;
-                    $existingCatIds = $service->categories()->withoutGlobalScope('project')->pluck('service_categories.id')->all();
-                    if (! in_array($catId, $existingCatIds, true)) {
-                        $service->categories()->syncWithoutDetaching([$catId]);
-                    }
-                    if (! $service->service_category_id) {
-                        $service->service_category_id = $catId;
-                        $service->saveQuietly();
-                    }
-                }
+                $this->syncServiceCategory($service, (int) ($job->service_category_id ?: 0));
             }
         } elseif ($listUrl) {
             $item->list_url = $listUrl;
@@ -305,6 +289,80 @@ final class StayCrawlService
         $item->save();
 
         return $item;
+    }
+
+    /** Gắn item đã thuộc job khác vào job hiện tại (không đánh cắp job_id). */
+    public function linkItemToJob(StayCrawlJob $job, StayCrawlItem $item): void
+    {
+        $meta = is_array($job->meta) ? $job->meta : [];
+        $linked = is_array($meta['linked_item_ids'] ?? null) ? $meta['linked_item_ids'] : [];
+        $id = (int) $item->id;
+        if ($id > 0 && ! in_array($id, $linked, true)) {
+            $linked[] = $id;
+            $meta['linked_item_ids'] = array_values(array_unique($linked));
+            $job->meta = $meta;
+            $job->save();
+        }
+    }
+
+    /** @return list<int> */
+    public function linkedItemIdsForJob(StayCrawlJob $job): array
+    {
+        $linked = data_get($job->meta, 'linked_item_ids', []);
+
+        return is_array($linked)
+            ? array_values(array_unique(array_filter(array_map('intval', $linked), fn (int $id) => $id > 0)))
+            : [];
+    }
+
+    /** Query items thuộc job (owner + linked từ job khác). */
+    public function itemsQueryForJob(StayCrawlJob $job): \Illuminate\Database\Eloquent\Builder
+    {
+        $linkedIds = $this->linkedItemIdsForJob($job);
+
+        return StayCrawlItem::query()->where(function ($q) use ($job, $linkedIds) {
+            $q->where('job_id', $job->id);
+            if ($linkedIds !== []) {
+                $q->orWhereIn('id', $linkedIds);
+            }
+        });
+    }
+
+    private function findExistingCrawledService(
+        StayCrawlItem $item,
+        string $canonical,
+        string $url,
+        ?int $projectId,
+    ): ?Service {
+        if ($item->service_id) {
+            return Service::withoutGlobalScopes()->find($item->service_id);
+        }
+
+        $svcQuery = Service::withoutGlobalScopes()
+            ->whereIn('cluster', self::crawlableClusters());
+        if ($projectId) {
+            $svcQuery->where('project_id', $projectId);
+        }
+
+        return $svcQuery->where(function ($q) use ($canonical, $url) {
+            $q->where('attrs->crawl->canonical_url', $canonical)
+                ->orWhere('attrs->crawl->source_url', $url);
+        })->first();
+    }
+
+    private function syncServiceCategory(Service $service, int $catId): void
+    {
+        if ($catId <= 0) {
+            return;
+        }
+        $existingCatIds = $service->categories()->withoutGlobalScope('project')->pluck('service_categories.id')->all();
+        if (! in_array($catId, $existingCatIds, true)) {
+            $service->categories()->syncWithoutDetaching([$catId]);
+        }
+        if (! $service->service_category_id) {
+            $service->service_category_id = $catId;
+            $service->saveQuietly();
+        }
     }
 
     /**
@@ -527,14 +585,29 @@ final class StayCrawlService
         return $this->enricher->needsEnrich($item);
     }
 
-    public function requireStayCategory(int $categoryId): ServiceCategory
+    /** @return list<string> */
+    public static function crawlableClusters(): array
+    {
+        $clusters = config('stay.crawl.crawlable_clusters', ['stay', 'experience']);
+
+        return is_array($clusters)
+            ? array_values(array_filter(array_map('strval', $clusters)))
+            : ['stay', 'experience'];
+    }
+
+    public function requireCrawlableCategory(int $categoryId): ServiceCategory
     {
         $category = ServiceCategory::query()->find($categoryId);
-        if (! $category || $category->cluster !== Service::CLUSTER_STAY) {
-            throw new RuntimeException('Chỉ khởi chạy crawler từ danh mục lưu trú (cluster stay).');
+        if (! $category || ! in_array($category->cluster, self::crawlableClusters(), true)) {
+            throw new RuntimeException('Chỉ khởi chạy crawler từ danh mục lưu trú hoặc trải nghiệm/du thuyền (cluster stay, experience).');
         }
 
         return $category;
+    }
+
+    public function requireStayCategory(int $categoryId): ServiceCategory
+    {
+        return $this->requireCrawlableCategory($categoryId);
     }
 
     /**
@@ -1484,15 +1557,18 @@ final class StayCrawlService
 
     private function applyRerunToJob(StayCrawlJob $job, ?string $rerun, string $from = 'basic'): void
     {
-        $done = $job->items()->get()->filter(fn (StayCrawlItem $i) => $this->itemIsAlreadyCrawled($i));
+        $allItems = $this->itemsQueryForJob($job)->get();
+        $done = $allItems->filter(fn (StayCrawlItem $i) => $this->itemIsAlreadyCrawled($i));
         if ($done->isEmpty()) {
             return;
         }
-        
-        // Nếu người dùng chọn cào lại / cải thiện thì reset các item đã xong
+
+        // Chỉ reset item do job này sở hữu — item linked từ job khác giữ nguyên
         if ($rerun === 'replace' || $rerun === 'improve') {
             foreach ($done as $item) {
-                $this->resetItemForRerun($item, $rerun, $from);
+                if ((int) $item->job_id === (int) $job->id) {
+                    $this->resetItemForRerun($item, $rerun, $from);
+                }
             }
         }
         // Mặc định hoặc rerun === null/skip: Giữ nguyên các khách sạn đã cào trước đó, không xóa/đè
@@ -1763,21 +1839,24 @@ final class StayCrawlService
                     continue;
                 }
                 $canon = StayBookingUrl::canonicalize($url);
-                $exists = $job->items()->where('canonical_url', $canon)->exists();
+                $exists = $this->itemsQueryForJob($job)->where('canonical_url', $canon)->exists();
                 if (! $exists) {
                     $item = $this->queueHotelUrl($url, $job);
                     $newAdded++;
-                    // Tự động đẩy ngay vào hàng đợi để Supervisor / worker cào song song không cần đợi listing kết thúc
-                    \App\Jobs\ProcessStayCrawlItemJob::dispatch(
-                        (int) $item->id,
-                        'vi',
-                        $useProxy,
-                        false,
-                    );
+                    // Chỉ dispatch nếu item thuộc job này và chưa imported (tránh cào trùng từ job song song)
+                    if ((int) $item->job_id === (int) $job->id
+                        && $item->status !== StayCrawlItem::STATUS_IMPORTED) {
+                        \App\Jobs\ProcessStayCrawlItemJob::dispatch(
+                            (int) $item->id,
+                            'vi',
+                            $useProxy,
+                            false,
+                        );
+                    }
                 }
             }
             if ($newAdded > 0) {
-                $job->items_found = $job->items()->count();
+                $job->items_found = $this->itemsQueryForJob($job)->count();
                 $this->touchQueueMeta($job, [
                     'phase' => 'queue',
                     'message' => "Đã tìm thấy {$job->items_found} chỗ nghỉ & đang xử lý trong queue",
@@ -1793,7 +1872,7 @@ final class StayCrawlService
         return [
             'running' => $running,
             'stream' => $streamData,
-            'urls_found' => (int) ($job->items()->count()),
+            'urls_found' => (int) $this->itemsQueryForJob($job)->count(),
             'message' => is_array($streamData) ? ($streamData['message'] ?? null) : 'Đang khởi động Chrome…',
         ];
     }

@@ -57,12 +57,12 @@ final class StayCrawlImporter
             $baseCode = 'bk-'.$slug;
             $existing = Service::query()->where('code', $baseCode)->first();
         }
-        $code = $existing?->code ?: $this->uniqueCode('bk-'.($slug ?: Str::slug($title)));
+        $code = $existing?->code ?: $this->uniqueCode('bk-'.($slug ?: Str::slug($title)), $categoryId);
         if ($existing) {
             $code = $existing->code;
         }
 
-        $row = $this->toSeedRow($fields, $item, $code);
+        $row = $this->toSeedRow($fields, $item, $code, $categoryId);
         if ($strategy === 'improve' && $existing) {
             $row = $this->mergeSeedRow($existing, $row, $locale);
         }
@@ -165,8 +165,9 @@ final class StayCrawlImporter
      * @param  array<string, mixed>  $fields
      * @return array<string, mixed>
      */
-    private function toSeedRow(array $fields, StayCrawlItem $item, string $code): array
+    private function toSeedRow(array $fields, StayCrawlItem $item, string $code, ?int $categoryId = null): array
     {
+        $cluster = $this->resolveCluster($categoryId);
         $attrs = is_array($fields['attrs'] ?? null) ? $fields['attrs'] : [];
         $crawl = is_array($attrs['crawl'] ?? null) ? $attrs['crawl'] : [];
         $crawl['source_url'] = $item->source_url;
@@ -197,7 +198,7 @@ final class StayCrawlImporter
         }
 
         return [
-            'cluster' => Service::CLUSTER_STAY,
+            'cluster' => $cluster,
             'code' => $code,
             'title' => $fields['title'],
             'location_label' => $fields['location_label'] ?? ($attrs['address'] ?? null),
@@ -221,8 +222,10 @@ final class StayCrawlImporter
     /** @param  array<string, mixed>  $row */
     private function serviceFill(array $row, ?int $categoryId, ?Service $existing = null): array
     {
+        $cluster = (string) ($row['cluster'] ?? $this->resolveCluster($categoryId, $existing));
+
         return [
-            'cluster' => Service::CLUSTER_STAY,
+            'cluster' => $cluster,
             'service_category_id' => $categoryId ?: $existing?->service_category_id,
             'code' => $row['code'],
             'price_from' => $row['price_from'] ?? $existing?->price_from,
@@ -436,7 +439,7 @@ final class StayCrawlImporter
             ? $existing->translations->firstWhere('language_id', $langId)
             : $existing->translations->first();
         $old = [
-            'cluster' => Service::CLUSTER_STAY,
+            'cluster' => $existing->cluster ?: Service::CLUSTER_STAY,
             'code' => $existing->code,
             'title' => $tr?->title,
             'location_label' => $tr?->location_label,
@@ -535,16 +538,32 @@ final class StayCrawlImporter
         return $option;
     }
 
-    private function uniqueCode(string $base): string
+    private function uniqueCode(string $base, ?int $categoryId = null): string
     {
+        $cluster = $this->resolveCluster($categoryId);
         $base = Str::limit(Str::slug($base) ?: 'stay', 48, '');
         $code = $base;
         $i = 2;
-        while (Service::query()->where('cluster', Service::CLUSTER_STAY)->where('code', $code)->exists()) {
+        while (Service::query()->where('cluster', $cluster)->where('code', $code)->exists()) {
             $code = $base.'-'.$i;
             $i++;
         }
 
         return $code;
+    }
+
+    private function resolveCluster(?int $categoryId, ?Service $existing = null): string
+    {
+        if ($existing?->cluster) {
+            return (string) $existing->cluster;
+        }
+        if ($categoryId) {
+            $cat = ServiceCategory::query()->find($categoryId);
+            if ($cat && in_array($cat->cluster, StayCrawlService::crawlableClusters(), true)) {
+                return $cat->cluster;
+            }
+        }
+
+        return Service::CLUSTER_STAY;
     }
 }

@@ -117,7 +117,8 @@ final class StayCrawlApiController extends Controller
         // Tự động đồng bộ tiến độ từ stream listing nếu có
         $this->crawl->syncListProgressFromStream($job);
         
-        $query = $job->items()
+        $linkedIds = $this->crawl->linkedItemIdsForJob($job);
+        $query = $this->crawl->itemsQueryForJob($job)
             ->select([
                 'id', 'project_id', 'job_id', 'source_url', 'canonical_url',
                 'status', 'http_status', 'blocked_reason', 'service_id',
@@ -145,18 +146,20 @@ final class StayCrawlApiController extends Controller
         $limit = min(500, max(1, (int) $request->input('limit', $request->input('per_page', 250))));
         $items = $query->limit($limit)->get();
 
-        // Thống kê nhanh theo từng nhóm trạng thái
+        // Thống kê nhanh theo từng nhóm trạng thái (owner + linked)
+        $countsQuery = $this->crawl->itemsQueryForJob($job);
         $counts = [
-            'total' => $job->items()->count(),
-            'done' => $job->items()->whereIn('status', [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_AI_DONE])->count(),
-            'failed' => $job->items()->where('status', StayCrawlItem::STATUS_FAILED)->count(),
-            'blocked' => $job->items()->where('status', StayCrawlItem::STATUS_BLOCKED)->count(),
-            'queued' => $job->items()->whereIn('status', [StayCrawlItem::STATUS_QUEUED, StayCrawlItem::STATUS_EXTRACTED, StayCrawlItem::STATUS_FETCHED])->count(),
+            'total' => (clone $countsQuery)->count(),
+            'done' => (clone $countsQuery)->whereIn('status', [StayCrawlItem::STATUS_IMPORTED, StayCrawlItem::STATUS_AI_DONE])->count(),
+            'failed' => (clone $countsQuery)->where('status', StayCrawlItem::STATUS_FAILED)->count(),
+            'blocked' => (clone $countsQuery)->where('status', StayCrawlItem::STATUS_BLOCKED)->count(),
+            'queued' => (clone $countsQuery)->whereIn('status', [StayCrawlItem::STATUS_QUEUED, StayCrawlItem::STATUS_EXTRACTED, StayCrawlItem::STATUS_FETCHED])->count(),
+            'linked' => count($linkedIds),
         ];
 
         return ApiResponse::success([
             'job' => $this->mapJob($job),
-            'items' => $items->map(fn (StayCrawlItem $i) => $this->mapItem($i))->values(),
+            'items' => $items->map(fn (StayCrawlItem $i) => $this->mapItem($i, false, $job))->values(),
             'stats' => $counts,
         ]);
     }
@@ -418,7 +421,7 @@ final class StayCrawlApiController extends Controller
 
         if (! empty($validated['service_category_id'])) {
             try {
-                $this->crawl->requireStayCategory((int) $validated['service_category_id']);
+                $this->crawl->requireCrawlableCategory((int) $validated['service_category_id']);
             } catch (RuntimeException $e) {
                 return ApiResponse::error($e->getMessage(), 'INVALID_CATEGORY', 422);
             }
@@ -477,7 +480,7 @@ final class StayCrawlApiController extends Controller
         }
 
         try {
-            $this->crawl->requireStayCategory((int) $validated['service_category_id']);
+            $this->crawl->requireCrawlableCategory((int) $validated['service_category_id']);
             $html = $validated['html'] ?? null;
             $rerun = $validated['rerun']
                 ?? $request->input('rerun')
@@ -968,11 +971,14 @@ final class StayCrawlApiController extends Controller
     }
 
     /** @return array<string, mixed> */
-    private function mapItem(StayCrawlItem $item, bool $full = false): array
+    private function mapItem(StayCrawlItem $item, bool $full = false, ?StayCrawlJob $forJob = null): array
     {
         $payload = [
             'id' => $item->id,
             'job_id' => $item->job_id,
+            'linked_from_other_job' => $forJob !== null
+                && (int) $item->job_id !== (int) $forJob->id
+                && in_array((int) $item->id, $this->crawl->linkedItemIdsForJob($forJob), true),
             'source_url' => $item->source_url,
             'canonical_url' => $item->canonical_url,
             'status' => $item->status,
@@ -987,6 +993,7 @@ final class StayCrawlApiController extends Controller
             'has_ai' => (bool) ($item->ai_at || (is_array($item->ai_json ?? null) && $item->ai_json !== [])),
             'slug_full' => $this->itemSlugFull($item),
             'enrich' => is_array($item->raw_json['enrich'] ?? null) ? $item->raw_json['enrich'] : null,
+            'service_cluster' => $item->relationLoaded('service') ? ($item->service?->cluster) : null,
         ];
         if ($full) {
             $payload['raw_json'] = $item->raw_json;
