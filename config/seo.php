@@ -52,13 +52,15 @@ return [
         ],
         'package_tour' => [
             'label' => 'Gói Tour',
-            'parent_type' => 'country',
-            'parent_relation' => 'country',
+            // Chi tiết: chọn hub hoặc danh mục cùng cấp dưới hub (điểm đến / chủ đề)
+            'parent_type' => ['tours_hub', 'country', 'tour_category'],
+            'parent_relation' => null,
         ],
         'tour_category' => [
             'label' => 'Chủ đề Tour',
-            'parent_type' => 'country',
-            'parent_relation' => 'country',
+            // Cùng cấp với country — chỉ gắn hub, không chọn lẫn nhau
+            'parent_type' => 'tours_hub',
+            'parent_relation' => null,
         ],
 
         'cruises_hub' => [
@@ -75,8 +77,8 @@ return [
         ],
         'package_cruise' => [
             'label' => 'Gói Cruise',
-            'parent_type' => 'cruise_type',
-            'parent_relation' => 'cruiseType',
+            'parent_type' => ['cruises_hub', 'cruise_type'],
+            'parent_relation' => null,
         ],
 
         'guide_hub' => [
@@ -88,14 +90,14 @@ return [
         ],
         'blog_category' => [
             'label' => 'Chuyên mục Blog',
-            // Có thể chọn hub hoặc chuyên mục khác để phân tầng
-            'parent_type' => ['guide_hub', 'blog_category'],
+            // Cùng cấp — chỉ hub, không nest chuyên mục vào chuyên mục
+            'parent_type' => 'guide_hub',
             'parent_relation' => null,
         ],
         'article' => [
             'label' => 'Bài viết',
-            'parent_type' => 'blog_category',
-            'parent_relation' => 'blogCategory',
+            'parent_type' => ['guide_hub', 'blog_category'],
+            'parent_relation' => null,
         ],
 
         'static_page' => [

@@ -108,12 +108,14 @@ class PackageController extends Controller
                     'parent_id' => $hubSeo->id,
                 ]);
             }
-            $parents = $this->seoService()->parentOptions('cruise_type');
+            $parents = $this->seoService()->parentOptionsForType('package_cruise');
             $defaultParentId = $package?->seoEntry?->parent_id
-                ?? $package?->cruiseType?->seoEntry?->id;
+                ?? $package?->cruiseType?->seoEntry?->id
+                ?? $hubSeo->id;
         } else {
-            $parents = $this->seoService()->parentOptions('country');
+            $parents = $this->seoService()->parentOptionsForType('package_tour');
             if ($parents->isEmpty()) {
+                $this->seoService()->ensureToursHub($locale);
                 $countriesWithSeo = Country::query()->with(['seoEntry.translations', 'translations'])->orderBy('sort')->get();
                 foreach ($countriesWithSeo as $country) {
                     $this->seoService()->ensureSeoFor($country, 'country', $locale, [
@@ -124,7 +126,7 @@ class PackageController extends Controller
                         'country_slug' => $country->translation($locale)?->slug ?? $country->code,
                     ]);
                 }
-                $parents = $this->seoService()->parentOptions('country');
+                $parents = $this->seoService()->parentOptionsForType('package_tour');
             }
             $defaultParentId = $package?->seoEntry?->parent_id
                 ?? $package?->country?->seoEntry?->id;

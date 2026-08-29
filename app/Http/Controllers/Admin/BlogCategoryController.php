@@ -66,8 +66,8 @@ class BlogCategoryController extends Controller
         $translation = $category?->translation($locale);
         $seoTranslation = $category?->seoEntry?->translation($locale);
         $countries = Country::query()->with('translations')->orderBy('sort')->get();
-        $parents = $this->seoService()->parentOptions(
-            ['guide_hub', 'blog_category'],
+        $parents = $this->seoService()->parentOptionsForType(
+            'blog_category',
             $category?->seoEntry?->id,
         );
         $defaultParentId = $category ? $category->seoEntry?->parent_id : $hubSeo->id;

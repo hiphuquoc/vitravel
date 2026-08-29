@@ -198,8 +198,8 @@ class PackageApiController extends Controller
             ],
             'seo_parents' => $this->mapSeoParents(
                 $type === Package::TYPE_CRUISE
-                    ? $this->seoService()->parentOptions('cruise_type')
-                    : $this->seoService()->parentOptions('country'),
+                    ? $this->seoService()->parentOptionsForType('package_cruise')
+                    : $this->seoService()->parentOptionsForType('package_tour'),
                 $locale,
             ),
         ]);

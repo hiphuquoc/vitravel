@@ -68,7 +68,7 @@ class ArticleController extends Controller
         $contentTypeTags = ContentTypeTag::query()->with('translations')->where('is_active', true)->get();
         $keywordTags = KeywordTag::query()->with('translations')->where('is_active', true)->get();
         $packages = Package::query()->with('translations')->orderByDesc('id')->limit(200)->get();
-        $parents = $this->seoService()->parentOptions('blog_category');
+        $parents = $this->seoService()->parentOptionsForType('article');
 
         $defaultParentId = old(
             'seo_parent_id',

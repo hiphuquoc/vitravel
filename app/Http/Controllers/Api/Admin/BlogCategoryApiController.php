@@ -62,7 +62,7 @@ class BlogCategoryApiController extends Controller
     {
         $locale = $request->string('locale', 'vi')->toString();
         $hubSeo = $this->seoService()->ensureGuideHub($locale);
-        $parents = $this->seoService()->parentOptions(['guide_hub', 'blog_category']);
+        $parents = $this->seoService()->parentOptionsForType('blog_category');
 
         return ApiResponse::success([
             'languages' => Language::adminOptions(),

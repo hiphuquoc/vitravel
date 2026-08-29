@@ -72,7 +72,7 @@ class ArticleApiController extends Controller
     public function meta(Request $request): JsonResponse
     {
         $locale = $request->string('locale', 'vi')->toString();
-        $parents = $this->seoService()->parentOptions('blog_category');
+        $parents = $this->seoService()->parentOptionsForType('article');
 
         return ApiResponse::success([
             'languages' => Language::adminOptions(),

@@ -937,6 +937,27 @@ class SeoService
     }
 
     /**
+     * parent_type từ config/seo.php — single source cho admin select trang cha.
+     *
+     * @return list<string>
+     */
+    public function parentTypesFor(string $seoType): array
+    {
+        $configured = config("seo.types.{$seoType}.parent_type");
+        if ($configured === null || $configured === '') {
+            return [];
+        }
+
+        return array_values(array_filter(array_map('strval', (array) $configured)));
+    }
+
+    /** @return Collection<int, SeoEntry> */
+    public function parentOptionsForType(string $seoType, ?int $excludeId = null, ?string $cluster = null, ?int $projectId = null): Collection
+    {
+        return $this->parentOptions($this->parentTypesFor($seoType), $excludeId, $cluster, $projectId);
+    }
+
+    /**
      * @param  string|list<string>|null  $parentType
      * @return Collection<int, SeoEntry>
      */
@@ -1347,11 +1368,22 @@ class SeoService
         Package::query()
             ->tours()
             ->with(['country.seoEntry.translations', 'seoEntry.translations', 'translations'])
-            ->each(function (Package $package) use ($locale) {
+            ->each(function (Package $package) use ($locale, $hub) {
                 $country = $package->country;
-                // Luôn lấy SEO country mới nhất (sau attach hub)
                 $country?->load('seoEntry.translations');
-                $parentId = $country?->seoEntry?->id;
+                $existingParentId = $package->seoEntry?->parent_id;
+                $allowedParentTypes = $this->parentTypesFor('package_tour');
+                $keepExisting = false;
+                if ($existingParentId) {
+                    $existingParentType = SeoEntry::withoutGlobalScope('project')
+                        ->whereKey($existingParentId)
+                        ->value('type');
+                    $keepExisting = $existingParentType
+                        && in_array((string) $existingParentType, $allowedParentTypes, true);
+                }
+                $parentId = $keepExisting
+                    ? $existingParentId
+                    : ($country?->seoEntry?->id ?: $hub->id);
                 if (! $parentId) {
                     return;
                 }
@@ -1381,12 +1413,19 @@ class SeoService
         if (class_exists(TourCategory::class)) {
             TourCategory::query()
                 ->with(['country', 'translations', 'seoEntry.translations'])
-                ->each(function (TourCategory $category) use ($locale) {
-                    $country = $category->country;
-                    // SEO quốc gia có thể lệch project_id (legacy) — không dùng scoped relation.
-                    $parentId = $country
-                        ? $country->seoEntry()->withoutGlobalScope('project')->value('id')
-                        : null;
+                ->each(function (TourCategory $category) use ($locale, $hub) {
+                    $existingParentId = $category->seoEntry()?->withoutGlobalScope('project')->value('parent_id')
+                        ?? $category->seoEntry?->parent_id;
+                    $allowedParentTypes = $this->parentTypesFor('tour_category');
+                    $keepExisting = false;
+                    if ($existingParentId) {
+                        $existingParentType = SeoEntry::withoutGlobalScope('project')
+                            ->whereKey($existingParentId)
+                            ->value('type');
+                        $keepExisting = $existingParentType
+                            && in_array((string) $existingParentType, $allowedParentTypes, true);
+                    }
+                    $parentId = $keepExisting ? $existingParentId : $hub->id;
                     if (! $parentId) {
                         return;
                     }

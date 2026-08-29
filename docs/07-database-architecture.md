@@ -238,14 +238,18 @@ Hubs cấp 1 (`parent_id = null`, `level = 1`) từ `config('seo.hubs')`:
 
 | Hub key | Public URL (mặc định) | SEO `type` | Con điển hình |
 |---|---|---|---|
-| `tours_hub` | `/tours` | `tours_hub` | `country` → `package_tour` / `tour_category` |
-| `cruises_hub` | `/cruises` | `cruises_hub` | `cruise_type` → `package_cruise` |
-| `guide_hub` | `/cam-nang-du-lich` | `guide_hub` | `blog_category` → `article` |
+| `tours_hub` | `/tours` | `tours_hub` | `country` + `tour_category` (cùng cấp dưới hub) → `package_tour` (cha = hub / country / topic) |
+| `cruises_hub` | `/cruises` | `cruises_hub` | `cruise_type` → `package_cruise` (cha = hub / type) |
+| `guide_hub` | `/cam-nang-du-lich` | `guide_hub` | `blog_category` (chỉ hub) → `article` (hub / category) |
 | `trains_hub` | `/ve-tau-cao-toc` | `trains_hub` | `service_category` → `service` |
 | `flights_hub` | `/ve-may-bay` | `flights_hub` | `service_category` → `service` |
 | `stays_hub` | `/luu-tru` | `stays_hub` | `service_category` → `service` |
 | `experiences_hub` | `/ve-vui-choi` | `experiences_hub` | `service_category` → `service` |
 | `extras_hub` | `/dich-vu-khac` | `extras_hub` | `service_category` → `service` |
+
+**Admin Select trang cha** (`config/seo.php` → `parent_type`, `SeoService::parentOptionsForType`):
+- **Danh mục** (country, tour_category, cruise_type, blog_category, service_category) → **chỉ hub** — không chọn peer cùng cấp.
+- **Chi tiết** (package_*, article, service) → **hub + danh mục** thuộc cây đó.
 
 Ví dụ cây:
 
@@ -253,10 +257,11 @@ Ví dụ cây:
 |---|---|---|---|
 | Hub tour | `/tours` | `tours_hub` | null |
 | Quốc gia | `/tours/viet-nam` | `country` | hub tour |
-| Tour | `/tours/viet-nam/ha-long-5-ngay` | `package_tour` | country |
+| Chủ đề | `/tours/tour-ha-long` | `tour_category` | hub tour (không nest dưới country) |
+| Tour | `/tours/viet-nam/ha-long-5-ngay` hoặc `/tours/tour-ha-long/…` | `package_tour` | hub / country / topic |
 | Hub cruise | `/cruises` | `cruises_hub` | null |
 | Loại | `/cruises/du-thuyen-ha-long` | `cruise_type` | hub cruise |
-| Cabin | `/cruises/du-thuyen-ha-long/...` | `package_cruise` | cruise_type |
+| Cabin | `/cruises/du-thuyen-ha-long/...` | `package_cruise` | hub / cruise_type |
 | Hub guide | `/cam-nang-du-lich` | `guide_hub` | null |
 | Chuyên mục | `/cam-nang-du-lich/{cat}` | `blog_category` | hub / category |
 | Bài viết | `…/{cat}/{slug}` | `article` | blog_category |
@@ -289,7 +294,7 @@ Breadcrumb UI + JSON-LD: chuỗi parent SEO (`SeoService::breadcrumbsForEntry`);
 | Home featured tours | `packages` (`is_featured`, type=tour) |
 | Bento destinations | `countries.home_grid_size` |
 | Tour listing + filter | `packages` + `travel_styles` + duration buckets + `category[]` |
-| Tour topic (`tour_category`) | `TourController::category` + `ListingChrome`; URL `/tours/{country}/{slug}` |
+| Tour topic (`tour_category`) | `TourController::category` + `ListingChrome`; URL `/tours/{slug}` (cha = hub) |
 | Tour/Cruise detail | `packages` + itinerary + cabin + faqs + reviews |
 | Service hub / listing / detail | `services` + `service_categories` + `ListingChrome`; hub StaticPage / `listing_hubs` |
 | Blog listing/detail | `articles` + blog taxonomies + comments |

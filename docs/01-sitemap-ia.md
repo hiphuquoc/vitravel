@@ -121,8 +121,8 @@ Theo ảnh `ve-chung-toi-about.png`, **CHI SIAMO là 1 trang dài duy nhất** g
 | Trang chủ | `/` | `/` |
 | **Hub tất cả tour** | — | **`/tours`** |
 | Danh mục tour theo quốc gia | `/tours/{country-slug}` | `/tours/{country}` |
-| Danh mục tour theo chủ đề/thời lượng | `/tours/{topic-slug}-c{id}/{country}` | `/tours/{country}/{topic-slug}` (SEO type `tour_category` → `TourController::category`) |
-| Chi tiết tour | `/t{id}-{slug}.html` | `/tours/{country}/{slug}` |
+| Danh mục tour theo chủ đề/thời lượng | `/tours/{topic-slug}-c{id}/{country}` | `/tours/{topic-slug}` (SEO type `tour_category` → cha = `tours_hub`, cùng cấp với country) |
+| Chi tiết tour | `/t{id}-{slug}.html` | `/tours/{parent}/{slug}` — parent = hub / country / topic |
 | Danh mục cruise | `/cruises/{cruise-type-slug}/` | `/cruises/{type}` |
 | Chi tiết cruise | `/cruises/{slug}/` | `/cruises/{type}/{slug}` |
 | Travel guide danh mục quốc gia | `/travel-guide/co{id}-{country}.html` | `/travel-guide/{country}` |

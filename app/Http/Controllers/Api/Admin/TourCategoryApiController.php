@@ -126,7 +126,7 @@ class TourCategoryApiController extends Controller
                 ->map(fn ($label, $value) => ['value' => $value, 'label' => $label])
                 ->values(),
             'seo_parents' => $this->mapSeoParents(
-                $this->seoService()->parentOptions('country'),
+                $this->seoService()->parentOptionsForType('tour_category'),
                 $locale,
             ),
         ]);
@@ -197,18 +197,8 @@ class TourCategoryApiController extends Controller
             );
 
             $parentId = (int) ($validated['seo_parent_id'] ?? 0) ?: null;
-            if (! $parentId && $category->country_id) {
-                $category->load(['country.translations', 'country.seoEntry.translations']);
-                $country = $category->country;
-                if ($country) {
-                    $countrySeo = $this->seoService()->ensureSeoFor($country, 'country', $locale, [
-                        'slug' => $country->translation($locale)?->slug ?? $country->code,
-                        'title' => $country->translation($locale)?->name ?? $country->code,
-                        'seo_title' => $country->translation($locale)?->name ?? $country->code,
-                        'status' => 'published',
-                    ]);
-                    $parentId = $countrySeo->id;
-                }
+            if (! $parentId) {
+                $parentId = $this->seoService()->ensureToursHub($locale)->id;
             }
 
             $ratingStar = $validated['rating_aggregate_star'] ?? null;

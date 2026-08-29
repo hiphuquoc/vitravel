@@ -34,15 +34,21 @@ Hubs (`config/seo.php` → `hubs`) — slug mặc định, **có thể đổi tr
 | `/cruises` | `cruises.hub` | Hub du thuyền + loại |
 | `/cam-nang-du-lich` | `guide.index` | Hub cẩm nang |
 
-| Pattern (sau hub) | Route name | SEO `type` |
-|---|---|---|
-| `{hub}/{country}` | `tours.index` | `country` |
-| `{hub}/{country}/{slug}` | `tours.show` | `package_tour` |
-| `{hub}/{type}` | `cruises.index` | `cruise_type` |
-| `{hub}/{type}/{slug}` | `cruises.show` | `package_cruise` |
-| `{hub}/{cat}` | `guide.country` | `blog_category` |
-| `{hub}/{cat}/{slug}` | `guide.show` | `article` |
-| `/api/listings/*` | `api.listings.*` | JSON `{count,html}` (không qua SEO catch-all) |
+| Pattern (sau hub) | Route name | SEO `type` | Trang cha hợp lệ (admin) |
+|---|---|---|---|
+| `{hub}/{country}` | `tours.index` | `country` | `tours_hub` only |
+| `{hub}/{topic}` | `tours.category` | `tour_category` | `tours_hub` only (cùng cấp với country — không chọn lẫn nhau) |
+| `{hub}/…/{slug}` | `tours.show` | `package_tour` | `tours_hub` + `country` + `tour_category` |
+| `{hub}/{type}` | `cruises.index` | `cruise_type` | `cruises_hub` only |
+| `{hub}/{type}/{slug}` | `cruises.show` | `package_cruise` | `cruises_hub` + `cruise_type` |
+| `{hub}/{cat}` | `guide.country` | `blog_category` | `guide_hub` only (không nest chuyên mục) |
+| `{hub}/{cat}/{slug}` | `guide.show` | `article` | `guide_hub` + `blog_category` |
+| `/api/listings/*` | `api.listings.*` | JSON `{count,html}` (không qua SEO catch-all) | — |
+
+**Quy tắc trang cha (admin Select):**
+- **Danh mục / listing** dưới hub → chỉ chọn **hub** (không chọn peer cùng cấp).
+- **Chi tiết** → chọn **hub + các danh mục** thuộc cây đó.
+- Config: `config/seo.php` → `types.*.parent_type`; runtime: `SeoService::parentOptionsForType()`.
 
 **Đổi slug cha:** `syncSeo` → `cascadeSlugFullChildren` cập nhật mọi con cùng locale + ghi `redirect_info` (301) qua `createRedirect301` (prefix `/{locale}` nếu không phải default). Uniqueness `(language_id, slug_full)` enforce trong `SeoService::assertSlugFullUnique` trước khi lưu.
 

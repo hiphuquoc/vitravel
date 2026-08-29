@@ -61,19 +61,11 @@ class TourCategoryController extends Controller
         $translation = $category?->translation($locale);
         $seoTranslation = $category?->seoEntry?->translation($locale);
         $typeOptions = TourCategory::typeOptions();
-        $parents = $this->seoService()->parentOptions('country');
+        $parents = $this->seoService()->parentOptionsForType('tour_category');
 
         if ($parents->isEmpty()) {
-            foreach (Country::query()->with(['seoEntry.translations', 'translations'])->orderBy('sort')->get() as $country) {
-                $this->seoService()->ensureSeoFor($country, 'country', $locale, [
-                    'slug' => $country->translation($locale)?->slug ?? $country->code,
-                    'title' => $country->translation($locale)?->name ?? $country->code,
-                    'seo_title' => $country->translation($locale)?->name ?? $country->code,
-                    'status' => 'published',
-                    'country_code' => $country->code,
-                ]);
-            }
-            $parents = $this->seoService()->parentOptions('country');
+            $this->seoService()->ensureToursHub($locale);
+            $parents = $this->seoService()->parentOptionsForType('tour_category');
         }
 
         $title = $category ? 'Chỉnh sửa danh mục tour' : 'Thêm danh mục tour';
@@ -142,20 +134,9 @@ class TourCategoryController extends Controller
             $countrySlug = $country?->translation($locale)?->slug
                 ?? $country?->translation()?->slug
                 ?? $countryCode;
-            $countryParentId = null;
 
-            if ($country) {
-                $countrySeo = $this->seoService()->ensureSeoFor($country, 'country', $locale, [
-                    'slug' => $countrySlug,
-                    'title' => $country->translation($locale)?->name ?? $countrySlug,
-                    'seo_title' => $country->translation($locale)?->name ?? $countrySlug,
-                    'status' => 'published',
-                    'country_slug' => $countrySlug,
-                ]);
-                $countryParentId = $countrySeo->id;
-            }
-
-            $parentId = $validated['seo_parent_id'] ?? $countryParentId;
+            $parentId = $validated['seo_parent_id']
+                ?? $this->seoService()->ensureToursHub($locale)->id;
 
             $this->saveSeoTranslations(
                 $category,
