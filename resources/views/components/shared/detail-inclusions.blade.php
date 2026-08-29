@@ -6,81 +6,76 @@
     'embedded' => false,
 ])
 
-@if (count($inclusions) || count($exclusions) || count($notes))
+@php
+    $blocks = [];
+    if (count($inclusions)) {
+        $blocks[] = [
+            'key' => 'in',
+            'title' => 'Bao gồm',
+            'items' => $inclusions,
+            'icon' => 'check',
+            'markIcon' => 'check',
+        ];
+    }
+    if (count($exclusions)) {
+        $blocks[] = [
+            'key' => 'out',
+            'title' => 'Không bao gồm',
+            'items' => $exclusions,
+            'icon' => 'x-mark',
+            'markIcon' => 'x-mark',
+        ];
+    }
+    if (count($notes)) {
+        $blocks[] = [
+            'key' => 'note',
+            'title' => 'Lưu ý',
+            'items' => $notes,
+            'icon' => 'flag',
+            'markIcon' => null,
+        ];
+    }
+@endphp
+
+@foreach ($blocks as $index => $block)
+    @php $blockId = (! $embedded && $index === 0) ? $sectionId : null; @endphp
+
     @if ($embedded)
-        <div class="detail-cover">
+        <div @class(['detail-cover-block', 'detail-cover-block--'.$block['key']])>
     @else
-    <section
-        id="{{ $sectionId }}"
-        class="detail-section"
-        aria-label="Bao gồm, không bao gồm và lưu ý"
-    >
-        <div class="detail-cover">
+        <section
+            @if ($blockId) id="{{ $blockId }}" @endif
+            @class(['detail-section', 'detail-cover-block', 'detail-cover-block--'.$block['key']])
+            aria-labelledby="detail-cover-title-{{ $block['key'] }}"
+        >
     @endif
-            @if (count($inclusions))
-                <div class="detail-cover__box detail-cover__box--in">
-                    <h2 class="detail-cover__head">
-                        <span class="detail-cover__badge detail-cover__badge--in" aria-hidden="true">
-                            <x-icon name="check" class="size-3.5" />
-                        </span>
-                        Bao gồm
-                    </h2>
-                    <ul class="detail-cover__list">
-                        @foreach ($inclusions as $inc)
-                            <li class="detail-cover__row">
-                                <span class="detail-cover__mark detail-cover__mark--in" aria-hidden="true">
-                                    <x-icon name="check" class="size-3.5" />
-                                </span>
-                                <span class="detail-cover__text">{{ $inc }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        <h2
+            id="detail-cover-title-{{ $block['key'] }}"
+            class="detail-section__title detail-cover-block__title"
+        >
+            <span class="detail-cover-block__title-mark" aria-hidden="true">
+                <x-icon :name="$block['icon']" class="size-4" />
+            </span>
+            <span>{{ $block['title'] }}</span>
+        </h2>
 
-            @if (count($exclusions))
-                <div class="detail-cover__box detail-cover__box--out">
-                    <h2 class="detail-cover__head">
-                        <span class="detail-cover__badge detail-cover__badge--out" aria-hidden="true">
-                            <x-icon name="x-mark" class="size-3.5" />
-                        </span>
-                        Không bao gồm
-                    </h2>
-                    <ul class="detail-cover__list">
-                        @foreach ($exclusions as $exc)
-                            <li class="detail-cover__row">
-                                <span class="detail-cover__mark detail-cover__mark--out" aria-hidden="true">
-                                    <x-icon name="x-mark" class="size-3.5" />
-                                </span>
-                                <span class="detail-cover__text">{{ $exc }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            @if (count($notes))
-                <div class="detail-cover__box detail-cover__box--note">
-                    <h2 class="detail-cover__head">
-                        <span class="detail-cover__badge detail-cover__badge--note" aria-hidden="true">
-                            <x-icon name="flag" class="size-3.5" />
-                        </span>
-                        Lưu ý
-                    </h2>
-                    <ul class="detail-cover__list">
-                        @foreach ($notes as $note)
-                            <li class="detail-cover__row">
-                                <span class="detail-cover__mark detail-cover__mark--note" aria-hidden="true">
-                                    <span class="detail-cover__dot"></span>
-                                </span>
-                                <span class="detail-cover__text">{{ $note }}</span>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+        <ul class="detail-cover-block__list">
+            @foreach ($block['items'] as $item)
+                <li class="detail-cover-block__row">
+                    <span class="detail-cover-block__mark" aria-hidden="true">
+                        @if ($block['markIcon'])
+                            <x-icon :name="$block['markIcon']" class="size-3.5" />
+                        @else
+                            <span class="detail-cover-block__dot"></span>
+                        @endif
+                    </span>
+                    <span class="detail-cover-block__text">{{ $item }}</span>
+                </li>
+            @endforeach
+        </ul>
+    @if ($embedded)
         </div>
-    @if (! $embedded)
-    </section>
+    @else
+        </section>
     @endif
-@endif
+@endforeach

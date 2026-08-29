@@ -4334,136 +4334,141 @@
         color: var(--color-primary-600, #567834);
     }
 
-    /* Inclusions / exclusions / notes — xếp dọc, cùng 1 kiểu box */
-    .detail-cover {
-        display: grid;
-        gap: var(--space-gap);
+    /*
+     * Bao gồm / Không bao gồm / Lưu ý
+     * Mỗi khối = 1 detail-section + H2.detail-section__title (đồng bộ Tổng quan / Lịch trình / Bảng giá).
+     * Panel list cùng ngôn ngữ visual với detail-facts / detail-content.
+     */
+    .detail-cover-block__title {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
     }
 
-    .detail-cover__box {
+    .detail-cover-block__title-mark {
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        width: 1.85rem;
+        height: 1.85rem;
+        border-radius: 0.55rem;
+        background: color-mix(in srgb, var(--color-primary-100, #e9efd6) 70%, #fff);
+        color: var(--color-primary-700, #455f2c);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-line, #ddd9c2) 55%, transparent);
+    }
+
+    .detail-cover-block--in .detail-cover-block__title-mark {
+        background: color-mix(in srgb, var(--color-leaf-100, #e9efd6) 75%, #fff);
+        color: var(--color-leaf-700, #455f2c);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-leaf-500, #6b8f3f) 22%, transparent);
+    }
+
+    .detail-cover-block--out .detail-cover-block__title-mark {
+        background: color-mix(in srgb, var(--color-accent-50, #fdf3ef) 90%, #fff);
+        color: var(--color-accent-700, #a14a2f);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-accent-500, #d9704f) 22%, transparent);
+    }
+
+    .detail-cover-block--note .detail-cover-block__title-mark {
+        background: color-mix(in srgb, var(--color-page-soft, #f8f6ec) 80%, #fff);
+        color: var(--color-ink-soft, #514f45);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-line, #ddd9c2) 70%, transparent);
+    }
+
+    .detail-cover-block__list {
+        list-style: none;
+        margin: 0;
+        padding: 0.25rem 0;
         min-width: 0;
         border-radius: 0.9rem;
         background: #fff;
-        border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 80%, transparent);
+        border: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 82%, transparent);
         overflow: hidden;
     }
 
-    .detail-cover__box--in {
-        border-color: color-mix(in srgb, var(--color-leaf-500, #6b8f3f) 28%, var(--color-line, #ddd9c2));
+    .detail-cover-block--in .detail-cover-block__list {
+        border-color: color-mix(in srgb, var(--color-leaf-500, #6b8f3f) 22%, var(--color-line, #ddd9c2));
+        box-shadow: inset 3px 0 0 var(--color-leaf-500, #6b8f3f);
     }
 
-    .detail-cover__box--out {
-        border-color: color-mix(in srgb, var(--color-accent-500, #d9704f) 24%, var(--color-line, #ddd9c2));
+    .detail-cover-block--out .detail-cover-block__list {
+        border-color: color-mix(in srgb, var(--color-accent-500, #d9704f) 20%, var(--color-line, #ddd9c2));
+        box-shadow: inset 3px 0 0 var(--color-accent-500, #d9704f);
     }
 
-    .detail-cover__box--note {
-        border-color: color-mix(in srgb, var(--color-primary-400, #8aa85c) 35%, var(--color-line, #ddd9c2));
+    .detail-cover-block--note .detail-cover-block__list {
+        border-color: color-mix(in srgb, var(--color-primary-400, #93b25e) 28%, var(--color-line, #ddd9c2));
+        box-shadow: inset 3px 0 0 color-mix(in srgb, var(--color-primary-500, #6b8f3f) 70%, var(--color-line, #ddd9c2));
     }
 
-    .detail-cover__head {
-        display: flex;
-        align-items: center;
-        gap: var(--space-gap-sm);
-        margin: 0;
-        padding: var(--space-card-stack-lg) var(--space-card);
-        font-size: var(--fs-item-title);
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 75%, transparent);
-    }
-
-    .detail-cover__box--in .detail-cover__head {
-        color: var(--color-leaf-700, #3f6b2a);
-        background: color-mix(in srgb, var(--color-leaf-100, #e9efd6) 55%, #fff);
-    }
-
-    .detail-cover__box--out .detail-cover__head {
-        color: var(--color-accent-700, #a14a2f);
-        background: color-mix(in srgb, var(--color-accent-50, #fdf3ef) 85%, #fff);
-    }
-
-    .detail-cover__box--note .detail-cover__head {
-        color: var(--color-primary-800, #3a4e27);
-        background: color-mix(in srgb, var(--color-page-soft, #f8f6ec) 70%, #fff);
-    }
-
-    .detail-cover__badge {
-        display: grid;
-        place-items: center;
-        width: 1.55rem;
-        height: 1.55rem;
-        border-radius: 999px;
-    }
-
-    .detail-cover__badge--in {
-        background: color-mix(in srgb, var(--color-leaf-500, #6b8f3f) 18%, #fff);
-        color: var(--color-leaf-700, #3f6b2a);
-    }
-
-    .detail-cover__badge--out {
-        background: color-mix(in srgb, var(--color-accent-500, #d9704f) 16%, #fff);
-        color: var(--color-accent-700, #a14a2f);
-    }
-
-    .detail-cover__badge--note {
-        background: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 14%, #fff);
-        color: var(--color-primary-700, #455f2c);
-    }
-
-    .detail-cover__list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .detail-cover__row {
+    .detail-cover-block__row {
         display: grid;
         grid-template-columns: auto 1fr;
-        gap: var(--space-gap-sm);
+        gap: 0.75rem;
         align-items: start;
-        padding: var(--space-card-stack-lg) var(--space-card);
-        border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 70%, transparent);
+        padding: 0.85rem clamp(0.9rem, 2vw, 1.15rem);
+        border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 68%, transparent);
+        transition: background-color 0.15s ease;
     }
 
-    .detail-cover__row:last-child {
+    .detail-cover-block__row:last-child {
         border-bottom: 0;
     }
 
-    .detail-cover__mark {
+    .detail-cover-block__row:hover {
+        background: color-mix(in srgb, var(--color-page-soft, #f8f6ec) 55%, #fff);
+    }
+
+    .detail-cover-block__mark {
         display: grid;
         place-items: center;
-        width: 1.25rem;
-        height: 1.25rem;
+        width: 1.35rem;
+        height: 1.35rem;
         margin-top: 0.12rem;
         border-radius: 999px;
+        flex-shrink: 0;
     }
 
-    .detail-cover__mark--in {
+    .detail-cover-block--in .detail-cover-block__mark {
         background: color-mix(in srgb, var(--color-leaf-500, #6b8f3f) 14%, #fff);
-        color: var(--color-leaf-700, #3f6b2a);
+        color: var(--color-leaf-700, #455f2c);
     }
 
-    .detail-cover__mark--out {
+    .detail-cover-block--out .detail-cover-block__mark {
         background: color-mix(in srgb, var(--color-accent-500, #d9704f) 12%, #fff);
         color: var(--color-accent-700, #a14a2f);
     }
 
-    .detail-cover__mark--note {
-        background: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 12%, #fff);
+    .detail-cover-block--note .detail-cover-block__mark {
+        background: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 10%, #fff);
         color: var(--color-primary-700, #455f2c);
     }
 
-    .detail-cover__dot {
+    .detail-cover-block__dot {
         width: 0.35rem;
         height: 0.35rem;
         border-radius: 999px;
         background: currentColor;
     }
 
-    .detail-cover__text {
+    .detail-cover-block__text {
         font-size: var(--fs-body);
+        font-weight: 500;
         line-height: var(--lh-body);
-        color: var(--color-ink-soft, #514f45);
+        color: var(--color-ink, #272b23);
+    }
+
+    @media (max-width: 567px) {
+        .detail-cover-block__title-mark {
+            width: 1.65rem;
+            height: 1.65rem;
+            border-radius: 0.45rem;
+        }
+
+        .detail-cover-block__row {
+            gap: 0.65rem;
+            padding: 0.75rem 0.85rem;
+        }
     }
 
     /* Reviews */

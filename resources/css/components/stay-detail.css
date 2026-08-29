@@ -1316,10 +1316,6 @@ body.stay-room-lock {
     color: var(--color-muted, #817d6e);
 }
 
-.detail-section .detail-facts + .detail-cover {
-    margin-top: var(--space-stack);
-}
-
 /* Stay booking sidebar — online book, not quote lead form */
 .stay-book__facts {
     display: grid;
