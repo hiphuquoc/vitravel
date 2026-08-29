@@ -89,6 +89,29 @@ if (! function_exists('site_brand')) {
     }
 }
 
+if (! function_exists('site_logo_url')) {
+    /**
+     * Logo / OG mặc định từ cài đặt dự án (schema_settings.logo).
+     * Trả về URL tuyệt đối hoặc null nếu chưa cấu hình.
+     */
+    function site_logo_url(): ?string
+    {
+        $raw = trim((string) (\App\Models\CompanyProfile::contact()['schema']['logo'] ?? ''));
+        if ($raw === '') {
+            $raw = trim((string) (config('seo.site.default_og_image') ?? ''));
+        }
+        if ($raw === '') {
+            return null;
+        }
+
+        if (str_starts_with($raw, 'http://') || str_starts_with($raw, 'https://')) {
+            return $raw;
+        }
+
+        return url($raw);
+    }
+}
+
 if (! function_exists('apply_site_brand')) {
     /**
      * Thay :brand / ViTravel trong chuỗi copy SEO·UI bằng brand dự án hiện tại.

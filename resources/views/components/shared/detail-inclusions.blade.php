@@ -1,5 +1,4 @@
 @props([
-    'title' => 'Giá đã bao gồm những gì?',
     'inclusions' => [],
     'exclusions' => [],
     'notes' => [],
@@ -14,20 +13,18 @@
     <section
         id="{{ $sectionId }}"
         class="detail-section"
-        aria-label="{{ $title }}"
+        aria-label="Bao gồm, không bao gồm và lưu ý"
     >
-        <h2 class="detail-section__title">{{ $title }}</h2>
-
         <div class="detail-cover">
     @endif
             @if (count($inclusions))
                 <div class="detail-cover__box detail-cover__box--in">
-                    <h3 class="detail-cover__head">
+                    <h2 class="detail-cover__head">
                         <span class="detail-cover__badge detail-cover__badge--in" aria-hidden="true">
                             <x-icon name="check" class="size-3.5" />
                         </span>
                         Bao gồm
-                    </h3>
+                    </h2>
                     <ul class="detail-cover__list">
                         @foreach ($inclusions as $inc)
                             <li class="detail-cover__row">
@@ -43,12 +40,12 @@
 
             @if (count($exclusions))
                 <div class="detail-cover__box detail-cover__box--out">
-                    <h3 class="detail-cover__head">
+                    <h2 class="detail-cover__head">
                         <span class="detail-cover__badge detail-cover__badge--out" aria-hidden="true">
                             <x-icon name="x-mark" class="size-3.5" />
                         </span>
                         Không bao gồm
-                    </h3>
+                    </h2>
                     <ul class="detail-cover__list">
                         @foreach ($exclusions as $exc)
                             <li class="detail-cover__row">
@@ -64,12 +61,12 @@
 
             @if (count($notes))
                 <div class="detail-cover__box detail-cover__box--note">
-                    <h3 class="detail-cover__head">
+                    <h2 class="detail-cover__head">
                         <span class="detail-cover__badge detail-cover__badge--note" aria-hidden="true">
                             <x-icon name="flag" class="size-3.5" />
                         </span>
                         Lưu ý
-                    </h3>
+                    </h2>
                     <ul class="detail-cover__list">
                         @foreach ($notes as $note)
                             <li class="detail-cover__row">

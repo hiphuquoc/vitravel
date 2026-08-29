@@ -15,12 +15,12 @@
     }
     array_push($sectionIds, 'lich-trinh', 'bao-gom', 'danh-gia', 'faq');
     $tabs = [
-        'tong-quan' => 'Tổng quan',
-        ...($hasPriceTable ? ['bang-gia' => 'Bảng giá'] : []),
-        'lich-trinh' => 'Lịch trình',
-        'bao-gom' => 'Bao gồm',
-        'danh-gia' => 'Đánh giá',
-        'faq' => 'FAQ',
+        'tong-quan' => ['label' => 'Tổng quan', 'icon' => 'info'],
+        ...($hasPriceTable ? ['bang-gia' => ['label' => 'Bảng giá', 'icon' => 'coins']] : []),
+        'lich-trinh' => ['label' => 'Lịch trình', 'icon' => 'calendar'],
+        'bao-gom' => ['label' => 'Bao gồm', 'icon' => 'check'],
+        'danh-gia' => ['label' => 'Đánh giá', 'icon' => 'star'],
+        'faq' => ['label' => 'FAQ', 'icon' => 'info'],
     ];
     $reviews = view_data()->testimonials(limit: 3);
 
@@ -74,17 +74,7 @@
 />
 
 <div class="detail-body" x-data="scrollSpy(@js($sectionIds))">
-    <nav class="detail-tabs" aria-label="Điều hướng trong trang">
-        <div class="container-site detail-tabs__inner">
-            @foreach ($tabs as $id => $label)
-                <a href="#{{ $id }}"
-                    class="detail-tabs__link"
-                    :class="active === '{{ $id }}' ? 'is-active' : ''">
-                    {{ $label }}
-                </a>
-            @endforeach
-        </div>
-    </nav>
+    <x-shared.detail-tabs :tabs="$tabs" />
 
     <div class="container-site detail-layout section-band--sm">
         <div class="min-w-0 detail-stack">
@@ -203,7 +193,6 @@
             </section>
 
             <x-shared.detail-inclusions
-                title="Giá đã bao gồm những gì?"
                 :inclusions="$item['inclusions'] ?? []"
                 :exclusions="$item['exclusions'] ?? []"
                 :notes="$item['notes'] ?? []"

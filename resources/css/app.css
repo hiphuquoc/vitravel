@@ -922,6 +922,18 @@
         color: #fff;
     }
 
+    .header-wordmark__mark--logo {
+        background: transparent;
+        overflow: hidden;
+    }
+
+    .header-wordmark__logo {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+
     .header-wordmark__icon {
         width: var(--header-wordmark-icon);
         height: var(--header-wordmark-icon);
@@ -10527,6 +10539,18 @@ body.is-mobileNavOpen {
     border-radius: 999px;
     background: var(--color-primary-500, #6b8f3f);
     color: #fff;
+}
+
+.footer-contact__logo--image {
+    background: transparent;
+    overflow: hidden;
+}
+
+.footer-contact__logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
 }
 
 .footer-contact__name {

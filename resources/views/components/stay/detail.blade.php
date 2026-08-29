@@ -76,7 +76,7 @@
         $sectionIds[] = 'chinh-sach';
     }
     if (! empty($service['faqs'])) {
-        $tabs['faq'] = ['label' => 'Câu hỏi thường gặp', 'icon' => 'help-circle'];
+        $tabs['faq'] = ['label' => 'Câu hỏi thường gặp', 'icon' => 'info'];
         $sectionIds[] = 'faq';
     }
 
@@ -103,26 +103,7 @@
 />
 
 <div @class(['detail-body', 'detail-body--plain' => count($tabs) < 2]) @if (count($sectionIds) > 1) x-data="scrollSpy(@js($sectionIds))" @endif>
-    @if (count($tabs) > 1)
-        <nav class="detail-tabs" aria-label="Điều hướng trong trang">
-            <div class="container-site">
-                <div class="detail-tabs__wrapper">
-                    <div class="detail-tabs__inner">
-                        @foreach ($tabs as $id => $tabData)
-                            <a href="#{{ $id }}"
-                                class="detail-tabs__link"
-                                @if (count($sectionIds) > 1)
-                                    :class="active === '{{ $id }}' ? 'is-active' : ''"
-                                @endif>
-                                <x-icon :name="$tabData['icon']" class="detail-tabs__icon size-4 shrink-0" />
-                                <span>{{ $tabData['label'] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </nav>
-    @endif
+    <x-shared.detail-tabs :tabs="$tabs" :enable-scroll-spy="count($sectionIds) > 1" />
 
     <div class="container-site detail-layout">
         <div class="min-w-0 detail-stack">

@@ -3,6 +3,7 @@
     $columns = view_data()->footerColumns();
     $seoLinks = view_data()->footerSeoLinks();
     $contact = view_data()->companyContact();
+    $brandLogoUrl = site_logo_url();
 @endphp
 
 <footer>
@@ -12,8 +13,12 @@
             <div class="footer-contact-strip__grid">
             <div>
                 <div class="footer-contact__brand-row">
-                    <span class="footer-contact__logo">
-                        <x-icon name="compass" class="size-5.5" />
+                    <span @class(['footer-contact__logo', 'footer-contact__logo--image' => filled($brandLogoUrl)])>
+                        @if ($brandLogoUrl)
+                            <img src="{{ $brandLogoUrl }}" alt="" class="footer-contact__logo-img" width="44" height="44" decoding="async">
+                        @else
+                            <x-icon name="compass" class="size-5.5" />
+                        @endif
                     </span>
                     <span>
                         <span class="footer-contact__name">{{ $contact['name'] }}</span>

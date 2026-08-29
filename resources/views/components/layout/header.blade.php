@@ -37,6 +37,7 @@
     $nav = view_data()->siteNav();
     $brandName = $nav['brand'] ?? site_brand();
     $brandTagline = $nav['tagline'] ?? '';
+    $brandLogoUrl = site_logo_url();
     $cruiseNav = $nav['cruise'] ?? [];
     $toursNav = $nav['tours'] ?? [];
     $hotlineDisplay = $companyContact['phone'] ?? '+84 24 3999 8888';
@@ -318,8 +319,12 @@
 
         {{-- Logo --}}
         <a href="{{ locale_route('home') }}" class="header-wordmark" aria-label="{{ $brandTagline !== '' ? $brandName.' — '.$brandTagline.' — về trang chủ' : $brandName.' — về trang chủ' }}">
-            <span class="header-wordmark__mark" aria-hidden="true">
-                <x-icon name="compass" class="header-wordmark__icon" />
+            <span @class(['header-wordmark__mark', 'header-wordmark__mark--logo' => filled($brandLogoUrl)]) aria-hidden="true">
+                @if ($brandLogoUrl)
+                    <img src="{{ $brandLogoUrl }}" alt="" class="header-wordmark__logo" width="36" height="36" decoding="async">
+                @else
+                    <x-icon name="compass" class="header-wordmark__icon" />
+                @endif
             </span>
             <span class="header-wordmark__text">
                 <span class="header-wordmark__name">{{ $brandName }}</span>
@@ -710,8 +715,12 @@
             x-transition:leave-end="translate-x-full">
             <header class="mobile-nav-drawer__head">
                 <a href="{{ locale_route('home') }}" class="header-wordmark header-wordmark--drawer" @click="closeMobileNav()" aria-label="{{ $brandTagline !== '' ? $brandName.' — '.$brandTagline.' — về trang chủ' : $brandName.' — về trang chủ' }}">
-                    <span class="header-wordmark__mark" aria-hidden="true">
-                        <x-icon name="compass" class="header-wordmark__icon" />
+                    <span @class(['header-wordmark__mark', 'header-wordmark__mark--logo' => filled($brandLogoUrl)]) aria-hidden="true">
+                        @if ($brandLogoUrl)
+                            <img src="{{ $brandLogoUrl }}" alt="" class="header-wordmark__logo" width="36" height="36" decoding="async">
+                        @else
+                            <x-icon name="compass" class="header-wordmark__icon" />
+                        @endif
                     </span>
                     <span class="header-wordmark__text">
                         <span class="header-wordmark__name">{{ $brandName }}</span>

@@ -13,6 +13,23 @@
     <link rel="canonical" href="{{ url()->current() }}">
 
     @php
+        $siteLogoUrl = site_logo_url();
+    @endphp
+    @if ($siteLogoUrl)
+        <link rel="icon" href="{{ $siteLogoUrl }}">
+        <link rel="apple-touch-icon" href="{{ $siteLogoUrl }}">
+    @endif
+    @hasSection('og_image')
+        <meta property="og:image" content="@yield('og_image')">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="@yield('og_image')">
+    @elseif ($siteLogoUrl)
+        <meta property="og:image" content="{{ $siteLogoUrl }}">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:image" content="{{ $siteLogoUrl }}">
+    @endif
+
+    @php
         $gcsPublic = rtrim((string) config('services.gcs.public_url', ''), '/');
         $gcsHost = $gcsPublic !== '' ? parse_url($gcsPublic, PHP_URL_HOST) : null;
         if (! $gcsHost && config('media.disk') === 'gcs' && config('services.gcs.bucket')) {
