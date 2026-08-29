@@ -1605,16 +1605,47 @@
         height: 1.2rem;
     }
 
-    /* Panel «Thêm» — giới hạn theo viewport, cuộn nội dung dài */
-    .header-more-panel {
-        width: min(24rem, calc(100vw - 1.5rem));
-        min-width: 18rem;
+    /*
+     * Nav flyout — dùng chung cho mega menu hover (tour/du thuyền/dịch vụ)
+     * và panel «Thêm» (blog / về chúng tôi). Giới hạn theo viewport + cuộn nội dung.
+     */
+    :root {
+        --nav-flyout-max-h: min(
+            70vh,
+            calc(100dvh - var(--site-header-offset, 4.25rem) - 1.25rem)
+        );
     }
 
-    .header-more-panel__card {
+    @media (max-height: 640px) {
+        :root {
+            --nav-flyout-max-h: min(
+                78vh,
+                calc(100dvh - var(--site-header-offset, 4.25rem) - 0.75rem)
+            );
+        }
+    }
+
+    .nav-flyout {
+        padding-top: 0.5rem;
+    }
+
+    .nav-flyout--wide {
+        width: min(36.25rem, calc(100vw - 2rem));
+    }
+
+    .nav-flyout--sm {
+        width: min(20rem, calc(100vw - 2rem));
+    }
+
+    .nav-flyout--more {
+        width: min(24rem, calc(100vw - 1.5rem));
+        min-width: min(18rem, calc(100vw - 1.5rem));
+    }
+
+    .nav-flyout__card {
         display: flex;
         flex-direction: column;
-        max-height: min(70vh, calc(100dvh - var(--site-header-offset, 7rem) - 1.25rem));
+        max-height: var(--nav-flyout-max-h);
         overflow: hidden;
         border-radius: 1rem;
         border: 1px solid var(--color-line, #ddd9c2);
@@ -1622,27 +1653,64 @@
         box-shadow: var(--shadow-card-hover, 0 16px 40px rgb(39 43 35 / 0.14));
     }
 
-    .header-more-panel__scroll {
+    .nav-flyout__scroll {
         flex: 1 1 auto;
         min-height: 0;
         overflow-x: hidden;
         overflow-y: auto;
         overscroll-behavior: contain;
         -webkit-overflow-scrolling: touch;
-        padding: 0.85rem 0.75rem 0.95rem;
+        scroll-behavior: smooth;
+        padding: 0.75rem 0.7rem 0.85rem;
+    }
+
+    .nav-flyout__lead {
+        position: sticky;
+        top: -0.75rem;
+        z-index: 1;
+        margin: -0.75rem -0.7rem 0.35rem;
+        padding: 0.75rem 0.7rem 0.65rem;
+        background:
+            linear-gradient(
+                180deg,
+                #fff 0%,
+                #fff 78%,
+                color-mix(in srgb, #fff 55%, transparent) 100%
+            );
+        border-bottom: 1px solid color-mix(in srgb, var(--color-line, #ddd9c2) 78%, transparent);
+        border-radius: 0;
+    }
+
+    .nav-flyout__lead.nav-panel-row {
+        border-radius: 0;
+    }
+
+    .nav-flyout__grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        column-gap: 0.5rem;
+        row-gap: 0.125rem;
     }
 
     @media (max-height: 640px) {
-        .header-more-panel__card {
-            max-height: min(78vh, calc(100dvh - var(--site-header-offset, 6rem) - 0.75rem));
+        .nav-flyout__scroll {
+            padding: 0.55rem 0.55rem 0.65rem;
         }
 
-        .header-more-panel__scroll {
-            padding-block: 0.65rem 0.75rem;
+        .nav-flyout__lead {
+            top: -0.55rem;
+            margin: -0.55rem -0.55rem 0.25rem;
+            padding: 0.55rem 0.55rem 0.5rem;
         }
 
-        .header-more-panel__scroll .nav-panel-link {
+        .nav-flyout__scroll .nav-panel-row,
+        .nav-flyout__scroll .nav-panel-link {
             padding-block: 0.45rem;
+        }
+
+        .nav-flyout__scroll .nav-panel-meta {
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
         }
     }
 
@@ -1656,6 +1724,10 @@
         .header-more-btn__glyph {
             width: 1.1rem;
             height: 1.1rem;
+        }
+
+        .nav-flyout--wide .nav-flyout__grid {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -8446,6 +8518,8 @@ body.is-searchOpen {
     flex-direction: column;
     width: min(22.5rem, calc(100vw - 1.25rem));
     max-width: 100%;
+    height: 100%;
+    height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
     background: #fff;
@@ -8457,7 +8531,7 @@ body.is-searchOpen {
     align-items: center;
     justify-content: space-between;
     gap: var(--space-gap, 0.75rem);
-    flex-shrink: 0;
+    flex: 0 0 auto;
     padding: var(--space-card, 1rem) var(--space-card, 1rem) 0.85rem;
     border-bottom: 1px solid var(--color-line, #ddd9c2);
     background:
@@ -8565,6 +8639,21 @@ a.mobile-nav-drawer__trigger {
 }
 .mobile-nav-drawer__sub {
     padding: 0.15rem 0 0.65rem 0.15rem;
+    /* Accordion dài: cuộn trong nhánh, body drawer vẫn cuộn được phần còn lại */
+    max-height: min(46vh, 19rem);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 45%, transparent) transparent;
+}
+.mobile-nav-drawer__sub::-webkit-scrollbar {
+    width: 5px;
+}
+.mobile-nav-drawer__sub::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-primary-500, #6b8f3f) 40%, transparent);
 }
 /* Cây thư mục — gạch đứt dọc + nhánh ngang */
 .mobile-nav-drawer__tree {

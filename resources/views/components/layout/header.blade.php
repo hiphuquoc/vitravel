@@ -343,28 +343,30 @@
                     {{ $toursNav['label'] ?? 'Tour trọn gói' }} <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                 </button>
                 <div x-cloak x-show="openMenu === 'dest'" x-transition.opacity.duration.150ms
-                    class="absolute top-full left-0 z-50 w-[580px] pt-2">
-                    <div class="rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
-                    <a href="{{ locale_route('tours.hub') }}" class="nav-panel-row group mb-1 border-b border-line pb-2">
-                        <span class="nav-panel-item-row">
-                            <span class="nav-panel-lead-mark" aria-hidden="true"></span>
-                            <span class="nav-panel-item">Tất cả tour</span>
-                        </span>
-                        <span class="nav-panel-meta">Xem toàn bộ hành trình Đông Nam Á</span>
-                    </a>
-                    <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                        @foreach ($destinations as $c)
-                            <a href="{{ locale_route('tours.index', $c['slug']) }}" class="nav-panel-row group">
+                    class="nav-flyout nav-flyout--wide absolute top-full left-0 z-50">
+                    <div class="nav-flyout__card">
+                        <div class="nav-flyout__scroll vt-scrollbar">
+                            <a href="{{ locale_route('tours.hub') }}" class="nav-panel-row nav-flyout__lead group">
                                 <span class="nav-panel-item-row">
-                                    <span class="nav-panel-item">{{ tour_listing_label($c['name'] ?? '') }}</span>
-                                    <x-shared.count-badge :count="$c['tourCount'] ?? 0" />
+                                    <span class="nav-panel-lead-mark" aria-hidden="true"></span>
+                                    <span class="nav-panel-item">Tất cả tour</span>
                                 </span>
-                                @if (! empty($c['tagline']))
-                                    <span class="nav-panel-meta">{{ $c['tagline'] }}</span>
-                                @endif
+                                <span class="nav-panel-meta">Xem toàn bộ hành trình Đông Nam Á</span>
                             </a>
-                        @endforeach
-                    </div>
+                            <div class="nav-flyout__grid">
+                                @foreach ($destinations as $c)
+                                    <a href="{{ locale_route('tours.index', $c['slug']) }}" class="nav-panel-row group">
+                                        <span class="nav-panel-item-row">
+                                            <span class="nav-panel-item">{{ tour_listing_label($c['name'] ?? '') }}</span>
+                                            <x-shared.count-badge :count="$c['tourCount'] ?? 0" />
+                                        </span>
+                                        @if (! empty($c['tagline']))
+                                            <span class="nav-panel-meta">{{ $c['tagline'] }}</span>
+                                        @endif
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -376,25 +378,27 @@
                     {{ $cruiseNav['label'] ?? 'Du thuyền' }} <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                 </button>
                 <div x-cloak x-show="openMenu === 'cruise'" x-transition.opacity.duration.150ms
-                    class="absolute top-full left-0 z-50 w-[580px] pt-2">
-                    <div class="rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
-                    <a href="{{ locale_route('cruises.hub') }}" class="nav-panel-row group mb-1 border-b border-line pb-2">
-                        <span class="nav-panel-item-row">
-                            <span class="nav-panel-lead-mark" aria-hidden="true"></span>
-                            <span class="nav-panel-item">{{ $cruiseNav['all_label'] ?? 'Tất cả du thuyền' }}</span>
-                        </span>
-                        <span class="nav-panel-meta">{{ $cruiseNav['all_meta'] ?? 'Xem toàn bộ lịch trình du thuyền' }}</span>
-                    </a>
-                    <div class="grid grid-cols-2 gap-x-2 gap-y-0.5">
-                        @foreach ($cruiseTypes as $t)
-                            <a href="{{ locale_route('cruises.index', $t['slug']) }}" class="nav-panel-row group">
+                    class="nav-flyout nav-flyout--wide absolute top-full left-0 z-50">
+                    <div class="nav-flyout__card">
+                        <div class="nav-flyout__scroll vt-scrollbar">
+                            <a href="{{ locale_route('cruises.hub') }}" class="nav-panel-row nav-flyout__lead group">
                                 <span class="nav-panel-item-row">
-                                    <span class="nav-panel-item">{{ $t['name'] }}</span>
-                                    <x-shared.count-badge :count="$t['count'] ?? 0" />
+                                    <span class="nav-panel-lead-mark" aria-hidden="true"></span>
+                                    <span class="nav-panel-item">{{ $cruiseNav['all_label'] ?? 'Tất cả du thuyền' }}</span>
                                 </span>
+                                <span class="nav-panel-meta">{{ $cruiseNav['all_meta'] ?? 'Xem toàn bộ lịch trình du thuyền' }}</span>
                             </a>
-                        @endforeach
-                    </div>
+                            <div class="nav-flyout__grid">
+                                @foreach ($cruiseTypes as $t)
+                                    <a href="{{ locale_route('cruises.index', $t['slug']) }}" class="nav-panel-row group">
+                                        <span class="nav-panel-item-row">
+                                            <span class="nav-panel-item">{{ $t['name'] }}</span>
+                                            <x-shared.count-badge :count="$t['count'] ?? 0" />
+                                        </span>
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -415,44 +419,46 @@
                         {{ $sc['nav_label'] }} <x-icon name="chevron-down" class="header-nav-chevron size-3.5 shrink-0" />
                     </button>
                     <div x-cloak x-show="openMenu === '{{ $svcKey }}'" x-transition.opacity.duration.150ms
-                        class="absolute top-full left-0 z-50 w-80 max-w-[min(20rem,calc(100vw-2rem))] pt-2">
-                        <div class="rounded-2xl border border-line bg-white p-3 shadow-(--shadow-card-hover)">
-                            <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="nav-panel-row group mb-1 border-b border-line pb-2">
-                                <span class="nav-panel-item-row">
-                                    <span class="nav-panel-lead-mark" aria-hidden="true"></span>
-                                    <span class="nav-panel-item">Tất cả {{ strtolower($sc['nav_label']) }}</span>
-                                </span>
-                                <span class="nav-panel-meta">{{ $sc['label'] ?? '' }}</span>
-                            </a>
-                            <div class="nav-panel-group">
-                                @if (($sc['code'] ?? '') === 'other')
-                                    @if ($transportHub)
-                                        <a href="{{ locale_route('services.hub', ['cluster' => $transportCluster]) }}" class="nav-panel-link">
+                        class="nav-flyout nav-flyout--sm absolute top-full left-0 z-50">
+                        <div class="nav-flyout__card">
+                            <div class="nav-flyout__scroll vt-scrollbar">
+                                <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="nav-panel-row nav-flyout__lead group">
+                                    <span class="nav-panel-item-row">
+                                        <span class="nav-panel-lead-mark" aria-hidden="true"></span>
+                                        <span class="nav-panel-item">Tất cả {{ strtolower($sc['nav_label']) }}</span>
+                                    </span>
+                                    <span class="nav-panel-meta">{{ $sc['label'] ?? '' }}</span>
+                                </a>
+                                <div class="nav-panel-group">
+                                    @if (($sc['code'] ?? '') === 'other')
+                                        @if ($transportHub)
+                                            <a href="{{ locale_route('services.hub', ['cluster' => $transportCluster]) }}" class="nav-panel-link">
+                                                <span class="nav-panel-item-row">
+                                                    <span>{{ $transportNavLabel }}</span>
+                                                    <x-shared.count-badge :count="$trainServiceCount" />
+                                                </span>
+                                            </a>
+                                        @endif
+                                        @if ($flightHub)
+                                            <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="nav-panel-link">
+                                                <span class="nav-panel-item-row">
+                                                    <span>Vé máy bay</span>
+                                                    <x-shared.count-badge :count="$flightServiceCount" />
+                                                </span>
+                                            </a>
+                                        @endif
+                                    @endif
+                                    @foreach ($svcCats as $cat)
+                                        <a href="{{ locale_route('services.index', ['cluster' => $sc['code'], 'category' => $cat['slug']]) }}" class="nav-panel-link">
                                             <span class="nav-panel-item-row">
-                                                <span>{{ $transportNavLabel }}</span>
-                                                <x-shared.count-badge :count="$trainServiceCount" />
+                                                <span>{{ $cat['name'] }}</span>
+                                                @if (($cat['count'] ?? 0) > 0)
+                                                    <x-shared.count-badge :count="$cat['count']" />
+                                                @endif
                                             </span>
                                         </a>
-                                    @endif
-                                    @if ($flightHub)
-                                        <a href="{{ locale_route('services.hub', ['cluster' => 'flight']) }}" class="nav-panel-link">
-                                            <span class="nav-panel-item-row">
-                                                <span>Vé máy bay</span>
-                                                <x-shared.count-badge :count="$flightServiceCount" />
-                                            </span>
-                                        </a>
-                                    @endif
-                                @endif
-                                @foreach ($svcCats as $cat)
-                                    <a href="{{ locale_route('services.index', ['cluster' => $sc['code'], 'category' => $cat['slug']]) }}" class="nav-panel-link">
-                                        <span class="nav-panel-item-row">
-                                            <span>{{ $cat['name'] }}</span>
-                                            @if (($cat['count'] ?? 0) > 0)
-                                                <x-shared.count-badge :count="$cat['count']" />
-                                            @endif
-                                        </span>
-                                    </a>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -470,11 +476,11 @@
                 </button>
                 <div x-cloak x-show="moreOpen" x-transition.opacity.duration.150ms
                     id="header-more-panel"
-                    class="header-more-panel absolute top-full right-0 z-50 pt-2"
+                    class="nav-flyout nav-flyout--more absolute top-full right-0 z-50"
                     role="region"
                     aria-label="Danh mục chương trình và cẩm nang">
-                    <div class="header-more-panel__card">
-                        <div class="header-more-panel__scroll vt-scrollbar">
+                    <div class="nav-flyout__card">
+                        <div class="nav-flyout__scroll vt-scrollbar">
                             <div class="nav-panel-group">
                                 <p class="nav-panel-group__title">{{ $nav['about_group'] ?? ('Về '.$brandName) }}</p>
                                 <a href="{{ locale_route('about') }}" class="nav-panel-link">
