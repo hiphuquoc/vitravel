@@ -529,7 +529,62 @@ class MediaService
             }
         }
 
+        return $this->mediaIsReferencedInServiceAttrs($mediaId);
+    }
+
+    /**
+     * Gallery/phòng khách s?n l?u media_id trong JSON attrs — không có FK.
+     */
+    private function mediaIsReferencedInServiceAttrs(int $mediaId): bool
+    {
+        if ($mediaId <= 0) {
+            return false;
+        }
+
+        if (Schema::hasTable('services') && Schema::hasColumn('services', 'attrs')) {
+            foreach (['gallery_media_ids', 'cover_media_ids'] as $jsonKey) {
+                if (DB::table('services')->whereJsonContains('attrs->'.$jsonKey, $mediaId)->exists()) {
+                    return true;
+                }
+            }
+
+            if ($this->jsonAttrsContainsMediaId('services', 'attrs', 'photos', $mediaId)) {
+                return true;
+            }
+        }
+
+        if (Schema::hasTable('service_options') && Schema::hasColumn('service_options', 'attrs')) {
+            if ($this->jsonAttrsContainsMediaId('service_options', 'attrs', 'photos', $mediaId)) {
+                return true;
+            }
+        }
+
         return false;
+    }
+
+    private function jsonAttrsContainsMediaId(string $table, string $column, string $arrayKey, int $mediaId): bool
+    {
+        $needle = '"media_id":'.$mediaId;
+        $needleSpaced = '"media_id": '.$mediaId;
+
+        return DB::table($table)
+            ->where(function ($q) use ($column, $needle, $needleSpaced): void {
+                foreach ([$needle, $needleSpaced] as $n) {
+                    $q->orWhere($column, 'like', '%'.$n.',%')
+                        ->orWhere($column, 'like', '%'.$n.'}%')
+                        ->orWhere($column, 'like', '%'.$n.']%');
+                }
+            })
+            ->where(function ($q) use ($column, $arrayKey): void {
+                $q->where($column, 'like', '%"'.$arrayKey.'"%');
+            })
+            ->exists();
+    }
+
+    /** Ki?m tra media còn ???c dùng (attachment, FK, gallery/phòng stay). */
+    public function mediaIsReferencedAnywhere(int $mediaId): bool
+    {
+        return $this->mediaIsReferenced($mediaId);
     }
 
     /** @return list<array{0: string, 1: string}> */

@@ -23,9 +23,10 @@ final class StayCrawlerMediaFolderMigrator
     public function __construct(private readonly MediaService $media) {}
 
     /**
+     * @param  (callable(array{moved: int, skipped: int, errors: int, projects: int, media_id?: int}): void)|null  $onProgress
      * @return array{moved: int, skipped: int, errors: int, projects: int}
      */
-    public function migrate(): array
+    public function migrate(?callable $onProgress = null): array
     {
         $stats = ['moved' => 0, 'skipped' => 0, 'errors' => 0, 'projects' => 0];
 
@@ -35,9 +36,9 @@ final class StayCrawlerMediaFolderMigrator
 
         $projects = Project::query()->orderBy('id')->get();
         foreach ($projects as $project) {
-            ProjectContext::run($project, function () use (&$stats): void {
+            ProjectContext::run($project, function () use (&$stats, $onProgress): void {
                 $stats['projects']++;
-                $this->migrateProject($stats);
+                $this->migrateProject($stats, $onProgress);
             });
         }
 
@@ -47,7 +48,7 @@ final class StayCrawlerMediaFolderMigrator
     }
 
     /** @param array{moved: int, skipped: int, errors: int, projects: int} $stats */
-    private function migrateProject(array &$stats): void
+    private function migrateProject(array &$stats, ?callable $onProgress = null): void
     {
         $projectId = ProjectContext::id();
         if ($projectId === null) {
@@ -80,6 +81,9 @@ final class StayCrawlerMediaFolderMigrator
                     $stats['moved']++;
                 } else {
                     $stats['skipped']++;
+                }
+                if ($onProgress !== null) {
+                    $onProgress(array_merge($stats, ['media_id' => (int) $media->id]));
                 }
             } catch (Throwable) {
                 $stats['errors']++;

@@ -28,6 +28,7 @@ use App\Models\TravelStyle;
 use App\Models\Project;
 use App\Models\SeoEntry;
 use App\Models\SeoEntryTranslation;
+use App\Services\MediaService;
 use App\Support\ProjectContext;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -68,7 +69,10 @@ final class LegacySoftDeletePurgeService
         ['table' => 'media', 'model' => Media::class, 'label' => 'Media'],
     ];
 
-    public function __construct(private readonly EntityPurgeService $purger) {}
+    public function __construct(
+        private readonly EntityPurgeService $purger,
+        private readonly MediaService $media,
+    ) {}
 
     /**
      * @return list<array{table: string, label: string, count: int}>
@@ -148,8 +152,12 @@ final class LegacySoftDeletePurgeService
                             }
 
                             try {
-                                $this->purger->purge($model);
-                                $purged++;
+                                if ($spec['table'] === 'media' && $model instanceof Media) {
+                                    $this->purgeLegacyMediaRow($model, $label, $purged, $skipped, $messages);
+                                } else {
+                                    $this->purger->purge($model);
+                                    $purged++;
+                                }
                             } catch (ValidationException $e) {
                                 $skipped++;
                                 $reason = collect($e->errors())->flatten()->first() ?: $e->getMessage();
@@ -230,6 +238,27 @@ final class LegacySoftDeletePurgeService
         }
 
         return $query;
+    }
+
+    /**
+     * Media legacy: chỉ xóa GCS khi thật sự mồ côi; nếu còn gallery/phòng → khôi phục deleted_at.
+     *
+     * @param  list<string>  $messages
+     */
+    private function purgeLegacyMediaRow(Media $media, string $label, int &$purged, int &$skipped, array &$messages): void
+    {
+        $mediaId = (int) $media->id;
+
+        if ($this->media->mediaIsReferencedAnywhere($mediaId)) {
+            $media->forceFill(['deleted_at' => null])->save();
+            $skipped++;
+            $messages[] = "{$label}: còn được dùng (gallery/phòng/attachment) — đã khôi phục, không xóa file.";
+
+            return;
+        }
+
+        $this->media->destroyMedia($media);
+        $purged++;
     }
 
     public function purgeOrphanSeoEntries(): int
