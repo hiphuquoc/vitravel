@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\CruiseType;
+use App\Support\CruiseTypeSlug;
 use App\Models\Faq;
 use App\Models\Language;
 use App\Models\Package;
@@ -22,7 +23,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class PackageApiController extends Controller
@@ -98,6 +98,7 @@ class PackageApiController extends Controller
                 'itineraryDays.translations',
                 'faqs.translations',
                 'cabinTypes.translations',
+                'cruiseType',
                 'mediaAttachments.media',
             ])
             ->findOrFail($id);
@@ -214,10 +215,15 @@ class PackageApiController extends Controller
         app()->setLocale($locale);
 
         if ($type === Package::TYPE_CRUISE && $request->filled('cruise_type')) {
-            $resolved = $this->resolveCruiseTypeSlug((string) $request->input('cruise_type'));
-            if ($resolved !== null) {
-                $request->merge(['cruise_type' => $resolved]);
+            $resolved = CruiseTypeSlug::resolve((string) $request->input('cruise_type'));
+            if ($resolved === null) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'cruise_type' => [
+                        'Loại du thuyền không hợp lệ. Chọn một mục có trong danh sách «Loại du thuyền» (slug phải tồn tại trong hệ thống).',
+                    ],
+                ]);
             }
+            $request->merge(['cruise_type' => $resolved]);
         }
 
         try {
@@ -270,12 +276,7 @@ class PackageApiController extends Controller
                 'travel_style_ids.*' => 'integer|exists:travel_styles,id',
                 'category_ids' => 'nullable|array',
                 'category_ids.*' => 'integer|exists:tour_categories,id',
-                'cruise_type' => [
-                    $type === Package::TYPE_CRUISE ? 'required' : 'nullable',
-                    'string',
-                    'max:64',
-                    Rule::exists(CruiseType::class, 'slug'),
-                ],
+                'cruise_type' => CruiseTypeSlug::packageRules($type === Package::TYPE_CRUISE),
                 'departure_port' => 'nullable|string|max:255',
                 'boat_class' => 'nullable|string|max:100',
                 'nights_on_board' => 'nullable|integer|min:0',
@@ -607,7 +608,10 @@ class PackageApiController extends Controller
             'currency' => $package->currency,
             'is_featured' => $package->is_featured,
             'is_hot_deal' => $package->is_hot_deal,
-            'cruise_type' => $package->cruise_type,
+            'cruise_type' => $package->cruiseType ? $package->cruise_type : null,
+            'cruise_type_invalid' => $package->cruise_type && ! $package->cruiseType
+                ? $package->cruise_type
+                : null,
             'cruise_type_name' => $package->relationLoaded('cruiseType')
                 ? ($package->cruiseType?->name)
                 : null,
@@ -648,7 +652,10 @@ class PackageApiController extends Controller
             'notes' => $this->arrayToLines($t?->notes),
             'sort' => $package->sort,
             'discount_badge' => $package->discount_badge,
-            'cruise_type' => $package->cruise_type,
+            'cruise_type' => $package->cruiseType ? $package->cruise_type : null,
+            'cruise_type_invalid' => $package->cruise_type && ! $package->cruiseType
+                ? $package->cruise_type
+                : null,
             'departure_port' => $package->departure_port,
             'boat_class' => $package->boat_class,
             'nights_on_board' => $package->nights_on_board,
@@ -698,28 +705,5 @@ class PackageApiController extends Controller
                     : ($package->review_count !== null ? (int) $package->review_count : null),
             ],
         ]);
-    }
-
-    /**
-     * AI / form có thể gửi tên loại thay vì slug. Map về slug của project hiện tại.
-     */
-    private function resolveCruiseTypeSlug(string $value): ?string
-    {
-        $value = trim($value);
-        if ($value === '') {
-            return null;
-        }
-
-        $lower = mb_strtolower($value);
-
-        $match = CruiseType::query()
-            ->get(['id', 'slug', 'name'])
-            ->first(function (CruiseType $type) use ($value, $lower) {
-                return $type->slug === $value
-                    || mb_strtolower($type->slug) === $lower
-                    || mb_strtolower(trim((string) $type->name)) === $lower;
-            });
-
-        return $match?->slug;
     }
 }

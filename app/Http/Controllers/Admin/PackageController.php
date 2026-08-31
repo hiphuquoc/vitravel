@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\Concerns\ManagesTranslations;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\CruiseType;
+use App\Support\CruiseTypeSlug;
 use App\Models\Faq;
 use App\Models\Language;
 use App\Models\Package;
@@ -170,9 +171,9 @@ class PackageController extends Controller
             'rating' => 'nullable|numeric|min:0|max:5',
             'review_count' => 'nullable|integer|min:0',
             'sort' => 'nullable|integer|min:0',
-            'cruise_type' => 'nullable|string|max:32',
+            'cruise_type' => CruiseTypeSlug::packageRules($type === Package::TYPE_CRUISE),
             'departure_port' => 'nullable|string|max:255',
-            'boat_class' => 'nullable|string|max:32',
+            'boat_class' => 'nullable|string|max:100',
             'nights_on_board' => 'nullable|integer|min:0',
             'title' => 'required|string|max:255',
             'start_location' => 'nullable|string|max:255',
