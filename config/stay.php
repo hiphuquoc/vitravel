@@ -192,8 +192,8 @@ return [
      * Docs: docs/16-accommodation-stays.md
      */
     'crawl' => [
-        /** Cụm service được phép cào từ Booking (danh mục + importer). */
-        'crawlable_clusters' => ['stay', 'experience'],
+        /** Cụm service được phép cào từ Booking (khách sạn, du thuyền cabin — cluster stay). */
+        'crawlable_clusters' => ['stay'],
         'user_agent' => env('STAY_CRAWL_UA', 'ViTravelStayBot/1.0 (+https://vitravel.dev/bot; research import)'),
         'timeout' => (int) env('STAY_CRAWL_TIMEOUT', 35),
         /** Nghỉ giữa các request HTTP fallback / lịch sự với Booking (ms). */

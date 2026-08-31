@@ -106,6 +106,9 @@ final class DetailProgramEnrichService
             $filtered = $this->normalizeStructuredLists($filtered, $context);
             $filtered = $this->stripWebSearchCitations($filtered);
             $filtered = $this->sanitizeForAdminSave($filtered);
+            if ($stage === self::STAGE_META) {
+                $filtered = SeoPromptRules::normalizeMetaFields($filtered);
+            }
             $filtered = array_intersect_key($filtered, array_flip($allowed));
 
             if ($stage === self::STAGE_FAQ && empty($filtered['faqs'])) {
@@ -188,13 +191,14 @@ final class DetailProgramEnrichService
 
         return match ($stage) {
             self::STAGE_META => $isService
-                ? ['title', 'summary', 'location_label', 'seo_slug', 'seo_title', 'seo_description']
+                ? ['title', 'summary', 'location_label', 'seo_slug', 'seo_title', 'seo_description', 'rating_aggregate_star', 'rating_aggregate_count']
                 : [
                     'title', 'summary', 'highlights_intro',
                     'featured_quote_text', 'featured_quote_author',
                     'places_to_visit', 'start_location', 'end_location',
                     'departure_port', 'boat_class',
                     'seo_slug', 'seo_title', 'seo_description',
+                    'rating_aggregate_star', 'rating_aggregate_count',
                 ],
             self::STAGE_CONTENT => $isService
                 ? ['content', 'highlights', 'inclusions', 'exclusions', 'notes']
@@ -226,6 +230,8 @@ final class DetailProgramEnrichService
         $isService = in_array($entityType, ['service', 'service_product'], true);
         $seoTitle = SeoPromptRules::schemaTitleJsonHint();
         $seoDesc = SeoPromptRules::schemaDescriptionJsonHint();
+        $seoSlug = SeoPromptRules::schemaSlugJsonHint();
+        $seoRating = SeoPromptRules::schemaRatingJsonHint();
 
         if ($stage === self::STAGE_META) {
             if ($isService) {
@@ -235,9 +241,10 @@ Chỉ các key sau (service):
   "title": "string",
   "summary": "string (2–4 câu)",
   "location_label": "string",
-  "seo_slug": "string",
+  {$seoSlug},
   {$seoTitle},
-  {$seoDesc}
+  {$seoDesc},
+  {$seoRating}
 }
 CẤM content, highlights, inclusions, faqs.
 TXT;
@@ -256,9 +263,10 @@ Chỉ các key sau (tour / cruise):
   "end_location": "string",
   "departure_port": "string (cruise)",
   "boat_class": "string (cruise)",
-  "seo_slug": "string",
+  {$seoSlug},
   {$seoTitle},
-  {$seoDesc}
+  {$seoDesc},
+  {$seoRating}
 }
 CẤM itinerary, faqs, highlight_bullets, inclusions/exclusions/notes.
 TXT;

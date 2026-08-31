@@ -230,7 +230,9 @@ Chỉ các key:
   "subtitle": "1–3 câu, PLAIN TEXT — cấm HTML",
   "seo_title": "{nội dung 65–85 ký tự} | {{brand}}",
   "seo_description": "200–350 ký tự, plain text, chi tiết + CTR",
-  "seo_slug": "Latin, dấu gạch ngang"
+  "seo_slug": "Latin 35–90 ký tự, bám seo_title, dấu `-`",
+  "rating_aggregate_star": "number 4.7–4.9",
+  "rating_aggregate_count": "integer 200–3000"
 }
 CẤM seo_body, faqs.{$extra}
 TXT;
@@ -275,6 +277,16 @@ TXT;
                     $out[$key] = trim($val);
                 }
             }
+            foreach (['rating_aggregate_star', 'rating_aggregate_count'] as $key) {
+                if (! array_key_exists($key, $fields)) {
+                    continue;
+                }
+                $val = $fields[$key];
+                if (is_numeric($val)) {
+                    $out[$key] = $val;
+                }
+            }
+            $out = SeoPromptRules::normalizeMetaFields($out);
         } elseif ($stage === self::STAGE_BODY) {
             $val = $fields['seo_body'] ?? null;
             if (is_string($val) && trim($val) !== '') {

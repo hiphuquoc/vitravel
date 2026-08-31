@@ -96,6 +96,9 @@ final class StayEnrichService
             $filtered = array_intersect_key($filtered, array_flip($allowed));
             $filtered = $this->stripWebSearchCitations($filtered);
             $filtered = $this->sanitize($filtered, $stage);
+            if ($stage === self::STAGE_META) {
+                $filtered = SeoPromptRules::normalizeMetaFields($filtered);
+            }
 
             if ($stage === self::STAGE_FAQ && empty($filtered['faqs'])) {
                 throw new RuntimeException('AI không trả FAQ (faqs). Thử chạy lại luồng FAQ.');
@@ -228,6 +231,7 @@ final class StayEnrichService
             self::STAGE_META => [
                 'title', 'summary', 'location_label', 'featured_quote_text', 'featured_quote_author',
                 'seo_slug', 'seo_title', 'seo_description',
+                'rating_aggregate_star', 'rating_aggregate_count',
             ],
             self::STAGE_PROPERTY => [
                 'content',
@@ -255,6 +259,8 @@ final class StayEnrichService
     {
         $seoTitle = SeoPromptRules::schemaTitleJsonHint();
         $seoDesc = SeoPromptRules::schemaDescriptionJsonHint();
+        $seoSlug = SeoPromptRules::schemaSlugJsonHint();
+        $seoRating = SeoPromptRules::schemaRatingJsonHint();
 
         if ($stage === self::STAGE_META) {
             return <<<TXT
@@ -265,9 +271,10 @@ Chỉ các key:
   "location_label": "string — địa chỉ / khu vực cụ thể",
   "featured_quote_text": "string ≤ 255",
   "featured_quote_author": "string",
-  "seo_slug": "string",
+  {$seoSlug},
   {$seoTitle},
-  {$seoDesc}
+  {$seoDesc},
+  {$seoRating}
 }
 CẤM content, faqs, options, attrs, amenities.
 TXT;

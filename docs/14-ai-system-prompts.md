@@ -124,7 +124,7 @@ Ví dụ body (luồng meta):
 
 Luồng `body`/`faq` gửi thêm `fields` (subtitle, seo_* đã có trên form). Form listing chưa có UI FAQ thì FAQ chỉ nằm trong state (toast nhắc).
 
-**Quy tắc SEO (meta):** giống enrich chương trình — `SeoPromptRules`.
+**Quy tắc SEO (meta):** `SeoPromptRules` — title 65–85 ký tự + brand, description 200–350, slug 35–90 bám title, rating 4.7–4.9 / 200–3000 review. Bối cảnh dự án: **Cài đặt → Bối cảnh AI** (`projects.config.ai_brief`, tối đa 5000 ký tự).
 
 ## Quản lý UI
 

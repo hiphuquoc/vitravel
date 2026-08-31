@@ -17,9 +17,9 @@ return [
     'name' => 'Trang listing — tiêu đề + SEO',
     'category' => 'enrich',
     'description' => 'Từ tiêu đề trang listing: chỉnh H1, subtitle (plain), seo_title / description / slug. Không viết seo_body hay FAQ.',
-    'version' => 2,
+    'version' => 3,
     'variables' => [
-        'brand', 'project_code', 'locale', 'entity_type', 'hub_key', 'page_kind',
+        'brand', 'project_code', 'project_brief', 'locale', 'entity_type', 'hub_key', 'page_kind',
         'context_json', 'schema_hint', 'extra_instructions',
     ],
     'entity_types' => ['listing_hub', 'country', 'tour_category', 'cruise_type', 'service_category'],
@@ -42,9 +42,10 @@ CHỈ nhận title. Tự research (web search) điểm đến / chủ đề / US
 ═══ NỘI DUNG ═══
 1) title — H1: giữ ý tiêu đề; chỉnh nhẹ cho tự nhiên / SEO, không đổi chủ đề.
 2) subtitle — 1–3 câu dưới H1: hook + phạm vi danh mục. **Plain text** (CẤM HTML).
-3) seo_slug — Latin ngắn, dấu `-`.
+3) seo_slug — Latin, bám seo_title (xem quy tắc SEO).
 
 PROMPT
+    .SeoPromptRules::projectBriefBlock()
     .SeoPromptRules::promptBlock()
     .<<<'PROMPT'
 

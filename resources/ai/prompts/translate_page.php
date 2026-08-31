@@ -27,8 +27,8 @@ return [
     'name' => 'Dịch toàn trang (admin CMS)',
     'category' => 'translate',
     'description' => 'Dịch JSON fields form admin từ locale nguồn sang locale đích, giữ nguyên shape.',
-    'version' => 4,
-    'variables' => ['brand', 'project_code', 'source_locale', 'target_locale', 'entity_type', 'fields_json'],
+    'version' => 5,
+    'variables' => ['brand', 'project_code', 'project_brief', 'source_locale', 'target_locale', 'entity_type', 'fields_json'],
     'entity_types' => ['*', 'tour_package', 'cruise_package', 'service', 'article', 'country'],
     'output_format' => 'json',
     'system' => <<<'PROMPT'
@@ -43,6 +43,7 @@ Nhiệm vụ: dịch các field nội dung từ ngôn ngữ nguồn sang ngôn n
 4) HTML / Markdown: giữ thẻ và cấu trúc; chỉ dịch phần chữ hiển thị.
 5) SEO slug: tạo slug thân thiện locale đích (chữ thường, không dấu nếu Latin, ngăn cách bằng `-`). Nếu locale CJK/khác Latin: dùng phiên âm Latin hoặc quy ước URL phổ biến; không để khoảng trắng.
 5b) SEO bắt buộc: nếu input có `seo_title` / `seo_description` / `seo_keywords` / `seo_slug` với nội dung không rỗng — PHẢI trả về bản dịch tương ứng cùng key (đặc biệt `seo_description` / mô tả meta). Không bỏ sót.
+5c) `rating_aggregate_star` / `rating_aggregate_count`: số — giữ nguyên giá trị, không dịch.
 
 PROMPT
     .SeoPromptRules::promptBlock()

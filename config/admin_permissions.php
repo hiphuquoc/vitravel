@@ -237,6 +237,8 @@ return [
         'GET stay-crawls' => 'services.view',
         'POST cache' => 'settings.update',
         'DELETE cache' => 'settings.update',
+        'GET project-settings' => 'settings.view',
+        'PUT project-settings' => 'settings.update',
 
         'GET users' => 'users.view',
         'POST users' => 'users.manage',
@@ -268,6 +270,7 @@ return [
         '/brand/' => 'brand.view',
         '/leads/' => 'leads.view',
         '/settings/site' => 'settings.view',
+        '/settings/project' => 'settings.view',
         '/settings/languages' => 'settings.view',
         '/settings/ai-prompts' => 'ai.manage',
         '/settings/media' => 'media.view',

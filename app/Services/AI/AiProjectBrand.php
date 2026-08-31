@@ -8,12 +8,12 @@ use App\Models\CompanyProfile;
 use App\Support\ProjectContext;
 
 /**
- * Thương hiệu / project code cho prompt AI — theo ProjectContext admin hiện tại.
+ * Thương hiệu / project code / bối cảnh AI cho prompt — theo ProjectContext admin hiện tại.
  */
 final class AiProjectBrand
 {
     /**
-     * @return array{brand: string, project_code: string}
+     * @return array{brand: string, project_code: string, project_brief: string}
      */
     public static function vars(): array
     {
@@ -34,6 +34,15 @@ final class AiProjectBrand
         return [
             'brand' => $brand,
             'project_code' => $code,
+            'project_brief' => SeoPromptRules::clipProjectBrief(self::briefRaw()),
         ];
+    }
+
+    public static function briefRaw(): string
+    {
+        $project = ProjectContext::get();
+        $config = is_array($project?->config) ? $project->config : [];
+
+        return trim((string) ($config['ai_brief'] ?? ''));
     }
 }

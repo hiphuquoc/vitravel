@@ -588,18 +588,18 @@ final class StayCrawlService
     /** @return list<string> */
     public static function crawlableClusters(): array
     {
-        $clusters = config('stay.crawl.crawlable_clusters', ['stay', 'experience']);
+        $clusters = config('stay.crawl.crawlable_clusters', ['stay']);
 
         return is_array($clusters)
             ? array_values(array_filter(array_map('strval', $clusters)))
-            : ['stay', 'experience'];
+            : ['stay'];
     }
 
     public function requireCrawlableCategory(int $categoryId): ServiceCategory
     {
         $category = ServiceCategory::query()->find($categoryId);
         if (! $category || ! in_array($category->cluster, self::crawlableClusters(), true)) {
-            throw new RuntimeException('Chỉ khởi chạy crawler từ danh mục lưu trú hoặc trải nghiệm/du thuyền (cluster stay, experience).');
+            throw new RuntimeException('Chỉ khởi chạy crawler từ danh mục lưu trú (cluster stay — khách sạn, du thuyền trên Booking).');
         }
 
         return $category;

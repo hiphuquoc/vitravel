@@ -9,8 +9,8 @@ return [
     'name' => 'Lưu trú — thông tin + SEO',
     'category' => 'enrich',
     'description' => 'Từ tên chỗ nghỉ: summary, vị trí, quote, meta SEO. Không viết giới thiệu dài / phòng / FAQ.',
-    'version' => 2,
-    'variables' => ['brand', 'project_code', 'locale', 'fields_json', 'schema_hint', 'extra_instructions'],
+    'version' => 3,
+    'variables' => ['brand', 'project_code', 'project_brief', 'locale', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['accommodation_stay'],
     'output_format' => 'json',
     'system' => <<<'PROMPT'
@@ -22,6 +22,7 @@ Nhiệm vụ: viết khối **meta lưu trú** — CHỈ từ title input. Khôn
 - featured_quote: cảm nhận khách (không bịa số sao review).
 
 PROMPT
+    .SeoPromptRules::projectBriefBlock()
     .SeoPromptRules::promptBlock()
     .<<<'PROMPT'
 

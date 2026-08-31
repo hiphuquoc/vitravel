@@ -73,6 +73,8 @@ Route::prefix('v1/admin')->group(function () {
         Route::get('/projects/{id}', [ProjectApiController::class, 'show'])->whereNumber('id');
 
         Route::middleware([ResolveAdminProject::class, AuthorizeAdminPermission::class])->group(function () {
+            Route::get('/project-settings', [ProjectApiController::class, 'settings']);
+            Route::put('/project-settings', [ProjectApiController::class, 'updateSettings']);
             Route::get('/users/meta', [UserApiController::class, 'meta']);
             Route::get('/users', [UserApiController::class, 'index']);
             Route::post('/users', [UserApiController::class, 'store']);

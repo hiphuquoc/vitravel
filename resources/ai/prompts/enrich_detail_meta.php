@@ -16,8 +16,8 @@ return [
     'name' => 'Chương trình chi tiết — thông tin bài + SEO',
     'category' => 'enrich',
     'description' => 'Từ tiêu đề thôi: tóm tắt, điểm đến, vị trí, quote, meta SEO. Không viết lịch trình / nội dung dài / FAQ.',
-    'version' => 2,
-    'variables' => ['brand', 'project_code', 'locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
+    'version' => 3,
+    'variables' => ['brand', 'project_code', 'project_brief', 'locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
     'system' => <<<'PROMPT'
@@ -45,6 +45,7 @@ Bạn CHỈ nhận **title** trong context JSON (biên tập có thể vừa s�
 - title: giữ đúng ý tiêu đề input; chỉ chỉnh nhẹ chính tả / SEO, không đổi chủ đề.
 
 PROMPT
+    .SeoPromptRules::projectBriefBlock()
     .SeoPromptRules::promptBlock()
     .<<<'PROMPT'
 
