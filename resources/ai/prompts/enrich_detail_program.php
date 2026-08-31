@@ -108,7 +108,7 @@ Số ngày = duration_days nếu có.
 
 ═══ SEO / UNIQUE ═══
 - Mỗi ngày một góc kể chuyện khác (không lặp cấu trúc câu/mở bài).
-- seo_title ≤ ~60 ký tự ý; seo_description ≤ ~155–160, có điểm đến + USP; seo_slug Latin, `-`.
+- seo_title: `{nội dung 65–85 ký tự} | {{brand}}`; seo_description: 200–350 ký tự chi tiết + CTR; seo_slug Latin, `-`.
 - highlight_bullets / places_to_visit: cụ thể, mỗi dòng một ý; ưu tiên tên địa danh thật.
 
 ═══ SERVICE (nếu entity service) ═══

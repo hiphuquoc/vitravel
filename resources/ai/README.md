@@ -37,3 +37,5 @@ Thư mục seed **file** cho system prompt. Runtime ưu tiên đọc bảng `ai_
 | `enrich_stay_faq` | enrich | Lưu trú — FAQ |
 
 Chi tiết sản phẩm: [`docs/14-ai-system-prompts.md`](../../docs/14-ai-system-prompts.md).
+
+Quy tắc SEO thống nhất (title/description): `app/Services/AI/SeoPromptRules.php` — được chèn vào prompt `*_meta`, `translate_page`, `crawl_stay_extract`.

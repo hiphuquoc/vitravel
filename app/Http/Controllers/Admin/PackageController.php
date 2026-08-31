@@ -183,7 +183,7 @@ class PackageController extends Controller
             'featured_quote_author' => 'nullable|string|max:255',
             'seo_slug' => 'nullable|string|max:191',
             'seo_title' => 'nullable|string|max:255',
-            'seo_description' => 'nullable|string|max:320',
+            'seo_description' => 'nullable|string|max:350',
             'seo_keywords' => 'nullable|string|max:500',
             'seo_parent_id' => 'nullable|integer|exists:seo_entries,id',
             'travel_style_ids' => 'nullable|array',

@@ -253,8 +253,11 @@ final class StayEnrichService
 
     private function schemaHintFor(string $stage): string
     {
+        $seoTitle = SeoPromptRules::schemaTitleJsonHint();
+        $seoDesc = SeoPromptRules::schemaDescriptionJsonHint();
+
         if ($stage === self::STAGE_META) {
-            return <<<'TXT'
+            return <<<TXT
 Chỉ các key:
 {
   "title": "string",
@@ -263,8 +266,8 @@ Chỉ các key:
   "featured_quote_text": "string ≤ 255",
   "featured_quote_author": "string",
   "seo_slug": "string",
-  "seo_title": "string ≤ ~60",
-  "seo_description": "string ≤ ~160"
+  {$seoTitle},
+  {$seoDesc}
 }
 CẤM content, faqs, options, attrs, amenities.
 TXT;
@@ -347,7 +350,7 @@ TXT;
             }
         }
         if (isset($fields['seo_description']) && is_string($fields['seo_description'])) {
-            $fields['seo_description'] = mb_substr(trim($fields['seo_description']), 0, 320);
+            $fields['seo_description'] = mb_substr(trim($fields['seo_description']), 0, SeoPromptRules::DESCRIPTION_MAX);
         }
         if (isset($fields['content']) && is_string($fields['content'])) {
             $fields['content'] = trim($fields['content']);

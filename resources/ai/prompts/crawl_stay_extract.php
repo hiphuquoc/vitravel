@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Services\AI\SeoPromptRules;
+
 return [
     'key' => 'crawl_stay_extract',
     'name' => 'Crawler lưu trú — HTML → schema stay',
     'category' => 'crawl',
     'description' => 'Từ khung HTML Booking.com (đã lọc) trả JSON đúng schema chỗ nghỉ. Giữ tiện ích/số liệu; viết lại copy marketing.',
-    'version' => 1,
+    'version' => 2,
     'variables' => ['brand', 'project_code', 'locale', 'source_url', 'extracted_html', 'raw_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['accommodation_stay'],
     'output_format' => 'json',
@@ -35,7 +37,10 @@ Bạn là biên tập chỗ nghỉ của «{{brand}}». Nhiệm vụ: đọc HTM
 - highlights USP (6–10 ý) — **không thêm tiện ích không có trong nguồn**
 - options[].description — hấp dẫn, không bịa amenity
 - faqs (5–8) — trả lời dựa trên chính sách nguồn; không bịa hoàn tiền
-- seo_title (≤60), seo_description (≤160), seo_slug
+
+PROMPT
+    .SeoPromptRules::promptBlock()
+    .<<<'PROMPT'
 
 ## CẤM
 - inclusions / exclusions / notes / bảng giá chi tiết / inventory realtime

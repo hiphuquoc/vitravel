@@ -228,8 +228,8 @@ Chỉ các key:
 {
   "title": "H1 — giữ ý tiêu đề input",
   "subtitle": "1–3 câu, PLAIN TEXT — cấm HTML",
-  "seo_title": "≤ ~60 ký tự",
-  "seo_description": "≤ ~155–160 ký tự",
+  "seo_title": "{nội dung 65–85 ký tự} | {{brand}}",
+  "seo_description": "200–350 ký tự, plain text, chi tiết + CTR",
   "seo_slug": "Latin, dấu gạch ngang"
 }
 CẤM seo_body, faqs.{$extra}

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Services\AI\SeoPromptRules;
+
 /**
  * Prompt: thông tin bài + SEO chương trình chi tiết (chỉ nhận tiêu đề).
  *
@@ -14,7 +16,7 @@ return [
     'name' => 'Chương trình chi tiết — thông tin bài + SEO',
     'category' => 'enrich',
     'description' => 'Từ tiêu đề thôi: tóm tắt, điểm đến, vị trí, quote, meta SEO. Không viết lịch trình / nội dung dài / FAQ.',
-    'version' => 1,
+    'version' => 2,
     'variables' => ['brand', 'project_code', 'locale', 'entity_type', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['tour_package', 'cruise_package', 'service', 'service_product'],
     'output_format' => 'json',
@@ -40,8 +42,11 @@ Bạn CHỈ nhận **title** trong context JSON (biên tập có thể vừa s�
 - places_to_visit: mỗi địa danh thật một dòng (không generic).
 - start_location / end_location (tour); departure_port / boat_class (cruise); location_label (service).
 - featured_quote_text + featured_quote_author: 1 câu cảm nhận khách (author dạng "Khách {{brand}}" hoặc tên + quốc tịch hợp lý, không bịa review giả chi tiết).
-- seo_title ≤ ~60 ký tự; seo_description ≤ ~155–160; seo_slug Latin, dấu `-`, ngắn.
 - title: giữ đúng ý tiêu đề input; chỉ chỉnh nhẹ chính tả / SEO, không đổi chủ đề.
+
+PROMPT
+    .SeoPromptRules::promptBlock()
+    .<<<'PROMPT'
 
 Locale: {{locale}}. Giọng Việt (nếu vi): tin cậy, giàu cảm xúc, không spam từ khóa.
 

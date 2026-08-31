@@ -86,6 +86,8 @@ Ví dụ body (luồng nội dung):
 
 Luồng `meta` chỉ cần `{ "title": "…" }`. Admin UI: chọn luồng trên modal xác nhận.
 
+**Quy tắc SEO (meta):** `seo_title` = `{nội dung 65–85 ký tự} | {{brand}}` (em dash `—` trong nội dung nếu cần); `seo_description` = 200–350 ký tự, chi tiết + CTR. Xem `App\Services\AI\SeoPromptRules`.
+
 ## Enrich trang listing (hub / country / chủ đề / cruise type / service category)
 
 Cùng pattern 3 luồng (prompt riêng, `schema_hint` tuỳ `entity_type`):
@@ -121,6 +123,8 @@ Ví dụ body (luồng meta):
 ```
 
 Luồng `body`/`faq` gửi thêm `fields` (subtitle, seo_* đã có trên form). Form listing chưa có UI FAQ thì FAQ chỉ nằm trong state (toast nhắc).
+
+**Quy tắc SEO (meta):** giống enrich chương trình — `SeoPromptRules`.
 
 ## Quản lý UI
 

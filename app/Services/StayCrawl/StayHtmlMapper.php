@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\StayCrawl;
 
+use App\Services\AI\SeoPromptRules;
 use App\Support\StayBookingUrl;
 use App\Support\StayFacilities;
 use App\Support\StaySeed;
@@ -102,7 +103,7 @@ final class StayHtmlMapper
             'review_count' => $reviews['count'],
             'seo_slug' => $slug,
             'seo_title' => $title,
-            'seo_description' => Str::limit(strip_tags($summary), 160, ''),
+            'seo_description' => Str::limit(strip_tags($summary), SeoPromptRules::DESCRIPTION_MAX, ''),
             'attrs' => $attrs,
             'options' => $rooms,
             'faqs' => [],

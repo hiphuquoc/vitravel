@@ -224,24 +224,26 @@ final class DetailProgramEnrichService
     private function schemaHintFor(string $entityType, string $stage): string
     {
         $isService = in_array($entityType, ['service', 'service_product'], true);
+        $seoTitle = SeoPromptRules::schemaTitleJsonHint();
+        $seoDesc = SeoPromptRules::schemaDescriptionJsonHint();
 
         if ($stage === self::STAGE_META) {
             if ($isService) {
-                return <<<'TXT'
+                return <<<TXT
 Chỉ các key sau (service):
 {
   "title": "string",
   "summary": "string (2–4 câu)",
   "location_label": "string",
   "seo_slug": "string",
-  "seo_title": "string ≤ ~60",
-  "seo_description": "string ≤ ~160"
+  {$seoTitle},
+  {$seoDesc}
 }
 CẤM content, highlights, inclusions, faqs.
 TXT;
             }
 
-            return <<<'TXT'
+            return <<<TXT
 Chỉ các key sau (tour / cruise):
 {
   "title": "string",
@@ -255,8 +257,8 @@ Chỉ các key sau (tour / cruise):
   "departure_port": "string (cruise)",
   "boat_class": "string (cruise)",
   "seo_slug": "string",
-  "seo_title": "string ≤ ~60",
-  "seo_description": "string ≤ ~160"
+  {$seoTitle},
+  {$seoDesc}
 }
 CẤM itinerary, faqs, highlight_bullets, inclusions/exclusions/notes.
 TXT;
@@ -525,7 +527,7 @@ TXT;
             'end_location' => 255,
             'location_label' => 255,
             'seo_title' => 255,
-            'seo_description' => 320,
+            'seo_description' => SeoPromptRules::DESCRIPTION_MAX,
             'seo_slug' => 191,
             'discount_badge' => 100,
         ];

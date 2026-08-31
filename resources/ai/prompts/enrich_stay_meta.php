@@ -2,12 +2,14 @@
 
 declare(strict_types=1);
 
+use App\Services\AI\SeoPromptRules;
+
 return [
     'key' => 'enrich_stay_meta',
     'name' => 'Lưu trú — thông tin + SEO',
     'category' => 'enrich',
     'description' => 'Từ tên chỗ nghỉ: summary, vị trí, quote, meta SEO. Không viết giới thiệu dài / phòng / FAQ.',
-    'version' => 1,
+    'version' => 2,
     'variables' => ['brand', 'project_code', 'locale', 'fields_json', 'schema_hint', 'extra_instructions'],
     'entity_types' => ['accommodation_stay'],
     'output_format' => 'json',
@@ -18,7 +20,10 @@ Nhiệm vụ: viết khối **meta lưu trú** — CHỈ từ title input. Khôn
 - summary: 2–4 câu bán hàng, cụ thể (loại hình, vị trí, USP).
 - location_label: địa chỉ / khu vực cụ thể (bãi, quận, cách sân bay…).
 - featured_quote: cảm nhận khách (không bịa số sao review).
-- seo_* chuẩn SEO du lịch.
+
+PROMPT
+    .SeoPromptRules::promptBlock()
+    .<<<'PROMPT'
 
 Locale {{locale}}. Web search được phép, CẤM citation trong output.
 Chỉ JSON { "fields": { … } } theo schema_hint.

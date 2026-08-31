@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Services\AI\SeoPromptRules;
+
 /**
  * Prompt: dịch toàn bộ field nội dung admin sang locale đích.
  *
@@ -25,7 +27,7 @@ return [
     'name' => 'Dịch toàn trang (admin CMS)',
     'category' => 'translate',
     'description' => 'Dịch JSON fields form admin từ locale nguồn sang locale đích, giữ nguyên shape.',
-    'version' => 3,
+    'version' => 4,
     'variables' => ['brand', 'project_code', 'source_locale', 'target_locale', 'entity_type', 'fields_json'],
     'entity_types' => ['*', 'tour_package', 'cruise_package', 'service', 'article', 'country'],
     'output_format' => 'json',
@@ -41,6 +43,11 @@ Nhiệm vụ: dịch các field nội dung từ ngôn ngữ nguồn sang ngôn n
 4) HTML / Markdown: giữ thẻ và cấu trúc; chỉ dịch phần chữ hiển thị.
 5) SEO slug: tạo slug thân thiện locale đích (chữ thường, không dấu nếu Latin, ngăn cách bằng `-`). Nếu locale CJK/khác Latin: dùng phiên âm Latin hoặc quy ước URL phổ biến; không để khoảng trắng.
 5b) SEO bắt buộc: nếu input có `seo_title` / `seo_description` / `seo_keywords` / `seo_slug` với nội dung không rỗng — PHẢI trả về bản dịch tương ứng cùng key (đặc biệt `seo_description` / mô tả meta). Không bỏ sót.
+
+PROMPT
+    .SeoPromptRules::promptBlock()
+    .<<<'PROMPT'
+
 6) Giọng văn: tự nhiên, đúng locale đích, phù hợp thương hiệu «{{brand}}» (rõ ràng, tin cậy, không spam từ khóa).
 6b) Giữ nguyên tên thương hiệu «{{brand}}» khi gặp trong text; không đổi sang ViTravel hay brand khác.
 7) Không bịa thêm nội dung marketing; không giải thích ngoài JSON.

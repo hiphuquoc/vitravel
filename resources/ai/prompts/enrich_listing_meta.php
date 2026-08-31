@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Services\AI\SeoPromptRules;
+
 /**
  * Prompt: listing — H1 / subtitle / meta SEO (chỉ nhận tiêu đề).
  *
@@ -15,7 +17,7 @@ return [
     'name' => 'Trang listing — tiêu đề + SEO',
     'category' => 'enrich',
     'description' => 'Từ tiêu đề trang listing: chỉnh H1, subtitle (plain), seo_title / description / slug. Không viết seo_body hay FAQ.',
-    'version' => 1,
+    'version' => 2,
     'variables' => [
         'brand', 'project_code', 'locale', 'entity_type', 'hub_key', 'page_kind',
         'context_json', 'schema_hint', 'extra_instructions',
@@ -40,8 +42,11 @@ CHỈ nhận title. Tự research (web search) điểm đến / chủ đề / US
 ═══ NỘI DUNG ═══
 1) title — H1: giữ ý tiêu đề; chỉnh nhẹ cho tự nhiên / SEO, không đổi chủ đề.
 2) subtitle — 1–3 câu dưới H1: hook + phạm vi danh mục. **Plain text** (CẤM HTML).
-3) seo_title ≤ ~60 ký tự; seo_description ≤ ~155–160 (điểm đến/chủ đề + USP «{{brand}}»).
-4) seo_slug — Latin ngắn, dấu `-`.
+3) seo_slug — Latin ngắn, dấu `-`.
+
+PROMPT
+    .SeoPromptRules::promptBlock()
+    .<<<'PROMPT'
 
 Locale: {{locale}}.
 

@@ -141,7 +141,7 @@ class CruiseTypeApiController extends Controller
                 'is_active' => 'nullable|boolean',
                 'seo_slug' => 'nullable|string|max:191',
                 'seo_title' => 'nullable|string|max:255',
-                'seo_description' => 'nullable|string|max:320',
+                'seo_description' => 'nullable|string|max:350',
                 'seo_parent_id' => 'nullable|integer|exists:seo_entries,id',
                 'rating_aggregate_star' => 'nullable|numeric|min:0|max:5',
                 'rating_aggregate_count' => 'nullable|integer|min:0',
