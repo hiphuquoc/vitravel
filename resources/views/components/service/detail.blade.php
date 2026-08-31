@@ -98,6 +98,8 @@
     :breadcrumbs="$breadcrumbs"
     :rating="$service['rating'] ?? null"
     :review-count="$service['reviewCount'] ?? 0"
+    entity-type="service"
+    :entity-id="$service['id'] ?? null"
 />
 
 <div @class(['detail-body', 'detail-body--plain' => count($tabs) < 2]) @if (count($sectionIds) > 1) x-data="scrollSpy(@js($sectionIds))" @endif>

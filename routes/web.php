@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\DetailGalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ListingController;
@@ -74,6 +75,8 @@ Route::prefix('api/listings')->name('api.listings.')->group(function () {
     Route::get('/featured-support', [ListingController::class, 'featuredSupport'])->name('featured-support');
     Route::get('/related', [ListingController::class, 'related'])->name('related');
 });
+
+Route::get('/api/detail-gallery', DetailGalleryController::class)->name('api.detail-gallery');
 
 // ── Lead forms ───────────────────────────────────────────────────────────
 Route::post('/leads/quick-inquiry', [LeadController::class, 'storeQuickInquiry'])->name('leads.quick-inquiry');

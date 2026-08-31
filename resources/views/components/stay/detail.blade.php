@@ -100,6 +100,8 @@
     :star-rating="$service['starRating'] ?? null"
     :location="$address"
     :thumb-slots="4"
+    entity-type="service"
+    :entity-id="$service['id'] ?? null"
 />
 
 <div @class(['detail-body', 'detail-body--plain' => count($tabs) < 2]) @if (count($sectionIds) > 1) x-data="scrollSpy(@js($sectionIds))" @endif>

@@ -10,6 +10,15 @@ return [
     /** Số ảnh seed vào Alpine lightbox trên trang chi tiết (tránh HTML JSON quá lớn). */
     'detail_lightbox_seed' => (int) env('STAY_DETAIL_LIGHTBOX_SEED', 20),
 
+    /** Gallery chi tiết — lazy-load qua /api/detail-gallery (drawer + viewer). */
+    'detail_gallery' => [
+        'batch_size' => (int) env('STAY_DETAIL_GALLERY_BATCH', 24),
+        /** Khoảng prefetch trước cuối drawer (px) — cân bằng mượt scroll vs tải mạng. */
+        'prefetch_margin_px' => (int) env('STAY_DETAIL_GALLERY_PREFETCH_PX', 900),
+        /** Prefetch khi viewer còn N ảnh tới cuối danh sách đã tải. */
+        'viewer_prefetch_ahead' => (int) env('STAY_DETAIL_GALLERY_VIEWER_AHEAD', 8),
+    ],
+
     'property_types' => [
         'hotel' => 'Khách sạn',
         'resort' => 'Resort',

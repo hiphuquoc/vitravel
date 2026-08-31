@@ -333,86 +333,257 @@ Alpine.data('demoForm', () => ({
 
 /**
  * Lightbox xem full media (video / ảnh) — dùng chung home showcase + trang thư viện.
+ * Hỗ trợ lazy-load gallery chi tiết qua fetch (cùng pattern IntersectionObserver với listing).
  */
-const mediaLightboxFactory = (items = []) => ({
-    items,
-    playlist: [],
-    drawerOpen: false,
-    viewerActive: null,
-    active: null,
-    get activeItem() {
-        return this.viewerActive === null ? null : this.items[this.viewerActive] ?? null;
-    },
-    get activeLabel() {
-        if (this.viewerActive === null || ! this.items.length) return '';
-        const n = String(this.viewerActive + 1).padStart(2, '0');
-        const total = String(this.items.length).padStart(2, '0');
+const mediaLightboxFactory = (input = []) => {
+    const config = Array.isArray(input) ? { items: input } : (input || {});
+    const seedItems = config.items ?? [];
 
-        return `${n} / ${total}`;
-    },
-    // Trả về danh sách thumbnail có cửa sổ trượt căn giữa xung quanh active item (Windowed Thumbnails)
-    get visibleThumbnails() {
-        if (! this.items.length) return [];
-        const total = this.items.length;
-        const current = this.viewerActive ?? 0;
-        const windowSize = 13; // Hiển thị 13 ảnh thumbnail kích thước gọn gàng
-        const half = Math.floor(windowSize / 2);
-        
-        let start = Math.max(0, current - half);
-        let end = Math.min(total, start + windowSize);
-        if (end - start < windowSize) {
-            start = Math.max(0, end - windowSize);
-        }
-        
-        const result = [];
-        for (let i = start; i < end; i++) {
-            result.push({
-                index: i,
-                item: this.items[i],
-                isActive: i === current
+    return {
+        items: seedItems,
+        galleryTotal: config.total ?? seedItems.length,
+        fetchUrl: config.fetchUrl ?? null,
+        entity: config.entity ?? null,
+        entityId: config.entityId ?? null,
+        fetchOffset: config.fetchOffset ?? seedItems.length,
+        batchSize: config.batchSize ?? 24,
+        prefetchMargin: config.prefetchMargin ?? 900,
+        viewerPrefetchAhead: config.viewerPrefetchAhead ?? 8,
+        hasMore: Boolean(config.hasMore),
+        loadingMore: false,
+        _isFetching: false,
+        _galleryObserver: null,
+        _galleryScrollHandler: null,
+        playlist: [],
+        drawerOpen: false,
+        viewerActive: null,
+        active: null,
+        init() {
+            if (! this.fetchUrl || ! this.hasMore) {
+                return;
+            }
+
+            this.$watch('drawerOpen', (open) => {
+                if (open) {
+                    this.$nextTick(() => this.enableGalleryScrollLoad());
+                } else {
+                    this.disableGalleryScrollLoad();
+                }
             });
-        }
-        return result;
-    },
-    open(index = 0) {
-        this.drawerOpen = true;
-        this.viewerActive = null;
-        this.active = null;
-        document.body.classList.add('stay-room-lock');
-    },
-    close() {
-        this.drawerOpen = false;
-        this.viewerActive = null;
-        this.active = null;
-        document.body.classList.remove('stay-room-lock');
-    },
-    openViewer(index) {
-        // Trên mobile (<= 768px), grid 1 cột to rõ đã là chế độ xem trọn vẹn, không cần mở viewer full nữa
-        if (window.innerWidth <= 768) {
-            return;
-        }
-        this.viewerActive = Number.isInteger(index) ? index : 0;
-        this.active = this.viewerActive;
-    },
-    closeViewer() {
-        this.viewerActive = null;
-        this.active = null;
-    },
-    selectViewer(idx) {
-        this.viewerActive = idx;
-        this.active = idx;
-    },
-    prev() {
-        if (! this.items.length) return;
-        this.viewerActive = (this.viewerActive - 1 + this.items.length) % this.items.length;
-        this.active = this.viewerActive;
-    },
-    next() {
-        if (! this.items.length) return;
-        this.viewerActive = (this.viewerActive + 1) % this.items.length;
-        this.active = this.viewerActive;
-    },
-});
+
+            this.$watch('viewerActive', (idx) => {
+                if (idx !== null && idx !== undefined) {
+                    this.maybePrefetchFromViewer(idx);
+                }
+            });
+        },
+        get activeItem() {
+            return this.viewerActive === null ? null : this.items[this.viewerActive] ?? null;
+        },
+        get activeLabel() {
+            if (this.viewerActive === null || ! this.items.length) return '';
+            const n = String(this.viewerActive + 1).padStart(2, '0');
+            const total = String(this.galleryTotal || this.items.length).padStart(2, '0');
+
+            return `${n} / ${total}`;
+        },
+        get visibleThumbnails() {
+            if (! this.items.length) return [];
+            const total = this.items.length;
+            const current = this.viewerActive ?? 0;
+            const windowSize = 13;
+            const half = Math.floor(windowSize / 2);
+
+            let start = Math.max(0, current - half);
+            let end = Math.min(total, start + windowSize);
+            if (end - start < windowSize) {
+                start = Math.max(0, end - windowSize);
+            }
+
+            const result = [];
+            for (let i = start; i < end; i++) {
+                result.push({
+                    index: i,
+                    item: this.items[i],
+                    isActive: i === current,
+                });
+            }
+
+            return result;
+        },
+        galleryPrefetchRootMargin() {
+            const px = Math.max(400, Number(this.prefetchMargin) || 900);
+
+            return `${px}px 0px ${Math.round(px * 0.65)}px 0px`;
+        },
+        buildGalleryFetchUrl() {
+            const url = new URL(this.fetchUrl, window.location.origin);
+            if (this.entity) url.searchParams.set('entity', this.entity);
+            if (this.entityId) url.searchParams.set('id', String(this.entityId));
+            url.searchParams.set('offset', String(this.fetchOffset));
+            url.searchParams.set('limit', String(this.batchSize));
+            url.searchParams.set('is_append', '1');
+
+            return url;
+        },
+        normalizeGalleryKey(item) {
+            const raw = item?.full || item?.src || '';
+
+            return String(raw).replace(/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i, '$2');
+        },
+        appendGalleryItems(batch) {
+            if (! Array.isArray(batch) || batch.length === 0) return;
+            const seen = new Set(this.items.map((item) => this.normalizeGalleryKey(item)));
+            batch.forEach((item) => {
+                const key = this.normalizeGalleryKey(item);
+                if (! key || seen.has(key)) return;
+                seen.add(key);
+                this.items.push(item);
+            });
+        },
+        enableGalleryScrollLoad() {
+            this.disableGalleryScrollLoad();
+            const root = this.$refs.drawerScroll;
+            const sentinel = this.$refs.gallerySentinel;
+            if (! root || ! sentinel) return;
+
+            const trigger = () => {
+                if (this.canLoadMoreGallery()) {
+                    this.loadNextGalleryBatch('SCROLL');
+                }
+            };
+
+            if ('IntersectionObserver' in window) {
+                this._galleryObserver = new IntersectionObserver((entries) => {
+                    if (entries[0]?.isIntersecting) {
+                        trigger();
+                    }
+                }, {
+                    root,
+                    rootMargin: this.galleryPrefetchRootMargin(),
+                    threshold: 0,
+                });
+                this._galleryObserver.observe(sentinel);
+            } else {
+                this._galleryScrollHandler = () => {
+                    const remaining = root.scrollHeight - (root.scrollTop + root.clientHeight);
+                    if (remaining < 900) {
+                        trigger();
+                    }
+                };
+                root.addEventListener('scroll', this._galleryScrollHandler, { passive: true });
+            }
+        },
+        disableGalleryScrollLoad() {
+            if (this._galleryObserver) {
+                this._galleryObserver.disconnect();
+                this._galleryObserver = null;
+            }
+            const root = this.$refs.drawerScroll;
+            if (root && this._galleryScrollHandler) {
+                root.removeEventListener('scroll', this._galleryScrollHandler);
+            }
+            this._galleryScrollHandler = null;
+        },
+        canLoadMoreGallery() {
+            return Boolean(this.fetchUrl) && this.hasMore && ! this._isFetching;
+        },
+        maybePrefetchFromViewer(idx) {
+            if (! this.canLoadMoreGallery()) return;
+            const remaining = this.items.length - 1 - Number(idx);
+            if (remaining <= this.viewerPrefetchAhead) {
+                this.loadNextGalleryBatch('VIEWER');
+            }
+        },
+        async loadNextGalleryBatch(origin = 'SCROLL') {
+            if (! this.canLoadMoreGallery()) return;
+
+            this._isFetching = true;
+            this.loadingMore = true;
+
+            try {
+                const res = await fetch(this.buildGalleryFetchUrl().toString(), {
+                    headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin',
+                });
+                if (! res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+
+                this.appendGalleryItems(data.items ?? []);
+                this.fetchOffset = data.next_offset ?? (this.fetchOffset + (data.items?.length ?? 0));
+                this.galleryTotal = data.total ?? this.galleryTotal;
+                this.hasMore = Boolean(data.has_more);
+
+                await this.$nextTick();
+                if (origin === 'VIEWER' && this.viewerActive !== null) {
+                    this.maybePrefetchFromViewer(this.viewerActive);
+                }
+            } catch (err) {
+                console.warn('[mediaLightbox] gallery fetch failed', err);
+            } finally {
+                this._isFetching = false;
+                this.loadingMore = false;
+            }
+        },
+        open(index = 0) {
+            this.drawerOpen = true;
+            this.viewerActive = null;
+            this.active = null;
+            document.body.classList.add('stay-room-lock');
+            if (this.canLoadMoreGallery()) {
+                this.$nextTick(() => this.enableGalleryScrollLoad());
+            }
+        },
+        close() {
+            this.drawerOpen = false;
+            this.viewerActive = null;
+            this.active = null;
+            this.disableGalleryScrollLoad();
+            document.body.classList.remove('stay-room-lock');
+        },
+        openViewer(index) {
+            if (window.innerWidth <= 768) {
+                return;
+            }
+            this.viewerActive = Number.isInteger(index) ? index : 0;
+            this.active = this.viewerActive;
+            this.maybePrefetchFromViewer(this.viewerActive);
+        },
+        closeViewer() {
+            this.viewerActive = null;
+            this.active = null;
+        },
+        selectViewer(idx) {
+            this.viewerActive = idx;
+            this.active = idx;
+            this.maybePrefetchFromViewer(idx);
+        },
+        prev() {
+            if (! this.items.length) return;
+            this.viewerActive = (this.viewerActive - 1 + this.items.length) % this.items.length;
+            this.active = this.viewerActive;
+            this.maybePrefetchFromViewer(this.viewerActive);
+        },
+        next() {
+            if (! this.items.length) return;
+            const atEnd = this.viewerActive >= this.items.length - 1;
+            if (atEnd && this.canLoadMoreGallery()) {
+                this.loadNextGalleryBatch('VIEWER').then(() => {
+                    if (this.viewerActive < this.items.length - 1) {
+                        this.viewerActive += 1;
+                        this.active = this.viewerActive;
+                        this.maybePrefetchFromViewer(this.viewerActive);
+                    }
+                });
+
+                return;
+            }
+            this.viewerActive = (this.viewerActive + 1) % this.items.length;
+            this.active = this.viewerActive;
+            this.maybePrefetchFromViewer(this.viewerActive);
+        },
+    };
+};
 
 Alpine.data('mediaLightbox', mediaLightboxFactory);
 Alpine.data('videoGallery', mediaLightboxFactory);

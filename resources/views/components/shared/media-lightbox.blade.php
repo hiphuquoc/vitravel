@@ -35,7 +35,7 @@
                         <span
                             style="display: inline-flex; align-items: center; padding: 0.15rem 0.55rem; border-radius: 999px; background: rgba(15, 118, 110, 0.1); border: 1px solid rgba(15, 118, 110, 0.25); color: #0f766e; font-size: 0.78rem; font-weight: 700; flex-shrink: 0;"
                         >
-                            <span x-text="items.length"></span> ảnh
+                            <span x-text="galleryTotal || items.length"></span> ảnh
                         </span>
                     </div>
 
@@ -53,12 +53,13 @@
 
                 {{-- Body Drawer: Responsive Grid Skeleton --}}
                 <div
+                    x-ref="drawerScroll"
                     class="vt-scrollbar"
                     style="flex: 1 1 auto; height: 100%; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: clamp(0.75rem, 2vw, 1.5rem); background: #f8fafc;"
                 >
                     <template x-if="drawerOpen">
                         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: 1rem; padding-bottom: 2.5rem;">
-                            <template x-for="(item, idx) in items" :key="idx">
+                            <template x-for="(item, idx) in items" :key="'gallery-' + idx + '-' + (item.full || item.src || '')">
                                 <div
                                     @click="openViewer(idx)"
                                     style="position: relative; aspect-ratio: 16 / 10; border-radius: 0.55rem; overflow: hidden; background: #e2e8f0; cursor: pointer; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s;"
@@ -87,6 +88,23 @@
                                     </div>
                                 </div>
                             </template>
+
+                            <template x-if="loadingMore">
+                                <div
+                                    style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; gap: 0.65rem; padding: 1rem 0; color: #64748b; font-size: 0.875rem; font-weight: 500;"
+                                    aria-live="polite"
+                                >
+                                    <span style="width: 1.25rem; height: 1.25rem; border: 2px solid #cbd5e1; border-top-color: #0f766e; border-radius: 999px; animation: vtSpin 0.75s linear infinite;"></span>
+                                    Đang tải thêm ảnh…
+                                </div>
+                            </template>
+
+                            <div
+                                x-ref="gallerySentinel"
+                                x-show="hasMore"
+                                style="grid-column: 1 / -1; height: 1px; width: 100%; pointer-events: none;"
+                                aria-hidden="true"
+                            ></div>
                         </div>
                     </template>
                 </div>
@@ -220,5 +238,8 @@
 @keyframes vtSkeleton {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+@keyframes vtSpin {
+    to { transform: rotate(360deg); }
 }
 </style>

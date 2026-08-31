@@ -4023,6 +4023,181 @@ class ViewDataService
         return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
     }
 
+    /**
+     * Trang chi tiết — phân trang gallery lightbox (JSON cho Alpine fetch).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function detailGallerySlice(string $entity, int $id, int $offset, int $limit): ?array
+    {
+        $context = $this->resolveDetailGalleryContext($entity, $id);
+        if ($context === null) {
+            return null;
+        }
+
+        $allItems = $this->buildDetailGalleryLightboxItems(
+            $context['title'],
+            $context['coverSrc'],
+            $context['coverSrcset'],
+            $context['gallery'],
+        );
+
+        $total = count($allItems);
+        $offset = max(0, $offset);
+        $limit = max(1, $limit);
+        $slice = array_slice($allItems, $offset, $limit);
+        $loaded = count($slice);
+
+        return [
+            'items' => $slice,
+            'total' => $total,
+            'count' => $total,
+            'offset' => $offset,
+            'limit' => $limit,
+            'next_offset' => $offset + $loaded,
+            'has_more' => ($offset + $loaded) < $total,
+        ];
+    }
+
+    /**
+     * @return array{title: string, coverSrc: ?string, coverSrcset: ?string, gallery: list<array<string, mixed>>}|null
+     */
+    protected function resolveDetailGalleryContext(string $entity, int $id): ?array
+    {
+        if ($id <= 0) {
+            return null;
+        }
+
+        if ($entity === 'service') {
+            $service = Service::query()
+                ->published()
+                ->with([
+                    'mediaAttachments.media',
+                    'translations',
+                    'seoEntry.translations',
+                    'category',
+                    'country.translations',
+                    'faqs',
+                ])
+                ->find($id);
+
+            if (! $service) {
+                return null;
+            }
+
+            $payload = $this->mapService($service, true);
+
+            return [
+                'title' => (string) ($payload['title'] ?? ''),
+                'coverSrc' => $payload['imageDetail'] ?? ($payload['image'] ?? null),
+                'coverSrcset' => $payload['imageDetailSrcset'] ?? ($payload['imageSrcset'] ?? null),
+                'gallery' => is_array($payload['gallery'] ?? null) ? $payload['gallery'] : [],
+            ];
+        }
+
+        if ($entity === 'package') {
+            $package = Package::query()
+                ->published()
+                ->with([
+                    'mediaAttachments.media',
+                    'translations',
+                    'seoEntry.translations',
+                    'country.translations',
+                    'countries.translations',
+                ])
+                ->find($id);
+
+            if (! $package) {
+                return null;
+            }
+
+            $payload = $this->mapPackage($package, $package->isCruise());
+
+            return [
+                'title' => (string) ($payload['title'] ?? ''),
+                'coverSrc' => $payload['imageDetail'] ?? ($payload['image'] ?? null),
+                'coverSrcset' => $payload['imageDetailSrcset'] ?? ($payload['imageSrcset'] ?? null),
+                'gallery' => is_array($payload['gallery'] ?? null) ? $payload['gallery'] : [],
+            ];
+        }
+
+        return null;
+    }
+
+    /**
+     * Chuẩn hóa gallery trang chi tiết → mảng lightbox (khớp detail-gallery.blade.php).
+     *
+     * @param  list<array<string, mixed>>  $gallery
+     * @return list<array<string, mixed>>
+     */
+    public function buildDetailGalleryLightboxItems(
+        string $title,
+        ?string $coverSrc,
+        ?string $coverSrcset,
+        array $gallery,
+    ): array {
+        $normUrl = static function (?string $url): string {
+            if (! $url) {
+                return '';
+            }
+            $path = parse_url($url, PHP_URL_PATH) ?: $url;
+
+            return preg_replace('/(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
+        };
+
+        $coverNorm = $normUrl($coverSrc);
+        $uniqueThumbs = collect($gallery)
+            ->filter(function ($t) use ($normUrl, $coverNorm) {
+                $src = $t['src'] ?? ($t['full'] ?? null);
+                if (! filled($src)) {
+                    return false;
+                }
+                if ($coverNorm === '') {
+                    return true;
+                }
+
+                return $normUrl($src) !== $coverNorm;
+            })
+            ->values()
+            ->all();
+
+        if (! filled($coverSrc) && $uniqueThumbs !== []) {
+            $first = array_shift($uniqueThumbs);
+            $coverSrc = $first['full'] ?? ($first['src'] ?? null);
+            $coverSrcset = $first['fullSrcset'] ?? ($first['srcset'] ?? null);
+        }
+
+        $lightboxItems = [];
+        if (filled($coverSrc)) {
+            $lightboxItems[] = [
+                'type' => 'image',
+                'src' => $coverSrc,
+                'srcset' => $coverSrcset,
+                'full' => $coverSrc,
+                'fullSrcset' => $coverSrcset,
+                'title' => $title,
+                'caption' => null,
+            ];
+        }
+        foreach ($uniqueThumbs as $g) {
+            $full = $g['full'] ?? ($g['src'] ?? null);
+            if (! filled($full)) {
+                continue;
+            }
+            $lightboxItems[] = [
+                'type' => 'image',
+                'src' => $g['thumb'] ?? ($g['src'] ?? $full),
+                'srcset' => $g['thumbSrcset'] ?? ($g['srcset'] ?? null),
+                'full' => $full,
+                'fullSrcset' => $g['fullSrcset'] ?? ($g['srcset'] ?? null),
+                'title' => $g['title'] ?? $title,
+                'caption' => $g['caption'] ?? null,
+            ];
+        }
+
+        return $lightboxItems;
+    }
+
     protected function countryFlag(?string $code): string
     {
         $flags = [

@@ -12,6 +12,8 @@
     'kicker' => null,
     'starRating' => null,
     'location' => null,
+    'entityType' => null,
+    'entityId' => null,
 ])
 
 @php
@@ -88,6 +90,25 @@
     $lightboxTotal = count($lightboxItems);
     $lightboxItems = array_slice($lightboxItems, 0, $lightboxCap);
 
+    $galleryBatch = (int) config('stay.detail_gallery.batch_size', 24);
+    $galleryPrefetchPx = (int) config('stay.detail_gallery.prefetch_margin_px', 900);
+    $galleryViewerAhead = (int) config('stay.detail_gallery.viewer_prefetch_ahead', 8);
+    $lightboxInit = $lightboxItems;
+    if (filled($entityType) && filled($entityId) && $lightboxTotal > count($lightboxItems)) {
+        $lightboxInit = [
+            'items' => $lightboxItems,
+            'total' => $lightboxTotal,
+            'hasMore' => true,
+            'fetchUrl' => route('api.detail-gallery'),
+            'entity' => (string) $entityType,
+            'entityId' => (int) $entityId,
+            'fetchOffset' => count($lightboxItems),
+            'batchSize' => $galleryBatch,
+            'prefetchMargin' => $galleryPrefetchPx,
+            'viewerPrefetchAhead' => $galleryViewerAhead,
+        ];
+    }
+
     $coverIndex = filled($coverSrc) ? 0 : null;
     $thumbBaseIndex = filled($coverSrc) ? 1 : 0;
 @endphp
@@ -95,7 +116,7 @@
 <section
     class="container-site detail-gallery"
     aria-label="Thư viện ảnh"
-    x-data="mediaLightbox(@js($lightboxItems))"
+    x-data="mediaLightbox(@js($lightboxInit))"
     @if ($lightboxTotal > $lightboxCap)
         data-gallery-truncated="{{ $lightboxTotal - $lightboxCap }}"
     @endif

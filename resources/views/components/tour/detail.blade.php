@@ -71,6 +71,8 @@
     :breadcrumbs="$breadcrumbs"
     :rating="$item['rating'] ?? null"
     :review-count="$item['reviewCount'] ?? 0"
+    entity-type="package"
+    :entity-id="$item['id'] ?? null"
 />
 
 <div class="detail-body" x-data="scrollSpy(@js($sectionIds))">
