@@ -88,7 +88,7 @@ class CruiseTypeController extends Controller
                 'required',
                 'string',
                 'max:64',
-                ProjectUnique::softDeleting('cruise_types', 'slug')
+                ProjectUnique::activeOnly('cruise_types', 'slug')
                     ->ignore($request->integer('id') ?: null),
             ],
             'sort' => 'nullable|integer|min:0',
@@ -164,7 +164,8 @@ class CruiseTypeController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        CruiseType::query()->findOrFail($request->integer('id'))->delete();
+        $row = CruiseType::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.cruiseTypes.list')->with('success', 'Đã xóa loại du thuyền thành công.');
     }

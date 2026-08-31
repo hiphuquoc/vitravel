@@ -289,7 +289,7 @@ class SeoService
             $query->where('id', '!=', $ignoreTranslationId);
         }
 
-        $conflicts = $query->get();
+        $conflicts = $query->get()->filter(fn (SeoEntryTranslation $trans) => $this->slugFullConflictIsActive($trans));
         if ($conflicts->isEmpty()) {
             return;
         }
@@ -298,10 +298,7 @@ class SeoService
         // (createRedirect301 lúc reclaim dễ sinh vòng A↔B / self-redirect).
         if ($reclaim) {
             foreach ($conflicts as $conflict) {
-                $parked = $this->normalizeSlugFull(
-                    '/__orphaned-'.$conflict->id.'/'.ltrim((string) $conflict->slug_full, '/')
-                );
-                $conflict->forceFill(['slug_full' => $parked])->save();
+                $this->parkTranslationSlugFull($conflict, '__orphaned');
             }
 
             return;
@@ -310,6 +307,47 @@ class SeoService
         throw ValidationException::withMessages([
             'seo_slug' => 'Đường dẫn đầy đủ (slug_full) đã tồn tại cho ngôn ngữ này.',
         ]);
+    }
+
+    /**
+     * Bỏ qua slug_full đã park hoặc thuộc bản ghi mồ côi.
+     */
+    protected function slugFullConflictIsActive(SeoEntryTranslation $trans): bool
+    {
+        $path = ltrim((string) $trans->slug_full, '/');
+        if ($path === '' || str_starts_with($path, '__trashed-') || str_starts_with($path, '__orphaned-')) {
+            return false;
+        }
+
+        $entry = SeoEntry::withoutGlobalScope('project')->find($trans->seo_entry_id);
+        if (! $entry) {
+            return false;
+        }
+
+        if (! $entry->reference_type || ! $entry->reference_id) {
+            return false;
+        }
+
+        $ref = $entry->reference()->withoutGlobalScope('project')->first();
+
+        return $ref !== null;
+    }
+
+    /**
+     * Park slug_full khi reclaim seed/rebuild — giải phóng URL cho bản ghi mới.
+     */
+    public function parkTranslationSlugFull(SeoEntryTranslation $trans, string $prefix = '__orphaned'): void
+    {
+        $current = ltrim((string) $trans->slug_full, '/');
+        if ($current === '' || str_starts_with($current, $prefix.'-')) {
+            return;
+        }
+
+        $parked = $this->normalizeSlugFull('/'.$prefix.'-'.$trans->id.'/'.$current);
+        $trans->forceFill([
+            'slug_full' => $parked,
+            'status' => 'draft',
+        ])->save();
     }
 
     /**
@@ -562,6 +600,13 @@ class SeoService
             }
 
             if (! $trans) {
+                continue;
+            }
+
+            $transPath = ltrim((string) $trans->slug_full, '/');
+            if ($transPath === ''
+                || str_starts_with($transPath, '__trashed-')
+                || str_starts_with($transPath, '__orphaned-')) {
                 continue;
             }
 

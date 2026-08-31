@@ -10,11 +10,9 @@ use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class TourCategory extends Model
 {
-    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasSeo, HasTranslations;
 
     public const TYPE_DURATION = 'duration';
 

@@ -230,7 +230,8 @@ class TeamMemberController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        TeamMember::query()->findOrFail($request->integer('id'))->delete();
+        $row = TeamMember::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.team.list')->with('success', 'Đã xóa thành viên thành công.');
     }

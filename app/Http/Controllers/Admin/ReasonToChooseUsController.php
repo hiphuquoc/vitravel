@@ -96,7 +96,8 @@ class ReasonToChooseUsController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        ReasonToChooseUs::query()->findOrFail($request->integer('id'))->delete();
+        $row = ReasonToChooseUs::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.reasons.list')->with('success', 'Đã xóa lý do.');
     }

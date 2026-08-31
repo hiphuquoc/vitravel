@@ -7,11 +7,9 @@ use App\Models\Concerns\HasSeo;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Destination extends Model
 {
-    use BelongsToProject, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasSeo, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'slug', 'intro_text'];

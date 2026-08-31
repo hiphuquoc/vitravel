@@ -198,7 +198,8 @@ class ArticleController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        Article::query()->findOrFail($request->integer('id'))->delete();
+        $article = Article::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($article);
 
         return redirect()->route('admin.articles.list')->with('success', 'Đã xóa bài viết thành công.');
     }

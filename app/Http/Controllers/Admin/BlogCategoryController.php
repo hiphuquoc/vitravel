@@ -159,7 +159,8 @@ class BlogCategoryController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        BlogCategory::query()->findOrFail($request->integer('id'))->delete();
+        $row = BlogCategory::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.blogCategories.list')->with('success', 'Đã xóa chuyên mục thành công.');
     }

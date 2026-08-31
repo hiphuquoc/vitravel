@@ -80,9 +80,10 @@ class TravelStyleApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        TravelStyle::query()->findOrFail($id)->delete();
+        $row = TravelStyle::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa chủ đề tour');
+        return ApiResponse::success(null, 'Đã xóa phong cách tour');
     }
 
     private function save(Request $request): JsonResponse

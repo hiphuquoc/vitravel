@@ -146,11 +146,17 @@ class ServiceController extends Controller
         return $this->cachedHtmlResponse(function () use ($cluster, $category, $slug) {
             $this->assertCluster($cluster);
             $service = $this->data->service($slug, $cluster);
-            if (! $service || ($service['categorySlug'] ?? '') !== $category) {
+            if (! $service) {
                 abort(404);
             }
 
-            // Related tải AJAX + skeleton (không chặn SSR / HTML cache)
+            $expectedCategory = (string) ($service['categorySlug'] ?? '');
+            // Chỉ so khớp danh mục khi dịch vụ còn gắn category DB.
+            // Dịch vụ gắn trực tiếp hub (không category) → URL 2 tầng hub/slug vẫn hợp lệ.
+            if ($expectedCategory !== '' && $expectedCategory !== $category) {
+                abort(404);
+            }
+
             return view('pages.services.show', [
                 'cluster' => $cluster,
                 'service' => $service,

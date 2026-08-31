@@ -10,11 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class ServiceCategory extends Model
 {
-    use BelongsToProject, HasSeo, SoftDeletes;
+    use BelongsToProject, HasSeo;
 
     protected $fillable = [
         'project_id', 'cluster', 'slug', 'name', 'intro', 'seo_body', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',

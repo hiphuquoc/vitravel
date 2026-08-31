@@ -190,16 +190,8 @@ class ExperienceVideoController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        $video = ExperienceVideo::query()->with(['thumbnail', 'videoFile'])->findOrFail($request->integer('id'));
-
-        if ($video->thumbnail) {
-            $this->mediaService()->deleteMedia($video->thumbnail);
-        }
-        if ($video->videoFile) {
-            $this->mediaService()->deleteMedia($video->videoFile);
-        }
-
-        $video->delete();
+        $video = ExperienceVideo::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($video);
 
         return redirect()->route('admin.videos.list')->with('success', 'Đã xóa video thành công.');
     }

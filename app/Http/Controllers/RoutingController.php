@@ -6,11 +6,14 @@ use App\Models\Article;
 use App\Models\BlogCategory;
 use App\Models\Country;
 use App\Models\CruiseType;
+use App\Models\Language;
 use App\Models\Package;
 use App\Models\SeoEntry;
+use App\Models\ServiceCategory;
 use App\Models\StaticPage;
 use App\Models\TeamMember;
 use App\Services\SeoService;
+use App\Services\ViewDataService;
 use App\Support\UrlPath;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,6 +52,11 @@ class RoutingController extends Controller
         $cruiseFallback = $this->dispatchCruisePathFallback($segments, $locale);
         if ($cruiseFallback !== null) {
             return $cruiseFallback;
+        }
+
+        $serviceFallback = $this->dispatchServicePathFallback($segments, $locale);
+        if ($serviceFallback !== null) {
+            return $serviceFallback;
         }
 
         abort(404);
@@ -106,7 +114,7 @@ class RoutingController extends Controller
 
     protected function dispatchServiceCategory(SeoEntry $entry, mixed $ref, string $locale, ?string $fallbackSlug): Response
     {
-        $cat = $ref instanceof \App\Models\ServiceCategory ? $ref : null;
+        $cat = $ref instanceof ServiceCategory ? $ref : null;
         $slug = $cat?->slug ?: ($fallbackSlug ?: abort(404));
         $cluster = $cat?->cluster
             ?? config('services_catalog.hub_to_cluster.'.$entry->parent?->type)
@@ -118,27 +126,39 @@ class RoutingController extends Controller
     protected function dispatchService(SeoEntry $entry, mixed $ref, string $locale, ?string $serviceSlug): Response
     {
         $service = $ref instanceof \App\Models\Service ? $ref : null;
+
         $slug = $serviceSlug
             ?: $service?->seoEntry?->translation($locale)?->slug
             ?: abort(404);
 
         $cluster = $service?->cluster;
-        
+
         $cat = $service?->category;
+        $parentEntry = $entry->parent;
+        $parentType = (string) ($parentEntry?->type ?? '');
+        $hubTypes = array_keys(config('services_catalog.hub_to_cluster', []));
+        $directUnderHub = in_array($parentType, $hubTypes, true);
+
         $categorySlug = $cat?->slug
-            ?? $entry->parent?->translation($locale)?->slug
-            ?? $entry->parent?->translations()->first()?->slug
-            ?? null;
+            ?? ($directUnderHub ? null : ($parentEntry?->translation($locale)?->slug
+                ?? $parentEntry?->translations()->first()?->slug
+                ?? null));
+
+        // Dịch vụ gắn trực tiếp hub: dùng slug hub làm segment giữa (URL 2 tầng).
+        if ($categorySlug === null && $directUnderHub) {
+            $categorySlug = $parentEntry?->translation($locale)?->slug
+                ?? $parentEntry?->translations()->first()?->slug
+                ?? '';
+        }
 
         if (! $cluster) {
-            $parentType = $entry->parent?->type;
             $cluster = config("services_catalog.hub_to_cluster.{$parentType}")
-                ?? ($entry->parent?->reference instanceof \App\Models\ServiceCategory
-                    ? $entry->parent->reference->cluster
+                ?? ($parentEntry?->reference instanceof ServiceCategory
+                    ? $parentEntry->reference->cluster
                     : null);
         }
 
-        if (! $cluster || ! $categorySlug) {
+        if (! $cluster) {
             abort(404);
         }
 
@@ -235,6 +255,65 @@ class RoutingController extends Controller
         }
 
         return app(CruiseController::class)->show($rest[0], $rest[1]);
+    }
+
+    /**
+     * Soft-route dịch vụ (train/ferry/flight/stay/experience/other) khi slug_full chưa khớp SEO row.
+     *
+     * @param  list<string>  $segments
+     */
+    protected function dispatchServicePathFallback(array $segments, string $locale): ?Response
+    {
+        if (count($segments) < 2) {
+            return null;
+        }
+
+        $seo = app(SeoService::class);
+        $data = app(ViewDataService::class);
+
+        foreach (config('services_catalog.hub_to_cluster', []) as $hubType => $cluster) {
+            $hubFull = '';
+            foreach (Language::contentLocaleChain($locale) as $code) {
+                $hubFull = trim($seo->hubSlugFullPath($hubType, $code), '/');
+                if ($hubFull !== '') {
+                    break;
+                }
+            }
+            if ($hubFull === '') {
+                continue;
+            }
+
+            $hubSegments = explode('/', $hubFull);
+            $hubCount = count($hubSegments);
+            if ($hubCount === 0 || array_slice($segments, 0, $hubCount) !== $hubSegments) {
+                continue;
+            }
+
+            $rest = array_slice($segments, $hubCount);
+            if ($rest === []) {
+                return app(ServiceController::class)->hub($cluster);
+            }
+
+            if (count($rest) === 1) {
+                return app(ServiceController::class)->index($cluster, $rest[0]);
+            }
+
+            $leaf = (string) end($rest);
+            $middle = (string) $rest[count($rest) - 2];
+            $service = $data->service($leaf, $cluster);
+            if (! $service) {
+                continue;
+            }
+
+            $expectedCategory = (string) ($service['categorySlug'] ?? '');
+            if ($expectedCategory !== '' && $expectedCategory !== $middle) {
+                continue;
+            }
+
+            return app(ServiceController::class)->show($cluster, $middle, $leaf);
+        }
+
+        return null;
     }
 
     /**

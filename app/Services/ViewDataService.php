@@ -722,7 +722,7 @@ class ViewDataService
         return BlogCategory::query()
             ->where('is_active', true)
             ->orderBy('sort')
-            ->with(['translations', 'country' => fn ($q) => $q->withTrashed()->with('translations'), 'articles'])
+            ->with(['translations', 'country' => fn ($q) => $q->with('translations'), 'articles'])
             ->get()
             ->map(function (BlogCategory $category) {
                 $countryTranslation = $category->country?->translation($this->locale());
@@ -3507,9 +3507,9 @@ class ViewDataService
             ->orderByDesc('published_at')
             ->with([
                 'translations',
-                'country' => fn ($q) => $q->withTrashed()->with('translations'),
+                'country' => fn ($q) => $q->with('translations'),
                 'blogCategory.translations',
-                'blogCategory.country' => fn ($q) => $q->withTrashed()->with('translations'),
+                'blogCategory.country' => fn ($q) => $q->with('translations'),
                 'contentTypeTags.translations',
                 'faqs.translations',
                 'mediaAttachments.media',

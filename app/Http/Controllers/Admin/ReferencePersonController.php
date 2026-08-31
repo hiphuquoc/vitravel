@@ -116,7 +116,8 @@ class ReferencePersonController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        ReferencePerson::query()->findOrFail($request->integer('id'))->delete();
+        $row = ReferencePerson::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.referencePersons.list')->with('success', 'Đã xóa đại diện.');
     }

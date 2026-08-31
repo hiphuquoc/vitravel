@@ -348,7 +348,7 @@ class PackageController extends Controller
     {
         $package = Package::query()->findOrFail($request->integer('id'));
         $type = $package->type;
-        $package->delete();
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($package);
 
         $route = $type === Package::TYPE_CRUISE ? 'admin.packages.cruises' : 'admin.packages.tours';
 

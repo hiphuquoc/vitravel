@@ -9,11 +9,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Review extends Model
 {
-    use BelongsToProject, HasMediaAttachments, SoftDeletes;
+    use BelongsToProject, HasMediaAttachments;
 
     protected $fillable = [
         'project_id', 'reviewable_type', 'reviewable_id', 'country_id', 'author_name',

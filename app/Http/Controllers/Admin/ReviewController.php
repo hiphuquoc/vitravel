@@ -113,7 +113,8 @@ class ReviewController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        Review::query()->findOrFail($request->integer('id'))->delete();
+        $row = Review::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.reviews.list')->with('success', 'Đã xóa cảm nhận thành công.');
     }

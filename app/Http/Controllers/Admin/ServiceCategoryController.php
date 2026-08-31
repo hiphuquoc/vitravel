@@ -146,7 +146,7 @@ class ServiceCategoryController extends Controller
                 'required',
                 'string',
                 'max:64',
-                ProjectUnique::softDeleting('service_categories', 'slug')
+                ProjectUnique::activeOnly('service_categories', 'slug')
                     ->ignore($request->integer('id') ?: null)
                     ->where('cluster', $request->input('cluster')),
             ],
@@ -223,7 +223,7 @@ class ServiceCategoryController extends Controller
     {
         $category = ServiceCategory::query()->findOrFail($request->integer('id'));
         $cluster = $category->cluster;
-        $category->delete();
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($category);
 
         return redirect()
             ->route('admin.serviceCategories.list', ['cluster' => $cluster])

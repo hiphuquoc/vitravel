@@ -91,9 +91,10 @@ class ReviewApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Review::query()->findOrFail($id)->delete();
+        $row = Review::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa cảm nhận');
+        return ApiResponse::success(null, 'Đã xóa cảm nhận (kèm media)');
     }
 
     private function save(Request $request): JsonResponse

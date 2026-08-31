@@ -4,122 +4,24 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Faq;
-use App\Models\HomeFeaturedService;
-use App\Models\Media;
-use App\Models\MediaAttachment;
-use App\Models\Review;
 use App\Models\Service;
 use App\Models\ServiceOption;
-use App\Models\StayCrawlItem;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use App\Services\Purge\EntityPurgeService;
 
 /**
- * Xóa cứng chỗ nghỉ / dịch vụ kèm quan hệ + file media (GCS) orphan.
- * Dùng chung: admin DELETE service (stay) và crawler rerun=replace.
+ * @deprecated Dùng EntityPurgeService — giữ alias cho StayCrawlImporter & test.
  */
 final class ServicePurgeService
 {
-    public function __construct(private readonly MediaService $media) {}
+    public function __construct(private readonly EntityPurgeService $purger) {}
 
     public function purge(Service $service): void
     {
-        $serviceId = (int) $service->id;
-
-        $mediaIds = [];
-        $cacheKeys = [];
-
-        DB::transaction(function () use ($serviceId, &$mediaIds, &$cacheKeys): void {
-            $service = Service::query()
-                ->withTrashed()
-                ->with([
-                    'options',
-                    'faqs.translations',
-                    'mediaAttachments',
-                    'seoEntry.translations',
-                    'priceTable',
-                ])
-                ->find($serviceId);
-
-            if (! $service) {
-                return;
-            }
-
-            $mediaIds = $this->collectMediaIds($service);
-
-            foreach ($service->seoEntry?->translations ?? [] as $trans) {
-                $slugFull = trim((string) ($trans->slug_full ?? ''));
-                if ($slugFull === '') {
-                    continue;
-                }
-                $cacheKeys[] = HtmlCacheService::buildKey($slugFull);
-            }
-
-            $this->purgeReviewsForService($serviceId, $mediaIds);
-
-            foreach ($service->options as $option) {
-                $option->translations()->delete();
-                $option->delete();
-            }
-
-            foreach ($service->faqs as $faq) {
-                $faq->translations()->delete();
-                $faq->delete();
-            }
-            // FAQ morph còn sót (chưa eager-load / soft state)
-            Faq::query()
-                ->where('faqable_type', 'service')
-                ->where('faqable_id', $serviceId)
-                ->each(function (Faq $faq): void {
-                    $faq->translations()->delete();
-                    $faq->delete();
-                });
-
-            $service->translations()->delete();
-
-            MediaAttachment::query()
-                ->where('mediable_type', 'service')
-                ->where('mediable_id', $serviceId)
-                ->delete();
-
-            $price = $service->priceTable;
-            if ($price) {
-                $price->delete();
-            }
-
-            if ($seo = $service->seoEntry) {
-                if ($seo->og_image_id) {
-                    $mediaIds[] = (int) $seo->og_image_id;
-                }
-                $seo->translations()->delete();
-                $seo->delete();
-            }
-
-            StayCrawlItem::query()->where('service_id', $serviceId)->update(['service_id' => null]);
-
-            if (Schema::hasTable('home_featured_services')) {
-                HomeFeaturedService::query()->where('service_id', $serviceId)->delete();
-            }
-
-            $service->forceDelete();
-        });
-
-        $mediaIds = array_values(array_unique(array_filter(
-            array_map('intval', $mediaIds),
-            fn (int $id) => $id > 0,
-        )));
-
-        $this->media->destroyOrphanMediaBatch($mediaIds);
-
-        $cache = app(HtmlCacheService::class);
-        foreach (array_unique($cacheKeys) as $key) {
-            $cache->clear($key);
-        }
+        $this->purger->purgeService($service);
     }
 
     /**
-     * Thu thập mọi media_id gắn chỗ nghỉ (attachment + attrs gallery/room photos).
+     * Thu thập mọi media_id gắn dịch vụ (attachment + attrs gallery/room photos).
      *
      * @return list<int>
      */
@@ -187,37 +89,6 @@ final class ServicePurgeService
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * @param  list<int>  $mediaIds
-     */
-    private function purgeReviewsForService(int $serviceId, array &$mediaIds): void
-    {
-        $reviews = Review::query()
-            ->withTrashed()
-            ->with('mediaAttachments')
-            ->where('reviewable_type', 'service')
-            ->where('reviewable_id', $serviceId)
-            ->get();
-
-        foreach ($reviews as $review) {
-            $avatar = (int) ($review->avatar_media_id ?? 0);
-            if ($avatar > 0) {
-                $mediaIds[] = $avatar;
-            }
-            foreach ($review->mediaAttachments as $attachment) {
-                $mid = (int) ($attachment->media_id ?? 0);
-                if ($mid > 0) {
-                    $mediaIds[] = $mid;
-                }
-            }
-            MediaAttachment::query()
-                ->where('mediable_type', 'review')
-                ->where('mediable_id', $review->id)
-                ->delete();
-            $review->forceDelete();
         }
     }
 }

@@ -26,7 +26,7 @@ final class ProjectUnique
         return $rule;
     }
 
-    public static function softDeleting(string $table, string $column): Unique
+    public static function activeOnly(string $table, string $column): Unique
     {
         $rule = self::rule($table, $column);
         if (self::tableHasColumn($table, 'deleted_at')) {
@@ -34,6 +34,12 @@ final class ProjectUnique
         }
 
         return $rule;
+    }
+
+    /** @deprecated Use activeOnly() */
+    public static function softDeleting(string $table, string $column): Unique
+    {
+        return self::activeOnly($table, $column);
     }
 
     private static function tableHasColumn(string $table, string $column): bool

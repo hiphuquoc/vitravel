@@ -9,11 +9,9 @@ use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class TeamMember extends Model
 {
-    use BelongsToProject, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasSeo, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['name', 'role', 'short_bio', 'bio_html'];

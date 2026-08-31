@@ -14,11 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Package extends Model
 {
-    use BelongsToProject, HasFaqs, HasMediaAttachments, HasPriceTable, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasPriceTable, HasSeo, HasTranslations;
 
     public const TYPE_TOUR = 'tour';
 

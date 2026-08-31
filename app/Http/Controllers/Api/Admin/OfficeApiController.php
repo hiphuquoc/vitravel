@@ -103,7 +103,8 @@ class OfficeApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Office::query()->findOrFail($id)->delete();
+        $row = Office::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa văn phòng');
     }

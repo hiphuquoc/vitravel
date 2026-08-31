@@ -88,7 +88,7 @@ class ContentSeeder extends Seeder
         $toursHubEn = $this->enId ? $this->seo->ensureToursHub('en') : null;
 
         foreach (ProjectSeed::get('countries', []) as $sort => $row) {
-            $country = Country::withTrashed()->updateOrCreate(
+            $country = Country::query()->updateOrCreate(
                 ['code' => $codes[$row['slug']] ?? strtoupper(substr($row['slug'], 0, 2))],
                 [
                     'home_grid_size' => $row['size'],
@@ -96,7 +96,6 @@ class ContentSeeder extends Seeder
                     'is_active' => true,
                     'show_in_menu' => true,
                     'show_in_customize_form' => $row['slug'] !== 'tour-ket-hop',
-                    'deleted_at' => null,
                 ]
             );
 

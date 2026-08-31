@@ -18,6 +18,7 @@ use App\Models\TravelStyle;
 use App\Services\CurrencyManager;
 use App\Services\MediaService;
 use App\Services\PriceTableService;
+use App\Services\Purge\EntityPurgeService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -121,9 +122,14 @@ class PackageApiController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $package = Package::query()->findOrFail($id);
-        $package->delete();
 
-        return ApiResponse::success(null, 'Đã xóa gói tour');
+        try {
+            app(EntityPurgeService::class)->purge($package);
+        } catch (ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        return ApiResponse::success(null, 'Đã xóa gói tour (kèm media & quan hệ)');
     }
 
     public function meta(Request $request): JsonResponse

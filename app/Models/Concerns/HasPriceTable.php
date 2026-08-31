@@ -16,7 +16,7 @@ trait HasPriceTable
 
     protected static function bootHasPriceTable(): void
     {
-        static::forceDeleting(function ($model): void {
+        static::deleting(function ($model): void {
             $model->priceTable?->delete();
         });
     }

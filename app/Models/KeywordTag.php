@@ -6,11 +6,9 @@ use App\Models\Concerns\BelongsToProject;
 use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class KeywordTag extends Model
 {
-    use BelongsToProject, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['label', 'slug'];

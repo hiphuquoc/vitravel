@@ -122,8 +122,8 @@ class MediaLibraryApiController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $row = Media::query()->findOrFail($id);
-        app(MediaService::class)->deleteMedia($row);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa media');
+        return ApiResponse::success(null, 'Đã xóa media (kèm file GCS)');
     }
 }

@@ -172,7 +172,8 @@ class TourCategoryController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        TourCategory::query()->findOrFail($request->integer('id'))->delete();
+        $row = TourCategory::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.tourCategories.list')->with('success', 'Đã xóa danh mục tour thành công.');
     }

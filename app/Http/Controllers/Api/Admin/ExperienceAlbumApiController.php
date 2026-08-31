@@ -100,9 +100,10 @@ class ExperienceAlbumApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        ExperienceAlbum::query()->findOrFail($id)->delete();
+        $row = ExperienceAlbum::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa album');
+        return ApiResponse::success(null, 'Đã xóa album (kèm media)');
     }
 
     private function save(Request $request): JsonResponse

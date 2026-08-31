@@ -86,9 +86,15 @@ class CruiseTypeApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        CruiseType::query()->findOrFail($id)->delete();
+        $row = CruiseType::query()->findOrFail($id);
 
-        return ApiResponse::success(null, 'Đã xóa loại du thuyền');
+        try {
+            app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        return ApiResponse::success(null, 'Đã xóa loại du thuyền (kèm media & quan hệ)');
     }
 
     public function meta(Request $request): JsonResponse
@@ -134,7 +140,7 @@ class CruiseTypeApiController extends Controller
                     'required',
                     'string',
                     'max:64',
-                    ProjectUnique::softDeleting('cruise_types', 'slug')
+                    ProjectUnique::activeOnly('cruise_types', 'slug')
                         ->ignore($request->integer('id') ?: null),
                 ],
                 'sort' => 'nullable|integer|min:0',

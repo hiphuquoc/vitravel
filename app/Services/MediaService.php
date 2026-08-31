@@ -120,7 +120,7 @@ class MediaService
     }
 
     /**
-     * Stem SEO cho tÍn file: {slug}[-{role}] ? an to‡n path, khÙng tr˘ng.
+     * Stem SEO cho tùn file: {slug}[-{role}] ? an toùn path, khùng trùng.
      */
     public function buildMediaStem(?string $slug, ?string $role, ?string $originalName = null): string
     {
@@ -145,7 +145,7 @@ class MediaService
         return $base;
     }
 
-    /** Chu?n ho· slug file: a-z0-9-, t?i ?a 80, khÙng path traversal. */
+    /** Chu?n hoù slug file: a-z0-9-, t?i ?a 80, khùng path traversal. */
     public function normalizeMediaStem(string $raw): string
     {
         $raw = str_replace(['\\', '/', '..'], ' ', $raw);
@@ -161,7 +161,7 @@ class MediaService
     }
 
     /**
-     * Ch?n stem ch?a b? chi?m (file full + variants trÍn disk / DB, k? c? soft-delete).
+     * Ch?n stem ch?a b? chi?m (file full + variants trùn disk / DB, k? c? soft-delete).
      */
     public function allocateUniqueMediaStem(
         string $disk,
@@ -214,15 +214,15 @@ class MediaService
                     return true;
                 }
             } catch (Throwable) {
-                // Disk l?i t?m ? coi nh? ch?a chi?m, vÚng allocate v?n an to‡n nh? random fallback.
+                // Disk l?i t?m ? coi nh? ch?a chi?m, vùng allocate v?n an toùn nh? random fallback.
             }
         }
 
-        return Media::withTrashed()->whereIn('path', $paths)->exists();
+        return Media::query()->whereIn('path', $paths)->exists();
     }
 
     /**
-     * L?u file video thÙ (khÙng resize) ? mp4 / webm / mov / ?
+     * L?u file video thù (khùng resize) ? mp4 / webm / mov / ?
      */
     public function storeUploadedVideo(UploadedFile $file, ?string $folder = null, ?string $disk = null): Media
     {
@@ -260,7 +260,7 @@ class MediaService
     }
 
     /**
-     * Sync video file trÍn c?t FK (video_media_id).
+     * Sync video file trùn c?t FK (video_media_id).
      */
     public function syncDirectVideoColumn(
         Model $model,
@@ -339,7 +339,7 @@ class MediaService
     }
 
     /**
-     * Payload d˘ng chung cho ViewData / Blade.
+     * Payload dùng chung cho ViewData / Blade.
      *
      * @return array{src: ?string, srcset: ?string, width: ?int, height: ?int, alt: ?string, variant: string}
      */
@@ -368,8 +368,8 @@ class MediaService
     }
 
     /**
-     * XÛa file trÍn disk (GCS/local) + hard-delete row media (khÙng ?? soft-delete r·c).
-     * D˘ng khi purge ch? ngh? / crawler replace.
+     * Xùa file trùn disk (GCS/local) + hard-delete row media (khùng ?? soft-delete rùc).
+     * Dùng khi purge ch? ngh? / crawler replace.
      */
     public function destroyMedia(?Media $media): void
     {
@@ -378,15 +378,11 @@ class MediaService
         }
 
         $this->deleteMediaFiles($media);
-        if (method_exists($media, 'forceDelete')) {
-            $media->forceDelete();
-        } else {
-            $media->delete();
-        }
+        $media->delete();
     }
 
     /**
-     * Ch? xÛa file khi media khÙng cÚn attachment / FK n‡o (?nh d˘ng chung th? vi?n).
+     * Ch? xùa file khi media khùng cùn attachment / FK nùo (?nh dùng chung th? vi?n).
      */
     public function deleteMediaIfOrphan(?Media $media): void
     {
@@ -402,7 +398,7 @@ class MediaService
     }
 
     /**
-     * Orphan ? xÛa file GCS + forceDelete row (purge stay / replace crawl).
+     * Orphan ù xùa file GCS + delete row (purge stay / replace crawl).
      */
     /**
      * Bulk destroy orphan media (x?a file v? DB theo l?, kh?ng l?p N query).
@@ -456,7 +452,7 @@ class MediaService
         }
 
         // 4. L?y Media models v? gom paths theo disk d? delete theo batch
-        $medias = Media::query()->withTrashed()->whereIn('id', $orphanIds)->get();
+        $medias = Media::query()->whereIn('id', $orphanIds)->get();
         $pathsByDisk = [];
 
         foreach ($medias as $media) {
@@ -485,7 +481,7 @@ class MediaService
         }
 
         // 5. Force delete c?c b?n ghi Media trong DB
-        Media::query()->withTrashed()->whereIn('id', $orphanIds)->forceDelete();
+        Media::query()->whereIn('id', $orphanIds)->delete();
     }
     public function destroyMediaIfOrphan(?Media $media): void
     {
@@ -1077,7 +1073,7 @@ class MediaService
         return $bestKey;
     }
 
-    /** B? ti?n t? projects/{code}/ kh?i path l?u trÍn disk. */
+    /** B? ti?n t? projects/{code}/ kh?i path l?u trùn disk. */
     public function stripProjectPrefixFromPath(string $path): string
     {
         $path = trim(str_replace('\\', '/', $path), '/');
@@ -1094,7 +1090,7 @@ class MediaService
         return $path;
     }
 
-    /** Path ??y ?? (cÛ projects/{code}/) cho folder key admin. */
+    /** Path ??y ?? (cù projects/{code}/) cho folder key admin. */
     public function resolveAdminFolderPath(string $folderKey): ?string
     {
         $folders = $this->adminFolderMap();
@@ -1119,7 +1115,7 @@ class MediaService
     }
 
     /**
-     * Path prefix (cÛ projects/{code}/) c?a c·c folder ?n ? d˘ng lo?i tr? khi list "T?t c?".
+     * Path prefix (cù projects/{code}/) c?a cùc folder ?n ? dùng lo?i tr? khi list "T?t c?".
      *
      * @return list<string>
      */
@@ -1147,7 +1143,7 @@ class MediaService
         }
     }
 
-    /** G?n / thay / xÛa cover (media_attachments role=cover) theo media_id ?„ upload. */
+    /** G?n / thay / xùa cover (media_attachments role=cover) theo media_id ?ù upload. */
     public function syncCoverMediaId(Model $model, ?int $mediaId, bool $remove = false): void
     {
         if (! method_exists($model, 'mediaAttachments')) {
@@ -1196,8 +1192,8 @@ class MediaService
     }
 
     /**
-     * ??ng b? gallery (media_attachments role=gallery) theo danh s·ch media_id.
-     * XÛa to‡n b? gallery c? r?i t?o l?i theo th? t? ? gi? media file (khÙng xÛa disk).
+     * ??ng b? gallery (media_attachments role=gallery) theo danh sùch media_id.
+     * Xùa toùn b? gallery c? r?i t?o l?i theo th? t? ? gi? media file (khùng xùa disk).
      *
      * @param  list<int|string>  $mediaIds
      */
@@ -1262,7 +1258,7 @@ class MediaService
     }
 
     /**
-     * G?n l?i gallery attachments t? media_id ?„ upload (attrs.gallery_media_ids / attrs.photos).
+     * G?n l?i gallery attachments t? media_id ?ù upload (attrs.gallery_media_ids / attrs.photos).
      */
     public function hydrateStayGalleryAttachments(Model $model): void
     {
@@ -1306,7 +1302,7 @@ class MediaService
         return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
     }
 
-    /** G?n / thay / xÛa ?nh trÍn c?t FK (banner_media_id, ?). */
+    /** G?n / thay / xùa ?nh trùn c?t FK (banner_media_id, ?). */
     public function syncDirectMediaId(Model $model, string $column, ?int $mediaId, bool $remove = false): void
     {
         $currentId = $model->{$column} ?? null;

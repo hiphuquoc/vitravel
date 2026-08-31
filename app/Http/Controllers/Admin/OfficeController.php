@@ -108,7 +108,8 @@ class OfficeController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        Office::query()->findOrFail($request->integer('id'))->delete();
+        $row = Office::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.offices.list')->with('success', 'Đã xóa văn phòng.');
     }

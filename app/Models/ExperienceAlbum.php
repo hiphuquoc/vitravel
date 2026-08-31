@@ -7,11 +7,9 @@ use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class ExperienceAlbum extends Model
 {
-    use BelongsToProject, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'description'];

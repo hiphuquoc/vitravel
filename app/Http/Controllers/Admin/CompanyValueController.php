@@ -96,7 +96,8 @@ class CompanyValueController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        CompanyValue::query()->findOrFail($request->integer('id'))->delete();
+        $row = CompanyValue::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.values.list')->with('success', 'Đã xóa giá trị.');
     }

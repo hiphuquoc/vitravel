@@ -82,7 +82,8 @@ class ReferencePersonApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        ReferencePerson::query()->findOrFail($id)->delete();
+        $row = ReferencePerson::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa đại diện');
     }

@@ -9,11 +9,9 @@ use App\Models\Concerns\HasTranslations;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class StaticPage extends Model
 {
-    use BelongsToProject, HasFaqs, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasSeo, HasTranslations;
 
     /** @var list<string> */
     protected array $translatable = ['title', 'body'];

@@ -6,11 +6,9 @@ use App\Models\Concerns\BelongsToProject;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class Media extends Model
 {
-    use BelongsToProject, SoftDeletes;
+    use BelongsToProject;
 
     protected $table = 'media';
 

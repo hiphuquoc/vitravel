@@ -6,11 +6,9 @@ use App\Models\Concerns\BelongsToProject;
 use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class ReferencePerson extends Model
 {
-    use BelongsToProject, SoftDeletes;
+    use BelongsToProject;
 
     protected $table = 'reference_persons';
 

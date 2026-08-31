@@ -15,6 +15,7 @@ use App\Models\KeywordTag;
 use App\Models\Language;
 use App\Models\Package;
 use App\Services\MediaService;
+use App\Services\Purge\EntityPurgeService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -151,9 +152,10 @@ class ArticleApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Article::query()->findOrFail($id)->delete();
+        $article = Article::query()->findOrFail($id);
+        app(EntityPurgeService::class)->purge($article);
 
-        return ApiResponse::success(null, 'Đã xóa bài viết');
+        return ApiResponse::success(null, 'Đã xóa bài viết (kèm media & quan hệ)');
     }
 
     private function save(Request $request): JsonResponse

@@ -79,9 +79,10 @@ class HomeSlideApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        HomeSlide::query()->findOrFail($id)->delete();
+        $row = HomeSlide::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa slide');
+        return ApiResponse::success(null, 'Đã xóa slide (kèm media)');
     }
 
     private function save(Request $request): JsonResponse

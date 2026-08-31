@@ -138,17 +138,10 @@ class ExperienceVideoApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        $video = ExperienceVideo::query()->with(['thumbnail', 'videoFile'])->findOrFail($id);
-        $media = app(MediaService::class);
-        if ($video->thumbnail) {
-            $media->deleteMedia($video->thumbnail);
-        }
-        if ($video->videoFile) {
-            $media->deleteMedia($video->videoFile);
-        }
-        $video->delete();
+        $video = ExperienceVideo::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($video);
 
-        return ApiResponse::success(null, 'Đã xóa video');
+        return ApiResponse::success(null, 'Đã xóa video (kèm media)');
     }
 
     private function save(Request $request): JsonResponse

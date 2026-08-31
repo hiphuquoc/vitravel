@@ -99,9 +99,10 @@ class TourCategoryApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        TourCategory::query()->findOrFail($id)->delete();
+        $row = TourCategory::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa danh mục tour');
+        return ApiResponse::success(null, 'Đã xóa danh mục tour (kèm media & quan hệ)');
     }
 
     public function meta(Request $request): JsonResponse

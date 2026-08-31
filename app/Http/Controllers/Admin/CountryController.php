@@ -179,7 +179,8 @@ class CountryController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        Country::query()->findOrFail($request->integer('id'))->delete();
+        $row = Country::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return redirect()->route('admin.countries.list')->with('success', 'Đã xóa quốc gia thành công.');
     }

@@ -11,7 +11,7 @@ use App\Models\Country;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\ServiceTranslation;
-use App\Services\ServicePurgeService;
+use App\Services\Purge\EntityPurgeService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -368,11 +368,7 @@ class ServiceController extends Controller
         $service = Service::query()->findOrFail($request->integer('id'));
         $cluster = $service->cluster;
 
-        if ($service->cluster === Service::CLUSTER_STAY) {
-            app(ServicePurgeService::class)->purge($service);
-        } else {
-            $service->delete();
-        }
+        app(EntityPurgeService::class)->purge($service);
 
         return redirect()
             ->route('admin.services.list', ['cluster' => $cluster])

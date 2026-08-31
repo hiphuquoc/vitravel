@@ -164,9 +164,10 @@ class TeamMemberApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        TeamMember::query()->findOrFail($id)->delete();
+        $row = TeamMember::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa thành viên');
+        return ApiResponse::success(null, 'Đã xóa thành viên (kèm media & quan hệ)');
     }
 
     private function save(Request $request): JsonResponse

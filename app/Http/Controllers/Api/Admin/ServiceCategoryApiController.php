@@ -125,9 +125,10 @@ class ServiceCategoryApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        ServiceCategory::query()->findOrFail($id)->delete();
+        $row = ServiceCategory::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return ApiResponse::success(null, 'Đã xóa danh mục dịch vụ');
+        return ApiResponse::success(null, 'Đã xóa danh mục dịch vụ (kèm media & quan hệ)');
     }
 
     private function save(Request $request): JsonResponse
@@ -157,7 +158,7 @@ class ServiceCategoryApiController extends Controller
                     'required',
                     'string',
                     'max:64',
-                    ProjectUnique::softDeleting('service_categories', 'slug')
+                    ProjectUnique::activeOnly('service_categories', 'slug')
                         ->ignore($request->integer('id') ?: null)
                         ->where('cluster', $request->input('cluster')),
                 ],

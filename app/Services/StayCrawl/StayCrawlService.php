@@ -1602,7 +1602,7 @@ final class StayCrawlService
         $from = StayCrawlEnricher::normalizeFrom($from);
 
         if ($rerun === 'replace' && $item->service_id) {
-            $service = Service::query()->withTrashed()->find($item->service_id);
+            $service = Service::query()->find($item->service_id);
             if ($service) {
                 $this->importer->purgeCrawledService($service);
             }

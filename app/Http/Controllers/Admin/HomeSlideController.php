@@ -164,13 +164,8 @@ class HomeSlideController extends Controller
 
     public function delete(Request $request): RedirectResponse
     {
-        $slide = HomeSlide::query()->with(['image', 'imageMobile'])->findOrFail($request->integer('id'));
-
-        DB::transaction(function () use ($slide) {
-            $this->mediaService->deleteMedia($slide->image);
-            $this->mediaService->deleteMedia($slide->imageMobile);
-            $slide->delete();
-        });
+        $slide = HomeSlide::query()->findOrFail($request->integer('id'));
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($slide);
 
         return redirect()->route('admin.homeSlides.list')->with('success', 'Đã xóa slide thành công.');
     }

@@ -8,11 +8,9 @@ use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class CruiseType extends Model
 {
-    use BelongsToProject, HasSeo, SoftDeletes;
+    use BelongsToProject, HasSeo;
 
     protected $fillable = [
         'project_id', 'slug', 'name', 'intro', 'seo_body', 'banner_media_id', 'cover_media_id', 'sort', 'is_active',

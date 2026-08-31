@@ -13,11 +13,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Service extends Model
 {
-    use BelongsToProject, HasFaqs, HasMediaAttachments, HasPriceTable, HasSeo, HasTranslations, SoftDeletes;
+    use BelongsToProject, HasFaqs, HasMediaAttachments, HasPriceTable, HasSeo, HasTranslations;
 
     public const CLUSTER_TRAIN = 'train';
 

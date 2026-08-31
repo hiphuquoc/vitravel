@@ -117,9 +117,15 @@ class CountryApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        Country::query()->findOrFail($id)->delete();
+        $row = Country::query()->findOrFail($id);
 
-        return ApiResponse::success(null, 'Đã xóa quốc gia');
+        try {
+            app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return ApiResponse::fromValidation($e);
+        }
+
+        return ApiResponse::success(null, 'Đã xóa quốc gia (kèm media & quan hệ)');
     }
 
     public function setActive(Request $request, int $id): JsonResponse
@@ -165,7 +171,7 @@ class CountryApiController extends Controller
                     'required',
                     'string',
                     'max:10',
-                    ProjectUnique::softDeleting('countries', 'code')
+                    ProjectUnique::activeOnly('countries', 'code')
                         ->ignore($request->integer('id') ?: null),
                 ],
                 'home_grid_size' => 'nullable|string|max:20',

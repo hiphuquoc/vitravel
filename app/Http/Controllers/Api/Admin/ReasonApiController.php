@@ -79,7 +79,8 @@ class ReasonApiController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
-        ReasonToChooseUs::query()->findOrFail($id)->delete();
+        $row = ReasonToChooseUs::query()->findOrFail($id);
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa lý do');
     }
