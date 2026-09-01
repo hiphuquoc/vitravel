@@ -7,7 +7,7 @@
     $table = is_array($table) ? $table : [];
     $periods = $table['periods'] ?? [];
     $guestTypes = $table['guestTypes'] ?? [];
-    $notes = trim((string) ($table['notes'] ?? ''));
+    $notes = detail_price_table_notes($table['notes'] ?? null) ?? '';
     $firstPeriodId = isset($periods[0]['id']) ? (int) $periods[0]['id'] : null;
     $periodIds = array_values(array_map(fn ($p) => (int) $p['id'], $periods));
 @endphp

@@ -9,6 +9,7 @@
     $isCruise = $type === 'cruise';
     $hasPriceTable = ! empty($item['priceTable']['periods']);
     $highlights = array_values(array_filter($item['highlights'] ?? [], fn ($h) => filled($h)));
+    $overviewLead = detail_lead_text($item['highlightsIntro'] ?? null, true, $highlights !== []);
     $sectionIds = ['tong-quan'];
     if ($hasPriceTable) {
         $sectionIds[] = 'bang-gia';
@@ -83,8 +84,8 @@
 
             <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                 <h2 class="detail-section__title">Tổng quan</h2>
-                @if (! empty($item['highlightsIntro']))
-                    <p class="detail-section__lead body-text prose-travel">{{ $item['highlightsIntro'] }}</p>
+                @if ($overviewLead !== null)
+                    <p class="detail-section__lead body-text prose-travel">{{ $overviewLead }}</p>
                 @endif
                 @if ($metaItems !== [] || $highlights !== [])
                     <dl class="detail-facts">

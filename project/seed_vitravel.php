@@ -660,7 +660,6 @@ $__vitravelSeed = array (
       array (
         'currency' => 'VND',
         'unit' => 'per_person',
-        'notes' => 'Ví dụ bảng giá chi tiết — copy khi tour mới cần override `price_table_defaults`.',
         'variants' =>
         array (
           0 =>

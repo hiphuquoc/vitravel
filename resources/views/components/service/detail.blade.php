@@ -53,7 +53,8 @@
     $serviceBodyHtml = $serviceBodyRaw !== '' ? rich_body_html($serviceBodyRaw) : '';
 
     $highlights = array_values(array_filter($service['highlights'] ?? [], fn ($h) => filled($h)));
-    $hasOverview = ! empty($service['summary']) || $displayAttrs !== [] || $highlights !== [];
+    $overviewLead = detail_lead_text($service['summary'] ?? null, true, $highlights !== []);
+    $hasOverview = $overviewLead !== null || $displayAttrs !== [] || $highlights !== [];
 
     $tabs = [];
     $sectionIds = [];
@@ -110,8 +111,8 @@
             @if ($hasOverview)
                 <section id="tong-quan" class="detail-section" aria-label="Tổng quan">
                     <h2 class="detail-section__title">Tổng quan</h2>
-                    @if (! empty($service['summary']))
-                        <p class="detail-section__lead body-text prose-travel">{{ $service['summary'] }}</p>
+                    @if ($overviewLead !== null)
+                        <p class="detail-section__lead body-text prose-travel">{{ $overviewLead }}</p>
                     @endif
                     @if ($displayAttrs !== [] || $highlights !== [])
                         <dl class="detail-facts">

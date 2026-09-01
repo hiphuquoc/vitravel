@@ -152,6 +152,64 @@ if (! function_exists('apply_site_brand_deep')) {
     }
 }
 
+if (! function_exists('detail_is_internal_copy')) {
+    /** Chuỗi nội bộ / placeholder dev — không hiển thị public. */
+    function detail_is_internal_copy(?string $text): bool
+    {
+        $text = trim((string) $text);
+        if ($text === '') {
+            return false;
+        }
+
+        $lower = mb_strtolower($text);
+        $markers = [
+            'price_table_defaults',
+            'copy khi tour mới',
+            'ví dụ bảng giá chi tiết',
+            'todo:',
+            'lorem ipsum',
+        ];
+
+        foreach ($markers as $marker) {
+            if (str_contains($lower, $marker)) {
+                return true;
+            }
+        }
+
+        return str_contains($text, '`');
+    }
+}
+
+if (! function_exists('detail_lead_text')) {
+    /** Lead tổng quan trang chi tiết — null nếu rỗng hoặc copy nội bộ. */
+    function detail_lead_text(?string $text, bool $hideWhenHighlights = false, bool $hasHighlights = false): ?string
+    {
+        $text = trim((string) $text);
+        if ($text === '' || detail_is_internal_copy($text)) {
+            return null;
+        }
+
+        if ($hideWhenHighlights && $hasHighlights) {
+            return null;
+        }
+
+        return $text;
+    }
+}
+
+if (! function_exists('detail_price_table_notes')) {
+    /** Ghi chú bảng giá public — null nếu rỗng hoặc copy nội bộ. */
+    function detail_price_table_notes(?string $notes): ?string
+    {
+        $notes = trim((string) $notes);
+        if ($notes === '' || detail_is_internal_copy($notes)) {
+            return null;
+        }
+
+        return $notes;
+    }
+}
+
 if (! function_exists('tour_listing_label')) {
     /**
      * Nhãn listing/menu tour: tối đa một lần "Tour " ở đầu.

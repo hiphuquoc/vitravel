@@ -188,7 +188,7 @@ class PriceTableService
             'currency' => $currency,
             'unit' => $unit,
             'unitLabel' => config('pricing.units.'.$unit, $unit),
-            'notes' => $table->notes,
+            'notes' => detail_price_table_notes($table->notes),
             'guestTypes' => $guestCols,
             'periods' => $periodPayload,
         ];
