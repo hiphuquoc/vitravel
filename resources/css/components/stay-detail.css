@@ -1659,7 +1659,7 @@ body.stay-room-lock {
     font-size: 0.72rem;
 }
 
-/* Overlay ảnh: loại hình + 5★ — góc phải trên */
+/* Overlay ảnh: loại hình + 5★ — góc phải trên (variant overlay) */
 .stay-card-media-tags {
     position: absolute;
     z-index: 10;
@@ -1734,6 +1734,45 @@ body.stay-room-lock {
     height: 0.78rem;
     color: #f6c34a;
     filter: drop-shadow(0 0.5px 1px rgb(0 0 0 / 0.25));
+}
+
+/* Meta inline dưới tiêu đề card — không box, số đậm */
+.stay-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.55rem;
+    margin: -0.15rem 0 0;
+    font-size: 0.72rem;
+    line-height: 1.25;
+}
+
+.stay-card-meta__type {
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-primary-700, #455f2c);
+}
+
+.stay-card-meta__star {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.1rem;
+    color: var(--color-muted, #817d6e);
+}
+
+.stay-card-meta__num {
+    font-weight: 800;
+    font-size: 1.06em;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--color-ink, #272b23);
+}
+
+.stay-card-meta__glyph {
+    width: 0.72rem;
+    height: 0.72rem;
+    color: #e5a817;
 }
 
 /* Stay property type pill (title card / detail — ngoài media) */

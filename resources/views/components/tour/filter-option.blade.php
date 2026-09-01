@@ -1,4 +1,4 @@
-{{-- Hàng checkbox trong danh sách điểm đến / danh mục --}}
+{{-- Hàng checkbox — tên + (số) inline, số đậm nhẹ, wrap tự nhiên --}}
 @props([
     'group',
     'value',
@@ -8,6 +8,7 @@
 
 @php
     $valueStr = (string) $value;
+    $countInt = ($count !== null && (int) $count > 0) ? (int) $count : null;
 @endphp
 
 <label
@@ -30,10 +31,7 @@
             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </span>
-    <span class="vt-check__text filter-row__body">
-        <span class="filter-row__label">{{ $label }}</span>
-        @if ($count !== null && (int) $count > 0)
-            <span class="filter-row__count">{{ (int) $count }}</span>
-        @endif
+    <span class="vt-check__text filter-row__line">
+        <span class="filter-row__name">{{ $label }}</span>@if ($countInt !== null)<span class="filter-row__meta" aria-hidden="true"> (<span class="filter-row__num">{{ number_format($countInt) }}</span>)</span>@endif
     </span>
 </label>
