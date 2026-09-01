@@ -8,6 +8,7 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\RoutingController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,19 @@ use Illuminate\Support\Facades\Route;
 | Tours / cruises / guide listing URLs are catch-all via RoutingController + slug_full.
 | Named SEO stubs in routes/seo_names.php keep route()/locale_route fallbacks valid.
 */
+
+// Sitemap + robots — trước fallback, theo Host → ProjectContext (đa dự án)
+// Cây: /sitemap.xml → /sitemap/{lang}.xml → /sitemap/{lang}/{file}.xml
+Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/sitemap/{language}.xml', [SitemapController::class, 'language'])
+    ->where('language', '[a-z]{2}(?:-[a-z0-9]+)?')
+    ->name('sitemap.language');
+Route::get('/sitemap/{language}/{name}.xml', [SitemapController::class, 'languageFile'])
+    ->where('language', '[a-z]{2}(?:-[a-z0-9]+)?')
+    ->where('name', '[a-zA-Z0-9_-]+')
+    ->name('sitemap.language.file');
+
 $registerPublicRoutes = function (bool $named = true): void {
     $home = Route::get('/', [HomeController::class, 'index']);
     $search = Route::get('/tim-kiem', [SearchController::class, 'index']);

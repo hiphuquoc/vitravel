@@ -120,7 +120,7 @@ class MediaService
     }
 
     /**
-     * Stem SEO cho tn file: {slug}[-{role}] ? an ton path, khng trng.
+     * Stem SEO cho tï¿½n file: {slug}[-{role}] ? an toï¿½n path, khï¿½ng trï¿½ng.
      */
     public function buildMediaStem(?string $slug, ?string $role, ?string $originalName = null): string
     {
@@ -145,7 +145,7 @@ class MediaService
         return $base;
     }
 
-    /** Chu?n ho slug file: a-z0-9-, t?i ?a 80, khng path traversal. */
+    /** Chu?n hoï¿½ slug file: a-z0-9-, t?i ?a 80, khï¿½ng path traversal. */
     public function normalizeMediaStem(string $raw): string
     {
         $raw = str_replace(['\\', '/', '..'], ' ', $raw);
@@ -161,7 +161,7 @@ class MediaService
     }
 
     /**
-     * Ch?n stem ch?a b? chi?m (file full + variants trn disk / DB, k? c? soft-delete).
+     * Ch?n stem ch?a b? chi?m (file full + variants trï¿½n disk / DB, k? c? soft-delete).
      */
     public function allocateUniqueMediaStem(
         string $disk,
@@ -214,7 +214,7 @@ class MediaService
                     return true;
                 }
             } catch (Throwable) {
-                // Disk l?i t?m ? coi nh? ch?a chi?m, vng allocate v?n an ton nh? random fallback.
+                // Disk l?i t?m ? coi nh? ch?a chi?m, vï¿½ng allocate v?n an toï¿½n nh? random fallback.
             }
         }
 
@@ -222,7 +222,7 @@ class MediaService
     }
 
     /**
-     * L?u file video th (khng resize) ? mp4 / webm / mov / ?
+     * L?u file video thï¿½ (khï¿½ng resize) ? mp4 / webm / mov / ?
      */
     public function storeUploadedVideo(UploadedFile $file, ?string $folder = null, ?string $disk = null): Media
     {
@@ -260,7 +260,7 @@ class MediaService
     }
 
     /**
-     * Sync video file trn c?t FK (video_media_id).
+     * Sync video file trï¿½n c?t FK (video_media_id).
      */
     public function syncDirectVideoColumn(
         Model $model,
@@ -339,7 +339,7 @@ class MediaService
     }
 
     /**
-     * Payload dng chung cho ViewData / Blade.
+     * Payload dï¿½ng chung cho ViewData / Blade.
      *
      * @return array{src: ?string, srcset: ?string, width: ?int, height: ?int, alt: ?string, variant: string}
      */
@@ -368,8 +368,8 @@ class MediaService
     }
 
     /**
-     * Xa file trn disk (GCS/local) + hard-delete row media (khng ?? soft-delete rc).
-     * Dng khi purge ch? ngh? / crawler replace.
+     * Xï¿½a file trï¿½n disk (GCS/local) + hard-delete row media (khï¿½ng ?? soft-delete rï¿½c).
+     * Dï¿½ng khi purge ch? ngh? / crawler replace.
      */
     public function destroyMedia(?Media $media): void
     {
@@ -382,7 +382,7 @@ class MediaService
     }
 
     /**
-     * Ch? xa file khi media khng cn attachment / FK no (?nh dng chung th? vi?n).
+     * Ch? xï¿½a file khi media khï¿½ng cï¿½n attachment / FK nï¿½o (?nh dï¿½ng chung th? vi?n).
      */
     public function deleteMediaIfOrphan(?Media $media): void
     {
@@ -398,7 +398,7 @@ class MediaService
     }
 
     /**
-     * Orphan  xa file GCS + delete row (purge stay / replace crawl).
+     * Orphan ï¿½ xï¿½a file GCS + delete row (purge stay / replace crawl).
      */
     /**
      * Bulk destroy orphan media (x?a file v? DB theo l?, kh?ng l?p N query).
@@ -533,7 +533,7 @@ class MediaService
     }
 
     /**
-     * Gallery/phòng khách s?n l?u media_id trong JSON attrs — không có FK.
+     * Gallery/phï¿½ng khï¿½ch s?n l?u media_id trong JSON attrs ï¿½ khï¿½ng cï¿½ FK.
      */
     private function mediaIsReferencedInServiceAttrs(int $mediaId): bool
     {
@@ -581,7 +581,7 @@ class MediaService
             ->exists();
     }
 
-    /** Ki?m tra media còn ???c dùng (attachment, FK, gallery/phòng stay). */
+    /** Ki?m tra media cï¿½n ???c dï¿½ng (attachment, FK, gallery/phï¿½ng stay). */
     public function mediaIsReferencedAnywhere(int $mediaId): bool
     {
         return $this->mediaIsReferenced($mediaId);
@@ -1128,7 +1128,7 @@ class MediaService
         return $bestKey;
     }
 
-    /** B? ti?n t? projects/{code}/ kh?i path l?u trn disk. */
+    /** B? ti?n t? projects/{code}/ kh?i path l?u trï¿½n disk. */
     public function stripProjectPrefixFromPath(string $path): string
     {
         $path = trim(str_replace('\\', '/', $path), '/');
@@ -1145,7 +1145,7 @@ class MediaService
         return $path;
     }
 
-    /** Path ??y ?? (c projects/{code}/) cho folder key admin. */
+    /** Path ??y ?? (cï¿½ projects/{code}/) cho folder key admin. */
     public function resolveAdminFolderPath(string $folderKey): ?string
     {
         $folders = $this->adminFolderMap();
@@ -1170,7 +1170,7 @@ class MediaService
     }
 
     /**
-     * Path prefix (c projects/{code}/) c?a cc folder ?n ? dng lo?i tr? khi list "T?t c?".
+     * Path prefix (cï¿½ projects/{code}/) c?a cï¿½c folder ?n ? dï¿½ng lo?i tr? khi list "T?t c?".
      *
      * @return list<string>
      */
@@ -1198,7 +1198,7 @@ class MediaService
         }
     }
 
-    /** G?n / thay / xa cover (media_attachments role=cover) theo media_id ? upload. */
+    /** G?n / thay / xï¿½a cover (media_attachments role=cover) theo media_id ?ï¿½ upload. */
     public function syncCoverMediaId(Model $model, ?int $mediaId, bool $remove = false): void
     {
         if (! method_exists($model, 'mediaAttachments')) {
@@ -1247,8 +1247,8 @@ class MediaService
     }
 
     /**
-     * ??ng b? gallery (media_attachments role=gallery) theo danh sch media_id.
-     * Xa ton b? gallery c? r?i t?o l?i theo th? t? ? gi? media file (khng xa disk).
+     * ??ng b? gallery (media_attachments role=gallery) theo danh sï¿½ch media_id.
+     * Xï¿½a toï¿½n b? gallery c? r?i t?o l?i theo th? t? ? gi? media file (khï¿½ng xï¿½a disk).
      *
      * @param  list<int|string>  $mediaIds
      */
@@ -1313,7 +1313,7 @@ class MediaService
     }
 
     /**
-     * G?n l?i gallery attachments t? media_id ? upload (attrs.gallery_media_ids / attrs.photos).
+     * G?n l?i gallery attachments t? media_id ?ï¿½ upload (attrs.gallery_media_ids / attrs.photos).
      */
     public function hydrateStayGalleryAttachments(Model $model): void
     {
@@ -1357,7 +1357,7 @@ class MediaService
         return preg_replace('/-(thumb|card|sm|md|lg|xl)(\.[a-z0-9]+)$/i', '$2', $path) ?: $path;
     }
 
-    /** G?n / thay / xa ?nh trn c?t FK (banner_media_id, ?). */
+    /** G?n / thay / xï¿½a ?nh trï¿½n c?t FK (banner_media_id, ?). */
     public function syncDirectMediaId(Model $model, string $column, ?int $mediaId, bool $remove = false): void
     {
         $currentId = $model->{$column} ?? null;
