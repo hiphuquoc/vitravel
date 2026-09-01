@@ -13,8 +13,8 @@ declare(strict_types=1);
  *     → /sitemap/vi.xml
  *     → /sitemap/en.xml
  *          → /sitemap/vi/pages.xml
- *          → /sitemap/vi/service-1.xml
- *          → /sitemap/vi/service.xml   (khi >1 chunk)
+ *          → /sitemap/vi/service_stay-1.xml   (khách sạn — cluster stay)
+ *          → /sitemap/vi/service.xml          (khi không tách cluster)
  *
  * Serve theo Host → ProjectContext. Generate: php artisan sitemap:generate
  */
@@ -24,8 +24,13 @@ return [
 
     'disk' => env('SITEMAP_DISK', 'sitemap'),
 
-    /** Thư mục gốc trên disk (mỗi project là 1 subfolder). */
-    'root' => 'sitemaps',
+    /** Thư mục gốc trên disk (mỗi project là 1 subfolder). Disk `sitemap` đã trỏ storage/app/sitemaps. */
+    'root' => env('SITEMAP_ROOT', ''),
+
+    /**
+     * Tách dịch vụ theo cluster (stay = khách sạn, train, flight, …) thay vì 1 file service chung.
+     */
+    'split_service_by_cluster' => filter_var(env('SITEMAP_SPLIT_SERVICE_BY_CLUSTER', true), FILTER_VALIDATE_BOOLEAN),
 
     'cache_max_age' => (int) env('SITEMAP_CACHE_MAX_AGE', 3600),
 
@@ -97,6 +102,12 @@ return [
         'package_tour' => '0.8',
         'package_cruise' => '0.8',
         'service' => '0.7',
+        'service_stay' => '0.8',
+        'service_train' => '0.7',
+        'service_ferry' => '0.7',
+        'service_flight' => '0.7',
+        'service_experience' => '0.7',
+        'service_other' => '0.6',
         'article' => '0.6',
         'team_member' => '0.5',
         'static_page' => '0.5',

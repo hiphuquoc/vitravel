@@ -56,13 +56,28 @@ class SitemapController extends Controller
         $readDisk = $disk;
         $readPath = $storagePath;
 
-        if (! $disk->exists($storagePath)) {
-            $legacyPath = $this->generator->storagePathFor($project, $relativePath);
-            $legacyDisk = Storage::disk('local');
-            if ($legacyDisk->exists($legacyPath)) {
-                $readDisk = $legacyDisk;
-                $readPath = $legacyPath;
+        foreach ($this->generator->storagePathCandidates($project, $relativePath) as $candidate) {
+            if ($disk->exists($candidate)) {
+                $readPath = $candidate;
+                $readDisk = $disk;
+                break;
             }
+        }
+
+        if (! $readDisk->exists($readPath)) {
+            foreach ($this->generator->storagePathCandidates($project, $relativePath) as $candidate) {
+                $legacyDisk = Storage::disk('local');
+                if ($legacyDisk->exists($candidate)) {
+                    $readDisk = $legacyDisk;
+                    $readPath = $candidate;
+                    break;
+                }
+            }
+        }
+
+        if (! $readDisk->exists($readPath)) {
+            $readDisk = $disk;
+            $readPath = $storagePath;
         }
 
         if (! $readDisk->exists($readPath) && $relativePath === 'sitemap.xml' && config('sitemap.generate_on_miss', false)) {
@@ -81,9 +96,12 @@ class SitemapController extends Controller
                 Log::warning('sitemap.generate_on_miss_failed', ['message' => $e->getMessage()]);
             }
 
-            if ($disk->exists($storagePath)) {
-                $readDisk = $disk;
-                $readPath = $storagePath;
+            foreach ($this->generator->storagePathCandidates($project, $relativePath) as $candidate) {
+                if ($disk->exists($candidate)) {
+                    $readDisk = $disk;
+                    $readPath = $candidate;
+                    break;
+                }
             }
         }
 
