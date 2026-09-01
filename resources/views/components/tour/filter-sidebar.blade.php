@@ -17,7 +17,7 @@
     'showPriceRangeFilter' => false,
     'showAmenityFilter' => false,
     'showStarFilter' => false,
-    'categoryLegend' => 'Khu vực lưu trú',
+    'categoryLegend' => 'Danh mục',
     'typeLegend' => 'Loại du thuyền',
     'unitLabel' => 'kết quả',
 ])
@@ -40,9 +40,6 @@
         };
         $priceRangeRows[] = compact('key', 'label', 'sub', 'min', 'max');
     }
-
-    $listLimit = 7;
-    $chipLimit = 10;
 @endphp
 
 {{-- FAB mobile mở drawer --}}
@@ -120,13 +117,7 @@
         {{-- Danh mục / khu vực (dịch vụ, lưu trú) --}}
         @if ($showCategoryFilter && count($categories))
             <x-tour.filter-section :title="$categoryLegend" group="category">
-                <div class="filter-list" x-data="{ expanded: false, searchCat: '' }">
-                    @if (count($categories) > $listLimit)
-                        <label class="filter-search">
-                            <x-icon name="search" class="filter-search__icon" />
-                            <input type="search" class="filter-search__input" x-model="searchCat" placeholder="Tìm trong danh sách…" autocomplete="off">
-                        </label>
-                    @endif
+                <div class="filter-list">
                     @foreach ($categories as $cat)
                         @php
                             $slug = (string) ($cat['slug'] ?? '');
@@ -138,13 +129,8 @@
                             :value="$slug"
                             :label="$name"
                             :count="$cat['count'] ?? null"
-                            search-model="searchCat"
-                            :search-haystack="$name"
-                            :index="$loop->index"
-                            :limit="$listLimit"
                         />
                     @endforeach
-                    <x-tour.filter-more :total="count($categories)" :limit="$listLimit" search-model="searchCat" />
                 </div>
             </x-tour.filter-section>
         @endif
@@ -152,13 +138,7 @@
         {{-- Điểm đến (tour) --}}
         @if ($showCountryFilter && count($countries))
             <x-tour.filter-section title="Điểm đến" group="country">
-                <div class="filter-list" x-data="{ expanded: false, searchCountry: '' }">
-                    @if (count($countries) > $listLimit)
-                        <label class="filter-search">
-                            <x-icon name="search" class="filter-search__icon" />
-                            <input type="search" class="filter-search__input" x-model="searchCountry" placeholder="Tìm quốc gia…" autocomplete="off">
-                        </label>
-                    @endif
+                <div class="filter-list">
                     @foreach ($countries as $country)
                         @php
                             $slug = (string) ($country['slug'] ?? '');
@@ -169,13 +149,8 @@
                             group="country"
                             :value="$slug"
                             :label="$name"
-                            search-model="searchCountry"
-                            :search-haystack="$name"
-                            :index="$loop->index"
-                            :limit="$listLimit"
                         />
                     @endforeach
-                    <x-tour.filter-more :total="count($countries)" :limit="$listLimit" search-model="searchCountry" />
                 </div>
             </x-tour.filter-section>
         @endif
@@ -183,13 +158,7 @@
         {{-- Loại du thuyền --}}
         @if ($showTypeFilter && count($types))
             <x-tour.filter-section :title="$typeLegend" group="type">
-                <div class="filter-list" x-data="{ expanded: false, searchType: '' }">
-                    @if (count($types) > $listLimit)
-                        <label class="filter-search">
-                            <x-icon name="search" class="filter-search__icon" />
-                            <input type="search" class="filter-search__input" x-model="searchType" placeholder="Tìm…" autocomplete="off">
-                        </label>
-                    @endif
+                <div class="filter-list">
                     @foreach ($types as $cruiseType)
                         @php
                             $slug = (string) ($cruiseType['slug'] ?? '');
@@ -201,13 +170,8 @@
                             :value="$slug"
                             :label="$name"
                             :count="$cruiseType['count'] ?? null"
-                            search-model="searchType"
-                            :search-haystack="$name"
-                            :index="$loop->index"
-                            :limit="$listLimit"
                         />
                     @endforeach
-                    <x-tour.filter-more :total="count($types)" :limit="$listLimit" search-model="searchType" />
                 </div>
             </x-tour.filter-section>
         @endif
@@ -230,9 +194,9 @@
         {{-- Phong cách du lịch — chip wrap --}}
         @if ($showStyleFilter && count($styles))
             <x-tour.filter-section title="Phong cách" group="style">
-                <div class="filter-chips" x-data="{ expanded: false }">
+                <div class="filter-chips">
                     @foreach ($styles as $key => $label)
-                        <span class="filter-chips__item" x-show="expanded || {{ $loop->index }} < {{ $chipLimit }}">
+                        <span class="filter-chips__item">
                             <x-tour.filter-chip
                                 group="style"
                                 :value="(string) $key"
@@ -240,7 +204,6 @@
                             />
                         </span>
                     @endforeach
-                    <x-tour.filter-more :total="count($styles)" :limit="$chipLimit" />
                 </div>
             </x-tour.filter-section>
         @endif

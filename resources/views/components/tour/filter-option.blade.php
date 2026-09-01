@@ -4,28 +4,14 @@
     'value',
     'label',
     'count' => null,
-    'searchModel' => null,
-    'searchHaystack' => null,
-    'index' => 0,
-    'limit' => 99,
 ])
 
 @php
     $valueStr = (string) $value;
-    $haystack = mb_strtolower((string) ($searchHaystack ?? $label));
-    $idx = (int) $index;
-    $lim = (int) $limit;
 @endphp
 
 <label
     class="filter-row vt-check"
-    @if ($searchModel)
-        x-show="{{ $searchModel }}
-            ? @js($haystack).includes({{ $searchModel }}.toLowerCase())
-            : (expanded || {{ $idx }} < {{ $lim }})"
-    @else
-        x-show="expanded || {{ $idx }} < {{ $lim }}"
-    @endif
     :class="{
         'filter-row--on': isChecked(@js($group), @js($valueStr)),
         'filter-row--locked': isLockedFilter(@js($group), @js($valueStr)),
@@ -44,7 +30,7 @@
             <path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
     </span>
-    <span class="vt-check__text filter-row__text">
+    <span class="vt-check__text filter-row__body">
         <span class="filter-row__label">{{ $label }}</span>
         @if ($count !== null && (int) $count > 0)
             <span class="filter-row__count">{{ (int) $count }}</span>

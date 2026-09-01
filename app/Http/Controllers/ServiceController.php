@@ -219,12 +219,6 @@ class ServiceController extends Controller
 
     protected function categoryLegend(string $cluster): string
     {
-        return match ($cluster) {
-            'train', 'ferry' => 'Tuyến',
-            'flight' => 'Tuyến bay',
-            'stay' => 'Khu vực lưu trú',
-            'experience' => 'Loại trải nghiệm',
-            default => 'Danh mục',
-        };
+        return 'Danh mục';
     }
 }
