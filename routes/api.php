@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\Admin\ListingHubApiController;
 use App\Http\Controllers\Api\Admin\MediaApiController;
 use App\Http\Controllers\Api\Admin\MediaLibraryApiController;
 use App\Http\Controllers\Api\Admin\MetaApiController;
+use App\Http\Controllers\Api\Admin\NavigationMenuApiController;
 use App\Http\Controllers\Api\Admin\OfficeApiController;
 use App\Http\Controllers\Api\Admin\PackageApiController;
 use App\Http\Controllers\Api\Admin\PriceGuestTypeApiController;
@@ -204,6 +205,10 @@ Route::prefix('v1/admin')->group(function () {
 
             Route::get('/home-sections', [HomeSectionApiController::class, 'show']);
             Route::put('/home-sections', [HomeSectionApiController::class, 'update']);
+
+            Route::get('/navigation-menu', [NavigationMenuApiController::class, 'show']);
+            Route::put('/navigation-menu', [NavigationMenuApiController::class, 'update']);
+            Route::post('/navigation-menu/reset', [NavigationMenuApiController::class, 'reset']);
 
             Route::get('/blog-categories/meta', [BlogCategoryApiController::class, 'meta']);
             Route::get('/blog-categories', [BlogCategoryApiController::class, 'index']);

@@ -40,6 +40,8 @@
     $brandLogoUrl = site_logo_url();
     $cruiseNav = $nav['cruise'] ?? [];
     $toursNav = $nav['tours'] ?? [];
+    $moreNavItems = view_data()->moreNavItems();
+    $headerCta = view_data()->headerCta();
     $hotlineDisplay = $companyContact['phone'] ?? '+84 24 3999 8888';
     $hotlineTel = preg_replace('/[^\d+]/', '', $hotlineDisplay) ?: $hotlineDisplay;
     $hotlineLabel = $companyContact['hotline_label'] ?? 'Hotline';
@@ -349,9 +351,9 @@
                             <a href="{{ locale_route('tours.hub') }}" class="nav-panel-row nav-flyout__lead group">
                                 <span class="nav-panel-item-row">
                                     <span class="nav-panel-lead-mark" aria-hidden="true"></span>
-                                    <span class="nav-panel-item">Tất cả tour</span>
+                                    <span class="nav-panel-item">{{ $toursNav['lead_label'] ?? 'Tất cả tour' }}</span>
                                 </span>
-                                <span class="nav-panel-meta">Xem toàn bộ hành trình Đông Nam Á</span>
+                                <span class="nav-panel-meta">{{ $toursNav['meta'] ?? 'Xem toàn bộ hành trình' }}</span>
                             </a>
                             <div class="nav-flyout__grid">
                                 @foreach ($destinations as $c)
@@ -404,7 +406,7 @@
             </div>
 
             @foreach ($serviceClusters as $sc)
-                @if (in_array($sc['code'] ?? '', ['train', 'flight'], true))
+                @if (! ($sc['show_in_main_bar'] ?? true))
                     @continue
                 @endif
                 @php
@@ -425,7 +427,7 @@
                                 <a href="{{ locale_route('services.hub', ['cluster' => $sc['code']]) }}" class="nav-panel-row nav-flyout__lead group">
                                     <span class="nav-panel-item-row">
                                         <span class="nav-panel-lead-mark" aria-hidden="true"></span>
-                                        <span class="nav-panel-item">Tất cả {{ strtolower($sc['nav_label']) }}</span>
+                                        <span class="nav-panel-item">{{ $sc['lead_label'] ?: 'Tất cả '.strtolower($sc['nav_label']) }}</span>
                                     </span>
                                     <span class="nav-panel-meta">{{ $sc['label'] ?? '' }}</span>
                                 </a>
@@ -482,65 +484,38 @@
                     <div class="nav-flyout__card">
                         <div class="nav-flyout__scroll vt-scrollbar">
                             <div class="nav-panel-group">
-                                <p class="nav-panel-group__title">{{ $nav['about_group'] ?? ('Về '.$brandName) }}</p>
-                                <a href="{{ locale_route('about') }}" class="nav-panel-link">
-                                    <span class="nav-panel-item-row">
-                                        <span>Về chúng tôi</span>
-                                    </span>
-                                </a>
-                                <a href="{{ locale_route('contact') }}" class="nav-panel-link">
-                                    <span class="nav-panel-item-row">
-                                        <span>Liên hệ</span>
-                                    </span>
-                                </a>
-                                @if (Route::has('team'))
-                                    <a href="{{ locale_route('team') }}" class="nav-panel-link">
-                                        <span class="nav-panel-item-row">
-                                            <span>Đội ngũ</span>
-                                        </span>
-                                    </a>
-                                @endif
-                                @if (Route::has('reviews'))
-                                    <a href="{{ locale_route('reviews') }}" class="nav-panel-link">
-                                        <span class="nav-panel-item-row">
-                                            <span>Cảm nhận khách hàng</span>
-                                        </span>
-                                    </a>
-                                @endif
-                                @if (Route::has('videos') || Route::has('gallery'))
-                                    @if (Route::has('gallery'))
-                                        <a href="{{ locale_route('gallery') }}" class="nav-panel-link">
+                                @foreach ($moreNavItems as $navItem)
+                                    @if (! ($navItem['is_active'] ?? true))
+                                        @continue
+                                    @endif
+                                    @if (($navItem['kind'] ?? '') === 'heading')
+                                        <p class="nav-panel-group__title">{{ $navItem['label'] }}</p>
+                                    @elseif (($navItem['kind'] ?? '') === 'route_link')
+                                        @php $navRoute = (string) ($navItem['reference'] ?? ''); @endphp
+                                        @if ($navRoute !== '' && Route::has($navRoute))
+                                            <a href="{{ locale_route($navRoute) }}" class="nav-panel-link">
+                                                <span class="nav-panel-item-row">
+                                                    <span>{{ $navItem['label'] }}</span>
+                                                </span>
+                                            </a>
+                                        @endif
+                                    @elseif (($navItem['kind'] ?? '') === 'blog_menu')
+                                        <a href="{{ locale_route('guide.index') }}" class="nav-panel-link">
                                             <span class="nav-panel-item-row">
-                                                <span>Thư viện ảnh</span>
+                                                <span class="font-medium text-primary-700">{{ $navItem['label'] ?? 'Tất cả bài viết' }}</span>
                                             </span>
                                         </a>
+                                        @foreach ($blogCategories as $bCat)
+                                            <a href="{{ locale_route('guide.category', ['category' => $bCat['slug']]) }}" class="nav-panel-link">
+                                                <span class="nav-panel-item-row">
+                                                    <span>{{ $bCat['name'] }}</span>
+                                                    @if (($bCat['count'] ?? 0) > 0)
+                                                        <x-shared.count-badge :count="$bCat['count']" />
+                                                    @endif
+                                                </span>
+                                            </a>
+                                        @endforeach
                                     @endif
-                                    @if (Route::has('videos'))
-                                        <a href="{{ locale_route('videos') }}" class="nav-panel-link">
-                                            <span class="nav-panel-item-row">
-                                                <span>Video trải nghiệm</span>
-                                            </span>
-                                        </a>
-                                    @endif
-                                @endif
-                            </div>
-
-                            <div class="nav-panel-group">
-                                <p class="nav-panel-group__title">Blogs</p>
-                                <a href="{{ locale_route('guide.index') }}" class="nav-panel-link">
-                                    <span class="nav-panel-item-row">
-                                        <span class="font-medium text-primary-700">Tất cả bài viết</span>
-                                    </span>
-                                </a>
-                                @foreach ($blogCategories as $bCat)
-                                    <a href="{{ locale_route('guide.category', ['category' => $bCat['slug']]) }}" class="nav-panel-link">
-                                        <span class="nav-panel-item-row">
-                                            <span>{{ $bCat['name'] }}</span>
-                                            @if (($bCat['count'] ?? 0) > 0)
-                                                <x-shared.count-badge :count="$bCat['count']" />
-                                            @endif
-                                        </span>
-                                    </a>
                                 @endforeach
                             </div>
                         </div>
@@ -551,7 +526,7 @@
 
         <div class="headerMain__actions">
             <a href="{{ locale_route('customize') }}" class="btn-primary-sm hidden whitespace-nowrap sm:inline-flex">
-                <x-icon name="route" class="size-5 shrink-0" /> Tour riêng
+                <x-icon name="route" class="size-5 shrink-0" /> {{ $headerCta['label'] ?? 'Tour riêng' }}
             </a>
 
             <button type="button" @click="openMobileNav()"
@@ -753,8 +728,8 @@
                         <ul class="mobile-nav-drawer__tree">
                             <li>
                                 <a href="{{ locale_route('tours.hub') }}" class="mobile-nav-drawer__tree-link mobile-nav-drawer__tree-link--lead" @click="closeMobileNav()">
-                                    <span class="mobile-nav-drawer__tree-link-title item-title">Tất cả tour</span>
-                                    <span class="mobile-nav-drawer__tree-link-meta">Xem toàn bộ hành trình</span>
+                                    <span class="mobile-nav-drawer__tree-link-title item-title">{{ $toursNav['lead_label'] ?? 'Tất cả tour' }}</span>
+                                    <span class="mobile-nav-drawer__tree-link-meta">{{ $toursNav['meta'] ?? 'Xem toàn bộ hành trình' }}</span>
                                 </a>
                             </li>
                             @foreach ($destinations as $c)
@@ -805,7 +780,7 @@
                 </div>
 
                 @foreach ($serviceClusters as $sc)
-                    @if (in_array($sc['code'] ?? '', ['train', 'flight'], true))
+                    @if (! ($sc['show_in_main_bar'] ?? true))
                         @continue
                     @endif
                     @php

@@ -181,6 +181,7 @@ return [
         'service-categories' => 'service_categories',
         'home-slides' => 'content',
         'home-sections' => 'content',
+        'navigation-menu' => 'content',
         'blog-categories' => 'content',
         'articles' => 'content',
         'team-members' => 'brand',

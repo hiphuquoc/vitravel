@@ -161,7 +161,8 @@ Demo seed: **22 categories**, **32 services** (4 train, 4 flight, 8 stay, 9 expe
 - `value_definitions`, `reason_definitions`, `reference_persons`, `about_page`
 - `home_slides`, `hero_pills`, `home_sections`, `footer_*`, `listing_faqs`
 - **`customize_form`** — form Tour riêng: `destinations_label`, `accommodation_label`, `budget_note`, `accommodation[]` (i18n `vi`/`en`); điểm đến mặc định từ countries/zones `show_in_customize_form` (có thể ghi đè bằng `destinations[]`)
-- **`nav`** — nhãn header + hub cruise (seed-only, không admin): `about_group`, `tours.{label}`, `cruise.{label,all_label,all_meta,search_hint,search_placeholder,hub_title,hub_subtitle}` — đổi «Du thuyền» / «Tour trọn gói» tuỳ dự án
+- **`nav`** — nhãn header + hub cruise (legacy seed): `about_group`, `tours.{label}`, `cruise.{…}`. Runtime ưu tiên bảng `navigation_items` (admin **Nội dung → Menu chính**); chưa lưu DB thì dùng `nav_menu` (tự sinh từ `nav` + `service_clusters` qua `project/includes/nav_menu.php`).
+- **`nav_menu`** — cây menu public đầy đủ: `main[]`, `more[]`, `cta[]` — mỗi item: `kind`, `key`, `label` (vi/en), `lead_label`, `meta`, `reference` (cluster/route). Cụm **Lưu trú** = `service_cluster` + `reference: stay`.
 - **`listing_hubs`** — đoạn SEO cuối trang hub (`tours_hub`, `cruises_hub`, `ferries_hub`/`trains_hub`, `flights_hub`, `stays_hub`, `experiences_hub`, `extras_hub`): `{ hubKey: { vi|en: { seo_body } } }`. Runtime: cột `static_page_translations.seo_body` (admin **Cài đặt → Hub**). `body`/`subtitle` = copy ngắn dưới H1; `seo_body` = prose cuối listing. Rỗng = ẩn khối. Nếu DB trống mà seed có `seo_body`, lần mở hub sẽ soft-fill (không cần `project:seed` lại). Hỗ trợ `:brand`.
 
 ### Listing chrome (public + AI)

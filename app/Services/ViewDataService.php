@@ -1440,54 +1440,19 @@ class ViewDataService
             $tagline = trim((string) ($contact['slogan'] ?? ''), " \t\n\r\0\x0B\"'");
         }
 
-        $seed = [];
-        try {
-            $raw = ProjectSeed::get('nav', []);
-            $seed = is_array($raw) ? $raw : [];
-        } catch (\Throwable) {
-            $seed = [];
-        }
+        return app(NavigationMenuService::class)->siteNavBundle($brand, $tagline, $this->locale());
+    }
 
-        $pick = function (mixed $val, string $fallback): string {
-            if (is_string($val) && $val !== '') {
-                return $val;
-            }
-            if (is_array($val)) {
-                $picked = LocaleContent::pick($val, $this->locale(), null);
-                if (is_string($picked) && $picked !== '') {
-                    return $picked;
-                }
-            }
+    /** @return list<array<string, mixed>> */
+    public function moreNavItems(): array
+    {
+        return app(NavigationMenuService::class)->moreMenuItems($this->locale());
+    }
 
-            return $fallback;
-        };
-
-        $cruiseSeed = is_array($seed['cruise'] ?? null) ? $seed['cruise'] : [];
-        $toursSeed = is_array($seed['tours'] ?? null) ? $seed['tours'] : [];
-
-        return [
-            'brand' => $brand,
-            'tagline' => $tagline,
-            'about_group' => $pick($seed['about_group'] ?? null, 'Về '.$brand),
-            'tours' => [
-                'label' => $pick($toursSeed['label'] ?? null, 'Tour trọn gói'),
-            ],
-            'cruise' => [
-                'label' => $pick($cruiseSeed['label'] ?? null, 'Du thuyền'),
-                'all_label' => $pick($cruiseSeed['all_label'] ?? null, 'Tất cả du thuyền'),
-                'all_meta' => $pick($cruiseSeed['all_meta'] ?? null, 'Xem toàn bộ lịch trình du thuyền'),
-                'search_hint' => $pick($cruiseSeed['search_hint'] ?? null, 'Tour, điểm đến, du thuyền, cẩm nang…'),
-                'search_placeholder' => $pick(
-                    $cruiseSeed['search_placeholder'] ?? null,
-                    'Tìm tour, điểm đến, du thuyền, bài viết…'
-                ),
-                'hub_title' => $pick($cruiseSeed['hub_title'] ?? $cruiseSeed['label'] ?? null, 'Du thuyền'),
-                'hub_subtitle' => $pick(
-                    $cruiseSeed['hub_subtitle'] ?? null,
-                    'Chọn lịch trình trên mặt nước phù hợp với bạn'
-                ),
-            ],
-        ];
+    /** @return array<string, mixed>|null */
+    public function headerCta(): ?array
+    {
+        return app(NavigationMenuService::class)->ctaItem($this->locale());
     }
 
     /** @return list<string> */
@@ -1533,26 +1498,7 @@ class ViewDataService
     /** @return list<array<string, mixed>> */
     public function serviceClusters(): array
     {
-        $seed = ProjectSeed::get('service_clusters', []);
-        if (is_array($seed) && $seed !== []) {
-            return array_values($seed);
-        }
-
-        $out = [];
-        foreach (config('services_catalog.clusters', []) as $code => $cfg) {
-            $out[] = [
-                'code' => $code,
-                'nav_label' => $cfg['nav_label'] ?? $code,
-                'label' => $cfg['label'] ?? $code,
-                'icon' => $cfg['icon'] ?? 'sparkles',
-                'hub_key' => $cfg['hub_key'] ?? null,
-                'sort' => $cfg['sort'] ?? 0,
-            ];
-        }
-
-        usort($out, fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
-
-        return $out;
+        return app(NavigationMenuService::class)->serviceClusters($this->locale());
     }
 
     public function serviceCluster(string $code): ?array

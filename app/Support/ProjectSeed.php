@@ -139,7 +139,7 @@ final class ProjectSeed
                 throw new RuntimeException(self::path().' phải return array.');
             }
 
-            self::$data = self::normalize($loaded);
+            self::$data = self::normalizeNavMenu(self::normalize($loaded));
         }
 
         return self::$data;
@@ -249,6 +249,29 @@ final class ProjectSeed
                 $data['services'][$i] = $row;
             }
         }
+
+        return $data;
+    }
+
+    /**
+     * Bổ sung nav_menu (menu public) nếu seed chưa khai báo — sinh từ nav + service_clusters.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected static function normalizeNavMenu(array $data): array
+    {
+        if (isset($data['nav_menu']) && is_array($data['nav_menu']) && $data['nav_menu'] !== []) {
+            return $data;
+        }
+
+        $helper = base_path('project/includes/nav_menu.php');
+        if (! is_file($helper)) {
+            return $data;
+        }
+
+        require_once $helper;
+        $data['nav_menu'] = vitravel_build_nav_menu($data);
 
         return $data;
     }
