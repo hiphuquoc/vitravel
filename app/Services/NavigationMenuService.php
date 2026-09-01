@@ -372,15 +372,6 @@ final class NavigationMenuService
     /** @param  array<string, mixed>  $row */
     private function mapPublicDefaultRow(string $zone, array $row, string $locale): array
     {
-        $pick = static function (?array $val, string $fallback = '') use ($locale): string {
-            if ($val === null) {
-                return $fallback;
-            }
-            $picked = LocaleContent::pick($val, $locale, null);
-
-            return is_string($picked) && $picked !== '' ? $picked : $fallback;
-        };
-
         return [
             'zone' => $zone,
             'kind' => (string) ($row['kind'] ?? ''),
@@ -389,10 +380,25 @@ final class NavigationMenuService
             'sort' => (int) ($row['sort'] ?? 0),
             'is_active' => ($row['is_active'] ?? true) !== false,
             'show_in_main_bar' => ($row['show_in_main_bar'] ?? true) !== false,
-            'label' => $pick(is_array($row['label'] ?? null) ? $row['label'] : ['vi' => (string) ($row['label'] ?? '')], (string) ($row['label'] ?? '')),
-            'lead_label' => $pick(is_array($row['lead_label'] ?? null) ? $row['lead_label'] : null, ''),
-            'meta' => $pick(is_array($row['meta'] ?? null) ? $row['meta'] : null, ''),
+            'label' => $this->pickLocalized($row['label'] ?? null, $locale),
+            'lead_label' => $this->pickLocalized($row['lead_label'] ?? null, $locale),
+            'meta' => $this->pickLocalized($row['meta'] ?? null, $locale),
         ];
+    }
+
+    private function pickLocalized(mixed $val, string $locale, string $fallback = ''): string
+    {
+        if (is_string($val) && $val !== '') {
+            return $val;
+        }
+
+        if (is_array($val)) {
+            $picked = LocaleContent::pick($val, $locale, null);
+
+            return is_string($picked) && $picked !== '' ? $picked : $fallback;
+        }
+
+        return $fallback;
     }
 
     private function mapPublicItem(NavigationItem $item, string $locale): array
@@ -450,17 +456,11 @@ final class NavigationMenuService
             return $out;
         }
 
-        return array_values(array_map(static function (array $row) use ($locale): array {
-            $navLabel = $row['nav_label'] ?? '';
-            if (is_array($navLabel)) {
-                $picked = LocaleContent::pick($navLabel, $locale, null);
-                $navLabel = is_string($picked) ? $picked : '';
-            }
-
+        return array_values(array_map(function (array $row) use ($locale): array {
             return [
                 'code' => (string) ($row['code'] ?? ''),
-                'nav_label' => (string) $navLabel,
-                'label' => (string) ($row['label'] ?? ''),
+                'nav_label' => $this->pickLocalized($row['nav_label'] ?? null, $locale, (string) ($row['code'] ?? '')),
+                'label' => $this->pickLocalized($row['label'] ?? null, $locale),
                 'lead_label' => '',
                 'icon' => (string) ($row['icon'] ?? 'sparkles'),
                 'hub_key' => (string) ($row['hub_key'] ?? ''),
