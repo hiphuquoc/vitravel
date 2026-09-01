@@ -92,6 +92,16 @@ class ResolveProjectFromHost
             }
         }
 
+        if ($host !== '' && Schema::hasColumn('projects', 'primary_domain')) {
+            $byPrimary = Project::query()
+                ->active()
+                ->where('primary_domain', $host)
+                ->first();
+            if ($byPrimary) {
+                return $byPrimary;
+            }
+        }
+
         // d) PROJECT_DEFAULT_CODE
         $defaultCode = trim((string) config('project.default_code', ''));
         if ($defaultCode !== '') {

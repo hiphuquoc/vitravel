@@ -5,8 +5,8 @@ declare(strict_types=1);
 /**
  * Sitemap đa dự án (multi-tenant).
  *
- * Mỗi project ghi file riêng: storage/app/{private}/sitemaps/{projectCode}/…
- * (disk `local` Laravel 11+ = storage/app/private)
+ * Mỗi project ghi file riêng: storage/app/sitemaps/{projectCode}/…
+ * (disk `sitemap`, KHÔNG dùng disk `local` = storage/app/private)
  *
  * Cây URL (ưu tiên ngôn ngữ):
  *   /sitemap.xml
@@ -22,12 +22,15 @@ return [
 
     'max_urls_per_file' => (int) env('SITEMAP_MAX_URLS', 1000),
 
-    'disk' => env('SITEMAP_DISK', 'local'),
+    'disk' => env('SITEMAP_DISK', 'sitemap'),
 
     /** Thư mục gốc trên disk (mỗi project là 1 subfolder). */
     'root' => 'sitemaps',
 
     'cache_max_age' => (int) env('SITEMAP_CACHE_MAX_AGE', 3600),
+
+    /** Tự generate khi /sitemap.xml chưa có — chỉ bật khi web user có quyền ghi storage. */
+    'generate_on_miss' => filter_var(env('SITEMAP_GENERATE_ON_MISS', false), FILTER_VALIDATE_BOOLEAN),
 
     /**
      * SEO types đưa vào sitemap (null = tất cả keys trong config/seo.php types).

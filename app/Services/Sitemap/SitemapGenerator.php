@@ -32,39 +32,56 @@ final class SitemapGenerator
     public function generateForProject(Project $project, ?string $baseUrl = null): array
     {
         return ProjectContext::run($project, function () use ($project, $baseUrl): array {
+            $this->ensureStorageRoot();
+
             $baseUrl = rtrim($baseUrl ?: $this->resolveBaseUrl($project), '/');
             $root = $this->projectRoot($project);
-            $disk = Storage::disk((string) config('sitemap.disk', 'local'));
-            $disk->makeDirectory($root.'/sitemap');
+            $disk = $this->disk();
+            $this->ensureRelativeDir($disk, $root.'/sitemap');
 
             $stats = ['locales' => 0, 'types' => 0, 'files' => 0, 'urls' => 0];
             $now = now()->toIso8601String();
             $mainEntries = [];
             $typesSeen = [];
 
-            foreach ($this->activeLocales() as $locale) {
-                $languageId = Language::idByCode($locale);
-                if (! $languageId) {
-                    continue;
-                }
+        foreach ($this->activeLocales() as $locale) {
+            $languageId = Language::idByCode($locale);
 
-                $langDir = $root.'/sitemap/'.$locale;
-                $disk->makeDirectory($langDir);
-                $langIndexEntries = [];
+            $langDir = $root.'/sitemap/'.$locale;
+            $this->ensureRelativeDir($disk, $langDir);
+            $langIndexEntries = [];
 
-                // Trang cứng theo từng locale
-                $pagesUrls = $this->buildStaticUrlsForLocale($baseUrl, $locale);
-                if ($pagesUrls !== []) {
-                    $this->writeAtomic($disk, $langDir.'/pages.xml', SitemapXml::urlset($pagesUrls));
+            // Trang cứng theo từng locale (không phụ thuộc language_id DB)
+            $pagesUrls = $this->buildStaticUrlsForLocale($baseUrl, $locale);
+            if ($pagesUrls !== []) {
+                $this->writeAtomic($disk, $langDir.'/pages.xml', SitemapXml::urlset($pagesUrls));
+                $stats['files']++;
+                $stats['urls'] += count($pagesUrls);
+                $langIndexEntries[] = [
+                    'loc' => $baseUrl.'/sitemap/'.$locale.'/pages.xml',
+                    'lastmod' => $now,
+                ];
+            }
+
+            if (! $languageId) {
+                if ($langIndexEntries !== []) {
+                    $this->writeAtomic(
+                        $disk,
+                        $root.'/sitemap/'.$locale.'.xml',
+                        SitemapXml::sitemapIndex($langIndexEntries),
+                    );
                     $stats['files']++;
-                    $stats['urls'] += count($pagesUrls);
-                    $langIndexEntries[] = [
-                        'loc' => $baseUrl.'/sitemap/'.$locale.'/pages.xml',
+                    $stats['locales']++;
+                    $mainEntries[] = [
+                        'loc' => $baseUrl.'/sitemap/'.$locale.'.xml',
                         'lastmod' => $now,
                     ];
                 }
 
-                foreach ($this->sitemapTypes() as $type) {
+                continue;
+            }
+
+            foreach ($this->sitemapTypes() as $type) {
                     $pages = $this->writeTypeLanguageChunks(
                         $disk,
                         $root,
@@ -296,7 +313,7 @@ final class SitemapGenerator
 
         $max = max(1, (int) config('sitemap.max_urls_per_file', 1000));
         $langDir = $root.'/sitemap/'.$locale;
-        $disk->makeDirectory($langDir);
+        $this->ensureRelativeDir($disk, $langDir);
 
         $changefreq = (string) config('sitemap.defaults.changefreq', 'weekly');
         $priority = (string) (
@@ -399,7 +416,7 @@ final class SitemapGenerator
     {
         $dir = dirname($relativePath);
         if ($dir !== '.' && $dir !== '') {
-            $disk->makeDirectory($dir);
+            $this->ensureRelativeDir($disk, $dir);
         }
 
         $tmp = $dir.'/.tmp-'.basename($relativePath).'.'.uniqid('', true);
@@ -410,6 +427,7 @@ final class SitemapGenerator
             $absoluteFinal = $disk->path($relativePath);
             if (is_file($absoluteTmp)) {
                 @rename($absoluteTmp, $absoluteFinal);
+                @chmod($absoluteFinal, 0664);
                 if (is_file($absoluteTmp)) {
                     $disk->put($relativePath, $contents);
                     $disk->delete($tmp);
@@ -423,5 +441,44 @@ final class SitemapGenerator
 
         $disk->put($relativePath, $contents);
         $disk->delete($tmp);
+    }
+
+    private function disk(): \Illuminate\Contracts\Filesystem\Filesystem
+    {
+        return Storage::disk((string) config('sitemap.disk', 'sitemap'));
+    }
+
+    public function ensureStorageRoot(): void
+    {
+        $root = storage_path('app/sitemaps');
+        $this->ensureAbsoluteDir($root);
+    }
+
+    private function ensureRelativeDir(\Illuminate\Contracts\Filesystem\Filesystem $disk, string $relativePath): void
+    {
+        try {
+            $absolute = $disk->path($relativePath);
+            $this->ensureAbsoluteDir($absolute);
+        } catch (\Throwable) {
+            $disk->makeDirectory($relativePath);
+        }
+    }
+
+    private function ensureAbsoluteDir(string $absolutePath): void
+    {
+        if (is_dir($absolutePath)) {
+            @chmod($absolutePath, 0775);
+
+            return;
+        }
+
+        if (! @mkdir($absolutePath, 0775, true) && ! is_dir($absolutePath)) {
+            throw new \RuntimeException(
+                "Không tạo được thư mục sitemap: {$absolutePath}. "
+                .'Chạy: sudo chown -R $USER:www-data storage && chmod -R 775 storage/app/sitemaps'
+            );
+        }
+
+        @chmod($absolutePath, 0775);
     }
 }

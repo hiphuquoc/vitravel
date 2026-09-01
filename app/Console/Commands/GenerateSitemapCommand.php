@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Services\Sitemap\SitemapGenerator;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Sinh sitemap XML đa dự án.
@@ -37,7 +38,9 @@ class GenerateSitemapCommand extends Command
         $code = $this->option('project') ? trim((string) $this->option('project')) : null;
         $query = Project::query()->active()->orderBy('id');
         if ($code) {
-            $query->where('code', $code);
+            $query->where(function ($q) use ($code): void {
+                $q->where('code', $code)->orWhere('seed_profile', $code);
+            });
         }
 
         $projects = $query->get();
@@ -50,6 +53,14 @@ class GenerateSitemapCommand extends Command
         $useQueue = (bool) $this->option('queue');
         $baseUrl = $this->option('base-url') ? rtrim((string) $this->option('base-url'), '/') : null;
 
+        try {
+            $generator->ensureStorageRoot();
+        } catch (\RuntimeException $e) {
+            $this->error($e->getMessage());
+
+            return self::FAILURE;
+        }
+
         foreach ($projects as $project) {
             if ($useQueue) {
                 GenerateProjectSitemapJob::dispatch($project->id);
@@ -61,14 +72,20 @@ class GenerateSitemapCommand extends Command
             $this->line("Generating sitemap: {$project->code} …");
             $stats = $generator->generateForProject($project, $baseUrl);
             $this->info(sprintf(
-                '  OK %s — locales=%d types=%d files=%d urls=%d → %s',
+                '  OK %s — locales=%d types=%d files=%d urls=%d',
                 $project->code,
                 $stats['locales'],
                 $stats['types'],
                 $stats['files'],
                 $stats['urls'],
-                $generator->projectRoot($project).'/sitemap.xml',
             ));
+            try {
+                $abs = Storage::disk((string) config('sitemap.disk', 'local'))
+                    ->path($generator->projectRoot($project).'/sitemap.xml');
+                $this->line('  → '.$abs);
+            } catch (\Throwable) {
+                $this->line('  → '.$generator->projectRoot($project).'/sitemap.xml');
+            }
         }
 
         if ($useQueue) {

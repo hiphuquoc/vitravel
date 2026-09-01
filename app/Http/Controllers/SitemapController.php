@@ -6,10 +6,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Services\Sitemap\SitemapGenerator;
-use App\Support\ProjectContext;
+use App\Support\ProjectHostResolver;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToCreateDirectory;
 
 class SitemapController extends Controller
 {
@@ -20,13 +23,11 @@ class SitemapController extends Controller
         return $this->serve('sitemap.xml');
     }
 
-    /** /sitemap/{language}.xml — index types của 1 locale */
     public function language(string $language): Response
     {
         return $this->serve('sitemap/'.$language.'.xml');
     }
 
-    /** /sitemap/{language}/{name}.xml — pages | type | type-N */
     public function languageFile(string $language, string $name): Response
     {
         return $this->serve('sitemap/'.$language.'/'.$name.'.xml');
@@ -45,20 +46,56 @@ class SitemapController extends Controller
 
     private function serve(string $relativePath): Response
     {
-        $project = $this->resolveProject();
+        $project = ProjectHostResolver::resolveFromRequest(request());
         if (! $project instanceof Project) {
-            abort(404, 'Sitemap: chưa resolve được project từ Host.');
+            abort(404, 'Sitemap: không resolve được project từ Host.');
         }
 
         $storagePath = $this->generator->storagePathFor($project, $relativePath);
-        $disk = Storage::disk((string) config('sitemap.disk', 'local'));
+        $disk = Storage::disk((string) config('sitemap.disk', 'sitemap'));
+        $readDisk = $disk;
+        $readPath = $storagePath;
 
         if (! $disk->exists($storagePath)) {
-            abort(404, 'Sitemap chưa generate hoặc thiếu file: '.$storagePath
-                .' — chạy: php artisan sitemap:generate --project='.$project->code);
+            $legacyPath = $this->generator->storagePathFor($project, $relativePath);
+            $legacyDisk = Storage::disk('local');
+            if ($legacyDisk->exists($legacyPath)) {
+                $readDisk = $legacyDisk;
+                $readPath = $legacyPath;
+            }
         }
 
-        $content = $disk->get($storagePath);
+        if (! $readDisk->exists($readPath) && $relativePath === 'sitemap.xml' && config('sitemap.generate_on_miss', false)) {
+            try {
+                $lock = Cache::lock('sitemap:generate:'.$project->id, 120);
+                if ($lock->get()) {
+                    try {
+                        $this->generator->generateForProject($project, request()->getSchemeAndHttpHost());
+                    } finally {
+                        $lock->release();
+                    }
+                }
+            } catch (UnableToCreateDirectory|\RuntimeException $e) {
+                Log::warning('sitemap.generate_on_miss_failed', ['message' => $e->getMessage()]);
+            } catch (\Throwable $e) {
+                Log::warning('sitemap.generate_on_miss_failed', ['message' => $e->getMessage()]);
+            }
+
+            if ($disk->exists($storagePath)) {
+                $readDisk = $disk;
+                $readPath = $storagePath;
+            }
+        }
+
+        if (! $readDisk->exists($readPath)) {
+            $hint = 'php artisan sitemap:generate --project='.$project->code;
+            if (config('app.debug')) {
+                abort(404, "Sitemap thiếu file [{$readPath}] — {$hint}");
+            }
+            abort(404);
+        }
+
+        $content = $readDisk->get($readPath);
         $headers = [
             'Content-Type' => 'application/xml; charset=UTF-8',
             'Cache-Control' => 'public, max-age='.(int) config('sitemap.cache_max_age', 3600),
@@ -77,45 +114,5 @@ class SitemapController extends Controller
         }
 
         return response($content, 200, $headers);
-    }
-
-    private function resolveProject(): ?Project
-    {
-        $project = ProjectContext::get();
-        if ($project instanceof Project) {
-            return $project;
-        }
-
-        // Fallback nếu middleware chưa set (hiếm) — vẫn theo Host
-        $host = strtolower((string) request()->getHost());
-        $host = preg_replace('/:\d+$/', '', $host) ?: $host;
-        if ($host !== '') {
-            $byDomain = Project::query()
-                ->active()
-                ->whereHas('domains', fn ($q) => $q->where('domain', $host))
-                ->first();
-            if ($byDomain) {
-                ProjectContext::set($byDomain);
-
-                return $byDomain;
-            }
-        }
-
-        $defaultCode = trim((string) config('project.default_code', ''));
-        if ($defaultCode !== '') {
-            $byCode = Project::query()->active()->where('code', $defaultCode)->first();
-            if ($byCode) {
-                ProjectContext::set($byCode);
-
-                return $byCode;
-            }
-        }
-
-        $first = Project::query()->active()->orderBy('id')->first();
-        if ($first) {
-            ProjectContext::set($first);
-        }
-
-        return $first;
     }
 }

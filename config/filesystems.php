@@ -47,6 +47,14 @@ return [
             'report' => false,
         ],
 
+        /** Sitemap XML — tách khỏi disk private (tránh lỗi quyền ghi www-data). */
+        'sitemap' => [
+            'driver' => 'local',
+            'root' => storage_path('app/sitemaps'),
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
