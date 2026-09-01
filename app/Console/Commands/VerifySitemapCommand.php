@@ -61,7 +61,12 @@ class VerifySitemapCommand extends Command
         $this->info('Projects:');
         foreach ($query->get() as $project) {
             $domains = $project->domains()->pluck('domain')->implode(', ');
+            $canonical = $generator->resolveBaseUrl($project);
             $this->line("  {$project->code} (#{$project->id}) primary={$project->primary_domain} domains=[{$domains}]");
+            $this->line("    canonical base URL → {$canonical}");
+            if (! app()->environment('local') && str_contains($canonical, '.dev')) {
+                $this->warn('    ⚠ Production đang dùng domain .dev — thêm domain .net/.com vào project_domains hoặc set SITEMAP_CANONICAL_BASE_URL');
+            }
             $this->checkProject($generator, $disk, $project);
         }
 

@@ -42,27 +42,76 @@ final class ProjectHostResolver
     }
 
     /**
-     * Base URL canonical cho sitemap (ưu tiên bỏ www nếu có cả hai).
+     * Base URL canonical cho sitemap.
+     * Ưu tiên domain production (bỏ .dev/.local/.test) rồi bỏ www.
      */
     public static function canonicalBaseUrl(Project $project): string
     {
-        $hosts = self::collectProjectHosts($project);
+        $hosts = self::rankHostsForCanonical(self::collectProjectHosts($project));
         if ($hosts === []) {
             $appUrl = rtrim((string) config('app.url'), '/');
 
             return $appUrl !== '' ? $appUrl : 'https://localhost';
         }
 
-        $preferNonWww = (bool) config('sitemap.prefer_non_www', true);
-        if ($preferNonWww) {
-            foreach ($hosts as $host) {
-                if (! str_starts_with($host, 'www.')) {
-                    return 'https://'.$host;
-                }
+        return 'https://'.$hosts[0];
+    }
+
+    public static function isDevHost(string $host): bool
+    {
+        $host = self::normalizeHost($host);
+        if ($host === '' || $host === 'localhost' || $host === '127.0.0.1') {
+            return true;
+        }
+
+        foreach (['.dev', '.local', '.test', '.localhost', '.invalid', '.example', '.lan'] as $suffix) {
+            if (str_ends_with($host, $suffix)) {
+                return true;
             }
         }
 
-        return 'https://'.$hosts[0];
+        return false;
+    }
+
+    /**
+     * Sắp xếp host cho sitemap: production trước, giữ thứ tự primary → domains, ưu tiên non-www.
+     *
+     * @param  list<string>  $hosts
+     * @return list<string>
+     */
+    public static function rankHostsForCanonical(array $hosts): array
+    {
+        $hosts = array_values(array_unique(array_filter(array_map(
+            static fn (string $host): string => self::normalizeHost($host),
+            $hosts,
+        ))));
+
+        if ($hosts === []) {
+            return [];
+        }
+
+        $production = array_values(array_filter(
+            $hosts,
+            static fn (string $host): bool => ! self::isDevHost($host),
+        ));
+        $candidates = $production !== [] ? $production : $hosts;
+
+        if (! (bool) config('sitemap.prefer_non_www', true)) {
+            return $candidates;
+        }
+
+        $order = array_flip($hosts);
+        usort($candidates, static function (string $a, string $b) use ($order): int {
+            $aWww = str_starts_with($a, 'www.') ? 1 : 0;
+            $bWww = str_starts_with($b, 'www.') ? 1 : 0;
+            if ($aWww !== $bWww) {
+                return $aWww <=> $bWww;
+            }
+
+            return ($order[$a] ?? 999) <=> ($order[$b] ?? 999);
+        });
+
+        return $candidates;
     }
 
     /**

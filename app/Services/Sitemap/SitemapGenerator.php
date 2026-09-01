@@ -194,13 +194,24 @@ final class SitemapGenerator
             return rtrim($override, '/');
         }
 
-        // Ưu tiên APP_URL nếu host trùng domain của project (local: vitravel.dev)
-        $appUrl = rtrim((string) config('app.url'), '/');
-        $appHost = strtolower((string) (parse_url($appUrl, PHP_URL_HOST) ?: ''));
-        if ($appHost !== '' && $this->projectOwnsHost($project, $appHost)) {
-            $scheme = parse_url($appUrl, PHP_URL_SCHEME) ?: 'https';
+        $byProject = config('sitemap.canonical_base_url_by_project', []);
+        if (is_array($byProject)) {
+            $code = (string) $project->code;
+            $projectOverride = trim((string) ($byProject[$code] ?? ''));
+            if ($projectOverride !== '') {
+                return rtrim($projectOverride, '/');
+            }
+        }
 
-            return $scheme.'://'.$appHost;
+        // Local: APP_URL khi trùng domain project (vd. vitravel.dev). Production: luôn từ DB.
+        if (app()->environment('local')) {
+            $appUrl = rtrim((string) config('app.url'), '/');
+            $appHost = strtolower((string) (parse_url($appUrl, PHP_URL_HOST) ?: ''));
+            if ($appHost !== '' && $this->projectOwnsHost($project, $appHost)) {
+                $scheme = parse_url($appUrl, PHP_URL_SCHEME) ?: 'https';
+
+                return $scheme.'://'.$appHost;
+            }
         }
 
         return ProjectHostResolver::canonicalBaseUrl($project);

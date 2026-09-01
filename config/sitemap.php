@@ -29,8 +29,17 @@ return [
 
     'cache_max_age' => (int) env('SITEMAP_CACHE_MAX_AGE', 3600),
 
-    /** URL gốc trong XML (vd: https://culaocham.net). Để trống = tự chọn từ domain project. */
+    /** URL gốc trong XML toàn cục (vd: https://culaocham.net). Để trống = tự chọn từ domain project. */
     'canonical_base_url' => env('SITEMAP_CANONICAL_BASE_URL', ''),
+
+    /**
+     * Override theo project code (ưu tiên sau canonical_base_url).
+     *
+     * @var array<string, string>
+     */
+    'canonical_base_url_by_project' => [
+        // 'culaocham' => env('SITEMAP_CULAOCHAM_BASE_URL', 'https://culaocham.net'),
+    ],
 
     /** Ưu tiên domain không có www khi sinh loc trong sitemap. */
     'prefer_non_www' => filter_var(env('SITEMAP_PREFER_NON_WWW', true), FILTER_VALIDATE_BOOLEAN),

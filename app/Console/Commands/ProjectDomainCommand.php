@@ -14,18 +14,22 @@ use Illuminate\Support\Facades\Schema;
  *
  * Ví dụ:
  *   php artisan project:domain hicatba --list
- *   php artisan project:domain hicatba --add=hicatba.dev --primary
+ *   php artisan project:domain hicatba --add=hicatba.dev --primary=hicatba.dev
  *   php artisan project:domain hicatba --add=hicatba.com
  *   php artisan project:domain hicatba --add=www.hicatba.com
+ *   php artisan project:domain hicatba --primary=hicatba.com
+ *   php artisan project:domain hicatba hicatba.com --set-primary   (shorthand)
  *   php artisan project:domain hicatba --remove=hicatba.dev
  */
 class ProjectDomainCommand extends Command
 {
     protected $signature = 'project:domain
         {code : Mã project (vd: hicatba)}
+        {domain? : Domain (shorthand: tự --add; kèm --set-primary)}
         {--list : Liệt kê domain hiện có}
         {--add=* : Thêm một hoặc nhiều domain}
         {--remove=* : Xóa domain}
+        {--set-primary : Đặt {domain} argument làm primary}
         {--primary= : Đặt domain này làm primary_domain}';
 
     protected $description = 'Thêm / xóa / liệt kê domain của project (local + production cùng lúc)';
@@ -50,14 +54,22 @@ class ProjectDomainCommand extends Command
             fn ($d) => $this->normalizeDomain((string) $d),
             (array) $this->option('add')
         )));
+        $domainArg = $this->argument('domain');
+        if (is_string($domainArg) && trim($domainArg) !== '') {
+            $adds[] = $this->normalizeDomain($domainArg);
+            $adds = array_values(array_unique($adds));
+        }
         $removes = array_values(array_filter(array_map(
             fn ($d) => $this->normalizeDomain((string) $d),
             (array) $this->option('remove')
         )));
         $primaryOpt = $this->option('primary');
-        $primary = is_string($primaryOpt) && trim($primaryOpt) !== ''
-            ? $this->normalizeDomain($primaryOpt)
-            : null;
+        $primary = null;
+        if (is_string($primaryOpt) && trim($primaryOpt) !== '') {
+            $primary = $this->normalizeDomain($primaryOpt);
+        } elseif ($this->option('set-primary') && is_string($domainArg) && trim($domainArg) !== '') {
+            $primary = $this->normalizeDomain($domainArg);
+        }
 
         $didMutate = false;
 

@@ -70,6 +70,8 @@ class GenerateSitemapCommand extends Command
             }
 
             $this->line("Generating sitemap: {$project->code} …");
+            $effectiveBase = $baseUrl ?: $generator->resolveBaseUrl($project);
+            $this->line("  base URL: {$effectiveBase}");
             $stats = $generator->generateForProject($project, $baseUrl);
             $this->info(sprintf(
                 '  OK %s — locales=%d types=%d files=%d urls=%d',
