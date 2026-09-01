@@ -66,8 +66,9 @@ class VerifySitemapCommand extends Command
         }
 
         $this->newLine();
-        $this->comment('Nếu route OK nhưng browser 404 → nginx/apache chưa pass .xml vào index.php.');
-        $this->comment('Nginx (aaPanel): thêm location = /sitemap.xml { try_files $uri /index.php?$query_string; }');
+        $this->comment('Nếu route OK nhưng browser 404 → nginx/apache chưa pass /sitemap/* vào index.php.');
+        $this->comment('Nginx: location ~ ^/sitemap/ { try_files $uri /index.php?$query_string; }');
+        $this->comment('Lưu ý www/non-www: regenerate với --base-url=https://domain-khong-www');
 
         $this->newLine();
         $this->info('Routes (sitemap):');

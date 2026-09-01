@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Resolve project theo Host (domain) — không dùng cookie / ?project=.
- * Dùng cho sitemap, robots, và các endpoint phải gắn chặt với domain.
+ * Hỗ trợ alias www ↔ non-www.
  */
 final class ProjectHostResolver
 {
@@ -26,6 +26,86 @@ final class ProjectHostResolver
             return self::fallback();
         }
 
+        foreach (self::hostAliases($host) as $tryHost) {
+            $project = self::findByHost($tryHost);
+            if ($project) {
+                return $project;
+            }
+        }
+
+        return self::fallback();
+    }
+
+    public static function resolveFromRequest(Request $request): ?Project
+    {
+        return self::resolve($request->getHost());
+    }
+
+    /**
+     * Base URL canonical cho sitemap (ưu tiên bỏ www nếu có cả hai).
+     */
+    public static function canonicalBaseUrl(Project $project): string
+    {
+        $hosts = self::collectProjectHosts($project);
+        if ($hosts === []) {
+            $appUrl = rtrim((string) config('app.url'), '/');
+
+            return $appUrl !== '' ? $appUrl : 'https://localhost';
+        }
+
+        $preferNonWww = (bool) config('sitemap.prefer_non_www', true);
+        if ($preferNonWww) {
+            foreach ($hosts as $host) {
+                if (! str_starts_with($host, 'www.')) {
+                    return 'https://'.$host;
+                }
+            }
+        }
+
+        return 'https://'.$hosts[0];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function hostAliases(string $host): array
+    {
+        $host = self::normalizeHost($host);
+        if ($host === '') {
+            return [];
+        }
+
+        $aliases = [$host];
+        if (str_starts_with($host, 'www.')) {
+            $aliases[] = substr($host, 4);
+        } else {
+            $aliases[] = 'www.'.$host;
+        }
+
+        return array_values(array_unique(array_filter($aliases)));
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function collectProjectHosts(Project $project): array
+    {
+        $hosts = [];
+        if (filled($project->primary_domain)) {
+            $hosts[] = self::normalizeHost((string) $project->primary_domain);
+        }
+
+        if (Schema::hasTable('project_domains')) {
+            foreach ($project->domains()->pluck('domain') as $domain) {
+                $hosts[] = self::normalizeHost((string) $domain);
+            }
+        }
+
+        return array_values(array_unique(array_filter($hosts)));
+    }
+
+    private static function findByHost(string $host): ?Project
+    {
         if (Schema::hasTable('project_domains')) {
             $domain = ProjectDomain::query()
                 ->where('domain', $host)
@@ -38,29 +118,22 @@ final class ProjectHostResolver
         }
 
         if (Schema::hasColumn('projects', 'primary_domain')) {
-            $byPrimary = Project::query()
+            return Project::query()
                 ->active()
                 ->where('primary_domain', $host)
                 ->first();
-
-            if ($byPrimary) {
-                return $byPrimary;
-            }
         }
 
-        return self::fallback();
-    }
-
-    public static function resolveFromRequest(Request $request): ?Project
-    {
-        return self::resolve($request->getHost());
+        return null;
     }
 
     private static function normalizeHost(string $host): string
     {
         $host = strtolower(trim($host));
+        $host = preg_replace('#^https?://#i', '', $host) ?: $host;
+        $host = preg_replace('/:\d+$/', '', $host) ?: $host;
 
-        return preg_replace('/:\d+$/', '', $host) ?: $host;
+        return rtrim($host, '/');
     }
 
     private static function fallback(): ?Project

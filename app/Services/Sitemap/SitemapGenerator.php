@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\SeoEntryTranslation;
 use App\Services\SeoService;
 use App\Support\ProjectContext;
+use App\Support\ProjectHostResolver;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
@@ -188,6 +189,11 @@ final class SitemapGenerator
 
     public function resolveBaseUrl(Project $project): string
     {
+        $override = trim((string) config('sitemap.canonical_base_url', ''));
+        if ($override !== '') {
+            return rtrim($override, '/');
+        }
+
         // Ưu tiên APP_URL nếu host trùng domain của project (local: vitravel.dev)
         $appUrl = rtrim((string) config('app.url'), '/');
         $appHost = strtolower((string) (parse_url($appUrl, PHP_URL_HOST) ?: ''));
@@ -197,18 +203,7 @@ final class SitemapGenerator
             return $scheme.'://'.$appHost;
         }
 
-        $domain = $project->primary_domain
-            ?: $project->domains()->where('is_primary', true)->value('domain')
-            ?: $project->domains()->orderBy('id')->value('domain');
-
-        if (is_string($domain) && $domain !== '') {
-            $domain = preg_replace('#^https?://#i', '', $domain) ?: $domain;
-            $domain = rtrim(strtolower($domain), '/');
-
-            return 'https://'.$domain;
-        }
-
-        return $appUrl !== '' ? $appUrl : 'https://localhost';
+        return ProjectHostResolver::canonicalBaseUrl($project);
     }
 
     public function storagePathFor(Project $project, string $requestPath): string
@@ -223,16 +218,13 @@ final class SitemapGenerator
 
     private function projectOwnsHost(Project $project, string $host): bool
     {
-        $host = strtolower(preg_replace('/:\d+$/', '', $host) ?: $host);
-        if ($host === '') {
-            return false;
+        foreach (ProjectHostResolver::hostAliases($host) as $alias) {
+            if (in_array($alias, ProjectHostResolver::collectProjectHosts($project), true)) {
+                return true;
+            }
         }
 
-        if (strtolower((string) ($project->primary_domain ?? '')) === $host) {
-            return true;
-        }
-
-        return $project->domains()->where('domain', $host)->exists();
+        return false;
     }
 
     /**

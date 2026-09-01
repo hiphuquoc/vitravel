@@ -7,6 +7,7 @@ namespace App\Http\Middleware;
 use App\Models\Project;
 use App\Models\ProjectDomain;
 use App\Support\ProjectContext;
+use App\Support\ProjectHostResolver;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -77,28 +78,32 @@ class ResolveProjectFromHost
             }
         }
 
-        // c) Host → project_domains
+        // c) Host → project_domains (+ alias www/non-www)
         $host = strtolower((string) $request->getHost());
         $host = preg_replace('/:\d+$/', '', $host) ?: $host;
 
-        if ($host !== '' && Schema::hasTable('project_domains')) {
-            $domain = ProjectDomain::query()
-                ->where('domain', $host)
-                ->with(['project' => fn ($q) => $q->where('is_active', true)])
-                ->first();
+        if ($host !== '') {
+            foreach (ProjectHostResolver::hostAliases($host) as $tryHost) {
+                if (Schema::hasTable('project_domains')) {
+                    $domain = ProjectDomain::query()
+                        ->where('domain', $tryHost)
+                        ->with(['project' => fn ($q) => $q->where('is_active', true)])
+                        ->first();
 
-            if ($domain?->project) {
-                return $domain->project;
-            }
-        }
+                    if ($domain?->project) {
+                        return $domain->project;
+                    }
+                }
 
-        if ($host !== '' && Schema::hasColumn('projects', 'primary_domain')) {
-            $byPrimary = Project::query()
-                ->active()
-                ->where('primary_domain', $host)
-                ->first();
-            if ($byPrimary) {
-                return $byPrimary;
+                if (Schema::hasColumn('projects', 'primary_domain')) {
+                    $byPrimary = Project::query()
+                        ->active()
+                        ->where('primary_domain', $tryHost)
+                        ->first();
+                    if ($byPrimary) {
+                        return $byPrimary;
+                    }
+                }
             }
         }
 
