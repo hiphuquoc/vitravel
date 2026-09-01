@@ -68,6 +68,7 @@ class VerifySitemapCommand extends Command
                 $this->warn('    ⚠ Production đang dùng domain .dev — thêm domain .net/.com vào project_domains hoặc set SITEMAP_CANONICAL_BASE_URL');
             }
             $this->checkProject($generator, $disk, $project);
+            $this->auditCategoryCoverage($generator, $disk, $project);
         }
 
         $this->newLine();
@@ -97,5 +98,67 @@ class VerifySitemapCommand extends Command
         } else {
             $this->line('       fix: php artisan sitemap:generate --project='.$project->code);
         }
+    }
+
+    private function auditCategoryCoverage(SitemapGenerator $generator, $disk, Project $project): void
+    {
+        $locale = 'vi';
+        $indexPath = $generator->projectRoot($project).'/sitemap/'.$locale.'.xml';
+        if (! $disk->exists($indexPath)) {
+            return;
+        }
+
+        $xml = (string) $disk->get($indexPath);
+        preg_match_all('#/sitemap/'.preg_quote($locale, '#').'/([^<]+)\.xml#', $xml, $matches);
+        /** @var list<string> $found */
+        $found = $matches[1] ?? [];
+
+        $groups = [
+            'Tour' => ['hub' => 'tours_hub', 'categories' => ['country', 'tour_category'], 'items' => ['package_tour']],
+            'Du thuyền' => ['hub' => 'cruises_hub', 'categories' => ['cruise_type'], 'items' => ['package_cruise']],
+            'Cẩm nang' => ['hub' => 'guide_hub', 'categories' => ['blog_category'], 'items' => ['article']],
+            'Vé tàu' => ['hub' => 'trains_hub', 'categories' => ['service_category_train'], 'items' => ['service_train']],
+            'Tàu/xe đảo' => ['hub' => 'ferries_hub', 'categories' => ['service_category_ferry'], 'items' => ['service_ferry']],
+            'Vé máy bay' => ['hub' => 'flights_hub', 'categories' => ['service_category_flight'], 'items' => ['service_flight']],
+            'Lưu trú (KS)' => ['hub' => 'stays_hub', 'categories' => ['service_category_stay'], 'items' => ['service_stay']],
+            'Vui chơi' => ['hub' => 'experiences_hub', 'categories' => ['service_category_experience'], 'items' => ['service_experience']],
+            'Dịch vụ khác' => ['hub' => 'extras_hub', 'categories' => ['service_category_other'], 'items' => ['service_other']],
+            'Đội ngũ' => ['hub' => 'team_hub', 'categories' => [], 'items' => ['team_member']],
+        ];
+
+        $this->line('    Coverage ('.$locale.'):');
+        foreach ($groups as $label => $row) {
+            $hub = $this->hasSitemapEntry($found, (string) $row['hub']) ? '✓' : '–';
+            $cats = [];
+            foreach ($row['categories'] as $cat) {
+                $cats[] = $cat.($this->hasSitemapEntry($found, $cat) ? '✓' : '–');
+            }
+            $items = [];
+            foreach ($row['items'] as $item) {
+                $items[] = $item.($this->hasSitemapEntry($found, $item) ? '✓' : '–');
+            }
+
+            $this->line(sprintf(
+                '      %-14s hub:%s  danh mục:[%s]  chi tiết:[%s]',
+                $label,
+                $hub,
+                $cats === [] ? '–' : implode(', ', $cats),
+                implode(', ', $items),
+            ));
+        }
+    }
+
+    /**
+     * @param  list<string>  $found
+     */
+    private function hasSitemapEntry(array $found, string $prefix): bool
+    {
+        foreach ($found as $name) {
+            if ($name === $prefix.'-1' || str_starts_with($name, $prefix.'-') || $name === $prefix) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Language;
 use App\Models\Project;
 use App\Models\SeoEntryTranslation;
 use App\Models\Service;
+use App\Models\ServiceCategory;
 use App\Services\SeoService;
 use App\Support\ProjectContext;
 use App\Support\ProjectHostResolver;
@@ -190,35 +191,62 @@ final class SitemapGenerator
             return $types;
         }
 
+        $clusters = array_keys(config('services_catalog.clusters', []));
         $expanded = [];
+
         foreach ($types as $type) {
-            if ($type !== 'service') {
-                $expanded[] = $type;
+            if ($type === 'service') {
+                foreach ($clusters as $cluster) {
+                    $expanded[] = 'service_'.$cluster;
+                }
 
                 continue;
             }
 
-            foreach (array_keys(config('services_catalog.clusters', [])) as $cluster) {
-                $expanded[] = 'service_'.$cluster;
+            if ($type === 'service_category') {
+                foreach ($clusters as $cluster) {
+                    $expanded[] = 'service_category_'.$cluster;
+                }
+
+                continue;
             }
+
+            $expanded[] = $type;
         }
 
         return $expanded;
     }
 
     /**
-     * @return array{seo_type: string, service_cluster: ?string}
+     * @return array{seo_type: string, cluster: ?string, reference_class: ?class-string}
      */
     private function resolveSitemapTypeFilter(string $type): array
     {
-        if (str_starts_with($type, 'service_') && $type !== 'service_category') {
-            $cluster = substr($type, strlen('service_'));
-            if (isset(config('services_catalog.clusters', [])[$cluster])) {
-                return ['seo_type' => 'service', 'service_cluster' => $cluster];
+        $clusters = config('services_catalog.clusters', []);
+
+        if (str_starts_with($type, 'service_category_')) {
+            $cluster = substr($type, strlen('service_category_'));
+            if (isset($clusters[$cluster])) {
+                return [
+                    'seo_type' => 'service_category',
+                    'cluster' => $cluster,
+                    'reference_class' => ServiceCategory::class,
+                ];
             }
         }
 
-        return ['seo_type' => $type, 'service_cluster' => null];
+        if (str_starts_with($type, 'service_')) {
+            $cluster = substr($type, strlen('service_'));
+            if (isset($clusters[$cluster])) {
+                return [
+                    'seo_type' => 'service',
+                    'cluster' => $cluster,
+                    'reference_class' => Service::class,
+                ];
+            }
+        }
+
+        return ['seo_type' => $type, 'cluster' => null, 'reference_class' => null];
     }
 
     public function projectRoot(Project $project): string
@@ -381,11 +409,15 @@ final class SitemapGenerator
         $changefreq = (string) config('sitemap.defaults.changefreq', 'weekly');
         $priority = (string) (
             config("sitemap.priority_by_type.{$type}")
-            ?? config('sitemap.priority_by_type.service')
+            ?? (str_starts_with($type, 'service_category_')
+                ? config('sitemap.priority_by_type.service_category')
+                : (str_starts_with($type, 'service_')
+                    ? config('sitemap.priority_by_type.service')
+                    : null))
             ?? config('sitemap.defaults.priority', '0.8')
         );
 
-        ['seo_type' => $seoType, 'service_cluster' => $serviceCluster] = $this->resolveSitemapTypeFilter($type);
+        ['seo_type' => $seoType, 'cluster' => $cluster, 'reference_class' => $referenceClass] = $this->resolveSitemapTypeFilter($type);
 
         $page = 0;
         $buffer = [];
@@ -414,17 +446,22 @@ final class SitemapGenerator
             ->where('status', 'published')
             ->whereNotNull('slug_full')
             ->where('slug_full', '!=', '')
-            ->whereHas('seoEntry', function ($q) use ($seoType, $serviceCluster): void {
+            ->whereHas('seoEntry', function ($q) use ($seoType, $cluster, $referenceClass): void {
                 $q->withoutGlobalScopes()
                     ->where('type', $seoType)
                     ->where('is_indexable', true);
 
-                if ($serviceCluster !== null) {
-                    $q->where('reference_type', (new Service)->getMorphClass())
+                if ($cluster !== null && $referenceClass !== null) {
+                    $q->where('reference_type', (new $referenceClass)->getMorphClass())
                         ->whereHasMorph(
                             'reference',
-                            [Service::class],
-                            fn ($rq) => $rq->withoutGlobalScopes()->where('cluster', $serviceCluster),
+                            [$referenceClass],
+                            function ($rq) use ($cluster, $referenceClass): void {
+                                $rq->withoutGlobalScopes()->where('cluster', $cluster);
+                                if ($referenceClass === ServiceCategory::class) {
+                                    $rq->where('is_active', true);
+                                }
+                            },
                         );
                 }
             })

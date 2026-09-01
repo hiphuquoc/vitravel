@@ -13,8 +13,8 @@ declare(strict_types=1);
  *     → /sitemap/vi.xml
  *     → /sitemap/en.xml
  *          → /sitemap/vi/pages.xml
- *          → /sitemap/vi/service_stay-1.xml   (khách sạn — cluster stay)
- *          → /sitemap/vi/service.xml          (khi không tách cluster)
+ *          → /sitemap/vi/service_stay-1.xml           (khách sạn)
+ *          → /sitemap/vi/service_category_stay-1.xml   (danh mục khách sạn)
  *
  * Serve theo Host → ProjectContext. Generate: php artisan sitemap:generate
  */
@@ -28,7 +28,7 @@ return [
     'root' => env('SITEMAP_ROOT', ''),
 
     /**
-     * Tách dịch vụ theo cluster (stay = khách sạn, train, flight, …) thay vì 1 file service chung.
+     * Tách service + service_category theo cluster (stay, train, flight, …).
      */
     'split_service_by_cluster' => filter_var(env('SITEMAP_SPLIT_SERVICE_BY_CLUSTER', true), FILTER_VALIDATE_BOOLEAN),
 
@@ -97,6 +97,12 @@ return [
         'country' => '0.8',
         'cruise_type' => '0.8',
         'service_category' => '0.7',
+        'service_category_stay' => '0.75',
+        'service_category_train' => '0.7',
+        'service_category_ferry' => '0.7',
+        'service_category_flight' => '0.7',
+        'service_category_experience' => '0.7',
+        'service_category_other' => '0.65',
         'tour_category' => '0.7',
         'blog_category' => '0.7',
         'package_tour' => '0.8',
