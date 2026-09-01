@@ -102,4 +102,22 @@ class NavigationItem extends Model
 
         return ($this->config['show_in_main_bar'] ?? true) !== false;
     }
+
+    /**
+     * Slug danh mục hiển thị trong drawer — rỗng/null = hiện tất cả.
+     *
+     * @return list<string>|null
+     */
+    public function categorySlugs(): ?array
+    {
+        $slugs = $this->config['category_slugs'] ?? null;
+        if (! is_array($slugs)) {
+            return null;
+        }
+
+        return array_values(array_filter(array_map(
+            static fn ($slug): string => trim((string) $slug),
+            $slugs,
+        )));
+    }
 }

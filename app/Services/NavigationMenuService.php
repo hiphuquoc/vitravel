@@ -194,7 +194,7 @@ final class NavigationMenuService
                     $out[] = $this->mapAdminItem($item, $locale);
                 }
             } else {
-                foreach ($shape[$zone] ?? [] as $row) {
+                foreach ($defaults[$zone] ?? [] as $row) {
                     if (! is_array($row)) {
                         continue;
                     }
@@ -202,7 +202,12 @@ final class NavigationMenuService
                     $out[] = array_merge($public, [
                         'id' => null,
                         'kind_label' => NavigationItem::kindLabels()[$public['kind']] ?? $public['kind'],
-                        'config' => ['show_in_main_bar' => $public['show_in_main_bar']],
+                        'hub_value' => self::hubValueForItem($public),
+                        'category_slugs' => $public['category_slugs'] ?? [],
+                        'config' => [
+                            'show_in_main_bar' => $public['show_in_main_bar'],
+                            'category_slugs' => $public['category_slugs'] ?? [],
+                        ],
                     ]);
                 }
             }
@@ -252,6 +257,11 @@ final class NavigationMenuService
                 $config = is_array($payload['config'] ?? null) ? $payload['config'] : [];
                 if (array_key_exists('show_in_main_bar', $payload)) {
                     $config['show_in_main_bar'] = (bool) $payload['show_in_main_bar'];
+                }
+                if (array_key_exists('category_slugs', $payload)) {
+                    $config['category_slugs'] = self::normalizeCategorySlugs($payload['category_slugs']);
+                } elseif (isset($config['category_slugs'])) {
+                    $config['category_slugs'] = self::normalizeCategorySlugs($config['category_slugs']);
                 }
 
                 $item->fill([
@@ -380,6 +390,7 @@ final class NavigationMenuService
             'sort' => (int) ($row['sort'] ?? 0),
             'is_active' => ($row['is_active'] ?? true) !== false,
             'show_in_main_bar' => ($row['show_in_main_bar'] ?? true) !== false,
+            'category_slugs' => self::normalizeCategorySlugs($row['category_slugs'] ?? ($row['config']['category_slugs'] ?? null)),
             'label' => $this->pickLocalized($row['label'] ?? null, $locale),
             'lead_label' => $this->pickLocalized($row['lead_label'] ?? null, $locale),
             'meta' => $this->pickLocalized($row['meta'] ?? null, $locale),
@@ -413,6 +424,7 @@ final class NavigationMenuService
             'sort' => $item->sort,
             'is_active' => $item->is_active,
             'show_in_main_bar' => $item->showInMainBar(),
+            'category_slugs' => $item->categorySlugs(),
             'label' => (string) ($t?->label ?? ''),
             'lead_label' => (string) ($t?->lead_label ?? ''),
             'meta' => (string) ($t?->meta ?? ''),
@@ -484,10 +496,77 @@ final class NavigationMenuService
             'sort' => $item->sort,
             'is_active' => $item->is_active,
             'show_in_main_bar' => $item->showInMainBar(),
+            'category_slugs' => $item->categorySlugs() ?? [],
+            'hub_value' => self::hubValueForItem([
+                'kind' => $item->kind,
+                'reference' => $item->reference,
+            ]),
             'label' => $t?->label,
             'lead_label' => $t?->lead_label,
             'meta' => $t?->meta,
-            'config' => $item->config ?? [],
+            'config' => array_merge(
+                is_array($item->config) ? $item->config : [],
+                ['category_slugs' => $item->categorySlugs() ?? []],
+            ),
         ];
+    }
+
+    /** @return list<string> */
+    public static function normalizeCategorySlugs(mixed $slugs): array
+    {
+        if (! is_array($slugs)) {
+            return [];
+        }
+
+        return array_values(array_unique(array_filter(array_map(
+            static fn ($slug): string => trim((string) $slug),
+            $slugs,
+        ))));
+    }
+
+    public static function hubValueForItem(array $item): string
+    {
+        $kind = (string) ($item['kind'] ?? '');
+
+        return match ($kind) {
+            NavigationItem::KIND_TOURS_MENU => 'tours',
+            NavigationItem::KIND_CRUISE_MENU => 'cruise',
+            NavigationItem::KIND_SERVICE_CLUSTER => 'cluster:'.((string) ($item['reference'] ?? '')),
+            default => '',
+        };
+    }
+
+    /** @return list<array{value: string, kind: string, label: string, reference: string|null}> */
+    public function hubOptions(): array
+    {
+        $options = [
+            [
+                'value' => 'tours',
+                'kind' => NavigationItem::KIND_TOURS_MENU,
+                'label' => 'Tour trọn gói',
+                'reference' => null,
+            ],
+            [
+                'value' => 'cruise',
+                'kind' => NavigationItem::KIND_CRUISE_MENU,
+                'label' => 'Du thuyền / trải nghiệm',
+                'reference' => null,
+            ],
+        ];
+
+        foreach (config('services_catalog.clusters', []) as $code => $cfg) {
+            if (! is_string($code) || $code === '') {
+                continue;
+            }
+
+            $options[] = [
+                'value' => 'cluster:'.$code,
+                'kind' => NavigationItem::KIND_SERVICE_CLUSTER,
+                'label' => (string) ($cfg['nav_label'] ?? $cfg['label'] ?? $code),
+                'reference' => $code,
+            ];
+        }
+
+        return $options;
     }
 }

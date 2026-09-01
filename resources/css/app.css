@@ -759,9 +759,8 @@
     }
 
     .tour-card-places {
-        @apply line-clamp-2 leading-snug text-primary-600;
+        @apply line-clamp-2 font-bold leading-snug text-primary-600;
         font-size: var(--fs-tour-places);
-        font-weight: 500;
     }
 
     .tour-card-quote {
@@ -867,6 +866,26 @@
 
     .tour-card-route__end {
         @apply ml-auto min-w-0 shrink text-right;
+    }
+
+    /* Grid ngang (listing): đi/đến tối đa 1 dòng */
+    .card:not(.card--stand) .tour-card-route__start,
+    .card:not(.card--stand) .tour-card-route__end {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+    }
+
+    /* Grid đứng (card--stand): đi/đến tối đa 2 dòng */
+    .card--stand .tour-card-route__start,
+    .card--stand .tour-card-route__end {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
     }
 
     .tour-card-route__label {

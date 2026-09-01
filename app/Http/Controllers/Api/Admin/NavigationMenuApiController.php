@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\NavigationItem;
 use App\Models\Language;
+use App\Models\NavigationItem;
 use App\Services\NavigationMenuService;
+use App\Services\ViewDataService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NavigationMenuApiController extends Controller
 {
-    public function show(Request $request, NavigationMenuService $menu): JsonResponse
+    public function show(Request $request, NavigationMenuService $menu, ViewDataService $views): JsonResponse
     {
         $locale = $request->string('locale', 'vi')->toString();
 
@@ -29,14 +30,8 @@ class NavigationMenuApiController extends Controller
                 NavigationItem::ZONE_MORE => 'Menu ⋯ (thêm)',
                 NavigationItem::ZONE_CTA => 'Nút CTA header',
             ],
-            'route_options' => $this->routeOptions(),
-            'cluster_options' => collect(config('services_catalog.clusters', []))
-                ->map(fn (array $cfg, string $code) => [
-                    'value' => $code,
-                    'label' => (string) ($cfg['label'] ?? $code),
-                ])
-                ->values()
-                ->all(),
+            'hub_options' => $menu->hubOptions(),
+            'category_catalog' => $this->categoryCatalog($views, $locale),
             'items' => $menu->adminPayload($locale),
         ]);
     }
@@ -56,6 +51,9 @@ class NavigationMenuApiController extends Controller
             'items.*.label' => 'nullable|string|max:255',
             'items.*.lead_label' => 'nullable|string|max:255',
             'items.*.meta' => 'nullable|string|max:500',
+            'items.*.category_slugs' => 'nullable|array',
+            'items.*.category_slugs.*' => 'string|max:128',
+            'items.*.config' => 'nullable|array',
         ]);
 
         $menu->saveAdminPayload($validated['items'], (string) $validated['locale']);
@@ -75,18 +73,46 @@ class NavigationMenuApiController extends Controller
         ], 'Đã khôi phục menu mặc định từ seed dự án.');
     }
 
-    /** @return list<array{value: string, label: string}> */
-    private function routeOptions(): array
+    /** @return array<string, list<array{slug: string, label: string, count: int, meta?: string}>> */
+    private function categoryCatalog(ViewDataService $views, string $locale): array
     {
-        return [
-            ['value' => 'about', 'label' => 'Về chúng tôi'],
-            ['value' => 'contact', 'label' => 'Liên hệ'],
-            ['value' => 'team', 'label' => 'Đội ngũ'],
-            ['value' => 'reviews', 'label' => 'Cảm nhận khách hàng'],
-            ['value' => 'gallery', 'label' => 'Thư viện ảnh'],
-            ['value' => 'videos', 'label' => 'Video trải nghiệm'],
-            ['value' => 'guide.index', 'label' => 'Tất cả bài viết (hub blog)'],
-            ['value' => 'customize', 'label' => 'Tour riêng (CTA)'],
+        app()->setLocale($locale);
+
+        $catalog = [
+            'tours' => array_map(
+                static fn (array $row): array => [
+                    'slug' => (string) ($row['slug'] ?? ''),
+                    'label' => (string) ($row['name'] ?? ''),
+                    'count' => (int) ($row['tourCount'] ?? 0),
+                    'meta' => (string) ($row['tagline'] ?? ''),
+                ],
+                $views->countries(),
+            ),
+            'cruise' => array_map(
+                static fn (array $row): array => [
+                    'slug' => (string) ($row['slug'] ?? ''),
+                    'label' => (string) ($row['name'] ?? ''),
+                    'count' => (int) ($row['count'] ?? 0),
+                ],
+                $views->cruiseTypes(),
+            ),
         ];
+
+        foreach (config('services_catalog.clusters', []) as $code => $cfg) {
+            if (! is_string($code) || $code === '') {
+                continue;
+            }
+
+            $catalog['cluster:'.$code] = array_map(
+                static fn (array $row): array => [
+                    'slug' => (string) ($row['slug'] ?? ''),
+                    'label' => (string) ($row['name'] ?? ''),
+                    'count' => (int) ($row['count'] ?? 0),
+                ],
+                $views->serviceCategories($code),
+            );
+        }
+
+        return $catalog;
     }
 }

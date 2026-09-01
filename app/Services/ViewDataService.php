@@ -22,6 +22,7 @@ use App\Models\HomeFeaturedTeamMember;
 use App\Models\HomeFeaturedTour;
 use App\Models\HomeFeaturedVideo;
 use App\Models\HomeSection;
+use App\Models\NavigationItem;
 use App\Models\KeywordTag;
 use App\Models\Language;
 use App\Models\Office;
@@ -1499,6 +1500,163 @@ class ViewDataService
     public function serviceClusters(): array
     {
         return app(NavigationMenuService::class)->serviceClusters($this->locale());
+    }
+
+    /**
+     * Menu chính header — nhãn + drawer danh mục (lọc theo cấu hình admin).
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function mainNavDrawers(): array
+    {
+        $menu = app(NavigationMenuService::class);
+        $items = $menu->mainBarItems($this->locale());
+        $clustersByCode = collect($this->serviceClusters())->keyBy('code');
+        $trainHub = $clustersByCode->get('train');
+        $ferryHub = $clustersByCode->get('ferry');
+        $transportHub = $ferryHub ?? $trainHub;
+        $transportCluster = (string) ($transportHub['code'] ?? $this->featuredTransportCluster());
+        $flightHub = $clustersByCode->get('flight');
+        $drawers = [];
+
+        foreach ($items as $item) {
+            $kind = (string) ($item['kind'] ?? '');
+            $slugs = $item['category_slugs'] ?? null;
+
+            if ($kind === NavigationItem::KIND_TOURS_MENU) {
+                $entries = $this->filterNavEntriesBySlugs($this->countries(), $slugs, 'slug');
+                $drawers[] = [
+                    'menu_key' => 'dest',
+                    'kind' => $kind,
+                    'label' => (string) ($item['label'] ?: 'Tour trọn gói'),
+                    'lead_label' => (string) ($item['lead_label'] ?: 'Tất cả tour'),
+                    'meta' => (string) ($item['meta'] ?: 'Xem toàn bộ hành trình'),
+                    'hub_url' => locale_route('tours.hub'),
+                    'flyout' => 'wide',
+                    'icon' => 'map-pin',
+                    'entries' => $this->mapTourNavEntries($entries),
+                    'extras' => [],
+                ];
+
+                continue;
+            }
+
+            if ($kind === NavigationItem::KIND_CRUISE_MENU) {
+                $entries = $this->filterNavEntriesBySlugs($this->cruiseTypes(), $slugs, 'slug');
+                $drawers[] = [
+                    'menu_key' => 'cruise',
+                    'kind' => $kind,
+                    'label' => (string) ($item['label'] ?: 'Du thuyền'),
+                    'lead_label' => (string) ($item['lead_label'] ?: 'Tất cả du thuyền'),
+                    'meta' => (string) ($item['meta'] ?: 'Xem toàn bộ lịch trình du thuyền'),
+                    'hub_url' => locale_route('cruises.hub'),
+                    'flyout' => 'wide',
+                    'icon' => 'cruise',
+                    'entries' => $this->mapCruiseNavEntries($entries),
+                    'extras' => [],
+                ];
+
+                continue;
+            }
+
+            if ($kind !== NavigationItem::KIND_SERVICE_CLUSTER) {
+                continue;
+            }
+
+            $code = (string) ($item['reference'] ?? '');
+            if ($code === '') {
+                continue;
+            }
+
+            $cluster = $clustersByCode->get($code, []);
+            $entries = $this->filterNavEntriesBySlugs($this->serviceCategories($code), $slugs, 'slug');
+            $extras = [];
+
+            if ($code === 'other') {
+                if ($transportHub) {
+                    $extras[] = [
+                        'label' => ($transportCluster === 'ferry') ? 'Vé tàu cao tốc / phà' : 'Vé tàu hỏa',
+                        'url' => locale_route('services.hub', ['cluster' => $transportCluster]),
+                        'count' => $this->serviceCount($transportCluster),
+                    ];
+                }
+                if ($flightHub) {
+                    $extras[] = [
+                        'label' => 'Vé máy bay',
+                        'url' => locale_route('services.hub', ['cluster' => 'flight']),
+                        'count' => $this->serviceCount('flight'),
+                    ];
+                }
+            }
+
+            $drawers[] = [
+                'menu_key' => 'svc-'.$code,
+                'kind' => $kind,
+                'cluster' => $code,
+                'label' => (string) ($item['label'] ?: ($cluster['nav_label'] ?? $code)),
+                'lead_label' => (string) ($item['lead_label'] ?: ('Tất cả '.strtolower((string) ($cluster['nav_label'] ?? $code)))),
+                'meta' => (string) ($item['meta'] ?: ($cluster['label'] ?? '')),
+                'hub_url' => locale_route('services.hub', ['cluster' => $code]),
+                'flyout' => 'sm',
+                'icon' => (string) ($cluster['icon'] ?? 'briefcase'),
+                'entries' => $this->mapServiceNavEntries($entries, $code),
+                'extras' => $extras,
+            ];
+        }
+
+        return $drawers;
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $rows
+     * @param  list<string>|null  $slugs
+     * @return list<array<string, mixed>>
+     */
+    protected function filterNavEntriesBySlugs(array $rows, ?array $slugs, string $key): array
+    {
+        if (! is_array($slugs) || $slugs === []) {
+            return $rows;
+        }
+
+        $allowed = array_flip($slugs);
+
+        return array_values(array_filter(
+            $rows,
+            static fn (array $row): bool => isset($allowed[(string) ($row[$key] ?? '')]),
+        ));
+    }
+
+    /** @param  list<array<string, mixed>>  $rows */
+    protected function mapTourNavEntries(array $rows): array
+    {
+        return array_values(array_map(fn (array $row): array => [
+            'name' => tour_listing_label((string) ($row['name'] ?? '')),
+            'url' => locale_route('tours.index', (string) ($row['slug'] ?? '')),
+            'meta' => (string) ($row['tagline'] ?? ''),
+            'count' => (int) ($row['tourCount'] ?? 0),
+        ], $rows));
+    }
+
+    /** @param  list<array<string, mixed>>  $rows */
+    protected function mapCruiseNavEntries(array $rows): array
+    {
+        return array_values(array_map(fn (array $row): array => [
+            'name' => (string) ($row['name'] ?? ''),
+            'url' => locale_route('cruises.index', (string) ($row['slug'] ?? '')),
+            'meta' => '',
+            'count' => (int) ($row['count'] ?? 0),
+        ], $rows));
+    }
+
+    /** @param  list<array<string, mixed>>  $rows */
+    protected function mapServiceNavEntries(array $rows, string $cluster): array
+    {
+        return array_values(array_map(fn (array $row): array => [
+            'name' => (string) ($row['name'] ?? ''),
+            'url' => locale_route('services.index', ['cluster' => $cluster, 'category' => (string) ($row['slug'] ?? '')]),
+            'meta' => '',
+            'count' => (int) ($row['count'] ?? 0),
+        ], $rows));
     }
 
     public function serviceCluster(string $code): ?array
