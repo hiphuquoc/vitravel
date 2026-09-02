@@ -154,6 +154,8 @@ final class LegacySoftDeletePurgeService
                             try {
                                 if ($spec['table'] === 'media' && $model instanceof Media) {
                                     $this->purgeLegacyMediaRow($model, $label, $purged, $skipped, $messages);
+                                } elseif ($spec['table'] === 'cruise_types' && $model instanceof CruiseType) {
+                                    $this->purgeLegacyCruiseTypeRow($model, $label, $purged, $messages);
                                 } else {
                                     $this->purger->purge($model);
                                     $purged++;
@@ -258,6 +260,46 @@ final class LegacySoftDeletePurgeService
         }
 
         $this->media->destroyMedia($media);
+        $purged++;
+    }
+
+    /**
+     * Loại du thuyền legacy (deleted_at): gỡ/chuyển gói cruise còn gắn slug trước khi xóa cứng.
+     *
+     * @param  list<string>  $messages
+     */
+    private function purgeLegacyCruiseTypeRow(CruiseType $type, string $label, int &$purged, array &$messages): void
+    {
+        $slug = (string) $type->slug;
+        $projectId = (int) $type->project_id;
+
+        $packageIds = Package::withoutGlobalScopes()
+            ->where('cruise_type', $slug)
+            ->pluck('id');
+
+        if ($packageIds->isNotEmpty()) {
+            $replacement = CruiseType::withoutGlobalScopes()
+                ->where('project_id', $projectId)
+                ->whereNull('deleted_at')
+                ->where('id', '!=', $type->id)
+                ->orderBy('sort')
+                ->orderBy('id')
+                ->value('slug');
+
+            if ($replacement) {
+                Package::withoutGlobalScopes()
+                    ->whereIn('id', $packageIds)
+                    ->update(['cruise_type' => $replacement]);
+                $messages[] = "{$label}: đã chuyển {$packageIds->count()} gói cruise sang loại «{$replacement}».";
+            } else {
+                Package::withoutGlobalScopes()
+                    ->whereIn('id', $packageIds)
+                    ->update(['cruise_type' => null]);
+                $messages[] = "{$label}: đã gỡ cruise_type khỏi gói #".$packageIds->join(', ').' (cần gán lại loại trong admin).';
+            }
+        }
+
+        $this->purger->purge($type);
         $purged++;
     }
 
