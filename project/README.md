@@ -30,6 +30,8 @@ php artisan project:seed hihagiang --domain=hihagiang.dev --domain=hihagiang.com
 php artisan project:seed hihalong --domain=hihalong.dev --domain=hihalong.vn --name="Hi Hạ Long"
 # Mũi Né: himuine.dev (local) + himuine.com (prod)
 php artisan project:seed himuine --domain=himuine.dev --domain=himuine.com --name="Hi Mũi Né"
+# Tam Đảo: hitamdao.dev (local) + hitamdao.com (prod)
+php artisan project:seed hitamdao --domain=hitamdao.dev --domain=hitamdao.com --name="Hi Tam Đảo"
 ```
 
 | Profile | File | Domain |
@@ -44,6 +46,7 @@ php artisan project:seed himuine --domain=himuine.dev --domain=himuine.com --nam
 | `hihagiang` | `project/seed_hihagiang.php` | `hihagiang.dev` / `hihagiang.com` / `hihagiang.vn` |
 | `hihalong` | `project/seed_hihalong.php` | `hihalong.dev` / `hihalong.vn` |
 | `himuine` | `project/seed_himuine.php` | `himuine.dev` / `himuine.com` |
+| `hitamdao` | `project/seed_hitamdao.php` | `hitamdao.dev` / `hitamdao.com` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
 
@@ -68,6 +71,7 @@ project/
   seed_hihagiang.php       ← Hà Giang (cao nguyên đá): hihagiang.dev / hihagiang.vn — Hi Hà Giang
   seed_hihalong.php        ← Hạ Long (vịnh UNESCO): hihalong.dev / hihalong.vn — Hi Hạ Long
   seed_himuine.php         ← Mũi Né (Bình Thuận): himuine.dev / himuine.com — Hi Mũi Né
+  seed_hitamdao.php        ← Tam Đảo (Vĩnh Phúc): hitamdao.dev / hitamdao.com — Hi Tam Đảo
 ```
 
 **Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.
