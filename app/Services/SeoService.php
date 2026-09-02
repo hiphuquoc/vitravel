@@ -1457,8 +1457,9 @@ class SeoService
 
         if (class_exists(TourCategory::class)) {
             TourCategory::query()
-                ->with(['country', 'translations', 'seoEntry.translations'])
+                ->with(['country.seoEntry.translations', 'translations', 'seoEntry.translations'])
                 ->each(function (TourCategory $category) use ($locale, $hub) {
+                    $country = $category->country;
                     $existingParentId = $category->seoEntry()?->withoutGlobalScope('project')->value('parent_id')
                         ?? $category->seoEntry?->parent_id;
                     $allowedParentTypes = $this->parentTypesFor('tour_category');
@@ -1470,7 +1471,9 @@ class SeoService
                         $keepExisting = $existingParentType
                             && in_array((string) $existingParentType, $allowedParentTypes, true);
                     }
-                    $parentId = $keepExisting ? $existingParentId : $hub->id;
+                    $parentId = $keepExisting
+                        ? $existingParentId
+                        : ($country?->seoEntry?->id ?: $hub->id);
                     if (! $parentId) {
                         return;
                     }

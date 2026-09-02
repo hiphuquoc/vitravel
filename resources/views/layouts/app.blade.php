@@ -51,14 +51,9 @@
 </head>
 
 <body class="min-h-screen">
-    <a href="#main-content"
-        class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:shadow-lg">
-        Bỏ qua điều hướng, tới nội dung chính
-    </a>
-
     <x-layout.header />
 
-    <main id="main-content">
+    <main>
         @yield('content')
     </main>
 

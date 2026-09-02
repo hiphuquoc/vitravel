@@ -24,6 +24,10 @@ php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net
 php artisan project:seed hidalat --domain=hidalat.dev --domain=hidalat.com --name="Hi Đà Lạt"
 # Cần Thơ: hicantho.dev (local) + hicantho.com (prod)
 php artisan project:seed hicantho --domain=hicantho.dev --domain=hicantho.com --name="Hi Cần Thơ"
+# Hà Giang: hihagiang.dev (local) + hihagiang.vn (prod)
+php artisan project:seed hihagiang --domain=hihagiang.dev --domain=hihagiang.vn --name="Hi Hà Giang"
+# Hạ Long: hihalong.dev (local) + hihalong.vn (prod)
+php artisan project:seed hihalong --domain=hihalong.dev --domain=hihalong.vn --name="Hi Hạ Long"
 ```
 
 | Profile | File | Domain |
@@ -35,6 +39,8 @@ php artisan project:seed hicantho --domain=hicantho.dev --domain=hicantho.com --
 | `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` / `culaocham.net` |
 | `hidalat` | `project/seed_hidalat.php` | `hidalat.dev` / `hidalat.com` |
 | `hicantho` | `project/seed_hicantho.php` | `hicantho.dev` / `hicantho.com` |
+| `hihagiang` | `project/seed_hihagiang.php` | `hihagiang.dev` / `hihagiang.vn` |
+| `hihalong` | `project/seed_hihalong.php` | `hihalong.dev` / `hihalong.vn` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
 
@@ -56,6 +62,8 @@ project/
   seed_culaocham.php        ← Cù Lao Chàm (Quảng Nam): culaocham.dev / culaocham.net
   seed_hidalat.php         ← Đà Lạt (Lâm Đồng): hidalat.dev / hidalat.com — Hi Đà Lạt
   seed_hicantho.php        ← Cần Thơ (ĐBSCL): hicantho.dev / hicantho.com — Hi Cần Thơ
+  seed_hihagiang.php       ← Hà Giang (cao nguyên đá): hihagiang.dev / hihagiang.vn — Hi Hà Giang
+  seed_hihalong.php        ← Hạ Long (vịnh UNESCO): hihalong.dev / hihalong.vn — Hi Hạ Long
 ```
 
 **Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.
