@@ -58,6 +58,13 @@
                     {{ $item['badge'] }}
                 </span>
             @endif
+            @if ($showStayMediaTags)
+                <x-stay.card-media-tags
+                    variant="overlay"
+                    :property-type-label="$propertyTypeLabel"
+                    :star-rating="$item['starRating'] ?? null"
+                />
+            @endif
             @if ($mediaBadge !== null)
                 <span class="tour-card-duration{{ $isStay ? ' tour-card-duration--plain' : '' }}">
                     <x-icon :name="$mediaBadgeIcon" class="tour-card-duration__icon" />
@@ -71,14 +78,6 @@
             <h3 class="tour-card-title item-title">
                 <a href="{{ $href }}" class="transition group-hover:text-primary-600">{{ $item['title'] }}</a>
             </h3>
-
-            @if ($showStayMediaTags)
-                <x-stay.card-media-tags
-                    variant="inline"
-                    :property-type-label="$propertyTypeLabel"
-                    :star-rating="$item['starRating'] ?? null"
-                />
-            @endif
 
             @if (! empty($item['rating']))
                 <x-shared.rating :rating="$item['rating']" :count="$item['reviewCount'] ?? 0" />

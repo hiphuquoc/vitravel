@@ -1,19 +1,19 @@
 {{--
   Loại hình + hạng sao trên card lưu trú.
-  variant=overlay — góc ảnh (legacy)
-  variant=inline — dưới tiêu đề, không box chồng ảnh (mặc định grid/danh mục)
+  variant=overlay — góc phải trên ảnh (mặc định listing danh mục / grid)
+  variant=inline — dưới tiêu đề (khi cần, không chồng ảnh)
 --}}
 @props([
     'propertyTypeLabel' => null,
     'starRating' => null,
-    'variant' => 'inline',
+    'variant' => 'overlay',
 ])
 
 @php
     $stars = filled($starRating) ? (int) round(max(0, min(5, (float) $starRating))) : 0;
     $showStar = $stars >= 3;
     $showType = filled($propertyTypeLabel);
-    $isInline = ($variant ?? 'inline') === 'inline';
+    $isInline = ($variant ?? 'overlay') === 'inline';
 @endphp
 
 @if ($showType || $showStar)

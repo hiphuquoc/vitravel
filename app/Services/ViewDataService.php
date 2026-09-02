@@ -2266,6 +2266,7 @@ class ViewDataService
 
         $items = $query
             ->withMin('options as min_option_price', 'price_from')
+            ->withCount('options as options_count')
             ->with([
                 'translations' => fn ($q) => $q->where('language_id', $langId),
                 'category' => fn ($q) => $q->select(['id', 'slug', 'name']),
@@ -2518,7 +2519,10 @@ class ViewDataService
             'propertyType' => $propertyType,
             'propertyTypeLabel' => config("stay.property_types.{$propertyType}") ?? ucfirst($propertyType),
             'totalRooms' => isset($attrs['total_rooms']) ? (int) $attrs['total_rooms'] : null,
-            'roomsCount' => null,
+            // Số hạng phòng (service_options) — badge góc phải dưới trên ảnh card
+            'roomsCount' => isset($service->options_count)
+                ? (int) $service->options_count
+                : ($service->relationLoaded('options') ? $service->options->count() : null),
             'quote' => $this->serviceQuote($service, $translation),
         ];
     }
