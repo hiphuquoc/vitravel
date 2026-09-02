@@ -1,0 +1,55 @@
+===== PROFILE: hitamdao =====
+PLACES (zones): 8
+  - trung-tam-thi-tran | Trung tâm thị trấn
+  - thac-bac-thac-dai | Thác Bạc & Thác Dải
+  - cau-may-sky-walk | Cầu Mây & Sky Walk
+  - vqg-rung-thong | VQG Tam Đảo & rừng thông
+  - khu-resort-dinh-cao | Khu resort trên đỉnh
+  - suoi-ca-am-thuc | Suối cá & ẩm thực
+  - ket-hop-ha-noi | Cửa ngõ Hà Nội
+  - ket-hop-ninh-binh | Kết hợp Ninh Bình
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - cuoi-tuan-ha-noi | Cuối tuần từ Hà Nội
+  - am-thuc | Tour ẩm thực
+  - trekking | Tour trekking & VQG
+  - cap-doi | Tour cặp đôi & lãng mạn
+  - gia-dinh | Tour gia đình
+  - team-building | Team-building & MICE
+TOUR_CATEGORIES:
+  [duration] zone=trung-tam-thi-tran slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[city-tour-tam-dao-1-ngay,thac-bac-thac-dai-1-ngay,cau-may-sky-walk-nua-ngay,trekking-vqg-tam-dao-1-ngay,ha-noi-tam-dao-tour-ngay,photo-tour-suong-mu-tam-dao]
+  [duration] zone=trung-tam-thi-tran slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[tam-dao-2n1d-cuoi-tuan-ha-noi,tam-dao-2n1d-lang-man,tam-dao-3n2d-tong-quan,gia-dinh-tam-dao-2n1d,team-building-tam-dao-2n1d,combo-tam-dao-ninh-binh-3n2d]
+  [duration] zone=vqg-rung-thong slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[tam-dao-4n3d-kham-pha-sau]
+  [duration] zone=trung-tam-thi-tran slug=nua-ngay name=Tour nửa ngày / tối min=0 max=1 pkgs=[cau-may-sky-walk-nua-ngay,food-tour-am-thuc-tam-dao]
+  [theme] zone=trung-tam-thi-tran slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[city-tour-tam-dao-1-ngay,thac-bac-thac-dai-1-ngay,cau-may-sky-walk-nua-ngay,trekking-vqg-tam-dao-1-ngay,food-tour-am-thuc-tam-dao,ha-noi-tam-dao-tour-ngay,photo-tour-suong-mu-tam-dao]
+  [theme] zone=trung-tam-thi-tran slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[tam-dao-2n1d-cuoi-tuan-ha-noi,tam-dao-2n1d-lang-man,gia-dinh-tam-dao-2n1d,team-building-tam-dao-2n1d]
+  [theme] zone=trung-tam-thi-tran slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[tam-dao-3n2d-tong-quan,combo-tam-dao-ninh-binh-3n2d]
+  [theme] zone=trung-tam-thi-tran slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[tam-dao-4n3d-kham-pha-sau]
+  [theme] zone=trung-tam-thi-tran slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=trung-tam-thi-tran slug=cuoi-tuan-ha-noi name=Cuối tuần từ Hà Nội min= max= pkgs=[tam-dao-2n1d-cuoi-tuan-ha-noi,ha-noi-tam-dao-tour-ngay]
+  [theme] zone=trung-tam-thi-tran slug=am-thuc name=Tour ẩm thực min= max= pkgs=[food-tour-am-thuc-tam-dao]
+  [theme] zone=trung-tam-thi-tran slug=trekking name=Tour trekking & VQG min= max= pkgs=[trekking-vqg-tam-dao-1-ngay,tam-dao-4n3d-kham-pha-sau,team-building-tam-dao-2n1d]
+  [theme] zone=trung-tam-thi-tran slug=cap-doi name=Tour cặp đôi & lãng mạn min= max= pkgs=[tam-dao-2n1d-lang-man,photo-tour-suong-mu-tam-dao]
+  [theme] zone=trung-tam-thi-tran slug=gia-dinh name=Tour gia đình min= max= pkgs=[gia-dinh-tam-dao-2n1d,tam-dao-3n2d-tong-quan]
+  [theme] zone=trung-tam-thi-tran slug=team-building name=Team-building & MICE min= max= pkgs=[team-building-tam-dao-2n1d]
+TYPE_COUNTS: duration=4 theme=11
+TOURS:
+  - tam-dao-2n1d-cuoi-tuan-ha-noi | days=2 nights= zone=ket-hop-ha-noi styles=[2n1d,cuoi-tuan-ha-noi] | Tam Đảo 2 ngày 1 đêm — Cuối tuần từ Hà Nội
+  - tam-dao-3n2d-tong-quan | days=3 nights= zone=trung-tam-thi-tran styles=[3n2d,gia-dinh] | Tam Đảo 3 ngày 2 đêm — Tổng quan thị trấn mây
+  - tam-dao-2n1d-lang-man | days=2 nights= zone=khu-resort-dinh-cao styles=[2n1d,cuoi-tuan-ha-noi,suong-mu-lang-man,cap-doi] | Tam Đảo 2 ngày 1 đêm — Lãng mạn & sương mù
+  - city-tour-tam-dao-1-ngay | days=1 nights= zone=trung-tam-thi-tran styles=[day-trip] | Tour thành phố Tam Đảo 1 ngày — Nhà thờ đá & phố núi
+  - thac-bac-thac-dai-1-ngay | days=1 nights= zone=thac-bac-thac-dai styles=[day-trip] | Thác Bạc & Thác Dải — Trekking rừng thông 1 ngày
+  - cau-may-sky-walk-nua-ngay | days=1 nights= zone=cau-may-sky-walk styles=[day-trip] | Cầu Mây & Sky Walk — Nửa ngày check-in
+  - trekking-vqg-tam-dao-1-ngay | days=1 nights= zone=vqg-rung-thong styles=[day-trip,trekking-vqg,trekking] | Trekking VQG Tam Đảo — Rừng thông & chim 1 ngày
+  - food-tour-am-thuc-tam-dao | days=1 nights= zone=suoi-ca-am-thuc styles=[day-trip,am-thuc-doi-ga,am-thuc] | Tour ẩm thực Tam Đảo — Buổi tối
+  - gia-dinh-tam-dao-2n1d | days=2 nights= zone=trung-tam-thi-tran styles=[2n1d,gia-dinh] | Tam Đảo gia đình 2 ngày 1 đêm — Nhẹ nhàng
+  - team-building-tam-dao-2n1d | days=2 nights= zone=khu-resort-dinh-cao styles=[2n1d,team-building-mice,trekking-vqg,trekking,team-building] | Team-building Tam Đảo 2 ngày 1 đêm
+  - ha-noi-tam-dao-tour-ngay | days=1 nights= zone=ket-hop-ha-noi styles=[day-trip,cuoi-tuan-ha-noi] | Tour ngày Hà Nội — Tam Đảo
+  - tam-dao-4n3d-kham-pha-sau | days=4 nights= zone=vqg-rung-thong styles=[4n3d,trekking-vqg,trekking] | Tam Đảo 4 ngày 3 đêm — Khám phá sâu
+  - photo-tour-suong-mu-tam-dao | days=1 nights= zone=thac-bac-thac-dai styles=[day-trip,suong-mu-lang-man,cap-doi] | Tour chụp ảnh sương mù Tam Đảo — 1 ngày
+  - combo-tam-dao-ninh-binh-3n2d | days=3 nights= zone=ket-hop-ninh-binh styles=[3n2d] | Tam Đảo — Ninh Bình 3 ngày 2 đêm
+TOUR_COUNT: 14

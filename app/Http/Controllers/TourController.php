@@ -133,7 +133,7 @@ class TourController extends Controller
                 'unitLabel' => 'tour',
                 'endpoint' => route('api.listings.tours'),
                 'filterDefaults' => [
-                    'country' => [$category['countrySlug'] ?? $country],
+                    // Chỉ khóa theo category slug — tour có thể thuộc zone khác hub (chủ đề thời lượng / insight).
                     'category' => [$category['slug'] ?? $slug],
                 ],
                 'showCountryFilter' => true,

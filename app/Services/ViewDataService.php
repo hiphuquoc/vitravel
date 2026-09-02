@@ -472,16 +472,10 @@ class ViewDataService
             return [];
         }
 
-        $country = $this->findCountryBySlug($countrySlug);
-        if (! $country) {
-            return [];
-        }
-
+        // Nguồn đúng = pivot package_tour_category (nhiều–nhiều).
+        // Không khóa theo country/zone của trang danh mục: chủ đề gắn HUB zone
+        // nhưng tour có thể thuộc huyện/combo khác.
         return $this->packageQuery(Package::TYPE_TOUR)
-            ->where(function ($q) use ($country) {
-                $q->where('country_id', $country->id)
-                    ->orWhereHas('countries', fn ($c) => $c->where('countries.id', $country->id));
-            })
             ->whereHas('categories', function ($q) use ($category) {
                 $q->where('tour_categories.id', $category['id']);
             })

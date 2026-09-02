@@ -13,6 +13,19 @@
  *
  * Lưu trú: không seed catalogue trong file này (data từ tool cào riêng); giữ menu + stays_hub.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
+ *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hisapa')
  *
  * @return array<string, mixed>
@@ -1983,155 +1996,279 @@ $__hisapaSeed = array(
     'tour_categories' => array(
         array(
             'zoneSlug' => 'thi-tran-sapa',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 1,
-            'maxDays' => 1,
+            'slug' => 'tour-thi-tran-sapa',
+            'type' => 'region',
+            'sort' => 0,
             'packageSlugs' => array(
+                'sapa-3n2d-tong-quan',
+                'sapa-2n1d-lang-man',
+                'gia-dinh-sapa-2n1d',
                 'city-tour-sapa-1-ngay',
+                'food-tour-am-thuc-sapa',
+            ),
+            'name' => array(
+                'vi' => 'Tour Thị trấn Sa Pa',
+
+
+
+
+'en' => 'Sa Pa town tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Nhà thờ đá, chợ đêm, Hàm Rồng biển mây & phố núi.',
+
+
+
+
+'en' => 'Stone church, night market, Ham Rong cloud sea & mountain streets.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực trung tâm Sa Pa — điểm lưu trú và khởi hành của mọi tuyến.',
+
+
+
+
+'en' => 'Sa Pa town GEO category — where every route starts and guests stay.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'fansipan-sun-world',
+            'slug' => 'tour-fansipan-sun-world',
+            'type' => 'region',
+            'sort' => 1,
+            'packageSlugs' => array(
                 'fansipan-cap-treo-1-ngay',
-                'thac-bac-thac-tinh-yeu-1-ngay',
-                'ha-noi-sapa-tour-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Fansipan Sun World',
+
+
+
+
+'en' => 'Fansipan Sun World tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cáp treo, tàu Mười Mây & đỉnh 3143m.',
+
+
+
+
+'en' => 'Cable car, Muoi May train & the 3143m summit.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Fansipan — vé cáp treo, tàu leo núi và đỉnh nóc Đông Dương.',
+
+
+
+
+'en' => 'Fansipan GEO category — cable car tickets, mountain train and Indochina\'s roof.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thung-lung-muong-hoa',
+            'slug' => 'tour-thung-lung-muong-hoa',
+            'type' => 'region',
+            'sort' => 2,
+            'packageSlugs' => array(
                 'photo-tour-ruong-bac-thang',
             ),
             'name' => array(
-                'vi' => 'Tour 1 ngày',
+                'vi' => 'Tour Thung lũng Mường Hoa',
 
 
 
 
-'en' => '1-day tours',
+'en' => 'Muong Hoa Valley tours',
             ),
             'subtitle' => array(
-                'vi' => 'City, Fansipan, thác, photo bậc thang.',
+                'vi' => 'Ruộng bậc thang UNESCO & tàu hoả leo núi.',
 
 
 
 
-'en' => 'City, Fansipan, falls, terrace photo.',
+'en' => 'UNESCO rice terraces & the mountain railway.',
             ),
             'seo_body' => array(
-                'vi' => 'Tour theo thời lượng — khác trang Fansipan hay Mường Hoa. Phù hợp ghép chuyến cuối tuần 2 ngày 1 đêm.',
+                'vi' => 'Danh mục khu vực Mường Hoa — bãi đá cổ, ruộng bậc thang và bản Tả Van.',
 
 
 
 
-'en' => 'Duration theme — distinct from Fansipan or Muong Hoa zone URLs. Fits a 2N1D weekend add-on.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'thi-tran-sapa',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 2,
-            'maxDays' => 3,
-            'packageSlugs' => array(
-                'sapa-2n1d-cuoi-tuan-ha-noi',
-                'sapa-2n1d-lang-man',
-                'sapa-3n2d-tong-quan',
-                'gia-dinh-sapa-2n1d',
-                'muong-hoa-trek-homestay-2n1d',
-                'combo-sapa-bac-ha-3n2d',
-            ),
-            'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
-
-
-
-
-'en' => '2–3 day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Tổng quan, lãng mạn, gia đình, trek homestay.',
-
-
-
-
-'en' => 'Overview, romance, family, homestay trek.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Sweet spot thoát phố Hà Nội — homestay bản làng + Fansipan + ẩm thực.',
-
-
-
-
-'en' => 'Sweet spot for escaping Hanoi — village homestay + Fansipan + cuisine.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'homestay-trek-ban-ho',
-            'slug' => '4-ngay-tro-len',
-            'type' => 'duration',
-            'sort' => 3,
-            'minDays' => 4,
-            'maxDays' => 10,
-            'packageSlugs' => array(
-                'sapa-4n3d-kham-pha-sau',
-            ),
-            'name' => array(
-                'vi' => 'Tour 4 ngày trở lên',
-
-
-
-
-'en' => '4+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá sâu trek & ẩm thực.',
-
-
-
-
-'en' => 'Deep trek & cuisine exploration.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Trekking nhiều ngày — bổ sung danh mục homestay theo thời lượng.',
-
-
-
-
-'en' => 'Multi-day trekking — duration intent complementing the homestay GEO zone page.',
+'en' => 'Muong Hoa GEO category — ancient rock field, terraces and Ta Van village.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ban-cat-cat-y-linh-ho',
-            'slug' => 'nua-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 0,
-            'maxDays' => 1,
+            'slug' => 'tour-ban-cat-cat',
+            'type' => 'region',
+            'sort' => 3,
             'packageSlugs' => array(
                 'cat-cat-y-linh-ho-nua-ngay',
-                'food-tour-am-thuc-sapa',
             ),
             'name' => array(
-                'vi' => 'Tour nửa ngày / tối',
+                'vi' => 'Tour Bản Cát Cát & Y Linh Hồ',
 
 
 
 
-'en' => 'Half-day / evening',
+'en' => 'Cat Cat & Y Linh Ho village tours',
             ),
             'subtitle' => array(
-                'vi' => 'Cát Cát, tour ẩm thực tối.',
+                'vi' => 'Làng H\'Mông, thác Cát Cát & view thung lũng.',
 
 
 
 
-'en' => 'Cat Cat, evening food tour.',
+'en' => 'Hmong villages, Cat Cat waterfall & valley views.',
             ),
             'seo_body' => array(
-                'vi' => 'Ghép vào chuyến 2 ngày 1 đêm cuối tuần — khung chiều/tối.',
+                'vi' => 'Danh mục khu vực Cát Cát — bản gần thị trấn nhất, đi bộ được trong buổi chiều.',
 
 
 
 
-'en' => 'Add to a 2N1D weekend — afternoon/evening slots.',
+'en' => 'Cat Cat GEO category — the closest village to town, walkable in an afternoon.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thac-bac-thac-tinh-yeu',
+            'slug' => 'tour-thac-bac-thac-tinh-yeu',
+            'type' => 'region',
+            'sort' => 4,
+            'packageSlugs' => array(
+                'thac-bac-thac-tinh-yeu-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Thác Bạc & Thác Tình Yêu',
+
+
+
+
+'en' => 'Silver Falls & Love Falls tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Thác nước giữa rừng thông — điểm chụp sương.',
+
+
+
+
+'en' => 'Waterfalls in the pine forest — misty photo stops.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực đèo Ô Quy Hồ — thác nước và rừng nguyên sinh Hoàng Liên.',
+
+
+
+
+'en' => 'O Quy Ho pass GEO category — waterfalls and the Hoang Lien old-growth forest.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'homestay-trek-ban-ho',
+            'slug' => 'tour-ban-ho-trek',
+            'type' => 'region',
+            'sort' => 5,
+            'packageSlugs' => array(
+                'muong-hoa-trek-homestay-2n1d',
+                'sapa-4n3d-kham-pha-sau',
+            ),
+            'name' => array(
+                'vi' => 'Tour Bản Hồ & tuyến trek',
+
+
+
+
+'en' => 'Ban Ho & trekking route tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trek Lao Chải — Tả Van, ngủ nhà dân Tày & Giáy.',
+
+
+
+
+'en' => 'Lao Chai — Ta Van trek, staying with Tay & Giay families.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Bản Hồ — cụm homestay xa thị trấn dành cho khách trekking.',
+
+
+
+
+'en' => 'Ban Ho GEO category — the homestay cluster away from town, for trekkers.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-ha-noi',
+            'slug' => 'combo-ha-noi',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'sapa-2n1d-cuoi-tuan-ha-noi',
+                'ha-noi-sapa-tour-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Combo Hà Nội',
+
+
+
+
+'en' => 'Hanoi combo',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tour ngày và cuối tuần 2 ngày 1 đêm từ Hà Nội — tàu/limo ~320km.',
+
+
+
+
+'en' => 'Day trips and 2N1D weekends from Hanoi — train/limo ~320km.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục combo cửa ngõ — trọn gói tàu đêm hoặc limousine kèm tour Sa Pa.',
+
+
+
+
+'en' => 'Gateway combo category — overnight train or limousine bundled with Sa Pa tours.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-bac-ha',
+            'slug' => 'combo-bac-ha',
+            'type' => 'region',
+            'sort' => 7,
+            'packageSlugs' => array(
+                'combo-sapa-bac-ha-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Combo Bắc Hà',
+
+
+
+
+'en' => 'Bac Ha combo',
+            ),
+            'subtitle' => array(
+                'vi' => 'Chợ phiên Chủ nhật & bản làng Flower H\'Mong.',
+
+
+
+
+'en' => 'Sunday market & Flower Hmong villages.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục combo liên vùng — ghép Sa Pa với chợ phiên Bắc Hà cuối tuần.',
+
+
+
+
+'en' => 'Multi-region combo category — pair Sa Pa with the weekend Bac Ha market.',
             ),
             'faqs' => array(),
         ),
@@ -2331,6 +2468,7 @@ $__hisapaSeed = array(
             'packageSlugs' => array(
                 'sapa-2n1d-cuoi-tuan-ha-noi',
                 'ha-noi-sapa-tour-ngay',
+                'sapa-2n1d-lang-man',
             ),
             'name' => array(
                 'vi' => 'Cuối tuần từ Hà Nội',
@@ -2395,7 +2533,7 @@ $__hisapaSeed = array(
         ),
         array(
             'zoneSlug' => 'thi-tran-sapa',
-            'slug' => 'fansipan',
+            'slug' => 'fansipan-cap-treo',
             'type' => 'theme',
             'sort' => 12,
             'packageSlugs' => array(
@@ -2404,46 +2542,46 @@ $__hisapaSeed = array(
                 'sapa-3n2d-tong-quan',
             ),
             'name' => array(
-                'vi' => 'Tour Fansipan & cáp treo',
+                'vi' => 'Fansipan & cáp treo',
 
 
 
 
-'en' => 'Fansipan & cable car tours',
+'en' => 'Fansipan & cable car',
             ),
             'subtitle' => array(
-                'vi' => 'Đỉnh 3143m, tàu Mười Mây.',
+                'vi' => 'Đỉnh 3143m, tàu Mười Mây — không trek nặng.',
 
 
 
 
-'en' => '3143m summit, Muoi May train.',
+'en' => '3143m summit, Muoi May train — no heavy trekking.',
             ),
             'seo_body' => array(
-                'vi' => 'Trang chủ đề Fansipan — khác danh mục khu Fansipan Sun World.',
+                'vi' => 'Chủ đề trải nghiệm đỉnh núi — khác danh mục khu vực Fansipan Sun World.',
 
 
 
 
-'en' => 'Theme intent — separate from the Fansipan Sun World GEO zone URL.',
+'en' => 'Summit experience theme — distinct from the Fansipan Sun World GEO category.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'thi-tran-sapa',
-            'slug' => 'am-thuc',
+            'slug' => 'am-thuc-dac-san',
             'type' => 'theme',
             'sort' => 13,
             'packageSlugs' => array(
                 'food-tour-am-thuc-sapa',
             ),
             'name' => array(
-                'vi' => 'Tour ẩm thực',
+                'vi' => 'Ẩm thực đặc sản',
 
 
 
 
-'en' => 'Food tours',
+'en' => 'Local cuisine',
             ),
             'subtitle' => array(
                 'vi' => 'Thắng cố, cá hồi, BBQ, rượu ngô.',
@@ -2465,7 +2603,7 @@ $__hisapaSeed = array(
         ),
         array(
             'zoneSlug' => 'thi-tran-sapa',
-            'slug' => 'cap-doi',
+            'slug' => 'cap-doi-lang-man',
             'type' => 'theme',
             'sort' => 14,
             'packageSlugs' => array(
@@ -2473,12 +2611,12 @@ $__hisapaSeed = array(
                 'photo-tour-ruong-bac-thang',
             ),
             'name' => array(
-                'vi' => 'Tour cặp đôi & lãng mạn',
+                'vi' => 'Cặp đôi & lãng mạn',
 
 
 
 
-'en' => 'Couple & romantic',
+'en' => 'Couples & romantic',
             ),
             'subtitle' => array(
                 'vi' => 'Ham Rong biển mây, Mường Hoa, photo tour.',
@@ -2500,7 +2638,7 @@ $__hisapaSeed = array(
         ),
         array(
             'zoneSlug' => 'thi-tran-sapa',
-            'slug' => 'gia-dinh',
+            'slug' => 'gia-dinh-tre-em',
             'type' => 'theme',
             'sort' => 15,
             'packageSlugs' => array(
@@ -2508,12 +2646,12 @@ $__hisapaSeed = array(
                 'sapa-3n2d-tong-quan',
             ),
             'name' => array(
-                'vi' => 'Tour gia đình',
+                'vi' => 'Gia đình có trẻ em',
 
 
 
 
-'en' => 'Family tours',
+'en' => 'Family with kids',
             ),
             'subtitle' => array(
                 'vi' => 'Fansipan & Mường Hoa — lịch nhẹ trẻ em.',

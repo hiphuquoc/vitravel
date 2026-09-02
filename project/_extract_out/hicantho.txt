@@ -1,0 +1,49 @@
+===== PROFILE: hicantho =====
+PLACES (zones): 8
+  - ninh-kieu-trung-tam | Ninh Kiều & trung tâm
+  - cho-noi-cai-rang | Chợ nổi Cái Răng
+  - cho-noi-phong-dien | Phong Điền & Trà Ôn
+  - vuon-trai-mien-tay | Vườn trái miền Tây
+  - lang-mien-tay | Làng miền Tây & văn hoá
+  - con-son-cu-lao | Con Sơn (cù lao)
+  - song-hau-kenh-rach | Sông Hậu & kênh rạch
+  - ket-hop-dbscl | Kết hợp ĐBSCL
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - cho-noi | Tour chợ nổi
+  - vuon-trai-homestay | Vườn trái & homestay
+TOUR_CATEGORIES:
+  [duration] zone=ninh-kieu-trung-tam slug=nua-ngay name=Tour nửa ngày / tối min=0 max=1 pkgs=[song-hau-hoang-hon-1-ngay,food-tour-can-tho-toi,xuong-may-kenh-rach-nua-ngay]
+  [duration] zone=cho-noi-cai-rang slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[city-tour-can-tho-1-ngay,cho-noi-cai-rang-sang-som-1-ngay,cho-noi-phong-dien-1-ngay,my-khanh-vuon-trai-1-ngay,binh-thuy-lang-mien-tay-1-ngay,vuon-chim-bang-lang-1-ngay]
+  [duration] zone=ninh-kieu-trung-tam slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[can-tho-2-ngay-cho-noi,con-son-homestay-2n1d,can-tho-3-ngay-tong-quan,can-tho-chau-doc-3n2d]
+  [duration] zone=ket-hop-dbscl slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[can-tho-4-ngay-kham-pha-sau,can-tho-ca-mau-4n3d,can-tho-phu-quoc-4n3d]
+  [theme] zone=ninh-kieu-trung-tam slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[city-tour-can-tho-1-ngay,cho-noi-cai-rang-sang-som-1-ngay,cho-noi-phong-dien-1-ngay,song-hau-hoang-hon-1-ngay,my-khanh-vuon-trai-1-ngay,binh-thuy-lang-mien-tay-1-ngay,vuon-chim-bang-lang-1-ngay,food-tour-can-tho-toi,xuong-may-kenh-rach-nua-ngay]
+  [theme] zone=ninh-kieu-trung-tam slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[can-tho-2-ngay-cho-noi,con-son-homestay-2n1d]
+  [theme] zone=ninh-kieu-trung-tam slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[can-tho-3-ngay-tong-quan,can-tho-chau-doc-3n2d]
+  [theme] zone=ninh-kieu-trung-tam slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[can-tho-4-ngay-kham-pha-sau,can-tho-ca-mau-4n3d,can-tho-phu-quoc-4n3d]
+  [theme] zone=ninh-kieu-trung-tam slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=ninh-kieu-trung-tam slug=cho-noi name=Tour chợ nổi min= max= pkgs=[cho-noi-cai-rang-sang-som-1-ngay,cho-noi-phong-dien-1-ngay,can-tho-2-ngay-cho-noi]
+  [theme] zone=ninh-kieu-trung-tam slug=vuon-trai-homestay name=Vườn trái & homestay min= max= pkgs=[my-khanh-vuon-trai-1-ngay,con-son-homestay-2n1d,can-tho-4-ngay-kham-pha-sau]
+TYPE_COUNTS: duration=4 theme=7
+TOURS:
+  - can-tho-3-ngay-tong-quan | days=3 nights= zone=ninh-kieu-trung-tam styles=[3n2d] | Cần Thơ 3 ngày 2 đêm — Tổng quan miền Tây sông nước
+  - can-tho-2-ngay-cho-noi | days=2 nights= zone=cho-noi-cai-rang styles=[2n1d,cho-noi] | Cần Thơ 2 ngày 1 đêm — Chợ nổi & sông nước
+  - can-tho-4-ngay-kham-pha-sau | days=4 nights= zone=song-hau-kenh-rach styles=[4n3d,vuon-trai-homestay] | Cần Thơ 4 ngày 3 đêm — Khám phá sâu ĐBSCL
+  - city-tour-can-tho-1-ngay | days=1 nights= zone=ninh-kieu-trung-tam styles=[day-trip] | Tour thành phố Cần Thơ 1 ngày — Ninh Kiều & văn hoá
+  - cho-noi-cai-rang-sang-som-1-ngay | days=1 nights= zone=cho-noi-cai-rang styles=[day-trip,cho-noi] | Chợ nổi Cái Răng — Tour sáng sớm 1 ngày
+  - cho-noi-phong-dien-1-ngay | days=1 nights= zone=cho-noi-phong-dien styles=[day-trip,cho-noi] | Chợ nổi Phong Điền — Trải nghiệm chân thực 1 ngày
+  - song-hau-hoang-hon-1-ngay | days=1 nights= zone=song-hau-kenh-rach styles=[day-trip] | Sông Hậu hoàng hôn — Thuyền & Ninh Kiều buổi tối
+  - my-khanh-vuon-trai-1-ngay | days=1 nights= zone=vuon-trai-mien-tay styles=[day-trip,vuon-trai-homestay] | Mỹ Khánh — Vườn trái & làng miền Tây 1 ngày
+  - binh-thuy-lang-mien-tay-1-ngay | days=1 nights= zone=lang-mien-tay styles=[day-trip] | Làng miền Tây — Bình Thủy, chùa & bảo tàng 1 ngày
+  - con-son-homestay-2n1d | days=2 nights= zone=con-son-cu-lao styles=[2n1d,vuon-trai-homestay] | Con Sơn 2 ngày 1 đêm — Homestay & đạp xe cù lao
+  - vuon-chim-bang-lang-1-ngay | days=1 nights= zone=song-hau-kenh-rach styles=[day-trip] | Vườn chim Bằng Lăng — Tour mùa chim 1 ngày
+  - food-tour-can-tho-toi | days=1 nights= zone=ninh-kieu-trung-tam styles=[day-trip] | Tour ẩm thực Cần Thơ — Buổi tối ẩm thực miền Tây
+  - can-tho-chau-doc-3n2d | days=3 nights= zone=ket-hop-dbscl styles=[3n2d] | Cần Thơ — Châu Đốc 3 ngày 2 đêm (Tra Su)
+  - can-tho-ca-mau-4n3d | days=4 nights= zone=ket-hop-dbscl styles=[4n3d] | Cần Thơ — Cà Mau 4 ngày 3 đêm (Mũi Cà Mau)
+  - can-tho-phu-quoc-4n3d | days=4 nights= zone=ket-hop-dbscl styles=[4n3d] | Cần Thơ — Phú Quốc 4 ngày 3 đêm (qua Rạch Giá)
+  - xuong-may-kenh-rach-nua-ngay | days=1 nights= zone=song-hau-kenh-rach styles=[day-trip] | Xuồng máy kênh rạch — Nửa ngày len làng
+TOUR_COUNT: 16

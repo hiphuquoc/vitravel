@@ -1,0 +1,49 @@
+===== PROFILE: phuquy =====
+PLACES (zones): 7
+  - trung-tam-phu-quy | Thị trấn / cảng Phú Quý
+  - bai-nho | Bãi Nhỏ
+  - bai-dai | Bãi Dài
+  - mui-den-bien | Mũi Đèn Biển
+  - chua-hang | Chùa Hang
+  - ran-san-ho | Rạn san hô & điểm lặn
+  - ket-hop-phan-thiet | Kết hợp Phan Thiết / Mũi Né
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - lan-bien | Tour lặn & snorkel
+  - bien-bai-nho | Tour biển Bãi Nhỏ
+  - hai-dang-van-hoa | Tour hải đăng & văn hoá
+TOUR_CATEGORIES:
+  [duration] zone=trung-tam-phu-quy slug=nua-ngay name=Tour nửa ngày min=0 max=1 pkgs=[lang-chai-hai-san-phu-quy-nua-ngay,binh-minh-hoang-hon-mui-den-bien,chua-hang-van-hoa-nua-ngay,snorkel-sup-kayak-nua-ngay]
+  [duration] zone=trung-tam-phu-quy slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[jeep-vong-dao-phu-quy-1-ngay,beach-hopping-bai-nho-bai-dai,mui-den-bien-chua-hang-1-ngay,lan-ngam-san-ho-phu-quy-1-ngay]
+  [duration] zone=trung-tam-phu-quy slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[phu-quy-3-ngay-tong-quan-dao,bai-nho-gia-dinh-2-ngay,honeymoon-bai-dai-3-ngay,camping-homestay-bai-dai-2n1d,diving-nhieu-ngay-phu-quy-3n2d,phan-thiet-phu-quy-weekend-2n1d]
+  [duration] zone=trung-tam-phu-quy slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[phan-thiet-phu-quy-ket-hop-4n3d]
+  [theme] zone=trung-tam-phu-quy slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[jeep-vong-dao-phu-quy-1-ngay,lang-chai-hai-san-phu-quy-nua-ngay,beach-hopping-bai-nho-bai-dai,mui-den-bien-chua-hang-1-ngay,binh-minh-hoang-hon-mui-den-bien,chua-hang-van-hoa-nua-ngay,lan-ngam-san-ho-phu-quy-1-ngay,snorkel-sup-kayak-nua-ngay]
+  [theme] zone=trung-tam-phu-quy slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[bai-nho-gia-dinh-2-ngay,camping-homestay-bai-dai-2n1d,phan-thiet-phu-quy-weekend-2n1d]
+  [theme] zone=trung-tam-phu-quy slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[phu-quy-3-ngay-tong-quan-dao,honeymoon-bai-dai-3-ngay,diving-nhieu-ngay-phu-quy-3n2d]
+  [theme] zone=trung-tam-phu-quy slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[phan-thiet-phu-quy-ket-hop-4n3d]
+  [theme] zone=trung-tam-phu-quy slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=trung-tam-phu-quy slug=lan-bien name=Tour lặn & snorkel min= max= pkgs=[lan-ngam-san-ho-phu-quy-1-ngay,diving-nhieu-ngay-phu-quy-3n2d,snorkel-sup-kayak-nua-ngay,thuyen-lan-ran-san-ho-phu-quy]
+  [theme] zone=trung-tam-phu-quy slug=bien-bai-nho name=Tour biển Bãi Nhỏ min= max= pkgs=[bai-nho-gia-dinh-2-ngay,beach-hopping-bai-nho-bai-dai]
+  [theme] zone=trung-tam-phu-quy slug=hai-dang-van-hoa name=Tour hải đăng & văn hoá min= max= pkgs=[mui-den-bien-chua-hang-1-ngay,binh-minh-hoang-hon-mui-den-bien,chua-hang-van-hoa-nua-ngay]
+TYPE_COUNTS: duration=4 theme=8
+TOURS:
+  - phu-quy-3-ngay-tong-quan-dao | days=3 nights= zone=trung-tam-phu-quy styles=[3n2d] | Phú Quý 3 ngày 2 đêm — Tổng quan đảo núi lửa
+  - jeep-vong-dao-phu-quy-1-ngay | days=1 nights= zone=trung-tam-phu-quy styles=[day-trip] | Jeep vòng đảo Phú Quý — đá núi lửa, bãi biển & hải đăng
+  - lang-chai-hai-san-phu-quy-nua-ngay | days=1 nights= zone=trung-tam-phu-quy styles=[day-trip] | Làng chài & hải sản Phú Quý — nửa ngày
+  - bai-nho-gia-dinh-2-ngay | days=2 nights= zone=bai-nho styles=[2n1d,bien-bai-nho] | Bãi Nhỏ 2 ngày 1 đêm — Gia đình: biển, snorkel nhẹ & jeep ngắn
+  - beach-hopping-bai-nho-bai-dai | days=1 nights= zone=bai-nho styles=[day-trip,bien-bai-nho] | Beach hopping Bãi Nhỏ — Bãi Dài — 1 ngày
+  - honeymoon-bai-dai-3-ngay | days=3 nights= zone=bai-dai styles=[3n2d] | Trăng mật Bãi Dài 3 ngày 2 đêm — yên tĩnh & hoàng hôn
+  - camping-homestay-bai-dai-2n1d | days=2 nights= zone=bai-dai styles=[2n1d] | Camping / Homestay Bãi Dài — 2 ngày 1 đêm yên tĩnh
+  - mui-den-bien-chua-hang-1-ngay | days=1 nights= zone=mui-den-bien styles=[day-trip,hai-dang-van-hoa] | Mũi Đèn Biển & Chùa Hang — văn hoá đảo 1 ngày
+  - binh-minh-hoang-hon-mui-den-bien | days=1 nights= zone=mui-den-bien styles=[day-trip,hai-dang-van-hoa] | Bình minh / Hoàng hôn Mũi Đèn Biển — nửa ngày
+  - chua-hang-van-hoa-nua-ngay | days=1 nights= zone=chua-hang styles=[day-trip,hai-dang-van-hoa] | Chùa Hang — thăm quan & kể chuyện nửa ngày
+  - lan-ngam-san-ho-phu-quy-1-ngay | days=1 nights= zone=ran-san-ho styles=[day-trip,lan-bien] | Lặn ngắm san hô Phú Quý — 1 ngày (snorkel / intro dive)
+  - diving-nhieu-ngay-phu-quy-3n2d | days=3 nights= zone=ran-san-ho styles=[3n2d,lan-bien] | Diving multi-day Phú Quý — 3 ngày 2 đêm (OW / fun dive)
+  - snorkel-sup-kayak-nua-ngay | days=1 nights= zone=ran-san-ho styles=[day-trip,lan-bien] | Snorkel + SUP / kayak gần bờ — nửa ngày
+  - phan-thiet-phu-quy-ket-hop-4n3d | days=4 nights= zone=ket-hop-phan-thiet styles=[4n3d] | Phan Thiết / Mũi Né — Phú Quý 4 ngày 3 đêm
+  - phan-thiet-phu-quy-weekend-2n1d | days=2 nights= zone=ket-hop-phan-thiet styles=[2n1d] | Cuối tuần Phan Thiết — Phú Quý 2 ngày 1 đêm
+TOUR_COUNT: 15

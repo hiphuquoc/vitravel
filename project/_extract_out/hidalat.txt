@@ -1,0 +1,49 @@
+===== PROFILE: hidalat =====
+PLACES (zones): 8
+  - trung-tam-xuan-huong | Trung tâm & Hồ Xuân Hương
+  - langbiang-ta-nung | Langbiang & Tà Nung
+  - tuyen-lam-truc-lam | Tuyền Lâm & Trúc Lâm
+  - datanla-robin-hill | Datanla & Robin Hill
+  - cau-dat | Cao nguyên Cầu Đất
+  - ngoai-o-thanh-pho | Ngoại ô & thác nước
+  - ket-hop-nha-trang | Kết hợp Nha Trang
+  - ket-hop-mui-ne | Kết hợp Mũi Né
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - cafe-agri | Tour cà phê & nông trại
+  - phieu-luu | Tour phiêu lưu
+TOUR_CATEGORIES:
+  [duration] zone=trung-tam-xuan-huong slug=nua-ngay name=Tour nửa ngày / tối min=0 max=1 pkgs=[food-tour-cho-dem-nua-dem,nau-an-da-lat-half-day]
+  [duration] zone=trung-tam-xuan-huong slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[city-tour-da-lat-1-ngay,canyoning-datanla-1-ngay,langbiang-jeep-trekking-1-ngay,cau-dat-cafe-tea-1-ngay,thac-voi-cu-lan-1-ngay,tuyen-lam-truc-lam-robin-1-ngay,chup-anh-trang-mat-da-lat]
+  [duration] zone=trung-tam-xuan-huong slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[da-lat-2-ngay-lang-man,festival-hoa-da-lat-2n1d,gia-dinh-da-lat-2n1d,da-lat-3-ngay-tong-quan,da-lat-nha-trang-3n2d,da-lat-mui-ne-3n2d]
+  [duration] zone=trung-tam-xuan-huong slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[da-lat-4-ngay-kham-pha-sau]
+  [theme] zone=trung-tam-xuan-huong slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[city-tour-da-lat-1-ngay,canyoning-datanla-1-ngay,langbiang-jeep-trekking-1-ngay,cau-dat-cafe-tea-1-ngay,thac-voi-cu-lan-1-ngay,food-tour-cho-dem-nua-dem,tuyen-lam-truc-lam-robin-1-ngay,chup-anh-trang-mat-da-lat,nau-an-da-lat-half-day]
+  [theme] zone=trung-tam-xuan-huong slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[da-lat-2-ngay-lang-man,festival-hoa-da-lat-2n1d,gia-dinh-da-lat-2n1d]
+  [theme] zone=trung-tam-xuan-huong slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[da-lat-3-ngay-tong-quan,da-lat-nha-trang-3n2d,da-lat-mui-ne-3n2d]
+  [theme] zone=trung-tam-xuan-huong slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[da-lat-4-ngay-kham-pha-sau]
+  [theme] zone=trung-tam-xuan-huong slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=trung-tam-xuan-huong slug=cafe-agri name=Tour cà phê & nông trại min= max= pkgs=[cau-dat-cafe-tea-1-ngay]
+  [theme] zone=trung-tam-xuan-huong slug=phieu-luu name=Tour phiêu lưu min= max= pkgs=[canyoning-datanla-1-ngay,langbiang-jeep-trekking-1-ngay,da-lat-4-ngay-kham-pha-sau]
+TYPE_COUNTS: duration=4 theme=7
+TOURS:
+  - da-lat-3-ngay-tong-quan | days=3 nights= zone=trung-tam-xuan-huong styles=[3n2d] | Đà Lạt 3 ngày 2 đêm — Tổng quan thành phố ngàn hoa
+  - da-lat-2-ngay-lang-man | days=2 nights= zone=trung-tam-xuan-huong styles=[2n1d] | Đà Lạt 2 ngày 1 đêm — Lãng mạn & hoa
+  - da-lat-4-ngay-kham-pha-sau | days=4 nights= zone=langbiang-ta-nung styles=[4n3d,phieu-luu] | Đà Lạt 4 ngày 3 đêm — Khám phá sâu cao nguyên
+  - city-tour-da-lat-1-ngay | days=1 nights= zone=trung-tam-xuan-huong styles=[day-trip] | Tour thành phố Đà Lạt 1 ngày — Biểu tượng & linh thiền
+  - canyoning-datanla-1-ngay | days=1 nights= zone=datanla-robin-hill styles=[day-trip,phieu-luu] | Canyoning thác Datanla — 1 ngày phiêu lưu
+  - langbiang-jeep-trekking-1-ngay | days=1 nights= zone=langbiang-ta-nung styles=[day-trip,phieu-luu] | Langbiang — Jeep & trekking đỉnh 1 ngày
+  - cau-dat-cafe-tea-1-ngay | days=1 nights= zone=cau-dat styles=[day-trip,cafe-agri] | Cầu Đất — Tour cà phê & đồi chè 1 ngày
+  - thac-voi-cu-lan-1-ngay | days=1 nights= zone=ngoai-o-thanh-pho styles=[day-trip] | Thác Voi — Đường hầm đất sét — Cù Lần 1 ngày
+  - festival-hoa-da-lat-2n1d | days=2 nights= zone=trung-tam-xuan-huong styles=[2n1d] | Festival hoa Đà Lạt — 2 ngày 1 đêm (cuối tháng 12)
+  - gia-dinh-da-lat-2n1d | days=2 nights= zone=trung-tam-xuan-huong styles=[2n1d] | Đà Lạt gia đình 2 ngày 1 đêm — Nhẹ nhàng & vui
+  - da-lat-nha-trang-3n2d | days=3 nights= zone=ket-hop-nha-trang styles=[3n2d] | Đà Lạt — Nha Trang 3 ngày 2 đêm
+  - da-lat-mui-ne-3n2d | days=3 nights= zone=ket-hop-mui-ne styles=[3n2d] | Đà Lạt — Mũi Né 3 ngày 2 đêm
+  - food-tour-cho-dem-nua-dem | days=1 nights= zone=trung-tam-xuan-huong styles=[day-trip] | Tour ẩm thực chợ đêm Đà Lạt — Buổi tối
+  - tuyen-lam-truc-lam-robin-1-ngay | days=1 nights= zone=tuyen-lam-truc-lam styles=[day-trip] | Tuyền Lâm — Trúc Lâm — Robin Hill 1 ngày
+  - chup-anh-trang-mat-da-lat | days=1 nights= zone=trung-tam-xuan-huong styles=[day-trip] | Tour chụp ảnh & trăng mật Đà Lạt — 1 ngày
+  - nau-an-da-lat-half-day | days=1 nights= zone=trung-tam-xuan-huong styles=[day-trip] | Lớp nấu ăn Đà Lạt — Nửa ngày
+TOUR_COUNT: 16

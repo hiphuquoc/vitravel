@@ -11,6 +11,19 @@
  *
  * Lưu trú: không seed catalogue trong file này (data từ tool cào riêng); giữ menu + stays_hub.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
+ *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hihagiang')
  *
  * @return array<string, mixed>
@@ -2327,169 +2340,188 @@ $__hihagiangSeed = array(
 
     'tour_categories' => array(
         array(
-            'zoneSlug' => 'meo-vac',
-            'slug' => '1-ngay',
-            'type' => 'duration',
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'tour-thanh-pho',
+            'type' => 'region',
             'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 1,
             'packageSlugs' => array(
-                'ma-pi-leng-nho-que-1-ngay',
                 'thanh-pho-ha-giang-1-ngay',
-                'yen-minh-rung-thong-1-ngay',
                 'food-tour-ha-giang-toi',
             ),
             'name' => array(
-                'vi' => 'Tour 1 ngày',
+                'vi' => 'Tour Thành phố Hà Giang',
 
 
 
 
-'en' => '1-day tours',
+'en' => 'Ha Giang City tours',
             ),
             'subtitle' => array(
-                'vi' => 'Mã Pí Lèng, Nho Quế, Yên Minh, tour ẩm thực.',
+                'vi' => 'Cửa ngõ loop — chợ đêm, ẩm thực và giấy phép biên giới.',
 
 
 
 
-'en' => 'Ma Pi Leng, Nho Que, Yen Minh, food tour.',
+'en' => 'Loop gateway — night market, food and border permits.',
             ),
             'seo_body' => array(
-                'vi' => 'Ghép vào loop hoặc đi lẻ từ Đồng Văn/Mèo Vạc.',
+                'vi' => 'Danh mục khu vực: toàn bộ tour khởi hành hoặc khám phá quanh thành phố Hà Giang.',
 
 
 
 
-'en' => 'Add to a loop or book standalone from Dong Van/Meo Vac.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'meo-vac',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 2,
-            'maxDays' => 3,
-            'packageSlugs' => array(
-                'ha-giang-loop-3-ngay-2-dem',
-                'ha-giang-loop-xe-may-3-ngay',
-                'quan-ba-co-tien-2-ngay-1-dem',
-                'dong-van-homestay-2-ngay',
-                'hoang-su-phi-2-ngay-1-dem',
-                'mua-tam-giac-mach-3-ngay',
-                'mua-hoa-dao-3-ngay',
-                'bac-me-thac-ba-2-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
-
-
-
-
-'en' => '2–3 day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Loop 3 ngày, Quản Bạ, homestay, mùa hoa.',
-
-
-
-
-'en' => '3-day loop, Quan Ba, homestay, flower seasons.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn phổ biến cho khách Hà Nội cuối tuần.',
-
-
-
-
-'en' => 'Sweet spot for Hanoi weekenders.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'meo-vac',
-            'slug' => '4-5-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 4,
-            'maxDays' => 5,
-            'packageSlugs' => array(
-                'ha-giang-loop-4-ngay-3-dem',
-                'ha-giang-loop-5-ngay-4-dem',
-                'ha-giang-sapa-5-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour 4 – 5 ngày',
-
-
-
-
-'en' => '4–5 day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Loop sâu, Hoàng Su Phì, combo Sapa.',
-
-
-
-
-'en' => 'Deep loop, Hoang Su Phi, Sapa combo.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Đủ thời gian Lũng Cú, chợ phiên và đi chậm.',
-
-
-
-
-'en' => 'Enough time for Lung Cu, Sunday market and a slower pace.',
+'en' => 'GEO category: every tour departing from or exploring Ha Giang City.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'quan-ba',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 1,
+            'slug' => 'tour-quan-ba',
+            'type' => 'region',
+            'sort' => 1,
+            'packageSlugs' => array(
+                'quan-ba-co-tien-2-ngay-1-dem',
+                'mua-hoa-dao-3-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Quản Bạ & Cổng trời',
+
+
+
+
+'en' => 'Quan Ba & Heaven Gate tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cổng trời, núi đôi Cô Tiên và thung lũng sương mù.',
+
+
+
+
+'en' => 'Heaven Gate, Twin Mountains and misty valleys.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Quản Bạ — cửa ngõ mở đầu cao nguyên đá.',
+
+
+
+
+'en' => 'Quan Ba GEO category — the opening gateway to the karst plateau.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'yen-minh',
+            'slug' => 'tour-yen-minh',
+            'type' => 'region',
+            'sort' => 2,
             'packageSlugs' => array(
                 'yen-minh-rung-thong-1-ngay',
             ),
             'name' => array(
-                'vi' => 'Tour 1 ngày Quản Bạ',
+                'vi' => 'Tour Yên Minh',
 
 
 
 
-'en' => '1-day Quan Ba',
+'en' => 'Yen Minh tours',
             ),
             'subtitle' => array(
-                'vi' => 'Rừng thông Yên Minh, cafe phố cao.',
+                'vi' => 'Rừng thông, thị trấn phố cao và chặng chuyển tiếp lên Đồng Văn.',
 
 
 
 
-'en' => 'Yen Minh pine forest, highland cafes.',
+'en' => 'Pine forests, highland town and the transfer leg to Dong Van.',
             ),
             'seo_body' => array(
-                'vi' => 'Dừng chân giữa loop hoặc tour ngắn.',
+                'vi' => 'Danh mục khu vực Yên Minh — điểm dừng giữa loop.',
 
 
 
 
-'en' => 'Stopover on the loop or short escape.',
+'en' => 'Yen Minh GEO category — the mid-loop stopover.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'dong-van',
+            'slug' => 'tour-dong-van',
+            'type' => 'region',
+            'sort' => 3,
+            'packageSlugs' => array(
+                'ha-giang-loop-4-ngay-3-dem',
+                'dong-van-homestay-2-ngay',
+                'mua-tam-giac-mach-3-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Đồng Văn & phố cổ',
+
+
+
+
+'en' => 'Dong Van & old quarter tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Phố cổ, chợ phiên Chủ nhật và trung tâm Công viên địa chất UNESCO.',
+
+
+
+
+'en' => 'Old quarter, Sunday market and the UNESCO geopark heart.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Đồng Văn — homestay dân tộc và mùa tam giác mạch.',
+
+
+
+
+'en' => 'Dong Van GEO category — ethnic homestays and buckwheat season.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'meo-vac',
+            'slug' => 'tour-meo-vac-ma-pi-leng',
+            'type' => 'region',
+            'sort' => 4,
+            'packageSlugs' => array(
+                'ha-giang-loop-3-ngay-2-dem',
+                'ha-giang-loop-xe-may-3-ngay',
+                'ma-pi-leng-nho-que-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Mèo Vạc & Mã Pí Lèng',
+
+
+
+
+'en' => 'Meo Vac & Ma Pi Leng tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Đèo Mã Pí Lèng, sông Nho Quế và vách đá Tu Sản.',
+
+
+
+
+'en' => 'Ma Pi Leng Pass, Nho Que River and Tu San Canyon.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Mèo Vạc — đoạn đèo huyền thoại của Hà Giang Loop.',
+
+
+
+
+'en' => 'Meo Vac GEO category — the legendary pass section of the Ha Giang Loop.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'hoang-su-phi',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 2,
-            'maxDays' => 3,
+            'slug' => 'tour-hoang-su-phi',
+            'type' => 'region',
+            'sort' => 5,
             'packageSlugs' => array(
+                'ha-giang-loop-5-ngay-4-dem',
                 'hoang-su-phi-2-ngay-1-dem',
             ),
             'name' => array(
@@ -2501,30 +2533,62 @@ $__hihagiangSeed = array(
 'en' => 'Hoang Su Phi tours',
             ),
             'subtitle' => array(
-                'vi' => 'Ruộng bậc thang & bản Dao đỏ.',
+                'vi' => 'Ruộng bậc thang đẹp nhất Việt Nam và bản làng Dao đỏ.',
 
 
 
 
-'en' => 'Terraced fields & Red Dao villages.',
+'en' => 'Vietnam\'s finest terraces and Red Dao villages.',
             ),
             'seo_body' => array(
-                'vi' => 'Tách khỏi loop — hoặc gộp tour 5 ngày.',
+                'vi' => 'Danh mục khu vực Hoàng Su Phì — đi lẻ hoặc gộp vào loop dài ngày.',
 
 
 
 
-'en' => 'Standalone — or bundled in the 5-day tour.',
+'en' => 'Hoang Su Phi GEO category — standalone or bundled into a longer loop.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'bac-me',
+            'slug' => 'tour-bac-me',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'bac-me-thac-ba-2-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Bắc Mê',
+
+
+
+
+'en' => 'Bac Me tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Hồ Thác Bà, hang động và lối về Cao Bằng.',
+
+
+
+
+'en' => 'Thac Ba Lake, caves and the route to Cao Bang.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Bắc Mê — nhánh phía đông, ít khách hơn loop chính.',
+
+
+
+
+'en' => 'Bac Me GEO category — the quieter eastern branch off the main loop.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-sapa',
-            'slug' => '4-5-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 4,
-            'maxDays' => 6,
+            'slug' => 'combo-sapa',
+            'type' => 'region',
+            'sort' => 7,
             'packageSlugs' => array(
                 'ha-giang-sapa-5-ngay',
             ),
@@ -2537,30 +2601,28 @@ $__hihagiangSeed = array(
 'en' => 'Sapa combo',
             ),
             'subtitle' => array(
-                'vi' => 'Loop Hà Giang + Fansipan/Sapa.',
+                'vi' => 'Nối cao nguyên đá Hà Giang và Fansipan trong một hành trình.',
 
 
 
 
-'en' => 'Ha Giang loop plus Fansipan/Sapa.',
+'en' => 'Link the Ha Giang karst plateau and Fansipan in one journey.',
             ),
             'seo_body' => array(
-                'vi' => 'Hai cao nguyên Tây Bắc trong một chuyến.',
+                'vi' => 'Danh mục combo liên vùng — hai cao nguyên Tây Bắc trong một chuyến.',
 
 
 
 
-'en' => 'Two Northwest highlands in one trip.',
+'en' => 'Multi-region combo category — two Northwest highlands in one trip.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-cao-bang',
-            'slug' => '4-5-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 5,
-            'maxDays' => 6,
+            'slug' => 'combo-cao-bang',
+            'type' => 'region',
+            'sort' => 8,
             'packageSlugs' => array(
                 'ha-giang-cao-bang-6-ngay',
             ),
@@ -2573,20 +2635,20 @@ $__hihagiangSeed = array(
 'en' => 'Cao Bang combo',
             ),
             'subtitle' => array(
-                'vi' => 'Loop + thác Bản Giốc & Ba Bể.',
+                'vi' => 'Hà Giang Loop + thác Bản Giốc & hồ Ba Bể.',
 
 
 
 
-'en' => 'Loop plus Ban Gioc Falls & Ba Be.',
+'en' => 'Ha Giang Loop plus Ban Gioc Falls and Ba Be Lake.',
             ),
             'seo_body' => array(
-                'vi' => 'Đông Bắc mở rộng — geopark và thác nước.',
+                'vi' => 'Danh mục combo liên vùng — Đông Bắc mở rộng, geopark và thác nước.',
 
 
 
 
-'en' => 'Extended Northeast — geopark and waterfalls.',
+'en' => 'Multi-region combo category — extended Northeast, geopark and waterfalls.',
             ),
             'faqs' => array(),
         ),
@@ -2826,6 +2888,7 @@ $__hihagiangSeed = array(
                 'dong-van-homestay-2-ngay',
                 'ha-giang-loop-3-ngay-2-dem',
                 'ha-giang-loop-4-ngay-3-dem',
+                'ha-giang-loop-5-ngay-4-dem',
             ),
             'name' => array(
                 'vi' => 'Homestay dân tộc',
@@ -2855,7 +2918,7 @@ $__hihagiangSeed = array(
         ),
         array(
             'zoneSlug' => 'thanh-pho-ha-giang',
-            'slug' => 'xe-may',
+            'slug' => 'loop-xe-may',
             'type' => 'theme',
             'sort' => 12,
             'packageSlugs' => array(
@@ -2889,7 +2952,7 @@ $__hihagiangSeed = array(
         ),
         array(
             'zoneSlug' => 'thanh-pho-ha-giang',
-            'slug' => 'mua-hoa',
+            'slug' => 'mua-hoa-dac-biet',
             'type' => 'theme',
             'sort' => 13,
             'packageSlugs' => array(
@@ -2897,12 +2960,12 @@ $__hihagiangSeed = array(
                 'mua-hoa-dao-3-ngay',
             ),
             'name' => array(
-                'vi' => 'Tour mùa hoa',
+                'vi' => 'Mùa hoa đặc biệt',
 
 
 
 
-'en' => 'Flower season tours',
+'en' => 'Flower seasons',
             ),
             'subtitle' => array(
                 'vi' => 'Tam giác mạch (10–11), hoa đào Tết (1–2).',
@@ -2980,7 +3043,7 @@ $__hihagiangSeed = array(
 'en' => 'Family & small group',
             ),
             'subtitle' => array(
-                'vi' => 'O to an toan, lich nhe — khong bat buoc xe may.',
+                'vi' => 'Ô tô an toàn, lịch nhẹ — không bắt buộc xe máy.',
 
 
 
@@ -2988,7 +3051,7 @@ $__hihagiangSeed = array(
 'en' => 'Safe car travel, light pace, no motorbike required.',
             ),
             'seo_body' => array(
-                'vi' => 'Phan khuc gia dinh/nhom ban — loc theo nhu cau, khong theo vung.',
+                'vi' => 'Phân khúc gia đình/nhóm bạn — lọc theo nhu cầu, không theo vùng.',
 
 
 

@@ -1,0 +1,51 @@
+===== PROFILE: culaocham =====
+PLACES (zones): 7
+  - bai-lang | Làng Bãi Làng
+  - bai-chong | Bãi Chồng
+  - bai-xep | Bãi Xếp
+  - bai-huong | Bãi Hương
+  - ran-san-ho | Rạn san hô & điểm lặn
+  - hai-dang | Hải đăng Hòn Lao
+  - ket-hop-hoi-an | Kết hợp Hội An / Cửa Đại
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - lan-bien | Tour lặn & snorkel
+  - bien-bai-chong | Tour biển Bãi Chồng
+  - van-hoa-lang-chai | Tour văn hoá & làng chài
+  - trekking-ngam-canh | Tour trekking & ngắm cảnh
+TOUR_CATEGORIES:
+  [duration] zone=bai-lang slug=nua-ngay name=Tour nửa ngày min=0 max=1 pkgs=[lang-bai-lang-chua-hai-tang-nua-ngay,bai-xep-kayak-snorkel-nua-ngay,bai-huong-cau-ca-cung-ngu-dan-nua-ngay,snorkel-nua-ngay-ran-san-ho,trekking-hai-dang-hon-lao-nua-ngay]
+  [duration] zone=bai-lang slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[cu-lao-cham-1-ngay-tu-hoi-an,bai-chong-nghi-bien-1-ngay,lan-ngam-san-ho-cu-lao-cham-1-ngay,fun-dive-cu-lao-cham-1-ngay]
+  [duration] zone=bai-lang slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[cu-lao-cham-2-ngay-1-dem-bai-lang,bai-chong-gia-dinh-2-ngay,cam-trai-bai-xep-2n1d,bai-huong-lang-chai-homestay-2n1d,hoi-an-cu-lao-cham-3n2d]
+  [duration] zone=bai-lang slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[da-nang-hoi-an-cu-lao-cham-4n3d]
+  [theme] zone=bai-lang slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[cu-lao-cham-1-ngay-tu-hoi-an,lang-bai-lang-chua-hai-tang-nua-ngay,bai-chong-nghi-bien-1-ngay,bai-xep-kayak-snorkel-nua-ngay,bai-huong-cau-ca-cung-ngu-dan-nua-ngay,lan-ngam-san-ho-cu-lao-cham-1-ngay,fun-dive-cu-lao-cham-1-ngay,snorkel-nua-ngay-ran-san-ho,trekking-hai-dang-hon-lao-nua-ngay]
+  [theme] zone=bai-lang slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[cu-lao-cham-2-ngay-1-dem-bai-lang,bai-chong-gia-dinh-2-ngay,cam-trai-bai-xep-2n1d,bai-huong-lang-chai-homestay-2n1d]
+  [theme] zone=bai-lang slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[hoi-an-cu-lao-cham-3n2d]
+  [theme] zone=bai-lang slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[da-nang-hoi-an-cu-lao-cham-4n3d]
+  [theme] zone=bai-lang slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=bai-lang slug=lan-bien name=Tour lặn & snorkel min= max= pkgs=[lan-ngam-san-ho-cu-lao-cham-1-ngay,fun-dive-cu-lao-cham-1-ngay,snorkel-nua-ngay-ran-san-ho,cano-lan-ran-san-ho-cu-lao-cham]
+  [theme] zone=bai-lang slug=bien-bai-chong name=Tour biển Bãi Chồng min= max= pkgs=[bai-chong-nghi-bien-1-ngay,bai-chong-gia-dinh-2-ngay]
+  [theme] zone=bai-lang slug=van-hoa-lang-chai name=Tour văn hoá & làng chài min= max= pkgs=[bai-huong-lang-chai-homestay-2n1d,bai-huong-cau-ca-cung-ngu-dan-nua-ngay,lang-bai-lang-chua-hai-tang-nua-ngay]
+  [theme] zone=bai-lang slug=trekking-ngam-canh name=Tour trekking & ngắm cảnh min= max= pkgs=[trekking-hai-dang-hon-lao-nua-ngay]
+TYPE_COUNTS: duration=4 theme=9
+TOURS:
+  - cu-lao-cham-1-ngay-tu-hoi-an | days=1 nights= zone=bai-lang styles=[day-trip] | Cù Lao Chàm 1 ngày từ Hội An — cano cao tốc, làng chài & snorkel
+  - lang-bai-lang-chua-hai-tang-nua-ngay | days=1 nights= zone=bai-lang styles=[day-trip,van-hoa-lang-chai] | Làng Bãi Làng & chùa Hải Tạng — văn hoá đảo nửa ngày
+  - cu-lao-cham-2-ngay-1-dem-bai-lang | days=2 nights= zone=bai-lang styles=[2n1d] | Cù Lao Chàm 2 ngày 1 đêm — homestay Bãi Làng & câu mực đêm
+  - bai-chong-nghi-bien-1-ngay | days=1 nights= zone=bai-chong styles=[day-trip,bien-bai-chong] | Bãi Chồng 1 ngày — nghỉ biển, ghế nằm & hải sản nướng
+  - bai-chong-gia-dinh-2-ngay | days=2 nights= zone=bai-chong styles=[2n1d,bien-bai-chong] | Bãi Chồng 2 ngày 1 đêm — gia đình: biển, snorkel nhẹ & bungalow
+  - bai-xep-kayak-snorkel-nua-ngay | days=1 nights= zone=bai-xep styles=[day-trip] | Bãi Xếp — kayak, SUP & snorkel vịnh kín gió nửa ngày
+  - cam-trai-bai-xep-2n1d | days=2 nights= zone=bai-xep styles=[2n1d] | Cắm trại Bãi Xếp 2 ngày 1 đêm — ngủ lều nghe sóng
+  - bai-huong-lang-chai-homestay-2n1d | days=2 nights= zone=bai-huong styles=[2n1d,van-hoa-lang-chai] | Bãi Hương 2 ngày 1 đêm — sống cùng làng chài phía nam đảo
+  - bai-huong-cau-ca-cung-ngu-dan-nua-ngay | days=1 nights= zone=bai-huong styles=[day-trip,van-hoa-lang-chai] | Câu cá cùng ngư dân Bãi Hương — nửa ngày
+  - lan-ngam-san-ho-cu-lao-cham-1-ngay | days=1 nights= zone=ran-san-ho styles=[day-trip,lan-bien] | Lặn ngắm san hô Cù Lao Chàm — 1 ngày trong khu bảo tồn biển
+  - fun-dive-cu-lao-cham-1-ngay | days=1 nights= zone=ran-san-ho styles=[day-trip,lan-bien] | Fun dive Cù Lao Chàm 1 ngày — 2 lần lặn cho thợ có chứng chỉ
+  - snorkel-nua-ngay-ran-san-ho | days=1 nights= zone=ran-san-ho styles=[day-trip,lan-bien] | Snorkel rạn san hô nửa ngày — gói gọn cho người mới
+  - trekking-hai-dang-hon-lao-nua-ngay | days=1 nights= zone=hai-dang styles=[day-trip,trekking-ngam-canh] | Trekking hải đăng Hòn Lao — toàn cảnh tám hòn đảo
+  - hoi-an-cu-lao-cham-3n2d | days=3 nights= zone=ket-hop-hoi-an styles=[3n2d] | Hội An — Cù Lao Chàm 3 ngày 2 đêm: phố cổ & đảo sinh quyển
+  - da-nang-hoi-an-cu-lao-cham-4n3d | days=4 nights= zone=ket-hop-hoi-an styles=[4n3d] | Đà Nẵng — Hội An — Cù Lao Chàm 4 ngày 3 đêm
+TOUR_COUNT: 15

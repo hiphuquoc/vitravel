@@ -1,0 +1,62 @@
+===== PROFILE: hihalong =====
+PLACES (zones): 10
+  - thanh-pho-ha-long-bai-chay | Thành phố Hạ Long — Bãi Cháy
+  - vinh-trung-tam | Vịnh trung tâm Hạ Long
+  - vinh-bai-tu-long | Vịnh Bái Tử Long
+  - dao-titop-hang-sung-sot | Đảo Titop & hang Sửng Sốt
+  - lang-chai-vung-vieng | Làng chài Vung Vieng
+  - tuan-chau-sun-world | Tuần Châu & Sun World
+  - yen-tu | Yên Tử
+  - ket-hop-cat-ba | Kết hợp Cát Bà / Lan Hạ
+  - ket-hop-ninh-binh | Kết hợp Ninh Bình
+  - ket-hop-ha-noi | Kết hợp Hà Nội
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - du-thuyen-cao-cap | Du thuyền cao cấp 5 sao
+  - du-thuyen-tieu-chuan | Du thuyền 3–4 sao tiêu chuẩn
+  - tour-ngay | Tour ngày tàu gỗ
+  - bai-tu-long | Tour & cruise Bái Tử Long
+  - gia-dinh | Gia đình & Sun World
+TOUR_CATEGORIES:
+  [duration] zone=vinh-trung-tam slug=1-ngay name=Tour 1 ngày vịnh trung tâm min=1 max=1 pkgs=[tour-ngay-tuyen-1-sung-sot-titop,tour-ngay-tuyen-2-bai-tu-long,tour-ngay-tuyen-3-vinh-sau,tour-ngay-private-vinh-rieng,cau-muc-dem-va-lop-nau-an]
+  [duration] zone=vinh-trung-tam slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[ha-long-2n1d-gia-dinh-bai-chay,ha-long-3n2d-tong-quan-vinh-dat-lien,ha-noi-ha-long-2n1d-limousine,van-don-ha-long-2n1d-combo]
+  [duration] zone=vinh-bai-tu-long slug=1-ngay name=Bái Tử Long 1–2 ngày min=1 max=2 pkgs=[tour-ngay-tuyen-2-bai-tu-long,bai-tu-long-2n1d-dat-lien-khach-san]
+  [duration] zone=ket-hop-ha-noi slug=1-ngay name=Tour ngày từ Hà Nội min=1 max=1 pkgs=[ha-noi-ha-long-tour-ngay-1-ngay]
+  [duration] zone=ket-hop-ha-noi slug=2-3-ngay name=2–3 ngày từ Hà Nội / VDO min=2 max=3 pkgs=[ha-noi-ha-long-2n1d-limousine,van-don-ha-long-2n1d-combo]
+  [duration] zone=lang-chai-vung-vieng slug=1-ngay name=Làng chài nửa ngày min=0 max=1 pkgs=[lang-chai-vung-vieng-kayak-nua-ngay]
+  [duration] zone=ket-hop-cat-ba slug=2-3-ngay name=Hạ Long + Cát Bà min=2 max=3 pkgs=[ha-long-cat-ba-lan-ha-2n1d]
+  [duration] zone=ket-hop-ninh-binh slug=2-3-ngay name=Hạ Long + Ninh Bình min=3 max=3 pkgs=[ha-long-ninh-binh-3n2d]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[tour-ngay-tuyen-1-sung-sot-titop,tour-ngay-tuyen-2-bai-tu-long,tour-ngay-tuyen-3-vinh-sau,ha-noi-ha-long-tour-ngay-1-ngay,lang-chai-vung-vieng-kayak-nua-ngay,sun-world-tuan-chau-nua-ngay,yen-tu-1-ngay-tu-ha-long,cau-muc-dem-va-lop-nau-an,tour-ngay-private-vinh-rieng,hon-gai-am-thuc-dem]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[ha-long-2n1d-gia-dinh-bai-chay,ha-long-cat-ba-lan-ha-2n1d,ha-noi-ha-long-2n1d-limousine,van-don-ha-long-2n1d-combo,bai-tu-long-2n1d-dat-lien-khach-san]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[ha-long-3n2d-tong-quan-vinh-dat-lien,ha-long-ninh-binh-3n2d]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=du-thuyen-cao-cap name=Du thuyền cao cấp 5 sao min= max= pkgs=[du-thuyen-5-sao-2n1d-luxury,du-thuyen-5-sao-3n2d-signature]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=du-thuyen-tieu-chuan name=Du thuyền 3–4 sao tiêu chuẩn min= max= pkgs=[du-thuyen-4-sao-2n1d-tieu-chuan,du-thuyen-3-sao-tieu-chuan-2n1d,du-thuyen-3n2d-vinh-sau]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=tour-ngay name=Tour ngày tàu gỗ min= max= pkgs=[tour-ngay-tuyen-1-sung-sot-titop,tour-ngay-vinh-tau-go-mui-che]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=bai-tu-long name=Tour & cruise Bái Tử Long min= max= pkgs=[tour-ngay-tuyen-2-bai-tu-long,du-thuyen-bai-tu-long-2n1d,bai-tu-long-2n1d-dat-lien-khach-san]
+  [theme] zone=thanh-pho-ha-long-bai-chay slug=gia-dinh name=Gia đình & Sun World min= max= pkgs=[ha-long-2n1d-gia-dinh-bai-chay,sun-world-tuan-chau-nua-ngay,hon-gai-am-thuc-dem]
+TYPE_COUNTS: duration=8 theme=10
+TOURS:
+  - tour-ngay-tuyen-1-sung-sot-titop | days=1 nights= zone=vinh-trung-tam styles=[day-trip,tour-ngay] | Tour ngày tuyến 1 — Hang Sửng Sốt & đảo Titop
+  - tour-ngay-tuyen-2-bai-tu-long | days=1 nights= zone=vinh-bai-tu-long styles=[day-trip,bai-tu-long] | Tour ngày tuyến 2 — Bái Tử Long yên tĩnh
+  - tour-ngay-tuyen-3-vinh-sau | days=1 nights= zone=vinh-trung-tam styles=[day-trip] | Tour ngày tuyến 3 — Vịnh sâu & ít khách
+  - ha-noi-ha-long-tour-ngay-1-ngay | days=1 nights= zone=ket-hop-ha-noi styles=[day-trip] | Hà Nội — Hạ Long tour ngày 1 ngày (limousine)
+  - lang-chai-vung-vieng-kayak-nua-ngay | days=1 nights= zone=lang-chai-vung-vieng styles=[day-trip] | Làng chài Vung Vieng — kayak nửa ngày
+  - sun-world-tuan-chau-nua-ngay | days=1 nights= zone=tuan-chau-sun-world styles=[day-trip,gia-dinh] | Sun World Tuần Châu — cáp treo & công viên nửa ngày
+  - yen-tu-1-ngay-tu-ha-long | days=1 nights= zone=yen-tu styles=[day-trip] | Yên Tử 1 ngày — hành hương & cáp treo
+  - ha-long-2n1d-gia-dinh-bai-chay | days=2 nights= zone=thanh-pho-ha-long-bai-chay styles=[2n1d,gia-dinh] | Hạ Long 2 ngày 1 đêm — Gia đình Bãi Cháy + tour vịnh
+  - ha-long-3n2d-tong-quan-vinh-dat-lien | days=3 nights= zone=thanh-pho-ha-long-bai-chay styles=[3n2d] | Hạ Long 3 ngày 2 đêm — Tổng quan vịnh & đất liền
+  - cau-muc-dem-va-lop-nau-an | days=1 nights= zone=vinh-trung-tam styles=[day-trip] | Câu mực đêm & lớp nấu ăn trên boong — buổi tối
+  - ha-long-cat-ba-lan-ha-2n1d | days=2 nights= zone=ket-hop-cat-ba styles=[2n1d] | Hạ Long — Cát Bà / Lan Hạ kết hợp 2 ngày 1 đêm
+  - ha-long-ninh-binh-3n2d | days=3 nights= zone=ket-hop-ninh-binh styles=[3n2d] | Hạ Long — Ninh Bình 3 ngày 2 đêm
+  - ha-noi-ha-long-2n1d-limousine | days=2 nights= zone=ket-hop-ha-noi styles=[2n1d] | Hà Nội — Hạ Long 2 ngày 1 đêm (limousine + khách sạn)
+  - tour-ngay-private-vinh-rieng | days=1 nights= zone=vinh-trung-tam styles=[day-trip] | Tour ngày private — tàu riêng vịnh Hạ Long
+  - hon-gai-am-thuc-dem | days=1 nights= zone=thanh-pho-ha-long-bai-chay styles=[day-trip,gia-dinh] | Hòn Gai — food walk & chợ hải sản buổi tối
+  - van-don-ha-long-2n1d-combo | days=2 nights= zone=ket-hop-ha-noi styles=[2n1d] | Vân Đồn — Hạ Long 2 ngày 1 đêm (bay + du thuyền)
+  - bai-tu-long-2n1d-dat-lien-khach-san | days=2 nights= zone=vinh-bai-tu-long styles=[2n1d,bai-tu-long] | Bái Tử Long 2 ngày 1 đêm — Khách sạn + tour ngày yên tĩnh
+TOUR_COUNT: 17

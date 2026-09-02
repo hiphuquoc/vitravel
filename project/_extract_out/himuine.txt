@@ -1,0 +1,62 @@
+===== PROFILE: himuine =====
+PLACES (zones): 10
+  - ham-tien-bai-bien | Ham Tien — dải bãi biển
+  - doi-cat-do | Đồi cát đỏ
+  - doi-cat-trang-bau-trang | Đồi cát trắng — Bàu Trắng
+  - suoi-tien | Suối Tiên (Fairy Stream)
+  - lang-chai-mui-ne | Làng chài Mũi Né
+  - phan-thiet-thanh-pho | Phan Thiết — thành phố
+  - ke-ga-ta-cu | Ke Ga — Ta Cu
+  - ket-hop-da-lat | Kết hợp Đà Lạt
+  - ket-hop-nha-trang | Kết hợp Nha Trang
+  - ket-hop-sai-gon | Kết hợp Sài Gòn
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - doi-cat | Tour đồi cát
+  - kite-surf | Kite-surf & windsurf
+  - lang-chai | Làng chài & hải sản
+  - gia-dinh | Gia đình & resort
+  - combo | Combo Sài Gòn
+  - honeymoon | Trang mat & cap doi
+TOUR_CATEGORIES:
+  [duration] zone=doi-cat-do slug=1-ngay name=Tour 1 ngày đồi cát min=1 max=1 pkgs=[tour-ngay-doi-cat-suoi-tien,jeep-doi-cat-do-sunrise,jeep-doi-cat-trang-bau-trang,tour-ngay-private-jeep-dunes]
+  [duration] zone=ham-tien-bai-bien slug=2-3-ngay name=Tour 2 – 3 ngày resort min=2 max=3 pkgs=[mui-ne-2n1d-resort-dunes,mui-ne-3n2d-kite-surf-package,gia-dinh-mui-ne-2n1d,honeymoon-mui-ne-3n2d]
+  [duration] zone=ket-hop-sai-gon slug=1-ngay name=Tour ngày từ Sài Gòn min=1 max=1 pkgs=[sai-gon-mui-ne-tour-ngay]
+  [duration] zone=ket-hop-sai-gon slug=2-3-ngay name=Cuối tuần 2 ngày 1 đêm từ Sài Gòn min=2 max=3 pkgs=[sai-gon-mui-ne-2n1d-weekend]
+  [duration] zone=ket-hop-nha-trang slug=2-3-ngay name=Nha Trang + Mũi Né min=2 max=3 pkgs=[nha-trang-mui-ne-2n1d]
+  [theme] zone=ham-tien-bai-bien slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[tour-ngay-doi-cat-suoi-tien,jeep-doi-cat-do-sunrise,jeep-doi-cat-trang-bau-trang,suoi-tien-nua-ngay,lang-chai-mui-ne-sang,ham-tien-beach-kite-culture,phan-thiet-po-sah-inu-city,ke-ga-ta-cu-ngay,sai-gon-mui-ne-tour-ngay,food-tour-phan-thiet-dem,tour-ngay-private-jeep-dunes]
+  [theme] zone=ham-tien-bai-bien slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[mui-ne-2n1d-resort-dunes,sai-gon-mui-ne-2n1d-weekend,nha-trang-mui-ne-2n1d,gia-dinh-mui-ne-2n1d]
+  [theme] zone=ham-tien-bai-bien slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[mui-ne-3n2d-kite-surf-package,da-lat-mui-ne-3n2d,honeymoon-mui-ne-3n2d]
+  [theme] zone=ham-tien-bai-bien slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[]
+  [theme] zone=ham-tien-bai-bien slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=ham-tien-bai-bien slug=doi-cat name=Tour đồi cát min= max= pkgs=[tour-ngay-doi-cat-suoi-tien,jeep-doi-cat-do-sunrise,jeep-doi-cat-trang-bau-trang,tour-ngay-private-jeep-dunes]
+  [theme] zone=ham-tien-bai-bien slug=kite-surf name=Kite-surf & windsurf min= max= pkgs=[mui-ne-3n2d-kite-surf-package]
+  [theme] zone=ham-tien-bai-bien slug=lang-chai name=Làng chài & hải sản min= max= pkgs=[lang-chai-mui-ne-sang,food-tour-phan-thiet-dem]
+  [theme] zone=ham-tien-bai-bien slug=gia-dinh name=Gia đình & resort min= max= pkgs=[gia-dinh-mui-ne-2n1d,mui-ne-2n1d-resort-dunes]
+  [theme] zone=ham-tien-bai-bien slug=combo name=Combo Sài Gòn min= max= pkgs=[sai-gon-mui-ne-2n1d-weekend,sai-gon-mui-ne-tour-ngay]
+  [theme] zone=ham-tien-bai-bien slug=honeymoon-bien name=Trang mat & cap doi min= max= pkgs=[honeymoon-mui-ne-3n2d]
+TYPE_COUNTS: duration=5 theme=11
+TOURS:
+  - tour-ngay-doi-cat-suoi-tien | days=1 nights= zone=doi-cat-do styles=[day-trip,doi-cat] | Tour ngày đồi cát đỏ — Suối Tiên & làng chài
+  - jeep-doi-cat-do-sunrise | days=1 nights= zone=doi-cat-do styles=[day-trip,doi-cat] | Jeep đồi cát đỏ — Sunrise & chụp ảnh
+  - jeep-doi-cat-trang-bau-trang | days=1 nights= zone=doi-cat-trang-bau-trang styles=[day-trip,doi-cat] | Jeep đồi cát trắng — Bàu Trắng & hồ nước
+  - suoi-tien-nua-ngay | days=1 nights= zone=suoi-tien styles=[day-trip,doi-cat] | Suối Tiên (Fairy Stream) — Nửa ngày
+  - lang-chai-mui-ne-sang | days=1 nights= zone=lang-chai-mui-ne styles=[day-trip,lang-chai] | Làng chài Mũi Né buổi sáng — Thuyền & nước mắm
+  - ham-tien-beach-kite-culture | days=1 nights= zone=ham-tien-bai-bien styles=[day-trip,kite-surf] | Ham Tien — Bãi biển, kite school & phố resort
+  - phan-thiet-po-sah-inu-city | days=1 nights= zone=phan-thiet-thanh-pho styles=[day-trip] | Phan Thiết — Tháp Po Sah Inu & phố cũ
+  - ke-ga-ta-cu-ngay | days=1 nights= zone=ke-ga-ta-cu styles=[day-trip] | Ke Ga hải đăng & Ta Cu — Tour ngày phía nam
+  - mui-ne-2n1d-resort-dunes | days=2 nights= zone=ham-tien-bai-bien styles=[2n1d,gia-dinh,doi-cat] | Mũi Né 2 ngày 1 đêm — Resort Ham Tien + đồi cát
+  - mui-ne-3n2d-kite-surf-package | days=3 nights= zone=ham-tien-bai-bien styles=[3n2d,kite-surf] | Mũi Né 3 ngày 2 đêm — Kite-surf & biển (mùa gió)
+  - sai-gon-mui-ne-2n1d-weekend | days=2 nights= zone=ket-hop-sai-gon styles=[2n1d,combo,gia-dinh] | Sài Gòn — Mũi Né 2 ngày 1 đêm (limousine + resort)
+  - sai-gon-mui-ne-tour-ngay | days=1 nights= zone=ket-hop-sai-gon styles=[day-trip,combo,doi-cat] | Sài Gòn — Mũi Né tour ngày (limousine + đồi cát)
+  - da-lat-mui-ne-3n2d | days=3 nights= zone=ket-hop-da-lat styles=[3n2d,combo] | Đà Lạt — Mũi Né 3 ngày 2 đêm (cao nguyên + biển)
+  - nha-trang-mui-ne-2n1d | days=2 nights= zone=ket-hop-nha-trang styles=[2n1d] | Nha Trang — Mũi Né 2 ngày 1 đêm
+  - gia-dinh-mui-ne-2n1d | days=2 nights= zone=ham-tien-bai-bien styles=[2n1d,gia-dinh] | Gia đình Mũi Né 2 ngày 1 đêm — Resort, biển & jeep nhẹ
+  - honeymoon-mui-ne-3n2d | days=3 nights= zone=ham-tien-bai-bien styles=[3n2d,honeymoon] | Trăng mật Mũi Né 3 ngày 2 đêm — Resort boutique & jeep riêng
+  - food-tour-phan-thiet-dem | days=1 nights= zone=phan-thiet-thanh-pho styles=[day-trip,lang-chai] | Tour ẩm thực Phan Thiết buổi tối — Hải sản & nước mắm
+  - tour-ngay-private-jeep-dunes | days=1 nights= zone=doi-cat-do styles=[day-trip,doi-cat] | Xe riêng jeep — Đồi cát đỏ & trắng (tùy chọn)
+TOUR_COUNT: 18

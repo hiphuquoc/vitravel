@@ -11,6 +11,19 @@
  * Cam Ranh/Nha Trang (CXR) hoặc Tuy Hoa (TBB) + xe nối. Thuyền biển = câu mực đêm,
  * ngắm san hô, SUP/kayak — không phải du thuyền qua đêm.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
+ *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('himuine')
  *
  * @return array<string, mixed>
@@ -183,16 +196,16 @@ $__himuineSeed = array(
 
 'en' => 'Family & resort',
         ),
-        'combo' => array(
-            'vi' => 'Combo Sài Gòn',
+        'cuoi-tuan-sai-gon' => array(
+            'vi' => 'Cuối tuần từ Sài Gòn',
 
 
 
 
-'en' => 'Saigon combo',
+'en' => 'Weekend from Saigon',
         ),
         'honeymoon' => array(
-            'vi' => 'Trang mat & cap doi',
+            'vi' => 'Trăng mật & cặp đôi',
 
 
 
@@ -1045,7 +1058,7 @@ $__himuineSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
-                'combo',
+                'cuoi-tuan-sai-gon',
                 'gia-dinh',
             ),
             'quote' => array(
@@ -1121,7 +1134,7 @@ $__himuineSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'combo',
+                'cuoi-tuan-sai-gon',
                 'doi-cat',
             ),
             'quote' => array(
@@ -1186,7 +1199,6 @@ $__himuineSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
-                'combo',
             ),
             'quote' => array(
                 'text' => 'Đà Lạt mát, Mũi Né nóng — một chuyến hai vibe.',
@@ -2364,188 +2376,350 @@ $__himuineSeed = array(
 
     'tour_categories' => array(
         array(
-            'zoneSlug' => 'doi-cat-do',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 1,
-            'packageSlugs' => array(
-                'tour-ngay-doi-cat-suoi-tien',
-                'jeep-doi-cat-do-sunrise',
-                'jeep-doi-cat-trang-bau-trang',
-                'tour-ngay-private-jeep-dunes',
-            ),
-            'name' => array(
-                'vi' => 'Tour 1 ngày đồi cát',
-
-
-
-
-'en' => '1-day dune tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Jeep đỏ, trắng, Suối Tiên — nửa ngày hoặc cả ngày.',
-
-
-
-
-'en' => 'Red, white dunes, Fairy Stream — half or full day.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour ngày đồi cát Mũi Né: jeep 150–300k, tour trọn ngày 400–900k — khác gói resort qua đêm.',
-
-
-
-
-'en' => 'Mui Ne dune day tours: jeep VND 150–300k, full tours 400–900k — separate from resort stays.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 2,
-            'maxDays' => 3,
+            'slug' => 'tour-ham-tien-bai-bien',
+            'type' => 'region',
+            'sort' => 0,
             'packageSlugs' => array(
+                'ham-tien-beach-kite-culture',
                 'mui-ne-2n1d-resort-dunes',
                 'mui-ne-3n2d-kite-surf-package',
                 'gia-dinh-mui-ne-2n1d',
                 'honeymoon-mui-ne-3n2d',
             ),
             'name' => array(
-                'vi' => 'Tour 2 – 3 ngày resort',
+                'vi' => 'Tour Ham Tiến — dải bãi biển',
 
 
 
 
-'en' => '2–3 day resort tours',
+'en' => 'Ham Tien beach strip tours',
             ),
             'subtitle' => array(
-                'vi' => 'Ham Tiến + jeep + kite (tùy chọn).',
+                'vi' => 'Nguyễn Đình Chiểu — dải resort chính, kite school & bãi biển.',
 
 
 
 
-'en' => 'Ham Tien + jeep + optional kite.',
+'en' => 'Nguyen Dinh Chieu — main resort strip, kite schools & beach.',
             ),
             'seo_body' => array(
-                'vi' => 'Gói 2–3 ngày dải resort — phân biệt tour ngày từ Sài Gòn.',
+                'vi' => 'Danh mục khu vực Ham Tiến — nơi lưu trú của hầu hết khách Mũi Né.',
 
 
 
 
-'en' => '2–3 day resort strip packages — distinct from one-day SGN trips.',
+'en' => 'Ham Tien GEO category — where most Mui Ne visitors stay.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'doi-cat-do',
+            'slug' => 'tour-doi-cat-do',
+            'type' => 'region',
+            'sort' => 1,
+            'packageSlugs' => array(
+                'tour-ngay-doi-cat-suoi-tien',
+                'jeep-doi-cat-do-sunrise',
+                'tour-ngay-private-jeep-dunes',
+            ),
+            'name' => array(
+                'vi' => 'Tour Đồi cát đỏ',
+
+
+
+
+'en' => 'Red Sand Dunes tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Sunrise jeep — điểm chụp iconic Mũi Né.',
+
+
+
+
+'en' => 'Sunrise jeep — Mui Ne\'s iconic photo spot.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực đồi cát đỏ — jeep bình minh và trượt cát sát Ham Tiến.',
+
+
+
+
+'en' => 'Red dunes GEO category — sunrise jeeps and sandboarding next to Ham Tien.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'doi-cat-trang-bau-trang',
+            'slug' => 'tour-doi-cat-trang-bau-trang',
+            'type' => 'region',
+            'sort' => 2,
+            'packageSlugs' => array(
+                'jeep-doi-cat-trang-bau-trang',
+            ),
+            'name' => array(
+                'vi' => 'Tour Đồi cát trắng & Bàu Trắng',
+
+
+
+
+'en' => 'White Dunes & Bau Trang tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Sa mạc mini ~30km — trượt cát, hồ Bàu Trắng.',
+
+
+
+
+'en' => 'Mini desert ~30km away — sandboarding and Bau Trang lake.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Bàu Trắng — xa hơn đồi cát đỏ, nên đi cùng jeep nửa ngày.',
+
+
+
+
+'en' => 'Bau Trang GEO category — further than the red dunes, best on a half-day jeep.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'suoi-tien',
+            'slug' => 'tour-suoi-tien',
+            'type' => 'region',
+            'sort' => 3,
+            'packageSlugs' => array(
+                'suoi-tien-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Suối Tiên',
+
+
+
+
+'en' => 'Fairy Stream tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Suối nước đỏ giữa vách đá — đi bộ chân đất.',
+
+
+
+
+'en' => 'Red-clay stream between canyon walls — barefoot walk.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Suối Tiên — ghép cùng đồi cát hoặc đi lẻ nửa ngày.',
+
+
+
+
+'en' => 'Fairy Stream GEO category — pair with the dunes or take it as a half day.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'lang-chai-mui-ne',
+            'slug' => 'tour-lang-chai-mui-ne',
+            'type' => 'region',
+            'sort' => 4,
+            'packageSlugs' => array(
+                'lang-chai-mui-ne-sang',
+            ),
+            'name' => array(
+                'vi' => 'Tour Làng chài Mũi Né',
+
+
+
+
+'en' => 'Mui Ne fishing village tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Thuyền đánh cá, nước mắm Phan Thiết & hải sản tươi.',
+
+
+
+
+'en' => 'Fishing boats, Phan Thiet fish sauce & fresh seafood.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực làng chài — chợ cá sáng sớm ngay đầu dải Ham Tiến.',
+
+
+
+
+'en' => 'Fishing village GEO category — the early-morning fish market at the top of the strip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'phan-thiet-thanh-pho',
+            'slug' => 'tour-phan-thiet',
+            'type' => 'region',
+            'sort' => 5,
+            'packageSlugs' => array(
+                'phan-thiet-po-sah-inu-city',
+                'food-tour-phan-thiet-dem',
+            ),
+            'name' => array(
+                'vi' => 'Tour Phan Thiết',
+
+
+
+
+'en' => 'Phan Thiet tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tháp Chăm Po Sah Inu, cảng & nước mắm.',
+
+
+
+
+'en' => 'Po Sah Inu Cham towers, harbour & fish sauce.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực thành phố Phan Thiết — di sản Chăm và ẩm thực buổi tối.',
+
+
+
+
+'en' => 'Phan Thiet city GEO category — Cham heritage and evening food scene.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ke-ga-ta-cu',
+            'slug' => 'tour-ke-ga-ta-cu',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'ke-ga-ta-cu-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Ke Ga & Ta Cu',
+
+
+
+
+'en' => 'Ke Ga & Ta Cu tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Hải đăng Ke Ga, núi Ta Cu phía nam.',
+
+
+
+
+'en' => 'Ke Ga lighthouse and Ta Cu mountain to the south.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực phía nam Phan Thiết — hải đăng cổ và tượng Phật nằm Ta Cu.',
+
+
+
+
+'en' => 'GEO category south of Phan Thiet — the old lighthouse and Ta Cu reclining Buddha.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-sai-gon',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 1,
+            'slug' => 'combo-sai-gon',
+            'type' => 'region',
+            'sort' => 7,
             'packageSlugs' => array(
+                'sai-gon-mui-ne-2n1d-weekend',
                 'sai-gon-mui-ne-tour-ngay',
             ),
             'name' => array(
-                'vi' => 'Tour ngày từ Sài Gòn',
+                'vi' => 'Combo Sài Gòn',
 
 
 
 
-'en' => 'Day trip from Saigon',
+'en' => 'Saigon combo',
             ),
             'subtitle' => array(
-                'vi' => 'Limo 2 chiều + đồi cát — về tối.',
+                'vi' => 'Tour ngày và cuối tuần 2 ngày 1 đêm từ Sài Gòn — limo 4–5 giờ.',
 
 
 
 
-'en' => 'Return limo + dunes — back evening.',
+'en' => 'Day trips and 2N1D weekends from Saigon — 4–5h limo.',
             ),
             'seo_body' => array(
-                'vi' => 'Tour ngày từ Sài Gòn ~1,1 triệu+ — limo riêng 250–350k/chiều.',
+                'vi' => 'Danh mục combo cửa ngõ — trọn gói limo hai chiều kèm tour hoặc resort.',
 
 
 
 
-'en' => 'SGN day tour from ~1.1M — limo separately VND 250–350k each way.',
+'en' => 'Gateway combo category — return limo bundled with tours or a resort stay.',
             ),
             'faqs' => array(),
         ),
         array(
-            'zoneSlug' => 'ket-hop-sai-gon',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 2,
-            'maxDays' => 3,
+            'zoneSlug' => 'ket-hop-da-lat',
+            'slug' => 'combo-da-lat',
+            'type' => 'region',
+            'sort' => 8,
             'packageSlugs' => array(
-                'sai-gon-mui-ne-2n1d-weekend',
+                'da-lat-mui-ne-3n2d',
             ),
             'name' => array(
-                'vi' => 'Cuối tuần 2 ngày 1 đêm từ Sài Gòn',
+                'vi' => 'Combo Đà Lạt',
 
 
 
 
-'en' => '2N1D weekend from SGN',
+'en' => 'Da Lat combo',
             ),
             'subtitle' => array(
-                'vi' => 'Limo + resort + jeep — chuẩn cuối tuần.',
+                'vi' => 'Cao nguyên + biển — 3–4 giờ đường đèo.',
 
 
 
 
-'en' => 'Limo + resort + jeep — classic weekend.',
+'en' => 'Highlands plus beach — 3–4h over the pass.',
             ),
             'seo_body' => array(
-                'vi' => 'Combo cửa ngõ Sài Gòn — T6 sáng đi, CN tối về.',
+                'vi' => 'Danh mục combo liên vùng — đổi khí hậu giữa Đà Lạt mát và biển nóng Mũi Né.',
 
 
 
 
-'en' => 'Saigon gateway combo — Fri/Sat out, Sun evening back.',
+'en' => 'Multi-region combo category — swap cool Da Lat for hot Mui Ne beaches.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-nha-trang',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 2,
-            'maxDays' => 3,
+            'slug' => 'combo-nha-trang',
+            'type' => 'region',
+            'sort' => 9,
             'packageSlugs' => array(
                 'nha-trang-mui-ne-2n1d',
             ),
             'name' => array(
-                'vi' => 'Nha Trang + Mũi Né',
+                'vi' => 'Combo Nha Trang',
 
 
 
 
-'en' => 'Nha Trang + Mui Ne',
+'en' => 'Nha Trang combo',
             ),
             'subtitle' => array(
-                'vi' => 'Bay CXR — xe ~2h.',
+                'vi' => 'Cam Ranh/Nha Trang — ~2 giờ xe.',
 
 
 
 
-'en' => 'Fly CXR — ~2h drive.',
+'en' => 'Cam Ranh/Nha Trang — ~2h drive.',
             ),
             'seo_body' => array(
-                'vi' => 'Phương án bay thay Sài Gòn — sân bay Cam Ranh + Mũi Né.',
+                'vi' => 'Danh mục combo liên vùng — phương án bay Cam Ranh thay vì đi đường từ Sài Gòn.',
 
 
 
 
-'en' => 'SGN alternative — Cam Ranh airport + Mui Ne.',
+'en' => 'Multi-region combo category — fly into Cam Ranh instead of driving from Saigon.',
             ),
             'faqs' => array(),
         ),
@@ -2742,48 +2916,52 @@ $__himuineSeed = array(
         ),
         array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => 'doi-cat',
+            'slug' => 'doi-cat-jeep',
             'type' => 'theme',
             'sort' => 10,
             'packageSlugs' => array(
                 'tour-ngay-doi-cat-suoi-tien',
                 'jeep-doi-cat-do-sunrise',
                 'jeep-doi-cat-trang-bau-trang',
+                'suoi-tien-nua-ngay',
                 'tour-ngay-private-jeep-dunes',
+                'mui-ne-2n1d-resort-dunes',
+                'sai-gon-mui-ne-tour-ngay',
             ),
             'name' => array(
-                'vi' => 'Tour đồi cát',
+                'vi' => 'Đồi cát & jeep',
 
 
 
 
-'en' => 'Sand dune tours',
+'en' => 'Sand dunes & jeep',
             ),
             'subtitle' => array(
-                'vi' => 'Đồi đỏ bình minh, Bàu Trắng, jeep riêng.',
+                'vi' => 'Đỏ bình minh, trắng Bàu Trắng, Suối Tiên.',
 
 
 
 
-'en' => 'Red sunrise, White Bau Trang, private jeep.',
+'en' => 'Red sunrise, White Bau Trang, Fairy Stream.',
             ),
             'seo_body' => array(
-                'vi' => 'Trang chủ đề đồi cát — không nhầm với danh mục resort Ham Tiến.',
+                'vi' => 'Trải nghiệm signature Mũi Né — lọc theo hoạt động, không theo zone đồi cát.',
 
 
 
 
-'en' => 'SEO zone doi-cat-do — not confused with Ham Tien resort hub.',
+'en' => 'Signature Mui Ne experience — activity filter, not a dune zone page.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => 'kite-surf',
+            'slug' => 'kite-windsurf',
             'type' => 'theme',
             'sort' => 11,
             'packageSlugs' => array(
                 'mui-ne-3n2d-kite-surf-package',
+                'ham-tien-beach-kite-culture',
             ),
             'name' => array(
                 'vi' => 'Kite-surf & windsurf',
@@ -2813,7 +2991,7 @@ $__himuineSeed = array(
         ),
         array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => 'lang-chai',
+            'slug' => 'lang-chai-hai-san',
             'type' => 'theme',
             'sort' => 12,
             'packageSlugs' => array(
@@ -2848,12 +3026,13 @@ $__himuineSeed = array(
         ),
         array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => 'gia-dinh',
+            'slug' => 'gia-dinh-resort',
             'type' => 'theme',
             'sort' => 13,
             'packageSlugs' => array(
                 'gia-dinh-mui-ne-2n1d',
                 'mui-ne-2n1d-resort-dunes',
+                'sai-gon-mui-ne-2n1d-weekend',
             ),
             'name' => array(
                 'vi' => 'Gia đình & resort',
@@ -2883,7 +3062,7 @@ $__himuineSeed = array(
         ),
         array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => 'combo',
+            'slug' => 'cuoi-tuan-sai-gon',
             'type' => 'theme',
             'sort' => 14,
             'packageSlugs' => array(
@@ -2891,41 +3070,41 @@ $__himuineSeed = array(
                 'sai-gon-mui-ne-tour-ngay',
             ),
             'name' => array(
-                'vi' => 'Combo Sài Gòn',
+                'vi' => 'Cuối tuần từ Sài Gòn',
 
 
 
 
-'en' => 'Saigon combo',
+'en' => 'Weekend from Saigon',
             ),
             'subtitle' => array(
-                'vi' => 'Limo + tour/resort một báo giá.',
+                'vi' => 'Limo 4–5h — tour ngày & 2 ngày 1 đêm resort.',
 
 
 
 
-'en' => 'Limo + tour/resort one quote.',
+'en' => '4–5h limo — day trips & 2N1D resort.',
             ),
             'seo_body' => array(
-                'vi' => 'Combo từ Sài Gòn — tách biệt với danh mục resort Ham Tiến.',
+                'vi' => 'Intent cửa ngõ Sài Gòn — không trùng danh mục khu vực Ham Tiến.',
 
 
 
 
-'en' => 'Zone ket-hop-sai-gon — anti-cannibalize vs Ham Tien resort only.',
+'en' => 'Saigon gateway intent — not the Ham Tien resort GEO page.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ham-tien-bai-bien',
-            'slug' => 'honeymoon-bien',
+            'slug' => 'trang-mat-bien',
             'type' => 'theme',
             'sort' => 15,
             'packageSlugs' => array(
                 'honeymoon-mui-ne-3n2d',
             ),
             'name' => array(
-                'vi' => 'Trang mat & cap doi',
+                'vi' => 'Trăng mật & cặp đôi',
 
 
 
@@ -2933,15 +3112,15 @@ $__himuineSeed = array(
 'en' => 'Honeymoon & couples',
             ),
             'subtitle' => array(
-                'vi' => 'Resort 4-5*, sunset cruise.',
+                'vi' => 'Resort 4–5*, sunset cruise.',
 
 
 
 
-'en' => '4-5* resort, sunset cruise.',
+'en' => '4–5* resort, sunset cruise.',
             ),
             'seo_body' => array(
-                'vi' => 'Mini honeymoon bien nong gan SGN.',
+                'vi' => 'Mini honeymoon biển nóng gần Sài Gòn.',
 
 
 
@@ -2979,8 +3158,8 @@ $__himuineSeed = array(
         'kite-surf' => 'Kite-surf & windsurf',
         'lang-chai' => 'Làng chài & hải sản',
         'gia-dinh' => 'Gia đình & resort',
-        'combo' => 'Combo Sài Gòn',
-        'honeymoon' => 'Trang mat & cap doi',
+        'cuoi-tuan-sai-gon' => 'Cuối tuần từ Sài Gòn',
+        'honeymoon' => 'Trăng mật & cặp đôi',
     ),
 );
 

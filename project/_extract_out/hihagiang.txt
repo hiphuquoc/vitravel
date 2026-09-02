@@ -1,0 +1,61 @@
+===== PROFILE: hihagiang =====
+PLACES (zones): 9
+  - thanh-pho-ha-giang | Thành phố Hà Giang
+  - quan-ba | Quản Bạ
+  - yen-minh | Yên Minh
+  - dong-van | Đồng Văn
+  - meo-vac | Mèo Vạc
+  - hoang-su-phi | Hoàng Su Phì
+  - bac-me | Bắc Mê
+  - ket-hop-sapa | Kết hợp Sapa
+  - ket-hop-cao-bang | Kết hợp Cao Bằng
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - loop-cao-nguyen | Loop cao nguyên đá
+  - homestay-dan-toc | Homestay dân tộc
+  - xe-may | Loop xe máy
+  - mua-hoa | Tour mùa hoa
+  - weekend-hanoi | Cuối tuần từ Hà Nội
+  - gia-dinh-nhom-nho | Gia đình & nhóm nhỏ
+TOUR_CATEGORIES:
+  [duration] zone=meo-vac slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[ma-pi-leng-nho-que-1-ngay,thanh-pho-ha-giang-1-ngay,yen-minh-rung-thong-1-ngay,food-tour-ha-giang-toi]
+  [duration] zone=meo-vac slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[ha-giang-loop-3-ngay-2-dem,ha-giang-loop-xe-may-3-ngay,quan-ba-co-tien-2-ngay-1-dem,dong-van-homestay-2-ngay,hoang-su-phi-2-ngay-1-dem,mua-tam-giac-mach-3-ngay,mua-hoa-dao-3-ngay,bac-me-thac-ba-2-ngay]
+  [duration] zone=meo-vac slug=4-5-ngay name=Tour 4 – 5 ngày min=4 max=5 pkgs=[ha-giang-loop-4-ngay-3-dem,ha-giang-loop-5-ngay-4-dem,ha-giang-sapa-5-ngay]
+  [duration] zone=quan-ba slug=1-ngay name=Tour 1 ngày Quản Bạ min=1 max=1 pkgs=[yen-minh-rung-thong-1-ngay]
+  [duration] zone=hoang-su-phi slug=2-3-ngay name=Tour Hoàng Su Phì min=2 max=3 pkgs=[hoang-su-phi-2-ngay-1-dem]
+  [duration] zone=ket-hop-sapa slug=4-5-ngay name=Combo Sapa min=4 max=6 pkgs=[ha-giang-sapa-5-ngay]
+  [duration] zone=ket-hop-cao-bang slug=4-5-ngay name=Combo Cao Bằng min=5 max=6 pkgs=[ha-giang-cao-bang-6-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[ma-pi-leng-nho-que-1-ngay,thanh-pho-ha-giang-1-ngay,yen-minh-rung-thong-1-ngay,food-tour-ha-giang-toi]
+  [theme] zone=thanh-pho-ha-giang slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[quan-ba-co-tien-2-ngay-1-dem,dong-van-homestay-2-ngay,hoang-su-phi-2-ngay-1-dem,bac-me-thac-ba-2-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[ha-giang-loop-3-ngay-2-dem,ha-giang-loop-xe-may-3-ngay,mua-tam-giac-mach-3-ngay,mua-hoa-dao-3-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[ha-giang-loop-4-ngay-3-dem]
+  [theme] zone=thanh-pho-ha-giang slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[ha-giang-loop-5-ngay-4-dem,ha-giang-sapa-5-ngay,ha-giang-cao-bang-6-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=loop-cao-nguyen name=Loop cao nguyên đá min= max= pkgs=[ha-giang-loop-3-ngay-2-dem,ha-giang-loop-4-ngay-3-dem,ha-giang-loop-5-ngay-4-dem]
+  [theme] zone=thanh-pho-ha-giang slug=homestay-dan-toc name=Homestay dân tộc min= max= pkgs=[dong-van-homestay-2-ngay,ha-giang-loop-3-ngay-2-dem,ha-giang-loop-4-ngay-3-dem]
+  [theme] zone=thanh-pho-ha-giang slug=xe-may name=Loop xe máy min= max= pkgs=[ha-giang-loop-xe-may-3-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=mua-hoa name=Tour mùa hoa min= max= pkgs=[mua-tam-giac-mach-3-ngay,mua-hoa-dao-3-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=cuoi-tuan-ha-noi name=Cuối tuần từ Hà Nội min= max= pkgs=[ha-giang-loop-3-ngay-2-dem,quan-ba-co-tien-2-ngay-1-dem,dong-van-homestay-2-ngay,hoang-su-phi-2-ngay-1-dem,bac-me-thac-ba-2-ngay]
+  [theme] zone=thanh-pho-ha-giang slug=gia-dinh-nhom-nho name=Gia đình & nhóm nhỏ min= max= pkgs=[quan-ba-co-tien-2-ngay-1-dem,ha-giang-loop-4-ngay-3-dem,thanh-pho-ha-giang-1-ngay,yen-minh-rung-thong-1-ngay]
+TYPE_COUNTS: duration=7 theme=11
+TOURS:
+  - ha-giang-loop-3-ngay-2-dem | days=3 nights= zone=meo-vac styles=[3n2d,weekend-hanoi,loop-cao-nguyen,homestay-dan-toc] | Hà Giang Loop 3 ngày 2 đêm — Cổng trời & Mã Pí Lèng
+  - ha-giang-loop-4-ngay-3-dem | days=4 nights= zone=dong-van styles=[4n3d,loop-cao-nguyen,homestay-dan-toc,gia-dinh-nhom-nho] | Hà Giang Loop 4 ngày 3 đêm — Khám phá sâu cao nguyên đá
+  - ha-giang-loop-5-ngay-4-dem | days=5 nights= zone=hoang-su-phi styles=[5-plus-days,loop-cao-nguyen,homestay-dan-toc] | Hà Giang Loop 5 ngày 4 đêm — Loop + Hoàng Su Phì
+  - ha-giang-loop-xe-may-3-ngay | days=3 nights= zone=meo-vac styles=[3n2d,xe-may,loop-cao-nguyen] | Hà Giang Loop xe máy 3 ngày 2 đêm — Tự do trên đèo
+  - quan-ba-co-tien-2-ngay-1-dem | days=2 nights= zone=quan-ba styles=[2n1d,weekend-hanoi,gia-dinh-nhom-nho] | Quản Bạ 2 ngày 1 đêm — Cổng trời & núi đôi
+  - ma-pi-leng-nho-que-1-ngay | days=1 nights= zone=meo-vac styles=[day-trip] | Mã Pí Lèng & thuyền Nho Quế — 1 ngày
+  - dong-van-homestay-2-ngay | days=2 nights= zone=dong-van styles=[2n1d,weekend-hanoi,homestay-dan-toc] | Homestay Đồng Văn 2 ngày 1 đêm — Sống cùng người H'Mông
+  - hoang-su-phi-2-ngay-1-dem | days=2 nights= zone=hoang-su-phi styles=[2n1d,weekend-hanoi] | Hoàng Su Phì 2 ngày 1 đêm — Ruộng bậc thang & Dao đỏ
+  - mua-tam-giac-mach-3-ngay | days=3 nights= zone=dong-van styles=[3n2d,mua-hoa,loop-cao-nguyen] | Mùa tam giác mạch 3 ngày 2 đêm — Hoa tím cao nguyên
+  - mua-hoa-dao-3-ngay | days=3 nights= zone=quan-ba styles=[3n2d,mua-hoa] | Mùa hoa đào 3 ngày 2 đêm — Xuân trên cao nguyên đá
+  - thanh-pho-ha-giang-1-ngay | days=1 nights= zone=thanh-pho-ha-giang styles=[day-trip,gia-dinh-nhom-nho] | Thành phố Hà Giang 1 ngày — Chuẩn bị loop & chợ đêm
+  - yen-minh-rung-thong-1-ngay | days=1 nights= zone=yen-minh styles=[day-trip,gia-dinh-nhom-nho] | Yên Minh — Rừng thông & phố cao 1 ngày
+  - ha-giang-sapa-5-ngay | days=5 nights= zone=ket-hop-sapa styles=[5-plus-days] | Hà Giang — Sapa 5 ngày 4 đêm
+  - ha-giang-cao-bang-6-ngay | days=6 nights= zone=ket-hop-cao-bang styles=[5-plus-days] | Hà Giang Loop — Cao Bằng 6 ngày 5 đêm
+  - food-tour-ha-giang-toi | days=1 nights= zone=thanh-pho-ha-giang styles=[day-trip] | Tour ẩm thực Hà Giang — Thắng cố & đặc sản tối
+  - bac-me-thac-ba-2-ngay | days=2 nights= zone=bac-me styles=[2n1d,weekend-hanoi] | Bắc Mê — Hồ Thác Bà 2 ngày 1 đêm
+TOUR_COUNT: 16

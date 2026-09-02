@@ -6,6 +6,16 @@
  * ============================================================================
  *
  * Một file seed / một dự án: chứa đủ tours, company, catalogue dịch vụ (không require seed_company / seed_services).
+ *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR — NGOẠI LỆ đa quốc gia (xem project/README.md §3):
+ * - DANH MỤC vùng: type=region (miền Bắc/Trung/Nam…) + type=package (combo Đông Dương).
+ * - Thời lượng: GIỮ type=duration theo từng quốc gia (khác hub 1 điểm đến).
+ * - CHỦ ĐỀ: type=theme = intent (di sản, nghỉ dưỡng, gia đình, trăng mật, trekking…).
+ * - Package ↔ category: nhiều–nhiều qua packageSlugs[].
+ * - travel_styles: mã intent/filter — không ép bộ day-trip/2n1d của hub.
+ * ---------------------------------------------------------------------------
+ *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('vitravel')
  *
  * @return array<string, mixed>
@@ -458,6 +468,7 @@ $__vitravelSeed = array (
         0 => 'heritage-rich',
         1 => 'culture-history',
         2 => 'balanced',
+        3 => 'family',
       ),
       'quote' => 
       array (
@@ -4563,6 +4574,24 @@ $__vitravelSeed = array (
       ),
     ),
   ),
+  /* ── Taxonomy tour — NGOẠI LỆ đa quốc gia (README §3) ───────────────────────
+   | vitravel không phải hub một điểm đến, nên KHÔNG áp quy tắc "cấm type=duration".
+   | Ở đây `countries` = quốc gia (Việt Nam, Campuchia, Bali, Thái Lan, Lào, Tour kết hợp),
+   | không phải zone trong một đảo/tỉnh. Vì vậy:
+   |
+   | type=duration  → GIỮ. Trang thời lượng theo từng quốc gia ("Tour Việt Nam 10 ngày",
+   |                  "Tour Campuchia 7 ngày") là nhu cầu tìm kiếm chính của khách outbound
+   |                  và không trùng với bất kỳ layer nào khác. minDays/maxDays lọc trong
+   |                  phạm vi quốc gia của category.
+   | type=region    → miền trong một quốc gia (miền Bắc / Trung / Nam) — layer GEO.
+   | type=theme     → ý định chuyến đi (intent), khớp `travel_styles`: di sản, nghỉ dưỡng
+   |                  biển, gia đình, trăng mật, trekking & thiên nhiên.
+   | type=package   → combo xuyên biên giới Đông Dương dưới country `tour-ket-hop`.
+   |
+   | KHÔNG chuyển duration → theme trên profile này (khác các hub phuquoc / phuquy / …).
+   | Quan hệ nhiều–nhiều: một tour gắn đồng thời duration + region + theme qua
+   | `packageSlugs[]`; tour xuyên quốc gia dùng `countrySlugs[]` để hiện ở nhiều nước.
+   */
   'tour_categories' => 
   array (
     0 => 
@@ -4573,6 +4602,10 @@ $__vitravelSeed = array (
       'sort' => 0,
       'minDays' => 9,
       'maxDays' => 11,
+      'packageSlugs' => 
+      array (
+        0 => 'viet-nam-10-ngay-di-san-mien-bac',
+      ),
       'name' => 
       array (
         'vi' => 'Tour Việt Nam 10 ngày',
@@ -4610,6 +4643,10 @@ $__vitravelSeed = array (
       'sort' => 1,
       'minDays' => 12,
       'maxDays' => 16,
+      'packageSlugs' => 
+      array (
+        0 => 'viet-nam-2-tuan-bac-trung-nam',
+      ),
       'name' => 
       array (
         'vi' => 'Tour Việt Nam 2 tuần',
@@ -4642,6 +4679,10 @@ $__vitravelSeed = array (
       'sort' => 2,
       'minDays' => 14,
       'maxDays' => 16,
+      'packageSlugs' => 
+      array (
+        0 => 'viet-nam-2-tuan-bac-trung-nam',
+      ),
       'name' => 
       array (
         'vi' => 'Tour Việt Nam 15 ngày',
@@ -4669,6 +4710,10 @@ $__vitravelSeed = array (
       'sort' => 3,
       'minDays' => 17,
       'maxDays' => 25,
+      'packageSlugs' => 
+      array (
+        0 => 'viet-nam-3-tuan-tron-ven',
+      ),
       'name' => 
       array (
         'vi' => 'Tour Việt Nam 3 tuần',
@@ -4696,6 +4741,11 @@ $__vitravelSeed = array (
       'sort' => 4,
       'minDays' => 1,
       'maxDays' => 8,
+      'packageSlugs' => 
+      array (
+        0 => 'sa-pa-trekking-4-ngay',
+        1 => 'phu-quoc-nghi-duong-5-ngay',
+      ),
       'name' => 
       array (
         'vi' => 'Tour Việt Nam dưới 7 ngày',
@@ -4725,6 +4775,10 @@ $__vitravelSeed = array (
       array (
         0 => 'viet-nam-10-ngay-di-san-mien-bac',
         1 => 'sa-pa-trekking-4-ngay',
+        2 => 'viet-nam-2-tuan-bac-trung-nam',
+        3 => 'viet-nam-3-tuan-tron-ven',
+        4 => 'du-thuyen-ha-long-2-ngay',
+        5 => 'du-thuyen-lan-ha-3-ngay',
       ),
       'name' => 
       array (
@@ -4754,6 +4808,7 @@ $__vitravelSeed = array (
       'packageSlugs' => 
       array (
         0 => 'viet-nam-2-tuan-bac-trung-nam',
+        1 => 'viet-nam-3-tuan-tron-ven',
       ),
       'name' => 
       array (
@@ -4839,6 +4894,10 @@ $__vitravelSeed = array (
       'slug' => 'di-san-angkor',
       'type' => 'theme',
       'sort' => 2,
+      'packageSlugs' => 
+      array (
+        0 => 'viet-nam-campuchia-15-ngay',
+      ),
       'name' => 
       array (
         'vi' => 'Tour di sản Angkor',
@@ -5115,6 +5174,191 @@ $__vitravelSeed = array (
       array (
         'vi' => 'Tour Đông Dương 3 tuần dành cho ai muốn một chuyến đi để đời xuyên suốt bán đảo.',
         'en' => 'A 3-week Indochina tour is for travellers wanting a once-in-a-lifetime peninsula journey.',
+      ),
+      'faqs' => 
+      array (
+      ),
+    ),
+    19 => 
+    array (
+      'countrySlug' => 'viet-nam',
+      'slug' => 'mien-nam',
+      'type' => 'region',
+      'sort' => 12,
+      'packageSlugs' => 
+      array (
+        0 => 'phu-quoc-nghi-duong-5-ngay',
+        1 => 'viet-nam-2-tuan-bac-trung-nam',
+        2 => 'viet-nam-3-tuan-tron-ven',
+        3 => 'du-thuyen-mekong-cai-be-can-tho',
+      ),
+      'name' => 
+      array (
+        'vi' => 'Tour miền Nam',
+        'en' => 'Southern Vietnam Tours',
+      ),
+      'subtitle' => 
+      array (
+        'vi' => 'TP. Hồ Chí Minh, đồng bằng sông Cửu Long, Phú Quốc và Côn Đảo.',
+        'en' => 'Ho Chi Minh City, the Mekong Delta, Phu Quoc and Con Dao.',
+      ),
+      'seo_body' => 
+      array (
+        'vi' => 'Miền Nam là nơi hành trình xuyên Việt kết lại: nhịp đô thị Sài Gòn, chợ nổi và kênh rạch miền Tây, rồi những ngày nghỉ biển ở Phú Quốc. Khí hậu khô ráo từ tháng 12 đến tháng 4 nên đây cũng là vùng dễ đi nhất vào mùa cao điểm.',
+        'en' => 'The south is where a cross-Vietnam journey lands: the urban pace of Saigon, floating markets and Mekong canals, then beach days on Phu Quoc. It stays dry from December to April, making it the easiest region to travel in high season.',
+      ),
+      'faqs' => 
+      array (
+      ),
+    ),
+    20 => 
+    array (
+      'countrySlug' => 'viet-nam',
+      'slug' => 'di-san',
+      'type' => 'theme',
+      'sort' => 20,
+      'packageSlugs' => 
+      array (
+        0 => 'viet-nam-10-ngay-di-san-mien-bac',
+        1 => 'viet-nam-2-tuan-bac-trung-nam',
+        2 => 'viet-nam-3-tuan-tron-ven',
+        3 => 'du-thuyen-mekong-cai-be-can-tho',
+      ),
+      'name' => 
+      array (
+        'vi' => 'Tour di sản & văn hoá',
+        'en' => 'Heritage & Culture Tours',
+      ),
+      'subtitle' => 
+      array (
+        'vi' => 'Hạ Long, Tràng An, cố đô Huế và phố cổ Hội An — trọng tâm di sản UNESCO.',
+        'en' => 'Halong Bay, Trang An, imperial Hue and ancient Hoi An — a UNESCO-led route.',
+      ),
+      'seo_body' => 
+      array (
+        'vi' => 'Chủ đề này gom các hành trình lấy di sản làm trục chính thay vì nghỉ dưỡng: đi chậm ở Huế và Hội An, có hướng dẫn viên kể lịch sử và thời gian đủ để vào bảo tàng, đền chùa. Khớp với `travel_styles` heritage-rich và culture-history — lọc theo ý định, không theo số ngày hay theo miền.',
+        'en' => 'This theme gathers itineraries built around heritage rather than resort time: slower days in Hue and Hoi An, guides who tell the history and enough hours for museums and temples. It maps to the heritage-rich and culture-history travel styles — filtered by intent, not by duration or region.',
+      ),
+      'faqs' => 
+      array (
+      ),
+    ),
+    21 => 
+    array (
+      'countrySlug' => 'viet-nam',
+      'slug' => 'nghi-duong-bien',
+      'type' => 'theme',
+      'sort' => 21,
+      'packageSlugs' => 
+      array (
+        0 => 'phu-quoc-nghi-duong-5-ngay',
+        1 => 'du-thuyen-ha-long-2-ngay',
+      ),
+      'name' => 
+      array (
+        'vi' => 'Tour nghỉ dưỡng biển',
+        'en' => 'Beach & Resort Tours',
+      ),
+      'subtitle' => 
+      array (
+        'vi' => 'Phú Quốc, Nha Trang, Đà Nẵng — resort, spa và lịch trình thoáng.',
+        'en' => 'Phu Quoc, Nha Trang, Da Nang — resorts, spa and a light schedule.',
+      ),
+      'seo_body' => 
+      array (
+        'vi' => 'Dành cho khách muốn ít di chuyển và nhiều thời gian ở một chỗ: mỗi điểm dừng tối thiểu hai đêm, hoạt động là tuỳ chọn chứ không bắt buộc. Khớp `travel_styles` beach — thường được ghép vào cuối một hành trình di sản để "hạ nhiệt".',
+        'en' => 'For travellers who want less transit and more time in one place: at least two nights per stop and activities offered rather than scheduled. It maps to the beach travel style and often closes out a heritage itinerary as a wind-down.',
+      ),
+      'faqs' => 
+      array (
+      ),
+    ),
+    22 => 
+    array (
+      'countrySlug' => 'viet-nam',
+      'slug' => 'gia-dinh',
+      'type' => 'theme',
+      'sort' => 22,
+      'packageSlugs' => 
+      array (
+        0 => 'phu-quoc-nghi-duong-5-ngay',
+        1 => 'viet-nam-10-ngay-di-san-mien-bac',
+      ),
+      'name' => 
+      array (
+        'vi' => 'Tour gia đình',
+        'en' => 'Family Tours',
+      ),
+      'subtitle' => 
+      array (
+        'vi' => 'Nhịp vừa phải, có ngày nghỉ xen kẽ và phương án thay thế cho chặng đi bộ dài.',
+        'en' => 'A moderate pace, rest days between highlights and alternatives to long walks.',
+      ),
+      'seo_body' => 
+      array (
+        'vi' => 'Chủ đề gia đình không đổi điểm đến mà đổi cách đi: rút ngắn chặng xe, thêm ngày nghỉ giữa các điểm nhấn và luôn có phương án xe thay cho đoạn trekking. Khớp `travel_styles` family — phòng ba/bốn khách và giá trẻ em được áp dụng trên cùng lịch trình.',
+        'en' => 'The family theme changes how you travel rather than where: shorter road legs, rest days between highlights and a vehicle alternative wherever there is trekking. It maps to the family travel style, with triple/quad rooms and child rates on the same itineraries.',
+      ),
+      'faqs' => 
+      array (
+      ),
+    ),
+    23 => 
+    array (
+      'countrySlug' => 'viet-nam',
+      'slug' => 'trang-mat',
+      'type' => 'theme',
+      'sort' => 23,
+      'packageSlugs' => 
+      array (
+        0 => 'phu-quoc-nghi-duong-5-ngay',
+        1 => 'du-thuyen-ha-long-2-ngay',
+      ),
+      'name' => 
+      array (
+        'vi' => 'Tour trăng mật',
+        'en' => 'Honeymoon Tours',
+      ),
+      'subtitle' => 
+      array (
+        'vi' => 'Riêng tư, phòng hạng cao và du thuyền — hành trình cho hai người.',
+        'en' => 'Private guiding, upgraded rooms and cruises — journeys for two.',
+      ),
+      'seo_body' => 
+      array (
+        'vi' => 'Các hành trình trăng mật đều chạy dạng private: xe riêng, hướng dẫn viên riêng, phòng hạng cao và một đêm du thuyền làm điểm nhấn. Khớp `travel_styles` honeymoon — có thể ghép thêm Bali hoặc Phú Quốc ở cuối chuyến.',
+        'en' => 'Honeymoon itineraries all run private: own vehicle, own guide, upgraded rooms and a cruise night as the centrepiece. It maps to the honeymoon travel style and can be extended with Bali or Phu Quoc at the end.',
+      ),
+      'faqs' => 
+      array (
+      ),
+    ),
+    24 => 
+    array (
+      'countrySlug' => 'viet-nam',
+      'slug' => 'trekking-thien-nhien',
+      'type' => 'theme',
+      'sort' => 24,
+      'packageSlugs' => 
+      array (
+        0 => 'sa-pa-trekking-4-ngay',
+        1 => 'viet-nam-3-tuan-tron-ven',
+        2 => 'du-thuyen-lan-ha-3-ngay',
+      ),
+      'name' => 
+      array (
+        'vi' => 'Tour trekking & thiên nhiên',
+        'en' => 'Trekking & Nature Tours',
+      ),
+      'subtitle' => 
+      array (
+        'vi' => 'Sa Pa, Hà Giang, Ninh Bình — homestay bản làng và nhóm nhỏ.',
+        'en' => 'Sapa, Ha Giang, Ninh Binh — village homestays and small groups.',
+      ),
+      'seo_body' => 
+      array (
+        'vi' => 'Chủ đề dành cho khách muốn đi bộ thật và ngủ ở bản: chặng trekking 4–6 giờ mỗi ngày, homestay của người Dao hoặc H’Mông, nhóm giới hạn để không phá nhịp làng. Khớp `travel_styles` trekking, nature-homestay và small-group.',
+        'en' => 'For travellers who want real walking and village nights: four to six hours of trekking a day, Dao or H’Mong homestays and capped group sizes so village life is not overwhelmed. It maps to the trekking, nature-homestay and small-group travel styles.',
       ),
       'faqs' => 
       array (

@@ -14,6 +14,18 @@
  * Tương tự, cụm dịch vụ "train" (tàu hoả liên tỉnh) được đổi thành "ferry"
  * (tàu cao tốc / phà / xe khách ra đảo) — vì Cát Bà không có đường sắt.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hicatba')
  *
  * @return array<string, mixed>
@@ -149,86 +161,19 @@ $__hicatbaSeed = array(
     ),
 
     'travel_styles' => array(
-        'day-trip' => array(
-            'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day trip',
-        ),
-        '2n1d' => array(
-            'vi' => '2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-        ),
-        '3n2d' => array(
-            'vi' => '3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-        ),
-        '4n3d' => array(
-            'vi' => '4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-        ),
-        '5-plus-days' => array(
-            'vi' => 'Từ 5 ngày',
-
-
-
-
-'en' => '5+ days',
-        ),
-        'vinh-lan-ha' => array(
-            'vi' => 'Tour vịnh Lan Hạ',
-
-
-
-
-'en' => 'Lan Ha Bay tours',
-        ),
-        'trekking-vqg' => array(
-            'vi' => 'Tour trekking vườn quốc gia',
-
-
-
-
-'en' => 'National park trekking tours',
-        ),
-        'dao-khi-tam-bien' => array(
-            'vi' => 'Tour Đảo Khỉ & tắm biển',
-
-
-
-
-'en' => 'Monkey Island & beach tours',
-        ),
-        'lang-viet-hai' => array(
-            'vi' => 'Tour làng Việt Hải',
-
-
-
-
-'en' => 'Viet Hai village tours',
-        ),
-        'lang-chai-cai-beo' => array(
-            'vi' => 'Tour làng chài Cái Bèo',
-
-
-
-
-'en' => 'Cai Beo fishing village tours',
-        ),
+        // (A) thời lượng chương trình — khớp chủ đề type=theme sort 0–4
+        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
+        '2n1d' => array('vi' => '2 ngày 1 đêm', 'en' => '2 days 1 night'),
+        '3n2d' => array('vi' => '3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+        '4n3d' => array('vi' => '4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+        '5-plus-days' => array('vi' => 'Từ 5 ngày', 'en' => '5+ days'),
+        // (B) tính chất / insight địa phương — khớp chủ đề type=theme sort 10+
+        'kayak-lan-bien' => array('vi' => 'Kayak & lặn biển', 'en' => 'Kayaking & snorkelling'),
+        'trekking-vqg' => array('vi' => 'Trekking & leo núi', 'en' => 'Trekking & climbing'),
+        'camping-viet-hai' => array('vi' => 'Camping & homestay bản địa', 'en' => 'Camping & local homestays'),
+        'gia-dinh-bien-dao' => array('vi' => 'Gia đình & biển đảo', 'en' => 'Family beach & island'),
+        'cuoi-tuan-hai-phong' => array('vi' => 'Cuối tuần từ Hà Nội & Hải Phòng', 'en' => 'Weekend from Hanoi & Hai Phong'),
+        'am-thuc-bien-lang-chai' => array('vi' => 'Ẩm thực biển & đời sống làng chài', 'en' => 'Seafood & fishing life'),
     ),
 
     'review_platforms' => array(
@@ -389,6 +334,8 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
+                'gia-dinh-bien-dao',
+                'cuoi-tuan-hai-phong',
             ),
             'quote' => array(
                 'text' => 'Ba ngày vừa đủ để thấy hết vẻ đẹp của Cát Bà — từ vịnh, rừng đến bãi biển.',
@@ -494,7 +441,7 @@ $__hicatbaSeed = array(
             'styles' => array(
                 'day-trip',
                 'trekking-vqg',
-                'lang-viet-hai',
+                'camping-viet-hai',
             ),
             'quote' => array(
                 'text' => 'Đường rừng mát, làng Việt Hải yên bình đến lạ — cảm giác như tách hẳn khỏi thị trấn.',
@@ -567,8 +514,7 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'vinh-lan-ha',
-                'dao-khi-tam-bien',
+                'kayak-lan-bien',
             ),
             'quote' => array(
                 'text' => 'Nước trong đến mức nhìn thấy đáy — đúng như quảng cáo, không hề bị thổi phồng.',
@@ -633,6 +579,7 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'cuoi-tuan-hai-phong',
             ),
             'quote' => array(
                 'text' => 'Đi một lần thấy cả hai vịnh — không còn phải chọn Cát Bà hay Hạ Long nữa.',
@@ -716,6 +663,8 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 '5-plus-days',
+                'kayak-lan-bien',
+                'trekking-vqg',
             ),
             'quote' => array(
                 'text' => 'Năm ngày đủ để không vội — có cả ngày chỉ nằm biển, có ngày leo núi mệt nhoài, rất đáng.',
@@ -833,7 +782,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'lang-chai-cai-beo',
+                'am-thuc-bien-lang-chai',
             ),
             'quote' => array(
                 'text' => 'Tour ngắn nhưng đúng chất địa phương — được lên nhà bè, xem người dân nuôi cá.',
@@ -895,6 +844,8 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'gia-dinh-bien-dao',
+                'cuoi-tuan-hai-phong',
             ),
             'quote' => array(
                 'text' => 'Con tôi 6 tuổi cũng đi kayak được — lịch trình vừa sức, không vội.',
@@ -970,6 +921,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Gió biển, đường ít xe — cách xem đảo khác hẳn ngồi ô tô.',
@@ -1032,6 +984,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Chỉ cần một buổi chiều Cát Cò là đã “reset” cả tuần làm việc.',
@@ -1093,7 +1046,7 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'vinh-lan-ha',
+                'am-thuc-bien-lang-chai',
             ),
             'quote' => array(
                 'text' => 'Ánh nắng vàng trên đá vôi — khoảnh khắc đẹp nhất chuyến đi của chúng tôi.',
@@ -1154,7 +1107,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'vinh-lan-ha',
+                'kayak-lan-bien',
             ),
             'quote' => array(
                 'text' => 'San hô còn khá nguyên — hướng dẫn viên chỉ đúng điểm nước trong.',
@@ -1218,7 +1171,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'vinh-lan-ha',
+                'kayak-lan-bien',
             ),
             'quote' => array(
                 'text' => 'Không đông đúc như tour ghép — được chèo vào những ngách không tàu lớn vào được.',
@@ -1284,6 +1237,7 @@ $__hicatbaSeed = array(
             'styles' => array(
                 'day-trip',
                 'trekking-vqg',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Không phải 10km — chỉ vài km rừng mát, vẫn thấy được “chất” vườn quốc gia.',
@@ -1347,8 +1301,9 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'camping-viet-hai',
                 'trekking-vqg',
-                'lang-viet-hai',
+                'cuoi-tuan-hai-phong',
             ),
             'quote' => array(
                 'text' => 'Đêm không sóng điện thoại — chỉ tiếng côn trùng và đèn dầu nhà dân.',
@@ -1428,7 +1383,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'lang-viet-hai',
+                'camping-viet-hai',
             ),
             'quote' => array(
                 'text' => 'Muốn thấy làng mà không đi bộ 10km — thuyền là lựa chọn đúng.',
@@ -1489,7 +1444,8 @@ $__hicatbaSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'dao-khi-tam-bien',
+                'kayak-lan-bien',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Bãi cát trắng, khỉ hoang dã, nước trong — đúng “must-do” của Cát Bà.',
@@ -1552,7 +1508,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'dao-khi-tam-bien',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Chỉ nửa ngày nhưng đã đủ cảm giác “đã đến Đảo Khỉ”.',
@@ -1611,7 +1567,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'lang-chai-cai-beo',
+                'am-thuc-bien-lang-chai',
             ),
             'quote' => array(
                 'text' => 'Đèn mực trên vịnh lung linh — trẻ con thích điên lên khi câu được con đầu tiên.',
@@ -1674,6 +1630,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 '3n2d',
+                'cuoi-tuan-hai-phong',
             ),
             'quote' => array(
                 'text' => 'Một đêm Lan Hạ, một đêm Hạ Long — cảm nhận rõ sự khác biệt của hai vịnh.',
@@ -1762,7 +1719,7 @@ $__hicatbaSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'vinh-lan-ha',
+                'trekking-vqg',
             ),
             'quote' => array(
                 'text' => 'Nhảy xuống nước sau mỗi đường leo — adrenaline đúng nghĩa.',
@@ -2622,166 +2579,121 @@ $__hicatbaSeed = array(
     ),
 
     'tour_categories' => array(
+        /* ── DANH MỤC (type=region) — khu vực GEO & combo, không chia theo số ngày ── */
         array(
             'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => 'nua-ngay',
-            'type' => 'duration',
+            'slug' => 'tour-trung-tam-dao-cat-ba',
+            'type' => 'region',
             'sort' => 0,
-            'minDays' => 0,
-            'maxDays' => 1,
-            'packageSlugs' => array(
-                'dap-xe-xuyen-dao-cat-ba-nua-ngay',
-                'bai-cat-co-tam-bien-spa-nua-ngay',
-                'lang-chai-cai-beo-hang-trung-trang-nua-ngay',
-                'vinh-lan-ha-hoang-hon-nua-ngay',
-                'trekking-vqg-nua-ngay-de',
-                'lang-viet-hai-thuyen-nua-ngay',
-                'dao-khi-nua-ngay',
-                'cau-muc-dem-lang-chai-cai-beo',
-            ),
-            'name' => array(
-                'vi' => 'Tour nửa ngày',
-
-
-
-
-'en' => 'Half-day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.',
-
-
-
-
-'en' => 'A compact option for a free morning or afternoon.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Các tour nửa ngày ở Cát Bà phù hợp ghép thêm trước hoặc sau chuyến đi chính.',
-
-
-
-
-'en' => 'Half-day Cat Ba tours are easy to add before or after your main trip.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 1,
-            'maxDays' => 1,
-            'packageSlugs' => array(
-                'trekking-viet-hai-vqg-1-ngay',
-                'vinh-lan-ha-kayak-dao-khi-1-ngay',
-                'vinh-lan-ha-lan-ngam-san-ho-1-ngay',
-                'vinh-lan-ha-private-kayak-1-ngay',
-                'dao-khi-1-ngay-tam-bien-lan',
-                'leo-nui-da-voi-lan-ha-1-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour 1 ngày',
-
-
-
-
-'en' => '1-day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Vịnh Lan Hạ, Đảo Khỉ hoặc trekking Việt Hải — không cần ngủ đêm.',
-
-
-
-
-'en' => 'Lan Ha Bay, Monkey Island or Viet Hai trekking — no overnight needed.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour 1 ngày là lựa chọn phổ biến nhất cho khách chỉ ghé Cát Bà ngắn ngày.',
-
-
-
-
-'en' => '1-day tours are the most popular pick for short visits to Cat Ba.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 2,
-            'maxDays' => 3,
             'packageSlugs' => array(
                 'cat-ba-3-ngay-tong-quan-dao',
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
                 'cat-ba-2-ngay-gia-dinh-bien-dao',
+                'dap-xe-xuyen-dao-cat-ba-nua-ngay',
+                'bai-cat-co-tam-bien-spa-nua-ngay',
+            ),
+            'name' => array('vi' => 'Tour trung tâm đảo Cát Bà', 'en' => 'Cat Ba town centre tours'),
+            'subtitle' => array('vi' => 'Bến Bèo, dãy bãi Cát Cò và phố đảo — nơi phần lớn khách đặt khách sạn và xuất phát mỗi sáng.', 'en' => 'Beo pier, the Cat Co beaches and the island town — where most guests stay and start each morning.'),
+            'seo_body' => array('vi' => 'Danh mục theo khu vực: mọi chương trình lấy thị trấn Cát Bà làm bản doanh, gồm cả tour dài ngày đi nhiều vùng.', 'en' => 'GEO category: every programme based in Cat Ba town, including multi-day tours that range further out.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'vinh-lan-ha',
+            'slug' => 'tour-vinh-lan-ha',
+            'type' => 'region',
+            'sort' => 1,
+            'packageSlugs' => array(
+                'vinh-lan-ha-kayak-dao-khi-1-ngay',
+                'vinh-lan-ha-hoang-hon-nua-ngay',
+                'vinh-lan-ha-lan-ngam-san-ho-1-ngay',
+                'vinh-lan-ha-private-kayak-1-ngay',
+                'leo-nui-da-voi-lan-ha-1-ngay',
+                'cat-ba-3-ngay-tong-quan-dao',
+                'cat-ba-2-ngay-gia-dinh-bien-dao',
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
+            ),
+            'name' => array('vi' => 'Tour vịnh Lan Hạ', 'en' => 'Lan Ha Bay tours'),
+            'subtitle' => array('vi' => 'Hơn 400 đảo đá vôi phía nam vịnh Hạ Long — vắng hơn, nước trong hơn, xuất phát từ bến Bèo.', 'en' => 'Over 400 karst islands south of Halong Bay — quieter, clearer water, departing from Beo pier.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực vịnh Lan Hạ, gom cả tour ngày và các chương trình nhiều ngày có chặng trên vịnh.', 'en' => 'The Lan Ha Bay GEO category, covering day boats and every multi-day tour with a bay leg.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'vuon-quoc-gia',
+            'slug' => 'tour-vuon-quoc-gia-cat-ba',
+            'type' => 'region',
+            'sort' => 2,
+            'packageSlugs' => array(
+                'trekking-viet-hai-vqg-1-ngay',
+                'trekking-vqg-nua-ngay-de',
                 'camping-viet-hai-2n1d',
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
+            ),
+            'name' => array('vi' => 'Tour vườn quốc gia Cát Bà', 'en' => 'Cat Ba National Park tours'),
+            'subtitle' => array('vi' => 'Rừng nguyên sinh, hang Trung Trang, đỉnh Ngự Lâm và vùng sống của voọc Cát Bà quý hiếm.', 'en' => 'Primary forest, Trung Trang cave, Ngu Lam peak and the habitat of the rare Cat Ba langur.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực vườn quốc gia — vùng lõi khu dự trữ sinh quyển, cách thị trấn khoảng 15km.', 'en' => 'The national park GEO category — the biosphere-reserve core, about 15km from town.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'dao-khi',
+            'slug' => 'tour-dao-khi-cat-dua',
+            'type' => 'region',
+            'sort' => 3,
+            'packageSlugs' => array(
+                'dao-khi-1-ngay-tam-bien-lan',
+                'dao-khi-nua-ngay',
+                'vinh-lan-ha-kayak-dao-khi-1-ngay',
+                'cat-ba-2-ngay-gia-dinh-bien-dao',
+            ),
+            'name' => array('vi' => 'Tour Đảo Khỉ (Cát Dứa)', 'en' => 'Monkey Island (Cat Dua) tours'),
+            'subtitle' => array('vi' => 'Hai bãi cát trắng, đàn khỉ hoang dã và mỏm đá ngắm toàn vịnh — 20 phút tàu từ bến Bèo.', 'en' => 'Two white-sand beaches, wild macaques and a viewpoint over the bay — 20 minutes by boat from Beo pier.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Đảo Khỉ, thường ghép chung hành trình với vịnh Lan Hạ.', 'en' => 'The Monkey Island GEO category, usually combined with a Lan Ha Bay leg.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'lang-viet-hai',
+            'slug' => 'tour-lang-viet-hai',
+            'type' => 'region',
+            'sort' => 4,
+            'packageSlugs' => array(
+                'camping-viet-hai-2n1d',
+                'lang-viet-hai-thuyen-nua-ngay',
+                'trekking-viet-hai-vqg-1-ngay',
+            ),
+            'name' => array('vi' => 'Tour làng Việt Hải', 'en' => 'Viet Hai village tours'),
+            'subtitle' => array('vi' => 'Bản làng nằm giữa vườn quốc gia, không tiếng xe máy — đến bằng thuyền hoặc đường trek xuyên rừng.', 'en' => 'A hamlet inside the national park with no motorbike noise — reached by boat or a forest trek.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Việt Hải — điểm lưu trú bản địa duy nhất trong vùng lõi vườn quốc gia.', 'en' => 'The Viet Hai GEO category — the only local homestay cluster inside the park core.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'cai-beo',
+            'slug' => 'tour-lang-chai-cai-beo',
+            'type' => 'region',
+            'sort' => 5,
+            'packageSlugs' => array(
+                'lang-chai-cai-beo-hang-trung-trang-nua-ngay',
+                'cau-muc-dem-lang-chai-cai-beo',
+            ),
+            'name' => array('vi' => 'Tour làng chài Cái Bèo', 'en' => 'Cai Beo floating village tours'),
+            'subtitle' => array('vi' => 'Làng chài nổi ngay cửa vịnh, gắn với di chỉ khảo cổ hơn 6.000 năm và các bè nuôi cá lồng.', 'en' => 'A floating village at the bay mouth, tied to a 6,000-year-old archaeological site and fish-cage rafts.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Cái Bèo — chỉ vài phút thuyền từ bến Bèo, dễ ghép vào buổi trống.', 'en' => 'The Cai Beo GEO category — minutes from Beo pier and easy to slot into a free half-day.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-ha-long',
+            'slug' => 'combo-cat-ba-ha-long',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
                 'cat-ba-ha-long-ket-hop-2n1d',
                 'cat-ba-ha-long-ket-hop-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
-
-
-
-
-'en' => '2–3 day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Kết hợp du thuyền qua đêm với trekking hoặc nghỉ dưỡng biển.',
-
-
-
-
-'en' => 'Combine an overnight cruise with trekking or a beach day.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn vẹn cả vịnh và rừng của Cát Bà.',
-
-
-
-
-'en' => 'A 2–3 day tour lets you experience both the bay and the forest of Cat Ba.',
-            ),
+            'name' => array('vi' => 'Combo Cát Bà — Hạ Long', 'en' => 'Cat Ba — Halong combos'),
+            'subtitle' => array('vi' => 'Nối hai vịnh di sản trong một hành trình, di chuyển bằng phà Tuần Châu hoặc tàu qua vịnh.', 'en' => 'Two heritage bays in one journey, linked by the Tuan Chau ferry or a cross-bay boat.'),
+            'seo_body' => array('vi' => 'Danh mục combo: hành trình liên vùng, không phải trang chủ đề theo tính chất.', 'en' => 'Combo category: a cross-region itinerary, not a character-based theme page.'),
             'faqs' => array(),
         ),
-        array(
-            'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => '4-ngay-tro-len',
-            'type' => 'duration',
-            'sort' => 3,
-            'minDays' => 4,
-            'maxDays' => 10,
-            'packageSlugs' => array(
-                'cat-ba-5-ngay-nghi-duong-kham-pha',
-            ),
-            'name' => array(
-                'vi' => 'Tour 4 ngày trở lên',
 
-
-
-
-'en' => '4+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Lịch trình sâu nhất: nghỉ dưỡng, lặn biển, trekking và làng chài.',
-
-
-
-
-'en' => 'Our deepest itineraries: beach, diving, trekking and fishing villages.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour dài ngày dành cho ai muốn trải nghiệm Cát Bà không vội vàng.',
-
-
-
-
-'en' => 'Longer tours are for travellers who want an unhurried Cat Ba experience.',
-            ),
-            'faqs' => array(),
-        ),
+        /* ── CHỦ ĐỀ (A) type=theme — thời lượng chương trình, gắn hub zone ── */
         array(
             'zoneSlug' => 'trung-tam-cat-ba',
             'slug' => 'tour-trong-ngay',
@@ -2805,30 +2717,9 @@ $__hicatbaSeed = array(
                 'cau-muc-dem-lang-chai-cai-beo',
                 'leo-nui-da-voi-lan-ha-1-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
-
-
-
-
-'en' => 'Full day — no overnight.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
-
-
-
-
-'en' => 'Duration filter — distinct from per-zone GEO category pages.',
-            ),
+            'name' => array('vi' => 'Tour trong ngày', 'en' => 'Day tours'),
+            'subtitle' => array('vi' => 'Trọn vẹn trong ngày — không qua đêm tại Cát Bà.', 'en' => 'A full day — no overnight in Cat Ba.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2843,30 +2734,9 @@ $__hicatbaSeed = array(
                 'cat-ba-2-ngay-gia-dinh-bien-dao',
                 'camping-viet-hai-2n1d',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-            ),
-            'subtitle' => array(
-                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
-
-
-
-
-'en' => 'Short weekend, one-night homestay or resort.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
-
-
-
-
-'en' => '2N1D sweet spot — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 2 ngày 1 đêm', 'en' => '2 days 1 night'),
+            'subtitle' => array('vi' => 'Cuối tuần ngắn — một đêm nghỉ tại Cát Bà.', 'en' => 'Short weekend — one overnight in Cat Ba.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2880,30 +2750,9 @@ $__hicatbaSeed = array(
                 'cat-ba-3-ngay-tong-quan-dao',
                 'cat-ba-ha-long-ket-hop-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
-
-
-
-
-'en' => 'Enough depth — two overnights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
-
-
-
-
-'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
-            ),
+            'name' => array('vi' => 'Tour 3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+            'subtitle' => array('vi' => 'Khám phá vừa đủ — hai đêm tại Cát Bà.', 'en' => 'Enough depth — two nights in Cat Ba.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2914,30 +2763,9 @@ $__hicatbaSeed = array(
             'minDays' => 4,
             'maxDays' => 4,
             'packageSlugs' => array(),
-            'name' => array(
-                'vi' => 'Tour 4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
-
-
-
-
-'en' => 'Deeper exploration, three nights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
-
-
-
-
-'en' => '4N3D itineraries — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+            'subtitle' => array('vi' => 'Khám phá sâu hơn — ba đêm trải nghiệm Cát Bà.', 'en' => 'Deeper exploration — three nights in Cat Ba.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2950,70 +2778,30 @@ $__hicatbaSeed = array(
             'packageSlugs' => array(
                 'cat-ba-5-ngay-nghi-duong-kham-pha',
             ),
-            'name' => array(
-                'vi' => 'Tour từ 5 ngày',
-
-
-
-
-'en' => '5+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Combo dài ngày, nhiều điểm đến.',
-
-
-
-
-'en' => 'Extended combos and multi-destination trips.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
-
-
-
-
-'en' => 'Long tours & combos — duration insight, not a GEO page.',
-            ),
+            'name' => array('vi' => 'Tour từ 5 ngày', 'en' => '5+ day tours'),
+            'subtitle' => array('vi' => 'Tour dài ngày và combo nhiều điểm đến từ Cát Bà.', 'en' => 'Extended tours and multi-stop combos from Cat Ba.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
+
+        /* ── CHỦ ĐỀ (B) type=theme — tính chất / insight, KHÔNG clone tên zone GEO ── */
         array(
             'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => 'vinh-lan-ha',
+            'slug' => 'kayak-lan-bien',
             'type' => 'theme',
             'sort' => 10,
             'packageSlugs' => array(
                 'vinh-lan-ha-kayak-dao-khi-1-ngay',
-                'vinh-lan-ha-hoang-hon-nua-ngay',
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
                 'vinh-lan-ha-lan-ngam-san-ho-1-ngay',
                 'vinh-lan-ha-private-kayak-1-ngay',
-                'leo-nui-da-voi-lan-ha-1-ngay',
+                'dao-khi-1-ngay-tam-bien-lan',
                 'du-thuyen-lan-ha-2-ngay',
-                'du-thuyen-lan-ha-3-ngay',
+                'thuyen-viet-hai-ao-ech-kayak',
             ),
-            'name' => array(
-                'vi' => 'Tour vịnh Lan Hạ',
-
-
-
-
-'en' => 'Lan Ha Bay tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Kayak, tắm biển, hoàng hôn và du thuyền giữa hơn 400 đảo đá vôi.',
-
-
-
-
-'en' => 'Kayak, swim, sunset and cruise among 400+ limestone islands.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Vịnh Lan Hạ được xem là phiên bản hoang sơ và ít khách hơn của Hạ Long.',
-
-
-
-
-'en' => 'Lan Ha Bay is considered the wilder, quieter version of Halong Bay.',
-            ),
+            'name' => array('vi' => 'Kayak & lặn biển', 'en' => 'Kayaking & snorkelling'),
+            'subtitle' => array('vi' => 'Chèo kayak vào hang xuyên thuỷ, lặn ống thở quanh rạn và bãi tắm nhỏ chỉ tới được bằng thuyền.', 'en' => 'Kayaking through tunnel caves, snorkelling the reefs and beaches you can only reach by boat.'),
+            'seo_body' => array('vi' => 'Chủ đề theo hoạt động dưới nước — dùng chung tour với danh mục vịnh Lan Hạ và Đảo Khỉ.', 'en' => 'A water-activity theme that shares tours with the Lan Ha Bay and Monkey Island categories.'),
             'faqs' => array(),
         ),
         array(
@@ -3023,140 +2811,80 @@ $__hicatbaSeed = array(
             'sort' => 11,
             'packageSlugs' => array(
                 'trekking-viet-hai-vqg-1-ngay',
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
                 'trekking-vqg-nua-ngay-de',
                 'camping-viet-hai-2n1d',
+                'leo-nui-da-voi-lan-ha-1-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour trekking vườn quốc gia',
-
-
-
-
-'en' => 'National park trekking tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Rừng nguyên sinh, Ao Ếch và làng Việt Hải — từ nửa ngày tới qua đêm.',
-
-
-
-
-'en' => 'Primary forest, Ao Ech and Viet Hai — from half-day to overnight.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Trekking vườn quốc gia là hoạt động được đánh giá cao nhất tại Cát Bà.',
-
-
-
-
-'en' => 'National park trekking is the highest-rated activity on Cat Ba.',
-            ),
+            'name' => array('vi' => 'Trekking & leo núi', 'en' => 'Trekking & climbing'),
+            'subtitle' => array('vi' => 'Từ đường mòn nửa ngày phù hợp mọi lứa tuổi tới xuyên rừng Việt Hải và leo vách đá vôi có bảo hộ.', 'en' => 'From an easy half-day trail to the Viet Hai forest crossing and belayed limestone climbing.'),
+            'seo_body' => array('vi' => 'Phân khúc khách vận động trên cạn, lọc theo độ khó thay vì theo khu vực.', 'en' => 'The land-activity segment, filtered by difficulty rather than by area.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => 'dao-khi-tam-bien',
+            'slug' => 'camping-viet-hai',
             'type' => 'theme',
             'sort' => 12,
             'packageSlugs' => array(
-                'dao-khi-1-ngay-tam-bien-lan',
-                'dao-khi-nua-ngay',
-                'vinh-lan-ha-kayak-dao-khi-1-ngay',
+                'trekking-viet-hai-vqg-1-ngay',
+                'camping-viet-hai-2n1d',
+                'lang-viet-hai-thuyen-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour Đảo Khỉ & tắm biển',
-
-
-
-
-'en' => 'Monkey Island & beach tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Bãi cát trắng Cát Dứa, snorkel và trải nghiệm gần khỉ hoang dã.',
-
-
-
-
-'en' => 'Cat Dua white sand, snorkel and safe monkey encounters.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Đảo Khỉ là điểm “must-do” gần như bắt buộc trong mọi chuyến Cát Bà ngắn ngày.',
-
-
-
-
-'en' => 'Monkey Island is a near must-do on any short Cat Ba trip.',
-            ),
+            'name' => array('vi' => 'Camping & homestay bản địa', 'en' => 'Camping & local homestays'),
+            'subtitle' => array('vi' => 'Ngủ lều hoặc nhà dân trong vùng lõi vườn quốc gia — không sóng điện thoại, ăn cơm cùng chủ nhà.', 'en' => 'Tents or family homestays inside the park core — no phone signal, meals with your hosts.'),
+            'seo_body' => array('vi' => 'Chủ đề theo hình thức lưu trú và trải nghiệm bản địa, không phải trang danh mục làng Việt Hải.', 'en' => 'A stay-style and local-immersion theme, not the Viet Hai village category page.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => 'lang-viet-hai',
+            'slug' => 'gia-dinh-bien-dao',
             'type' => 'theme',
             'sort' => 13,
             'packageSlugs' => array(
-                'camping-viet-hai-2n1d',
-                'lang-viet-hai-thuyen-nua-ngay',
-                'trekking-viet-hai-vqg-1-ngay',
+                'cat-ba-3-ngay-tong-quan-dao',
+                'cat-ba-2-ngay-gia-dinh-bien-dao',
+                'dap-xe-xuyen-dao-cat-ba-nua-ngay',
+                'bai-cat-co-tam-bien-spa-nua-ngay',
+                'trekking-vqg-nua-ngay-de',
+                'dao-khi-1-ngay-tam-bien-lan',
+                'dao-khi-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour làng Việt Hải',
-
-
-
-
-'en' => 'Viet Hai village tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Homestay/camping hoặc thuyền vào làng giữa vườn quốc gia.',
-
-
-
-
-'en' => 'Homestay/camping or boat access to the village inside the park.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Việt Hải là trải nghiệm “off-grid” đặc trưng nhất của đảo Cát Bà.',
-
-
-
-
-'en' => 'Viet Hai is Cat Ba’s most distinctive off-grid village experience.',
-            ),
+            'name' => array('vi' => 'Gia đình & biển đảo', 'en' => 'Family beach & island'),
+            'subtitle' => array('vi' => 'Bãi tắm nông, tàu lớn có mái che, lịch nhẹ — trẻ từ 5 tuổi đi được toàn bộ chương trình.', 'en' => 'Shallow beaches, large covered boats and light pacing — suitable for children from age five.'),
+            'seo_body' => array('vi' => 'Phân khúc gia đình — lọc theo nhu cầu khách, dùng chung tour với các danh mục khu vực.', 'en' => 'The family segment — a needs-based filter sharing tours with the GEO categories.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'trung-tam-cat-ba',
-            'slug' => 'lang-chai-cai-beo',
+            'slug' => 'cuoi-tuan-hai-phong',
             'type' => 'theme',
             'sort' => 14,
             'packageSlugs' => array(
+                'cat-ba-3-ngay-tong-quan-dao',
+                'cat-ba-ha-long-ket-hop-2n1d',
+                'cat-ba-2-ngay-gia-dinh-bien-dao',
+                'camping-viet-hai-2n1d',
+                'cat-ba-ha-long-ket-hop-3n2d',
+            ),
+            'name' => array('vi' => 'Cuối tuần từ Hà Nội & Hải Phòng', 'en' => 'Weekend from Hanoi & Hai Phong'),
+            'subtitle' => array('vi' => 'Limousine 3,5 giờ từ Hà Nội hoặc 45 phút phà từ Hải Phòng — lịch 2N1D và 3N2D khít hai ngày nghỉ.', 'en' => 'A 3.5-hour limousine from Hanoi or a 45-minute ferry from Hai Phong — 2N1D and 3N2D itineraries.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thị trường nguồn, không phải trang danh mục vùng.', 'en' => 'A source-market theme, not a GEO category page.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'am-thuc-bien-lang-chai',
+            'type' => 'theme',
+            'sort' => 15,
+            'packageSlugs' => array(
                 'lang-chai-cai-beo-hang-trung-trang-nua-ngay',
+                'vinh-lan-ha-hoang-hon-nua-ngay',
                 'cau-muc-dem-lang-chai-cai-beo',
             ),
-            'name' => array(
-                'vi' => 'Tour làng chài Cái Bèo',
-
-
-
-
-'en' => 'Cai Beo fishing village tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Thuyền nan, di chỉ khảo cổ và câu mực đêm trên vịnh.',
-
-
-
-
-'en' => 'Sampan rides, archaeology and night squid fishing on the bay.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Cái Bèo gắn với di chỉ khảo cổ hơn 6.000 năm — điểm văn hoá gần trung tâm nhất.',
-
-
-
-
-'en' => 'Cai Beo links to 6,000+ year archaeology — the closest cultural stop to town.',
-            ),
+            'name' => array('vi' => 'Ẩm thực biển & đời sống làng chài', 'en' => 'Seafood & fishing life'),
+            'subtitle' => array('vi' => 'Câu mực đêm, chọn cá tại bè nuôi và bữa hải sản do chính ngư dân chế biến.', 'en' => 'Night squid fishing, picking fish off the rafts and seafood meals cooked by the fishers themselves.'),
+            'seo_body' => array('vi' => 'Chủ đề foodie và trải nghiệm nghề biển — không trùng danh mục khu vực Cái Bèo.', 'en' => 'A foodie and working-sea theme — distinct from the Cai Beo GEO category.'),
             'faqs' => array(),
         ),
     ),
@@ -3184,11 +2912,12 @@ $__hicatbaSeed = array(
         '3n2d' => '3 ngày 2 đêm',
         '4n3d' => '4 ngày 3 đêm',
         '5-plus-days' => 'Từ 5 ngày',
-        'vinh-lan-ha' => 'Tour vịnh Lan Hạ',
-        'trekking-vqg' => 'Tour trekking vườn quốc gia',
-        'dao-khi-tam-bien' => 'Tour Đảo Khỉ & tắm biển',
-        'lang-viet-hai' => 'Tour làng Việt Hải',
-        'lang-chai-cai-beo' => 'Tour làng chài Cái Bèo',
+        'kayak-lan-bien' => 'Kayak & lặn biển',
+        'trekking-vqg' => 'Trekking & leo núi',
+        'camping-viet-hai' => 'Camping & homestay bản địa',
+        'gia-dinh-bien-dao' => 'Gia đình & biển đảo',
+        'cuoi-tuan-hai-phong' => 'Cuối tuần từ Hà Nội & Hải Phòng',
+        'am-thuc-bien-lang-chai' => 'Ẩm thực biển & đời sống làng chài',
     ),
 );
 

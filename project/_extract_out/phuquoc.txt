@@ -1,0 +1,50 @@
+===== PROFILE: phuquoc =====
+PLACES (zones): 9
+  - duong-dong | Dương Đông
+  - bai-truong | Bãi Trường (Long Beach)
+  - bai-sao | Bãi Sao
+  - bai-khem | Bãi Khem
+  - ong-lang | Ông Lang
+  - an-thoi-hon-thom | An Thới / Hòn Thơm
+  - ganh-dau-rach-vem | Gành Dầu / Rạch Vẹm
+  - vinpearl-grand-world | Vinpearl / Grand World
+  - ket-hop-rach-gia | Kết hợp Rạch Giá / Hà Tiên
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - bien-nam-dao | Tour biển nam đảo
+  - vui-choi-gia-dinh | Tour vui chơi gia đình
+  - bien-bai-sao | Tour biển Bãi Sao & Hàm Ninh
+TOUR_CATEGORIES:
+  [duration] zone=duong-dong slug=nua-ngay name=Tour nửa ngày min=0 max=1 pkgs=[kayak-rach-vem-nua-ngay,lang-chai-ham-ninh-nua-ngay,sunset-cruise-ong-lang-bai-truong]
+  [duration] zone=duong-dong slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[vinwonders-phu-quoc-1-ngay,cap-treo-hon-thom-1-ngay,tour-4-dao-snorkel-phu-quoc,vuon-tieu-nuoc-mam-nha-tu-1-ngay,bai-sao-1-ngay-nghi-bien,safari-phu-quoc-1-ngay]
+  [duration] zone=duong-dong slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[phu-quoc-3-ngay-tong-quan-dao,honeymoon-bai-khem-ong-lang-3n2d,gia-dinh-grand-world-vinwonders-2n1d,rach-gia-phu-quoc-tau-cao-toc-3n2d]
+  [duration] zone=duong-dong slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[phu-quoc-tu-sai-gon-4n3d]
+  [theme] zone=duong-dong slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[vinwonders-phu-quoc-1-ngay,cap-treo-hon-thom-1-ngay,tour-4-dao-snorkel-phu-quoc,vuon-tieu-nuoc-mam-nha-tu-1-ngay,bai-sao-1-ngay-nghi-bien,safari-phu-quoc-1-ngay,kayak-rach-vem-nua-ngay,lang-chai-ham-ninh-nua-ngay,sunset-cruise-ong-lang-bai-truong]
+  [theme] zone=duong-dong slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[gia-dinh-grand-world-vinwonders-2n1d]
+  [theme] zone=duong-dong slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[phu-quoc-3-ngay-tong-quan-dao,honeymoon-bai-khem-ong-lang-3n2d,rach-gia-phu-quoc-tau-cao-toc-3n2d]
+  [theme] zone=duong-dong slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[phu-quoc-tu-sai-gon-4n3d]
+  [theme] zone=duong-dong slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=duong-dong slug=bien-nam-dao name=Tour biển nam đảo min= max= pkgs=[tour-4-dao-snorkel-phu-quoc,cap-treo-hon-thom-1-ngay,thuyen-4-dao-phu-quoc,thuyen-lan-nam-dao-phu-quoc]
+  [theme] zone=duong-dong slug=vui-choi-gia-dinh name=Tour vui chơi gia đình min= max= pkgs=[vinwonders-phu-quoc-1-ngay,safari-phu-quoc-1-ngay,gia-dinh-grand-world-vinwonders-2n1d]
+  [theme] zone=duong-dong slug=bien-bai-sao name=Tour biển Bãi Sao & Hàm Ninh min= max= pkgs=[bai-sao-1-ngay-nghi-bien,lang-chai-ham-ninh-nua-ngay]
+TYPE_COUNTS: duration=4 theme=8
+TOURS:
+  - phu-quoc-3-ngay-tong-quan-dao | days=3 nights= zone=duong-dong styles=[3n2d] | Phú Quốc 3 ngày 2 đêm — Tổng quan đảo ngọc
+  - vinwonders-phu-quoc-1-ngay | days=1 nights= zone=vinpearl-grand-world styles=[day-trip,vui-choi-gia-dinh] | VinWonders Phú Quốc — 1 ngày công viên giải trí
+  - cap-treo-hon-thom-1-ngay | days=1 nights= zone=an-thoi-hon-thom styles=[day-trip,bien-nam-dao] | Cáp treo Hòn Thơm — 1 ngày nam đảo
+  - tour-4-dao-snorkel-phu-quoc | days=1 nights= zone=an-thoi-hon-thom styles=[day-trip,bien-nam-dao] | Tour 4 đảo Phú Quốc — snorkel & làng chài
+  - vuon-tieu-nuoc-mam-nha-tu-1-ngay | days=1 nights= zone=duong-dong styles=[day-trip] | Vườn tiêu — nước mắm — nhà tù Phú Quốc — 1 ngày văn hoá
+  - bai-sao-1-ngay-nghi-bien | days=1 nights= zone=bai-sao styles=[day-trip,bien-bai-sao] | Bãi Sao 1 ngày — nghỉ biển cát trắng
+  - safari-phu-quoc-1-ngay | days=1 nights= zone=vinpearl-grand-world styles=[day-trip,vui-choi-gia-dinh] | Vinpearl Safari Phú Quốc — 1 ngày bán hoang dã
+  - honeymoon-bai-khem-ong-lang-3n2d | days=3 nights= zone=bai-khem styles=[3n2d] | Trăng mật Bãi Khem / Ông Lang — 3 ngày 2 đêm
+  - gia-dinh-grand-world-vinwonders-2n1d | days=2 nights= zone=vinpearl-grand-world styles=[2n1d,vui-choi-gia-dinh] | Gia đình Grand World & VinWonders — 2 ngày 1 đêm
+  - kayak-rach-vem-nua-ngay | days=1 nights= zone=ganh-dau-rach-vem styles=[day-trip] | Kayak Rạch Vẹm — rừng ngập mặn nửa ngày
+  - lang-chai-ham-ninh-nua-ngay | days=1 nights= zone=bai-sao styles=[day-trip,bien-bai-sao] | Làng chài Hàm Ninh — hải sản & nhum nửa ngày
+  - sunset-cruise-ong-lang-bai-truong | days=1 nights= zone=ong-lang styles=[day-trip] | Hoàng hôn trên biển — Ông Lang / Bãi Trường
+  - phu-quoc-tu-sai-gon-4n3d | days=4 nights= zone=bai-truong styles=[4n3d] | Phú Quốc từ Sài Gòn — 4 ngày 3 đêm bay thẳng
+  - rach-gia-phu-quoc-tau-cao-toc-3n2d | days=3 nights= zone=ket-hop-rach-gia styles=[3n2d] | Rạch Giá — Phú Quốc tàu cao tốc — 3 ngày 2 đêm
+TOUR_COUNT: 14

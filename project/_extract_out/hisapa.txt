@@ -1,0 +1,57 @@
+===== PROFILE: hisapa =====
+PLACES (zones): 10
+  - thi-tran-sapa | Thị trấn Sa Pa
+  - fansipan-sun-world | Fansipan Sun World
+  - thung-lung-muong-hoa | Thung lũng Mường Hoa
+  - ban-cat-cat-y-linh-ho | Bản Cát Cát & Y Linh Hồ
+  - thac-bac-thac-tinh-yeu | Thác Bạc & Thác Tình Yêu
+  - homestay-trek-ban-ho | Homestay trek Bản Hồ
+  - lao-cai-cua-ngo | Lào Cai cửa ngõ
+  - ket-hop-bac-ha | Kết hợp Bắc Hà
+  - ket-hop-ha-noi | Cửa ngõ Hà Nội
+  - ket-hop-mu-cang-chai | Kết hợp Mù Cang Chải
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - cuoi-tuan-ha-noi | Cuối tuần từ Hà Nội
+  - trekking-homestay | Trekking & homestay
+  - fansipan | Tour Fansipan & cáp treo
+  - am-thuc | Tour ẩm thực
+  - cap-doi | Tour cặp đôi & lãng mạn
+  - gia-dinh | Tour gia đình
+TOUR_CATEGORIES:
+  [duration] zone=thi-tran-sapa slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[city-tour-sapa-1-ngay,fansipan-cap-treo-1-ngay,thac-bac-thac-tinh-yeu-1-ngay,ha-noi-sapa-tour-ngay,photo-tour-ruong-bac-thang]
+  [duration] zone=thi-tran-sapa slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[sapa-2n1d-cuoi-tuan-ha-noi,sapa-2n1d-lang-man,sapa-3n2d-tong-quan,gia-dinh-sapa-2n1d,muong-hoa-trek-homestay-2n1d,combo-sapa-bac-ha-3n2d]
+  [duration] zone=homestay-trek-ban-ho slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[sapa-4n3d-kham-pha-sau]
+  [duration] zone=ban-cat-cat-y-linh-ho slug=nua-ngay name=Tour nửa ngày / tối min=0 max=1 pkgs=[cat-cat-y-linh-ho-nua-ngay,food-tour-am-thuc-sapa]
+  [theme] zone=thi-tran-sapa slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[city-tour-sapa-1-ngay,fansipan-cap-treo-1-ngay,cat-cat-y-linh-ho-nua-ngay,thac-bac-thac-tinh-yeu-1-ngay,food-tour-am-thuc-sapa,ha-noi-sapa-tour-ngay,photo-tour-ruong-bac-thang]
+  [theme] zone=thi-tran-sapa slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[sapa-2n1d-cuoi-tuan-ha-noi,sapa-2n1d-lang-man,muong-hoa-trek-homestay-2n1d,gia-dinh-sapa-2n1d]
+  [theme] zone=thi-tran-sapa slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[sapa-3n2d-tong-quan,combo-sapa-bac-ha-3n2d]
+  [theme] zone=thi-tran-sapa slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[sapa-4n3d-kham-pha-sau]
+  [theme] zone=thi-tran-sapa slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[]
+  [theme] zone=thi-tran-sapa slug=cuoi-tuan-ha-noi name=Cuối tuần từ Hà Nội min= max= pkgs=[sapa-2n1d-cuoi-tuan-ha-noi,ha-noi-sapa-tour-ngay]
+  [theme] zone=thi-tran-sapa slug=trekking-homestay name=Trekking & homestay min= max= pkgs=[muong-hoa-trek-homestay-2n1d,sapa-4n3d-kham-pha-sau]
+  [theme] zone=thi-tran-sapa slug=fansipan name=Tour Fansipan & cáp treo min= max= pkgs=[fansipan-cap-treo-1-ngay,sapa-2n1d-cuoi-tuan-ha-noi,sapa-3n2d-tong-quan]
+  [theme] zone=thi-tran-sapa slug=am-thuc name=Tour ẩm thực min= max= pkgs=[food-tour-am-thuc-sapa]
+  [theme] zone=thi-tran-sapa slug=cap-doi name=Tour cặp đôi & lãng mạn min= max= pkgs=[sapa-2n1d-lang-man,photo-tour-ruong-bac-thang]
+  [theme] zone=thi-tran-sapa slug=gia-dinh name=Tour gia đình min= max= pkgs=[gia-dinh-sapa-2n1d,sapa-3n2d-tong-quan]
+TYPE_COUNTS: duration=4 theme=11
+TOURS:
+  - sapa-2n1d-cuoi-tuan-ha-noi | days=2 nights= zone=ket-hop-ha-noi styles=[2n1d,cuoi-tuan-ha-noi,fansipan] | Sa Pa 2 ngày 1 đêm — Cuối tuần từ Hà Nội
+  - sapa-3n2d-tong-quan | days=3 nights= zone=thi-tran-sapa styles=[3n2d,fansipan,gia-dinh] | Sa Pa 3 ngày 2 đêm — Tổng quan thị trấn mây
+  - sapa-2n1d-lang-man | days=2 nights= zone=thi-tran-sapa styles=[2n1d,cuoi-tuan-ha-noi,cap-doi] | Sa Pa 2 ngày 1 đêm — Lãng mạn & biển mây
+  - city-tour-sapa-1-ngay | days=1 nights= zone=thi-tran-sapa styles=[day-trip] | Tour thành phố Sa Pa 1 ngày — Nhà thờ đá & chợ đêm
+  - fansipan-cap-treo-1-ngay | days=1 nights= zone=fansipan-sun-world styles=[day-trip,fansipan] | Fansipan cáp treo 1 ngày — Đỉnh nóc Đông Dương
+  - muong-hoa-trek-homestay-2n1d | days=2 nights= zone=homestay-trek-ban-ho styles=[2n1d,trekking-homestay] | Mường Hoa trek homestay 2 ngày 1 đêm
+  - cat-cat-y-linh-ho-nua-ngay | days=1 nights= zone=ban-cat-cat-y-linh-ho styles=[day-trip] | Cát Cát & Y Linh Hồ — Trek nửa ngày
+  - thac-bac-thac-tinh-yeu-1-ngay | days=1 nights= zone=thac-bac-thac-tinh-yeu styles=[day-trip] | Thác Bạc & Thác Tình Yêu — Trekking 1 ngày
+  - food-tour-am-thuc-sapa | days=1 nights= zone=thi-tran-sapa styles=[day-trip,am-thuc] | Tour ẩm thực Sa Pa — Buổi tối
+  - gia-dinh-sapa-2n1d | days=2 nights= zone=thi-tran-sapa styles=[2n1d,gia-dinh] | Sa Pa gia đình 2 ngày 1 đêm — Nhẹ nhàng
+  - ha-noi-sapa-tour-ngay | days=1 nights= zone=ket-hop-ha-noi styles=[day-trip,cuoi-tuan-ha-noi] | Tour ngày Hà Nội — Sa Pa
+  - sapa-4n3d-kham-pha-sau | days=4 nights= zone=homestay-trek-ban-ho styles=[4n3d,trekking-homestay] | Sa Pa 4 ngày 3 đêm — Khám phá sâu
+  - combo-sapa-bac-ha-3n2d | days=3 nights= zone=ket-hop-bac-ha styles=[3n2d] | Sa Pa — Bắc Hà 3 ngày 2 đêm
+  - photo-tour-ruong-bac-thang | days=1 nights= zone=thung-lung-muong-hoa styles=[day-trip,cap-doi] | Tour chụp ảnh ruộng bậc thang — 1 ngày
+TOUR_COUNT: 14

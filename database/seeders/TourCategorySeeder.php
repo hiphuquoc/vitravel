@@ -120,14 +120,20 @@ class TourCategorySeeder extends Seeder
     protected function seedTourCategories(): void
     {
         foreach (ProjectSeed::get('tour_categories', []) as $row) {
-            $countryId = $this->countryIds[$row['countrySlug'] ?? $row['zoneSlug'] ?? ''] ?? null;
+            $zoneKey = $row['countrySlug'] ?? $row['zoneSlug'] ?? '';
+            $countryId = $this->countryIds[$zoneKey] ?? null;
             if (! $countryId) {
                 continue;
             }
 
+            $slug = $row['slug'];
+            $compositeKey = $zoneKey.'|'.$slug;
+
+            // Unique within zone: same slug under different zones must not collide.
             $category = TourCategoryTranslation::query()
                 ->where('language_id', $this->viId)
-                ->where('slug', $row['slug'])
+                ->where('slug', $slug)
+                ->whereHas('tourCategory', fn ($q) => $q->where('country_id', $countryId))
                 ->first()
                 ?->tourCategory;
 
@@ -143,7 +149,9 @@ class TourCategorySeeder extends Seeder
             ]);
             $category->save();
 
-            $this->categoryIds[$row['slug']] = $category->id;
+            $this->categoryIds[$compositeKey] = $category->id;
+            // Backward-compat: last write wins for bare slug lookups
+            $this->categoryIds[$slug] = $category->id;
 
             foreach (['vi', 'en'] as $locale) {
                 $languageId = $locale === 'vi' ? $this->viId : $this->enId;
@@ -192,7 +200,9 @@ class TourCategorySeeder extends Seeder
     protected function linkPackagesToCategories(): void
     {
         foreach (ProjectSeed::get('tour_categories', []) as $row) {
-            $categoryId = $this->categoryIds[$row['slug']] ?? null;
+            $zoneKey = $row['countrySlug'] ?? $row['zoneSlug'] ?? '';
+            $compositeKey = $zoneKey.'|'.($row['slug'] ?? '');
+            $categoryId = $this->categoryIds[$compositeKey] ?? $this->categoryIds[$row['slug'] ?? ''] ?? null;
             if (! $categoryId) {
                 continue;
             }
@@ -210,8 +220,41 @@ class TourCategorySeeder extends Seeder
                 );
             }
 
-            if (isset($row['minDays'], $row['maxDays'])) {
-                $countryId = $this->countryIds[$row['countrySlug'] ?? $row['zoneSlug'] ?? ''] ?? null;
+            $type = $row['type'] ?? '';
+
+            // region (danh mục GEO/combo): nếu không khai báo packageSlugs → lấy mọi tour thuộc zone đó
+            if ($type === TourCategory::TYPE_REGION && empty($row['packageSlugs'])) {
+                $countryId = $this->countryIds[$zoneKey] ?? null;
+                if ($countryId) {
+                    $packageIds = $packageIds->merge(
+                        Package::query()
+                            ->published()
+                            ->tours()
+                            ->where('country_id', $countryId)
+                            ->pluck('id'),
+                    );
+                }
+            }
+
+            // theme thời lượng: minDays/maxDays khớp project-wide (không khóa theo hub zone)
+            // để tour gắn zone huyện vẫn vào đúng chủ đề thời lượng.
+            if ($type === TourCategory::TYPE_THEME && isset($row['minDays'])) {
+                $min = (int) $row['minDays'];
+                $max = array_key_exists('maxDays', $row) && $row['maxDays'] !== null
+                    ? (int) $row['maxDays']
+                    : 999;
+                $packageIds = $packageIds->merge(
+                    Package::query()
+                        ->published()
+                        ->tours()
+                        ->whereBetween('duration_days', [$min, $max])
+                        ->pluck('id'),
+                );
+            }
+
+            // duration legacy (vitravel): giữ filter theo country của category
+            if ($type === TourCategory::TYPE_DURATION && isset($row['minDays'], $row['maxDays'])) {
+                $countryId = $this->countryIds[$zoneKey] ?? null;
                 if ($countryId) {
                     $packageIds = $packageIds->merge(
                         Package::query()

@@ -1,0 +1,51 @@
+===== PROFILE: vitravel =====
+PLACES (countries): 6
+  - viet-nam | Việt Nam
+  - campuchia | Campuchia
+  - bali | Bali (Indonesia)
+  - thai-lan | Thái Lan
+  - lao | Lào
+  - tour-ket-hop | Tour kết hợp
+TRAVEL_STYLES:
+  - long-duration | Tour dài ngày
+  - heritage-rich | Nhiều di sản
+  - nature-homestay | Thiên nhiên & homestay
+  - culture-history | Văn hoá & lịch sử
+  - balanced | Kỳ nghỉ cân bằng
+  - beach | Nghỉ dưỡng biển
+  - honeymoon | Trăng mật
+  - family | Gia đình
+  - trekking | Trekking & khám phá
+  - multi-country-combo | Tour kết hợp nhiều nước
+  - small-group | Nhóm nhỏ
+TOUR_CATEGORIES:
+  [duration] zone=viet-nam slug=viet-nam-10-ngay name=Tour Việt Nam 10 ngày min=9 max=11 pkgs=[]
+  [duration] zone=viet-nam slug=viet-nam-2-tuan name=Tour Việt Nam 2 tuần min=12 max=16 pkgs=[]
+  [duration] zone=viet-nam slug=viet-nam-15-ngay name=Tour Việt Nam 15 ngày min=14 max=16 pkgs=[]
+  [duration] zone=viet-nam slug=viet-nam-3-tuan name=Tour Việt Nam 3 tuần min=17 max=25 pkgs=[]
+  [duration] zone=viet-nam slug=duoi-7-ngay name=Tour Việt Nam dưới 7 ngày min=1 max=8 pkgs=[]
+  [region] zone=viet-nam slug=mien-bac name=Tour miền Bắc min= max= pkgs=[viet-nam-10-ngay-di-san-mien-bac,sa-pa-trekking-4-ngay]
+  [region] zone=viet-nam slug=mien-trung name=Tour miền Trung min= max= pkgs=[viet-nam-2-tuan-bac-trung-nam]
+  [duration] zone=campuchia slug=campuchia-7-ngay name=Tour Campuchia 7 ngày min=5 max=9 pkgs=[]
+  [duration] zone=campuchia slug=campuchia-10-ngay name=Tour Campuchia 10 ngày min=9 max=14 pkgs=[]
+  [theme] zone=campuchia slug=di-san-angkor name=Tour di sản Angkor min= max= pkgs=[]
+  [duration] zone=bali slug=bali-7-ngay name=Tour Bali 7 ngày min=5 max=9 pkgs=[bali-7-ngay-ubud-bien]
+  [duration] zone=bali slug=bali-10-ngay name=Tour Bali 10 ngày min=9 max=14 pkgs=[]
+  [theme] zone=bali slug=nghi-duong-bali name=Tour nghỉ dưỡng Bali min= max= pkgs=[bali-7-ngay-ubud-bien]
+  [duration] zone=thai-lan slug=thai-lan-7-ngay name=Tour Thái Lan 7 ngày min=5 max=9 pkgs=[]
+  [duration] zone=thai-lan slug=thai-lan-10-ngay name=Tour Thái Lan 10 ngày min=9 max=14 pkgs=[thai-lan-10-ngay-bac-trung-nam]
+  [duration] zone=lao slug=lao-7-ngay name=Tour Lào 7 ngày min=5 max=9 pkgs=[]
+  [duration] zone=lao slug=lao-10-ngay name=Tour Lào 10 ngày min=9 max=14 pkgs=[]
+  [package] zone=tour-ket-hop slug=dong-duong-15-ngay name=Tour Đông Dương 15 ngày min=13 max=17 pkgs=[viet-nam-campuchia-15-ngay]
+  [package] zone=tour-ket-hop slug=dong-duong-3-tuan name=Tour Đông Dương 3 tuần min=18 max=25 pkgs=[]
+TYPE_COUNTS: duration=13 region=2 theme=2 package=2
+TOURS:
+  - viet-nam-10-ngay-di-san-mien-bac | days=10 nights= zone=viet-nam styles=[heritage-rich,culture-history,balanced] | Việt Nam 10 ngày — Di sản miền Bắc & vịnh Hạ Long
+  - viet-nam-2-tuan-bac-trung-nam | days=14 nights= zone=viet-nam styles=[long-duration,heritage-rich,balanced] | Việt Nam 2 tuần — Xuyên Việt Bắc Trung Nam
+  - viet-nam-campuchia-15-ngay | days=15 nights= zone=tour-ket-hop styles=[multi-country-combo,long-duration,heritage-rich] | Việt Nam & Campuchia 15 ngày — Mekong nối hai miền di sản
+  - sa-pa-trekking-4-ngay | days=4 nights= zone=viet-nam styles=[trekking,nature-homestay,small-group] | Sa Pa 4 ngày — Trekking bản làng & ruộng bậc thang
+  - viet-nam-3-tuan-tron-ven | days=21 nights= zone=viet-nam styles=[long-duration,balanced,nature-homestay] | Việt Nam 3 tuần — Trọn vẹn từ địa đầu tới đất mũi
+  - phu-quoc-nghi-duong-5-ngay | days=5 nights= zone=viet-nam styles=[beach,honeymoon,family] | Phú Quốc 5 ngày — Nghỉ dưỡng biển & khám phá đảo ngọc
+  - bali-7-ngay-ubud-bien | days=7 nights= zone=bali styles=[culture-history,beach,balanced,honeymoon] | Bali 7 ngày — Ubud, đền thiêng & biển Seminyak
+  - thai-lan-10-ngay-bac-trung-nam | days=10 nights= zone=thai-lan styles=[culture-history,beach,balanced,long-duration] | Thái Lan 10 ngày — Chiang Mai, Bangkok & biển phía Nam
+TOUR_COUNT: 8

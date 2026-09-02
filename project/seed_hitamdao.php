@@ -13,6 +13,19 @@
  *
  * Lưu trú: không seed catalogue trong file này (data từ tool cào riêng); giữ menu + stays_hub.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
+ *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hitamdao')
  *
  * @return array<string, mixed>
@@ -162,45 +175,45 @@ $__hitamdaoSeed = array(
 
 'en' => 'Weekend from Hanoi',
         ),
-        'am-thuc' => array(
-            'vi' => 'Tour ẩm thực',
+        'suong-mu-lang-man' => array(
+            'vi' => 'Sương mù & lãng mạn',
 
 
 
 
-'en' => 'Food tours',
+'en' => 'Mist & romance',
         ),
-        'trekking' => array(
-            'vi' => 'Tour trekking & VQG',
+        'trekking-vqg' => array(
+            'vi' => 'Trekking & VQG',
 
 
 
 
 'en' => 'Trekking & national park',
         ),
-        'cap-doi' => array(
-            'vi' => 'Tour cặp đôi & lãng mạn',
+        'am-thuc-doi-ga' => array(
+            'vi' => 'Ẩm thực gà đồi & suối cá',
 
 
 
 
-'en' => 'Couple & romantic',
+'en' => 'Hill chicken & fish stream',
         ),
-        'gia-dinh' => array(
-            'vi' => 'Tour gia đình',
-
-
-
-
-'en' => 'Family tours',
-        ),
-        'team-building' => array(
+        'team-building-mice' => array(
             'vi' => 'Team-building & MICE',
 
 
 
 
 'en' => 'Team building & MICE',
+        ),
+        'gia-dinh' => array(
+            'vi' => 'Gia đình có trẻ em',
+
+
+
+
+'en' => 'Family with kids',
         ),
     ),
 
@@ -555,7 +568,6 @@ $__hitamdaoSeed = array(
                 '2n1d',
                 'cuoi-tuan-ha-noi',
                 'suong-mu-lang-man',
-                'cap-doi',
             ),
             'quote' => array(
                 'text' => 'Sáng dậy trong sương trên đồi, chiều Cầu Mây — mini trăng mật không cần bay xa.',
@@ -819,7 +831,6 @@ $__hitamdaoSeed = array(
             'styles' => array(
                 'day-trip',
                 'trekking-vqg',
-                'trekking',
             ),
             'quote' => array(
                 'text' => 'Không khí trong lành, nghe chim — khác hẳn Hà Nội chỉ 80km.',
@@ -884,7 +895,6 @@ $__hitamdaoSeed = array(
             'styles' => array(
                 'day-trip',
                 'am-thuc-doi-ga',
-                'am-thuc',
             ),
             'quote' => array(
                 'text' => 'Gà đồi, suối cá, chay tỏi và rượu mật ong — ăn no mà vẫn nhớ.',
@@ -1022,8 +1032,6 @@ $__hitamdaoSeed = array(
                 '2n1d',
                 'team-building-mice',
                 'trekking-vqg',
-                'trekking',
-                'team-building',
             ),
             'quote' => array(
                 'text' => 'Treking nhẹ + gala tối trên đồi — team Hà Nội recharge hiệu quả.',
@@ -1169,7 +1177,6 @@ $__hitamdaoSeed = array(
             'styles' => array(
                 '4n3d',
                 'trekking-vqg',
-                'trekking',
             ),
             'quote' => array(
                 'text' => 'Bốn ngày mới đủ trek VQG, cả hai thác và tour ẩm thực đầy đủ.',
@@ -1266,7 +1273,6 @@ $__hitamdaoSeed = array(
             'styles' => array(
                 'day-trip',
                 'suong-mu-lang-man',
-                'cap-doi',
             ),
             'quote' => array(
                 'text' => 'Photographer biết góc Thác Bạc lúc 6h — ảnh không cần filter.',
@@ -1952,156 +1958,279 @@ $__hitamdaoSeed = array(
     'tour_categories' => array(
         array(
             'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 1,
-            'maxDays' => 1,
+            'slug' => 'tour-trung-tam-thi-tran',
+            'type' => 'region',
+            'sort' => 0,
             'packageSlugs' => array(
+                'tam-dao-3n2d-tong-quan',
+                'gia-dinh-tam-dao-2n1d',
                 'city-tour-tam-dao-1-ngay',
-                'thac-bac-thac-dai-1-ngay',
-                'cau-may-sky-walk-nua-ngay',
-                'trekking-vqg-tam-dao-1-ngay',
-                'ha-noi-tam-dao-tour-ngay',
-                'photo-tour-suong-mu-tam-dao',
             ),
             'name' => array(
-                'vi' => 'Tour 1 ngày',
+                'vi' => 'Tour Trung tâm thị trấn',
 
 
 
 
-'en' => '1-day tours',
+'en' => 'Town centre tours',
             ),
             'subtitle' => array(
-                'vi' => 'City, thác, Cầu Mây, VQG, photo sương.',
+                'vi' => 'Nhà thờ đá, chợ đêm, quán ven đồi & di sản Pháp.',
 
 
 
 
-'en' => 'City, falls, Cloud Bridge, NP, mist photo.',
+'en' => 'Stone church, night market, hillside cafes & French heritage.',
             ),
             'seo_body' => array(
-                'vi' => 'Tour theo thời lượng — khác trang Thác Bạc hay VQG. Phù hợp ghép chuyến cuối tuần 2 ngày 1 đêm.',
+                'vi' => 'Danh mục khu vực trung tâm Tam Đảo — nơi lưu trú và khởi hành của mọi tuyến.',
 
 
 
 
-'en' => 'Duration theme — distinct from falls or NP zone URLs. Fits a 2N1D weekend add-on.',
+'en' => 'Tam Dao town GEO category — where guests stay and every route starts.',
             ),
             'faqs' => array(),
         ),
         array(
-            'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 2,
-            'maxDays' => 3,
+            'zoneSlug' => 'thac-bac-thac-dai',
+            'slug' => 'tour-thac-bac-thac-dai',
+            'type' => 'region',
+            'sort' => 1,
             'packageSlugs' => array(
-                'tam-dao-2n1d-cuoi-tuan-ha-noi',
-                'tam-dao-2n1d-lang-man',
-                'tam-dao-3n2d-tong-quan',
-                'gia-dinh-tam-dao-2n1d',
-                'team-building-tam-dao-2n1d',
-                'combo-tam-dao-ninh-binh-3n2d',
+                'thac-bac-thac-dai-1-ngay',
+                'photo-tour-suong-mu-tam-dao',
             ),
             'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
+                'vi' => 'Tour Thác Bạc & Thác Dải',
 
 
 
 
-'en' => '2–3 day tours',
+'en' => 'Silver Falls & Dai Falls tours',
             ),
             'subtitle' => array(
-                'vi' => 'Tổng quan, lãng mạn, gia đình, MICE.',
+                'vi' => 'Thác nước giữa rừng thông — điểm chụp sương iconic.',
 
 
 
 
-'en' => 'Overview, romance, family, MICE.',
+'en' => 'Waterfalls in the pine forest — the iconic misty photo stop.',
             ),
             'seo_body' => array(
-                'vi' => 'Sweet spot thoát phố Hà Nội — resort trên đồi + thác + ẩm thực.',
+                'vi' => 'Danh mục khu vực thác — 200 bậc xuống Thác Bạc, đi được quanh năm.',
 
 
 
 
-'en' => 'Sweet spot for escaping Hanoi — hilltop resort + falls + cuisine.',
+'en' => 'Waterfall GEO category — 200 steps down to Silver Falls, walkable year-round.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'cau-may-sky-walk',
+            'slug' => 'tour-cau-may-sky-walk',
+            'type' => 'region',
+            'sort' => 2,
+            'packageSlugs' => array(
+                'cau-may-sky-walk-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Cầu Mây & Sky Walk',
+
+
+
+
+'en' => 'Cloud Bridge & Sky Walk tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cầu treo mây, Sky Walk view rừng — check-in hot.',
+
+
+
+
+'en' => 'Cloud suspension bridge and forest-view Sky Walk — the hot check-in.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực Cầu Mây — cụm check-in nửa ngày ngay cạnh thị trấn.',
+
+
+
+
+'en' => 'Cloud Bridge GEO category — the half-day check-in cluster next to town.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'vqg-rung-thong',
-            'slug' => '4-ngay-tro-len',
-            'type' => 'duration',
+            'slug' => 'tour-vqg-rung-thong',
+            'type' => 'region',
             'sort' => 3,
-            'minDays' => 4,
-            'maxDays' => 10,
             'packageSlugs' => array(
+                'trekking-vqg-tam-dao-1-ngay',
                 'tam-dao-4n3d-kham-pha-sau',
             ),
             'name' => array(
-                'vi' => 'Tour 4 ngày trở lên',
+                'vi' => 'Tour VQG Tam Đảo & rừng thông',
 
 
 
 
-'en' => '4+ day tours',
+'en' => 'Tam Dao National Park & pine forest tours',
             ),
             'subtitle' => array(
-                'vi' => 'Khám phá sâu VQG & ẩm thực.',
+                'vi' => 'Trekking, chim hoang dã & không khí trong lành.',
 
 
 
 
-'en' => 'Deep NP & cuisine exploration.',
+'en' => 'Trekking, wild birds & clean mountain air.',
             ),
             'seo_body' => array(
-                'vi' => 'Trekking nhiều ngày — bổ sung danh mục VQG theo thời lượng.',
+                'vi' => 'Danh mục khu vực vườn quốc gia — tuyến trek có hướng dẫn viên bản địa.',
 
 
 
 
-'en' => 'Multi-day trekking — duration intent complementing the NP GEO zone page.',
+'en' => 'National park GEO category — guided trekking routes with local rangers.',
             ),
             'faqs' => array(),
         ),
         array(
-            'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => 'nua-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 0,
-            'maxDays' => 1,
+            'zoneSlug' => 'khu-resort-dinh-cao',
+            'slug' => 'tour-khu-resort-dinh-cao',
+            'type' => 'region',
+            'sort' => 4,
             'packageSlugs' => array(
-                'cau-may-sky-walk-nua-ngay',
+                'tam-dao-2n1d-lang-man',
+                'team-building-tam-dao-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour Khu resort trên đỉnh',
+
+
+
+
+'en' => 'Hilltop resort tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Resort, villa view sương — nghỉ dưỡng trên đồi.',
+
+
+
+
+'en' => 'Resorts and mist-view villas — hilltop retreats.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục khu vực resort đỉnh — phòng họp, gala và villa cho đoàn.',
+
+
+
+
+'en' => 'Hilltop resort GEO category — meeting rooms, gala space and group villas.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'suoi-ca-am-thuc',
+            'slug' => 'tour-suoi-ca-am-thuc',
+            'type' => 'region',
+            'sort' => 5,
+            'packageSlugs' => array(
                 'food-tour-am-thuc-tam-dao',
             ),
             'name' => array(
-                'vi' => 'Tour nửa ngày / tối',
+                'vi' => 'Tour Suối cá & ẩm thực',
 
 
 
 
-'en' => 'Half-day / evening',
+'en' => 'Fish stream & food tours',
             ),
             'subtitle' => array(
-                'vi' => 'Cầu Mây, tour ẩm thực tối.',
+                'vi' => 'Suối cá, gà đồi, dê núi, chay tỏi & rượu mật ong.',
 
 
 
 
-'en' => 'Cloud Bridge, evening food tour.',
+'en' => 'Fish stream, hill chicken, mountain goat, garlic greens & honey wine.',
             ),
             'seo_body' => array(
-                'vi' => 'Ghép vào chuyến 2 ngày 1 đêm cuối tuần — khung chiều/tối.',
+                'vi' => 'Danh mục khu vực suối cá — cụm quán đặc sản dọc suối phía dưới thị trấn.',
 
 
 
 
-'en' => 'Add to a 2N1D weekend — afternoon/evening slots.',
+'en' => 'Fish stream GEO category — the specialty eateries along the stream below town.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-ha-noi',
+            'slug' => 'combo-ha-noi',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'tam-dao-2n1d-cuoi-tuan-ha-noi',
+                'ha-noi-tam-dao-tour-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Combo Hà Nội',
+
+
+
+
+'en' => 'Hanoi combo',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tour ngày và cuối tuần 2 ngày 1 đêm từ Hà Nội — limo ~80km.',
+
+
+
+
+'en' => 'Day trips and 2N1D weekends from Hanoi — limo ~80km.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục combo cửa ngõ — trọn gói limousine hai chiều kèm tour Tam Đảo.',
+
+
+
+
+'en' => 'Gateway combo category — return limousine bundled with Tam Dao tours.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-ninh-binh',
+            'slug' => 'combo-ninh-binh',
+            'type' => 'region',
+            'sort' => 7,
+            'packageSlugs' => array(
+                'combo-tam-dao-ninh-binh-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Combo Ninh Bình',
+
+
+
+
+'en' => 'Ninh Binh combo',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tràng An + Tam Đảo — núi mát sau di sản.',
+
+
+
+
+'en' => 'Trang An plus Tam Dao — cool hills after the heritage sites.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Danh mục combo liên vùng — ghép di sản Ninh Bình với hai đêm nghỉ đồi.',
+
+
+
+
+'en' => 'Multi-region combo category — pair Ninh Binh heritage with two nights in the hills.',
             ),
             'faqs' => array(),
         ),
@@ -2301,6 +2430,7 @@ $__hitamdaoSeed = array(
             'packageSlugs' => array(
                 'tam-dao-2n1d-cuoi-tuan-ha-noi',
                 'ha-noi-tam-dao-tour-ngay',
+                'tam-dao-2n1d-lang-man',
             ),
             'name' => array(
                 'vi' => 'Cuối tuần từ Hà Nội',
@@ -2330,19 +2460,19 @@ $__hitamdaoSeed = array(
         ),
         array(
             'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => 'am-thuc',
+            'slug' => 'am-thuc-doi-ga',
             'type' => 'theme',
             'sort' => 11,
             'packageSlugs' => array(
                 'food-tour-am-thuc-tam-dao',
             ),
             'name' => array(
-                'vi' => 'Tour ẩm thực',
+                'vi' => 'Ẩm thực gà đồi & suối cá',
 
 
 
 
-'en' => 'Food tours',
+'en' => 'Hill chicken & fish stream',
             ),
             'subtitle' => array(
                 'vi' => 'Gà đồi, suối cá, chay tỏi, rượu mật ong.',
@@ -2353,18 +2483,18 @@ $__hitamdaoSeed = array(
 'en' => 'Hill chicken, fish stream, garlic veg, honey wine.',
             ),
             'seo_body' => array(
-                'vi' => 'Trang chủ đề ẩm thực — khác danh mục suối cá.',
+                'vi' => 'Foodie intent Tam Đảo — không trùng danh mục khu vực suối cá.',
 
 
 
 
-'en' => 'Theme intent — separate from the fish-stream GEO zone URL.',
+'en' => 'Tam Dao foodie intent — not the fish-stream GEO category.',
             ),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => 'trekking',
+            'slug' => 'trekking-vqg',
             'type' => 'theme',
             'sort' => 12,
             'packageSlugs' => array(
@@ -2373,7 +2503,7 @@ $__hitamdaoSeed = array(
                 'team-building-tam-dao-2n1d',
             ),
             'name' => array(
-                'vi' => 'Tour trekking & VQG',
+                'vi' => 'Trekking & VQG',
 
 
 
@@ -2400,7 +2530,7 @@ $__hitamdaoSeed = array(
         ),
         array(
             'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => 'cap-doi',
+            'slug' => 'suong-mu-lang-man',
             'type' => 'theme',
             'sort' => 13,
             'packageSlugs' => array(
@@ -2408,12 +2538,12 @@ $__hitamdaoSeed = array(
                 'photo-tour-suong-mu-tam-dao',
             ),
             'name' => array(
-                'vi' => 'Tour cặp đôi & lãng mạn',
+                'vi' => 'Sương mù & lãng mạn',
 
 
 
 
-'en' => 'Couple & romantic',
+'en' => 'Mist & romance',
             ),
             'subtitle' => array(
                 'vi' => 'Resort sương, Cầu Mây, photo tour.',
@@ -2435,7 +2565,7 @@ $__hitamdaoSeed = array(
         ),
         array(
             'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => 'gia-dinh',
+            'slug' => 'gia-dinh-tre-em',
             'type' => 'theme',
             'sort' => 14,
             'packageSlugs' => array(
@@ -2443,12 +2573,12 @@ $__hitamdaoSeed = array(
                 'tam-dao-3n2d-tong-quan',
             ),
             'name' => array(
-                'vi' => 'Tour gia đình',
+                'vi' => 'Gia đình có trẻ em',
 
 
 
 
-'en' => 'Family tours',
+'en' => 'Family with kids',
             ),
             'subtitle' => array(
                 'vi' => 'Thác & suối cá — lịch nhẹ trẻ em.',
@@ -2470,7 +2600,7 @@ $__hitamdaoSeed = array(
         ),
         array(
             'zoneSlug' => 'trung-tam-thi-tran',
-            'slug' => 'team-building',
+            'slug' => 'team-building-mice',
             'type' => 'theme',
             'sort' => 15,
             'packageSlugs' => array(
@@ -2526,11 +2656,11 @@ $__hitamdaoSeed = array(
         '4n3d' => '4 ngày 3 đêm',
         '5-plus-days' => 'Từ 5 ngày',
         'cuoi-tuan-ha-noi' => 'Cuối tuần từ Hà Nội',
-        'am-thuc' => 'Tour ẩm thực',
-        'trekking' => 'Tour trekking & VQG',
-        'cap-doi' => 'Tour cặp đôi & lãng mạn',
-        'gia-dinh' => 'Tour gia đình',
-        'team-building' => 'Team-building & MICE',
+        'suong-mu-lang-man' => 'Sương mù & lãng mạn',
+        'trekking-vqg' => 'Trekking & VQG',
+        'am-thuc-doi-ga' => 'Ẩm thực gà đồi & suối cá',
+        'team-building-mice' => 'Team-building & MICE',
+        'gia-dinh' => 'Gia đình có trẻ em',
     ),
 );
 

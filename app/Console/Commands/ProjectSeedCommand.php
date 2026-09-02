@@ -22,8 +22,10 @@ use Database\Seeders\SeoHierarchySeeder;
 use Database\Seeders\ServiceCatalogSeeder;
 use Database\Seeders\TaxonomySeeder;
 use Database\Seeders\TourCategorySeeder;
+use Database\Seeders\TourPackageStyleSyncSeeder;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -39,7 +41,7 @@ class ProjectSeedCommand extends Command
         {profile : Mã seed / project (vd: vitravel, hicatba)}
         {--domain= : Domain map Host → project (vd: hicatba.dev)}
         {--name= : Tên hiển thị project}
-        {--only= : Chỉ chạy nhóm seeder: services (catalogue dịch vụ/lưu trú). Không đụng content/tour/SEO}
+        {--only= : Chỉ chạy nhóm seeder: services | tours (chủ đề/danh mục/travel_styles + gắn package). Không đụng cụm khác}
         {--fresh-project : Xóa toàn bộ data của project này rồi seed lại (giữ project khác)}';
 
     protected $description = 'Seed nội dung một profile (project/seed_{name}.php) vào DB hiện tại';
@@ -100,6 +102,12 @@ class ProjectSeedCommand extends Command
 
             ProjectContext::set($project);
             $this->info("ProjectContext → {$project->code} (#{$project->id})");
+
+            $only = strtolower(trim((string) $this->option('only')));
+            if (in_array($only, ['tours', 'tour', 'tour-taxonomy', 'themes'], true)) {
+                $this->warn("Đang xóa taxonomy tour cũ (categories + pivots + travel_styles) của project #{$project->id}…");
+                $this->purgeTourTaxonomy($project->id);
+            }
 
             try {
                 $this->callSilentSeeders();
@@ -173,15 +181,118 @@ class ProjectSeedCommand extends Command
             'service' => [ServiceCatalogSeeder::class],
             'stay' => [ServiceCatalogSeeder::class],
             'catalog' => [ServiceCatalogSeeder::class],
+            // Chủ đề + danh mục tour + travel_styles + gắn package (không đụng bài viết/home/services catalogue)
+            'tours' => [
+                TaxonomySeeder::class,
+                TourPackageStyleSyncSeeder::class,
+                TourCategorySeeder::class,
+            ],
+            'tour' => [
+                TaxonomySeeder::class,
+                TourPackageStyleSyncSeeder::class,
+                TourCategorySeeder::class,
+            ],
+            'tour-taxonomy' => [
+                TaxonomySeeder::class,
+                TourPackageStyleSyncSeeder::class,
+                TourCategorySeeder::class,
+            ],
+            'themes' => [
+                TaxonomySeeder::class,
+                TourPackageStyleSyncSeeder::class,
+                TourCategorySeeder::class,
+            ],
         ];
 
         if (! isset($aliases[$only])) {
             throw new \InvalidArgumentException(
-                'Giá trị --only không hợp lệ. Dùng: services (catalogue dịch vụ/lưu trú).'
+                'Giá trị --only không hợp lệ. Dùng: services | tours (chủ đề/danh mục/travel_styles).'
             );
         }
 
         return $aliases[$only];
+    }
+
+    /**
+     * Xóa danh mục/chủ đề tour + pivot + travel_styles của 1 project trước khi seed lại cụm taxonomy.
+     * Giữ nguyên packages, articles, services, home…
+     */
+    private function purgeTourTaxonomy(int $projectId): void
+    {
+        if (Schema::hasTable('package_tour_category') && Schema::hasTable('tour_categories')) {
+            $categoryIds = DB::table('tour_categories')->where('project_id', $projectId)->pluck('id');
+            if ($categoryIds->isNotEmpty()) {
+                DB::table('package_tour_category')->whereIn('tour_category_id', $categoryIds)->delete();
+            }
+        }
+
+        foreach ([
+            'tour_category_translations',
+            'tour_categories',
+            'travel_style_translations',
+            'travel_styles',
+            'package_travel_style',
+        ] as $table) {
+            if (! Schema::hasTable($table)) {
+                continue;
+            }
+            try {
+                if ($table === 'package_travel_style') {
+                    // Pivot không có project_id — xóa theo package thuộc project
+                    if (Schema::hasTable('packages') && Schema::hasColumn('packages', 'project_id')) {
+                        $packageIds = DB::table('packages')->where('project_id', $projectId)->pluck('id');
+                        if ($packageIds->isNotEmpty()) {
+                            DB::table('package_travel_style')->whereIn('package_id', $packageIds)->delete();
+                        }
+                    }
+
+                    continue;
+                }
+                if ($table === 'tour_category_translations') {
+                    if (Schema::hasTable('tour_categories') && Schema::hasColumn('tour_categories', 'project_id')) {
+                        $ids = DB::table('tour_categories')->where('project_id', $projectId)->pluck('id');
+                        if ($ids->isNotEmpty()) {
+                            DB::table('tour_category_translations')->whereIn('tour_category_id', $ids)->delete();
+                        }
+                    }
+
+                    continue;
+                }
+                if ($table === 'travel_style_translations') {
+                    if (Schema::hasTable('travel_styles') && Schema::hasColumn('travel_styles', 'project_id')) {
+                        $ids = DB::table('travel_styles')->where('project_id', $projectId)->pluck('id');
+                        if ($ids->isNotEmpty()) {
+                            DB::table('travel_style_translations')->whereIn('travel_style_id', $ids)->delete();
+                        }
+                    }
+
+                    continue;
+                }
+                if (Schema::hasColumn($table, 'project_id')) {
+                    DB::table($table)->where('project_id', $projectId)->delete();
+                }
+            } catch (\Throwable $e) {
+                $this->warn("Skip purge tour taxonomy {$table}: ".$e->getMessage());
+            }
+        }
+
+        // FAQ gắn tour category
+        if (Schema::hasTable('faqs') && Schema::hasColumn('faqs', 'project_id')) {
+            try {
+                $faqIds = DB::table('faqs')
+                    ->where('project_id', $projectId)
+                    ->where('faqable_type', 'like', '%TourCategory%')
+                    ->pluck('id');
+                if ($faqIds->isNotEmpty()) {
+                    if (Schema::hasTable('faq_translations')) {
+                        DB::table('faq_translations')->whereIn('faq_id', $faqIds)->delete();
+                    }
+                    DB::table('faqs')->whereIn('id', $faqIds)->delete();
+                }
+            } catch (\Throwable $e) {
+                $this->warn('Skip purge tour category faqs: '.$e->getMessage());
+            }
+        }
     }
 
     private function callSilentSeeders(): void

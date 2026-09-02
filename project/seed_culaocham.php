@@ -19,6 +19,18 @@
  * Lưu ý nội dung: đảo áp dụng quy định "Nói không với túi ni lông" và hạn chế
  * nhựa dùng một lần từ 2009 — mọi copy nên nhắc quy tắc sinh thái này.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('culaocham')
  *
  * @return array<string, mixed>
@@ -160,78 +172,18 @@ $__culaochamSeed = array(
     ),
 
     'travel_styles' => array(
-        'day-trip' => array(
-            'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day trip',
-        ),
-        '2n1d' => array(
-            'vi' => '2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-        ),
-        '3n2d' => array(
-            'vi' => '3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-        ),
-        '4n3d' => array(
-            'vi' => '4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-        ),
-        '5-plus-days' => array(
-            'vi' => 'Từ 5 ngày',
-
-
-
-
-'en' => '5+ days',
-        ),
-        'lan-bien' => array(
-            'vi' => 'Tour lặn & snorkel',
-
-
-
-
-'en' => 'Dive & snorkel tours',
-        ),
-        'bien-bai-chong' => array(
-            'vi' => 'Tour biển Bãi Chồng',
-
-
-
-
-'en' => 'Bai Chong beach tours',
-        ),
-        'van-hoa-lang-chai' => array(
-            'vi' => 'Tour văn hoá & làng chài',
-
-
-
-
-'en' => 'Culture & fishing village tours',
-        ),
-        'trekking-ngam-canh' => array(
-            'vi' => 'Tour trekking & ngắm cảnh',
-
-
-
-
-'en' => 'Trekking & viewpoint tours',
-        ),
+        // (A) thời lượng chương trình — khớp chủ đề type=theme sort 0–4
+        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
+        '2n1d' => array('vi' => '2 ngày 1 đêm', 'en' => '2 days 1 night'),
+        '3n2d' => array('vi' => '3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+        '4n3d' => array('vi' => '4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+        '5-plus-days' => array('vi' => 'Từ 5 ngày', 'en' => '5+ days'),
+        // (B) tính chất / insight địa phương — khớp chủ đề type=theme sort 10+
+        'lan-bien-san-ho' => array('vi' => 'Lặn biển & ngắm san hô', 'en' => 'Diving & snorkelling'),
+        'van-hoa-lang-chai' => array('vi' => 'Văn hoá & làng chài', 'en' => 'Culture & fishing villages'),
+        'trekking-ngam-canh' => array('vi' => 'Trekking & ngắm cảnh', 'en' => 'Trekking & viewpoints'),
+        'gia-dinh-bien-dao' => array('vi' => 'Gia đình & biển đảo', 'en' => 'Family beach & island'),
+        'cuoi-tuan-da-nang-hoi-an' => array('vi' => 'Cuối tuần từ Đà Nẵng & Hội An', 'en' => 'Weekend from Da Nang & Hoi An'),
     ),
 
     'review_platforms' => array(
@@ -392,6 +344,9 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'lan-bien-san-ho',
+                'gia-dinh-bien-dao',
+                'cuoi-tuan-da-nang-hoi-an',
             ),
             'quote' => array(
                 'text' => 'Rời phố cổ lúc 7 giờ sáng, 30 phút sau đã đứng trước chùa Hải Tạng — chuyến đi trong ngày đáng giá nhất ở Hội An.',
@@ -541,6 +496,8 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'van-hoa-lang-chai',
+                'cuoi-tuan-da-nang-hoi-an',
             ),
             'quote' => array(
                 'text' => 'Buổi chiều khi cano cuối rời đảo, Bãi Làng trở nên yên đến khó tin — đó mới là Cù Lao Chàm thật.',
@@ -633,7 +590,7 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'bien-bai-chong',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Không chạy điểm, không vội — cả ngày chỉ tắm biển và ăn hải sản nướng dưới hàng dừa.',
@@ -706,7 +663,7 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
-                'bien-bai-chong',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Hai con 6 và 9 tuổi snorkel được ngay bờ, buổi tối cả nhà đi bộ ra bãi ngắm sao.',
@@ -785,6 +742,7 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'lan-bien-san-ho',
             ),
             'quote' => array(
                 'text' => 'Vịnh kín gió nên mặt nước phẳng như gương — chèo kayak lần đầu vẫn thoải mái.',
@@ -857,6 +815,7 @@ $__culaochamSeed = array(
             'featured' => false,
             'styles' => array(
                 '2n1d',
+                'trekking-ngam-canh',
             ),
             'quote' => array(
                 'text' => 'Đêm không đèn đường, chỉ có tiếng sóng và trời đầy sao — đúng thứ tôi tìm khi rời Hội An.',
@@ -1092,7 +1051,7 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'lan-bien',
+                'lan-bien-san-ho',
             ),
             'quote' => array(
                 'text' => 'Ba điểm snorkel khác nhau trong một ngày, mỗi điểm một kiểu san hô — hơn hẳn tour ghép chỉ dừng một chỗ.',
@@ -1170,7 +1129,7 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'lan-bien',
+                'lan-bien-san-ho',
             ),
             'quote' => array(
                 'text' => 'Điểm lặn gần bờ nhưng đáy còn nhiều san hô mềm và cá rạn — briefing an toàn rất chuyên nghiệp.',
@@ -1243,7 +1202,8 @@ $__culaochamSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'lan-bien',
+                'lan-bien-san-ho',
+                'gia-dinh-bien-dao',
             ),
             'quote' => array(
                 'text' => 'Chỉ nửa buổi nhưng đủ thấy san hô và đàn cá — hợp với lịch ở đảo một đêm.',
@@ -1378,6 +1338,8 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
+                'lan-bien-san-ho',
+                'cuoi-tuan-da-nang-hoi-an',
             ),
             'quote' => array(
                 'text' => 'Một đêm phố cổ, một đêm trên đảo — cảm nhận rõ hai nhịp sống chỉ cách nhau 30 phút cano.',
@@ -1476,6 +1438,7 @@ $__culaochamSeed = array(
             'featured' => true,
             'styles' => array(
                 '4n3d',
+                'cuoi-tuan-da-nang-hoi-an',
             ),
             'quote' => array(
                 'text' => 'Bay tới Đà Nẵng buổi trưa, bốn ngày sau về mà cảm giác đã đi ba chuyến khác nhau.',
@@ -2372,161 +2335,111 @@ $__culaochamSeed = array(
     ),
 
     'tour_categories' => array(
+        /* ── DANH MỤC (type=region) — khu vực GEO & combo, không chia theo số ngày ── */
         array(
             'zoneSlug' => 'bai-lang',
-            'slug' => 'nua-ngay',
-            'type' => 'duration',
+            'slug' => 'tour-bai-lang-trung-tam-dao',
+            'type' => 'region',
             'sort' => 0,
-            'minDays' => 0,
-            'maxDays' => 1,
-            'packageSlugs' => array(
-                'lang-bai-lang-chua-hai-tang-nua-ngay',
-                'bai-xep-kayak-snorkel-nua-ngay',
-                'bai-huong-cau-ca-cung-ngu-dan-nua-ngay',
-                'snorkel-nua-ngay-ran-san-ho',
-                'trekking-hai-dang-hon-lao-nua-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour nửa ngày',
-
-
-
-
-'en' => 'Half-day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống trên đảo.',
-
-
-
-
-'en' => 'A compact option for a free morning or afternoon on the island.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Các tour nửa ngày ở Cù Lao Chàm phù hợp ghép thêm cho khách ngủ lại đảo một đêm.',
-
-
-
-
-'en' => 'Half-day Cu Lao Cham tours are easy to add if you stay overnight on the island.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'bai-lang',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 1,
-            'maxDays' => 1,
             'packageSlugs' => array(
                 'cu-lao-cham-1-ngay-tu-hoi-an',
+                'lang-bai-lang-chua-hai-tang-nua-ngay',
+                'cu-lao-cham-2-ngay-1-dem-bai-lang',
+            ),
+            'name' => array('vi' => 'Tour Bãi Làng & trung tâm đảo', 'en' => 'Bai Lang & island centre tours'),
+            'subtitle' => array('vi' => 'Bến cano, chợ Tân Hiệp, chùa Hải Tạng 300 năm và giếng cổ Chăm — trung tâm hành chính của xã đảo.', 'en' => 'The speedboat pier, Tan Hiep market, the 300-year-old Hai Tang pagoda and the ancient Cham well.'),
+            'seo_body' => array('vi' => 'Danh mục theo khu vực: mọi chương trình cập bến và lưu trú tại Bãi Làng, gồm cả tour trong ngày.', 'en' => 'GEO category: every programme landing and staying at Bai Lang, day trips included.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'bai-chong',
+            'slug' => 'tour-bai-chong',
+            'type' => 'region',
+            'sort' => 1,
+            'packageSlugs' => array(
                 'bai-chong-nghi-bien-1-ngay',
+                'bai-chong-gia-dinh-2-ngay',
+                'cu-lao-cham-1-ngay-tu-hoi-an',
+            ),
+            'name' => array('vi' => 'Tour Bãi Chồng', 'en' => 'Bai Chong beach tours'),
+            'subtitle' => array('vi' => 'Bãi tắm biểu tượng của đảo — nước trong, cát mịn, ghế nằm dưới hàng dừa và hải sản nướng.', 'en' => 'The island’s signature beach — clear water, fine sand, loungers under the palms and grilled seafood.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Bãi Chồng — điểm dừng nghỉ biển của gần như mọi tour ra Cù Lao Chàm.', 'en' => 'The Bai Chong GEO category — the beach stop on almost every Cu Lao Cham tour.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'bai-xep',
+            'slug' => 'tour-bai-xep',
+            'type' => 'region',
+            'sort' => 2,
+            'packageSlugs' => array(
+                'bai-xep-kayak-snorkel-nua-ngay',
+                'cam-trai-bai-xep-2n1d',
+            ),
+            'name' => array('vi' => 'Tour Bãi Xếp', 'en' => 'Bai Xep cove tours'),
+            'subtitle' => array('vi' => 'Vịnh nhỏ kín gió, mặt nước phẳng gần như cả ngày — kayak, SUP và bãi dựng lều.', 'en' => 'A sheltered little cove with near-flat water all day — kayaking, SUP and a campsite.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Bãi Xếp — nơi duy nhất trên đảo được phép cắm trại qua đêm.', 'en' => 'The Bai Xep GEO category — the only place on the island where overnight camping is allowed.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'bai-huong',
+            'slug' => 'tour-bai-huong',
+            'type' => 'region',
+            'sort' => 3,
+            'packageSlugs' => array(
+                'bai-huong-lang-chai-homestay-2n1d',
+                'bai-huong-cau-ca-cung-ngu-dan-nua-ngay',
+            ),
+            'name' => array('vi' => 'Tour Bãi Hương', 'en' => 'Bai Huong tours'),
+            'subtitle' => array('vi' => 'Làng chài phía nam đảo, gần như không có khách trong ngày — homestay và nhịp sống thật.', 'en' => 'The southern fishing hamlet with almost no day visitors — homestays and everyday island life.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Bãi Hương — điểm ngủ lại yên tĩnh nhất Cù Lao Chàm.', 'en' => 'The Bai Huong GEO category — the quietest overnight base on Cu Lao Cham.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ran-san-ho',
+            'slug' => 'tour-ran-san-ho-diem-lan',
+            'type' => 'region',
+            'sort' => 4,
+            'packageSlugs' => array(
                 'lan-ngam-san-ho-cu-lao-cham-1-ngay',
                 'fun-dive-cu-lao-cham-1-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour 1 ngày',
-
-
-
-
-'en' => '1-day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Cano sáng từ Cửa Đại, chiều về Hội An — không cần đổi khách sạn.',
-
-
-
-
-'en' => 'Morning speedboat from Cua Dai and back to Hoi An by afternoon — no hotel change needed.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour 1 ngày là cách phổ biến nhất để đến Cù Lao Chàm khi bạn đang nghỉ tại Hội An.',
-
-
-
-
-'en' => 'A day trip is the most popular way to visit Cu Lao Cham while staying in Hoi An.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'bai-lang',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 2,
-            'minDays' => 2,
-            'maxDays' => 3,
-            'packageSlugs' => array(
-                'cu-lao-cham-2-ngay-1-dem-bai-lang',
-                'bai-chong-gia-dinh-2-ngay',
-                'cam-trai-bai-xep-2n1d',
-                'bai-huong-lang-chai-homestay-2n1d',
+                'snorkel-nua-ngay-ran-san-ho',
+                'cu-lao-cham-1-ngay-tu-hoi-an',
                 'hoi-an-cu-lao-cham-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
-
-
-
-
-'en' => '2–3 day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Ngủ lại đảo để thấy Cù Lao Chàm sau khi cano khách trong ngày rời bến.',
-
-
-
-
-'en' => 'Stay overnight to see Cu Lao Cham after the day-trip boats leave.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour 2–3 ngày cho phép cảm nhận nhịp chậm thật sự của xã đảo Tân Hiệp.',
-
-
-
-
-'en' => 'A 2–3 day tour lets you feel the real, slower rhythm of the Tan Hiep island commune.',
-            ),
+            'name' => array('vi' => 'Tour rạn san hô & điểm lặn', 'en' => 'Coral reef & dive site tours'),
+            'subtitle' => array('vi' => 'Hơn 165 ha rạn được bảo vệ quanh Hòn Lao — snorkel nước nông và điểm scuba cho thợ có chứng chỉ.', 'en' => 'Over 165 hectares of protected reef around Hon Lao — shallow snorkelling and certified scuba sites.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực khu bảo tồn biển — lý do chính khiến khách vượt biển ra đảo.', 'en' => 'The marine protected area GEO category — the main reason travellers cross to the island.'),
             'faqs' => array(),
         ),
         array(
-            'zoneSlug' => 'bai-lang',
-            'slug' => '4-ngay-tro-len',
-            'type' => 'duration',
-            'sort' => 3,
-            'minDays' => 4,
-            'maxDays' => 10,
+            'zoneSlug' => 'hai-dang',
+            'slug' => 'tour-hai-dang-hon-lao',
+            'type' => 'region',
+            'sort' => 5,
             'packageSlugs' => array(
-                'da-nang-hoi-an-cu-lao-cham-4n3d',
+                'trekking-hai-dang-hon-lao-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour 4 ngày trở lên',
-
-
-
-
-'en' => '4+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Combo Đà Nẵng — Hội An — Cù Lao Chàm trong một hành trình liền mạch.',
-
-
-
-
-'en' => 'Da Nang — Hoi An — Cu Lao Cham combos in one seamless trip.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour dài ngày dành cho khách bay tới Đà Nẵng và muốn cả phố cổ lẫn đảo.',
-
-
-
-
-'en' => 'Longer tours for travellers flying into Da Nang who want both the old town and the island.',
-            ),
+            'name' => array('vi' => 'Tour hải đăng Hòn Lao', 'en' => 'Hon Lao lighthouse tours'),
+            'subtitle' => array('vi' => 'Đường rừng lên đỉnh và toàn cảnh tám hòn đảo — hoạt động trên cạn đáng giá nhất của đảo.', 'en' => 'A forest trail to the summit and the panorama over all eight islands — the island’s best land activity.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực hải đăng — nên đi buổi sáng sớm để tránh nắng và có tầm nhìn xa.', 'en' => 'The lighthouse GEO category — go early for cooler air and long views.'),
             'faqs' => array(),
         ),
+        array(
+            'zoneSlug' => 'ket-hop-hoi-an',
+            'slug' => 'combo-hoi-an-cua-dai',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'hoi-an-cu-lao-cham-3n2d',
+                'da-nang-hoi-an-cu-lao-cham-4n3d',
+            ),
+            'name' => array('vi' => 'Combo Hội An / Cửa Đại', 'en' => 'Hoi An / Cua Dai combos'),
+            'subtitle' => array('vi' => 'Cửa ngõ đất liền — phố cổ Hội An, bến cano Cửa Đại và sân bay Đà Nẵng trong cùng hành trình.', 'en' => 'The mainland gateway — Hoi An old town, Cua Dai pier and Da Nang airport in one itinerary.'),
+            'seo_body' => array('vi' => 'Danh mục combo đất liền — đảo: gom các chương trình có cả phố cổ và Cù Lao Chàm.', 'en' => 'The mainland-and-island combo category, grouping itineraries with both the old town and Cu Lao Cham.'),
+            'faqs' => array(),
+        ),
+
+        /* ── CHỦ ĐỀ (A) type=theme — thời lượng chương trình, gắn hub zone ── */
         array(
             'zoneSlug' => 'bai-lang',
             'slug' => 'tour-trong-ngay',
@@ -2545,30 +2458,9 @@ $__culaochamSeed = array(
                 'snorkel-nua-ngay-ran-san-ho',
                 'trekking-hai-dang-hon-lao-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
-
-
-
-
-'en' => 'Full day — no overnight.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
-
-
-
-
-'en' => 'Duration filter — distinct from per-zone GEO category pages.',
-            ),
+            'name' => array('vi' => 'Tour trong ngày', 'en' => 'Day tours'),
+            'subtitle' => array('vi' => 'Trọn vẹn trong ngày — không qua đêm tại Cù Lao Chàm.', 'en' => 'A full day — no overnight in Cu Lao Cham.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2584,30 +2476,9 @@ $__culaochamSeed = array(
                 'cam-trai-bai-xep-2n1d',
                 'bai-huong-lang-chai-homestay-2n1d',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-            ),
-            'subtitle' => array(
-                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
-
-
-
-
-'en' => 'Short weekend, one-night homestay or resort.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
-
-
-
-
-'en' => '2N1D sweet spot — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 2 ngày 1 đêm', 'en' => '2 days 1 night'),
+            'subtitle' => array('vi' => 'Cuối tuần ngắn — một đêm nghỉ tại Cù Lao Chàm.', 'en' => 'Short weekend — one overnight in Cu Lao Cham.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2620,30 +2491,9 @@ $__culaochamSeed = array(
             'packageSlugs' => array(
                 'hoi-an-cu-lao-cham-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
-
-
-
-
-'en' => 'Enough depth — two overnights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
-
-
-
-
-'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
-            ),
+            'name' => array('vi' => 'Tour 3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+            'subtitle' => array('vi' => 'Khám phá vừa đủ — hai đêm tại Cù Lao Chàm.', 'en' => 'Enough depth — two nights in Cu Lao Cham.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2656,30 +2506,9 @@ $__culaochamSeed = array(
             'packageSlugs' => array(
                 'da-nang-hoi-an-cu-lao-cham-4n3d',
             ),
-            'name' => array(
-                'vi' => 'Tour 4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
-
-
-
-
-'en' => 'Deeper exploration, three nights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
-
-
-
-
-'en' => '4N3D itineraries — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+            'subtitle' => array('vi' => 'Khám phá sâu hơn — ba đêm trải nghiệm Cù Lao Chàm.', 'en' => 'Deeper exploration — three nights in Cu Lao Cham.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2690,172 +2519,93 @@ $__culaochamSeed = array(
             'minDays' => 5,
             'maxDays' => null,
             'packageSlugs' => array(),
-            'name' => array(
-                'vi' => 'Tour từ 5 ngày',
-
-
-
-
-'en' => '5+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Combo dài ngày, nhiều điểm đến.',
-
-
-
-
-'en' => 'Extended combos and multi-destination trips.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
-
-
-
-
-'en' => 'Long tours & combos — duration insight, not a GEO page.',
-            ),
+            'name' => array('vi' => 'Tour từ 5 ngày', 'en' => '5+ day tours'),
+            'subtitle' => array('vi' => 'Tour dài ngày và combo nhiều điểm đến từ Cù Lao Chàm.', 'en' => 'Extended tours and multi-stop combos from Cu Lao Cham.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
+
+        /* ── CHỦ ĐỀ (B) type=theme — tính chất / insight, KHÔNG clone tên zone GEO ── */
         array(
             'zoneSlug' => 'bai-lang',
-            'slug' => 'lan-bien',
+            'slug' => 'lan-bien-san-ho',
             'type' => 'theme',
             'sort' => 10,
             'packageSlugs' => array(
+                'cu-lao-cham-1-ngay-tu-hoi-an',
+                'bai-xep-kayak-snorkel-nua-ngay',
                 'lan-ngam-san-ho-cu-lao-cham-1-ngay',
                 'fun-dive-cu-lao-cham-1-ngay',
                 'snorkel-nua-ngay-ran-san-ho',
+                'hoi-an-cu-lao-cham-3n2d',
                 'cano-lan-ran-san-ho-cu-lao-cham',
             ),
-            'name' => array(
-                'vi' => 'Tour lặn & snorkel',
-
-
-
-
-'en' => 'Dive & snorkel tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Từ snorkel nửa ngày tới fun dive trong khu bảo tồn biển.',
-
-
-
-
-'en' => 'From half-day snorkelling to fun dives inside the marine protected area.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Rạn san hô là lý do chính khiến khách vượt biển ra Cù Lao Chàm.',
-
-
-
-
-'en' => 'The coral reefs are the main reason travellers cross to Cu Lao Cham.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'bai-lang',
-            'slug' => 'bien-bai-chong',
-            'type' => 'theme',
-            'sort' => 11,
-            'packageSlugs' => array(
-                'bai-chong-nghi-bien-1-ngay',
-                'bai-chong-gia-dinh-2-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour biển Bãi Chồng',
-
-
-
-
-'en' => 'Bai Chong beach tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Bãi tắm đẹp nhất đảo — gia đình, ghế nằm và hải sản nướng.',
-
-
-
-
-'en' => 'The island’s best beach — families, loungers and grilled seafood.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Bãi Chồng là nơi dễ chịu nhất để nghỉ cả ngày trong lần đầu ra đảo.',
-
-
-
-
-'en' => 'Bai Chong is the easiest place to spend a whole day on your first island visit.',
-            ),
+            'name' => array('vi' => 'Lặn biển & ngắm san hô', 'en' => 'Diving & snorkelling'),
+            'subtitle' => array('vi' => 'Từ snorkel nửa ngày cho người mới tới fun dive hai bình trong khu bảo tồn biển.', 'en' => 'From a beginner half-day snorkel to two-tank fun dives inside the marine protected area.'),
+            'seo_body' => array('vi' => 'Chủ đề theo hoạt động dưới nước — dùng chung tour với danh mục khu vực rạn san hô.', 'en' => 'A water-activity theme sharing tours with the coral reef GEO category.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'bai-lang',
             'slug' => 'van-hoa-lang-chai',
             'type' => 'theme',
-            'sort' => 12,
+            'sort' => 11,
             'packageSlugs' => array(
+                'lang-bai-lang-chua-hai-tang-nua-ngay',
+                'cu-lao-cham-2-ngay-1-dem-bai-lang',
                 'bai-huong-lang-chai-homestay-2n1d',
                 'bai-huong-cau-ca-cung-ngu-dan-nua-ngay',
-                'lang-bai-lang-chua-hai-tang-nua-ngay',
+                'thuyen-cau-muc-dem-bai-lang',
             ),
-            'name' => array(
-                'vi' => 'Tour văn hoá & làng chài',
-
-
-
-
-'en' => 'Culture & fishing village tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Chùa Hải Tạng, giếng cổ Chăm và đời sống ngư dân Bãi Hương.',
-
-
-
-
-'en' => 'Hai Tang pagoda, the ancient Cham well and fishing life at Bai Huong.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Phần văn hoá là điều khiến Cù Lao Chàm khác với một hòn đảo nghỉ dưỡng thuần tuý.',
-
-
-
-
-'en' => 'The cultural layer is what sets Cu Lao Cham apart from a purely resort island.',
-            ),
+            'name' => array('vi' => 'Văn hoá & làng chài', 'en' => 'Culture & fishing villages'),
+            'subtitle' => array('vi' => 'Chùa Hải Tạng, giếng cổ Chăm, nghề yến sào và bữa cơm cùng gia đình ngư dân.', 'en' => 'Hai Tang pagoda, the ancient Cham well, the swiftlet-nest trade and meals with fishing families.'),
+            'seo_body' => array('vi' => 'Chủ đề văn hoá — phần khiến Cù Lao Chàm khác một hòn đảo nghỉ dưỡng thuần tuý.', 'en' => 'A cultural theme — what sets Cu Lao Cham apart from a purely resort island.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'bai-lang',
             'slug' => 'trekking-ngam-canh',
             'type' => 'theme',
-            'sort' => 13,
+            'sort' => 12,
             'packageSlugs' => array(
+                'cam-trai-bai-xep-2n1d',
                 'trekking-hai-dang-hon-lao-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour trekking & ngắm cảnh',
-
-
-
-
-'en' => 'Trekking & viewpoint tours',
+            'name' => array('vi' => 'Trekking & ngắm cảnh', 'en' => 'Trekking & viewpoints'),
+            'subtitle' => array('vi' => 'Đường rừng lên hải đăng, mỏm đá ngắm vịnh và đêm ngủ lều nghe sóng.', 'en' => 'The forest trail to the lighthouse, clifftop viewpoints and a night in a tent by the surf.'),
+            'seo_body' => array('vi' => 'Chủ đề hoạt động trên cạn — lọc theo tính chất chương trình, không theo khu vực.', 'en' => 'A land-activity theme, filtered by programme character rather than by area.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'bai-lang',
+            'slug' => 'gia-dinh-bien-dao',
+            'type' => 'theme',
+            'sort' => 13,
+            'packageSlugs' => array(
+                'cu-lao-cham-1-ngay-tu-hoi-an',
+                'bai-chong-nghi-bien-1-ngay',
+                'bai-chong-gia-dinh-2-ngay',
+                'snorkel-nua-ngay-ran-san-ho',
             ),
-            'subtitle' => array(
-                'vi' => 'Đường rừng lên hải đăng Hòn Lao và toàn cảnh tám hòn đảo.',
-
-
-
-
-'en' => 'The forest trail to Hon Lao lighthouse and the panorama over all eight islands.',
+            'name' => array('vi' => 'Gia đình & biển đảo', 'en' => 'Family beach & island'),
+            'subtitle' => array('vi' => 'Cano lớn có mái che, bãi tắm nông và snorkel ngay bờ — trẻ từ 6 tuổi tham gia được.', 'en' => 'Larger covered speedboats, shallow beaches and snorkelling right off the sand — fine from age six.'),
+            'seo_body' => array('vi' => 'Phân khúc gia đình — lọc theo nhu cầu khách, dùng chung tour với các danh mục khu vực.', 'en' => 'The family segment — a needs-based filter sharing tours with the GEO categories.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'bai-lang',
+            'slug' => 'cuoi-tuan-da-nang-hoi-an',
+            'type' => 'theme',
+            'sort' => 14,
+            'packageSlugs' => array(
+                'cu-lao-cham-1-ngay-tu-hoi-an',
+                'cu-lao-cham-2-ngay-1-dem-bai-lang',
+                'hoi-an-cu-lao-cham-3n2d',
+                'da-nang-hoi-an-cu-lao-cham-4n3d',
             ),
-            'seo_body' => array(
-                'vi' => 'Trekking hải đăng là hoạt động trên cạn đáng giá nhất tại Cù Lao Chàm.',
-
-
-
-
-'en' => 'The lighthouse hike is the most rewarding land activity on Cu Lao Cham.',
-            ),
+            'name' => array('vi' => 'Cuối tuần từ Đà Nẵng & Hội An', 'en' => 'Weekend from Da Nang & Hoi An'),
+            'subtitle' => array('vi' => 'Cano 30 phút từ Cửa Đại — đi về trong ngày hoặc thêm một đêm trên đảo sau khi đoàn khách ngày rời bến.', 'en' => 'A 30-minute speedboat from Cua Dai — same-day return or one extra night once the day boats leave.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thị trường nguồn đất liền, không phải trang danh mục combo Hội An.', 'en' => 'A mainland source-market theme, not the Hoi An combo category page.'),
             'faqs' => array(),
         ),
     ),
@@ -2883,10 +2633,11 @@ $__culaochamSeed = array(
         '3n2d' => '3 ngày 2 đêm',
         '4n3d' => '4 ngày 3 đêm',
         '5-plus-days' => 'Từ 5 ngày',
-        'lan-bien' => 'Tour lặn & snorkel',
-        'bien-bai-chong' => 'Tour biển Bãi Chồng',
-        'van-hoa-lang-chai' => 'Tour văn hoá & làng chài',
-        'trekking-ngam-canh' => 'Tour trekking & ngắm cảnh',
+        'lan-bien-san-ho' => 'Lặn biển & ngắm san hô',
+        'van-hoa-lang-chai' => 'Văn hoá & làng chài',
+        'trekking-ngam-canh' => 'Trekking & ngắm cảnh',
+        'gia-dinh-bien-dao' => 'Gia đình & biển đảo',
+        'cuoi-tuan-da-nang-hoi-an' => 'Cuối tuần từ Đà Nẵng & Hội An',
     ),
 );
 

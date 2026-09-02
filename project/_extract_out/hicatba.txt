@@ -1,0 +1,58 @@
+===== PROFILE: hicatba =====
+PLACES (zones): 7
+  - trung-tam-cat-ba | Trung tâm đảo Cát Bà
+  - vinh-lan-ha | Vịnh Lan Hạ
+  - vuon-quoc-gia | Vườn quốc gia Cát Bà
+  - dao-khi | Đảo Khỉ (Cát Dứa)
+  - lang-viet-hai | Làng Việt Hải
+  - cai-beo | Làng chài Cái Bèo
+  - ket-hop-ha-long | Kết hợp Hạ Long
+TRAVEL_STYLES:
+  - day-trip | Tour trong ngày
+  - 2n1d | 2 ngày 1 đêm
+  - 3n2d | 3 ngày 2 đêm
+  - 4n3d | 4 ngày 3 đêm
+  - 5-plus-days | Từ 5 ngày
+  - vinh-lan-ha | Tour vịnh Lan Hạ
+  - trekking-vqg | Tour trekking vườn quốc gia
+  - dao-khi-tam-bien | Tour Đảo Khỉ & tắm biển
+  - lang-viet-hai | Tour làng Việt Hải
+  - lang-chai-cai-beo | Tour làng chài Cái Bèo
+TOUR_CATEGORIES:
+  [duration] zone=trung-tam-cat-ba slug=nua-ngay name=Tour nửa ngày min=0 max=1 pkgs=[dap-xe-xuyen-dao-cat-ba-nua-ngay,bai-cat-co-tam-bien-spa-nua-ngay,lang-chai-cai-beo-hang-trung-trang-nua-ngay,vinh-lan-ha-hoang-hon-nua-ngay,trekking-vqg-nua-ngay-de,lang-viet-hai-thuyen-nua-ngay,dao-khi-nua-ngay,cau-muc-dem-lang-chai-cai-beo]
+  [duration] zone=trung-tam-cat-ba slug=1-ngay name=Tour 1 ngày min=1 max=1 pkgs=[trekking-viet-hai-vqg-1-ngay,vinh-lan-ha-kayak-dao-khi-1-ngay,vinh-lan-ha-lan-ngam-san-ho-1-ngay,vinh-lan-ha-private-kayak-1-ngay,dao-khi-1-ngay-tam-bien-lan,leo-nui-da-voi-lan-ha-1-ngay]
+  [duration] zone=trung-tam-cat-ba slug=2-3-ngay name=Tour 2 – 3 ngày min=2 max=3 pkgs=[cat-ba-3-ngay-tong-quan-dao,cat-ba-2-ngay-gia-dinh-bien-dao,camping-viet-hai-2n1d,cat-ba-ha-long-ket-hop-2n1d,cat-ba-ha-long-ket-hop-3n2d]
+  [duration] zone=trung-tam-cat-ba slug=4-ngay-tro-len name=Tour 4 ngày trở lên min=4 max=10 pkgs=[cat-ba-5-ngay-nghi-duong-kham-pha]
+  [theme] zone=trung-tam-cat-ba slug=tour-trong-ngay name=Tour trong ngày min=1 max=1 pkgs=[trekking-viet-hai-vqg-1-ngay,vinh-lan-ha-kayak-dao-khi-1-ngay,lang-chai-cai-beo-hang-trung-trang-nua-ngay,dap-xe-xuyen-dao-cat-ba-nua-ngay,bai-cat-co-tam-bien-spa-nua-ngay,vinh-lan-ha-hoang-hon-nua-ngay,vinh-lan-ha-lan-ngam-san-ho-1-ngay,vinh-lan-ha-private-kayak-1-ngay,trekking-vqg-nua-ngay-de,lang-viet-hai-thuyen-nua-ngay,dao-khi-1-ngay-tam-bien-lan,dao-khi-nua-ngay,cau-muc-dem-lang-chai-cai-beo,leo-nui-da-voi-lan-ha-1-ngay]
+  [theme] zone=trung-tam-cat-ba slug=tour-2-ngay-1-dem name=Tour 2 ngày 1 đêm min=2 max=2 pkgs=[cat-ba-ha-long-ket-hop-2n1d,cat-ba-2-ngay-gia-dinh-bien-dao,camping-viet-hai-2n1d]
+  [theme] zone=trung-tam-cat-ba slug=tour-3-ngay-2-dem name=Tour 3 ngày 2 đêm min=3 max=3 pkgs=[cat-ba-3-ngay-tong-quan-dao,cat-ba-ha-long-ket-hop-3n2d]
+  [theme] zone=trung-tam-cat-ba slug=tour-4-ngay-3-dem name=Tour 4 ngày 3 đêm min=4 max=4 pkgs=[]
+  [theme] zone=trung-tam-cat-ba slug=tour-tu-5-ngay name=Tour từ 5 ngày min=5 max=null pkgs=[cat-ba-5-ngay-nghi-duong-kham-pha]
+  [theme] zone=trung-tam-cat-ba slug=vinh-lan-ha name=Tour vịnh Lan Hạ min= max= pkgs=[vinh-lan-ha-kayak-dao-khi-1-ngay,vinh-lan-ha-hoang-hon-nua-ngay,vinh-lan-ha-lan-ngam-san-ho-1-ngay,vinh-lan-ha-private-kayak-1-ngay,leo-nui-da-voi-lan-ha-1-ngay,du-thuyen-lan-ha-2-ngay,du-thuyen-lan-ha-3-ngay]
+  [theme] zone=trung-tam-cat-ba slug=trekking-vqg name=Tour trekking vườn quốc gia min= max= pkgs=[trekking-viet-hai-vqg-1-ngay,trekking-vqg-nua-ngay-de,camping-viet-hai-2n1d]
+  [theme] zone=trung-tam-cat-ba slug=dao-khi-tam-bien name=Tour Đảo Khỉ & tắm biển min= max= pkgs=[dao-khi-1-ngay-tam-bien-lan,dao-khi-nua-ngay,vinh-lan-ha-kayak-dao-khi-1-ngay]
+  [theme] zone=trung-tam-cat-ba slug=lang-viet-hai name=Tour làng Việt Hải min= max= pkgs=[camping-viet-hai-2n1d,lang-viet-hai-thuyen-nua-ngay,trekking-viet-hai-vqg-1-ngay]
+  [theme] zone=trung-tam-cat-ba slug=lang-chai-cai-beo name=Tour làng chài Cái Bèo min= max= pkgs=[lang-chai-cai-beo-hang-trung-trang-nua-ngay,cau-muc-dem-lang-chai-cai-beo]
+TYPE_COUNTS: duration=4 theme=10
+TOURS:
+  - cat-ba-3-ngay-tong-quan-dao | days=3 nights= zone=trung-tam-cat-ba styles=[3n2d] | Cát Bà 3 ngày 2 đêm — Tổng quan đảo ngọc
+  - trekking-viet-hai-vqg-1-ngay | days=1 nights= zone=vuon-quoc-gia styles=[day-trip,trekking-vqg,lang-viet-hai] | Trekking Việt Hải xuyên Vườn quốc gia Cát Bà — 1 ngày
+  - vinh-lan-ha-kayak-dao-khi-1-ngay | days=1 nights= zone=vinh-lan-ha styles=[day-trip,vinh-lan-ha,dao-khi-tam-bien] | Vịnh Lan Hạ 1 ngày — Kayak, tắm biển & Đảo Khỉ
+  - cat-ba-ha-long-ket-hop-2n1d | days=2 nights= zone=ket-hop-ha-long styles=[2n1d] | Cát Bà — Hạ Long kết hợp 2 ngày 1 đêm
+  - cat-ba-5-ngay-nghi-duong-kham-pha | days=5 nights= zone=trung-tam-cat-ba styles=[5-plus-days] | Cát Bà 5 ngày 4 đêm — Nghỉ dưỡng, lặn biển & trekking trọn vẹn
+  - lang-chai-cai-beo-hang-trung-trang-nua-ngay | days=1 nights= zone=cai-beo styles=[day-trip,lang-chai-cai-beo] | Làng chài Cái Bèo & hang Trung Trang — nửa ngày
+  - cat-ba-2-ngay-gia-dinh-bien-dao | days=2 nights= zone=trung-tam-cat-ba styles=[2n1d] | Cát Bà 2 ngày 1 đêm — Gia đình: biển, vịnh & Đảo Khỉ
+  - dap-xe-xuyen-dao-cat-ba-nua-ngay | days=1 nights= zone=trung-tam-cat-ba styles=[day-trip] | Đạp xe xuyên đảo Cát Bà — làng chài & đồi chè
+  - bai-cat-co-tam-bien-spa-nua-ngay | days=1 nights= zone=trung-tam-cat-ba styles=[day-trip] | Bãi Cát Cò — Tắm biển & thư giãn nửa ngày
+  - vinh-lan-ha-hoang-hon-nua-ngay | days=1 nights= zone=vinh-lan-ha styles=[day-trip,vinh-lan-ha] | Hoàng hôn vịnh Lan Hạ — nửa ngày trên tàu
+  - vinh-lan-ha-lan-ngam-san-ho-1-ngay | days=1 nights= zone=vinh-lan-ha styles=[day-trip,vinh-lan-ha] | Lặn ngắm san hô vịnh Lan Hạ — 1 ngày
+  - vinh-lan-ha-private-kayak-1-ngay | days=1 nights= zone=vinh-lan-ha styles=[day-trip,vinh-lan-ha] | Kayak riêng vịnh Lan Hạ — tour private 1 ngày
+  - trekking-vqg-nua-ngay-de | days=1 nights= zone=vuon-quoc-gia styles=[day-trip,trekking-vqg] | Trekking vườn quốc gia nửa ngày — dễ, phù hợp mọi lứa tuổi
+  - camping-viet-hai-2n1d | days=2 nights= zone=lang-viet-hai styles=[2n1d,trekking-vqg,lang-viet-hai] | Camping / Homestay làng Việt Hải — 2 ngày 1 đêm
+  - lang-viet-hai-thuyen-nua-ngay | days=1 nights= zone=lang-viet-hai styles=[day-trip,lang-viet-hai] | Làng Việt Hải bằng thuyền — nửa ngày không trekking
+  - dao-khi-1-ngay-tam-bien-lan | days=1 nights= zone=dao-khi styles=[day-trip,dao-khi-tam-bien] | Đảo Khỉ (Cát Dứa) 1 ngày — Tắm biển & lặn ngắm
+  - dao-khi-nua-ngay | days=1 nights= zone=dao-khi styles=[day-trip,dao-khi-tam-bien] | Đảo Khỉ nửa ngày — gọn, dễ ghép lịch
+  - cau-muc-dem-lang-chai-cai-beo | days=1 nights= zone=cai-beo styles=[day-trip,lang-chai-cai-beo] | Câu mực đêm làng chài Cái Bèo
+  - cat-ba-ha-long-ket-hop-3n2d | days=3 nights= zone=ket-hop-ha-long styles=[3n2d] | Cát Bà — Hạ Long 3 ngày 2 đêm — Hai vịnh trọn vẹn
+  - leo-nui-da-voi-lan-ha-1-ngay | days=1 nights= zone=vinh-lan-ha styles=[day-trip,vinh-lan-ha] | Leo núi đá vôi / deep water solo vịnh Lan Hạ — 1 ngày
+TOUR_COUNT: 20

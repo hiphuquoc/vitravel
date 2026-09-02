@@ -34,6 +34,12 @@ php artisan project:seed himuine --domain=himuine.dev --domain=himuine.com --nam
 php artisan project:seed hitamdao --domain=hitamdao.dev --domain=hitamdao.com --name="Hi Tam Đảo"
 # Sa Pa: hisapa.dev (local) + hisapa.vn (prod)
 php artisan project:seed hisapa --domain=hisapa.dev --domain=hisapa.vn --name="Hi Sa Pa"
+
+# Chỉ seed lại taxonomy tour (chủ đề + danh mục + travel_styles + gắn package) — không đụng bài viết/home/services
+php artisan project:seed hidalat --only=tours
+
+# Xóa toàn bộ data 1 project rồi seed lại (giữ project khác)
+php artisan project:seed hihagiang --fresh-project --domain=hihagiang.dev --name="Hi Hà Giang"
 ```
 
 | Profile | File | Domain |
@@ -130,12 +136,42 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 - `review_platforms` — `{ code, name, rating, … }[]`
 - `duration_buckets` — filter thời lượng
 
-### 3. Điểm đến
+### 3. Điểm đến + phân luồng Danh mục / Chủ đề tour
 
 - `countries` — `{ slug, name, size, tagline }[]` → SEO `country` (CMS entity). Runtime listing: `tagline` → `subtitle`; `long_form`/`intro_text` (nếu có) → `seoBody`
 - Alias dự án 1 điểm đến: **`zones` / `zoneSlug` / `zone_translations`** được `ProjectSeed` chuẩn hoá thành `countries` / `countrySlug` / `country_translations` lúc load
 - `country_translations` — i18n theo slug (hoặc `zone_translations`)
-- `tour_categories` — danh mục con dưới country/zone (`countrySlug` hoặc `zoneSlug`). Shape:
+- `meta.country_codes` — optional; nếu thiếu, tự sinh từ slug
+
+#### Quy tắc phân tách (bắt buộc — mọi hub)
+
+> Package ↔ category/theme đã là **nhiều–nhiều** (`package_tour_category` + `packageSlugs[]`).
+> Một tour có thể thuộc nhiều danh mục GEO **và** nhiều chủ đề cùng lúc.
+
+| Layer | `tour_categories.type` | Gắn `zoneSlug` | Nội dung |
+|-------|------------------------|----------------|----------|
+| **Danh mục** | `region` | Vùng GEO hoặc `ket-hop-*` | Nhóm theo **khu vực / combo** (Đồng Văn, Mèo Vạc, Combo Sapa…). **Không** chia theo số ngày. |
+| **Chủ đề** | `theme` | Hub zone (thị trấn / cửa ngõ) | (A) **Thời lượng chương trình**: trong ngày · 2N1D · 3N2D · 4N3D · từ 5 ngày. (B) **Tính chất / phân khúc**: gia đình, trăng mật, teambuilding, cuối tuần, hoạt động signature. |
+| ~~Thời lượng dưới zone~~ | ~~`duration`~~ | — | **Cấm trên hub** — trùng chủ đề thời lượng. Chỉ còn hợp lệ trên `vitravel` (đa quốc gia). |
+
+**Không chồng lấn:**
+- Chủ đề **không** clone tên zone GEO (vd: không theme “Vịnh Lan Hạ” khi đã có zone `vinh-lan-ha`).
+- Danh mục **không** đặt tên “Tour 1 ngày / 2–3 ngày…”.
+- `travel_styles` = mã filter khớp chủ đề (duration + insight) — **không** tạo trang SEO riêng; trang SEO = `tour_categories`.
+
+**Seed lại riêng cụm taxonomy tour** (không đụng bài viết / home / catalogue dịch vụ khác):
+
+```bash
+php artisan project:seed hidalat --only=tours
+```
+
+**Seed đè toàn bộ 1 project:**
+
+```bash
+php artisan project:seed hihagiang --fresh-project --domain=hihagiang.dev --name="Hi Hà Giang"
+```
+
+`tour_categories` shape:
 
 ```
 {
@@ -148,8 +184,6 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 ```
 
   Public URL: `/tours/{country}/{slug}` (SEO type `tour_category` → `TourController::category`). Legacy seed keys `description` / `seoIntro` vẫn được seeder đọc nếu còn.
-- `meta.country_codes` — optional; nếu thiếu, tự sinh từ slug
-
 ### 4. Sản phẩm
 
 - `tours` → `package_tour`

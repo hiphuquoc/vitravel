@@ -10,6 +10,18 @@
  * limousine Hà Nội — Hạ Long (không có đường sắt tới vịnh). Cụm "flight" = sân bay
  * Vân Đồn (VDO) ~50km + kết nối Hà Nội. Du thuyền qua đêm = sản phẩm chính (cruises).
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hihalong')
  *
  * @return array<string, mixed>
@@ -109,86 +121,20 @@ $__hihalongSeed = array(
     ),
 
     'travel_styles' => array(
-        'day-trip' => array(
-            'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day trip',
-        ),
-        '2n1d' => array(
-            'vi' => '2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-        ),
-        '3n2d' => array(
-            'vi' => '3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-        ),
-        '4n3d' => array(
-            'vi' => '4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-        ),
-        '5-plus-days' => array(
-            'vi' => 'Từ 5 ngày',
-
-
-
-
-'en' => '5+ days',
-        ),
-        'du-thuyen-cao-cap' => array(
-            'vi' => 'Du thuyền cao cấp 5 sao',
-
-
-
-
-'en' => '5-star luxury cruises',
-        ),
-        'du-thuyen-tieu-chuan' => array(
-            'vi' => 'Du thuyền 3–4 sao tiêu chuẩn',
-
-
-
-
-'en' => '3–4 star standard cruises',
-        ),
-        'tour-ngay' => array(
-            'vi' => 'Tour ngày tàu gỗ',
-
-
-
-
-'en' => 'Day boat tours',
-        ),
-        'bai-tu-long' => array(
-            'vi' => 'Tour & cruise Bái Tử Long',
-
-
-
-
-'en' => 'Bai Tu Long tours & cruises',
-        ),
-        'gia-dinh' => array(
-            'vi' => 'Gia đình & Sun World',
-
-
-
-
-'en' => 'Family & Sun World',
-        ),
+        // (A) thời lượng chương trình — khớp chủ đề type=theme sort 0–4
+        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
+        '2n1d' => array('vi' => '2 ngày 1 đêm', 'en' => '2 days 1 night'),
+        '3n2d' => array('vi' => '3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+        '4n3d' => array('vi' => '4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+        '5-plus-days' => array('vi' => 'Từ 5 ngày', 'en' => '5+ days'),
+        // (B) tính chất / insight địa phương — khớp chủ đề type=theme sort 10+
+        'du-thuyen-cao-cap' => array('vi' => 'Du thuyền cao cấp', 'en' => 'Luxury cruises'),
+        'du-thuyen-tieu-chuan' => array('vi' => 'Du thuyền tiêu chuẩn', 'en' => 'Standard cruises'),
+        'tour-ngay-vinh' => array('vi' => 'Tour ngày trên vịnh', 'en' => 'Day boats on the bay'),
+        'gia-dinh-vinh' => array('vi' => 'Gia đình trên vịnh & đất liền', 'en' => 'Family bay & mainland'),
+        'cuoi-tuan-ha-noi' => array('vi' => 'Cuối tuần từ Hà Nội', 'en' => 'Weekend from Hanoi'),
+        'am-thuc-hai-san' => array('vi' => 'Ẩm thực hải sản & làng chài', 'en' => 'Seafood & fishing villages'),
+        'hanh-huong-yen-tu' => array('vi' => 'Hành hương & thiền', 'en' => 'Pilgrimage & meditation'),
     ),
 
     'review_platforms' => array(
@@ -383,7 +329,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'tour-ngay',
+                'tour-ngay-vinh',
             ),
             'quote' => array(
                 'text' => 'Đúng combo kinh điển — hang Sửng Sốt ấn tượng, Titop tắm biển được.',
@@ -455,7 +401,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'bai-tu-long',
+                'tour-ngay-vinh',
             ),
             'quote' => array(
                 'text' => 'Ít tàu hơn hẳn tuyến 1 — nước trong, cảm giác vịnh riêng cho nhóm mình.',
@@ -520,6 +466,7 @@ $__hihalongSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'tour-ngay-vinh',
             ),
             'quote' => array(
                 'text' => 'Tuyến 3 ít người biết — hang nhỏ đẹp, không chen chúc như Sửng Sốt.',
@@ -581,6 +528,8 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'tour-ngay-vinh',
+                'cuoi-tuan-ha-noi',
             ),
             'quote' => array(
                 'text' => 'Limousine đón tận khách sạn, về kịp tối — đúng kiểu “check-in Hạ Long” một ngày.',
@@ -652,6 +601,8 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'tour-ngay-vinh',
+                'am-thuc-hai-san',
             ),
             'quote' => array(
                 'text' => 'Kayak qua làng chài thật sự — không phải set-up cho du khách.',
@@ -713,7 +664,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'gia-dinh',
+                'gia-dinh-vinh',
             ),
             'quote' => array(
                 'text' => 'Con thích cáp treo — buổi chiều vui, tối ăn hải sản Bãi Cháy.',
@@ -774,6 +725,7 @@ $__hihalongSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'hanh-huong-yen-tu',
             ),
             'quote' => array(
                 'text' => 'Kết hợp vịnh và chùa — buổi sáng Yên Tử mát, chiều về Bãi Cháy nghỉ.',
@@ -837,7 +789,8 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
-                'gia-dinh',
+                'gia-dinh-vinh',
+                'cuoi-tuan-ha-noi',
             ),
             'quote' => array(
                 'text' => 'Không ngủ tàu mà vẫn thấy vịnh — tối Sun World, sáng tour ngày, con thoải mái hơn.',
@@ -912,6 +865,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
+                'gia-dinh-vinh',
             ),
             'quote' => array(
                 'text' => 'Một đêm du thuyền + một đêm khách sạn — cân bằng giữa vịnh và Sun World.',
@@ -1000,6 +954,7 @@ $__hihalongSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'am-thuc-hai-san',
             ),
             'quote' => array(
                 'text' => 'Câu được mực, chef dạy làm gỏi — đúng kiểu team building trên vịnh.',
@@ -1061,6 +1016,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'cuoi-tuan-ha-noi',
             ),
             'quote' => array(
                 'text' => 'Một đêm Hạ Long, một ngày Lan Hạ — thấy rõ sự khác nhau giữa hai vịnh.',
@@ -1137,6 +1093,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
+                'cuoi-tuan-ha-noi',
             ),
             'quote' => array(
                 'text' => 'Tràng An và Hạ Long trong một chuyến — tiết kiệm bay quốc tế.',
@@ -1222,6 +1179,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'cuoi-tuan-ha-noi',
             ),
             'quote' => array(
                 'text' => 'Không ngủ tàu vẫn ổn — khách sạn Bãi Cháy sạch, tour ngày đủ cảm giác vịnh.',
@@ -1296,6 +1254,7 @@ $__hihalongSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'tour-ngay-vinh',
             ),
             'quote' => array(
                 'text' => 'Tàu riêng 4 người — lịch trình linh hoạt, không chen chúc.',
@@ -1358,7 +1317,8 @@ $__hihalongSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
-                'gia-dinh',
+                'am-thuc-hai-san',
+                'gia-dinh-vinh',
             ),
             'quote' => array(
                 'text' => 'Hòn Gai khác hẳn Bãi Cháy — chợ địa phương, không chỉ quán du lịch.',
@@ -1421,6 +1381,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
+                'cuoi-tuan-ha-noi',
             ),
             'quote' => array(
                 'text' => 'Bay thẳng Vân Đồn, 45 phút ra bến — tiết kiệm cả ngày so với đi bộ từ Hà Nội.',
@@ -1501,7 +1462,7 @@ $__hihalongSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
-                'bai-tu-long',
+                'gia-dinh-vinh',
             ),
             'quote' => array(
                 'text' => 'Chủ đích tránh du thuyền đông — tour Bái Tử Long 2 ngày vẫn đủ “wow”.',
@@ -2290,303 +2251,153 @@ $__hihalongSeed = array(
     ),
 
     'tour_categories' => array(
+        /* ── DANH MỤC (type=region) — khu vực GEO & combo, không chia theo số ngày ── */
         array(
-            'zoneSlug' => 'vinh-trung-tam',
-            'slug' => '1-ngay',
-            'type' => 'duration',
+            'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
+            'slug' => 'tour-thanh-pho-ha-long-bai-chay',
+            'type' => 'region',
             'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 1,
             'packageSlugs' => array(
-                'tour-ngay-tuyen-1-sung-sot-titop',
-                'tour-ngay-tuyen-2-bai-tu-long',
-                'tour-ngay-tuyen-3-vinh-sau',
-                'tour-ngay-private-vinh-rieng',
-                'cau-muc-dem-va-lop-nau-an',
+                'ha-long-2n1d-gia-dinh-bai-chay',
+                'ha-long-3n2d-tong-quan-vinh-dat-lien',
+                'hon-gai-am-thuc-dem',
             ),
-            'name' => array(
-                'vi' => 'Tour 1 ngày vịnh trung tâm',
-
-
-
-
-'en' => '1-day central bay tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Tuyến 1, 2, 3 — về bờ chiều, không cabin.',
-
-
-
-
-'en' => 'Routes 1–3 — back to pier by afternoon, no cabin.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour ngày vịnh trung tâm Hạ Long: giá 800k–1.5M, phù hợp khách thiếu thời gian hoặc ghép Hà Nội tour ngày.',
-
-
-
-
-'en' => 'Central Halong day tours: VND 800k–1.5M, ideal for short stays or Hanoi day combos.',
-            ),
+            'name' => array('vi' => 'Tour thành phố Hạ Long — Bãi Cháy', 'en' => 'Halong City — Bai Chay tours'),
+            'subtitle' => array('vi' => 'Bãi Cháy, Hòn Gai và cảng tàu quốc tế — nơi khách lưu trú và mọi chuyến ra vịnh khởi hành.', 'en' => 'Bai Chay, Hon Gai and the international cruise port — where guests stay and every bay trip starts.'),
+            'seo_body' => array('vi' => 'Danh mục theo khu vực: các chương trình lấy đất liền Hạ Long làm bản doanh, gồm cả tour nhiều ngày.', 'en' => 'GEO category: programmes based on the Halong mainland, including multi-day itineraries.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'vinh-trung-tam',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
+            'slug' => 'tour-vinh-trung-tam-ha-long',
+            'type' => 'region',
             'sort' => 1,
-            'minDays' => 2,
-            'maxDays' => 3,
             'packageSlugs' => array(
-                'ha-long-2n1d-gia-dinh-bai-chay',
+                'tour-ngay-tuyen-1-sung-sot-titop',
+                'tour-ngay-tuyen-3-vinh-sau',
+                'cau-muc-dem-va-lop-nau-an',
+                'tour-ngay-private-vinh-rieng',
                 'ha-long-3n2d-tong-quan-vinh-dat-lien',
-                'ha-noi-ha-long-2n1d-limousine',
-                'van-don-ha-long-2n1d-combo',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
-
-
-
-
-'en' => '2–3 day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Du thuyền + khách sạn hoặc combo Vân Đồn.',
-
-
-
-
-'en' => 'Cruise + hotel or Van Don combos.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour 2–3 ngày kết hợp du thuyền qua đêm và nghỉ Bãi Cháy — phân biệt rõ với tour ngày tàu gỗ.',
-
-
-
-
-'en' => '2–3 day tours mix overnight cruises and Bai Chay stays — distinct from day boats.',
-            ),
+            'name' => array('vi' => 'Tour vịnh trung tâm Hạ Long', 'en' => 'Central Halong Bay tours'),
+            'subtitle' => array('vi' => 'Tuyến 1 và tuyến 3 — hang Sửng Sốt, Titop, hang Luồn và vùng vịnh sâu ít tàu hơn.', 'en' => 'Routes 1 and 3 — Sung Sot cave, Titop, Luon cave and the quieter deep-bay area.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực vịnh trung tâm — vùng lõi di sản UNESCO, quản lý theo tuyến tham quan.', 'en' => 'The central bay GEO category — the UNESCO heritage core, managed by numbered routes.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'vinh-bai-tu-long',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 2,
+            'slug' => 'tour-vinh-bai-tu-long',
+            'type' => 'region',
+            'sort' => 2,
             'packageSlugs' => array(
                 'tour-ngay-tuyen-2-bai-tu-long',
                 'bai-tu-long-2n1d-dat-lien-khach-san',
-            ),
-            'name' => array(
-                'vi' => 'Bái Tử Long 1–2 ngày',
-
-
-
-
-'en' => 'Bai Tu Long 1–2 days',
-            ),
-            'subtitle' => array(
-                'vi' => 'Anti-crowd — ít tàu hơn trung tâm.',
-
-
-
-
-'en' => 'Anti-crowd — fewer boats than central bay.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Bái Tử Long positioning: yên tĩnh, Vung Vieng, không chen Sửng Sốt.',
-
-
-
-
-'en' => 'Bai Tu Long positioning: quiet, Vung Vieng, no Surprise Cave crowds.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'ket-hop-ha-noi',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 1,
-            'maxDays' => 1,
-            'packageSlugs' => array(
-                'ha-noi-ha-long-tour-ngay-1-ngay',
-            ),
-            'name' => array(
-                'vi' => 'Tour ngày từ Hà Nội',
-
-
-
-
-'en' => 'Day trip from Hanoi',
-            ),
-            'subtitle' => array(
-                'vi' => 'Limousine 2 chiều + tuyến 1 — về tối.',
-
-
-
-
-'en' => 'Return limousine + Route 1 — back evening.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour ngày Hà Nội — Hạ Long ~1.2M+ — limousine 250–350k/chiều riêng.',
-
-
-
-
-'en' => 'Hanoi — Halong day tour from ~1.2M — limousine VND 250–350k each way separately.',
-            ),
-            'faqs' => array(),
-        ),
-        array(
-            'zoneSlug' => 'ket-hop-ha-noi',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 1,
-            'minDays' => 2,
-            'maxDays' => 3,
-            'packageSlugs' => array(
-                'ha-noi-ha-long-2n1d-limousine',
                 'van-don-ha-long-2n1d-combo',
             ),
-            'name' => array(
-                'vi' => '2–3 ngày từ Hà Nội / VDO',
-
-
-
-
-'en' => '2–3 days from Hanoi / VDO',
+            'name' => array('vi' => 'Tour vịnh Bái Tử Long', 'en' => 'Bai Tu Long Bay tours'),
+            'subtitle' => array('vi' => 'Vịnh phía đông bắc, ít tàu và ít khách hơn hẳn — Thiên Cảnh Sơn, Cống Đỏ và Vân Đồn.', 'en' => 'The northeastern bay with far fewer boats and crowds — Thien Canh Son, Cong Do and Van Don.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Bái Tử Long — lựa chọn tránh đông, thay thế cho vịnh trung tâm.', 'en' => 'The Bai Tu Long GEO category — the anti-crowd alternative to the central bay.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'dao-titop-hang-sung-sot',
+            'slug' => 'tour-dao-titop-hang-sung-sot',
+            'type' => 'region',
+            'sort' => 3,
+            'packageSlugs' => array(
+                'tour-ngay-tuyen-1-sung-sot-titop',
+                'ha-long-3n2d-tong-quan-vinh-dat-lien',
+                'ha-noi-ha-long-tour-ngay-1-ngay',
             ),
-            'subtitle' => array(
-                'vi' => 'Cuối tuần đầy đủ — xe + du thuyền.',
-
-
-
-
-'en' => 'Full weekend — transfer + cruise.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Combo cửa ngõ Hà Nội hoặc sân bay Vân Đồn với du thuyền.',
-
-
-
-
-'en' => 'Hanoi gateway or Van Don airport combos with cruises.',
-            ),
+            'name' => array('vi' => 'Tour đảo Titop & hang Sửng Sốt', 'en' => 'Titop Island & Sung Sot Cave tours'),
+            'subtitle' => array('vi' => 'Hai điểm dừng nổi tiếng nhất vịnh — bãi tắm nhỏ, 400 bậc lên đài ngắm và hang động lớn nhất tuyến 1.', 'en' => 'The bay’s two best-known stops — a small beach, 400 steps to the viewpoint and route 1’s largest cave.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Titop — Sửng Sốt, có mặt trong hầu hết tour ngày và du thuyền tuyến 1.', 'en' => 'The Titop — Sung Sot GEO category, included in most day trips and route 1 cruises.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'lang-chai-vung-vieng',
-            'slug' => '1-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 0,
-            'maxDays' => 1,
+            'slug' => 'tour-lang-chai-vung-vieng',
+            'type' => 'region',
+            'sort' => 4,
             'packageSlugs' => array(
                 'lang-chai-vung-vieng-kayak-nua-ngay',
+                'tour-ngay-tuyen-2-bai-tu-long',
             ),
-            'name' => array(
-                'vi' => 'Làng chài nửa ngày',
-
-
-
-
-'en' => 'Half-day fishing village',
+            'name' => array('vi' => 'Tour làng chài Vung Viêng', 'en' => 'Vung Vieng fishing village tours'),
+            'subtitle' => array('vi' => 'Làng chài nổi trong Bái Tử Long — thuyền nan do người làng chèo, bè nuôi cá và lớp học trên nước.', 'en' => 'A floating village in Bai Tu Long — bamboo boats rowed by villagers, fish rafts and a school on the water.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Vung Viêng — điểm văn hoá sống động nhất trên vịnh.', 'en' => 'The Vung Vieng GEO category — the most living cultural stop on the bay.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'tuan-chau-sun-world',
+            'slug' => 'tour-tuan-chau-sun-world',
+            'type' => 'region',
+            'sort' => 5,
+            'packageSlugs' => array(
+                'sun-world-tuan-chau-nua-ngay',
+                'ha-long-2n1d-gia-dinh-bai-chay',
             ),
-            'subtitle' => array(
-                'vi' => 'Kayak Vung Vieng — ghép cruise hoặc chiều tự do.',
-
-
-
-
-'en' => 'Vung Vieng kayak — add to cruise or free afternoon.',
+            'name' => array('vi' => 'Tour Tuần Châu & Sun World', 'en' => 'Tuan Chau & Sun World tours'),
+            'subtitle' => array('vi' => 'Cáp treo Nữ Hoàng, vòng quay Mặt Trời, công viên nước và bến phà đi Cát Bà.', 'en' => 'The Queen Cable Car, Sun Wheel, water park and the ferry terminal for Cat Ba.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực giải trí trên đất liền — phương án cho ngày biển động không ra vịnh được.', 'en' => 'The mainland entertainment GEO category — the fallback when the bay is closed by weather.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'yen-tu',
+            'slug' => 'tour-yen-tu',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'yen-tu-1-ngay-tu-ha-long',
             ),
-            'seo_body' => array(
-                'vi' => 'Trải nghiệm làng chài nổi thật — thường trong tour Bái Tử Long.',
-
-
-
-
-'en' => 'Real floating village experience — usually on Bai Tu Long tours.',
-            ),
+            'name' => array('vi' => 'Tour Yên Tử', 'en' => 'Yen Tu tours'),
+            'subtitle' => array('vi' => 'Kinh đô Phật giáo Trúc Lâm trên núi, cách Hạ Long khoảng 60km — cáp treo hoặc 6.000 bậc đá.', 'en' => 'The Truc Lam Buddhist capital in the mountains, 60km from Halong — cable car or 6,000 stone steps.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Yên Tử — điểm hành hương lớn nhất Quảng Ninh, đông nhất dịp đầu năm.', 'en' => 'The Yen Tu GEO category — Quang Ninh’s largest pilgrimage site, busiest after Tet.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-cat-ba',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 2,
-            'maxDays' => 3,
+            'slug' => 'combo-ha-long-cat-ba-lan-ha',
+            'type' => 'region',
+            'sort' => 7,
             'packageSlugs' => array(
                 'ha-long-cat-ba-lan-ha-2n1d',
             ),
-            'name' => array(
-                'vi' => 'Hạ Long + Cát Bà',
-
-
-
-
-'en' => 'Halong + Cat Ba',
-            ),
-            'subtitle' => array(
-                'vi' => 'Hai vịnh di sản — tàu cao tốc xuyên vịnh.',
-
-
-
-
-'en' => 'Two heritage bays — cross-bay speedboat.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Combo Lan Hạ yên hơn trung tâm Hạ Long — tàu Tuần Châu — Cát Bà.',
-
-
-
-
-'en' => 'Lan Ha combo quieter than central Halong — Tuan Chau — Cat Ba boat.',
-            ),
+            'name' => array('vi' => 'Combo Hạ Long — Cát Bà / Lan Hạ', 'en' => 'Halong — Cat Ba / Lan Ha combos'),
+            'subtitle' => array('vi' => 'Hai vịnh di sản liền nhau, nối bằng phà Tuần Châu — Gia Luận hoặc tàu qua vịnh.', 'en' => 'Two adjoining heritage bays, linked by the Tuan Chau — Gia Luan ferry or a cross-bay boat.'),
+            'seo_body' => array('vi' => 'Danh mục combo liên vùng Hạ Long — Cát Bà, không phải trang chủ đề theo tính chất.', 'en' => 'The Halong — Cat Ba cross-region combo category, not a character-based theme page.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-ninh-binh',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
-            'sort' => 0,
-            'minDays' => 3,
-            'maxDays' => 3,
+            'slug' => 'combo-ha-long-ninh-binh',
+            'type' => 'region',
+            'sort' => 8,
             'packageSlugs' => array(
                 'ha-long-ninh-binh-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Hạ Long + Ninh Bình',
-
-
-
-
-'en' => 'Halong + Ninh Binh',
-            ),
-            'subtitle' => array(
-                'vi' => 'Tràng An + du thuyền — combo miền Bắc.',
-
-
-
-
-'en' => 'Trang An + cruise — Northern Vietnam combo.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tiết kiệm thời gian bay quốc tế: Ninh Bình và Hạ Long một chuyến.',
-
-
-
-
-'en' => 'Save time for international visitors: Ninh Binh and Halong in one trip.',
-            ),
+            'name' => array('vi' => 'Combo Hạ Long — Ninh Bình', 'en' => 'Halong — Ninh Binh combos'),
+            'subtitle' => array('vi' => 'Vịnh trên biển và vịnh trên cạn trong một hành trình — Tràng An, Tam Cốc và hang Múa.', 'en' => 'The bay at sea and the bay on land in one trip — Trang An, Tam Coc and Mua cave.'),
+            'seo_body' => array('vi' => 'Danh mục combo Hạ Long — Ninh Bình, phổ biến với khách quốc tế đi từ Hà Nội.', 'en' => 'The Halong — Ninh Binh combo category, popular with international guests coming from Hanoi.'),
             'faqs' => array(),
         ),
+        array(
+            'zoneSlug' => 'ket-hop-ha-noi',
+            'slug' => 'combo-ha-noi-ha-long',
+            'type' => 'region',
+            'sort' => 9,
+            'packageSlugs' => array(
+                'ha-noi-ha-long-tour-ngay-1-ngay',
+                'ha-noi-ha-long-2n1d-limousine',
+                'van-don-ha-long-2n1d-combo',
+            ),
+            'name' => array('vi' => 'Combo Hà Nội — Hạ Long', 'en' => 'Hanoi — Halong combos'),
+            'subtitle' => array('vi' => 'Cao tốc 2,5 giờ từ Hà Nội — đón tại phố cổ, gồm cả tuyến Vân Đồn phía đông.', 'en' => 'A 2.5-hour expressway from Hanoi — old-quarter pickup, including the eastern Van Don route.'),
+            'seo_body' => array('vi' => 'Danh mục combo có chặng Hà Nội — gom mọi chương trình khởi hành và kết thúc tại thủ đô.', 'en' => 'The Hanoi-leg combo category, grouping every itinerary that starts and ends in the capital.'),
+            'faqs' => array(),
+        ),
+
+        /* ── CHỦ ĐỀ (A) type=theme — thời lượng chương trình, gắn hub zone ── */
         array(
             'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
             'slug' => 'tour-trong-ngay',
@@ -2606,30 +2417,9 @@ $__hihalongSeed = array(
                 'tour-ngay-private-vinh-rieng',
                 'hon-gai-am-thuc-dem',
             ),
-            'name' => array(
-                'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
-
-
-
-
-'en' => 'Full day — no overnight.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
-
-
-
-
-'en' => 'Duration filter — distinct from per-zone GEO category pages.',
-            ),
+            'name' => array('vi' => 'Tour trong ngày', 'en' => 'Day tours'),
+            'subtitle' => array('vi' => 'Trọn vẹn trong ngày — không qua đêm tại Hạ Long.', 'en' => 'A full day — no overnight in Halong.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2646,30 +2436,9 @@ $__hihalongSeed = array(
                 'van-don-ha-long-2n1d-combo',
                 'bai-tu-long-2n1d-dat-lien-khach-san',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-            ),
-            'subtitle' => array(
-                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
-
-
-
-
-'en' => 'Short weekend, one-night homestay or resort.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
-
-
-
-
-'en' => '2N1D sweet spot — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 2 ngày 1 đêm', 'en' => '2 days 1 night'),
+            'subtitle' => array('vi' => 'Cuối tuần ngắn — một đêm nghỉ tại Hạ Long.', 'en' => 'Short weekend — one overnight in Halong.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2683,30 +2452,9 @@ $__hihalongSeed = array(
                 'ha-long-3n2d-tong-quan-vinh-dat-lien',
                 'ha-long-ninh-binh-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
-
-
-
-
-'en' => 'Enough depth — two overnights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
-
-
-
-
-'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
-            ),
+            'name' => array('vi' => 'Tour 3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+            'subtitle' => array('vi' => 'Khám phá vừa đủ — hai đêm tại Hạ Long.', 'en' => 'Enough depth — two nights in Halong.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2717,30 +2465,9 @@ $__hihalongSeed = array(
             'minDays' => 4,
             'maxDays' => 4,
             'packageSlugs' => array(),
-            'name' => array(
-                'vi' => 'Tour 4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
-
-
-
-
-'en' => 'Deeper exploration, three nights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
-
-
-
-
-'en' => '4N3D itineraries — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+            'subtitle' => array('vi' => 'Khám phá sâu hơn — ba đêm trải nghiệm Hạ Long.', 'en' => 'Deeper exploration — three nights in Halong.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2751,32 +2478,13 @@ $__hihalongSeed = array(
             'minDays' => 5,
             'maxDays' => null,
             'packageSlugs' => array(),
-            'name' => array(
-                'vi' => 'Tour từ 5 ngày',
-
-
-
-
-'en' => '5+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Combo dài ngày, nhiều điểm đến.',
-
-
-
-
-'en' => 'Extended combos and multi-destination trips.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
-
-
-
-
-'en' => 'Long tours & combos — duration insight, not a GEO page.',
-            ),
+            'name' => array('vi' => 'Tour từ 5 ngày', 'en' => '5+ day tours'),
+            'subtitle' => array('vi' => 'Tour dài ngày và combo nhiều điểm đến từ Hạ Long.', 'en' => 'Extended tours and multi-stop combos from Halong.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
+
+        /* ── CHỦ ĐỀ (B) type=theme — tính chất / insight, KHÔNG clone tên zone GEO ── */
         array(
             'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
             'slug' => 'du-thuyen-cao-cap',
@@ -2786,30 +2494,9 @@ $__hihalongSeed = array(
                 'du-thuyen-5-sao-2n1d-luxury',
                 'du-thuyen-5-sao-3n2d-signature',
             ),
-            'name' => array(
-                'vi' => 'Du thuyền cao cấp 5 sao',
-
-
-
-
-'en' => '5-star luxury cruises',
-            ),
-            'subtitle' => array(
-                'vi' => 'Suite, quản gia, ẩm thực cao cấp — trăng mật & khách quốc tế.',
-
-
-
-
-'en' => 'Suites, butler, fine dining — honeymoons & international guests.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Du thuyền 5 sao Hạ Long 7–12 triệu+ — xem mục du thuyền, không nhầm tour ngày.',
-
-
-
-
-'en' => '5-star Halong cruises from VND 7–12M+ — main cruises hub product, not day trips.',
-            ),
+            'name' => array('vi' => 'Du thuyền cao cấp', 'en' => 'Luxury cruises'),
+            'subtitle' => array('vi' => 'Du thuyền 5 sao, cabin bồn tắm view vịnh, spa và bếp trưởng riêng — 2N1D hoặc 3N2D.', 'en' => 'Five-star cruises with bay-view bathtubs, spa and a dedicated chef — 2N1D or 3N2D.'),
+            'seo_body' => array('vi' => 'Chủ đề theo phân khúc sản phẩm ngủ đêm trên vịnh, không phải trang danh mục khu vực.', 'en' => 'A product-segment theme for overnight bay stays, not a GEO category page.'),
             'faqs' => array(),
         ),
         array(
@@ -2821,138 +2508,93 @@ $__hihalongSeed = array(
                 'du-thuyen-4-sao-2n1d-tieu-chuan',
                 'du-thuyen-3-sao-tieu-chuan-2n1d',
                 'du-thuyen-3n2d-vinh-sau',
+                'du-thuyen-bai-tu-long-2n1d',
             ),
-            'name' => array(
-                'vi' => 'Du thuyền 3–4 sao tiêu chuẩn',
-
-
-
-
-'en' => '3–4 star standard cruises',
-            ),
-            'subtitle' => array(
-                'vi' => 'Sweet spot 2.5–6M — gia đình & lần đầu ngủ vịnh.',
-
-
-
-
-'en' => 'Sweet spot VND 2.5–6M — families & first overnight bay trips.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Phân khúc phổ biến nhất: du thuyền 3–4 sao tuyến 1 đầy đủ Titop & Sửng Sốt.',
-
-
-
-
-'en' => 'Most popular segment: 3–4 star Route 1 cruises with Titop & Surprise Cave.',
-            ),
+            'name' => array('vi' => 'Du thuyền tiêu chuẩn', 'en' => 'Standard cruises'),
+            'subtitle' => array('vi' => 'Du thuyền 3–4 sao, cabin riêng và đủ hoạt động kayak, hang động — mức giá hợp lý nhất.', 'en' => 'Three- and four-star cruises with private cabins and the full kayak-and-cave programme at the best value.'),
+            'seo_body' => array('vi' => 'Chủ đề theo phân khúc giá và hạng tàu — dùng chung tuyến với các danh mục vịnh.', 'en' => 'A price-and-class segment theme sharing routes with the bay GEO categories.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
-            'slug' => 'tour-ngay',
+            'slug' => 'tour-ngay-vinh',
             'type' => 'theme',
             'sort' => 12,
             'packageSlugs' => array(
                 'tour-ngay-tuyen-1-sung-sot-titop',
+                'tour-ngay-tuyen-2-bai-tu-long',
+                'tour-ngay-tuyen-3-vinh-sau',
+                'ha-noi-ha-long-tour-ngay-1-ngay',
+                'lang-chai-vung-vieng-kayak-nua-ngay',
+                'tour-ngay-private-vinh-rieng',
                 'tour-ngay-vinh-tau-go-mui-che',
             ),
-            'name' => array(
-                'vi' => 'Tour ngày tàu gỗ',
-
-
-
-
-'en' => 'Day boat tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Không ngủ đêm — giá 800k–1.5M.',
-
-
-
-
-'en' => 'No overnight — VND 800k–1.5M.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour ngày khác du thuyền: tàu gỗ mui che, về bờ 16h — xem mục du thuyền nếu cần cabin.',
-
-
-
-
-'en' => 'Day tours differ from cruises: wooden day boats, back by 4pm — see cruises hub for cabins.',
-            ),
+            'name' => array('vi' => 'Tour ngày trên vịnh', 'en' => 'Day boats on the bay'),
+            'subtitle' => array('vi' => 'Tàu ngày 6–8 giờ, về đất liền ngủ — không cần đổi khách sạn, chi phí thấp hơn du thuyền.', 'en' => 'Six to eight hours afloat, sleeping back on land — no hotel change and cheaper than a cruise.'),
+            'seo_body' => array('vi' => 'Chủ đề theo hình thức chương trình, phân biệt rõ với sản phẩm ngủ đêm trên vịnh.', 'en' => 'A programme-format theme, clearly distinct from overnight cruise products.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
-            'slug' => 'bai-tu-long',
+            'slug' => 'gia-dinh-vinh',
             'type' => 'theme',
             'sort' => 13,
             'packageSlugs' => array(
-                'tour-ngay-tuyen-2-bai-tu-long',
-                'du-thuyen-bai-tu-long-2n1d',
+                'sun-world-tuan-chau-nua-ngay',
+                'ha-long-2n1d-gia-dinh-bai-chay',
+                'ha-long-3n2d-tong-quan-vinh-dat-lien',
+                'hon-gai-am-thuc-dem',
                 'bai-tu-long-2n1d-dat-lien-khach-san',
             ),
-            'name' => array(
-                'vi' => 'Tour & cruise Bái Tử Long',
-
-
-
-
-'en' => 'Bai Tu Long tours & cruises',
-            ),
-            'subtitle' => array(
-                'vi' => 'Tuyến 2, làng chài, du thuyền qua đêm yên.',
-
-
-
-
-'en' => 'Route 2, fishing villages, quiet overnight cruises.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn lần thứ hai đến Hạ Long hoặc ghét đông — thay vì tuyến 1.',
-
-
-
-
-'en' => 'For repeat visitors or crowd-averse travellers — instead of Route 1.',
-            ),
+            'name' => array('vi' => 'Gia đình trên vịnh & đất liền', 'en' => 'Family bay & mainland'),
+            'subtitle' => array('vi' => 'Tàu lớn ổn định, công viên nước và cáp treo dự phòng khi biển động — lịch không bắt trẻ leo nhiều.', 'en' => 'Stable larger boats, a water park and cable car as a rough-sea backup — no long climbs for kids.'),
+            'seo_body' => array('vi' => 'Phân khúc gia đình — lọc theo nhu cầu khách, dùng chung tour với các danh mục khu vực.', 'en' => 'The family segment — a needs-based filter sharing tours with the GEO categories.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
-            'slug' => 'gia-dinh',
+            'slug' => 'cuoi-tuan-ha-noi',
             'type' => 'theme',
             'sort' => 14,
             'packageSlugs' => array(
+                'ha-noi-ha-long-tour-ngay-1-ngay',
                 'ha-long-2n1d-gia-dinh-bai-chay',
-                'sun-world-tuan-chau-nua-ngay',
+                'ha-long-cat-ba-lan-ha-2n1d',
+                'ha-long-ninh-binh-3n2d',
+                'ha-noi-ha-long-2n1d-limousine',
+                'van-don-ha-long-2n1d-combo',
+            ),
+            'name' => array('vi' => 'Cuối tuần từ Hà Nội', 'en' => 'Weekend from Hanoi'),
+            'subtitle' => array('vi' => 'Cao tốc 2,5 giờ — tour ngày đi về trong 1 ngày, 2N1D và combo cuối tuần dài qua Cát Bà, Ninh Bình.', 'en' => 'A 2.5-hour expressway — same-day round trips, 2N1D and long-weekend combos via Cat Ba or Ninh Binh.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thị trường nguồn Hà Nội, không phải trang danh mục vùng.', 'en' => 'A Hanoi source-market theme, not a GEO category page.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
+            'slug' => 'am-thuc-hai-san',
+            'type' => 'theme',
+            'sort' => 15,
+            'packageSlugs' => array(
+                'lang-chai-vung-vieng-kayak-nua-ngay',
+                'cau-muc-dem-va-lop-nau-an',
                 'hon-gai-am-thuc-dem',
             ),
-            'name' => array(
-                'vi' => 'Gia đình & Sun World',
-
-
-
-
-'en' => 'Family & Sun World',
+            'name' => array('vi' => 'Ẩm thực hải sản & làng chài', 'en' => 'Seafood & fishing villages'),
+            'subtitle' => array('vi' => 'Câu mực đêm, lớp nấu ăn trên tàu, chợ hải sản Hòn Gai và bè cá trong làng chài nổi.', 'en' => 'Night squid fishing, onboard cooking classes, the Hon Gai seafood market and floating-village rafts.'),
+            'seo_body' => array('vi' => 'Chủ đề foodie và nghề biển — gom trải nghiệm ở nhiều khu vực khác nhau của vịnh.', 'en' => 'A foodie and working-sea theme, drawing experiences from several parts of the bay.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-long-bai-chay',
+            'slug' => 'hanh-huong-yen-tu',
+            'type' => 'theme',
+            'sort' => 16,
+            'packageSlugs' => array(
+                'yen-tu-1-ngay-tu-ha-long',
             ),
-            'subtitle' => array(
-                'vi' => 'Khách sạn Bãi Cháy + vui chơi — không bắt buộc ngủ tàu.',
-
-
-
-
-'en' => 'Bai Chay hotels + activities — no forced boat sleep.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Phân khúc khách nội địa cuối tuần: Sun World, tour ngày, trẻ em.',
-
-
-
-
-'en' => 'Domestic weekend segment: Sun World, day tours, kids.',
-            ),
+            'name' => array('vi' => 'Hành hương & thiền', 'en' => 'Pilgrimage & meditation'),
+            'subtitle' => array('vi' => 'Yên Tử, chùa Ba Vàng và các điểm thiền Trúc Lâm — cao điểm tháng 1–3 âm lịch.', 'en' => 'Yen Tu, Ba Vang pagoda and Truc Lam meditation sites — peak in the first three lunar months.'),
+            'seo_body' => array('vi' => 'Chủ đề theo mục đích chuyến đi, không trùng danh mục khu vực Yên Tử.', 'en' => 'A trip-purpose theme, distinct from the Yen Tu GEO category.'),
             'faqs' => array(),
         ),
     ),
@@ -2980,11 +2622,13 @@ $__hihalongSeed = array(
         '3n2d' => '3 ngày 2 đêm',
         '4n3d' => '4 ngày 3 đêm',
         '5-plus-days' => 'Từ 5 ngày',
-        'du-thuyen-cao-cap' => 'Du thuyền cao cấp 5 sao',
-        'du-thuyen-tieu-chuan' => 'Du thuyền 3–4 sao tiêu chuẩn',
-        'tour-ngay' => 'Tour ngày tàu gỗ',
-        'bai-tu-long' => 'Tour & cruise Bái Tử Long',
-        'gia-dinh' => 'Gia đình & Sun World',
+        'du-thuyen-cao-cap' => 'Du thuyền cao cấp',
+        'du-thuyen-tieu-chuan' => 'Du thuyền tiêu chuẩn',
+        'tour-ngay-vinh' => 'Tour ngày trên vịnh',
+        'gia-dinh-vinh' => 'Gia đình trên vịnh & đất liền',
+        'cuoi-tuan-ha-noi' => 'Cuối tuần từ Hà Nội',
+        'am-thuc-hai-san' => 'Ẩm thực hải sản & làng chài',
+        'hanh-huong-yen-tu' => 'Hành hương & thiền',
     ),
 );
 

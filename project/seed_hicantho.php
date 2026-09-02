@@ -11,6 +11,18 @@
  *
  * Lưu trú: không seed catalogue trong file này (data từ tool cào riêng); giữ menu + stays_hub.
  *
+ * ---------------------------------------------------------------------------
+ * TAXONOMY TOUR (bắt buộc đồng bộ mọi hub — xem project/README.md §3):
+ * - DANH MỤC = tour_categories type=region → khu vực / combo (zone hoặc ket-hop-*).
+ *   Không chia theo số ngày; không đặt tên "Tour 1 ngày / 2–3 ngày…".
+ * - CHỦ ĐỀ   = tour_categories type=theme  → gắn HUB zone:
+ *   (A) thời lượng: tour-trong-ngay | 2N1D | 3N2D | 4N3D | từ 5 ngày
+ *   (B) tính chất: gia đình, trăng mật, teambuilding, cuối tuần, insight địa phương
+ *   — KHÔNG clone tên zone GEO.
+ * - Package ↔ category/theme: nhiều–nhiều qua packageSlugs[] (+ minDays cho theme thời lượng).
+ * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
+ * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hicantho')
  *
  * @return array<string, mixed>
@@ -110,62 +122,18 @@ $__hicanthoSeed = array(
     ),
 
     'travel_styles' => array(
-        'day-trip' => array(
-            'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day trip',
-        ),
-        '2n1d' => array(
-            'vi' => '2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-        ),
-        '3n2d' => array(
-            'vi' => '3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-        ),
-        '4n3d' => array(
-            'vi' => '4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-        ),
-        '5-plus-days' => array(
-            'vi' => 'Từ 5 ngày',
-
-
-
-
-'en' => '5+ days',
-        ),
-        'cho-noi' => array(
-            'vi' => 'Tour chợ nổi',
-
-
-
-
-'en' => 'Floating market tours',
-        ),
-        'vuon-trai-homestay' => array(
-            'vi' => 'Vườn trái & homestay',
-
-
-
-
-'en' => 'Fruit gardens & homestay',
-        ),
+        // (A) thời lượng chương trình — khớp chủ đề type=theme sort 0–4
+        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
+        '2n1d' => array('vi' => '2 ngày 1 đêm', 'en' => '2 days 1 night'),
+        '3n2d' => array('vi' => '3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+        '4n3d' => array('vi' => '4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+        '5-plus-days' => array('vi' => 'Từ 5 ngày', 'en' => '5+ days'),
+        // (B) tính chất / insight địa phương — khớp chủ đề type=theme sort 10+
+        'cho-noi-song-nuoc' => array('vi' => 'Chợ nổi & đời sống sông nước', 'en' => 'Floating markets & river life'),
+        'vuon-trai-homestay' => array('vi' => 'Vườn trái & homestay nhà vườn', 'en' => 'Orchards & garden homestays'),
+        'gia-dinh-mien-tay' => array('vi' => 'Gia đình & nhóm nhỏ', 'en' => 'Family & small groups'),
+        'am-thuc-song-nuoc' => array('vi' => 'Ẩm thực sông nước', 'en' => 'Delta river cuisine'),
+        'cuoi-tuan-sai-gon' => array('vi' => 'Cuối tuần từ Sài Gòn', 'en' => 'Weekend from Saigon'),
     ),
 
     'review_platforms' => array(
@@ -343,6 +311,9 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
+                'cho-noi-song-nuoc',
+                'gia-dinh-mien-tay',
+                'cuoi-tuan-sai-gon',
             ),
             'quote' => array(
                 'text' => 'Ba ngày vừa đủ — chợ nổi sáng sớm, vườn trái Mỹ Khánh và hoàng hôn Sông Hậu.',
@@ -444,7 +415,8 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 '2n1d',
-                'cho-noi',
+                'cho-noi-song-nuoc',
+                'cuoi-tuan-sai-gon',
             ),
             'quote' => array(
                 'text' => 'Dậy 4h30 đáng giá — ánh bình minh trên ghe trái cây không quên được.',
@@ -519,6 +491,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 '4n3d',
+                'cho-noi-song-nuoc',
                 'vuon-trai-homestay',
             ),
             'quote' => array(
@@ -619,6 +592,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'gia-dinh-mien-tay',
             ),
             'quote' => array(
                 'text' => 'Một ngày gom Ninh Kiều, Bình Thủy và bảo tàng — không cần tự lái xe.',
@@ -683,7 +657,8 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'cho-noi',
+                'cho-noi-song-nuoc',
+                'am-thuc-song-nuoc',
             ),
             'quote' => array(
                 'text' => 'Hủ tiếu trên ghe lúc bình minh — trải nghiệm đúng nghĩa miền Tây.',
@@ -746,7 +721,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
-                'cho-noi',
+                'cho-noi-song-nuoc',
             ),
             'quote' => array(
                 'text' => 'Ít khách du lịch hơn Cái Răng — cảm giác như đi chợ cùng người địa phương.',
@@ -809,6 +784,8 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'am-thuc-song-nuoc',
+                'gia-dinh-mien-tay',
             ),
             'quote' => array(
                 'text' => 'Hoàng hôn trên Sông Hậu rộng — đẹp hơn mọi quán nhậu view.',
@@ -873,6 +850,7 @@ $__hicanthoSeed = array(
             'styles' => array(
                 'day-trip',
                 'vuon-trai-homestay',
+                'gia-dinh-mien-tay',
             ),
             'quote' => array(
                 'text' => 'Con thích đu đủ và đi xe ngựa — bố mẹ được nghỉ giữa vườn xanh.',
@@ -935,6 +913,7 @@ $__hicanthoSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'vuon-trai-homestay',
             ),
             'quote' => array(
                 'text' => 'Nhà cổ Bình Thủy đẹp như phim — chùa Khmer cũng rất ấn tượng.',
@@ -996,6 +975,7 @@ $__hicanthoSeed = array(
             'styles' => array(
                 '2n1d',
                 'vuon-trai-homestay',
+                'am-thuc-song-nuoc',
             ),
             'quote' => array(
                 'text' => 'Đạp xe quanh cù lao, tối ngồi nghe sông — yên bình thật sự.',
@@ -1073,6 +1053,7 @@ $__hicanthoSeed = array(
             'featured' => false,
             'styles' => array(
                 'day-trip',
+                'gia-dinh-mien-tay',
             ),
             'quote' => array(
                 'text' => 'Hàng ngàn cò trắng bay về tổ chiều — cảnh đẹp như tranh.',
@@ -1133,6 +1114,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'am-thuc-song-nuoc',
             ),
             'quote' => array(
                 'text' => 'Lẩu mắm, bún riêu, nem nướng — ăn no mà vẫn muốn quay lại.',
@@ -1196,6 +1178,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 '3n2d',
+                'cuoi-tuan-sai-gon',
             ),
             'quote' => array(
                 'text' => 'Chợ nổi Cần Thơ + rừng tràm Tra Su — combo miền Tây hoàn hảo.',
@@ -1282,6 +1265,7 @@ $__hicanthoSeed = array(
             'featured' => false,
             'styles' => array(
                 '4n3d',
+                'cuoi-tuan-sai-gon',
             ),
             'quote' => array(
                 'text' => 'Từ chợ nổi đến mũi đất cực Nam — hành trình xuyên ĐBSCL đáng nhớ.',
@@ -1375,6 +1359,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 '4n3d',
+                'cuoi-tuan-sai-gon',
             ),
             'quote' => array(
                 'text' => 'Miền Tây sông nước rồi ra đảo — combo lý tưởng từ Sài Gòn.',
@@ -1472,6 +1457,7 @@ $__hicanthoSeed = array(
             'featured' => true,
             'styles' => array(
                 'day-trip',
+                'cho-noi-song-nuoc',
             ),
             'quote' => array(
                 'text' => 'Kênh nhỏ yên tĩnh hơn sông lớn — thấy đời sống thật của người miền Tây.',
@@ -2153,162 +2139,128 @@ $__hicanthoSeed = array(
     ),
 
     'tour_categories' => array(
+        /* ── DANH MỤC (type=region) — khu vực GEO & combo, không chia theo số ngày ── */
         array(
             'zoneSlug' => 'ninh-kieu-trung-tam',
-            'slug' => 'nua-ngay',
-            'type' => 'duration',
+            'slug' => 'tour-ninh-kieu-trung-tam',
+            'type' => 'region',
             'sort' => 0,
-            'minDays' => 0,
-            'maxDays' => 1,
             'packageSlugs' => array(
-                'song-hau-hoang-hon-1-ngay',
+                'can-tho-3-ngay-tong-quan',
+                'city-tour-can-tho-1-ngay',
                 'food-tour-can-tho-toi',
-                'xuong-may-kenh-rach-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour nửa ngày / tối',
-
-
-
-
-'en' => 'Half-day / evening',
-            ),
-            'subtitle' => array(
-                'vi' => 'Hoàng hôn Sông Hậu, tour ẩm thực, xuồng kênh.',
-
-
-
-
-'en' => 'Hau River sunset, food tour, canal boats.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Ghép thêm vào chuyến cuối tuần Sài Gòn.',
-
-
-
-
-'en' => 'Easy add-on to an HCMC weekend trip.',
-            ),
+            'name' => array('vi' => 'Tour Ninh Kiều & trung tâm', 'en' => 'Ninh Kieu & city centre tours'),
+            'subtitle' => array('vi' => 'Bến Ninh Kiều, cầu đi bộ, chợ cổ và phố ẩm thực — nơi mọi chuyến sông nước bắt đầu.', 'en' => 'Ninh Kieu pier, the walking bridge, the old market and the food streets — where every river trip begins.'),
+            'seo_body' => array('vi' => 'Danh mục theo khu vực: các chương trình lấy trung tâm Cần Thơ làm bản doanh, kể cả tour nhiều ngày.', 'en' => 'GEO category: programmes based in central Can Tho, including multi-day itineraries.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'cho-noi-cai-rang',
-            'slug' => '1-ngay',
-            'type' => 'duration',
+            'slug' => 'tour-cho-noi-cai-rang',
+            'type' => 'region',
             'sort' => 1,
-            'minDays' => 1,
-            'maxDays' => 1,
             'packageSlugs' => array(
-                'city-tour-can-tho-1-ngay',
+                'can-tho-2-ngay-cho-noi',
                 'cho-noi-cai-rang-sang-som-1-ngay',
-                'cho-noi-phong-dien-1-ngay',
-                'my-khanh-vuon-trai-1-ngay',
-                'binh-thuy-lang-mien-tay-1-ngay',
-                'vuon-chim-bang-lang-1-ngay',
+                'can-tho-3-ngay-tong-quan',
+                'can-tho-4-ngay-kham-pha-sau',
             ),
-            'name' => array(
-                'vi' => 'Tour 1 ngày',
-
-
-
-
-'en' => '1-day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Chợ nổi, city, vườn trái, làng miền Tây.',
-
-
-
-
-'en' => 'Floating markets, city, gardens, villages.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Phổ biến với khách 2 ngày 1 đêm cuối tuần.',
-
-
-
-
-'en' => 'Popular for 2-night weekend visitors.',
-            ),
+            'name' => array('vi' => 'Tour chợ nổi Cái Răng', 'en' => 'Cai Rang floating market tours'),
+            'subtitle' => array('vi' => 'Chợ nổi lớn nhất miền Tây, đông nhất lúc 5–7 giờ sáng — thuyền rời bến Ninh Kiều từ 5 giờ.', 'en' => 'The Mekong Delta’s largest floating market, busiest from 5–7am — boats leave Ninh Kieu at 5am.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Cái Răng, gom cả tour ngày và các chương trình dài có chặng chợ nổi.', 'en' => 'The Cai Rang GEO category, covering day trips and longer tours with a market leg.'),
             'faqs' => array(),
         ),
         array(
-            'zoneSlug' => 'ninh-kieu-trung-tam',
-            'slug' => '2-3-ngay',
-            'type' => 'duration',
+            'zoneSlug' => 'cho-noi-phong-dien',
+            'slug' => 'tour-phong-dien-tra-on',
+            'type' => 'region',
             'sort' => 2,
-            'minDays' => 2,
-            'maxDays' => 3,
             'packageSlugs' => array(
+                'cho-noi-phong-dien-1-ngay',
+                'can-tho-4-ngay-kham-pha-sau',
+            ),
+            'name' => array('vi' => 'Tour Phong Điền & Trà Ôn', 'en' => 'Phong Dien & Tra On tours'),
+            'subtitle' => array('vi' => 'Chợ nổi nhỏ hơn, gần như không có tàu du lịch — mua bán thật giữa người dân trong vùng.', 'en' => 'Smaller floating markets with almost no tourist boats — real trade between local growers.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Phong Điền — lựa chọn cho khách muốn tránh đông ở Cái Răng.', 'en' => 'The Phong Dien GEO category — the choice for travellers avoiding the Cai Rang crowds.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'vuon-trai-mien-tay',
+            'slug' => 'tour-vuon-trai-mien-tay',
+            'type' => 'region',
+            'sort' => 3,
+            'packageSlugs' => array(
+                'my-khanh-vuon-trai-1-ngay',
                 'can-tho-2-ngay-cho-noi',
-                'con-son-homestay-2n1d',
                 'can-tho-3-ngay-tong-quan',
-                'can-tho-chau-doc-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 – 3 ngày',
-
-
-
-
-'en' => '2–3 day tours',
+            'name' => array('vi' => 'Tour vườn trái miền Tây', 'en' => 'Mekong orchard tours'),
+            'subtitle' => array('vi' => 'Mỹ Khánh và các nhà vườn quanh Phong Điền — hái trái tại gốc, cầu tre và đàn ca tài tử.', 'en' => 'My Khanh and the orchards around Phong Dien — pick your own fruit, bamboo bridges and tai tu music.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực vườn trái — mùa chính tháng 5–8, các mùa khác vẫn có trái luân phiên.', 'en' => 'The orchard GEO category — peak season May–August, with rotating fruit year-round.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'lang-mien-tay',
+            'slug' => 'tour-lang-mien-tay-van-hoa',
+            'type' => 'region',
+            'sort' => 4,
+            'packageSlugs' => array(
+                'binh-thuy-lang-mien-tay-1-ngay',
+                'can-tho-3-ngay-tong-quan',
             ),
-            'subtitle' => array(
-                'vi' => 'Tổng quan, chợ nổi, homestay, combo Châu Đốc.',
-
-
-
-
-'en' => 'Overview, floating markets, homestay, Chau Doc combo.',
+            'name' => array('vi' => 'Tour làng miền Tây & văn hoá', 'en' => 'Delta villages & culture tours'),
+            'subtitle' => array('vi' => 'Nhà cổ Bình Thuỷ, lò hủ tiếu, xưởng bánh tráng và những nghề gia đình còn giữ đến nay.', 'en' => 'The Binh Thuy ancient house, noodle kitchens, rice-paper workshops and surviving family trades.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực làng nghề và di tích quanh Cần Thơ, thường ghép trong một ngày.', 'en' => 'The craft-village and heritage GEO category around Can Tho, usually covered in one day.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'con-son-cu-lao',
+            'slug' => 'tour-cu-lao-con-son',
+            'type' => 'region',
+            'sort' => 5,
+            'packageSlugs' => array(
+                'con-son-homestay-2n1d',
+                'can-tho-4-ngay-kham-pha-sau',
             ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn phổ biến cho khách Sài Gòn cuối tuần.',
-
-
-
-
-'en' => 'Sweet spot for HCMC weekenders.',
+            'name' => array('vi' => 'Tour cù lao Cồn Sơn', 'en' => 'Con Son islet tours'),
+            'subtitle' => array('vi' => 'Cù lao giữa sông Hậu — bè cá lóc bay, nhà vườn làm bánh dân gian và du lịch cộng đồng.', 'en' => 'An islet in the Hau River — jumping-fish rafts, garden homes making folk cakes, community tourism.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực Cồn Sơn — mô hình du lịch cộng đồng do chính các hộ dân trên cù lao vận hành.', 'en' => 'The Con Son GEO category — community tourism run by the islet households themselves.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'song-hau-kenh-rach',
+            'slug' => 'tour-song-hau-kenh-rach',
+            'type' => 'region',
+            'sort' => 6,
+            'packageSlugs' => array(
+                'can-tho-4-ngay-kham-pha-sau',
+                'song-hau-hoang-hon-1-ngay',
+                'vuon-chim-bang-lang-1-ngay',
+                'xuong-may-kenh-rach-nua-ngay',
             ),
+            'name' => array('vi' => 'Tour sông Hậu & kênh rạch', 'en' => 'Hau River & canal tours'),
+            'subtitle' => array('vi' => 'Xuồng máy vào kênh nhỏ, vườn chim Bằng Lăng và hoàng hôn giữa dòng sông Hậu.', 'en' => 'Sampans into narrow canals, the Bang Lang stork garden and sunset midstream on the Hau.'),
+            'seo_body' => array('vi' => 'Danh mục khu vực sông và kênh rạch — phần đặc trưng nhất của địa hình Cần Thơ.', 'en' => 'The river-and-canal GEO category — the most characteristic part of Can Tho’s landscape.'),
             'faqs' => array(),
         ),
         array(
             'zoneSlug' => 'ket-hop-dbscl',
-            'slug' => '4-ngay-tro-len',
-            'type' => 'duration',
-            'sort' => 3,
-            'minDays' => 4,
-            'maxDays' => 10,
+            'slug' => 'combo-dong-bang-song-cuu-long',
+            'type' => 'region',
+            'sort' => 7,
             'packageSlugs' => array(
-                'can-tho-4-ngay-kham-pha-sau',
+                'can-tho-chau-doc-3n2d',
                 'can-tho-ca-mau-4n3d',
                 'can-tho-phu-quoc-4n3d',
             ),
-            'name' => array(
-                'vi' => 'Tour 4 ngày trở lên',
-
-
-
-
-'en' => '4+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá sâu ĐBSCL & combo đảo.',
-
-
-
-
-'en' => 'Deep delta exploration & island combos.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Chợ nổi, homestay, Cà Mau, Phú Quốc.',
-
-
-
-
-'en' => 'Floating markets, homestays, Ca Mau, Phu Quoc.',
-            ),
+            'name' => array('vi' => 'Combo Đồng bằng sông Cửu Long', 'en' => 'Mekong Delta combos'),
+            'subtitle' => array('vi' => 'Nối Cần Thơ với Châu Đốc, Cà Mau hoặc Phú Quốc — hành trình 3–4 ngày qua nhiều tỉnh.', 'en' => 'Can Tho linked with Chau Doc, Ca Mau or Phu Quoc — 3–4 day journeys across several provinces.'),
+            'seo_body' => array('vi' => 'Danh mục combo liên tỉnh, dùng Cần Thơ làm trung tâm trung chuyển của đồng bằng.', 'en' => 'The inter-province combo category, using Can Tho as the delta’s transit hub.'),
             'faqs' => array(),
         ),
+
+        /* ── CHỦ ĐỀ (A) type=theme — thời lượng chương trình, gắn hub zone ── */
         array(
             'zoneSlug' => 'ninh-kieu-trung-tam',
             'slug' => 'tour-trong-ngay',
@@ -2327,30 +2279,9 @@ $__hicanthoSeed = array(
                 'food-tour-can-tho-toi',
                 'xuong-may-kenh-rach-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour trong ngày',
-
-
-
-
-'en' => 'Day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
-
-
-
-
-'en' => 'Full day — no overnight.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
-
-
-
-
-'en' => 'Duration filter — distinct from per-zone GEO category pages.',
-            ),
+            'name' => array('vi' => 'Tour trong ngày', 'en' => 'Day tours'),
+            'subtitle' => array('vi' => 'Trọn vẹn trong ngày — không qua đêm tại Cần Thơ.', 'en' => 'A full day — no overnight in Can Tho.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2364,30 +2295,9 @@ $__hicanthoSeed = array(
                 'can-tho-2-ngay-cho-noi',
                 'con-son-homestay-2n1d',
             ),
-            'name' => array(
-                'vi' => 'Tour 2 ngày 1 đêm',
-
-
-
-
-'en' => '2 days 1 night',
-            ),
-            'subtitle' => array(
-                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
-
-
-
-
-'en' => 'Short weekend, one-night homestay or resort.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
-
-
-
-
-'en' => '2N1D sweet spot — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 2 ngày 1 đêm', 'en' => '2 days 1 night'),
+            'subtitle' => array('vi' => 'Cuối tuần ngắn — một đêm nghỉ tại Cần Thơ.', 'en' => 'Short weekend — one overnight in Can Tho.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2401,30 +2311,9 @@ $__hicanthoSeed = array(
                 'can-tho-3-ngay-tong-quan',
                 'can-tho-chau-doc-3n2d',
             ),
-            'name' => array(
-                'vi' => 'Tour 3 ngày 2 đêm',
-
-
-
-
-'en' => '3 days 2 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
-
-
-
-
-'en' => 'Enough depth — two overnights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
-
-
-
-
-'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
-            ),
+            'name' => array('vi' => 'Tour 3 ngày 2 đêm', 'en' => '3 days 2 nights'),
+            'subtitle' => array('vi' => 'Khám phá vừa đủ — hai đêm tại Cần Thơ.', 'en' => 'Enough depth — two nights in Can Tho.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2439,30 +2328,9 @@ $__hicanthoSeed = array(
                 'can-tho-ca-mau-4n3d',
                 'can-tho-phu-quoc-4n3d',
             ),
-            'name' => array(
-                'vi' => 'Tour 4 ngày 3 đêm',
-
-
-
-
-'en' => '4 days 3 nights',
-            ),
-            'subtitle' => array(
-                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
-
-
-
-
-'en' => 'Deeper exploration, three nights.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
-
-
-
-
-'en' => '4N3D itineraries — hub duration filter.',
-            ),
+            'name' => array('vi' => 'Tour 4 ngày 3 đêm', 'en' => '4 days 3 nights'),
+            'subtitle' => array('vi' => 'Khám phá sâu hơn — ba đêm trải nghiệm Cần Thơ.', 'en' => 'Deeper exploration — three nights in Can Tho.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
         array(
@@ -2473,66 +2341,29 @@ $__hicanthoSeed = array(
             'minDays' => 5,
             'maxDays' => null,
             'packageSlugs' => array(),
-            'name' => array(
-                'vi' => 'Tour từ 5 ngày',
-
-
-
-
-'en' => '5+ day tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Combo dài ngày, nhiều điểm đến.',
-
-
-
-
-'en' => 'Extended combos and multi-destination trips.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
-
-
-
-
-'en' => 'Long tours & combos — duration insight, not a GEO page.',
-            ),
+            'name' => array('vi' => 'Tour từ 5 ngày', 'en' => '5+ day tours'),
+            'subtitle' => array('vi' => 'Tour dài ngày và combo nhiều điểm đến từ Cần Thơ.', 'en' => 'Extended tours and multi-stop combos from Can Tho.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thời lượng chương trình — khác danh mục theo khu vực / combo.', 'en' => 'Program-duration theme — distinct from GEO/combo category pages.'),
             'faqs' => array(),
         ),
+
+        /* ── CHỦ ĐỀ (B) type=theme — tính chất / insight, KHÔNG clone tên zone GEO ── */
         array(
             'zoneSlug' => 'ninh-kieu-trung-tam',
-            'slug' => 'cho-noi',
+            'slug' => 'cho-noi-song-nuoc',
             'type' => 'theme',
             'sort' => 10,
             'packageSlugs' => array(
+                'can-tho-3-ngay-tong-quan',
+                'can-tho-2-ngay-cho-noi',
+                'can-tho-4-ngay-kham-pha-sau',
                 'cho-noi-cai-rang-sang-som-1-ngay',
                 'cho-noi-phong-dien-1-ngay',
-                'can-tho-2-ngay-cho-noi',
+                'xuong-may-kenh-rach-nua-ngay',
             ),
-            'name' => array(
-                'vi' => 'Tour chợ nổi',
-
-
-
-
-'en' => 'Floating market tours',
-            ),
-            'subtitle' => array(
-                'vi' => 'Cái Răng, Phong Điền — bình minh trên sông.',
-
-
-
-
-'en' => 'Cai Rang, Phong Dien — dawn on the river.',
-            ),
-            'seo_body' => array(
-                'vi' => 'Trải nghiệm đặc trưng của Cần Thơ.',
-
-
-
-
-'en' => 'Signature Can Tho experience.',
-            ),
+            'name' => array('vi' => 'Chợ nổi & đời sống sông nước', 'en' => 'Floating markets & river life'),
+            'subtitle' => array('vi' => 'Dậy từ 4h30, uống cà phê trên thuyền và xem hàng đổi chủ giữa dòng — hoạt động signature của Cần Thơ.', 'en' => 'Up at 4:30am, coffee served on the boat and cargo changing hands midstream — Can Tho’s signature activity.'),
+            'seo_body' => array('vi' => 'Chủ đề theo hoạt động, gom mọi tour có chặng chợ nổi ở nhiều khu vực khác nhau.', 'en' => 'An activity theme grouping every tour with a floating-market leg across different areas.'),
             'faqs' => array(),
         ),
         array(
@@ -2541,34 +2372,64 @@ $__hicanthoSeed = array(
             'type' => 'theme',
             'sort' => 11,
             'packageSlugs' => array(
-                'my-khanh-vuon-trai-1-ngay',
-                'con-son-homestay-2n1d',
                 'can-tho-4-ngay-kham-pha-sau',
+                'my-khanh-vuon-trai-1-ngay',
+                'binh-thuy-lang-mien-tay-1-ngay',
+                'con-son-homestay-2n1d',
             ),
-            'name' => array(
-                'vi' => 'Vườn trái & homestay',
-
-
-
-
-'en' => 'Fruit gardens & homestay',
+            'name' => array('vi' => 'Vườn trái & homestay nhà vườn', 'en' => 'Orchards & garden homestays'),
+            'subtitle' => array('vi' => 'Ngủ nhà vườn, ăn cơm cùng chủ nhà, hái trái và học làm bánh dân gian miền Tây.', 'en' => 'Sleep in a garden home, eat with your hosts, pick fruit and learn to make delta folk cakes.'),
+            'seo_body' => array('vi' => 'Chủ đề theo hình thức lưu trú và trải nghiệm nông nghiệp — không trùng danh mục vườn trái.', 'en' => 'A stay-style and farm-experience theme — distinct from the orchard GEO category.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'gia-dinh-mien-tay',
+            'type' => 'theme',
+            'sort' => 12,
+            'packageSlugs' => array(
+                'can-tho-3-ngay-tong-quan',
+                'city-tour-can-tho-1-ngay',
+                'song-hau-hoang-hon-1-ngay',
+                'my-khanh-vuon-trai-1-ngay',
+                'vuon-chim-bang-lang-1-ngay',
             ),
-            'subtitle' => array(
-                'vi' => 'Mỹ Khánh, Con Sơn, agri-tourism.',
-
-
-
-
-'en' => 'My Khanh, Con Son, agri-tourism.',
+            'name' => array('vi' => 'Gia đình & nhóm nhỏ', 'en' => 'Family & small groups'),
+            'subtitle' => array('vi' => 'Thuyền lớn có áo phao trẻ em, lịch không phải dậy quá sớm và điểm dừng có bóng mát.', 'en' => 'Larger boats with child life jackets, no pre-dawn starts and shaded stops.'),
+            'seo_body' => array('vi' => 'Phân khúc gia đình — lọc theo nhu cầu khách, dùng chung tour với các danh mục khu vực.', 'en' => 'The family segment — a needs-based filter sharing tours with the GEO categories.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'am-thuc-song-nuoc',
+            'type' => 'theme',
+            'sort' => 13,
+            'packageSlugs' => array(
+                'cho-noi-cai-rang-sang-som-1-ngay',
+                'song-hau-hoang-hon-1-ngay',
+                'con-son-homestay-2n1d',
+                'food-tour-can-tho-toi',
             ),
-            'seo_body' => array(
-                'vi' => 'Trải nghiệm chậm bên kênh rạch.',
-
-
-
-
-'en' => 'Slow travel beside the canals.',
+            'name' => array('vi' => 'Ẩm thực sông nước', 'en' => 'Delta river cuisine'),
+            'subtitle' => array('vi' => 'Bún cá, lẩu mắm, bánh xèo miền Tây và cá lóc nướng trui ăn ngay trên bè.', 'en' => 'Fish noodle soup, fermented-fish hotpot, delta banh xeo and grilled snakehead eaten on the raft.'),
+            'seo_body' => array('vi' => 'Chủ đề foodie — gom tour ăn uống buổi tối và các bữa đặc sản trên sông.', 'en' => 'A foodie theme grouping evening tasting tours and speciality meals on the water.'),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'cuoi-tuan-sai-gon',
+            'type' => 'theme',
+            'sort' => 14,
+            'packageSlugs' => array(
+                'can-tho-3-ngay-tong-quan',
+                'can-tho-2-ngay-cho-noi',
+                'can-tho-chau-doc-3n2d',
+                'can-tho-ca-mau-4n3d',
+                'can-tho-phu-quoc-4n3d',
             ),
+            'name' => array('vi' => 'Cuối tuần từ Sài Gòn', 'en' => 'Weekend from Saigon'),
+            'subtitle' => array('vi' => 'Cao tốc 3–3,5 giờ hoặc bay 1 giờ — lịch 2N1D, 3N2D và combo dài hơn qua các tỉnh lân cận.', 'en' => 'A 3–3.5 hour expressway drive or a one-hour flight — 2N1D, 3N2D and longer multi-province combos.'),
+            'seo_body' => array('vi' => 'Chủ đề theo thị trường nguồn TP.HCM, không phải trang danh mục vùng.', 'en' => 'A Ho Chi Minh City source-market theme, not a GEO category page.'),
             'faqs' => array(),
         ),
     ),
@@ -2595,8 +2456,11 @@ $__hicanthoSeed = array(
         '3n2d' => '3 ngày 2 đêm',
         '4n3d' => '4 ngày 3 đêm',
         '5-plus-days' => 'Từ 5 ngày',
-        'cho-noi' => 'Tour chợ nổi',
-        'vuon-trai-homestay' => 'Vườn trái & homestay',
+        'cho-noi-song-nuoc' => 'Chợ nổi & đời sống sông nước',
+        'vuon-trai-homestay' => 'Vườn trái & homestay nhà vườn',
+        'gia-dinh-mien-tay' => 'Gia đình & nhóm nhỏ',
+        'am-thuc-song-nuoc' => 'Ẩm thực sông nước',
+        'cuoi-tuan-sai-gon' => 'Cuối tuần từ Sài Gòn',
     ),
 );
 
