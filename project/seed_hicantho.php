@@ -32,9 +32,21 @@ $__hicanthoSeed = array(
     ),
 
     'price_guest_types' => array(
-        array('code' => 'adult', 'sort' => 10, 'age_min' => 12, 'age_max' => 59, 'name' => array('vi' => 'Người lớn', 'en' => 'Adult')),
-        array('code' => 'child', 'sort' => 20, 'age_min' => 2, 'age_max' => 11, 'name' => array('vi' => 'Trẻ em', 'en' => 'Child')),
-        array('code' => 'senior', 'sort' => 30, 'age_min' => 60, 'age_max' => null, 'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)')),
+        array('code' => 'adult', 'sort' => 10, 'age_min' => 12, 'age_max' => 59, 'name' => array('vi' => 'Người lớn',
+
+
+
+'en' => 'Adult')),
+        array('code' => 'child', 'sort' => 20, 'age_min' => 2, 'age_max' => 11, 'name' => array('vi' => 'Trẻ em',
+
+
+
+'en' => 'Child')),
+        array('code' => 'senior', 'sort' => 30, 'age_min' => 60, 'age_max' => null, 'name' => array('vi' => 'Cao tuổi (60+)',
+
+
+
+'en' => 'Senior (60+)')),
     ),
 
     'price_table_defaults' => array(
@@ -60,30 +72,100 @@ $__hicanthoSeed = array(
     ),
 
     'content_tags' => array(
-        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?', 'en' => 'Where to eat & drink?'),
-        'where-to-stay' => array('vi' => 'Ở đâu?', 'en' => 'Where to stay?'),
-        'what-to-do' => array('vi' => 'Làm gì & xem gì?', 'en' => 'What to do & see?'),
-        'how-to-get-there' => array('vi' => 'Di chuyển tới Cần Thơ thế nào?', 'en' => 'How to get to Can Tho?'),
-        'travel-tips' => array('vi' => 'Mẹo du lịch', 'en' => 'Travel tips'),
-        'trip-report' => array('vi' => 'Cảm nhận chuyến đi', 'en' => 'How was the trip?'),
-        'which-tour' => array('vi' => 'Chọn tour nào?', 'en' => 'Which tour to choose?'),
+        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?',
+
+
+
+'en' => 'Where to eat & drink?'),
+        'where-to-stay' => array('vi' => 'Ở đâu?',
+
+
+
+'en' => 'Where to stay?'),
+        'what-to-do' => array('vi' => 'Làm gì & xem gì?',
+
+
+
+'en' => 'What to do & see?'),
+        'how-to-get-there' => array('vi' => 'Di chuyển tới Cần Thơ thế nào?',
+
+
+
+'en' => 'How to get to Can Tho?'),
+        'travel-tips' => array('vi' => 'Mẹo du lịch',
+
+
+
+'en' => 'Travel tips'),
+        'trip-report' => array('vi' => 'Cảm nhận chuyến đi',
+
+
+
+'en' => 'How was the trip?'),
+        'which-tour' => array('vi' => 'Chọn tour nào?',
+
+
+
+'en' => 'Which tour to choose?'),
     ),
 
     'travel_styles' => array(
-        'floating-market' => array('vi' => 'Chợ nổi sông nước', 'en' => 'Floating markets'),
-        'mekong-river' => array('vi' => 'Sông Hậu & kênh rạch', 'en' => 'Hau River & canals'),
-        'food-culture' => array('vi' => 'Ẩm thực miền Tây', 'en' => 'Mekong food culture'),
-        'homestay-rural' => array('vi' => 'Homestay & làng quê', 'en' => 'Homestay & rural life'),
-        'cycling-eco' => array('vi' => 'Đạp xe & sinh thái', 'en' => 'Cycling & eco'),
-        'agri-tourism' => array('vi' => 'Vườn trái & nông trại', 'en' => 'Fruit gardens & farms'),
-        'family' => array('vi' => 'Gia đình', 'en' => 'Family'),
-        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
-        'multi-day' => array('vi' => 'Tour nhiều ngày', 'en' => 'Multi-day tour'),
-        'balanced' => array('vi' => 'Kỳ nghỉ cân bằng', 'en' => 'Balanced'),
-        'multi-destination-combo' => array('vi' => 'Kết hợp nhiều điểm đến', 'en' => 'Multi-destination combo'),
-        'small-group' => array('vi' => 'Nhóm nhỏ', 'en' => 'Small group'),
-        'photography' => array('vi' => 'Chụp ảnh & check-in', 'en' => 'Photography'),
-        'adventure' => array('vi' => 'Phiêu lưu & khám phá', 'en' => 'Adventure'),
+        'day-trip' => array(
+            'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day trip',
+        ),
+        '2n1d' => array(
+            'vi' => '2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+        ),
+        '3n2d' => array(
+            'vi' => '3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+        ),
+        '4n3d' => array(
+            'vi' => '4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+        ),
+        '5-plus-days' => array(
+            'vi' => 'Từ 5 ngày',
+
+
+
+
+'en' => '5+ days',
+        ),
+        'cho-noi' => array(
+            'vi' => 'Tour chợ nổi',
+
+
+
+
+'en' => 'Floating market tours',
+        ),
+        'vuon-trai-homestay' => array(
+            'vi' => 'Vườn trái & homestay',
+
+
+
+
+'en' => 'Fruit gardens & homestay',
+        ),
     ),
 
     'review_platforms' => array(
@@ -116,7 +198,11 @@ $__hicanthoSeed = array(
             'vi' => array('title' => 'Cần Thơ', 'title_accent' => 'thủ phủ miền Tây trên sông Hậu',
                 'description' => 'Chợ nổi bình minh, bến Ninh Kiều, kênh rạch xanh và ẩm thực đậm đà — cửa ngõ khám phá đồng bằng sông Cửu Long.',
                 'button_label' => 'Khám phá Cần Thơ', 'image_alt' => 'Cần Thơ — thủ phủ miền Tây trên sông Hậu'),
-            'en' => array('title' => 'Can Tho', 'title_accent' => 'capital of the Mekong Delta on the Hau River',
+
+
+
+
+'en' => array('title' => 'Can Tho', 'title_accent' => 'capital of the Mekong Delta on the Hau River',
                 'description' => 'Dawn floating markets, Ninh Kieu wharf, green canals and bold cuisine — gateway to the Mekong Delta.',
                 'button_label' => 'Discover Can Tho', 'image_alt' => 'Can Tho — Mekong Delta capital on the Hau River'),
         ),
@@ -125,7 +211,11 @@ $__hicanthoSeed = array(
             'vi' => array('title' => 'Chợ nổi Cái Răng', 'title_accent' => 'bình minh trên sông lớn nhất',
                 'description' => '5:30–7h sáng — ghe chở trái cây, hủ tiếu nổi và nhịp mua bán đặc trưng ĐBSCL. Tour sáng sớm có HDV địa phương.',
                 'button_label' => 'Xem tour chợ nổi', 'image_alt' => 'Chợ nổi Cái Răng bình minh'),
-            'en' => array('title' => 'Cai Rang floating market', 'title_accent' => 'dawn on the largest river market',
+
+
+
+
+'en' => array('title' => 'Cai Rang floating market', 'title_accent' => 'dawn on the largest river market',
                 'description' => '5:30–7am — fruit boats, floating noodle stalls and iconic Mekong trading. Early-morning tours with local guides.',
                 'button_label' => 'View floating market tours', 'image_alt' => 'Cai Rang floating market at dawn'),
         ),
@@ -134,7 +224,11 @@ $__hicanthoSeed = array(
             'vi' => array('title' => 'Vườn trái & làng quê', 'title_accent' => 'Mỹ Khánh, Cái Mơn, homestay vườn',
                 'description' => 'Trái cây theo mùa, đạp xe làng, nấu ăn miền Tây và đêm ngủ giữa vườn — trải nghiệm chậm rãi bên kênh rạch.',
                 'button_label' => 'Xem tour vườn trái', 'image_alt' => 'Vườn trái Mỹ Khánh Cần Thơ'),
-            'en' => array('title' => 'Fruit gardens & villages', 'title_accent' => 'My Khanh, Cai Mon, garden homestays',
+
+
+
+
+'en' => array('title' => 'Fruit gardens & villages', 'title_accent' => 'My Khanh, Cai Mon, garden homestays',
                 'description' => 'Seasonal fruit, village cycling, Mekong cooking and nights among the orchards — slow travel beside the canals.',
                 'button_label' => 'View garden tours', 'image_alt' => 'My Khanh fruit garden Can Tho'),
         ),
@@ -152,350 +246,1277 @@ $__hicanthoSeed = array(
     ),
 
     'zone_translations' => array(
-        'ninh-kieu-trung-tam' => array('vi' => 'Ninh Kiều & trung tâm', 'en' => 'Ninh Kieu & city centre',
-            'tagline' => array('vi' => 'Bến Ninh Kiều, cầu đi bộ, nhà cổ Bình Thủy và nhịp sống thành phố', 'en' => 'Ninh Kieu wharf, pedestrian bridge, Binh Thuy ancient house and city life')),
-        'cho-noi-cai-rang' => array('vi' => 'Chợ nổi Cái Răng', 'en' => 'Cai Rang floating market',
-            'tagline' => array('vi' => 'Chợ nổi lớn nhất ĐBSCL — 5:30–7h sáng, ghe trái cây và hủ tiếu', 'en' => 'Largest floating market in the delta — 5:30–7am, fruit boats and noodle stalls')),
-        'cho-noi-phong-dien' => array('vi' => 'Phong Điền & Trà Ôn', 'en' => 'Phong Dien & Tra On',
-            'tagline' => array('vi' => 'Chợ nổi nhỏ hơn, chân thực hơn — trải nghiệm địa phương', 'en' => 'Smaller, more authentic floating markets — local experience')),
-        'vuon-trai-mien-tay' => array('vi' => 'Vườn trái miền Tây', 'en' => 'Mekong fruit gardens',
-            'tagline' => array('vi' => 'Mỹ Khánh, Cái Mơn (Bến Tre) và homestay vườn trái', 'en' => 'My Khanh, Cai Mon (Ben Tre) and orchard homestays')),
-        'lang-mien-tay' => array('vi' => 'Làng miền Tây & văn hoá', 'en' => 'Mekong villages & culture',
-            'tagline' => array('vi' => 'Nhà cổ Bình Thủy, chùa Ông, chùa Khmer Munirangseyaram, Bảo tàng Dân tộc học', 'en' => 'Binh Thuy ancient house, Ong Pagoda, Munirangseyaram Khmer temple, Ethnology Museum')),
-        'con-son-cu-lao' => array('vi' => 'Con Sơn (cù lao)', 'en' => 'Con Son islet',
-            'tagline' => array('vi' => 'Cù lao giữa sông, homestay, đạp xe và đời sống ven kênh', 'en' => 'River islet, homestays, cycling and canal-side life')),
-        'song-hau-kenh-rach' => array('vi' => 'Sông Hậu & kênh rạch', 'en' => 'Hau River & canals',
-            'tagline' => array('vi' => 'Xuồng máy, sampan, du thuyền hoàng hôn và len kênh nhỏ', 'en' => 'Motorboats, sampans, sunset cruises and narrow canals')),
-        'ket-hop-dbscl' => array('vi' => 'Kết hợp ĐBSCL', 'en' => 'Mekong Delta combos',
-            'tagline' => array('vi' => 'Châu Đốc (Tra Su), Cà Mau (Mũi), Phú Quốc qua Rạch Giá', 'en' => 'Chau Doc (Tra Su), Ca Mau (southern tip), Phu Quoc via Rach Gia')),
+        'ninh-kieu-trung-tam' => array('vi' => 'Ninh Kiều & trung tâm',
+
+
+
+'en' => 'Ninh Kieu & city centre',
+            'tagline' => array('vi' => 'Bến Ninh Kiều, cầu đi bộ, nhà cổ Bình Thủy và nhịp sống thành phố',
+
+
+
+'en' => 'Ninh Kieu wharf, pedestrian bridge, Binh Thuy ancient house and city life')),
+        'cho-noi-cai-rang' => array('vi' => 'Chợ nổi Cái Răng',
+
+
+
+'en' => 'Cai Rang floating market',
+            'tagline' => array('vi' => 'Chợ nổi lớn nhất ĐBSCL — 5:30–7h sáng, ghe trái cây và hủ tiếu',
+
+
+
+'en' => 'Largest floating market in the delta — 5:30–7am, fruit boats and noodle stalls')),
+        'cho-noi-phong-dien' => array('vi' => 'Phong Điền & Trà Ôn',
+
+
+
+'en' => 'Phong Dien & Tra On',
+            'tagline' => array('vi' => 'Chợ nổi nhỏ hơn, chân thực hơn — trải nghiệm địa phương',
+
+
+
+'en' => 'Smaller, more authentic floating markets — local experience')),
+        'vuon-trai-mien-tay' => array('vi' => 'Vườn trái miền Tây',
+
+
+
+'en' => 'Mekong fruit gardens',
+            'tagline' => array('vi' => 'Mỹ Khánh, Cái Mơn (Bến Tre) và homestay vườn trái',
+
+
+
+'en' => 'My Khanh, Cai Mon (Ben Tre) and orchard homestays')),
+        'lang-mien-tay' => array('vi' => 'Làng miền Tây & văn hoá',
+
+
+
+'en' => 'Mekong villages & culture',
+            'tagline' => array('vi' => 'Nhà cổ Bình Thủy, chùa Ông, chùa Khmer Munirangseyaram, Bảo tàng Dân tộc học',
+
+
+
+'en' => 'Binh Thuy ancient house, Ong Pagoda, Munirangseyaram Khmer temple, Ethnology Museum')),
+        'con-son-cu-lao' => array('vi' => 'Con Sơn (cù lao)',
+
+
+
+'en' => 'Con Son islet',
+            'tagline' => array('vi' => 'Cù lao giữa sông, homestay, đạp xe và đời sống ven kênh',
+
+
+
+'en' => 'River islet, homestays, cycling and canal-side life')),
+        'song-hau-kenh-rach' => array('vi' => 'Sông Hậu & kênh rạch',
+
+
+
+'en' => 'Hau River & canals',
+            'tagline' => array('vi' => 'Xuồng máy, sampan, du thuyền hoàng hôn và len kênh nhỏ',
+
+
+
+'en' => 'Motorboats, sampans, sunset cruises and narrow canals')),
+        'ket-hop-dbscl' => array('vi' => 'Kết hợp ĐBSCL',
+
+
+
+'en' => 'Mekong Delta combos',
+            'tagline' => array('vi' => 'Châu Đốc (Tra Su), Cà Mau (Mũi), Phú Quốc qua Rạch Giá',
+
+
+
+'en' => 'Chau Doc (Tra Su), Ca Mau (southern tip), Phu Quoc via Rach Gia')),
     ),
 
     'tours' => array(
         array(
             'slug' => 'can-tho-3-ngay-tong-quan',
             'title' => 'Cần Thơ 3 ngày 2 đêm — Tổng quan miền Tây sông nước',
-            'zoneSlug' => 'ninh-kieu-trung-tam', 'zone' => 'Ninh Kiều & trung tâm',
-            'tourCode' => 'CT3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.9, 'reviewCount' => 198, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('balanced', 'floating-market', 'mekong-river', 'food-culture'),
-            'quote' => array('text' => 'Ba ngày vừa đủ — chợ nổi sáng sớm, vườn trái Mỹ Khánh và hoàng hôn Sông Hậu.', 'author' => 'Chị Minh Anh'),
-            'places' => array('Chợ nổi Cái Răng', 'Ninh Kiều', 'Mỹ Khánh', 'Nhà cổ Bình Thủy', 'Sông Hậu'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'zone' => 'Ninh Kiều & trung tâm',
+            'tourCode' => 'CT3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.9,
+            'reviewCount' => 198,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+            ),
+            'quote' => array(
+                'text' => 'Ba ngày vừa đủ — chợ nổi sáng sớm, vườn trái Mỹ Khánh và hoàng hôn Sông Hậu.',
+                'author' => 'Chị Minh Anh',
+            ),
+            'places' => array(
+                'Chợ nổi Cái Răng',
+                'Ninh Kiều',
+                'Mỹ Khánh',
+                'Nhà cổ Bình Thủy',
+                'Sông Hậu',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => 'Lịch trình cân bằng cho lần đầu: chợ nổi, city tour, vườn trái và thuyền hoàng hôn.',
-            'highlights' => array('Tour chợ nổi Cái Răng 5:30', 'City tour Ninh Kiều & Bình Thủy', 'Vườn trái Mỹ Khánh', 'Thuyền hoàng hôn Sông Hậu', 'Food tour ẩm thực miền Tây'),
+            'highlights' => array(
+                'Tour chợ nổi Cái Răng 5:30',
+                'City tour Ninh Kiều & Bình Thủy',
+                'Vườn trái Mỹ Khánh',
+                'Thuyền hoàng hôn Sông Hậu',
+                'Tour ẩm thực ẩm thực miền Tây',
+            ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Đón — City tour & Ninh Kiều', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm Cần Thơ',
-                    'content' => 'Đón sân bay/bến xe, city tour Ninh Kiều, nhà cổ Bình Thủy, chùa Ông. Tối dạo bến và cầu đi bộ.'),
-                array('day' => 2, 'title' => 'Chợ nổi — Vườn trái', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Trung tâm Cần Thơ',
-                    'content' => '04:30 xuất phát chợ nổi Cái Răng, ăn sáng trên ghe. Chiều vườn trái Mỹ Khánh, thưởng thức trái theo mùa.'),
-                array('day' => 3, 'title' => 'Sampan kênh — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('boat', 'car'), 'overnight' => null,
-                    'content' => 'Sáng sampan len kênh rạch, tham quan làng nghề. Ăn trưa và tiễn sân bay VCA/bến xe.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Đón — City tour & Ninh Kiều',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm Cần Thơ',
+                    'content' => 'Đón sân bay/bến xe, city tour Ninh Kiều, nhà cổ Bình Thủy, chùa Ông. Tối dạo bến và cầu đi bộ.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Chợ nổi — Vườn trái',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Trung tâm Cần Thơ',
+                    'content' => '04:30 xuất phát chợ nổi Cái Răng, ăn sáng trên ghe. Chiều vườn trái Mỹ Khánh, thưởng thức trái theo mùa.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Sampan kênh — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng sampan len kênh rạch, tham quan làng nghề. Ăn trưa và tiễn sân bay VCA/bến xe.',
+                ),
             ),
-            'inclusions' => array('Xe đưa đón trong chương trình', 'Vé tham quan theo lịch', 'HDV địa phương', 'Bữa ăn ghi trong chương trình', 'Thuyền chợ nổi & sampan'),
-            'exclusions' => array('Vé máy bay/xe liên tỉnh (đặt thêm)', 'Lưu trú (đặt thêm)', 'Đồ uống', 'Tip'),
-            'notes' => array('Có thể gộp đặt homestay, khách sạn hoặc resort qua :brand theo khu vực bạn chọn.', 'Chợ nổi phụ thuộc mùa nước — lịch có thể điều chỉnh nhẹ.'),
+            'inclusions' => array(
+                'Xe đưa đón trong chương trình',
+                'Vé tham quan theo lịch',
+                'HDV địa phương',
+                'Bữa ăn ghi trong chương trình',
+                'Thuyền chợ nổi & sampan',
+            ),
+            'exclusions' => array(
+                'Vé máy bay/xe liên tỉnh (đặt thêm)',
+                'Lưu trú (đặt thêm)',
+                'Đồ uống',
+                'Tip',
+            ),
+            'notes' => array(
+                'Có thể gộp đặt homestay, khách sạn hoặc resort qua :brand theo khu vực bạn chọn.',
+                'Chợ nổi phụ thuộc mùa nước — lịch có thể điều chỉnh nhẹ.',
+            ),
             'faqs' => array(
-                array('q' => 'Tour có bao gồm khách sạn không?', 'a' => 'Giá tour chưa gồm phòng nghỉ. :brand hỗ trợ gợi ý và đặt homestay, khách sạn hoặc resort theo ngân sách và khu vực — ghép vào cùng chuyến đi.'),
-                array('q' => 'Chợ nổi mở mấy giờ?', 'a' => 'Cái Răng sôi động nhất 5:30–7h sáng — tour xuất phát rất sớm, nên ngủ sớm đêm trước.'),
+                array(
+                    'q' => 'Tour có bao gồm khách sạn không?',
+                    'a' => 'Giá tour chưa gồm phòng nghỉ. :brand hỗ trợ gợi ý và đặt homestay, khách sạn hoặc resort theo ngân sách và khu vực — ghép vào cùng chuyến đi.',
+                ),
+                array(
+                    'q' => 'Chợ nổi mở mấy giờ?',
+                    'a' => 'Cái Răng sôi động nhất 5:30–7h sáng — tour xuất phát rất sớm, nên ngủ sớm đêm trước.',
+                ),
             ),
-            'galleryCount' => 6, 'priceFrom' => 2650000.0, 'currency' => 'VND',
+            'galleryCount' => 6,
+            'priceFrom' => 2650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'can-tho-2-ngay-cho-noi',
             'title' => 'Cần Thơ 2 ngày 1 đêm — Chợ nổi & sông nước',
-            'zoneSlug' => 'cho-noi-cai-rang', 'zone' => 'Chợ nổi Cái Răng',
-            'tourCode' => 'CT2D-01', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 156, 'badge' => 'Chợ nổi', 'featured' => true,
-            'styles' => array('floating-market', 'mekong-river', 'photography', 'day-trip'),
-            'quote' => array('text' => 'Dậy 4h30 đáng giá — ánh bình minh trên ghe trái cây không quên được.', 'author' => 'Anh Đức Thắng'),
-            'places' => array('Chợ nổi Cái Răng', 'Cầu Cần Thơ', 'Ninh Kiều'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
-            'highlightsIntro' => 'Gói ngắn tập trung chợ nổi và trải nghiệm sông — phù hợp cuối tuần Sài Gòn.',
-            'highlights' => array('Chợ nổi Cái Răng sáng sớm', 'Sampan kênh rạch', 'Hoàng hôn Sông Hậu', 'Ăn lẩu mắm & bún riêu'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Chợ nổi & sampan', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Trung tâm Cần Thơ',
-                    'content' => 'Sáng sớm chợ nổi, trưa sampan kênh. Chiều tự do Ninh Kiều, tối food tour.'),
-                array('day' => 2, 'title' => 'City tour — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null,
-                    'content' => 'Bình Thủy, Bảo tàng Dân tộc học, tiễn khách.'),
+            'zoneSlug' => 'cho-noi-cai-rang',
+            'zone' => 'Chợ nổi Cái Răng',
+            'tourCode' => 'CT2D-01',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 156,
+            'badge' => 'Chợ nổi',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'cho-noi',
             ),
-            'inclusions' => array('Xe 2 ngày', 'Thuyền chợ nổi & sampan', 'HDV', 'Bữa ăn theo lịch'),
-            'exclusions' => array('Lưu trú (đặt thêm)', 'Xe SGN—Cần Thơ'),
-            'notes' => array('Mùa chợ nổi đẹp nhất tháng 11–4.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 1850000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Dậy 4h30 đáng giá — ánh bình minh trên ghe trái cây không quên được.',
+                'author' => 'Anh Đức Thắng',
+            ),
+            'places' => array(
+                'Chợ nổi Cái Răng',
+                'Cầu Cần Thơ',
+                'Ninh Kiều',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
+            'highlightsIntro' => 'Gói ngắn tập trung chợ nổi và trải nghiệm sông — phù hợp cuối tuần Sài Gòn.',
+            'highlights' => array(
+                'Chợ nổi Cái Răng sáng sớm',
+                'Sampan kênh rạch',
+                'Hoàng hôn Sông Hậu',
+                'Ăn lẩu mắm & bún riêu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Chợ nổi & sampan',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Trung tâm Cần Thơ',
+                    'content' => 'Sáng sớm chợ nổi, trưa sampan kênh. Chiều tự do Ninh Kiều, tối tour ẩm thực.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Tour thành phố — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Bình Thủy, Bảo tàng Dân tộc học, tiễn khách.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe 2 ngày',
+                'Thuyền chợ nổi & sampan',
+                'HDV',
+                'Bữa ăn theo lịch',
+            ),
+            'exclusions' => array(
+                'Lưu trú (đặt thêm)',
+                'Xe SGN—Cần Thơ',
+            ),
+            'notes' => array(
+                'Mùa chợ nổi đẹp nhất tháng 11–4.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 1850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'can-tho-4-ngay-kham-pha-sau',
             'title' => 'Cần Thơ 4 ngày 3 đêm — Khám phá sâu ĐBSCL',
-            'zoneSlug' => 'song-hau-kenh-rach', 'zone' => 'Sông Hậu & kênh rạch',
-            'tourCode' => 'CT4D-01', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 4.8, 'reviewCount' => 72, 'badge' => null, 'featured' => true,
-            'styles' => array('multi-day', 'homestay-rural', 'agri-tourism', 'cycling-eco'),
-            'quote' => array('text' => 'Bốn ngày mới đủ để ngủ homestay vườn, đạp xe Con Sơn và chợ Phong Điền yên tĩnh.', 'author' => 'Chị Lan Hương'),
-            'places' => array('Cái Răng', 'Phong Điền', 'Mỹ Khánh', 'Con Sơn', 'Vườn chim Bằng Lăng'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
-            'highlightsIntro' => 'Hành trình đầy đủ: hai chợ nổi, vườn trái, cù lao homestay và vườn chim (mùa).',
-            'highlights' => array('Cái Răng + Phong Điền', 'Homestay vườn trái', 'Đạp xe Con Sơn', 'Vườn chim Bằng Lăng (11–7)', 'Làng nghề & ẩm thực'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đón — Ninh Kiều', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm', 'content' => 'City tour, hoàng hôn Sông Hậu.'),
-                array('day' => 2, 'title' => 'Chợ nổi — Mỹ Khánh', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('boat', 'car'), 'overnight' => 'Homestay vườn', 'content' => 'Sáng Cái Răng, chiều Mỹ Khánh, tối homestay vườn.'),
-                array('day' => 3, 'title' => 'Con Sơn — đạp xe', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('boat', 'bicycle'), 'overnight' => 'Con Sơn / Cần Thơ', 'content' => 'Sampan sang cù lao, đạp xe làng, nấu ăn miền Tây.'),
-                array('day' => 4, 'title' => 'Phong Điền — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('boat', 'car'), 'overnight' => null, 'content' => 'Chợ Phong Điền (nếu lịch phù hợp), tiễn VCA.'),
+            'zoneSlug' => 'song-hau-kenh-rach',
+            'zone' => 'Sông Hậu & kênh rạch',
+            'tourCode' => 'CT4D-01',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 4.8,
+            'reviewCount' => 72,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                '4n3d',
+                'vuon-trai-homestay',
             ),
-            'inclusions' => array('Xe & thuyền theo lịch', 'HDV', 'Homestay 1 đêm', 'Hoạt động vườn & đạp xe'),
-            'exclusions' => array('Lưu trú trung tâm (đặt thêm)', 'Xe liên tỉnh'),
-            'notes' => array('Vườn chim theo mùa tháng 11–7.'), 'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 3950000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Bốn ngày mới đủ để ngủ homestay vườn, đạp xe Con Sơn và chợ Phong Điền yên tĩnh.',
+                'author' => 'Chị Lan Hương',
+            ),
+            'places' => array(
+                'Cái Răng',
+                'Phong Điền',
+                'Mỹ Khánh',
+                'Con Sơn',
+                'Vườn chim Bằng Lăng',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
+            'highlightsIntro' => 'Hành trình đầy đủ: hai chợ nổi, vườn trái, cù lao homestay và vườn chim (mùa).',
+            'highlights' => array(
+                'Cái Răng + Phong Điền',
+                'Homestay vườn trái',
+                'Đạp xe Con Sơn',
+                'Vườn chim Bằng Lăng (11–7)',
+                'Làng nghề & ẩm thực',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đón — Ninh Kiều',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm',
+                    'content' => 'City tour, hoàng hôn Sông Hậu.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Chợ nổi — Mỹ Khánh',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => 'Homestay vườn',
+                    'content' => 'Sáng Cái Răng, chiều Mỹ Khánh, tối homestay vườn.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Con Sơn — đạp xe',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'bicycle',
+                    ),
+                    'overnight' => 'Con Sơn / Cần Thơ',
+                    'content' => 'Sampan sang cù lao, đạp xe làng, nấu ăn miền Tây.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Phong Điền — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Chợ Phong Điền (nếu lịch phù hợp), tiễn VCA.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe & thuyền theo lịch',
+                'HDV',
+                'Homestay 1 đêm',
+                'Hoạt động vườn & đạp xe',
+            ),
+            'exclusions' => array(
+                'Lưu trú trung tâm (đặt thêm)',
+                'Xe liên tỉnh',
+            ),
+            'notes' => array(
+                'Vườn chim theo mùa tháng 11–7.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 3950000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'city-tour-can-tho-1-ngay',
-            'title' => 'City tour Cần Thơ 1 ngày — Ninh Kiều & văn hoá',
-            'zoneSlug' => 'ninh-kieu-trung-tam', 'zone' => 'Ninh Kiều & trung tâm',
-            'tourCode' => 'CT1D-01', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 278, 'badge' => 'Phổ biến', 'featured' => true,
-            'styles' => array('day-trip', 'balanced', 'food-culture'),
-            'quote' => array('text' => 'Một ngày gom Ninh Kiều, Bình Thủy và bảo tàng — không cần tự lái xe.', 'author' => 'Gia đình chị Thảo'),
-            'places' => array('Ninh Kiều', 'Nhà cổ Bình Thủy', 'Chùa Ông', 'Bảo tàng Dân tộc học'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'title' => 'Tour thành phố Cần Thơ 1 ngày — Ninh Kiều & văn hoá',
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'zone' => 'Ninh Kiều & trung tâm',
+            'tourCode' => 'CT1D-01',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 278,
+            'badge' => 'Phổ biến',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Một ngày gom Ninh Kiều, Bình Thủy và bảo tàng — không cần tự lái xe.',
+                'author' => 'Gia đình chị Thảo',
+            ),
+            'places' => array(
+                'Ninh Kiều',
+                'Nhà cổ Bình Thủy',
+                'Chùa Ông',
+                'Bảo tàng Dân tộc học',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => 'Tour ghép hoặc riêng — các điểm biểu tượng thành phố trong một ngày.',
-            'highlights' => array('Bến Ninh Kiều & cầu đi bộ', 'Nhà cổ Bình Thủy', 'Chùa Ông (Quang Triệu)', 'Bảo tàng Dân tộc học'),
-            'itinerary' => array(array('day' => 1, 'title' => 'City tour trọn ngày', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => '08:30–17:00 tham quan các điểm, ăn trưa quán địa phương, chiều tự do chợ Cần Thơ.')),
-            'inclusions' => array('Xe 16 chỗ hoặc riêng', 'Vé bảo tàng', 'HDV', 'Bữa trưa'),
-            'exclusions' => array('Đồ uống', 'Mua sắm chợ'), 'notes' => array('Ghép nhóm max 12 khách.'),
-            'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 580000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Bến Ninh Kiều & cầu đi bộ',
+                'Nhà cổ Bình Thủy',
+                'Chùa Ông (Quang Triệu)',
+                'Bảo tàng Dân tộc học',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tour thành phố trọn ngày',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => '08:30–17:00 tham quan các điểm, ăn trưa quán địa phương, chiều tự do chợ Cần Thơ.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe 16 chỗ hoặc riêng',
+                'Vé bảo tàng',
+                'HDV',
+                'Bữa trưa',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+                'Mua sắm chợ',
+            ),
+            'notes' => array(
+                'Ghép nhóm max 12 khách.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 580000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cho-noi-cai-rang-sang-som-1-ngay',
             'title' => 'Chợ nổi Cái Răng — Tour sáng sớm 1 ngày',
-            'zoneSlug' => 'cho-noi-cai-rang', 'zone' => 'Chợ nổi Cái Răng',
-            'tourCode' => 'CT1D-02', 'duration' => '1 ngày (sáng sớm)', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 412, 'badge' => 'Must-do', 'featured' => true,
-            'styles' => array('floating-market', 'day-trip', 'photography', 'small-group'),
-            'quote' => array('text' => 'Hủ tiếu trên ghe lúc bình minh — trải nghiệm đúng nghĩa miền Tây.', 'author' => 'Sarah Kim'),
-            'places' => array('Chợ nổi Cái Răng', 'Cầu Cần Thơ'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'cho-noi-cai-rang',
+            'zone' => 'Chợ nổi Cái Răng',
+            'tourCode' => 'CT1D-02',
+            'duration' => '1 ngày (sáng sớm)',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 412,
+            'badge' => 'Must-do',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'cho-noi',
+            ),
+            'quote' => array(
+                'text' => 'Hủ tiếu trên ghe lúc bình minh — trải nghiệm đúng nghĩa miền Tây.',
+                'author' => 'Sarah Kim',
+            ),
+            'places' => array(
+                'Chợ nổi Cái Răng',
+                'Cầu Cần Thơ',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => '04:30–09:00 — xuồng máy vào chợ nổi lớn nhất ĐBSCL, ăn sáng trên sông.',
-            'highlights' => array('Xuất phát 04:30', 'Ghe trái cây & hàng hoá', 'Hủ tiếu chợ nổi', 'HDV kể chuyện chợ'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Floating market dawn', 'meals' => 'Sáng', 'transport' => array('boat'), 'overnight' => null,
-                'content' => '04:30 đón khách, 05:00 vào chợ, 07:30 về, ăn sáng, kết thúc ~09:00.')),
-            'inclusions' => array('Xe đón trong nội thành', 'Thuyền xuồng máy', 'HDV', 'Ăn sáng'),
-            'exclusions' => array('Đồ uống thêm', 'Tip'),
-            'notes' => array('Mùa nước thấp (4–6) chợ ít ghe hơn — HDV sẽ tư vấn thay thế Phong Điền.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 450000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Xuất phát 04:30',
+                'Ghe trái cây & hàng hoá',
+                'Hủ tiếu chợ nổi',
+                'HDV kể chuyện chợ',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Floating market dawn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => '04:30 đón khách, 05:00 vào chợ, 07:30 về, ăn sáng, kết thúc ~09:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đón trong nội thành',
+                'Thuyền xuồng máy',
+                'HDV',
+                'Ăn sáng',
+            ),
+            'exclusions' => array(
+                'Đồ uống thêm',
+                'Tip',
+            ),
+            'notes' => array(
+                'Mùa nước thấp (4–6) chợ ít ghe hơn — HDV sẽ tư vấn thay thế Phong Điền.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cho-noi-phong-dien-1-ngay',
             'title' => 'Chợ nổi Phong Điền — Trải nghiệm chân thực 1 ngày',
-            'zoneSlug' => 'cho-noi-phong-dien', 'zone' => 'Phong Điền & Trà Ôn',
-            'tourCode' => 'CT1D-03', 'duration' => '1 ngày (sáng sớm)', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 134, 'badge' => 'Địa phương', 'featured' => true,
-            'styles' => array('floating-market', 'day-trip', 'homestay-rural'),
-            'quote' => array('text' => 'Ít khách du lịch hơn Cái Răng — cảm giác như đi chợ cùng người địa phương.', 'author' => 'Felix Müller'),
-            'places' => array('Chợ nổi Phong Điền', 'Kênh rạch Phong Điền'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'cho-noi-phong-dien',
+            'zone' => 'Phong Điền & Trà Ôn',
+            'tourCode' => 'CT1D-03',
+            'duration' => '1 ngày (sáng sớm)',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 134,
+            'badge' => 'Địa phương',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'cho-noi',
+            ),
+            'quote' => array(
+                'text' => 'Ít khách du lịch hơn Cái Răng — cảm giác như đi chợ cùng người địa phương.',
+                'author' => 'Felix Müller',
+            ),
+            'places' => array(
+                'Chợ nổi Phong Điền',
+                'Kênh rạch Phong Điền',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => 'Chợ nhỏ hơn, yên tĩnh hơn — kết hợp len kênh và tham quan làng ven sông.',
-            'highlights' => array('Chợ Phong Điền sáng sớm', 'Sampan kênh nhỏ', 'Làng nghề địa phương', 'Trái cây vườn nhà'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Phong Dien market', 'meals' => 'Sáng; Trưa', 'transport' => array('car', 'boat'), 'overnight' => null,
-                'content' => '05:00 xuất phát, chợ Phong Điền, sampan kênh, trưa quán địa phương, về trước 14h.')),
-            'inclusions' => array('Xe', 'Thuyền', 'HDV', 'Ăn sáng & trưa'), 'exclusions' => array('Đồ uống'),
-            'notes' => array('Phù hợp khách đã đi Cái Răng muốn trải nghiệm khác.'), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 520000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Chợ Phong Điền sáng sớm',
+                'Sampan kênh nhỏ',
+                'Làng nghề địa phương',
+                'Trái cây vườn nhà',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Phong Dien market',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => '05:00 xuất phát, chợ Phong Điền, sampan kênh, trưa quán địa phương, về trước 14h.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Thuyền',
+                'HDV',
+                'Ăn sáng & trưa',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+            ),
+            'notes' => array(
+                'Phù hợp khách đã đi Cái Răng muốn trải nghiệm khác.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 520000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'song-hau-hoang-hon-1-ngay',
             'title' => 'Sông Hậu hoàng hôn — Thuyền & Ninh Kiều buổi tối',
-            'zoneSlug' => 'song-hau-kenh-rach', 'zone' => 'Sông Hậu & kênh rạch',
-            'tourCode' => 'CT0.5D-01', 'duration' => 'Nửa ngày (chiều tối)', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 189, 'badge' => 'Hoàng hôn', 'featured' => true,
-            'styles' => array('mekong-river', 'photography', 'food-culture'),
-            'quote' => array('text' => 'Hoàng hôn trên Sông Hậu rộng — đẹp hơn mọi quán nhậu view.', 'author' => 'Chị Diệu Linh'),
-            'places' => array('Sông Hậu', 'Ninh Kiều', 'Cầu đi bộ'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'song-hau-kenh-rach',
+            'zone' => 'Sông Hậu & kênh rạch',
+            'tourCode' => 'CT0.5D-01',
+            'duration' => 'Nửa ngày (chiều tối)',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 189,
+            'badge' => 'Hoàng hôn',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Hoàng hôn trên Sông Hậu rộng — đẹp hơn mọi quán nhậu view.',
+                'author' => 'Chị Diệu Linh',
+            ),
+            'places' => array(
+                'Sông Hậu',
+                'Ninh Kiều',
+                'Cầu đi bộ',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => '16:30–20:00 — thuyền trên Sông Hậu, dạo bến Ninh Kiều và ẩm thực tối.',
-            'highlights' => array('Thuyền hoàng hôn', 'View cầu Cần Thơ', 'Dạo Ninh Kiều', 'Gợi ý quán lẩu mắm'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Sunset cruise', 'meals' => 'Tối (gợi ý)', 'transport' => array('boat', 'walking'), 'overnight' => null,
-                'content' => '16:30 lên thuyền, 18:30 cập bến Ninh Kiều, tối tự do ăn uống hoặc food tour add-on.')),
-            'inclusions' => array('Thuyền hoàng hôn', 'HDV', 'Nước uống trên thuyền'), 'exclusions' => array('Bữa tối', 'Xe đón xa trung tâm'),
-            'notes' => array('Có thể gộp food tour buổi tối.'), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 320000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Thuyền hoàng hôn',
+                'View cầu Cần Thơ',
+                'Dạo Ninh Kiều',
+                'Gợi ý quán lẩu mắm',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Sunset cruise',
+                    'meals' => 'Tối (gợi ý)',
+                    'transport' => array(
+                        'boat',
+                        'walking',
+                    ),
+                    'overnight' => null,
+                    'content' => '16:30 lên thuyền, 18:30 cập bến Ninh Kiều, tối tự do ăn uống hoặc tour ẩm thực add-on.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền hoàng hôn',
+                'HDV',
+                'Nước uống trên thuyền',
+            ),
+            'exclusions' => array(
+                'Bữa tối',
+                'Xe đón xa trung tâm',
+            ),
+            'notes' => array(
+                'Có thể gộp tour ẩm thực buổi tối.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 320000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'my-khanh-vuon-trai-1-ngay',
             'title' => 'Mỹ Khánh — Vườn trái & làng miền Tây 1 ngày',
-            'zoneSlug' => 'vuon-trai-mien-tay', 'zone' => 'Vườn trái miền Tây',
-            'tourCode' => 'CT1D-04', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 167, 'badge' => 'Vườn trái', 'featured' => true,
-            'styles' => array('agri-tourism', 'family', 'day-trip', 'food-culture'),
-            'quote' => array('text' => 'Con thích đu đủ và đi xe ngựa — bố mẹ được nghỉ giữa vườn xanh.', 'author' => 'Gia đình anh Việt'),
-            'places' => array('Vườn Mỹ Khánh', 'Khu du lịch sinh thái'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
-            'highlightsIntro' => 'Agri-tourism đặc trưng: hái trái theo mùa, cỗ đồng quê và biểu diễn đờn ca tài tử.',
-            'highlights' => array('Hái trái theo mùa', 'Cỗ đồng quê', 'Đờn ca tài tử', 'Xe ngựa / đạp xe (tuỳ chọn)'),
-            'itinerary' => array(array('day' => 1, 'title' => 'My Khanh garden', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Sáng tới vườn, tour hái trái, trưa cỗ miền Tây, chiều tài tử, về trước 16h.')),
-            'inclusions' => array('Xe', 'Vé vườn', 'HDV', 'Trưa cỗ đồng quê'), 'exclusions' => array('Trái mang về', 'Hoạt động mạo hiểm'),
-            'notes' => array('Trái theo mùa — sầu riêng, nhãn, chôm chôm…'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 680000.0, 'currency' => 'VND',
+            'zoneSlug' => 'vuon-trai-mien-tay',
+            'zone' => 'Vườn trái miền Tây',
+            'tourCode' => 'CT1D-04',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 167,
+            'badge' => 'Vườn trái',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'vuon-trai-homestay',
+            ),
+            'quote' => array(
+                'text' => 'Con thích đu đủ và đi xe ngựa — bố mẹ được nghỉ giữa vườn xanh.',
+                'author' => 'Gia đình anh Việt',
+            ),
+            'places' => array(
+                'Vườn Mỹ Khánh',
+                'Khu du lịch sinh thái',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
+            'highlightsIntro' => 'Du lịch nông nghiệp đặc trưng: hái trái theo mùa, cỗ đồng quê và biểu diễn đờn ca tài tử.',
+            'highlights' => array(
+                'Hái trái theo mùa',
+                'Cỗ đồng quê',
+                'Đờn ca tài tử',
+                'Xe ngựa / đạp xe (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'My Khanh garden',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tới vườn, tour hái trái, trưa cỗ miền Tây, chiều tài tử, về trước 16h.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Vé vườn',
+                'HDV',
+                'Trưa cỗ đồng quê',
+            ),
+            'exclusions' => array(
+                'Trái mang về',
+                'Hoạt động mạo hiểm',
+            ),
+            'notes' => array(
+                'Trái theo mùa — sầu riêng, nhãn, chôm chôm…',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 680000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'binh-thuy-lang-mien-tay-1-ngay',
             'title' => 'Làng miền Tây — Bình Thủy, chùa & bảo tàng 1 ngày',
-            'zoneSlug' => 'lang-mien-tay', 'zone' => 'Làng miền Tây & văn hoá',
-            'tourCode' => 'CT1D-05', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 98, 'badge' => null, 'featured' => false,
-            'styles' => array('balanced', 'day-trip', 'food-culture'),
-            'quote' => array('text' => 'Nhà cổ Bình Thủy đẹp như phim — chùa Khmer cũng rất ấn tượng.', 'author' => 'David Park'),
-            'places' => array('Nhà cổ Bình Thủy', 'Chùa Khmer Munirangseyaram', 'Bảo tàng Dân tộc học'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'lang-mien-tay',
+            'zone' => 'Làng miền Tây & văn hoá',
+            'tourCode' => 'CT1D-05',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 98,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Nhà cổ Bình Thủy đẹp như phim — chùa Khmer cũng rất ấn tượng.',
+                'author' => 'David Park',
+            ),
+            'places' => array(
+                'Nhà cổ Bình Thủy',
+                'Chùa Khmer Munirangseyaram',
+                'Bảo tàng Dân tộc học',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => 'Khám phá di sản kiến trúc và đa văn hoá miền Tây trong một ngày.',
-            'highlights' => array('Nhà cổ Pháp Bình Thủy', 'Chùa Ông & chùa Khmer', 'Bảo tàng Dân tộc học', 'Làng nghề gốm / mật ong (tuỳ mùa)'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Culture day', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Sáng Bình Thủy, trưa quán địa phương, chiều bảo tàng và chùa Khmer.')),
-            'inclusions' => array('Xe', 'Vé bảo tàng', 'HDV', 'Trưa'), 'exclusions' => array('Quà lưu niệm'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 620000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Nhà cổ Pháp Bình Thủy',
+                'Chùa Ông & chùa Khmer',
+                'Bảo tàng Dân tộc học',
+                'Làng nghề gốm / mật ong (tuỳ mùa)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Culture day',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng Bình Thủy, trưa quán địa phương, chiều bảo tàng và chùa Khmer.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Vé bảo tàng',
+                'HDV',
+                'Trưa',
+            ),
+            'exclusions' => array(
+                'Quà lưu niệm',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 620000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'con-son-homestay-2n1d',
             'title' => 'Con Sơn 2 ngày 1 đêm — Homestay & đạp xe cù lao',
-            'zoneSlug' => 'con-son-cu-lao', 'zone' => 'Con Sơn (cù lao)',
-            'tourCode' => 'CT2D-02', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 87, 'badge' => 'Homestay', 'featured' => true,
-            'styles' => array('homestay-rural', 'cycling-eco', 'multi-day'),
-            'quote' => array('text' => 'Đạp xe quanh cù lao, tối ngồi nghe sông — yên bình thật sự.', 'author' => 'Vợ chồng Tuấn — Hà'),
-            'places' => array('Cù lao Con Sơn', 'Kênh rạch', 'Vườn nhà dân'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
-            'highlightsIntro' => 'Trải nghiệm chậm trên cù lao: homestay, đạp xe, nấu ăn và sampan kênh.',
-            'highlights' => array('Homestay nhà vườn', 'Đạp xe làng', 'Nấu bánh xèo / lẩu mắm', 'Sampan kênh hoàng hôn'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Sang cù lao — Homestay', 'meals' => 'Trưa; Tối', 'transport' => array('car', 'boat', 'bicycle'), 'overnight' => 'Homestay Con Sơn',
-                    'content' => 'Sáng sampan sang cù lao, đạp xe, trưa nhà dân, chiều nấu ăn, tối nghỉ homestay.'),
-                array('day' => 2, 'title' => 'Sáng làng — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('boat', 'car'), 'overnight' => null,
-                    'content' => 'Sáng tham quan vườn, trưa về Cần Thơ, tiễn khách.'),
+            'zoneSlug' => 'con-son-cu-lao',
+            'zone' => 'Con Sơn (cù lao)',
+            'tourCode' => 'CT2D-02',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 87,
+            'badge' => 'Homestay',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'vuon-trai-homestay',
             ),
-            'inclusions' => array('Xe & thuyền', 'Homestay', 'Xe đạp', 'HDV', 'Bữa ăn theo lịch'),
-            'exclusions' => array('Đồ uống có cồn', 'Tip homestay'),
-            'notes' => array('Phòng homestay đơn giản, sạch sẽ — phù hợp khách thích trải nghiệm địa phương.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 1650000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đạp xe quanh cù lao, tối ngồi nghe sông — yên bình thật sự.',
+                'author' => 'Vợ chồng Tuấn — Hà',
+            ),
+            'places' => array(
+                'Cù lao Con Sơn',
+                'Kênh rạch',
+                'Vườn nhà dân',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
+            'highlightsIntro' => 'Trải nghiệm chậm trên cù lao: homestay, đạp xe, nấu ăn và sampan kênh.',
+            'highlights' => array(
+                'Homestay nhà vườn',
+                'Đạp xe làng',
+                'Nấu bánh xèo / lẩu mắm',
+                'Sampan kênh hoàng hôn',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Sang cù lao — Homestay',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                        'bicycle',
+                    ),
+                    'overnight' => 'Homestay Con Sơn',
+                    'content' => 'Sáng sampan sang cù lao, đạp xe, trưa nhà dân, chiều nấu ăn, tối nghỉ homestay.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Sáng làng — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tham quan vườn, trưa về Cần Thơ, tiễn khách.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe & thuyền',
+                'Homestay',
+                'Xe đạp',
+                'HDV',
+                'Bữa ăn theo lịch',
+            ),
+            'exclusions' => array(
+                'Đồ uống có cồn',
+                'Tip homestay',
+            ),
+            'notes' => array(
+                'Phòng homestay đơn giản, sạch sẽ — phù hợp khách thích trải nghiệm địa phương.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 1650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vuon-chim-bang-lang-1-ngay',
             'title' => 'Vườn chim Bằng Lăng — Tour mùa chim 1 ngày',
-            'zoneSlug' => 'song-hau-kenh-rach', 'zone' => 'Sông Hậu & kênh rạch',
-            'tourCode' => 'CT1D-06', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 76, 'badge' => 'Mùa chim', 'featured' => false,
-            'styles' => array('cycling-eco', 'photography', 'day-trip'),
-            'quote' => array('text' => 'Hàng ngàn cò trắng bay về tổ chiều — cảnh đẹp như tranh.', 'author' => 'Anh Quốc Bảo'),
-            'places' => array('Vườn chim Bằng Lăng', 'Sông Hậu'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'song-hau-kenh-rach',
+            'zone' => 'Sông Hậu & kênh rạch',
+            'tourCode' => 'CT1D-06',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 76,
+            'badge' => 'Mùa chim',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Hàng ngàn cò trắng bay về tổ chiều — cảnh đẹp như tranh.',
+                'author' => 'Anh Quốc Bảo',
+            ),
+            'places' => array(
+                'Vườn chim Bằng Lăng',
+                'Sông Hậu',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => 'Mùa chim tháng 11–7 — chiều tối là thời điểm đẹp nhất khi chim về tổ.',
-            'highlights' => array('Tháp quan sát', 'Chim cò trắng', 'Hoàng hôn sông', 'HDV sinh thái'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Stork garden', 'meals' => 'Chiều', 'transport' => array('car'), 'overnight' => null,
-                'content' => '14:00 xuất phát, tới vườn chim ~15:30, quan sát đến hoàng hôn, về tối.')),
-            'inclusions' => array('Xe', 'Vé vườn chim', 'HDV'), 'exclusions' => array('Ăn tối'),
-            'notes' => array('Chỉ vận hành mùa chim tháng 11–7 — ngoài mùa có thể thay tour khác.'), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 550000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Tháp quan sát',
+                'Chim cò trắng',
+                'Hoàng hôn sông',
+                'HDV sinh thái',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Stork garden',
+                    'meals' => 'Chiều',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => '14:00 xuất phát, tới vườn chim ~15:30, quan sát đến hoàng hôn, về tối.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Vé vườn chim',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Ăn tối',
+            ),
+            'notes' => array(
+                'Chỉ vận hành mùa chim tháng 11–7 — ngoài mùa có thể thay tour khác.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 550000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'food-tour-can-tho-toi',
-            'title' => 'Food tour Cần Thơ — Buổi tối ẩm thực miền Tây',
-            'zoneSlug' => 'ninh-kieu-trung-tam', 'zone' => 'Ninh Kiều & trung tâm',
-            'tourCode' => 'CT0.5D-02', 'duration' => 'Nửa đêm', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 234, 'badge' => 'Ăn uống', 'featured' => true,
-            'styles' => array('food-culture', 'day-trip'),
-            'quote' => array('text' => 'Lẩu mắm, bún riêu, nem nướng — ăn no mà vẫn muốn quay lại.', 'author' => 'Food blogger Ken'),
-            'places' => array('Chợ đêm', 'Quán lẩu mắm', 'Bún riêu'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
-            'highlightsIntro' => '18:00–22:00 — dẫn ăn 6–8 món đặc sản Cần Thơ với HDV foodie.',
-            'highlights' => array('Lẩu mắm', 'Bún riêu', 'Bánh xèo', 'Nem nướng', 'Hủ tiếu'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Food tour', 'meals' => 'Tối', 'transport' => array('walking', 'car'), 'overnight' => null,
-                'content' => 'Đi bộ và xe ngắn giữa các quán, thử món, kể chuyện ẩm thực miền Tây.')),
-            'inclusions' => array('HDV foodie', '7–8 món tasting'), 'exclusions' => array('Đồ uống thêm', 'Mua sắm'),
-            'notes' => array('Báo dị ứng thực phẩm trước.'), 'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 420000.0, 'currency' => 'VND',
+            'title' => 'Tour ẩm thực Cần Thơ — Buổi tối ẩm thực miền Tây',
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'zone' => 'Ninh Kiều & trung tâm',
+            'tourCode' => 'CT0.5D-02',
+            'duration' => 'Nửa đêm',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 234,
+            'badge' => 'Ăn uống',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Lẩu mắm, bún riêu, nem nướng — ăn no mà vẫn muốn quay lại.',
+                'author' => 'Food blogger Ken',
+            ),
+            'places' => array(
+                'Chợ đêm',
+                'Quán lẩu mắm',
+                'Bún riêu',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
+            'highlightsIntro' => '18:00–22:00 — dẫn ăn 6–8 món đặc sản Cần Thơ với HDV am thực.',
+            'highlights' => array(
+                'Lẩu mắm',
+                'Bún riêu',
+                'Bánh xèo',
+                'Nem nướng',
+                'Hủ tiếu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tour ẩm thực',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'walking',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đi bộ và xe ngắn giữa các quán, thử món, kể chuyện ẩm thực miền Tây.',
+                ),
+            ),
+            'inclusions' => array(
+                'HDV am thực',
+                '7–8 món tasting',
+            ),
+            'exclusions' => array(
+                'Đồ uống thêm',
+                'Mua sắm',
+            ),
+            'notes' => array(
+                'Báo dị ứng thực phẩm trước.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 3,
+            'priceFrom' => 420000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'can-tho-chau-doc-3n2d',
             'title' => 'Cần Thơ — Châu Đốc 3 ngày 2 đêm (Tra Su)',
-            'zoneSlug' => 'ket-hop-dbscl', 'zone' => 'Kết hợp ĐBSCL',
-            'tourCode' => 'CTCD3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.8, 'reviewCount' => 64, 'badge' => 'Combo', 'featured' => true,
-            'styles' => array('multi-destination-combo', 'floating-market', 'mekong-river'),
-            'quote' => array('text' => 'Chợ nổi Cần Thơ + rừng tràm Tra Su — combo miền Tây hoàn hảo.', 'author' => 'Vợ chồng anh Phong'),
-            'places' => array('Cần Thơ', 'Châu Đốc', 'Rừng tràm Tra Su'),
-            'start' => 'Cần Thơ', 'end' => 'Châu Đốc',
-            'highlightsIntro' => '2 đêm Cần Thơ + 1 đêm Châu Đốc — xe nối sẵn, tham quan Tra Su.',
-            'highlights' => array('Chợ nổi Cái Răng', 'Xe Cần Thơ—Châu Đốc ~3h', 'Rừng tràm Tra Su', 'Núi Sam / làng chài (tuỳ chọn)'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Chợ nổi Cần Thơ', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('boat', 'car'), 'overnight' => 'Cần Thơ', 'content' => 'Sáng chợ nổi, chiều city tour.'),
-                array('day' => 2, 'title' => 'Sang Châu Đốc — Tra Su', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Châu Đốc', 'content' => 'Xe sang Châu Đốc, chiều rừng tràm Tra Su.'),
-                array('day' => 3, 'title' => 'Châu Đốc — Kết thúc', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Tự do, tiễn bến xe / nối Phnom Penh.'),
+            'zoneSlug' => 'ket-hop-dbscl',
+            'zone' => 'Kết hợp ĐBSCL',
+            'tourCode' => 'CTCD3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.8,
+            'reviewCount' => 64,
+            'badge' => 'Combo',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('Xe Cần Thơ', 'Thuyền chợ nổi', 'Xe nối Châu Đốc', 'Vé Tra Su', 'HDV'),
-            'exclusions' => array('Lưu trú (đặt thêm)', 'Vé xe về'),
-            'notes' => array('Có thể đảo chiều bắt đầu từ Châu Đốc.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 3100000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Chợ nổi Cần Thơ + rừng tràm Tra Su — combo miền Tây hoàn hảo.',
+                'author' => 'Vợ chồng anh Phong',
+            ),
+            'places' => array(
+                'Cần Thơ',
+                'Châu Đốc',
+                'Rừng tràm Tra Su',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Châu Đốc',
+            'highlightsIntro' => '2 đêm Cần Thơ + 1 đêm Châu Đốc — xe nối sẵn, tham quan Tra Su.',
+            'highlights' => array(
+                'Chợ nổi Cái Răng',
+                'Xe Cần Thơ—Châu Đốc ~3h',
+                'Rừng tràm Tra Su',
+                'Núi Sam / làng chài (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Chợ nổi Cần Thơ',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => 'Cần Thơ',
+                    'content' => 'Sáng chợ nổi, chiều city tour.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Sang Châu Đốc — Tra Su',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Châu Đốc',
+                    'content' => 'Xe sang Châu Đốc, chiều rừng tràm Tra Su.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Châu Đốc — Kết thúc',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tự do, tiễn bến xe / nối Phnom Penh.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe Cần Thơ',
+                'Thuyền chợ nổi',
+                'Xe nối Châu Đốc',
+                'Vé Tra Su',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Lưu trú (đặt thêm)',
+                'Vé xe về',
+            ),
+            'notes' => array(
+                'Có thể đảo chiều bắt đầu từ Châu Đốc.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 3100000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'can-tho-ca-mau-4n3d',
             'title' => 'Cần Thơ — Cà Mau 4 ngày 3 đêm (Mũi Cà Mau)',
-            'zoneSlug' => 'ket-hop-dbscl', 'zone' => 'Kết hợp ĐBSCL',
-            'tourCode' => 'CTCM4D-01', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 4.7, 'reviewCount' => 48, 'badge' => null, 'featured' => false,
-            'styles' => array('multi-destination-combo', 'adventure', 'mekong-river'),
-            'quote' => array('text' => 'Từ chợ nổi đến mũi đất cực Nam — hành trình xuyên ĐBSCL đáng nhớ.', 'author' => 'Nhóm bạn Sài Gòn'),
-            'places' => array('Cần Thơ', 'Cà Mau', 'Mũi Cà Mau', 'U Minh'),
-            'start' => 'Cần Thơ', 'end' => 'Cà Mau',
-            'highlightsIntro' => 'Hành trình dài miền Tây: Cần Thơ, U Minh và cực Nam tổ quốc.',
-            'highlights' => array('Chợ nổi & vườn trái', 'Rừng U Minh', 'Mũi Cà Mau', 'Xe nối liên tỉnh'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cần Thơ', 'meals' => 'Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Cần Thơ', 'content' => 'Chợ nổi sáng hôm sau hoặc chiều city tour.'),
-                array('day' => 2, 'title' => 'Xuống Cà Mau', 'meals' => 'Sáng; Tối', 'transport' => array('car'), 'overnight' => 'Cà Mau', 'content' => 'Xe ~4h xuống Cà Mau.'),
-                array('day' => 3, 'title' => 'Mũi Cà Mau', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Cà Mau', 'content' => 'Tour mũi đất cực Nam, biển Đất Mũi.'),
-                array('day' => 4, 'title' => 'U Minh — Tiễn', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Rừng U Minh (tuỳ chọn), tiễn.'),
+            'zoneSlug' => 'ket-hop-dbscl',
+            'zone' => 'Kết hợp ĐBSCL',
+            'tourCode' => 'CTCM4D-01',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 4.7,
+            'reviewCount' => 48,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                '4n3d',
             ),
-            'inclusions' => array('Xe theo lịch', 'HDV', 'Vé tham quan chính'), 'exclusions' => array('Lưu trú', 'Ăn tối tự do'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 5, 'priceFrom' => 4200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Từ chợ nổi đến mũi đất cực Nam — hành trình xuyên ĐBSCL đáng nhớ.',
+                'author' => 'Nhóm bạn Sài Gòn',
+            ),
+            'places' => array(
+                'Cần Thơ',
+                'Cà Mau',
+                'Mũi Cà Mau',
+                'U Minh',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cà Mau',
+            'highlightsIntro' => 'Hành trình dài miền Tây: Cần Thơ, U Minh và cực Nam tổ quốc.',
+            'highlights' => array(
+                'Chợ nổi & vườn trái',
+                'Rừng U Minh',
+                'Mũi Cà Mau',
+                'Xe nối liên tỉnh',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cần Thơ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Cần Thơ',
+                    'content' => 'Chợ nổi sáng hôm sau hoặc chiều city tour.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Xuống Cà Mau',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Cà Mau',
+                    'content' => 'Xe ~4h xuống Cà Mau.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mũi Cà Mau',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Cà Mau',
+                    'content' => 'Tour mũi đất cực Nam, biển Đất Mũi.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'U Minh — Tiễn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Rừng U Minh (tuỳ chọn), tiễn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe theo lịch',
+                'HDV',
+                'Vé tham quan chính',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Ăn tối tự do',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 4200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'can-tho-phu-quoc-4n3d',
             'title' => 'Cần Thơ — Phú Quốc 4 ngày 3 đêm (qua Rạch Giá)',
-            'zoneSlug' => 'ket-hop-dbscl', 'zone' => 'Kết hợp ĐBSCL',
-            'tourCode' => 'CTPQ4D-01', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 4.8, 'reviewCount' => 56, 'badge' => 'Biển đảo', 'featured' => true,
-            'styles' => array('multi-destination-combo', 'balanced'),
-            'quote' => array('text' => 'Miền Tây sông nước rồi ra đảo — combo lý tưởng từ Sài Gòn.', 'author' => 'Chị Ngọc Ánh'),
-            'places' => array('Cần Thơ', 'Rạch Giá', 'Phú Quốc'),
-            'start' => 'Cần Thơ', 'end' => 'Phú Quốc',
-            'highlightsIntro' => '2 đêm Cần Thơ + phà/tàu Rạch Giá—Phú Quốc — sông và biển trong một chuyến.',
-            'highlights' => array('Chợ nổi & Mỹ Khánh', 'Xe Cần Thơ—Rạch Giá', 'Phà/tàu sang Phú Quốc', 'Gợi ý beach time'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cần Thơ', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Cần Thơ', 'content' => 'City tour, hoàng hôn.'),
-                array('day' => 2, 'title' => 'Chợ nổi — vườn trái', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('boat', 'car'), 'overnight' => 'Cần Thơ', 'content' => 'Sáng Cái Răng, chiều Mỹ Khánh.'),
-                array('day' => 3, 'title' => 'Sang Phú Quốc', 'meals' => 'Sáng; Tối', 'transport' => array('car', 'ferry'), 'overnight' => 'Phú Quốc', 'content' => 'Xe Rạch Giá, phà/tàu sang đảo.'),
-                array('day' => 4, 'title' => 'Phú Quốc — Kết thúc', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Tự do biển, tiễn sân bay PQC.'),
+            'zoneSlug' => 'ket-hop-dbscl',
+            'zone' => 'Kết hợp ĐBSCL',
+            'tourCode' => 'CTPQ4D-01',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 4.8,
+            'reviewCount' => 56,
+            'badge' => 'Biển đảo',
+            'featured' => true,
+            'styles' => array(
+                '4n3d',
             ),
-            'inclusions' => array('Xe Cần Thơ', 'Tour chợ nổi', 'Xe Rạch Giá', 'HDV Cần Thơ', 'Hỗ trợ đặt phà'),
-            'exclusions' => array('Lưu trú', 'Vé phà/tàu', 'Tour biển Phú Quốc'),
-            'notes' => array('Vé phà theo hãng — đặt trước mùa cao điểm.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 3850000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Miền Tây sông nước rồi ra đảo — combo lý tưởng từ Sài Gòn.',
+                'author' => 'Chị Ngọc Ánh',
+            ),
+            'places' => array(
+                'Cần Thơ',
+                'Rạch Giá',
+                'Phú Quốc',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => '2 đêm Cần Thơ + phà/tàu Rạch Giá—Phú Quốc — sông và biển trong một chuyến.',
+            'highlights' => array(
+                'Chợ nổi & Mỹ Khánh',
+                'Xe Cần Thơ—Rạch Giá',
+                'Phà/tàu sang Phú Quốc',
+                'Gợi ý beach time',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cần Thơ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Cần Thơ',
+                    'content' => 'City tour, hoàng hôn.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Chợ nổi — vườn trái',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => 'Cần Thơ',
+                    'content' => 'Sáng Cái Răng, chiều Mỹ Khánh.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Sang Phú Quốc',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                        'ferry',
+                    ),
+                    'overnight' => 'Phú Quốc',
+                    'content' => 'Xe Rạch Giá, phà/tàu sang đảo.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Phú Quốc — Kết thúc',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tự do biển, tiễn sân bay PQC.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe Cần Thơ',
+                'Tour chợ nổi',
+                'Xe Rạch Giá',
+                'HDV Cần Thơ',
+                'Hỗ trợ đặt phà',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Vé phà/tàu',
+                'Tour biển Phú Quốc',
+            ),
+            'notes' => array(
+                'Vé phà theo hãng — đặt trước mùa cao điểm.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 3850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'xuong-may-kenh-rach-nua-ngay',
             'title' => 'Xuồng máy kênh rạch — Nửa ngày len làng',
-            'zoneSlug' => 'song-hau-kenh-rach', 'zone' => 'Sông Hậu & kênh rạch',
-            'tourCode' => 'CT0.5D-03', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 145, 'badge' => null, 'featured' => true,
-            'styles' => array('mekong-river', 'homestay-rural', 'small-group'),
-            'quote' => array('text' => 'Kênh nhỏ yên tĩnh hơn sông lớn — thấy đời sống thật của người miền Tây.', 'author' => 'Khách Úc'),
-            'places' => array('Kênh rạch Cần Thơ', 'Làng ven kênh'),
-            'start' => 'Cần Thơ', 'end' => 'Cần Thơ',
+            'zoneSlug' => 'song-hau-kenh-rach',
+            'zone' => 'Sông Hậu & kênh rạch',
+            'tourCode' => 'CT0.5D-03',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 145,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Kênh nhỏ yên tĩnh hơn sông lớn — thấy đời sống thật của người miền Tây.',
+                'author' => 'Khách Úc',
+            ),
+            'places' => array(
+                'Kênh rạch Cần Thơ',
+                'Làng ven kênh',
+            ),
+            'start' => 'Cần Thơ',
+            'end' => 'Cần Thơ',
             'highlightsIntro' => '08:00–12:00 hoặc 13:00–17:00 — xuồng máy len kênh, ghé lò bánh và vườn nhà.',
-            'highlights' => array('Xuồng máy kênh nhỏ', 'Lò bánh hỏi / cốm dẹp', 'Trái vườn nhà', 'HDV địa phương'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Canal motorboat', 'meals' => 'Trái cây / trà', 'transport' => array('boat'), 'overnight' => null,
-                'content' => 'Len kênh 2–3 giờ, ghé 2–3 điểm làng, thưởng thức trái cây tươi.')),
-            'inclusions' => array('Thuyền xuồng máy', 'HDV', 'Trái cây / trà'), 'exclusions' => array('Xe đón xa trung tâm'),
-            'notes' => array('Ghép nhóm 4–8 khách hoặc thuyền riêng.'), 'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 280000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Xuồng máy kênh nhỏ',
+                'Lò bánh hỏi / cốm dẹp',
+                'Trái vườn nhà',
+                'HDV địa phương',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Canal motorboat',
+                    'meals' => 'Trái cây / trà',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Len kênh 2–3 giờ, ghé 2–3 điểm làng, thưởng thức trái cây tươi.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền xuồng máy',
+                'HDV',
+                'Trái cây / trà',
+            ),
+            'exclusions' => array(
+                'Xe đón xa trung tâm',
+            ),
+            'notes' => array(
+                'Ghép nhóm 4–8 khách hoặc thuyền riêng.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 3,
+            'priceFrom' => 280000,
+            'currency' => 'VND',
         ),
     ),
 
@@ -587,7 +1608,7 @@ $__hicanthoSeed = array(
             'excerpt' => 'So sánh xe giường nằm (3–4h), limousine (3–4h) và bay VCA (~1h + 20 phút ra trung tâm) — phù hợp từng kiểu khách.',
             'content' => array(
                 array('type' => 'p', 'text' => 'Phần lớn khách Cần Thơ cuối tuần đến từ TP.HCM. Ba phương án phổ biến: xe giường nằm, limousine ban ngày, hoặc bay sân bay Cần Thơ (VCA) cách trung tâm ~8km.'),
-                array('type' => 'h2', 'id' => 'xe-giuong', 'text' => 'I. Xe giường nằm SGN — Cần Thơ'),
+                array('type' => 'h2', 'id' => 'xe-giuong', 'text' => 'I. Xe giường nằm Sài Gòn — Cần Thơ'),
                 array('type' => 'p', 'text' => 'Khởi hành tối hoặc sáng sớm, mất 3–4 giờ — giá 150.000–280.000đ/ghế. Phù hợp sinh viên và nhóm bạn.'),
                 array('type' => 'h2', 'id' => 'limousine', 'text' => 'II. Limousine 9–16 chỗ'),
                 array('type' => 'p', 'text' => 'Đón quận trung tâm Sài Gòn, mất 3–4 giờ, ghế massage — phổ biến với gia đình. Nên đặt trước thứ 6.'),
@@ -624,7 +1645,7 @@ $__hicanthoSeed = array(
             'views' => 1890, 'rating' => 4.8, 'ratingCount' => 42,
             'excerpt' => 'Lẩu mắm, bún riêu, bánh xèo, nem nướng và hủ tiếu — bản đồ ẩm thực thủ phủ miền Tây.',
             'content' => array(
-                array('type' => 'p', 'text' => 'Ẩm thực Cần Thơ đậm đà, gắn với sông nước và mắm. Lẩu mắm là món signature — nên thử ít nhất một bữa.'),
+                array('type' => 'p', 'text' => 'Ẩm thực Cần Thơ đậm đà, gắn với sông nước và mắm. Lẩu mắm là món đặc trưng — nên thử ít nhất một bữa.'),
                 array('type' => 'ul', 'items' => array('Lẩu mắm', 'Bún riêu cua', 'Bánh xèo', 'Nem nướng', 'Hủ tiếu', 'Bánh cống')),
             ),
             'faqs' => array(), 'galleryCount' => 4,
@@ -667,7 +1688,7 @@ $__hicanthoSeed = array(
             'views' => 980, 'rating' => 4.8, 'ratingCount' => 26,
             'excerpt' => '17:00–19:00 trên Sông Hậu — view cầu Cần Thơ và ánh đèn Ninh Kiều phản chiếu.',
             'content' => array(
-                array('type' => 'p', 'text' => 'Tour thuyền hoàng hôn khởi hành từ bến Ninh Kiều. Kết hợp food tour tối sau khi cập bến là lịch trình phổ biến.'),
+                array('type' => 'p', 'text' => 'Tour thuyền hoàng hôn khởi hành từ bến Ninh Kiều. Kết hợp tour ẩm thực tối sau khi cập bến là lịch trình phổ biến.'),
             ),
             'faqs' => array(), 'galleryCount' => 5,
         ),
@@ -737,13 +1758,13 @@ $__hicanthoSeed = array(
         array('name' => 'Sarah Kim', 'country' => 'Hàn Quốc', 'flag' => '🇰🇷', 'rating' => 5.0,
             'quote' => 'Cai Rang floating market at dawn was magical — best Mekong experience in Vietnam.', 'photos' => 8, 'trip' => 'Floating market tour', 'avatar' => null, 'photoUrls' => array()),
         array('name' => 'Trần Quốc Bảo', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 4.9,
-            'quote' => 'Homestay Con Sơn đúng gu — đạp xe làng, tối ngồi nghe sông rất yên bình.', 'photos' => 4, 'trip' => 'Con Sơn homestay 2N1Đ', 'avatar' => null, 'photoUrls' => array()),
+            'quote' => 'Homestay Con Sơn đúng gu — đạp xe làng, tối ngồi nghe sông rất yên bình.', 'photos' => 4, 'trip' => 'Con Sơn homestay 2 ngày 1 đêm', 'avatar' => null, 'photoUrls' => array()),
         array('name' => 'Felix Müller', 'country' => 'Đức', 'flag' => '🇩🇪', 'rating' => 4.8,
             'quote' => 'The sampan canal tour showed real delta life — quiet and authentic.', 'photos' => 6, 'trip' => 'Canal sampan half-day', 'avatar' => null, 'photoUrls' => array()),
         array('name' => 'Diệu Linh', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 5.0,
             'quote' => 'Thuyền hoàng hôn Sông Hậu — view cầu Cần Thơ đẹp hơn mọi quán nhậu.', 'photos' => 3, 'trip' => 'Sunset Hau River cruise', 'avatar' => null, 'photoUrls' => array()),
         array('name' => 'David Park', 'country' => 'Úc', 'flag' => '🇦🇺', 'rating' => 4.9,
-            'quote' => 'Limousine from Saigon was smooth — they even helped us pick a riverside hotel.', 'photos' => 7, 'trip' => 'Weekend escape SGN', 'avatar' => null, 'photoUrls' => array()),
+            'quote' => 'Limousine from Saigon was smooth — they even helped us pick a riverside hotel.', 'photos' => 7, 'trip' => 'Cuối tuần escape SGN', 'avatar' => null, 'photoUrls' => array()),
     ),
 
     'team' => array(
@@ -827,16 +1848,32 @@ $__hicanthoSeed = array(
     'usps' => array(
         array('icon' => 'compass', 'sort' => 0,
             'vi' => array('title' => 'am hiểu miền Tây như người Cần Thơ', 'description' => 'Đội ngũ bản địa biết mùa nước, giờ chợ nổi và homestay vườn phù hợp.'),
-            'en' => array('title' => 'true Mekong locals', 'description' => 'Our team knows water seasons, floating market hours and the right orchard homestays.')),
+
+
+
+
+'en' => array('title' => 'true Mekong locals', 'description' => 'Our team knows water seasons, floating market hours and the right orchard homestays.')),
         array('icon' => 'refund', 'sort' => 1,
             'vi' => array('title' => 'báo giá minh bạch, không phí ẩn', 'description' => 'Giá tour và dịch vụ liệt kê rõ từng hạng mục; lưu trú chọn theo khu vực và ngân sách của bạn.'),
-            'en' => array('title' => 'transparent pricing, no hidden fees', 'description' => 'Clear line-item quotes for tours and services; stays matched to your area and budget.')),
+
+
+
+
+'en' => array('title' => 'transparent pricing, no hidden fees', 'description' => 'Clear line-item quotes for tours and services; stays matched to your area and budget.')),
         array('icon' => 'boat', 'sort' => 2,
             'vi' => array('title' => 'từ chợ nổi đến vườn trái & combo ĐBSCL', 'description' => 'Một đầu mối cho chợ nổi, sampan kênh, Mỹ Khánh và combo Châu Đốc, Cà Mau, Phú Quốc.'),
-            'en' => array('title' => 'markets to fruit gardens & delta combos', 'description' => 'One contact for floating markets, canal sampans, My Khanh and Chau Doc, Ca Mau, Phu Quoc combos.')),
+
+
+
+
+'en' => array('title' => 'markets to fruit gardens & delta combos', 'description' => 'One contact for floating markets, canal sampans, My Khanh and Chau Doc, Ca Mau, Phu Quoc combos.')),
         array('icon' => 'support', 'sort' => 3,
             'vi' => array('title' => 'hỗ trợ 24/7 trên sông nước', 'description' => 'Hotline khi nước lớn, đổi lịch chợ nổi hoặc cần đổi limousine về Sài Gòn.'),
-            'en' => array('title' => '24/7 delta support', 'description' => 'Hotline for high water, market reschedules or changing your return limousine.')),
+
+
+
+
+'en' => array('title' => '24/7 delta support', 'description' => 'Hotline for high water, market reschedules or changing your return limousine.')),
     ),
 
     'offices' => array(
@@ -845,29 +1882,93 @@ $__hicanthoSeed = array(
     ),
 
     'values' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
-        array('vi' => array('name' => 'Am hiểu Cần Thơ', 'desc' => 'Sinh ra trên sông nước — hiểu từng mùa nước'), 'en' => array('name' => 'Can Tho expertise', 'desc' => 'Raised on the river — we know every water season')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'), 'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
-        array('vi' => array('name' => 'An toàn', 'desc' => 'Thuyền sông có tiêu chuẩn an toàn và kế hoạch dự phòng'), 'en' => array('name' => 'Safety', 'desc' => 'River boats with safety standards and backup plans')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
+        array('vi' => array('name' => 'Am hiểu Cần Thơ', 'desc' => 'Sinh ra trên sông nước — hiểu từng mùa nước'),
+
+
+
+'en' => array('name' => 'Can Tho expertise', 'desc' => 'Raised on the river — we know every water season')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
+        array('vi' => array('name' => 'An toàn', 'desc' => 'Thuyền sông có tiêu chuẩn an toàn và kế hoạch dự phòng'),
+
+
+
+'en' => array('name' => 'Safety', 'desc' => 'River boats with safety standards and backup plans')),
     ),
     'value_definitions' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
-        array('vi' => array('name' => 'Am hiểu Cần Thơ', 'desc' => 'Sinh ra trên sông nước — hiểu từng mùa nước'), 'en' => array('name' => 'Can Tho expertise', 'desc' => 'Raised on the river — we know every water season')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'), 'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
-        array('vi' => array('name' => 'An toàn', 'desc' => 'Thuyền sông có tiêu chuẩn an toàn và kế hoạch dự phòng'), 'en' => array('name' => 'Safety', 'desc' => 'River boats with safety standards and backup plans')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
+        array('vi' => array('name' => 'Am hiểu Cần Thơ', 'desc' => 'Sinh ra trên sông nước — hiểu từng mùa nước'),
+
+
+
+'en' => array('name' => 'Can Tho expertise', 'desc' => 'Raised on the river — we know every water season')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
+        array('vi' => array('name' => 'An toàn', 'desc' => 'Thuyền sông có tiêu chuẩn an toàn và kế hoạch dự phòng'),
+
+
+
+'en' => array('name' => 'Safety', 'desc' => 'River boats with safety standards and backup plans')),
     ),
 
     'reasons' => array(
-        array('vi' => array('title' => 'HDV & thuyền trưởng bản địa', 'desc' => 'Người Cần Thơ dẫn tour, chợ nổi và tư vấn khu ở.'), 'en' => array('title' => 'Local guides & boat captains', 'desc' => 'Can Tho natives lead tours, floating markets and stay-area advice.')),
-        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay vườn, khách sạn trung tâm, resort ven Sông Hậu.'), 'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Orchard homestays, city hotels, Hau River resorts.')),
-        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine SGN, shuttle VCA và tour gộp một báo giá.'), 'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'SGN limousines, VCA shuttles and tours in one quote.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi mùa nước đổi lịch chợ nổi hoặc thời tiết xấu.'), 'en' => array('title' => '24/7 support', 'desc' => 'Hotline when water levels shift market schedules or weather delays travel.')),
+        array('vi' => array('title' => 'HDV & thuyền trưởng bản địa', 'desc' => 'Người Cần Thơ dẫn tour, chợ nổi và tư vấn khu ở.'),
+
+
+
+'en' => array('title' => 'Local guides & boat captains', 'desc' => 'Can Tho natives lead tours, floating markets and stay-area advice.')),
+        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay vườn, khách sạn trung tâm, resort ven Sông Hậu.'),
+
+
+
+'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Orchard homestays, city hotels, Hau River resorts.')),
+        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine Sài Gòn, shuttle VCA và tour gộp một báo giá.'),
+
+
+
+'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'limo Sài Gònusines, VCA shuttles and tours in one quote.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi mùa nước đổi lịch chợ nổi hoặc thời tiết xấu.'),
+
+
+
+'en' => array('title' => '24/7 support', 'desc' => 'Hotline when water levels shift market schedules or weather delays travel.')),
     ),
     'reason_definitions' => array(
-        array('vi' => array('title' => 'HDV & thuyền trưởng bản địa', 'desc' => 'Người Cần Thơ dẫn tour, chợ nổi và tư vấn khu ở.'), 'en' => array('title' => 'Local guides & boat captains', 'desc' => 'Can Tho natives lead tours, floating markets and stay-area advice.')),
-        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay vườn, khách sạn trung tâm, resort ven Sông Hậu.'), 'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Orchard homestays, city hotels, Hau River resorts.')),
-        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine SGN, shuttle VCA và tour gộp một báo giá.'), 'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'SGN limousines, VCA shuttles and tours in one quote.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi mùa nước đổi lịch chợ nổi hoặc thời tiết xấu.'), 'en' => array('title' => '24/7 support', 'desc' => 'Hotline when water levels shift market schedules or weather delays travel.')),
+        array('vi' => array('title' => 'HDV & thuyền trưởng bản địa', 'desc' => 'Người Cần Thơ dẫn tour, chợ nổi và tư vấn khu ở.'),
+
+
+
+'en' => array('title' => 'Local guides & boat captains', 'desc' => 'Can Tho natives lead tours, floating markets and stay-area advice.')),
+        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay vườn, khách sạn trung tâm, resort ven Sông Hậu.'),
+
+
+
+'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Orchard homestays, city hotels, Hau River resorts.')),
+        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine Sài Gòn, shuttle VCA và tour gộp một báo giá.'),
+
+
+
+'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'limo Sài Gònusines, VCA shuttles and tours in one quote.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi mùa nước đổi lịch chợ nổi hoặc thời tiết xấu.'),
+
+
+
+'en' => array('title' => '24/7 support', 'desc' => 'Hotline when water levels shift market schedules or weather delays travel.')),
     ),
 
     'reference_persons' => array(
@@ -889,7 +1990,11 @@ $__hicanthoSeed = array(
             'reasons_section' => array('title' => 'Vì sao chọn Hi Cần Thơ?', 'eyebrow' => 'Lý do', 'subtitle' => 'Bản địa, minh bạch, an toàn trên sông.', 'cta_label' => 'Bắt đầu hành trình', 'cta_url' => null, 'image' => null, 'imageSrcset' => null),
             'reference_section' => array('title' => 'Đại diện nước ngoài', 'eyebrow' => 'Mạng lưới', 'subtitle' => 'Trao đổi bằng ngôn ngữ của bạn với đại diện Hi Cần Thơ.'),
         ),
-        'en' => array(
+
+
+
+
+'en' => array(
             'seo_title' => 'About us — Hi Can Tho, connecting travellers with the Mekong Delta',
             'seo_description' => 'Our story, mission and team — tours, services and stay advice by area.',
             'page_title' => 'About us',
@@ -905,8 +2010,16 @@ $__hicanthoSeed = array(
     ),
 
     'hero_pills' => array(
-        array('zone_slug' => 'cho-noi-cai-rang', 'vi' => array('label' => 'Chợ nổi Cái Răng'), 'en' => array('label' => 'Cai Rang market'), 'url' => '/diem-den/cho-noi-cai-rang'),
-        array('zone_slug' => 'vuon-trai-mien-tay', 'vi' => array('label' => 'Vườn trái Mỹ Khánh'), 'en' => array('label' => 'My Khanh gardens'), 'url' => '/diem-den/vuon-trai-mien-tay'),
+        array('zone_slug' => 'cho-noi-cai-rang', 'vi' => array('label' => 'Chợ nổi Cái Răng'),
+
+
+
+'en' => array('label' => 'Cai Rang market'), 'url' => '/diem-den/cho-noi-cai-rang'),
+        array('zone_slug' => 'vuon-trai-mien-tay', 'vi' => array('label' => 'Vườn trái Mỹ Khánh'),
+
+
+
+'en' => array('label' => 'My Khanh gardens'), 'url' => '/diem-den/vuon-trai-mien-tay'),
     ),
 
     'home_sections' => array(
@@ -914,50 +2027,94 @@ $__hicanthoSeed = array(
             'vi' => array('key' => 'company_intro', 'eyebrow' => 'Chuyên gia ĐBSCL', 'title' => 'Trái tim đồng bằng sông Cửu Long', 'subtitle' => null,
                 'body' => 'Hi Cần Thơ là nền tảng du lịch miền Tây do người bản địa xây dựng — <strong class="font-semibold text-ink">một đầu mối</strong> cho tour chợ nổi, thuyền sông, vườn trái, di chuyển và lưu trú từ homestay vườn đến resort ven Sông Hậu. Chúng tôi thiết kế hành trình quanh Cái Răng, Ninh Kiều, Mỹ Khánh và kênh rạch để bạn cảm nhận đúng nhịp sống sông nước.',
                 'metaLine' => 'Giấy phép lữ hành số 0052/2024/TCDL-GPLHQT', 'ctaLabel' => 'Về chúng tôi', 'ctaUrl' => '/ve-chung-toi', 'image' => null, 'imageAlt' => 'Hi Cần Thơ'),
-            'en' => array('key' => 'company_intro', 'eyebrow' => 'Mekong Delta experts', 'title' => 'Heart of the Mekong Delta', 'subtitle' => null,
+
+
+
+
+'en' => array('key' => 'company_intro', 'eyebrow' => 'Mekong Delta experts', 'title' => 'Heart of the Mekong Delta', 'subtitle' => null,
                 'body' => 'Hi Can Tho is a locally built Mekong Delta travel platform — <strong class="font-semibold text-ink">one place</strong> for floating market tours, river boats, fruit gardens, transfers and stays from orchard homestays to Hau River resorts. We craft itineraries around Cai Rang, Ninh Kieu, My Khanh and the canals so you feel the real river rhythm.',
                 'metaLine' => 'Travel license No. 0052/2024/TCDL-GPLHQT', 'ctaLabel' => 'About us', 'ctaUrl' => '/ve-chung-toi', 'image' => null, 'imageAlt' => 'Hi Can Tho'),
         ),
         'featured_tours' => array(
             'vi' => array('key' => 'featured_tours', 'eyebrow' => 'Yêu thích', 'title' => 'Tour được đặt nhiều nhất', 'subtitle' => 'Hành trình khách đánh giá cao trong 12 tháng qua.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_tours', 'eyebrow' => 'Popular', 'title' => 'Most booked tours', 'subtitle' => 'Top-rated itineraries over the past 12 months.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_tours', 'eyebrow' => 'Popular', 'title' => 'Most booked tours', 'subtitle' => 'Top-rated itineraries over the past 12 months.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'featured_cruises' => array(
             'vi' => array('key' => 'featured_cruises', 'eyebrow' => 'Thuyền sông', 'title' => 'Chợ nổi & hoàng hôn Sông Hậu', 'subtitle' => 'Xuồng máy bình minh, sampan kênh rạch — trải nghiệm nước đặc trưng Cần Thơ.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_cruises', 'eyebrow' => 'River boats', 'title' => 'Floating markets & Hau River sunsets', 'subtitle' => 'Dawn motorboats and canal sampans — Can Tho\'s signature water experiences.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_cruises', 'eyebrow' => 'River boats', 'title' => 'Floating markets & Hau River sunsets', 'subtitle' => 'Dawn motorboats and canal sampans — Can Tho\'s đặc trưng water experiences.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'featured_trains' => array(
             'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Di chuyển', 'title' => 'Xe khách, limousine & shuttle VCA', 'subtitle' => 'Từ Sài Gòn, Châu Đốc, Rạch Giá — một đầu mối đặt vé và đưa đón.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_trains', 'eyebrow' => 'Getting there', 'title' => 'Buses, limousines & VCA shuttles', 'subtitle' => 'From HCMC, Chau Doc, Rach Gia — one place to book transfers.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_trains', 'eyebrow' => 'Getting there', 'title' => 'Buses, limousines & VCA shuttles', 'subtitle' => 'From Sài Gòn, Chau Doc, Rach Gia — one place to book transfers.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'support_services' => array(
             'vi' => array('key' => 'support_services', 'eyebrow' => 'Dịch vụ', 'title' => 'Vé, trải nghiệm & hỗ trợ', 'subtitle' => 'Chợ nổi, vườn trái, HDV riêng và tiện ích trên sông nước.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'support_services', 'eyebrow' => 'Services', 'title' => 'Tickets, experiences & support', 'subtitle' => 'Floating markets, fruit gardens, private guides and delta extras.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'support_services', 'eyebrow' => 'Services', 'title' => 'Tickets, experiences & support', 'subtitle' => 'Floating markets, fruit gardens, private guides and delta extras.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'destinations' => array(
             'vi' => array('key' => 'destinations', 'eyebrow' => 'Khắp Cần Thơ', 'title' => 'Khu vực được yêu thích', 'subtitle' => 'Chợ nổi, Ninh Kiều, vườn trái, Con Sơn và combo ĐBSCL.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'destinations', 'eyebrow' => 'Across Can Tho', 'title' => 'Favourite areas', 'subtitle' => 'Floating markets, Ninh Kieu, fruit gardens, Con Son and delta combos.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'destinations', 'eyebrow' => 'Across Can Tho', 'title' => 'Favourite areas', 'subtitle' => 'Floating markets, Ninh Kieu, fruit gardens, Con Son and delta combos.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'testimonials' => array(
             'vi' => array('key' => 'testimonials', 'eyebrow' => 'Khách kể', 'title' => 'Trải nghiệm thật', 'subtitle' => 'Hơn 3.500 khách đã đồng hành cùng Hi Cần Thơ.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Xem cảm nhận', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences', 'subtitle' => 'Over 3,500 guests have travelled with Hi Can Tho.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences', 'subtitle' => 'Over 3,500 guests have travelled with Hi Can Tho.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
         ),
         'review_platforms' => array(
             'vi' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Cần Thơ được đánh giá cao trên', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Can Tho is highly rated on', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Can Tho is highly rated on', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'team' => array(
             'vi' => array('key' => 'team', 'eyebrow' => 'Con người Hi Cần Thơ', 'title' => 'Đội ngũ bản địa', 'subtitle' => 'Cùng bạn từ ý tưởng đến khi rời miền Tây sông nước.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Gặp đội ngũ', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'team', 'eyebrow' => 'The Hi Can Tho team', 'title' => 'Local experts', 'subtitle' => 'With you from the first idea until you leave the delta.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Meet the team', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'team', 'eyebrow' => 'The Hi Can Tho team', 'title' => 'Local experts', 'subtitle' => 'With you from the first idea until you leave the delta.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Meet the team', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
         ),
         'videos' => array(
             'vi' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Cần Thơ qua ống kính', 'subtitle' => 'Chợ nổi, sông Hậu và vườn trái — clip từ khách và đội ngũ.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Xem video', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Can Tho on film', 'subtitle' => 'Floating markets, Hau River and fruit gardens — from guests and our team.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Can Tho on film', 'subtitle' => 'Floating markets, Hau River and fruit gardens — from guests and our team.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
         ),
         'quick_inquiry' => array(
             'vi' => array('key' => 'quick_inquiry', 'eyebrow' => 'Tư vấn miễn phí', 'title' => 'Gửi lời nhắn', 'subtitle' => null,
                 'body' => 'Chưa chọn tour hay khu homestay? Phản hồi trong <strong class="font-semibold text-ink">24 giờ làm việc</strong>, miễn phí.', 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send a message', 'subtitle' => null,
+
+
+
+
+'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send a message', 'subtitle' => null,
                 'body' => 'Not sure which tour or stay area? Reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.', 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
     ),
@@ -996,42 +2153,424 @@ $__hicanthoSeed = array(
     ),
 
     'tour_categories' => array(
-        array('zoneSlug' => 'ninh-kieu-trung-tam', 'slug' => 'nua-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 0, 'maxDays' => 1,
-            'packageSlugs' => array('song-hau-hoang-hon-1-ngay', 'food-tour-can-tho-toi', 'xuong-may-kenh-rach-nua-ngay'),
-            'name' => array('vi' => 'Tour nửa ngày / tối', 'en' => 'Half-day / evening'),
-            'subtitle' => array('vi' => 'Hoàng hôn Sông Hậu, food tour, xuồng kênh.', 'en' => 'Hau River sunset, food tour, canal boats.'),
-            'seo_body' => array('vi' => 'Ghép thêm vào chuyến cuối tuần Sài Gòn.', 'en' => 'Easy add-on to an HCMC weekend trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'cho-noi-cai-rang', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 1, 'maxDays' => 1,
-            'packageSlugs' => array('city-tour-can-tho-1-ngay', 'cho-noi-cai-rang-sang-som-1-ngay', 'cho-noi-phong-dien-1-ngay', 'my-khanh-vuon-trai-1-ngay', 'binh-thuy-lang-mien-tay-1-ngay', 'vuon-chim-bang-lang-1-ngay'),
-            'name' => array('vi' => 'Tour 1 ngày', 'en' => '1-day tours'),
-            'subtitle' => array('vi' => 'Chợ nổi, city, vườn trái, làng miền Tây.', 'en' => 'Floating markets, city, gardens, villages.'),
-            'seo_body' => array('vi' => 'Phổ biến với khách 2N1Đ cuối tuần.', 'en' => 'Popular for 2-night weekend visitors.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ninh-kieu-trung-tam', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 2, 'maxDays' => 3,
-            'packageSlugs' => array('can-tho-2-ngay-cho-noi', 'con-son-homestay-2n1d', 'can-tho-3-ngay-tong-quan', 'can-tho-chau-doc-3n2d'),
-            'name' => array('vi' => 'Tour 2 – 3 ngày', 'en' => '2–3 day tours'),
-            'subtitle' => array('vi' => 'Tổng quan, chợ nổi, homestay, combo Châu Đốc.', 'en' => 'Overview, floating markets, homestay, Chau Doc combo.'),
-            'seo_body' => array('vi' => 'Sweet spot cho khách Sài Gòn cuối tuần.', 'en' => 'Sweet spot for HCMC weekenders.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ket-hop-dbscl', 'slug' => '4-ngay-tro-len', 'type' => 'duration', 'sort' => 3, 'minDays' => 4, 'maxDays' => 10,
-            'packageSlugs' => array('can-tho-4-ngay-kham-pha-sau', 'can-tho-ca-mau-4n3d', 'can-tho-phu-quoc-4n3d'),
-            'name' => array('vi' => 'Tour 4 ngày trở lên', 'en' => '4+ day tours'),
-            'subtitle' => array('vi' => 'Khám phá sâu ĐBSCL & combo đảo.', 'en' => 'Deep delta exploration & island combos.'),
-            'seo_body' => array('vi' => 'Chợ nổi, homestay, Cà Mau, Phú Quốc.', 'en' => 'Floating markets, homestays, Ca Mau, Phu Quoc.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'cho-noi-cai-rang', 'slug' => 'cho-noi', 'type' => 'theme', 'sort' => 10,
-            'packageSlugs' => array('cho-noi-cai-rang-sang-som-1-ngay', 'cho-noi-phong-dien-1-ngay', 'can-tho-2-ngay-cho-noi'),
-            'name' => array('vi' => 'Tour chợ nổi', 'en' => 'Floating market tours'),
-            'subtitle' => array('vi' => 'Cái Răng, Phong Điền — bình minh trên sông.', 'en' => 'Cai Rang, Phong Dien — dawn on the river.'),
-            'seo_body' => array('vi' => 'Trải nghiệm signature của Cần Thơ.', 'en' => 'Signature Can Tho experience.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'vuon-trai-mien-tay', 'slug' => 'vuon-trai-homestay', 'type' => 'theme', 'sort' => 11,
-            'packageSlugs' => array('my-khanh-vuon-trai-1-ngay', 'con-son-homestay-2n1d', 'can-tho-4-ngay-kham-pha-sau'),
-            'name' => array('vi' => 'Vườn trái & homestay', 'en' => 'Fruit gardens & homestay'),
-            'subtitle' => array('vi' => 'Mỹ Khánh, Con Sơn, agri-tourism.', 'en' => 'My Khanh, Con Son, agri-tourism.'),
-            'seo_body' => array('vi' => 'Trải nghiệm chậm bên kênh rạch.', 'en' => 'Slow travel beside the canals.'),
-            'faqs' => array()),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'nua-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 0,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'song-hau-hoang-hon-1-ngay',
+                'food-tour-can-tho-toi',
+                'xuong-may-kenh-rach-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour nửa ngày / tối',
+
+
+
+
+'en' => 'Half-day / evening',
+            ),
+            'subtitle' => array(
+                'vi' => 'Hoàng hôn Sông Hậu, tour ẩm thực, xuồng kênh.',
+
+
+
+
+'en' => 'Hau River sunset, food tour, canal boats.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Ghép thêm vào chuyến cuối tuần Sài Gòn.',
+
+
+
+
+'en' => 'Easy add-on to an HCMC weekend trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'cho-noi-cai-rang',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'city-tour-can-tho-1-ngay',
+                'cho-noi-cai-rang-sang-som-1-ngay',
+                'cho-noi-phong-dien-1-ngay',
+                'my-khanh-vuon-trai-1-ngay',
+                'binh-thuy-lang-mien-tay-1-ngay',
+                'vuon-chim-bang-lang-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour 1 ngày',
+
+
+
+
+'en' => '1-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Chợ nổi, city, vườn trái, làng miền Tây.',
+
+
+
+
+'en' => 'Floating markets, city, gardens, villages.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Phổ biến với khách 2 ngày 1 đêm cuối tuần.',
+
+
+
+
+'en' => 'Popular for 2-night weekend visitors.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 2,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'can-tho-2-ngay-cho-noi',
+                'con-son-homestay-2n1d',
+                'can-tho-3-ngay-tong-quan',
+                'can-tho-chau-doc-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 – 3 ngày',
+
+
+
+
+'en' => '2–3 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tổng quan, chợ nổi, homestay, combo Châu Đốc.',
+
+
+
+
+'en' => 'Overview, floating markets, homestay, Chau Doc combo.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến cho khách Sài Gòn cuối tuần.',
+
+
+
+
+'en' => 'Sweet spot for HCMC weekenders.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-dbscl',
+            'slug' => '4-ngay-tro-len',
+            'type' => 'duration',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 10,
+            'packageSlugs' => array(
+                'can-tho-4-ngay-kham-pha-sau',
+                'can-tho-ca-mau-4n3d',
+                'can-tho-phu-quoc-4n3d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày trở lên',
+
+
+
+
+'en' => '4+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu ĐBSCL & combo đảo.',
+
+
+
+
+'en' => 'Deep delta exploration & island combos.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Chợ nổi, homestay, Cà Mau, Phú Quốc.',
+
+
+
+
+'en' => 'Floating markets, homestays, Ca Mau, Phu Quoc.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'tour-trong-ngay',
+            'type' => 'theme',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'city-tour-can-tho-1-ngay',
+                'cho-noi-cai-rang-sang-som-1-ngay',
+                'cho-noi-phong-dien-1-ngay',
+                'song-hau-hoang-hon-1-ngay',
+                'my-khanh-vuon-trai-1-ngay',
+                'binh-thuy-lang-mien-tay-1-ngay',
+                'vuon-chim-bang-lang-1-ngay',
+                'food-tour-can-tho-toi',
+                'xuong-may-kenh-rach-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
+
+
+
+
+'en' => 'Full day — no overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
+
+
+
+
+'en' => 'Duration filter — distinct from per-zone GEO category pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'tour-2-ngay-1-dem',
+            'type' => 'theme',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 2,
+            'packageSlugs' => array(
+                'can-tho-2-ngay-cho-noi',
+                'con-son-homestay-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
+
+
+
+
+'en' => 'Short weekend, one-night homestay or resort.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
+
+
+
+
+'en' => '2N1D sweet spot — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'tour-3-ngay-2-dem',
+            'type' => 'theme',
+            'sort' => 2,
+            'minDays' => 3,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'can-tho-3-ngay-tong-quan',
+                'can-tho-chau-doc-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
+
+
+
+
+'en' => 'Enough depth — two overnights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
+
+
+
+
+'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'tour-4-ngay-3-dem',
+            'type' => 'theme',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 4,
+            'packageSlugs' => array(
+                'can-tho-4-ngay-kham-pha-sau',
+                'can-tho-ca-mau-4n3d',
+                'can-tho-phu-quoc-4n3d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
+
+
+
+
+'en' => 'Deeper exploration, three nights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
+
+
+
+
+'en' => '4N3D itineraries — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'tour-tu-5-ngay',
+            'type' => 'theme',
+            'sort' => 4,
+            'minDays' => 5,
+            'maxDays' => null,
+            'packageSlugs' => array(),
+            'name' => array(
+                'vi' => 'Tour từ 5 ngày',
+
+
+
+
+'en' => '5+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo dài ngày, nhiều điểm đến.',
+
+
+
+
+'en' => 'Extended combos and multi-destination trips.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
+
+
+
+
+'en' => 'Long tours & combos — duration insight, not a GEO page.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'cho-noi',
+            'type' => 'theme',
+            'sort' => 10,
+            'packageSlugs' => array(
+                'cho-noi-cai-rang-sang-som-1-ngay',
+                'cho-noi-phong-dien-1-ngay',
+                'can-tho-2-ngay-cho-noi',
+            ),
+            'name' => array(
+                'vi' => 'Tour chợ nổi',
+
+
+
+
+'en' => 'Floating market tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cái Răng, Phong Điền — bình minh trên sông.',
+
+
+
+
+'en' => 'Cai Rang, Phong Dien — dawn on the river.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Trải nghiệm đặc trưng của Cần Thơ.',
+
+
+
+
+'en' => 'Signature Can Tho experience.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ninh-kieu-trung-tam',
+            'slug' => 'vuon-trai-homestay',
+            'type' => 'theme',
+            'sort' => 11,
+            'packageSlugs' => array(
+                'my-khanh-vuon-trai-1-ngay',
+                'con-son-homestay-2n1d',
+                'can-tho-4-ngay-kham-pha-sau',
+            ),
+            'name' => array(
+                'vi' => 'Vườn trái & homestay',
+
+
+
+
+'en' => 'Fruit gardens & homestay',
+            ),
+            'subtitle' => array(
+                'vi' => 'Mỹ Khánh, Con Sơn, agri-tourism.',
+
+
+
+
+'en' => 'My Khanh, Con Son, agri-tourism.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Trải nghiệm chậm bên kênh rạch.',
+
+
+
+
+'en' => 'Slow travel beside the canals.',
+            ),
+            'faqs' => array(),
+        ),
     ),
 
     'listing_faqs' => array(
@@ -1041,14 +2580,23 @@ $__hicanthoSeed = array(
         array('q' => 'Chợ nổi hủy khi mùa nước thấp?', 'a' => 'Chợ vẫn mở nhưng ít ghe hơn — đổi sang Phong Điền hoặc tăng thời gian sampan kênh miễn phí theo chính sách.'),
     ),
 
-    'duration_buckets' => array('half-day' => 'Nửa ngày', '1-day' => '1 ngày', '2-3-days' => '2 – 3 ngày', '4-plus' => '4 ngày trở lên'),
+    'duration_buckets' => array(
+        'half-day' => 'Nửa ngày',
+        '1-day' => '1 ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+    ),
 
     'travel_style_labels' => array(
-        'floating-market' => 'Chợ nổi', 'mekong-river' => 'Sông Hậu & kênh', 'food-culture' => 'Ẩm thực miền Tây',
-        'homestay-rural' => 'Homestay & làng', 'cycling-eco' => 'Đạp xe & sinh thái', 'agri-tourism' => 'Vườn trái',
-        'family' => 'Gia đình', 'day-trip' => 'Tour trong ngày', 'multi-day' => 'Nhiều ngày',
-        'photography' => 'Chụp ảnh', 'balanced' => 'Cân bằng', 'multi-destination-combo' => 'Combo đa điểm',
-        'small-group' => 'Nhóm nhỏ', 'adventure' => 'Phiêu lưu',
+        'day-trip' => 'Tour trong ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+        'cho-noi' => 'Tour chợ nổi',
+        'vuon-trai-homestay' => 'Vườn trái & homestay',
     ),
 );
 
@@ -1067,14 +2615,14 @@ $__servicesSeed = [
         ['cluster' => 'train', 'slug' => 'xe-rieng-charter', 'name' => 'Xe riêng & charter liên tỉnh', 'sort' => 4, 'intro' => 'Ô tô 4–16 chỗ theo ngày.', 'seo_body' => 'Phù hợp đoàn hoặc dừng vườn trái.'],
         ['cluster' => 'train', 'slug' => 'shuttle-san-bay-vca', 'name' => 'Shuttle sân bay Cần Thơ (VCA)', 'sort' => 5, 'intro' => 'Sân bay ~8km — shuttle ~20 phút.', 'seo_body' => 'Gộp vé bay qua :brand.'],
         ['cluster' => 'train', 'slug' => 'xe-noi-thanh-can-tho', 'name' => 'Xe đón bến & nội thành', 'sort' => 6, 'intro' => 'Đón bến xe/sân bay trong Cần Thơ.', 'seo_body' => 'Tiện khi tour chợ nổi sáng sớm.'],
-        ['cluster' => 'flight', 'slug' => 'noi-dia-vca', 'name' => 'Vé nội địa tới Cần Thơ (VCA)', 'sort' => 1, 'intro' => 'Bay SGN/HAN/DAD.', 'seo_body' => 'SGN—VCA ~45 phút.'],
+        ['cluster' => 'flight', 'slug' => 'noi-dia-vca', 'name' => 'Vé nội địa tới Cần Thơ (VCA)', 'sort' => 1, 'intro' => 'Bay Sài Gòn/Hà Nội/DAD.', 'seo_body' => 'SGN—VCA ~45 phút.'],
         ['cluster' => 'flight', 'slug' => 'dua-don-vca', 'name' => 'Đưa đón sân bay VCA ↔ thành phố', 'sort' => 2, 'intro' => 'Door-to-city ~8km.', 'seo_body' => ':brand theo dõi chuyến bay.'],
         ['cluster' => 'flight', 'slug' => 'combo-bay-shuttle', 'name' => 'Combo vé bay + shuttle', 'sort' => 3, 'intro' => 'Một báo giá bay + xe.', 'seo_body' => 'Tiện khách lần đầu.'],
         ['cluster' => 'experience', 'slug' => 'cho-noi-song', 'name' => 'Chợ nổi & thuyền sông', 'sort' => 1, 'intro' => 'Cái Răng, Phong Điền, xuồng máy.', 'seo_body' => 'Must-do Cần Thơ.'],
         ['cluster' => 'experience', 'slug' => 'song-hau-thuyen', 'name' => 'Sông Hậu & hoàng hôn', 'sort' => 2, 'intro' => 'Thuyền Ninh Kiều, view cầu Cần Thơ.', 'seo_body' => 'Chiều tối trên sông lớn.'],
         ['cluster' => 'experience', 'slug' => 'vuon-trai-agri', 'name' => 'Vườn trái & nông trại', 'sort' => 3, 'intro' => 'Mỹ Khánh, Cái Mơn, hái trái.', 'seo_body' => 'Agri-tourism signature miền Tây.'],
         ['cluster' => 'experience', 'slug' => 'lang-mien-tay', 'name' => 'Làng miền Tây & văn hoá', 'sort' => 4, 'intro' => 'Bình Thủy, chùa, bảo tàng.', 'seo_body' => 'Di sản và đa văn hoá.'],
-        ['cluster' => 'experience', 'slug' => 'am-thuc-mekong', 'name' => 'Ẩm thực miền Tây', 'sort' => 5, 'intro' => 'Food tour, lẩu mắm, cooking.', 'seo_body' => 'Lẩu mắm không thể bỏ qua.'],
+        ['cluster' => 'experience', 'slug' => 'am-thuc-mekong', 'name' => 'Ẩm thực miền Tây', 'sort' => 5, 'intro' => 'Tour ẩm thực, lẩu mắm, cooking.', 'seo_body' => 'Lẩu mắm không thể bỏ qua.'],
         ['cluster' => 'experience', 'slug' => 'con-son-cu-lao', 'name' => 'Con Sơn & sampan kênh', 'sort' => 6, 'intro' => 'Cù lao, đạp xe, sampan.', 'seo_body' => 'Trải nghiệm chậm ven kênh.'],
         ['cluster' => 'experience', 'slug' => 'city-tour-can-tho', 'name' => 'City tour Cần Thơ', 'sort' => 7, 'intro' => 'Ninh Kiều, Bình Thủy, bảo tàng.', 'seo_body' => 'Lần đầu tới Cần Thơ.'],
         ['cluster' => 'other', 'slug' => 'huong-dan-rieng', 'name' => 'HDV riêng & hỗ trợ đoàn', 'sort' => 1, 'intro' => 'Guide tiếng Anh, điều phối tour.'],
@@ -1086,7 +2634,7 @@ $__servicesSeed = [
         ['code' => 'train-sleeper-sgn-ct-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
             'title' => 'Xe giường nằm Sài Gòn → Cần Thơ (một chiều)', 'slug' => 'xe-giuong-sai-gon-can-tho-mot-chieu',
             'price_from' => 180000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 1024,
-            'is_featured' => true, 'location_label' => 'SGN → Cần Thơ',
+            'is_featured' => true, 'location_label' => 'Sài Gòn → Cần Thơ',
             'summary' => 'Khởi hành tối hoặc sáng — mất 3–4 giờ.',
             'highlights' => ['3–4 giờ', 'Giường nằm hoặc ghế ngả', 'Đón bến Miền Tây / quận trung tâm'],
             'inclusions' => ['Vé một chiều'], 'exclusions' => ['Đón tận nhà xa trung tâm'],
@@ -1095,7 +2643,7 @@ $__servicesSeed = [
             'title' => 'Xe giường khứ hồi Sài Gòn ↔ Cần Thơ', 'slug' => 'xe-giuong-khu-hoi-sai-gon-can-tho',
             'price_from' => 340000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 567,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN ↔ Cần Thơ',
-            'summary' => 'Gói weekend — đi tối thứ 6, về chiều chủ nhật.',
+            'summary' => 'Gói cuối tuần — đi tối thứ 6, về chiều chủ nhật.',
             'highlights' => ['Rẻ hơn 2 chiều lẻ', 'Giữ chỗ chiều về'], 'inclusions' => ['2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Cần Thơ', 'vehicle_type' => 'xe giường nằm']],
         ['code' => 'train-limousine-sgn-ct', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
@@ -1159,14 +2707,14 @@ $__servicesSeed = [
         ['code' => 'flight-sgn-vca', 'cluster' => 'flight', 'category_slug' => 'noi-dia-vca', 'zone_slug' => 'ninh-kieu-trung-tam',
             'title' => 'Vé máy bay Sài Gòn — Cần Thơ (VCA)', 'slug' => 've-may-bay-sgn-vca',
             'price_from' => 750000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 489,
-            'is_featured' => true, 'location_label' => 'SGN → VCA',
+            'is_featured' => true, 'location_label' => 'Sài Gòn → VCA',
             'summary' => 'Bay ~45 phút — sân bay gần trung tâm (~8km).',
             'highlights' => ['Nhiều chuyến/ngày', 'Gộp shuttle'], 'inclusions' => ['Vé economy', 'Thuế phí'], 'exclusions' => ['Ra thành phố'],
             'notes' => [], 'attrs' => ['from' => 'SGN', 'to' => 'VCA', 'flight_time' => '45m']],
         ['code' => 'flight-han-vca', 'cluster' => 'flight', 'category_slug' => 'noi-dia-vca', 'zone_slug' => 'ninh-kieu-trung-tam',
             'title' => 'Vé máy bay Hà Nội — Cần Thơ (VCA)', 'slug' => 've-may-bay-han-vca',
             'price_from' => 1050000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 198,
-            'is_featured' => true, 'location_label' => 'HAN → VCA',
+            'is_featured' => true, 'location_label' => 'Hà Nội → VCA',
             'summary' => 'Bay ~2h — nhanh hơn xe liên tỉnh.',
             'highlights' => ['Bay thẳng', 'Gộp shuttle'], 'inclusions' => ['Vé economy'], 'exclusions' => ['Hành lý thêm'],
             'notes' => [], 'attrs' => ['from' => 'HAN', 'to' => 'VCA', 'flight_time' => '2h']],
@@ -1180,7 +2728,7 @@ $__servicesSeed = [
         ['code' => 'flight-combo-fly-shuttle', 'cluster' => 'flight', 'category_slug' => 'combo-bay-shuttle', 'zone_slug' => 'ninh-kieu-trung-tam',
             'title' => 'Combo vé bay + shuttle Cần Thơ', 'slug' => 'combo-ve-bay-shuttle-can-tho',
             'price_from' => 950000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 112,
-            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/HAN → thành phố',
+            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/Hà Nội → thành phố',
             'summary' => 'Một báo giá bay + xe ra trung tâm — không tự ghép.',
             'highlights' => ['Một đầu mối', 'Đổi ngày linh hoạt'], 'inclusions' => ['Vé bay', 'Shuttle'], 'exclusions' => ['Lưu trú', 'Tour'],
             'notes' => ['Giá theo ngày bay.'], 'attrs' => ['from' => 'SGN / HAN', 'to' => 'Cần Thơ']],
@@ -1250,11 +2798,11 @@ $__servicesSeed = [
             'highlights' => ['E-ticket', 'HDV tuỳ chọn'], 'inclusions' => ['Vé'], 'exclusions' => ['HDV'],
             'notes' => [], 'attrs' => ['duration_hours' => 1.5, 'activity' => 'museum']],
         ['code' => 'exp-food-tour', 'cluster' => 'experience', 'category_slug' => 'am-thuc-mekong', 'zone_slug' => 'ninh-kieu-trung-tam',
-            'title' => 'Food tour Cần Thơ buổi tối', 'slug' => 'food-tour-can-tho-toi',
+            'title' => 'Tour ẩm thực Cần Thơ buổi tối', 'slug' => 'food-tour-can-tho-toi',
             'price_from' => 420000, 'currency' => 'VND', 'rating' => 4.9, 'review_count' => 267,
             'is_featured' => true, 'location_label' => 'Trung tâm Cần Thơ',
-            'summary' => '18h–22h — lẩu mắm, bún riêu, nem nướng với HDV foodie.',
-            'highlights' => ['7–8 món', 'HDV foodie'], 'inclusions' => ['HDV', 'Tasting'], 'exclusions' => ['Đồ uống'],
+            'summary' => '18h–22h — lẩu mắm, bún riêu, nem nướng với HDV am thực.',
+            'highlights' => ['7–8 món', 'HDV am thực'], 'inclusions' => ['HDV', 'Tasting'], 'exclusions' => ['Đồ uống'],
             'notes' => [], 'attrs' => ['duration_hours' => 3, 'activity' => 'food_tour']],
         ['code' => 'exp-cooking-class', 'cluster' => 'experience', 'category_slug' => 'am-thuc-mekong', 'zone_slug' => 'vuon-trai-mien-tay',
             'title' => 'Lớp nấu ăn miền Tây — nửa ngày', 'slug' => 'lop-nau-an-mien-tay-nua-ngay',
@@ -1278,7 +2826,7 @@ $__servicesSeed = [
             'highlights' => ['Tháp quan sát', 'Mùa chim'], 'inclusions' => ['Vé', 'Xe ghép'], 'exclusions' => ['Ăn tối'],
             'notes' => ['Ngoài mùa chim có thể thay tour khác.'], 'attrs' => ['duration_hours' => 3, 'activity' => 'bird_watching']],
         ['code' => 'exp-city-tour', 'cluster' => 'experience', 'category_slug' => 'city-tour-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
-            'title' => 'City tour Cần Thơ trọn ngày', 'slug' => 'city-tour-can-tho-tron-ngay',
+            'title' => 'Tour thành phố Cần Thơ trọn ngày', 'slug' => 'city-tour-can-tho-tron-ngay',
             'price_from' => 520000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 345,
             'is_featured' => true, 'location_label' => 'Trung tâm Cần Thơ',
             'summary' => 'Ninh Kiều, Bình Thủy, chùa Ông, bảo tàng.',
@@ -1362,7 +2910,7 @@ $__servicesSeed = [
     'service_listing_faqs' => [
         ['q' => 'Giá "từ" có cố định không?', 'a' => 'Không — giá tham khảo mùa thấp điểm. Hi Cần Thơ chốt giá sau khi nhận ngày và số khách.'],
         ['q' => 'Đặt lưu trú ở Cần Thơ qua Hi Cần Thơ thế nào?', 'a' => 'Xem mục Lưu trú để tham khảo homestay vườn, khách sạn trung tâm và resort ven Sông Hậu hoặc liên hệ tư vấn viên để được gợi ý phù hợp ngân sách và lịch trình.'],
-        ['q' => 'Gộp limousine SGN + tour chợ nổi một đơn?', 'a' => 'Có — một báo giá minh bạch, một đầu mối chăm sóc.'],
+        ['q' => 'Gộp limousine Sài Gòn + tour chợ nổi một đơn?', 'a' => 'Có — một báo giá minh bạch, một đầu mối chăm sóc.'],
         ['q' => 'Chợ nổi hủy vì mưa?', 'a' => 'Đổi ngày miễn phí hoặc thay Phong Điền / tăng sampan kênh theo chính sách.'],
         ['q' => 'Shuttle VCA có chạy đêm không?', 'a' => 'Có phụ phí chuyến bay đêm — đặt trước khi bay.'],
     ],
@@ -1412,15 +2960,27 @@ return array_merge(
     ['customize_form' => [
         'destinations_label' => [
             'vi' => 'Bạn muốn khám phá khu vực nào ở Cần Thơ?',
-            'en' => 'Which areas of Can Tho would you like to explore?',
+
+
+
+
+'en' => 'Which areas of Can Tho would you like to explore?',
         ],
         'accommodation_label' => [
             'vi' => 'Bạn thích loại lưu trú nào?',
-            'en' => 'What kind of stay do you prefer?',
+
+
+
+
+'en' => 'What kind of stay do you prefer?',
         ],
         'budget_note' => [
             'vi' => 'Ngân sách dự kiến (chưa gồm vé xe/bay Sài Gòn—Cần Thơ)',
-            'en' => 'Estimated budget (excluding HCMC—Can Tho bus/flight tickets)',
+
+
+
+
+'en' => 'Estimated budget (excluding HCMC—Can Tho bus/flight tickets)',
         ],
         'accommodation' => [
             'vi' => [
@@ -1430,7 +2990,11 @@ return array_merge(
                 'Khách sạn gần chợ nổi',
                 'Nhờ tư vấn giúp tôi',
             ],
-            'en' => [
+
+
+
+
+'en' => [
                 'City centre / Ninh Kieu',
                 'Orchard homestay (My Khanh, Con Son)',
                 'Hau River resort',
@@ -1440,46 +3004,110 @@ return array_merge(
         ],
     ]],
     ['nav' => [
-        'about_group' => ['vi' => 'Về Hi Cần Thơ', 'en' => 'About Hi Can Tho'],
-        'tours' => ['label' => ['vi' => 'Tour', 'en' => 'Tours']],
+        'about_group' => ['vi' => 'Về Hi Cần Thơ',
+
+
+
+'en' => 'About Hi Can Tho'],
+        'tours' => ['label' => ['vi' => 'Tour',
+
+
+
+'en' => 'Tours']],
         'cruise' => [
-            'label' => ['vi' => 'Thuyền sông', 'en' => 'River boats'],
-            'all_label' => ['vi' => 'Tất cả thuyền sông', 'en' => 'All river boats'],
-            'all_meta' => ['vi' => 'Chợ nổi, Sông Hậu & sampan kênh rạch', 'en' => 'Floating markets, Hau River & canal sampans'],
-            'search_hint' => ['vi' => 'Tour, chợ nổi, vườn trái, cẩm nang…', 'en' => 'Tours, floating markets, fruit gardens, guides…'],
-            'search_placeholder' => ['vi' => 'Tìm tour, dịch vụ, bài viết…', 'en' => 'Search tours, services, articles…'],
-            'hub_title' => ['vi' => 'Thuyền sông', 'en' => 'River boats'],
-            'hub_subtitle' => ['vi' => 'Chợ nổi bình minh, hoàng hôn Sông Hậu và sampan kênh rạch.', 'en' => 'Dawn floating markets, Hau River sunsets and canal sampans.'],
+            'label' => ['vi' => 'Thuyền sông',
+
+
+
+'en' => 'River boats'],
+            'all_label' => ['vi' => 'Tất cả thuyền sông',
+
+
+
+'en' => 'All river boats'],
+            'all_meta' => ['vi' => 'Chợ nổi, Sông Hậu & sampan kênh rạch',
+
+
+
+'en' => 'Floating markets, Hau River & canal sampans'],
+            'search_hint' => ['vi' => 'Tour, chợ nổi, vườn trái, cẩm nang…',
+
+
+
+'en' => 'Tours, floating markets, fruit gardens, guides…'],
+            'search_placeholder' => ['vi' => 'Tìm tour, dịch vụ, bài viết…',
+
+
+
+'en' => 'Search tours, services, articles…'],
+            'hub_title' => ['vi' => 'Thuyền sông',
+
+
+
+'en' => 'River boats'],
+            'hub_subtitle' => ['vi' => 'Chợ nổi bình minh, hoàng hôn Sông Hậu và sampan kênh rạch.',
+
+
+
+'en' => 'Dawn floating markets, Hau River sunsets and canal sampans.'],
         ],
     ]],
     ['listing_hubs' => [
         'tours_hub' => [
             'vi' => ['seo_body' => 'Tour :brand gom chợ nổi, vườn trái, homestay và combo ĐBSCL — thiết kế bởi chuyên gia bản địa.'],
-            'en' => ['seo_body' => ':brand tours cover floating markets, fruit gardens, homestays and delta combos — designed by local experts.'],
+
+
+
+
+'en' => ['seo_body' => ':brand tours cover floating markets, fruit gardens, homestays and delta combos — designed by local experts.'],
         ],
         'cruises_hub' => [
             'vi' => ['seo_body' => 'Thuyền sông Cần Thơ — chợ nổi bình minh, hoàng hôn Sông Hậu và sampan kênh rạch từ :brand.'],
-            'en' => ['seo_body' => 'Can Tho river boats — dawn floating markets, Hau River sunsets and canal sampans from :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Can Tho river boats — dawn floating markets, Hau River sunsets and canal sampans from :brand.'],
         ],
         'trains_hub' => [
             'vi' => ['seo_body' => 'Xe giường, limousine Sài Gòn, xe Châu Đốc/Rạch Giá/Cà Mau và shuttle VCA qua :brand — e-ticket, đổi ngày linh hoạt.'],
-            'en' => ['seo_body' => 'Sleeper buses, HCMC limousines, Chau Doc/Rach Gia/Ca Mau coaches and VCA shuttles via :brand — e-tickets and flexible changes.'],
+
+
+
+
+'en' => ['seo_body' => 'Sleeper buses, HCMC limousines, Chau Doc/Rach Gia/Ca Mau coaches and VCA shuttles via :brand — e-tickets and flexible changes.'],
         ],
         'flights_hub' => [
             'vi' => ['seo_body' => 'Vé bay VCA và đưa đón sân bay Cần Thơ kết nối tour :brand.'],
-            'en' => ['seo_body' => 'VCA flights and Can Tho airport transfers aligned with your :brand itinerary.'],
+
+
+
+
+'en' => ['seo_body' => 'VCA flights and Can Tho airport transfers aligned with your :brand itinerary.'],
         ],
         'stays_hub' => [
             'vi' => ['seo_body' => ':brand tổng hợp lưu trú Cần Thơ theo khu vực — homestay vườn trái, khách sạn trung tâm Ninh Kiều và resort ven Sông Hậu. Lọc theo ngân sách, phong cách và gần các điểm trong hành trình của bạn.'],
-            'en' => ['seo_body' => ':brand brings together Can Tho stays by area — orchard homestays, Ninh Kieu city hotels and Hau River resorts. Filter by budget, style and proximity to your itinerary.'],
+
+
+
+
+'en' => ['seo_body' => ':brand brings together Can Tho stays by area — orchard homestays, Ninh Kieu city hotels and Hau River resorts. Filter by budget, style and proximity to your itinerary.'],
         ],
         'experiences_hub' => [
             'vi' => ['seo_body' => 'Trải nghiệm Cần Thơ: chợ nổi, vườn trái Mỹ Khánh, sampan kênh, lẩu mắm — đặt lẻ hoặc gộp tour qua :brand.'],
-            'en' => ['seo_body' => 'Can Tho experiences: floating markets, My Khanh gardens, canal sampans, lau mam — à la carte or bundled via :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Can Tho experiences: floating markets, My Khanh gardens, canal sampans, lau mam — à la carte or bundled via :brand.'],
         ],
         'extras_hub' => [
             'vi' => ['seo_body' => 'HDV riêng, xe có lái, hỗ trợ đổi lịch chợ nổi và hotline 24/7 trên sông nước cùng :brand.'],
-            'en' => ['seo_body' => 'Private guides, cars with drivers, floating market reschedule support and 24/7 delta hotline with :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Private guides, cars with drivers, floating market reschedule support and 24/7 delta hotline with :brand.'],
         ],
     ]],
 );

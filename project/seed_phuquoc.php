@@ -42,21 +42,33 @@ $__phuquocSeed = array(
             'sort' => 10,
             'age_min' => 12,
             'age_max' => 59,
-            'name' => array('vi' => 'Người lớn', 'en' => 'Adult'),
+            'name' => array('vi' => 'Người lớn',
+
+
+
+'en' => 'Adult'),
         ),
         array(
             'code' => 'child',
             'sort' => 20,
             'age_min' => 2,
             'age_max' => 11,
-            'name' => array('vi' => 'Trẻ em', 'en' => 'Child'),
+            'name' => array('vi' => 'Trẻ em',
+
+
+
+'en' => 'Child'),
         ),
         array(
             'code' => 'senior',
             'sort' => 30,
             'age_min' => 60,
             'age_max' => null,
-            'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)'),
+            'name' => array('vi' => 'Cao tuổi (60+)',
+
+
+
+'en' => 'Senior (60+)'),
         ),
     ),
 
@@ -101,34 +113,108 @@ $__phuquocSeed = array(
     ),
 
     'content_tags' => array(
-        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?', 'en' => 'Where to eat & drink?'),
-        'where-to-stay' => array('vi' => 'Ở đâu?', 'en' => 'Where to stay?'),
-        'what-to-do' => array('vi' => 'Làm gì & xem gì?', 'en' => 'What to do & see?'),
-        'how-to-get-there' => array('vi' => 'Di chuyển ra đảo thế nào?', 'en' => 'How to get there?'),
-        'travel-tips' => array('vi' => 'Mẹo du lịch', 'en' => 'Travel tips'),
-        'trip-report' => array('vi' => 'Cảm nhận chuyến đi', 'en' => 'How was the trip?'),
-        'which-tour' => array('vi' => 'Chọn tour nào?', 'en' => 'Which tour to choose?'),
+        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?',
+
+
+
+'en' => 'Where to eat & drink?'),
+        'where-to-stay' => array('vi' => 'Ở đâu?',
+
+
+
+'en' => 'Where to stay?'),
+        'what-to-do' => array('vi' => 'Làm gì & xem gì?',
+
+
+
+'en' => 'What to do & see?'),
+        'how-to-get-there' => array('vi' => 'Di chuyển ra đảo thế nào?',
+
+
+
+'en' => 'How to get there?'),
+        'travel-tips' => array('vi' => 'Mẹo du lịch',
+
+
+
+'en' => 'Travel tips'),
+        'trip-report' => array('vi' => 'Cảm nhận chuyến đi',
+
+
+
+'en' => 'How was the trip?'),
+        'which-tour' => array('vi' => 'Chọn tour nào?',
+
+
+
+'en' => 'Which tour to choose?'),
     ),
 
     'travel_styles' => array(
-        'diving' => array('vi' => 'Lặn biển chuyên sâu', 'en' => 'Scuba diving'),
-        'beach' => array('vi' => 'Nghỉ dưỡng biển', 'en' => 'Beach'),
-        'diving-snorkel' => array('vi' => 'Lặn & ngắm san hô', 'en' => 'Diving & snorkeling'),
-        'family' => array('vi' => 'Gia đình', 'en' => 'Family'),
-        'honeymoon' => array('vi' => 'Trăng mật', 'en' => 'Honeymoon'),
-        'culture' => array('vi' => 'Văn hoá & lịch sử', 'en' => 'Culture & history'),
-        'adventure' => array('vi' => 'Phiêu lưu', 'en' => 'Adventure'),
-        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
-        'multi-day' => array('vi' => 'Tour nhiều ngày', 'en' => 'Multi-day tour'),
-        'long-duration' => array('vi' => 'Tour dài ngày', 'en' => 'Long duration'),
-        'small-group' => array('vi' => 'Nhóm nhỏ', 'en' => 'Small group'),
-        'seafood' => array('vi' => 'Hải sản & làng chài', 'en' => 'Seafood & fishing village'),
-        'theme-park' => array('vi' => 'Công viên giải trí', 'en' => 'Theme park'),
-        'wildlife' => array('vi' => 'Safari & thiên nhiên', 'en' => 'Safari & nature'),
-        'balanced' => array('vi' => 'Kỳ nghỉ cân bằng', 'en' => 'Balanced'),
-        'multi-destination-combo' => array('vi' => 'Kết hợp nhiều điểm đến', 'en' => 'Multi-destination combo'),
-        'quiet-stay' => array('vi' => 'Nghỉ yên tĩnh', 'en' => 'Quiet stay'),
-        'luxury' => array('vi' => 'Nghỉ dưỡng cao cấp', 'en' => 'Luxury'),
+        'day-trip' => array(
+            'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day trip',
+        ),
+        '2n1d' => array(
+            'vi' => '2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+        ),
+        '3n2d' => array(
+            'vi' => '3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+        ),
+        '4n3d' => array(
+            'vi' => '4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+        ),
+        '5-plus-days' => array(
+            'vi' => 'Từ 5 ngày',
+
+
+
+
+'en' => '5+ days',
+        ),
+        'bien-nam-dao' => array(
+            'vi' => 'Tour biển nam đảo',
+
+
+
+
+'en' => 'South-island sea tours',
+        ),
+        'vui-choi-gia-dinh' => array(
+            'vi' => 'Tour vui chơi gia đình',
+
+
+
+
+'en' => 'Family fun tours',
+        ),
+        'bien-bai-sao' => array(
+            'vi' => 'Tour biển Bãi Sao & Hàm Ninh',
+
+
+
+
+'en' => 'Bai Sao & Ham Ninh tours',
+        ),
     ),
 
     'review_platforms' => array(
@@ -154,10 +240,14 @@ $__phuquocSeed = array(
         array(
             'sort' => 0, 'text_align' => 'center', 'link_url' => '/diem-den/bai-sao',
             'vi' => array('title' => 'Phú Quốc', 'title_accent' => 'đảo ngọc An Giang',
-                'description' => 'Cát trắng Bãi Sao, rừng nguyên sinh và vịnh An Thới — kỳ nghỉ biển đầy đủ nhất miền Tây Nam, chỉ một chuyến bay tới sân bay Phú Quốc (PQC).',
+                'description' => 'Cát trắng Bãi Sao, rừng nguyên sinh và vịnh An Thới — kỳ nghỉ biển đầy đủ nhất miền Tây Nam, chỉ một chuyến bay tới sân bay Phú Quốc (Phú Quốc).',
                 'button_label' => 'Khám phá đảo Phú Quốc', 'image_alt' => 'Bãi Sao Phú Quốc nhìn từ trên cao'),
-            'en' => array('title' => 'Phu Quoc Island', 'title_accent' => 'the pearl of An Giang',
-                'description' => 'Bai Sao white sand, ancient forest and An Thoi Bay — Vietnam’s fullest island escape, one flight to Phu Quoc International Airport (PQC).',
+
+
+
+
+'en' => array('title' => 'Phu Quoc Island', 'title_accent' => 'the pearl of An Giang',
+                'description' => 'Bai Sao white sand, ancient forest and An Thoi Bay — Vietnam’s fullest island escape, one flight to Phu Quoc International Airport (Phú Quốc).',
                 'button_label' => 'Explore Phu Quoc', 'image_alt' => 'Aerial view of Bai Sao beach Phu Quoc'),
         ),
         array(
@@ -165,7 +255,11 @@ $__phuquocSeed = array(
             'vi' => array('title' => 'Cáp treo Hòn Thơm', 'title_accent' => 'kỷ lục thế giới trên vịnh xanh',
                 'description' => 'Cáp treo 3 dây vượt biển tới Hòn Thơm — bãi tắm, công viên nước và view quần đảo An Thới trong một ngày.',
                 'button_label' => 'Xem tour Hòn Thơm', 'image_alt' => 'Cáp treo Hòn Thơm Phú Quốc'),
-            'en' => array('title' => 'Hon Thom cable car', 'title_accent' => 'a world-record ride over turquoise water',
+
+
+
+
+'en' => array('title' => 'Hon Thom cable car', 'title_accent' => 'a world-record ride over turquoise water',
                 'description' => 'A three-cable sea crossing to Hon Thom — beaches, water park and An Thoi archipelago views in one day.',
                 'button_label' => 'View Hon Thom tours', 'image_alt' => 'Hon Thom cable car Phu Quoc'),
         ),
@@ -174,7 +268,11 @@ $__phuquocSeed = array(
             'vi' => array('title' => 'VinWonders & Grand World', 'title_accent' => 'công viên giải trí giữa đảo ngọc',
                 'description' => 'Công viên nước, tàu lượn, phố đêm Grand World và show thực cảnh — điểm nhấn cho gia đình và nhóm bạn.',
                 'button_label' => 'Tour VinWonders', 'image_alt' => 'VinWonders Phú Quốc'),
-            'en' => array('title' => 'VinWonders & Grand World', 'title_accent' => 'theme-park energy on the pearl island',
+
+
+
+
+'en' => array('title' => 'VinWonders & Grand World', 'title_accent' => 'theme-park energy on the pearl island',
                 'description' => 'Water park, roller coasters, Grand World night street and live shows — a highlight for families and friend groups.',
                 'button_label' => 'VinWonders tours', 'image_alt' => 'VinWonders Phu Quoc'),
         ),
@@ -193,37 +291,128 @@ $__phuquocSeed = array(
     ),
 
     'zone_translations' => array(
-        'duong-dong' => array('vi' => 'Dương Đông', 'en' => 'Duong Dong Town',
-            'tagline' => array('vi' => 'Thị trấn trung tâm — chợ đêm, cảng Dương Đông và nhịp sống phố đảo', 'en' => 'Island town hub — night market, Duong Dong harbour and local street life')),
-        'bai-truong' => array('vi' => 'Bãi Trường (Long Beach)', 'en' => 'Bai Truong (Long Beach)',
-            'tagline' => array('vi' => 'Dải bãi dài phía tây — resort, ghế nằm và hoàng hôn', 'en' => 'West-coast long beach — resorts, loungers and sunsets')),
-        'bai-sao' => array('vi' => 'Bãi Sao', 'en' => 'Bai Sao Beach',
-            'tagline' => array('vi' => 'Cát trắng mịn phía nam — bãi đẹp nhất đảo theo nhiều du khách', 'en' => 'Fine white sand in the south — often called the island’s prettiest beach')),
-        'bai-khem' => array('vi' => 'Bãi Khem', 'en' => 'Bai Khem Beach',
-            'tagline' => array('vi' => 'Bãi cát trắng cao cấp phía đông nam — yên và sang', 'en' => 'Upscale white-sand beach in the southeast — quiet and polished')),
-        'ong-lang' => array('vi' => 'Ông Lang', 'en' => 'Ong Lang Beach',
-            'tagline' => array('vi' => 'Bãi tây bắc yên tĩnh — boutique resort và hoàng hôn', 'en' => 'Quiet northwest beach — boutique resorts and sunsets')),
-        'an-thoi-hon-thom' => array('vi' => 'An Thới / Hòn Thơm', 'en' => 'An Thoi / Hon Thom',
-            'tagline' => array('vi' => 'Cảng nam đảo, cáp treo kỷ lục và quần đảo snorkel', 'en' => 'South harbour, record cable car and snorkel islets')),
-        'ganh-dau-rach-vem' => array('vi' => 'Gành Dầu / Rạch Vẹm', 'en' => 'Ganh Dau / Rach Vem',
-            'tagline' => array('vi' => 'Mũi cực tây — kayak, rừng ngập mặn và hoàng hôn Gành Dầu', 'en' => 'Far-west cape — kayaking, mangroves and Ganh Dau sunsets')),
-        'vinpearl-grand-world' => array('vi' => 'Vinpearl / Grand World', 'en' => 'Vinpearl / Grand World',
-            'tagline' => array('vi' => 'VinWonders, Safari, Grand World và khu nghỉ Vinpearl', 'en' => 'VinWonders, Safari, Grand World and Vinpearl resorts')),
-        'ket-hop-rach-gia' => array('vi' => 'Kết hợp Rạch Giá / Hà Tiên', 'en' => 'Combined with Rach Gia / Ha Tien',
-            'tagline' => array('vi' => 'Cửa ngõ đất liền — tàu cao tốc từ Rạch Giá hoặc Hà Tiên', 'en' => 'Mainland gateway — high-speed ferries from Rach Gia or Ha Tien')),
+        'duong-dong' => array('vi' => 'Dương Đông',
+
+
+
+'en' => 'Duong Dong Town',
+            'tagline' => array('vi' => 'Thị trấn trung tâm — chợ đêm, cảng Dương Đông và nhịp sống phố đảo',
+
+
+
+'en' => 'Island town hub — night market, Duong Dong harbour and local street life')),
+        'bai-truong' => array('vi' => 'Bãi Trường (Long Beach)',
+
+
+
+'en' => 'Bai Truong (Long Beach)',
+            'tagline' => array('vi' => 'Dải bãi dài phía tây — resort, ghế nằm và hoàng hôn',
+
+
+
+'en' => 'West-coast long beach — resorts, loungers and sunsets')),
+        'bai-sao' => array('vi' => 'Bãi Sao',
+
+
+
+'en' => 'Bai Sao Beach',
+            'tagline' => array('vi' => 'Cát trắng mịn phía nam — bãi đẹp nhất đảo theo nhiều du khách',
+
+
+
+'en' => 'Fine white sand in the south — often called the island’s prettiest beach')),
+        'bai-khem' => array('vi' => 'Bãi Khem',
+
+
+
+'en' => 'Bai Khem Beach',
+            'tagline' => array('vi' => 'Bãi cát trắng cao cấp phía đông nam — yên và sang',
+
+
+
+'en' => 'Upscale white-sand beach in the southeast — quiet and polished')),
+        'ong-lang' => array('vi' => 'Ông Lang',
+
+
+
+'en' => 'Ong Lang Beach',
+            'tagline' => array('vi' => 'Bãi tây bắc yên tĩnh — boutique resort và hoàng hôn',
+
+
+
+'en' => 'Quiet northwest beach — boutique resorts and sunsets')),
+        'an-thoi-hon-thom' => array('vi' => 'An Thới / Hòn Thơm',
+
+
+
+'en' => 'An Thoi / Hon Thom',
+            'tagline' => array('vi' => 'Cảng nam đảo, cáp treo kỷ lục và quần đảo snorkel',
+
+
+
+'en' => 'South harbour, record cable car and snorkel islets')),
+        'ganh-dau-rach-vem' => array('vi' => 'Gành Dầu / Rạch Vẹm',
+
+
+
+'en' => 'Ganh Dau / Rach Vem',
+            'tagline' => array('vi' => 'Mũi cực tây — kayak, rừng ngập mặn và hoàng hôn Gành Dầu',
+
+
+
+'en' => 'Far-west cape — kayaking, mangroves and Ganh Dau sunsets')),
+        'vinpearl-grand-world' => array('vi' => 'Vinpearl / Grand World',
+
+
+
+'en' => 'Vinpearl / Grand World',
+            'tagline' => array('vi' => 'VinWonders, Safari, Grand World và khu nghỉ Vinpearl',
+
+
+
+'en' => 'VinWonders, Safari, Grand World and Vinpearl resorts')),
+        'ket-hop-rach-gia' => array('vi' => 'Kết hợp Rạch Giá / Hà Tiên',
+
+
+
+'en' => 'Combined with Rach Gia / Ha Tien',
+            'tagline' => array('vi' => 'Cửa ngõ đất liền — tàu cao tốc từ Rạch Giá hoặc Hà Tiên',
+
+
+
+'en' => 'Mainland gateway — high-speed ferries from Rach Gia or Ha Tien')),
     ),
 
     'tours' => array(
         array(
             'slug' => 'phu-quoc-3-ngay-tong-quan-dao',
             'title' => 'Phú Quốc 3 ngày 2 đêm — Tổng quan đảo ngọc',
-            'zoneSlug' => 'duong-dong', 'zone' => 'Dương Đông',
-            'tourCode' => 'PQC3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 218, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('beach', 'balanced', 'multi-day', 'family'),
-            'quote' => array('text' => 'Ba ngày vừa đủ: Bãi Sao, cáp treo Hòn Thơm và một buổi Grand World buổi tối — không bị nhồi quá.', 'author' => 'Chị Minh Anh'),
-            'places' => array('Dương Đông', 'Bãi Trường', 'Bãi Sao', 'Hòn Thơm', 'Grand World', 'Nhà tù Phú Quốc'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
+            'zoneSlug' => 'duong-dong',
+            'zone' => 'Dương Đông',
+            'tourCode' => 'PQC3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 218,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+            ),
+            'quote' => array(
+                'text' => 'Ba ngày vừa đủ: Bãi Sao, cáp treo Hòn Thơm và một buổi Grand World buổi tối — không bị nhồi quá.',
+                'author' => 'Chị Minh Anh',
+            ),
+            'places' => array(
+                'Dương Đông',
+                'Bãi Trường',
+                'Bãi Sao',
+                'Hòn Thơm',
+                'Grand World',
+                'Nhà tù Phú Quốc',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
             'highlightsIntro' => 'Lịch trình cân bằng cho lần đầu tới đảo: biển Bãi Sao, cáp treo Hòn Thơm, chợ đêm Dương Đông và một tối tại Grand World.',
             'highlights' => array(
                 'Tắm biển Bãi Sao — cát trắng phía nam',
@@ -233,15 +422,37 @@ $__phuquocSeed = array(
                 'Xe đưa đón sân bay PQC — khách sạn',
             ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Đón sân bay — Nhận phòng Bãi Trường / Dương Đông', 'meals' => 'Tối',
-                    'transport' => array('car'), 'overnight' => 'Bãi Trường / Dương Đông',
-                    'content' => 'Đón tại sân bay quốc tế Phú Quốc (PQC), nhận phòng khu Bãi Trường hoặc Dương Đông. Chiều tự do tắm biển, tối chợ đêm Dương Đông hoặc Grand World.'),
-                array('day' => 2, 'title' => 'Nam đảo — Bãi Sao & cáp treo Hòn Thơm', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('car', 'cable-car'), 'overnight' => 'Bãi Trường / Dương Đông',
-                    'content' => 'Sáng đi nam đảo: Bãi Sao tắm biển, trưa hải sản, chiều cáp treo Hòn Thơm (hoặc đảo chiều theo đông khách). Tối tự do.'),
-                array('day' => 3, 'title' => 'Vườn tiêu / nước mắm / nhà tù — Ra sân bay', 'meals' => 'Sáng',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Sáng tham quan điểm văn hoá đặc trưng (vườn tiêu, nhà thùng nước mắm, nhà tù Phú Quốc — chọn theo giờ bay), đưa ra sân bay PQC.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Đón sân bay — Nhận phòng Bãi Trường / Dương Đông',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Trường / Dương Đông',
+                    'content' => 'Đón tại sân bay quốc tế Phú Quốc (Phú Quốc), nhận phòng khu Bãi Trường hoặc Dương Đông. Chiều tự do tắm biển, tối chợ đêm Dương Đông hoặc Grand World.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Nam đảo — Bãi Sao & cáp treo Hòn Thơm',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'cable-car',
+                    ),
+                    'overnight' => 'Bãi Trường / Dương Đông',
+                    'content' => 'Sáng đi nam đảo: Bãi Sao tắm biển, trưa hải sản, chiều cáp treo Hòn Thơm (hoặc đảo chiều theo đông khách). Tối tự do.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Vườn tiêu / nước mắm / nhà tù — Ra sân bay',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tham quan điểm văn hoá đặc trưng (vườn tiêu, nhà thùng nước mắm, nhà tù Phú Quốc — chọn theo giờ bay), đưa ra sân bay PQC.',
+                ),
             ),
             'inclusions' => array(
                 'Khách sạn / resort 3–4* khu Bãi Trường hoặc Dương Đông 2 đêm',
@@ -250,336 +461,994 @@ $__phuquocSeed = array(
                 'Vé cáp treo Hòn Thơm (hạng theo gói đã chọn)',
                 'HDV tiếng Việt (Anh theo yêu cầu)',
             ),
-            'exclusions' => array('Vé máy bay tới/đi PQC', 'Vé VinWonders / Safari (có thể thêm)', 'Đồ uống ngoài chương trình', 'Tiền tip', 'Bảo hiểm du lịch'),
-            'notes' => array('Lịch trình có thể đổi thứ tự tuỳ giờ bay và đông khách tại cáp treo.', 'Tour ghép nhóm nhỏ; có phương án private.'),
-            'faqs' => array(
-                array('q' => 'Từ Hà Nội / Sài Gòn tới Phú Quốc mất bao lâu?', 'a' => 'Bay thẳng tới sân bay Phú Quốc (PQC): khoảng 1 giờ từ Sài Gòn (SGN), khoảng 2 giờ từ Hà Nội (HAN). Ngoài ra có tàu cao tốc từ Rạch Giá / Hà Tiên nếu bạn muốn kết hợp đất liền.'),
-                array('q' => 'Tour 3 ngày có phù hợp gia đình có trẻ nhỏ?', 'a' => 'Có. Bãi Sao nước nông, cáp treo Hòn Thơm có ghế ngồi an toàn. Nên tránh ngày quá dày nếu đi cùng trẻ dưới 5 tuổi.'),
+            'exclusions' => array(
+                'Vé máy bay tới/đi PQC',
+                'Vé VinWonders / Safari (có thể thêm)',
+                'Đồ uống ngoài chương trình',
+                'Tiền tip',
+                'Bảo hiểm du lịch',
             ),
-            'galleryCount' => 8, 'priceFrom' => 3590000.0, 'currency' => 'VND',
+            'notes' => array(
+                'Lịch trình có thể đổi thứ tự tuỳ giờ bay và đông khách tại cáp treo.',
+                'Tour ghép nhóm nhỏ; có phương án private.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Từ Hà Nội / Sài Gòn tới Phú Quốc mất bao lâu?',
+                    'a' => 'Bay thẳng tới sân bay Phú Quốc (Phú Quốc): khoảng 1 giờ từ Sài Gòn (SGN), khoảng 2 giờ từ Hà Nội (Hà Nội). Ngoài ra có tàu cao tốc từ Rạch Giá / Hà Tiên nếu bạn muốn kết hợp đất liền.',
+                ),
+                array(
+                    'q' => 'Tour 3 ngày có phù hợp gia đình có trẻ nhỏ?',
+                    'a' => 'Có. Bãi Sao nước nông, cáp treo Hòn Thơm có ghế ngồi an toàn. Nên tránh ngày quá dày nếu đi cùng trẻ dưới 5 tuổi.',
+                ),
+            ),
+            'galleryCount' => 8,
+            'priceFrom' => 3590000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vinwonders-phu-quoc-1-ngay',
             'title' => 'VinWonders Phú Quốc — 1 ngày công viên giải trí',
-            'zoneSlug' => 'vinpearl-grand-world', 'zone' => 'Vinpearl / Grand World',
-            'tourCode' => 'PQC1D-02', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 186, 'badge' => 'Gia đình', 'featured' => true,
-            'styles' => array('theme-park', 'family', 'day-trip'),
-            'quote' => array('text' => 'Con 9 tuổi chơi cả ngày không chán — công viên nước và tàu lượn đủ “đã” cho nhóm gia đình.', 'author' => 'Anh Đức Thành'),
-            'places' => array('VinWonders Phú Quốc', 'Grand World (tuỳ chọn tối)'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Một ngày tại VinWonders: công viên nước, trò chơi cảm giác mạnh, show biểu diễn — đưa đón từ khách sạn.',
-            'highlights' => array('Vé vào cổng VinWonders theo hạng', 'Xe đưa đón 2 chiều', 'HDV hỗ trợ định hướng trong công viên', 'Có thể ghép tối Grand World'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Full day VinWonders', 'meals' => NULL,
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón khách sạn ~08:00–08:30, vào VinWonders cả ngày, về khoảng 17:00–17:30. Tuỳ chọn ở lại Grand World buổi tối.'),
+            'zoneSlug' => 'vinpearl-grand-world',
+            'zone' => 'Vinpearl / Grand World',
+            'tourCode' => 'PQC1D-02',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 186,
+            'badge' => 'Gia đình',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'vui-choi-gia-dinh',
             ),
-            'inclusions' => array('Vé VinWonders', 'Xe đưa đón', 'HDV hỗ trợ'),
-            'exclusions' => array('Ăn uống trong công viên', 'Ảnh/video trả phí', 'Vé show đặc biệt (nếu có)'),
-            'notes' => array('Mang đồ bơi nếu muốn vào công viên nước.', 'Cuối tuần và lễ rất đông — nên đi sớm.'),
-            'faqs' => array(array('q' => 'Trẻ em có giảm giá không?', 'a' => 'Có — theo chiều cao/độ tuổi quy định của VinWonders. Báo chiều cao trẻ khi đặt để chọn đúng hạng vé.')),
-            'galleryCount' => 6, 'priceFrom' => 1250000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Con 9 tuổi chơi cả ngày không chán — công viên nước và tàu lượn đủ “đã” cho nhóm gia đình.',
+                'author' => 'Anh Đức Thành',
+            ),
+            'places' => array(
+                'VinWonders Phú Quốc',
+                'Grand World (tuỳ chọn tối)',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Một ngày tại VinWonders: công viên nước, trò chơi cảm giác mạnh, show biểu diễn — đưa đón từ khách sạn.',
+            'highlights' => array(
+                'Vé vào cổng VinWonders theo hạng',
+                'Xe đưa đón 2 chiều',
+                'HDV hỗ trợ định hướng trong công viên',
+                'Có thể ghép tối Grand World',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Full day VinWonders',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón khách sạn ~08:00–08:30, vào VinWonders cả ngày, về khoảng 17:00–17:30. Tuỳ chọn ở lại Grand World buổi tối.',
+                ),
+            ),
+            'inclusions' => array(
+                'Vé VinWonders',
+                'Xe đưa đón',
+                'HDV hỗ trợ',
+            ),
+            'exclusions' => array(
+                'Ăn uống trong công viên',
+                'Ảnh/video trả phí',
+                'Vé show đặc biệt (nếu có)',
+            ),
+            'notes' => array(
+                'Mang đồ bơi nếu muốn vào công viên nước.',
+                'Cuối tuần và lễ rất đông — nên đi sớm.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Trẻ em có giảm giá không?',
+                    'a' => 'Có — theo chiều cao/độ tuổi quy định của VinWonders. Báo chiều cao trẻ khi đặt để chọn đúng hạng vé.',
+                ),
+            ),
+            'galleryCount' => 6,
+            'priceFrom' => 1250000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cap-treo-hon-thom-1-ngay',
             'title' => 'Cáp treo Hòn Thơm — 1 ngày nam đảo',
-            'zoneSlug' => 'an-thoi-hon-thom', 'zone' => 'An Thới / Hòn Thơm',
-            'tourCode' => 'PQC1D-03', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 164, 'badge' => 'Được yêu thích', 'featured' => true,
-            'styles' => array('adventure', 'beach', 'day-trip', 'family'),
-            'quote' => array('text' => 'Đi cáp treo vượt biển là khoảnh khắc “wow” nhất chuyến Phú Quốc của chúng tôi.', 'author' => 'Cặp đôi Hùng & Trang'),
-            'places' => array('Ga An Thới', 'Hòn Thơm', 'Bãi tắm Hòn Thơm', 'Công viên nước (tuỳ vé)'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Ngày nam đảo tập trung cáp treo 3 dây: view quần đảo, tắm biển Hòn Thơm, ăn trưa hải sản An Thới.',
-            'highlights' => array('Vé cáp treo khứ hồi', 'Thời gian tự do trên đảo Hòn Thơm', 'Ăn trưa hải sản (tuỳ gói)', 'Xe đưa đón khách sạn'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cáp treo & Hòn Thơm', 'meals' => 'Trưa',
-                    'transport' => array('car', 'cable-car'), 'overnight' => NULL,
-                    'content' => 'Đón sáng, tới ga cáp treo An Thới, sang Hòn Thơm, tắm biển / công viên nước theo vé, ăn trưa, chiều về lại đất liền đảo lớn.'),
+            'zoneSlug' => 'an-thoi-hon-thom',
+            'zone' => 'An Thới / Hòn Thơm',
+            'tourCode' => 'PQC1D-03',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 164,
+            'badge' => 'Được yêu thích',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'bien-nam-dao',
             ),
-            'inclusions' => array('Xe đưa đón', 'Vé cáp treo (hạng theo gói)', 'HDV', 'Bữa trưa (gói đủ)'),
-            'exclusions' => array('Vé công viên nước nâng cấp (nếu chưa gồm)', 'Đồ uống có cồn'),
-            'notes' => array('Không khuyến khích khi sợ độ cao nặng — có thể chọn tour Bãi Sao thay thế.'),
+            'quote' => array(
+                'text' => 'Đi cáp treo vượt biển là khoảnh khắc “wow” nhất chuyến Phú Quốc của chúng tôi.',
+                'author' => 'Cặp đôi Hùng & Trang',
+            ),
+            'places' => array(
+                'Ga An Thới',
+                'Hòn Thơm',
+                'Bãi tắm Hòn Thơm',
+                'Công viên nước (tuỳ vé)',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Ngày nam đảo tập trung cáp treo 3 dây: view quần đảo, tắm biển Hòn Thơm, ăn trưa hải sản An Thới.',
+            'highlights' => array(
+                'Vé cáp treo khứ hồi',
+                'Thời gian tự do trên đảo Hòn Thơm',
+                'Ăn trưa hải sản (tuỳ gói)',
+                'Xe đưa đón khách sạn',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cáp treo & Hòn Thơm',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                        'cable-car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón sáng, tới ga cáp treo An Thới, sang Hòn Thơm, tắm biển / công viên nước theo vé, ăn trưa, chiều về lại đất liền đảo lớn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'Vé cáp treo (hạng theo gói)',
+                'HDV',
+                'Bữa trưa (gói đủ)',
+            ),
+            'exclusions' => array(
+                'Vé công viên nước nâng cấp (nếu chưa gồm)',
+                'Đồ uống có cồn',
+            ),
+            'notes' => array(
+                'Không khuyến khích khi sợ độ cao nặng — có thể chọn tour Bãi Sao thay thế.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 980000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 980000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'tour-4-dao-snorkel-phu-quoc',
             'title' => 'Tour 4 đảo Phú Quốc — snorkel & làng chài',
-            'zoneSlug' => 'an-thoi-hon-thom', 'zone' => 'An Thới / Hòn Thơm',
-            'tourCode' => 'PQC1D-04', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 242, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('diving-snorkel', 'seafood', 'day-trip', 'adventure'),
-            'quote' => array('text' => 'Hòn Mây Rút, hòn Gầm Ghì — nước trong, ăn hải sản trên thuyền đúng kiểu Phú Quốc.', 'author' => 'Bạn Quang Huy'),
-            'places' => array('Hòn Mây Rút', 'Hòn Gầm Ghì', 'Hòn Móng Tay', 'Hòn Rỏi / điểm theo mùa'),
-            'start' => 'An Thới', 'end' => 'An Thới',
-            'highlightsIntro' => 'Tour thuyền cổ điển phía nam: 3–4 điểm đảo, snorkel, câu cá giải trí, ăn trưa hải sản trên thuyền.',
-            'highlights' => array('Thuyền cả ngày từ An Thới', '2–3 điểm snorkel', 'Ăn trưa hải sản', 'Thiết bị ống thở cơ bản', 'Xe khách sạn — cảng (tuỳ gói)'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => '4 đảo trong ngày', 'meals' => 'Trưa',
-                    'transport' => array('boat', 'car'), 'overnight' => NULL,
-                    'content' => 'Đón KS hoặc tập trung cảng An Thới ~08:00, lần lượt các hòn theo điều kiện biển, snorkel, ăn trưa, về ~15:30–16:00.'),
+            'zoneSlug' => 'an-thoi-hon-thom',
+            'zone' => 'An Thới / Hòn Thơm',
+            'tourCode' => 'PQC1D-04',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 242,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'bien-nam-dao',
             ),
-            'inclusions' => array('Thuyền', 'Snorkel set cơ bản', 'Bữa trưa', 'Áo phao', 'HDV thuyền'),
-            'exclusions' => array('Ảnh/video dưới nước', 'Đồ uống có cồn', 'Vé cáp treo Hòn Thơm'),
-            'notes' => array('Mùa gió (khoảng tháng 6–9 phía nam có thể sóng hơn) — điểm đảo có thể đổi.', 'Biết bơi cơ bản; trẻ từ 6 tuổi có áo phao.'),
-            'faqs' => array(array('q' => 'Tour 4 đảo khác gì cáp treo Hòn Thơm?', 'a' => '4 đảo = thuyền + snorkel + làng chài. Hòn Thơm = cáp treo + đảo lớn có công viên nước. Nhiều khách làm cả hai trong chuyến 3–4 ngày.')),
-            'galleryCount' => 6, 'priceFrom' => 690000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Hòn Mây Rút, hòn Gầm Ghì — nước trong, ăn hải sản trên thuyền đúng kiểu Phú Quốc.',
+                'author' => 'Bạn Quang Huy',
+            ),
+            'places' => array(
+                'Hòn Mây Rút',
+                'Hòn Gầm Ghì',
+                'Hòn Móng Tay',
+                'Hòn Rỏi / điểm theo mùa',
+            ),
+            'start' => 'An Thới',
+            'end' => 'An Thới',
+            'highlightsIntro' => 'Tour thuyền cổ điển phía nam: 3–4 điểm đảo, snorkel, câu cá giải trí, ăn trưa hải sản trên thuyền.',
+            'highlights' => array(
+                'Thuyền cả ngày từ An Thới',
+                '2–3 điểm snorkel',
+                'Ăn trưa hải sản',
+                'Thiết bị ống thở cơ bản',
+                'Xe khách sạn — cảng (tuỳ gói)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => '4 đảo trong ngày',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón KS hoặc tập trung cảng An Thới ~08:00, lần lượt các hòn theo điều kiện biển, snorkel, ăn trưa, về ~15:30–16:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền',
+                'Snorkel set cơ bản',
+                'Bữa trưa',
+                'Áo phao',
+                'HDV thuyền',
+            ),
+            'exclusions' => array(
+                'Ảnh/video dưới nước',
+                'Đồ uống có cồn',
+                'Vé cáp treo Hòn Thơm',
+            ),
+            'notes' => array(
+                'Mùa gió (khoảng tháng 6–9 phía nam có thể sóng hơn) — điểm đảo có thể đổi.',
+                'Biết bơi cơ bản; trẻ từ 6 tuổi có áo phao.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Tour 4 đảo khác gì cáp treo Hòn Thơm?',
+                    'a' => '4 đảo = thuyền + snorkel + làng chài. Hòn Thơm = cáp treo + đảo lớn có công viên nước. Nhiều khách làm cả hai trong chuyến 3–4 ngày.',
+                ),
+            ),
+            'galleryCount' => 6,
+            'priceFrom' => 690000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vuon-tieu-nuoc-mam-nha-tu-1-ngay',
             'title' => 'Vườn tiêu — nước mắm — nhà tù Phú Quốc — 1 ngày văn hoá',
-            'zoneSlug' => 'duong-dong', 'zone' => 'Dương Đông',
-            'tourCode' => 'PQC1D-05', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 98, 'badge' => NULL, 'featured' => true,
-            'styles' => array('culture', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Hiểu vì sao tiêu và nước mắm Phú Quốc nổi tiếng — và nhà tù là bài học lịch sử không thể bỏ.', 'author' => 'Anh Việt Khoa'),
-            'places' => array('Vườn tiêu', 'Nhà thùng nước mắm', 'Nhà tù Phú Quốc', 'Chợ Dương Đông'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Tour văn hoá–đặc sản trong ngày: vườn tiêu, quy trình nước mắm truyền thống, bảo tàng nhà tù và mua quà mang về.',
-            'highlights' => array('Tham quan vườn tiêu', 'Nhà thùng nước mắm chuẩn Phú Quốc', 'Nhà tù / khu di tích', 'HDV kể lịch sử đảo', 'Ăn trưa địa phương'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đặc sản & di tích trong ngày', 'meals' => 'Trưa',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón 08:00, lần lượt vườn tiêu — nhà thùng — nhà tù, ăn trưa, chiều ghé chợ / cửa hàng đặc sản, về KS ~16:00.'),
+            'zoneSlug' => 'duong-dong',
+            'zone' => 'Dương Đông',
+            'tourCode' => 'PQC1D-05',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 98,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Xe', 'HDV', 'Vé vào một số điểm', 'Bữa trưa'),
-            'exclusions' => array('Mua tiêu / nước mắm mang về', 'Đồ uống'),
-            'notes' => array('Không ép mua hàng — thời gian shopping tự nguyện.'),
+            'quote' => array(
+                'text' => 'Hiểu vì sao tiêu và nước mắm Phú Quốc nổi tiếng — và nhà tù là bài học lịch sử không thể bỏ.',
+                'author' => 'Anh Việt Khoa',
+            ),
+            'places' => array(
+                'Vườn tiêu',
+                'Nhà thùng nước mắm',
+                'Nhà tù Phú Quốc',
+                'Chợ Dương Đông',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Tour văn hoá–đặc sản trong ngày: vườn tiêu, quy trình nước mắm truyền thống, bảo tàng nhà tù và mua quà mang về.',
+            'highlights' => array(
+                'Tham quan vườn tiêu',
+                'Nhà thùng nước mắm chuẩn Phú Quốc',
+                'Nhà tù / khu di tích',
+                'HDV kể lịch sử đảo',
+                'Ăn trưa địa phương',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đặc sản & di tích trong ngày',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón 08:00, lần lượt vườn tiêu — nhà thùng — nhà tù, ăn trưa, chiều ghé chợ / cửa hàng đặc sản, về KS ~16:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV',
+                'Vé vào một số điểm',
+                'Bữa trưa',
+            ),
+            'exclusions' => array(
+                'Mua tiêu / nước mắm mang về',
+                'Đồ uống',
+            ),
+            'notes' => array(
+                'Không ép mua hàng — thời gian shopping tự nguyện.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 590000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 590000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'bai-sao-1-ngay-nghi-bien',
             'title' => 'Bãi Sao 1 ngày — nghỉ biển cát trắng',
-            'zoneSlug' => 'bai-sao', 'zone' => 'Bãi Sao',
-            'tourCode' => 'PQC1D-06', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 132, 'badge' => 'Biển đẹp', 'featured' => true,
-            'styles' => array('beach', 'day-trip', 'family', 'quiet-stay'),
-            'quote' => array('text' => 'Cát mịn, nước trong — cả ngày chỉ ghế nằm và hải sản ven bãi là đủ hạnh phúc.', 'author' => 'Chị Lan Phương'),
-            'places' => array('Bãi Sao', 'Hải sản ven bãi'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Tour “chỉ biển”: đưa tới Bãi Sao, ghế nằm / ô (tuỳ gói), thời gian tắm tự do, ăn trưa hải sản, chiều về.',
-            'highlights' => array('Xe đưa đón', 'Thời gian tắm tự do', 'Ghế nằm (gói đủ)', 'Trưa hải sản Bãi Sao', 'Không chạy nhiều điểm'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Một ngày tại Bãi Sao', 'meals' => 'Trưa',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón sáng, tới Bãi Sao, tắm và nghỉ, ăn trưa, chiều về khách sạn trước giờ cao điểm.'),
+            'zoneSlug' => 'bai-sao',
+            'zone' => 'Bãi Sao',
+            'tourCode' => 'PQC1D-06',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 132,
+            'badge' => 'Biển đẹp',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'bien-bai-sao',
             ),
-            'inclusions' => array('Xe đưa đón', 'Bữa trưa', 'Ghế nằm (gói đủ)'),
-            'exclusions' => array('Thuê SUP / kayak (có thể thêm)', 'Đồ uống có cồn'),
-            'notes' => array('Trưa nắng gắt — mang kem chống nắng và mũ.'),
+            'quote' => array(
+                'text' => 'Cát mịn, nước trong — cả ngày chỉ ghế nằm và hải sản ven bãi là đủ hạnh phúc.',
+                'author' => 'Chị Lan Phương',
+            ),
+            'places' => array(
+                'Bãi Sao',
+                'Hải sản ven bãi',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Tour “chỉ biển”: đưa tới Bãi Sao, ghế nằm / ô (tuỳ gói), thời gian tắm tự do, ăn trưa hải sản, chiều về.',
+            'highlights' => array(
+                'Xe đưa đón',
+                'Thời gian tắm tự do',
+                'Ghế nằm (gói đủ)',
+                'Trưa hải sản Bãi Sao',
+                'Không chạy nhiều điểm',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Một ngày tại Bãi Sao',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón sáng, tới Bãi Sao, tắm và nghỉ, ăn trưa, chiều về khách sạn trước giờ cao điểm.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'Bữa trưa',
+                'Ghế nằm (gói đủ)',
+            ),
+            'exclusions' => array(
+                'Thuê SUP / kayak (có thể thêm)',
+                'Đồ uống có cồn',
+            ),
+            'notes' => array(
+                'Trưa nắng gắt — mang kem chống nắng và mũ.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 520000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 520000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'safari-phu-quoc-1-ngay',
             'title' => 'Vinpearl Safari Phú Quốc — 1 ngày bán hoang dã',
-            'zoneSlug' => 'vinpearl-grand-world', 'zone' => 'Vinpearl / Grand World',
-            'tourCode' => 'PQC1D-07', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 154, 'badge' => 'Gia đình', 'featured' => true,
-            'styles' => array('wildlife', 'family', 'day-trip'),
-            'quote' => array('text' => 'Xe bus xuyên bán đảo thú — trẻ em thích nhất chuyến đi.', 'author' => 'Gia đình Hương & Tuấn'),
-            'places' => array('Vinpearl Safari Phú Quốc'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Safari công viên động vật bán hoang dã: xe chuyên dụng, khu đi bộ, cho ăn một số loài theo lịch công viên.',
-            'highlights' => array('Vé Safari', 'Xe đưa đón KS', 'HDV hỗ trợ', 'Phù hợp trẻ em'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Safari trong ngày', 'meals' => NULL,
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón sáng, cả buổi tại Safari (xe bus + khu walking), về chiều. Có thể kết hợp nửa ngày VinWonders (gói riêng).'),
+            'zoneSlug' => 'vinpearl-grand-world',
+            'zone' => 'Vinpearl / Grand World',
+            'tourCode' => 'PQC1D-07',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 154,
+            'badge' => 'Gia đình',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'vui-choi-gia-dinh',
             ),
-            'inclusions' => array('Vé Safari', 'Xe đưa đón', 'HDV hỗ trợ'),
-            'exclusions' => array('Ăn trong công viên', 'Combo VinWonders (mua thêm)'),
-            'notes' => array('Mang mũ và nước — trời nắng trên xe mở.'),
-            'faqs' => array(array('q' => 'Có nên mua combo Safari + VinWonders?', 'a' => 'Nếu chỉ 1 ngày rảnh: chọn một. Nếu ở 3–4 ngày: làm 2 ngày riêng sẽ đỡ mệt hơn combo nhồi.')),
-            'galleryCount' => 5, 'priceFrom' => 890000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Xe bus xuyên bán đảo thú — trẻ em thích nhất chuyến đi.',
+                'author' => 'Gia đình Hương & Tuấn',
+            ),
+            'places' => array(
+                'Vinpearl Safari Phú Quốc',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Safari công viên động vật bán hoang dã: xe chuyên dụng, khu đi bộ, cho ăn một số loài theo lịch công viên.',
+            'highlights' => array(
+                'Vé Safari',
+                'Xe đưa đón KS',
+                'HDV hỗ trợ',
+                'Phù hợp trẻ em',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Safari trong ngày',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón sáng, cả buổi tại Safari (xe bus + khu walking), về chiều. Có thể kết hợp nửa ngày VinWonders (gói riêng).',
+                ),
+            ),
+            'inclusions' => array(
+                'Vé Safari',
+                'Xe đưa đón',
+                'HDV hỗ trợ',
+            ),
+            'exclusions' => array(
+                'Ăn trong công viên',
+                'Combo VinWonders (mua thêm)',
+            ),
+            'notes' => array(
+                'Mang mũ và nước — trời nắng trên xe mở.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Có nên mua combo Safari + VinWonders?',
+                    'a' => 'Nếu chỉ 1 ngày rảnh: chọn một. Nếu ở 3–4 ngày: làm 2 ngày riêng sẽ đỡ mệt hơn combo nhồi.',
+                ),
+            ),
+            'galleryCount' => 5,
+            'priceFrom' => 890000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'honeymoon-bai-khem-ong-lang-3n2d',
             'title' => 'Trăng mật Bãi Khem / Ông Lang — 3 ngày 2 đêm',
-            'zoneSlug' => 'bai-khem', 'zone' => 'Bãi Khem',
-            'tourCode' => 'PQC3D-08', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 67, 'badge' => 'Lãng mạn', 'featured' => true,
-            'styles' => array('honeymoon', 'beach', 'luxury', 'quiet-stay'),
-            'quote' => array('text' => 'Bãi Khem yên và đẹp — thêm một buổi hoàng hôn Ông Lang là đủ kỷ niệm.', 'author' => 'Cặp đôi Nam & Linh'),
-            'places' => array('Bãi Khem', 'Ông Lang', 'Bãi Sao (tuỳ chọn)', 'Sunset cruise (tuỳ chọn)'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Ở resort cao cấp khu Bãi Khem hoặc Ông Lang, một buổi spa đôi, một buổi biển riêng tư và một tối set menu hải sản.',
-            'highlights' => array('2 đêm resort 4–5*', 'Đón sân bay riêng', 'Spa đôi 60 phút', 'Set tối hải sản', 'Nhịp độ chậm, ít điểm đông'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đón sân bay — Check-in resort', 'meals' => 'Tối',
-                    'transport' => array('car'), 'overnight' => 'Bãi Khem / Ông Lang',
-                    'content' => 'Đón PQC bằng xe riêng, nhận phòng, chiều nghỉ biển, tối set menu.'),
-                array('day' => 2, 'title' => 'Spa — Biển — Hoàng hôn', 'meals' => 'Sáng; Tối',
-                    'transport' => array('car', 'boat'), 'overnight' => 'Bãi Khem / Ông Lang',
-                    'content' => 'Sáng spa đôi, chiều tự do biển hoặc Bãi Sao riêng, chiều muộn ngắm hoàng hôn Ông Lang / thuyền sunset (tuỳ gói).'),
-                array('day' => 3, 'title' => 'Sáng tự do — Ra sân bay', 'meals' => 'Sáng',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Sáng nghỉ dưỡng, đúng giờ đưa ra sân bay PQC.'),
+            'zoneSlug' => 'bai-khem',
+            'zone' => 'Bãi Khem',
+            'tourCode' => 'PQC3D-08',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 67,
+            'badge' => 'Lãng mạn',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('Resort 2 đêm', 'Xe riêng sân bay', 'Spa đôi', 'Bữa theo chương trình', 'Set tối ngày 1'),
-            'exclusions' => array('Vé máy bay', 'Đồ uống có cồn', 'Vé VinWonders'),
-            'notes' => array('Có thể thêm trang trí honeymoon phòng với phụ phí nhỏ.'),
+            'quote' => array(
+                'text' => 'Bãi Khem yên và đẹp — thêm một buổi hoàng hôn Ông Lang là đủ kỷ niệm.',
+                'author' => 'Cặp đôi Nam & Linh',
+            ),
+            'places' => array(
+                'Bãi Khem',
+                'Ông Lang',
+                'Bãi Sao (tuỳ chọn)',
+                'Sunset cruise (tuỳ chọn)',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Ở resort cao cấp khu Bãi Khem hoặc Ông Lang, một buổi spa đôi, một buổi biển riêng tư và một tối set menu hải sản.',
+            'highlights' => array(
+                '2 đêm resort 4–5*',
+                'Đón sân bay riêng',
+                'Spa đôi 60 phút',
+                'Set tối hải sản',
+                'Nhịp độ chậm, ít điểm đông',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đón sân bay — Check-in resort',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Khem / Ông Lang',
+                    'content' => 'Đón PQC bằng xe riêng, nhận phòng, chiều nghỉ biển, tối set menu.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Spa — Biển — Hoàng hôn',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Bãi Khem / Ông Lang',
+                    'content' => 'Sáng spa đôi, chiều tự do biển hoặc Bãi Sao riêng, chiều muộn ngắm hoàng hôn Ông Lang / thuyền sunset (tuỳ gói).',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Sáng tự do — Ra sân bay',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng nghỉ dưỡng, đúng giờ đưa ra sân bay PQC.',
+                ),
+            ),
+            'inclusions' => array(
+                'Resort 2 đêm',
+                'Xe riêng sân bay',
+                'Spa đôi',
+                'Bữa theo chương trình',
+                'Set tối ngày 1',
+            ),
+            'exclusions' => array(
+                'Vé máy bay',
+                'Đồ uống có cồn',
+                'Vé VinWonders',
+            ),
+            'notes' => array(
+                'Có thể thêm trang trí honeymoon phòng với phụ phí nhỏ.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 8900000.0, 'currency' => 'VND',
+            'galleryCount' => 6,
+            'priceFrom' => 8900000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'gia-dinh-grand-world-vinwonders-2n1d',
             'title' => 'Gia đình Grand World & VinWonders — 2 ngày 1 đêm',
-            'zoneSlug' => 'vinpearl-grand-world', 'zone' => 'Vinpearl / Grand World',
-            'tourCode' => 'PQC2D-09', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 88, 'badge' => 'Gia đình', 'featured' => true,
-            'styles' => array('family', 'theme-park', 'multi-day'),
-            'quote' => array('text' => 'Ở gần Grand World tiện quá — tối xem show, sáng sang VinWonders không mất giờ di chuyển.', 'author' => 'Chị Thanh Hằng'),
-            'places' => array('Grand World', 'VinWonders', 'Vinpearl (khu nghỉ)'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Weekend gia đình: 1 đêm gần Grand World / Vinpearl, 1 ngày VinWonders, tối phố đèn lồng và show.',
-            'highlights' => array('1 đêm KS/resort khu Grand World', 'Vé VinWonders', 'Xe đưa đón', 'Định hướng show buổi tối'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Nhận phòng — Grand World buổi tối', 'meals' => 'Tối',
-                    'transport' => array('car'), 'overnight' => 'Grand World / Vinpearl',
-                    'content' => 'Đón sân bay hoặc KS khác, nhận phòng, tối dạo Grand World và xem show (vé show theo lịch).'),
-                array('day' => 2, 'title' => 'VinWonders — Kết thúc', 'meals' => 'Sáng',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Cả ngày VinWonders, chiều trả phòng / đưa về KS khác hoặc sân bay theo giờ.'),
+            'zoneSlug' => 'vinpearl-grand-world',
+            'zone' => 'Vinpearl / Grand World',
+            'tourCode' => 'PQC2D-09',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 88,
+            'badge' => 'Gia đình',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'vui-choi-gia-dinh',
             ),
-            'inclusions' => array('KS 1 đêm', 'Vé VinWonders', 'Xe đưa đón chính', 'HDV hỗ trợ'),
-            'exclusions' => array('Ăn trong công viên', 'Vé show đặc biệt', 'Tip'),
-            'notes' => array('Phòng gia đình nên đặt trước lễ 7–10 ngày.'),
+            'quote' => array(
+                'text' => 'Ở gần Grand World tiện quá — tối xem show, sáng sang VinWonders không mất giờ di chuyển.',
+                'author' => 'Chị Thanh Hằng',
+            ),
+            'places' => array(
+                'Grand World',
+                'VinWonders',
+                'Vinpearl (khu nghỉ)',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Cuối tuần gia đình: 1 đêm gần Grand World / Vinpearl, 1 ngày VinWonders, tối phố đèn lồng và show.',
+            'highlights' => array(
+                '1 đêm KS/resort khu Grand World',
+                'Vé VinWonders',
+                'Xe đưa đón',
+                'Định hướng show buổi tối',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Nhận phòng — Grand World buổi tối',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Grand World / Vinpearl',
+                    'content' => 'Đón sân bay hoặc KS khác, nhận phòng, tối dạo Grand World và xem show (vé show theo lịch).',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'VinWonders — Kết thúc',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Cả ngày VinWonders, chiều trả phòng / đưa về KS khác hoặc sân bay theo giờ.',
+                ),
+            ),
+            'inclusions' => array(
+                'KS 1 đêm',
+                'Vé VinWonders',
+                'Xe đưa đón chính',
+                'HDV hỗ trợ',
+            ),
+            'exclusions' => array(
+                'Ăn trong công viên',
+                'Vé show đặc biệt',
+                'Tip',
+            ),
+            'notes' => array(
+                'Phòng gia đình nên đặt trước lễ 7–10 ngày.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 4200000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 4200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'kayak-rach-vem-nua-ngay',
             'title' => 'Kayak Rạch Vẹm — rừng ngập mặn nửa ngày',
-            'zoneSlug' => 'ganh-dau-rach-vem', 'zone' => 'Gành Dầu / Rạch Vẹm',
-            'tourCode' => 'PQCHD-10', 'duration' => 'Nửa ngày (3–4 giờ)', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 76, 'badge' => 'Thiên nhiên', 'featured' => false,
-            'styles' => array('adventure', 'day-trip', 'small-group', 'quiet-stay'),
-            'quote' => array('text' => 'Chèo giữa đước và nghe chim — Phú Quốc yên khác hẳn khu Bãi Trường đông đúc.', 'author' => 'Bạn Thuỳ Dương'),
-            'places' => array('Rạch Vẹm', 'Rừng ngập mặn', 'Gành Dầu (tuỳ chọn hoàng hôn)'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Nửa ngày chèo kayak qua kênh rừng ngập mặn Rạch Vẹm — nhóm nhỏ, HDV địa phương, có thể ghép hoàng hôn Gành Dầu.',
-            'highlights' => array('Kayak đôi / đơn', 'Áo phao & hướng dẫn', 'Nhóm nhỏ', 'Xe đưa đón', 'Tuỳ chọn thêm Gành Dầu'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Kayak Rạch Vẹm', 'meals' => NULL,
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón KS, tới Rạch Vẹm, briefing, chèo 1.5–2 giờ, nghỉ nhẹ, về lại hoặc chuyển Gành Dầu xem hoàng hôn.'),
+            'zoneSlug' => 'ganh-dau-rach-vem',
+            'zone' => 'Gành Dầu / Rạch Vẹm',
+            'tourCode' => 'PQCHD-10',
+            'duration' => 'Nửa ngày (3–4 giờ)',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 76,
+            'badge' => 'Thiên nhiên',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Xe đưa đón', 'Kayak', 'Áo phao', 'HDV'),
-            'exclusions' => array('Ăn uống', 'Ảnh drone'),
-            'notes' => array('Không đi khi mưa giông mạnh.', 'Trẻ từ 8 tuổi kèm người lớn.'),
+            'quote' => array(
+                'text' => 'Chèo giữa đước và nghe chim — Phú Quốc yên khác hẳn khu Bãi Trường đông đúc.',
+                'author' => 'Bạn Thuỳ Dương',
+            ),
+            'places' => array(
+                'Rạch Vẹm',
+                'Rừng ngập mặn',
+                'Gành Dầu (tuỳ chọn hoàng hôn)',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Nửa ngày chèo kayak qua kênh rừng ngập mặn Rạch Vẹm — nhóm nhỏ, HDV địa phương, có thể ghép hoàng hôn Gành Dầu.',
+            'highlights' => array(
+                'Kayak đôi / đơn',
+                'Áo phao & hướng dẫn',
+                'Nhóm nhỏ',
+                'Xe đưa đón',
+                'Tuỳ chọn thêm Gành Dầu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Kayak Rạch Vẹm',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón KS, tới Rạch Vẹm, briefing, chèo 1.5–2 giờ, nghỉ nhẹ, về lại hoặc chuyển Gành Dầu xem hoàng hôn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'Kayak',
+                'Áo phao',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Ăn uống',
+                'Ảnh drone',
+            ),
+            'notes' => array(
+                'Không đi khi mưa giông mạnh.',
+                'Trẻ từ 8 tuổi kèm người lớn.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 450000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'lang-chai-ham-ninh-nua-ngay',
             'title' => 'Làng chài Hàm Ninh — hải sản & nhum nửa ngày',
-            'zoneSlug' => 'bai-sao', 'zone' => 'Bãi Sao',
-            'tourCode' => 'PQCHD-11', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 91, 'badge' => 'Hải sản', 'featured' => false,
-            'styles' => array('seafood', 'culture', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Nhum Hàm Ninh và ghẹ tươi — đúng lý do tôi luôn khuyên bạn bè ghé đông đảo.', 'author' => 'Anh Minh Tuấn'),
-            'places' => array('Làng chài Hàm Ninh', 'Chợ hải sản ven bãi'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Buổi sáng hoặc chiều: làng chài phía đông, chọn hải sản / nhum, chế biến tại quán đối tác, hiểu nhịp ngư dân.',
-            'highlights' => array('Tham quan làng chài', 'Hải sản / nhum theo gói', 'HDV', 'Xe đưa đón', 'Dễ ghép sau Bãi Sao'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hàm Ninh nửa ngày', 'meals' => 'Hải sản theo gói',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón KS, tới Hàm Ninh, dạo làng chài, dùng hải sản theo set, về lại chỗ nghỉ.'),
+            'zoneSlug' => 'bai-sao',
+            'zone' => 'Bãi Sao',
+            'tourCode' => 'PQCHD-11',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 91,
+            'badge' => 'Hải sản',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'bien-bai-sao',
             ),
-            'inclusions' => array('Xe', 'HDV', '1 set hải sản theo gói'),
-            'exclusions' => array('Đồ uống', 'Món gọi thêm'),
-            'notes' => array('Nhum theo mùa — nếu hết sẽ đổi set tương đương.'),
+            'quote' => array(
+                'text' => 'Nhum Hàm Ninh và ghẹ tươi — đúng lý do tôi luôn khuyên bạn bè ghé đông đảo.',
+                'author' => 'Anh Minh Tuấn',
+            ),
+            'places' => array(
+                'Làng chài Hàm Ninh',
+                'Chợ hải sản ven bãi',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Buổi sáng hoặc chiều: làng chài phía đông, chọn hải sản / nhum, chế biến tại quán đối tác, hiểu nhịp ngư dân.',
+            'highlights' => array(
+                'Tham quan làng chài',
+                'Hải sản / nhum theo gói',
+                'HDV',
+                'Xe đưa đón',
+                'Dễ ghép sau Bãi Sao',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hàm Ninh nửa ngày',
+                    'meals' => 'Hải sản theo gói',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón KS, tới Hàm Ninh, dạo làng chài, dùng hải sản theo set, về lại chỗ nghỉ.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV',
+                '1 set hải sản theo gói',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+                'Món gọi thêm',
+            ),
+            'notes' => array(
+                'Nhum theo mùa — nếu hết sẽ đổi set tương đương.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 390000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 390000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'sunset-cruise-ong-lang-bai-truong',
             'title' => 'Hoàng hôn trên biển — Ông Lang / Bãi Trường',
-            'zoneSlug' => 'ong-lang', 'zone' => 'Ông Lang',
-            'tourCode' => 'PQCHD-12', 'duration' => 'Nửa ngày (2.5–3 giờ)', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 104, 'badge' => 'Lãng mạn', 'featured' => true,
-            'styles' => array('honeymoon', 'beach', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Mặt trời lặn phía vịnh Thái Lan — ly đồ uống trên thuyền, không cần filter.', 'author' => 'Cặp đôi Đức & My'),
-            'places' => array('Ông Lang', 'Bãi Trường (nhìn từ biển)'),
-            'start' => 'Phú Quốc', 'end' => 'Phú Quốc',
-            'highlightsIntro' => 'Tour chiều chuyên golden hour: thuyền ngắm hoàng hôn phía tây đảo, đồ uống nhẹ, nhạc êm, nhóm vừa phải.',
-            'highlights' => array('Thuyền sunset', 'Đồ uống nhẹ', 'Góc chụp đẹp', 'Đón tận KS khu tây', 'Phù hợp couple'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Sunset cruise', 'meals' => 'Đồ uống nhẹ',
-                    'transport' => array('boat', 'car'), 'overnight' => NULL,
-                    'content' => 'Đón chiều muộn (~16:00–16:30), lên thuyền, ra vịnh ngắm hoàng hôn, về khoảng 19:00.'),
+            'zoneSlug' => 'ong-lang',
+            'zone' => 'Ông Lang',
+            'tourCode' => 'PQCHD-12',
+            'duration' => 'Nửa ngày (2.5–3 giờ)',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 104,
+            'badge' => 'Lãng mạn',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Thuyền', 'Đồ uống nhẹ theo gói', 'Xe đưa đón khu tây'),
-            'exclusions' => array('Đồ uống có cồn cao cấp', 'Ăn tối đầy đủ'),
-            'notes' => array('Phụ thuộc mây; mưa lớn có lịch thay thế hoặc hoàn.'),
+            'quote' => array(
+                'text' => 'Mặt trời lặn phía vịnh Thái Lan — ly đồ uống trên thuyền, không cần filter.',
+                'author' => 'Cặp đôi Đức & My',
+            ),
+            'places' => array(
+                'Ông Lang',
+                'Bãi Trường (nhìn từ biển)',
+            ),
+            'start' => 'Phú Quốc',
+            'end' => 'Phú Quốc',
+            'highlightsIntro' => 'Tour chiều chuyên golden hour: thuyền ngắm hoàng hôn phía tây đảo, đồ uống nhẹ, nhạc êm, nhóm vừa phải.',
+            'highlights' => array(
+                'Thuyền sunset',
+                'Đồ uống nhẹ',
+                'Góc chụp đẹp',
+                'Đón tận KS khu tây',
+                'Phù hợp couple',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Sunset cruise',
+                    'meals' => 'Đồ uống nhẹ',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón chiều muộn (~16:00–16:30), lên thuyền, ra vịnh ngắm hoàng hôn, về khoảng 19:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền',
+                'Đồ uống nhẹ theo gói',
+                'Xe đưa đón khu tây',
+            ),
+            'exclusions' => array(
+                'Đồ uống có cồn cao cấp',
+                'Ăn tối đầy đủ',
+            ),
+            'notes' => array(
+                'Phụ thuộc mây; mưa lớn có lịch thay thế hoặc hoàn.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 650000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'phu-quoc-tu-sai-gon-4n3d',
             'title' => 'Phú Quốc từ Sài Gòn — 4 ngày 3 đêm bay thẳng',
-            'zoneSlug' => 'bai-truong', 'zone' => 'Bãi Trường (Long Beach)',
-            'tourCode' => 'PQC4D-13', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 5.0, 'reviewCount' => 143, 'badge' => 'Trọn gói', 'featured' => true,
-            'styles' => array('beach', 'multi-day', 'balanced', 'family'),
-            'quote' => array('text' => 'Bay sáng, chiều đã tắm Bãi Trường — lịch 4 ngày đủ VinWonders, Hòn Thơm và 4 đảo.', 'author' => 'Anh Hoàng Long'),
-            'places' => array('Bãi Trường', 'VinWonders', 'Hòn Thơm', '4 đảo', 'Bãi Sao', 'Dương Đông'),
-            'start' => 'TP.HCM', 'end' => 'TP.HCM',
-            'highlightsIntro' => 'Gói bay SGN–PQC: 3 đêm Bãi Trường, 1 ngày VinWonders hoặc Safari, 1 ngày nam đảo (Hòn Thơm / 4 đảo), 1 buổi Bãi Sao.',
-            'highlights' => array('Vé máy bay khứ hồi (tuỳ gói)', '3 đêm resort Bãi Trường', 'VinWonders hoặc Safari', 'Hòn Thơm hoặc tour 4 đảo', 'Đưa đón sân bay'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Bay Sài Gòn — Phú Quốc — Nhận phòng', 'meals' => 'Tối',
-                    'transport' => array('plane', 'car'), 'overnight' => 'Bãi Trường',
-                    'content' => 'Bay SGN–PQC, đón sân bay, nhận phòng Bãi Trường, tối tự do / chợ đêm.'),
-                array('day' => 2, 'title' => 'VinWonders hoặc Safari', 'meals' => 'Sáng; Tối',
-                    'transport' => array('car'), 'overnight' => 'Bãi Trường',
-                    'content' => 'Cả ngày công viên giải trí / safari theo lựa chọn lúc đặt.'),
-                array('day' => 3, 'title' => 'Nam đảo — Hòn Thơm hoặc 4 đảo + Bãi Sao', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('car', 'boat', 'cable-car'), 'overnight' => 'Bãi Trường',
-                    'content' => 'Ngày nam đảo: cáp treo hoặc thuyền 4 đảo; chiều muộn Bãi Sao nếu còn giờ.'),
-                array('day' => 4, 'title' => 'Tự do — Bay về Sài Gòn', 'meals' => 'Sáng',
-                    'transport' => array('car', 'plane'), 'overnight' => NULL,
-                    'content' => 'Sáng tự do / mua đặc sản, đưa ra PQC bay về SGN.'),
+            'zoneSlug' => 'bai-truong',
+            'zone' => 'Bãi Trường (Long Beach)',
+            'tourCode' => 'PQC4D-13',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 5,
+            'reviewCount' => 143,
+            'badge' => 'Trọn gói',
+            'featured' => true,
+            'styles' => array(
+                '4n3d',
             ),
-            'inclusions' => array('3 đêm KS', 'Xe đưa đón & tour', 'Vé VinWonders hoặc Safari', 'Vé Hòn Thơm hoặc tour 4 đảo', 'Bữa theo chương trình'),
-            'exclusions' => array('Vé máy bay (có gói gồm / không gồm)', 'Chi phí cá nhân', 'Tip'),
-            'notes' => array('Nên chọn giờ bay về chiều để còn sáng tự do ngày 4.'),
-            'faqs' => array(array('q' => 'Có thể đi tàu thay vì bay không?', 'a' => 'Có — xem tour kết hợp Rạch Giá. Bay thẳng nhanh hơn và phù hợp lịch 4 ngày gọn.')),
-            'galleryCount' => 8, 'priceFrom' => 7800000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Bay sáng, chiều đã tắm Bãi Trường — lịch 4 ngày đủ VinWonders, Hòn Thơm và 4 đảo.',
+                'author' => 'Anh Hoàng Long',
+            ),
+            'places' => array(
+                'Bãi Trường',
+                'VinWonders',
+                'Hòn Thơm',
+                '4 đảo',
+                'Bãi Sao',
+                'Dương Đông',
+            ),
+            'start' => 'TP.HCM',
+            'end' => 'TP.HCM',
+            'highlightsIntro' => 'Gói bay Sài Gòn–PQC: 3 đêm Bãi Trường, 1 ngày VinWonders hoặc Safari, 1 ngày nam đảo (Hòn Thơm / 4 đảo), 1 buổi Bãi Sao.',
+            'highlights' => array(
+                'Vé máy bay khứ hồi (tuỳ gói)',
+                '3 đêm resort Bãi Trường',
+                'VinWonders hoặc Safari',
+                'Hòn Thơm hoặc tour 4 đảo',
+                'Đưa đón sân bay',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Bay Sài Gòn — Phú Quốc — Nhận phòng',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'plane',
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Trường',
+                    'content' => 'Bay SGN–PQC, đón sân bay, nhận phòng Bãi Trường, tối tự do / chợ đêm.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'VinWonders hoặc Safari',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Trường',
+                    'content' => 'Cả ngày công viên giải trí / safari theo lựa chọn lúc đặt.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Nam đảo — Hòn Thơm hoặc 4 đảo + Bãi Sao',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                        'cable-car',
+                    ),
+                    'overnight' => 'Bãi Trường',
+                    'content' => 'Ngày nam đảo: cáp treo hoặc thuyền 4 đảo; chiều muộn Bãi Sao nếu còn giờ.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Tự do — Bay về Sài Gòn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                        'plane',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tự do / mua đặc sản, đưa ra PQC bay về Sài Gòn.',
+                ),
+            ),
+            'inclusions' => array(
+                '3 đêm KS',
+                'Xe đưa đón & tour',
+                'Vé VinWonders hoặc Safari',
+                'Vé Hòn Thơm hoặc tour 4 đảo',
+                'Bữa theo chương trình',
+            ),
+            'exclusions' => array(
+                'Vé máy bay (có gói gồm / không gồm)',
+                'Chi phí cá nhân',
+                'Tip',
+            ),
+            'notes' => array(
+                'Nên chọn giờ bay về chiều để còn sáng tự do ngày 4.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Có thể đi tàu thay vì bay không?',
+                    'a' => 'Có — xem tour kết hợp Rạch Giá. Bay thẳng nhanh hơn và phù hợp lịch 4 ngày gọn.',
+                ),
+            ),
+            'galleryCount' => 8,
+            'priceFrom' => 7800000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'rach-gia-phu-quoc-tau-cao-toc-3n2d',
             'title' => 'Rạch Giá — Phú Quốc tàu cao tốc — 3 ngày 2 đêm',
-            'zoneSlug' => 'ket-hop-rach-gia', 'zone' => 'Kết hợp Rạch Giá / Hà Tiên',
-            'tourCode' => 'PQCRG3D-14', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.8, 'reviewCount' => 72, 'badge' => NULL, 'featured' => true,
-            'styles' => array('multi-destination-combo', 'beach', 'multi-day', 'balanced'),
-            'quote' => array('text' => 'Không thích bay thì tàu Superdong Rạch Giá là lựa chọn ổn — sáng lên tàu, trưa đã trên đảo.', 'author' => 'Nhóm bạn Cần Thơ'),
-            'places' => array('Rạch Giá', 'Phú Quốc', 'Bãi Trường', 'Bãi Sao', 'Dương Đông'),
-            'start' => 'Rạch Giá', 'end' => 'Rạch Giá',
-            'highlightsIntro' => 'Combo cửa ngõ An Giang: tàu cao tốc Rạch Giá ↔ Phú Quốc, 2 đêm đảo, Bãi Sao + một trải nghiệm (4 đảo hoặc Hòn Thơm).',
-            'highlights' => array('Vé tàu khứ hồi (tuỳ gói)', '2 đêm Phú Quốc', 'Đưa đón bến tàu Dương Đông / An Thới', 'Bãi Sao + 1 hoạt động chính', 'Hỗ trợ lịch tàu theo thủy triều'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Tàu Rạch Giá — Phú Quốc — Nhận phòng', 'meals' => 'Tối',
-                    'transport' => array('ferry', 'car'), 'overnight' => 'Phú Quốc',
-                    'content' => 'Lên tàu cao tốc tại Rạch Giá, tới đảo, đưa về KS, tối Dương Đông.'),
-                array('day' => 2, 'title' => 'Bãi Sao + Hòn Thơm hoặc 4 đảo', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('car', 'boat', 'cable-car'), 'overnight' => 'Phú Quốc',
-                    'content' => 'Ngày trải nghiệm chính theo gói đã chọn.'),
-                array('day' => 3, 'title' => 'Tàu về Rạch Giá', 'meals' => 'Sáng',
-                    'transport' => array('ferry', 'car'), 'overnight' => NULL,
-                    'content' => 'Sáng tự do ngắn, đúng giờ tàu về Rạch Giá.'),
+            'zoneSlug' => 'ket-hop-rach-gia',
+            'zone' => 'Kết hợp Rạch Giá / Hà Tiên',
+            'tourCode' => 'PQCRG3D-14',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.8,
+            'reviewCount' => 72,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('2 đêm KS', 'Vé tàu khứ hồi (gói đủ)', 'Xe bến — KS', '1 hoạt động chính', 'Bữa theo chương trình'),
-            'exclusions' => array('Xe Sài Gòn — Rạch Giá (có thể thêm)', 'Vé máy bay', 'Tip'),
-            'notes' => array('Lịch tàu phụ thuộc thời tiết — xác nhận trước khi thu tiền.', 'Có thể xuất phát Hà Tiên thay Rạch Giá.'),
-            'faqs' => array(array('q' => 'Tàu mất bao lâu?', 'a' => 'Thường khoảng 1.5–2.5 giờ tuỳ hãng (Superdong, Phú Quốc Express…) và biển. Nên có mặt trước giờ xuất bến ít nhất 30–45 phút.')),
-            'galleryCount' => 5, 'priceFrom' => 4200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Không thích bay thì tàu Superdong Rạch Giá là lựa chọn ổn — sáng lên tàu, trưa đã trên đảo.',
+                'author' => 'Nhóm bạn Cần Thơ',
+            ),
+            'places' => array(
+                'Rạch Giá',
+                'Phú Quốc',
+                'Bãi Trường',
+                'Bãi Sao',
+                'Dương Đông',
+            ),
+            'start' => 'Rạch Giá',
+            'end' => 'Rạch Giá',
+            'highlightsIntro' => 'Combo cửa ngõ An Giang: tàu cao tốc Rạch Giá ↔ Phú Quốc, 2 đêm đảo, Bãi Sao + một trải nghiệm (4 đảo hoặc Hòn Thơm).',
+            'highlights' => array(
+                'Vé tàu khứ hồi (tuỳ gói)',
+                '2 đêm Phú Quốc',
+                'Đưa đón bến tàu Dương Đông / An Thới',
+                'Bãi Sao + 1 hoạt động chính',
+                'Hỗ trợ lịch tàu theo thủy triều',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tàu Rạch Giá — Phú Quốc — Nhận phòng',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'ferry',
+                        'car',
+                    ),
+                    'overnight' => 'Phú Quốc',
+                    'content' => 'Lên tàu cao tốc tại Rạch Giá, tới đảo, đưa về KS, tối Dương Đông.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Bãi Sao + Hòn Thơm hoặc 4 đảo',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                        'cable-car',
+                    ),
+                    'overnight' => 'Phú Quốc',
+                    'content' => 'Ngày trải nghiệm chính theo gói đã chọn.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Tàu về Rạch Giá',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'ferry',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tự do ngắn, đúng giờ tàu về Rạch Giá.',
+                ),
+            ),
+            'inclusions' => array(
+                '2 đêm KS',
+                'Vé tàu khứ hồi (gói đủ)',
+                'Xe bến — KS',
+                '1 hoạt động chính',
+                'Bữa theo chương trình',
+            ),
+            'exclusions' => array(
+                'Xe Sài Gòn — Rạch Giá (có thể thêm)',
+                'Vé máy bay',
+                'Tip',
+            ),
+            'notes' => array(
+                'Lịch tàu phụ thuộc thời tiết — xác nhận trước khi thu tiền.',
+                'Có thể xuất phát Hà Tiên thay Rạch Giá.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Tàu mất bao lâu?',
+                    'a' => 'Thường khoảng 1.5–2.5 giờ tuỳ hãng (Superdong, Phú Quốc Express…) và biển. Nên có mặt trước giờ xuất bến ít nhất 30–45 phút.',
+                ),
+            ),
+            'galleryCount' => 5,
+            'priceFrom' => 4200000,
+            'currency' => 'VND',
         ),
     ),
 
@@ -646,7 +1515,7 @@ $__phuquocSeed = array(
             'start' => 'Bến khu tây đảo', 'end' => 'Bến khu tây đảo',
             'departurePort' => 'Bến Ông Lang / Bãi Trường', 'boatClass' => 'Du thuyền nhỏ / catamaran ngày', 'nightsOnBoard' => 0,
             'cabinTypes' => array(),
-            'highlightsIntro' => 'Cruise chiều: nhạc nhẹ, đồ uống, ngắm mặt trời lặn — không overnight.',
+            'highlightsIntro' => 'Du thuyền chiều: nhạc nhẹ, đồ uống, ngắm hoàng hôn — không qua đêm trên tàu.',
             'highlights' => array('View hoàng hôn trên biển', 'Welcome drink', 'Nhóm vừa phải', 'Đón khu tây'),
             'itinerary' => array(
                 array('day' => 1, 'title' => 'Sunset on the water', 'meals' => 'Đồ uống nhẹ',
@@ -709,11 +1578,11 @@ $__phuquocSeed = array(
             'tags' => array('Di chuyển thế nào?', 'Mẹo du lịch'),
             'author' => 'Minh Trí', 'publishedAt' => '02/07/2026', 'updatedAt' => '18/07/2026',
             'views' => 2840, 'rating' => 4.9, 'ratingCount' => 78,
-            'excerpt' => 'Bay thẳng tới sân bay Phú Quốc (PQC) hoặc đi tàu cao tốc từ Rạch Giá / Hà Tiên — so sánh thời gian, chi phí và mẹo đặt vé.',
+            'excerpt' => 'Bay thẳng tới sân bay Phú Quốc (Phú Quốc) hoặc đi tàu cao tốc từ Rạch Giá / Hà Tiên — so sánh thời gian, chi phí và mẹo đặt vé.',
             'content' => array(
-                array('type' => 'p', 'text' => 'Phú Quốc có sân bay quốc tế (PQC) ngay trên đảo — khác nhiều đảo nhỏ phải phụ thuộc hoàn toàn vào tàu. Dưới đây là các cách phổ biến nhất năm 2026.'),
-                array('type' => 'h2', 'id' => 'bay-thang', 'text' => 'I. Bay thẳng tới Phú Quốc (PQC)'),
-                array('type' => 'p', 'text' => 'Từ Sài Gòn (SGN) khoảng 1 giờ; từ Hà Nội (HAN) khoảng 2 giờ. Nhiều hãng khai thác hàng ngày. Đây là lựa chọn nhanh nhất cho kỳ nghỉ 3–4 ngày.'),
+                array('type' => 'p', 'text' => 'Phú Quốc có sân bay quốc tế (Phú Quốc) ngay trên đảo — khác nhiều đảo nhỏ phải phụ thuộc hoàn toàn vào tàu. Dưới đây là các cách phổ biến nhất năm 2026.'),
+                array('type' => 'h2', 'id' => 'bay-thang', 'text' => 'I. Bay thẳng tới Phú Quốc (Phú Quốc)'),
+                array('type' => 'p', 'text' => 'Từ Sài Gòn (SGN) khoảng 1 giờ; từ Hà Nội (Hà Nội) khoảng 2 giờ. Nhiều hãng khai thác hàng ngày. Đây là lựa chọn nhanh nhất cho kỳ nghỉ 3–4 ngày.'),
                 array('type' => 'h2', 'id' => 'tau-rach-gia', 'text' => 'II. Tàu cao tốc Rạch Giá / Hà Tiên — Phú Quốc'),
                 array('type' => 'p', 'text' => 'Superdong và Phú Quốc Express chạy từ Rạch Giá hoặc Hà Tiên. Phù hợp khách miền Tây, sợ bay, hoặc muốn kết hợp đất liền An Giang. Hành trình tàu thường 1.5–2.5 giờ tuỳ biển.'),
                 array('type' => 'h2', 'id' => 'xe-noi', 'text' => 'III. Xe khách / limousine Sài Gòn — Rạch Giá nối tàu'),
@@ -952,16 +1821,32 @@ $__phuquocSeed = array(
     'usps' => array(
         array('icon' => 'compass', 'sort' => 0,
             'vi' => array('title' => 'am hiểu đảo ngọc', 'description' => 'Đội ngũ làm việc lâu năm tại Phú Quốc — biết giờ bay PQC, lịch tàu Rạch Giá, điểm nước trong và chỗ ăn hải sản thật.'),
-            'en' => array('title' => 'pearl-island expertise', 'description' => 'Our team has years on Phu Quoc — they know PQC flight timing, Rach Gia ferries, clear-water days and real seafood spots.')),
+
+
+
+
+'en' => array('title' => 'pearl-island expertise', 'description' => 'Our team has years on Phu Quoc — they know PQC flight timing, Rach Gia ferries, clear-water days and real seafood spots.')),
         array('icon' => 'refund', 'sort' => 1,
             'vi' => array('title' => 'giá rõ ràng, minh bạch', 'description' => 'Báo giá trọn gói, không phí ẩn. Đổi lịch linh hoạt khi bay/tàu thay đổi vì thời tiết.'),
-            'en' => array('title' => 'clear, transparent pricing', 'description' => 'All-in pricing with no hidden fees. Flexible rescheduling when flights or ferries shift for weather.')),
+
+
+
+
+'en' => array('title' => 'clear, transparent pricing', 'description' => 'All-in pricing with no hidden fees. Flexible rescheduling when flights or ferries shift for weather.')),
         array('icon' => 'boat', 'sort' => 2,
             'vi' => array('title' => 'trải nghiệm biển đúng chỗ', 'description' => '4 đảo, Hòn Thơm, sunset cruise — chọn thuyền và khung giờ phù hợp thay vì tour đông nhồi điểm.'),
-            'en' => array('title' => 'the right sea experiences', 'description' => '4 islands, Hon Thom, sunset cruises — right boats and timing instead of overcrowded checklist tours.')),
+
+
+
+
+'en' => array('title' => 'the right sea experiences', 'description' => '4 islands, Hon Thom, sunset cruises — right boats and timing instead of overcrowded checklist tours.')),
         array('icon' => 'support', 'sort' => 3,
             'vi' => array('title' => 'hỗ trợ quanh giờ bay & tàu', 'description' => 'Đồng hành từ lúc chọn chuyến PQC hoặc tàu Rạch Giá tới khi bạn rời đảo.'),
-            'en' => array('title' => 'support around flights & ferries', 'description' => 'We help from choosing PQC flights or Rach Gia sailings through your island stay and departure.')),
+
+
+
+
+'en' => array('title' => 'support around flights & ferries', 'description' => 'We help from choosing PQC flights or Rach Gia sailings through your island stay and departure.')),
     ),
 
     'offices' => array(
@@ -970,31 +1855,103 @@ $__phuquocSeed = array(
     ),
 
     'values' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
-        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Làm việc lâu năm tại Phú Quốc — hiểu bay, tàu, bãi và mùa'), 'en' => array('name' => 'Island expertise', 'desc' => 'Years on Phu Quoc — we know flights, ferries, beaches and seasons')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'), 'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
-        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ biển đảo và hỗ trợ đối tác bản địa'), 'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the island sea and supporting local partners')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
+        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Làm việc lâu năm tại Phú Quốc — hiểu bay, tàu, bãi và mùa'),
+
+
+
+'en' => array('name' => 'Island expertise', 'desc' => 'Years on Phu Quoc — we know flights, ferries, beaches and seasons')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
+        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ biển đảo và hỗ trợ đối tác bản địa'),
+
+
+
+'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the island sea and supporting local partners')),
     ),
     'value_definitions' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
-        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Làm việc lâu năm tại Phú Quốc — hiểu bay, tàu, bãi và mùa'), 'en' => array('name' => 'Island expertise', 'desc' => 'Years on Phu Quoc — we know flights, ferries, beaches and seasons')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'), 'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
-        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ biển đảo và hỗ trợ đối tác bản địa'), 'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the island sea and supporting local partners')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
+        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Làm việc lâu năm tại Phú Quốc — hiểu bay, tàu, bãi và mùa'),
+
+
+
+'en' => array('name' => 'Island expertise', 'desc' => 'Years on Phu Quoc — we know flights, ferries, beaches and seasons')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
+        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ biển đảo và hỗ trợ đối tác bản địa'),
+
+
+
+'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the island sea and supporting local partners')),
     ),
 
     'reasons' => array(
-        array('vi' => array('title' => 'Hướng dẫn viên và đối tác bản địa', 'desc' => 'Đội ngũ hiểu từng cung đường từ Dương Đông tới An Thới và giờ đẹp tại Bãi Sao.'), 'en' => array('title' => 'Local guides and partners', 'desc' => 'Our team knows every stretch from Duong Dong to An Thoi and the best light at Bai Sao.')),
-        array('vi' => array('title' => 'Cam kết đổi lịch khi bay/tàu thay đổi', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi chuyến bay hoặc tàu cao tốc bị ảnh hưởng thời tiết.'), 'en' => array('title' => 'Clear weather change policy', 'desc' => 'Transparent rebooking and refunds when flights or ferries are disrupted by weather.')),
-        array('vi' => array('title' => 'Làm việc trực tiếp với resort và chủ thuyền', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'), 'en' => array('title' => 'Direct resort and boat partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
-        array('vi' => array('title' => 'Hỗ trợ quanh giờ bay PQC', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh trước giờ bay và giờ tàu.'), 'en' => array('title' => 'Support around PQC timing', 'desc' => 'Real people on hotline and Zalo, responsive around flight and ferry schedules.')),
-        array('vi' => array('title' => 'Du lịch có trách nhiệm với biển đảo', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'), 'en' => array('title' => 'Sea-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
+        array('vi' => array('title' => 'Hướng dẫn viên và đối tác bản địa', 'desc' => 'Đội ngũ hiểu từng cung đường từ Dương Đông tới An Thới và giờ đẹp tại Bãi Sao.'),
+
+
+
+'en' => array('title' => 'Local guides and partners', 'desc' => 'Our team knows every stretch from Duong Dong to An Thoi and the best light at Bai Sao.')),
+        array('vi' => array('title' => 'Cam kết đổi lịch khi bay/tàu thay đổi', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi chuyến bay hoặc tàu cao tốc bị ảnh hưởng thời tiết.'),
+
+
+
+'en' => array('title' => 'Clear weather change policy', 'desc' => 'Transparent rebooking and refunds when flights or ferries are disrupted by weather.')),
+        array('vi' => array('title' => 'Làm việc trực tiếp với resort và chủ thuyền', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'),
+
+
+
+'en' => array('title' => 'Direct resort and boat partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
+        array('vi' => array('title' => 'Hỗ trợ quanh giờ bay PQC', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh trước giờ bay và giờ tàu.'),
+
+
+
+'en' => array('title' => 'Support around PQC timing', 'desc' => 'Real people on hotline and Zalo, responsive around flight and ferry schedules.')),
+        array('vi' => array('title' => 'Du lịch có trách nhiệm với biển đảo', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'),
+
+
+
+'en' => array('title' => 'Sea-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
     ),
     'reason_definitions' => array(
-        array('vi' => array('title' => 'Hướng dẫn viên và đối tác bản địa', 'desc' => 'Đội ngũ hiểu từng cung đường từ Dương Đông tới An Thới và giờ đẹp tại Bãi Sao.'), 'en' => array('title' => 'Local guides and partners', 'desc' => 'Our team knows every stretch from Duong Dong to An Thoi and the best light at Bai Sao.')),
-        array('vi' => array('title' => 'Cam kết đổi lịch khi bay/tàu thay đổi', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi chuyến bay hoặc tàu cao tốc bị ảnh hưởng thời tiết.'), 'en' => array('title' => 'Clear weather change policy', 'desc' => 'Transparent rebooking and refunds when flights or ferries are disrupted by weather.')),
-        array('vi' => array('title' => 'Làm việc trực tiếp với resort và chủ thuyền', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'), 'en' => array('title' => 'Direct resort and boat partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
-        array('vi' => array('title' => 'Hỗ trợ quanh giờ bay PQC', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh trước giờ bay và giờ tàu.'), 'en' => array('title' => 'Support around PQC timing', 'desc' => 'Real people on hotline and Zalo, responsive around flight and ferry schedules.')),
-        array('vi' => array('title' => 'Du lịch có trách nhiệm với biển đảo', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'), 'en' => array('title' => 'Sea-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
+        array('vi' => array('title' => 'Hướng dẫn viên và đối tác bản địa', 'desc' => 'Đội ngũ hiểu từng cung đường từ Dương Đông tới An Thới và giờ đẹp tại Bãi Sao.'),
+
+
+
+'en' => array('title' => 'Local guides and partners', 'desc' => 'Our team knows every stretch from Duong Dong to An Thoi and the best light at Bai Sao.')),
+        array('vi' => array('title' => 'Cam kết đổi lịch khi bay/tàu thay đổi', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi chuyến bay hoặc tàu cao tốc bị ảnh hưởng thời tiết.'),
+
+
+
+'en' => array('title' => 'Clear weather change policy', 'desc' => 'Transparent rebooking and refunds when flights or ferries are disrupted by weather.')),
+        array('vi' => array('title' => 'Làm việc trực tiếp với resort và chủ thuyền', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'),
+
+
+
+'en' => array('title' => 'Direct resort and boat partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
+        array('vi' => array('title' => 'Hỗ trợ quanh giờ bay PQC', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh trước giờ bay và giờ tàu.'),
+
+
+
+'en' => array('title' => 'Support around PQC timing', 'desc' => 'Real people on hotline and Zalo, responsive around flight and ferry schedules.')),
+        array('vi' => array('title' => 'Du lịch có trách nhiệm với biển đảo', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'),
+
+
+
+'en' => array('title' => 'Sea-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
     ),
 
     'reference_persons' => array(
@@ -1026,7 +1983,11 @@ $__phuquocSeed = array(
             'reference_section' => array('title' => 'Người đại diện của chúng tôi tại nước ngoài', 'eyebrow' => 'Mạng lưới toàn cầu',
                 'subtitle' => 'Bạn có thể trao đổi trực tiếp bằng ngôn ngữ của mình với đại diện Đảo Phú Quốc tại châu Á và châu Âu.'),
         ),
-        'en' => array(
+
+
+
+
+'en' => array(
             'seo_title' => 'About us — Đảo Phú Quốc, your complete travel & service hub for Phu Quoc Island',
             'seo_description' => 'Our story, mission and team at Đảo Phú Quốc — designing journeys and connecting services across Phu Quoc Island (An Giang).',
             'page_title' => 'About us',
@@ -1051,9 +2012,21 @@ $__phuquocSeed = array(
     ),
 
     'hero_pills' => array(
-        array('zone_slug' => 'bai-sao', 'vi' => array('label' => 'Bãi Sao'), 'en' => array('label' => 'Bai Sao'), 'url' => '/diem-den/bai-sao'),
-        array('zone_slug' => 'vinpearl-grand-world', 'vi' => array('label' => 'VinWonders'), 'en' => array('label' => 'VinWonders'), 'url' => '/diem-den/vinpearl-grand-world'),
-        array('zone_slug' => 'an-thoi-hon-thom', 'vi' => array('label' => 'Hòn Thơm'), 'en' => array('label' => 'Hon Thom'), 'url' => '/diem-den/an-thoi-hon-thom'),
+        array('zone_slug' => 'bai-sao', 'vi' => array('label' => 'Bãi Sao'),
+
+
+
+'en' => array('label' => 'Bai Sao'), 'url' => '/diem-den/bai-sao'),
+        array('zone_slug' => 'vinpearl-grand-world', 'vi' => array('label' => 'VinWonders'),
+
+
+
+'en' => array('label' => 'VinWonders'), 'url' => '/diem-den/vinpearl-grand-world'),
+        array('zone_slug' => 'an-thoi-hon-thom', 'vi' => array('label' => 'Hòn Thơm'),
+
+
+
+'en' => array('label' => 'Hon Thom'), 'url' => '/diem-den/an-thoi-hon-thom'),
     ),
 
     'home_sections' => array(
@@ -1061,50 +2034,94 @@ $__phuquocSeed = array(
             'vi' => array('key' => 'company_intro', 'eyebrow' => 'Chuyên gia đảo Phú Quốc', 'title' => 'Hành trình chân thật trên đảo ngọc', 'subtitle' => NULL,
                 'body' => 'Đảo Phú Quốc là đơn vị lữ hành kết nối du khách với Bãi Sao, Bãi Trường, Hòn Thơm, VinWonders và nhịp sống Dương Đông. Chúng tôi không bán tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> trên đảo Phú Quốc (An Giang).',
                 'metaLine' => 'Giấy phép kinh doanh dịch vụ lữ hành số 0297/2022/TCDL-GPLHQT', 'ctaLabel' => 'Tìm hiểu về chúng tôi', 'ctaUrl' => '/ve-chung-toi', 'image' => NULL, 'imageAlt' => 'Ảnh đội ngũ Đảo Phú Quốc'),
-            'en' => array('key' => 'company_intro', 'eyebrow' => 'Phu Quoc island experts', 'title' => 'Authentic journeys on the pearl island', 'subtitle' => NULL,
+
+
+
+
+'en' => array('key' => 'company_intro', 'eyebrow' => 'Phu Quoc island experts', 'title' => 'Authentic journeys on the pearl island', 'subtitle' => NULL,
                 'body' => 'Đảo Phú Quốc connects guests with Bai Sao, Long Beach, Hon Thom, VinWonders and Duong Dong life. We do not sell off-the-shelf packages — every itinerary is tailored from real experience on Phu Quoc (An Giang).',
                 'metaLine' => 'Travel service license No. 0297/2022/TCDL-GPLHQT', 'ctaLabel' => 'Learn about us', 'ctaUrl' => '/ve-chung-toi', 'image' => NULL, 'imageAlt' => 'Đảo Phú Quốc team'),
         ),
         'featured_tours' => array(
             'vi' => array('key' => 'featured_tours', 'eyebrow' => 'Được yêu thích nhất', 'title' => 'Những tour được yêu cầu nhiều nhất', 'subtitle' => 'Những hành trình khách hàng đặt và đánh giá cao nhất trong 12 tháng qua.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_tours', 'eyebrow' => 'Most popular', 'title' => 'Our most requested tours', 'subtitle' => 'Itineraries our guests book and rate highest over the past 12 months.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_tours', 'eyebrow' => 'Most popular', 'title' => 'Our most requested tours', 'subtitle' => 'Itineraries our guests book and rate highest over the past 12 months.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'featured_cruises' => array(
             'vi' => array('key' => 'featured_cruises', 'eyebrow' => 'Hành trình trên biển', 'title' => 'Thuyền 4 đảo, câu mực đêm & hoàng hôn', 'subtitle' => 'Những trải nghiệm thuyền được yêu thích nhất — nơi việc ra khơi trở thành một phần của chuyến đi.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_cruises', 'eyebrow' => 'On the water', 'title' => '4-island boats, night squid fishing & sunsets', 'subtitle' => 'Our most loved boat experiences — where getting offshore becomes part of the trip.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_cruises', 'eyebrow' => 'On the water', 'title' => '4-island boats, night squid fishing & sunsets', 'subtitle' => 'Our most loved boat experiences — where getting offshore becomes part of the trip.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'featured_trains' => array(
             'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Ra đảo dễ dàng', 'title' => 'Vé tàu & phà Rạch Giá / Hà Tiên — Phú Quốc', 'subtitle' => 'Chọn theo tuyến: tàu cao tốc hoặc phà từ Rạch Giá / Hà Tiên — giữ chỗ trước khi ra cảng.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_trains', 'eyebrow' => 'Easy island access', 'title' => 'Ferry & boat tickets Rach Gia / Ha Tien — Phu Quoc', 'subtitle' => 'Pick by route: high-speed boat or car ferry from Rach Gia / Ha Tien — reserve before you reach the port.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_trains', 'eyebrow' => 'Easy island access', 'title' => 'Ferry & boat tickets Rach Gia / Ha Tien — Phu Quoc', 'subtitle' => 'Pick by route: high-speed boat or car ferry from Rach Gia / Ha Tien — reserve before you reach the port.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'support_services' => array(
             'vi' => array('key' => 'support_services', 'eyebrow' => 'Dịch vụ bổ trợ', 'title' => 'Chỉ chọn những gì bạn cần', 'subtitle' => 'Bay PQC, lưu trú, vui chơi và dịch vụ hỗ trợ trên đảo — linh hoạt đặt riêng theo kế hoạch của bạn.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'support_services', 'eyebrow' => 'Add-on services', 'title' => 'Choose only what you need', 'subtitle' => 'PQC flights, stays, activities, and island support — book à la carte around your plan.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'support_services', 'eyebrow' => 'Add-on services', 'title' => 'Choose only what you need', 'subtitle' => 'PQC flights, stays, activities, and island support — book à la carte around your plan.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'destinations' => array(
             'vi' => array('key' => 'destinations', 'eyebrow' => 'Khắp đảo Phú Quốc', 'title' => 'Những điểm đến được yêu thích nhất', 'subtitle' => 'Từ Dương Đông tới Bãi Sao, Hòn Thơm và Vinpearl — chọn nơi bạn muốn khám phá.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'destinations', 'eyebrow' => 'Across Phu Quoc Island', 'title' => 'Our most loved destinations', 'subtitle' => 'From Duong Dong to Bai Sao, Hon Thom and Vinpearl — choose where to explore.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'destinations', 'eyebrow' => 'Across Phu Quoc Island', 'title' => 'Our most loved destinations', 'subtitle' => 'From Duong Dong to Bai Sao, Hon Thom and Vinpearl — choose where to explore.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'testimonials' => array(
             'vi' => array('key' => 'testimonials', 'eyebrow' => 'Khách hàng kể lại', 'title' => 'Trải nghiệm chân thật từ khách hàng', 'subtitle' => 'Hàng nghìn du khách đã đồng hành cùng chúng tôi trên đảo — đây là những gì họ kể lại.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Xem tất cả cảm nhận', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences from our travellers', 'subtitle' => 'Thousands of guests have travelled with us on the island — here is what they say.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Read all reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences from our travellers', 'subtitle' => 'Thousands of guests have travelled with us on the island — here is what they say.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Read all reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'review_platforms' => array(
             'vi' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'Đảo Phú Quốc được đánh giá cao trên', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'Đảo Phú Quốc is highly rated on', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'Đảo Phú Quốc is highly rated on', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'team' => array(
             'vi' => array('key' => 'team', 'eyebrow' => 'Con người Đảo Phú Quốc', 'title' => 'Đội ngũ tận tâm của chúng tôi', 'subtitle' => 'Những con người am hiểu đảo ngọc — đồng hành từ lúc lên ý tưởng tới khi rời Phú Quốc.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Gặp gỡ cả đội ngũ', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'team', 'eyebrow' => 'The Đảo Phú Quốc team', 'title' => 'Our dedicated local experts', 'subtitle' => 'People who know the pearl island — with you from the first idea until you leave.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Meet the full team', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'team', 'eyebrow' => 'The Đảo Phú Quốc team', 'title' => 'Our dedicated local experts', 'subtitle' => 'People who know the pearl island — with you from the first idea until you leave.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Meet the full team', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'videos' => array(
             'vi' => array('key' => 'videos', 'eyebrow' => 'Trải nghiệm thật', 'title' => 'Đảo Phú Quốc qua từng thước phim đẹp', 'subtitle' => 'Video chân thật do khách hàng và đội ngũ Đảo Phú Quốc ghi lại.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Xem tất cả video', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'videos', 'eyebrow' => 'Real experiences', 'title' => 'Phu Quoc Island in unforgettable frames', 'subtitle' => 'Authentic films from guests and our local team.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'View all videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'videos', 'eyebrow' => 'Real experiences', 'title' => 'Phu Quoc Island in unforgettable frames', 'subtitle' => 'Authentic films from guests and our local team.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'View all videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'quick_inquiry' => array(
             'vi' => array('key' => 'quick_inquiry', 'eyebrow' => 'Tư vấn miễn phí', 'title' => 'Gửi lời nhắn cho chúng tôi', 'subtitle' => NULL,
                 'body' => 'Bạn chưa chắc nên chọn Bãi Trường hay Bãi Sao, mùa nào đẹp, bay hay tàu, ngân sách bao nhiêu? Để lại lời nhắn — đội ngũ Đảo Phú Quốc sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.', 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send us a message', 'subtitle' => NULL,
+
+
+
+
+'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send us a message', 'subtitle' => NULL,
                 'body' => 'Not sure between Long Beach or Bai Sao, which season, flight or ferry, or your budget? Leave a note — the Đảo Phú Quốc team will reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.', 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
     ),
@@ -1150,17 +2167,51 @@ $__phuquocSeed = array(
     ),
 
     'tour_categories' => array(
-        array('zoneSlug' => 'duong-dong', 'slug' => 'nua-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 0, 'maxDays' => 1,
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'nua-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 0,
+            'maxDays' => 1,
             'packageSlugs' => array(
                 'kayak-rach-vem-nua-ngay',
                 'lang-chai-ham-ninh-nua-ngay',
                 'sunset-cruise-ong-lang-bai-truong',
             ),
-            'name' => array('vi' => 'Tour nửa ngày', 'en' => 'Half-day tours'),
-            'subtitle' => array('vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.', 'en' => 'A compact option for a free morning or afternoon.'),
-            'seo_body' => array('vi' => 'Các tour nửa ngày ở Phú Quốc phù hợp ghép thêm trước hoặc sau chuyến đi chính.', 'en' => 'Half-day Phu Quoc tours are easy to add before or after your main trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'duong-dong', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 1, 'maxDays' => 1,
+            'name' => array(
+                'vi' => 'Tour nửa ngày',
+
+
+
+
+'en' => 'Half-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.',
+
+
+
+
+'en' => 'A compact option for a free morning or afternoon.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Các tour nửa ngày ở Phú Quốc phù hợp ghép thêm trước hoặc sau chuyến đi chính.',
+
+
+
+
+'en' => 'Half-day Phu Quoc tours are easy to add before or after your main trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 1,
+            'maxDays' => 1,
             'packageSlugs' => array(
                 'vinwonders-phu-quoc-1-ngay',
                 'cap-treo-hon-thom-1-ngay',
@@ -1169,56 +2220,403 @@ $__phuquocSeed = array(
                 'bai-sao-1-ngay-nghi-bien',
                 'safari-phu-quoc-1-ngay',
             ),
-            'name' => array('vi' => 'Tour 1 ngày', 'en' => '1-day tours'),
-            'subtitle' => array('vi' => 'VinWonders, Hòn Thơm, 4 đảo, Bãi Sao hoặc safari — không cần ngủ đêm thêm.', 'en' => 'VinWonders, Hon Thom, 4 islands, Bai Sao or safari — no extra overnight needed.'),
-            'seo_body' => array('vi' => 'Tour 1 ngày phổ biến với khách đã có phòng và chỉ muốn thêm trải nghiệm.', 'en' => '1-day tours suit guests who already have lodging and want add-on experiences.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'duong-dong', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 2, 'maxDays' => 3,
+            'name' => array(
+                'vi' => 'Tour 1 ngày',
+
+
+
+
+'en' => '1-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'VinWonders, Hòn Thơm, 4 đảo, Bãi Sao hoặc safari — không cần ngủ đêm thêm.',
+
+
+
+
+'en' => 'VinWonders, Hon Thom, 4 islands, Bai Sao or safari — no extra overnight needed.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour 1 ngày phổ biến với khách đã có phòng và chỉ muốn thêm trải nghiệm.',
+
+
+
+
+'en' => '1-day tours suit guests who already have lodging and want add-on experiences.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 2,
+            'maxDays' => 3,
             'packageSlugs' => array(
                 'phu-quoc-3-ngay-tong-quan-dao',
                 'honeymoon-bai-khem-ong-lang-3n2d',
                 'gia-dinh-grand-world-vinwonders-2n1d',
                 'rach-gia-phu-quoc-tau-cao-toc-3n2d',
             ),
-            'name' => array('vi' => 'Tour 2 – 3 ngày', 'en' => '2–3 day tours'),
-            'subtitle' => array('vi' => 'Kết hợp biển, công viên giải trí hoặc nghỉ yên trên đảo.', 'en' => 'Combine beach, theme parks or a quiet island stay.'),
-            'seo_body' => array('vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn nhịp của đảo ngọc.', 'en' => 'A 2–3 day tour lets you feel Phu Quoc’s island rhythm.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'duong-dong', 'slug' => '4-ngay-tro-len', 'type' => 'duration', 'sort' => 3, 'minDays' => 4, 'maxDays' => 10,
-            'packageSlugs' => array('phu-quoc-tu-sai-gon-4n3d'),
-            'name' => array('vi' => 'Tour 4 ngày trở lên', 'en' => '4+ day tours'),
-            'subtitle' => array('vi' => 'Gói bay từ Sài Gòn với đủ điểm nhấn đảo.', 'en' => 'Flight packages from Saigon covering the island highlights.'),
-            'seo_body' => array('vi' => 'Tour dài ngày dành cho ai muốn chơi đủ biển và công viên trong một hành trình.', 'en' => 'Longer tours for travellers who want both beach and parks in one trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'an-thoi-hon-thom', 'slug' => 'bien-nam-dao', 'type' => 'theme', 'sort' => 10,
+            'name' => array(
+                'vi' => 'Tour 2 – 3 ngày',
+
+
+
+
+'en' => '2–3 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Kết hợp biển, công viên giải trí hoặc nghỉ yên trên đảo.',
+
+
+
+
+'en' => 'Combine beach, theme parks or a quiet island stay.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn nhịp của đảo ngọc.',
+
+
+
+
+'en' => 'A 2–3 day tour lets you feel Phu Quoc’s island rhythm.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => '4-ngay-tro-len',
+            'type' => 'duration',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 10,
+            'packageSlugs' => array(
+                'phu-quoc-tu-sai-gon-4n3d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày trở lên',
+
+
+
+
+'en' => '4+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Gói bay từ Sài Gòn với đủ điểm nhấn đảo.',
+
+
+
+
+'en' => 'Flight packages from Saigon covering the island highlights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài ngày dành cho ai muốn chơi đủ biển và công viên trong một hành trình.',
+
+
+
+
+'en' => 'Longer tours for travellers who want both beach and parks in one trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'tour-trong-ngay',
+            'type' => 'theme',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'vinwonders-phu-quoc-1-ngay',
+                'cap-treo-hon-thom-1-ngay',
+                'tour-4-dao-snorkel-phu-quoc',
+                'vuon-tieu-nuoc-mam-nha-tu-1-ngay',
+                'bai-sao-1-ngay-nghi-bien',
+                'safari-phu-quoc-1-ngay',
+                'kayak-rach-vem-nua-ngay',
+                'lang-chai-ham-ninh-nua-ngay',
+                'sunset-cruise-ong-lang-bai-truong',
+            ),
+            'name' => array(
+                'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
+
+
+
+
+'en' => 'Full day — no overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
+
+
+
+
+'en' => 'Duration filter — distinct from per-zone GEO category pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'tour-2-ngay-1-dem',
+            'type' => 'theme',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 2,
+            'packageSlugs' => array(
+                'gia-dinh-grand-world-vinwonders-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
+
+
+
+
+'en' => 'Short weekend, one-night homestay or resort.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
+
+
+
+
+'en' => '2N1D sweet spot — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'tour-3-ngay-2-dem',
+            'type' => 'theme',
+            'sort' => 2,
+            'minDays' => 3,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'phu-quoc-3-ngay-tong-quan-dao',
+                'honeymoon-bai-khem-ong-lang-3n2d',
+                'rach-gia-phu-quoc-tau-cao-toc-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
+
+
+
+
+'en' => 'Enough depth — two overnights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
+
+
+
+
+'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'tour-4-ngay-3-dem',
+            'type' => 'theme',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 4,
+            'packageSlugs' => array(
+                'phu-quoc-tu-sai-gon-4n3d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
+
+
+
+
+'en' => 'Deeper exploration, three nights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
+
+
+
+
+'en' => '4N3D itineraries — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'tour-tu-5-ngay',
+            'type' => 'theme',
+            'sort' => 4,
+            'minDays' => 5,
+            'maxDays' => null,
+            'packageSlugs' => array(),
+            'name' => array(
+                'vi' => 'Tour từ 5 ngày',
+
+
+
+
+'en' => '5+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo dài ngày, nhiều điểm đến.',
+
+
+
+
+'en' => 'Extended combos and multi-destination trips.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
+
+
+
+
+'en' => 'Long tours & combos — duration insight, not a GEO page.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'bien-nam-dao',
+            'type' => 'theme',
+            'sort' => 10,
             'packageSlugs' => array(
                 'tour-4-dao-snorkel-phu-quoc',
                 'cap-treo-hon-thom-1-ngay',
                 'thuyen-4-dao-phu-quoc',
                 'thuyen-lan-nam-dao-phu-quoc',
             ),
-            'name' => array('vi' => 'Tour biển nam đảo', 'en' => 'South-island sea tours'),
-            'subtitle' => array('vi' => '4 đảo, cáp treo Hòn Thơm và thuyền lặn phía nam.', 'en' => '4 islands, Hon Thom cable car and south snorkel boats.'),
-            'seo_body' => array('vi' => 'Nam đảo là trái tim trải nghiệm biển của Phú Quốc.', 'en' => 'The south is the heart of Phu Quoc’s sea experiences.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'vinpearl-grand-world', 'slug' => 'vui-choi-gia-dinh', 'type' => 'theme', 'sort' => 11,
-            'packageSlugs' => array('vinwonders-phu-quoc-1-ngay', 'safari-phu-quoc-1-ngay', 'gia-dinh-grand-world-vinwonders-2n1d'),
-            'name' => array('vi' => 'Tour vui chơi gia đình', 'en' => 'Family fun tours'),
-            'subtitle' => array('vi' => 'VinWonders, Safari và Grand World.', 'en' => 'VinWonders, Safari and Grand World.'),
-            'seo_body' => array('vi' => 'Điểm nhấn giải trí lớn nhất đảo cho gia đình và nhóm bạn.', 'en' => 'The island’s biggest entertainment highlights for families and friends.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'bai-sao', 'slug' => 'bien-bai-sao', 'type' => 'theme', 'sort' => 12,
-            'packageSlugs' => array('bai-sao-1-ngay-nghi-bien', 'lang-chai-ham-ninh-nua-ngay'),
-            'name' => array('vi' => 'Tour biển Bãi Sao & Hàm Ninh', 'en' => 'Bai Sao & Ham Ninh tours'),
-            'subtitle' => array('vi' => 'Cát trắng và làng chài hải sản phía đông nam.', 'en' => 'White sand and the seafood fishing village on the southeast.'),
-            'seo_body' => array('vi' => 'Bãi Sao là điểm tắm được nhắc tới nhiều nhất trên đảo ngọc.', 'en' => 'Bai Sao is the most talked-about swim stop on the pearl island.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ket-hop-rach-gia', 'slug' => 'ket-hop-rach-gia', 'type' => 'package', 'sort' => 15, 'minDays' => 2, 'maxDays' => 4,
-            'packageSlugs' => array('rach-gia-phu-quoc-tau-cao-toc-3n2d', 'phu-quoc-tu-sai-gon-4n3d'),
-            'name' => array('vi' => 'Tour kết hợp cửa ngõ', 'en' => 'Gateway combo tours'),
-            'subtitle' => array('vi' => 'Nối Rạch Giá / Hà Tiên hoặc bay từ Sài Gòn với đảo.', 'en' => 'Link Rach Gia / Ha Tien or Saigon flights with the island.'),
-            'seo_body' => array('vi' => 'Tour kết hợp giúp khách không phải tự lo nối xe–tàu–bay.', 'en' => 'Combined tours remove the stress of connecting road, ferry and flight yourself.'),
-            'faqs' => array()),
+            'name' => array(
+                'vi' => 'Tour biển nam đảo',
+
+
+
+
+'en' => 'South-island sea tours',
+            ),
+            'subtitle' => array(
+                'vi' => '4 đảo, cáp treo Hòn Thơm và thuyền lặn phía nam.',
+
+
+
+
+'en' => '4 islands, Hon Thom cable car and south snorkel boats.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Nam đảo là trái tim trải nghiệm biển của Phú Quốc.',
+
+
+
+
+'en' => 'The south is the heart of Phu Quoc’s sea experiences.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'vui-choi-gia-dinh',
+            'type' => 'theme',
+            'sort' => 11,
+            'packageSlugs' => array(
+                'vinwonders-phu-quoc-1-ngay',
+                'safari-phu-quoc-1-ngay',
+                'gia-dinh-grand-world-vinwonders-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour vui chơi gia đình',
+
+
+
+
+'en' => 'Family fun tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'VinWonders, Safari và Grand World.',
+
+
+
+
+'en' => 'VinWonders, Safari and Grand World.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Điểm nhấn giải trí lớn nhất đảo cho gia đình và nhóm bạn.',
+
+
+
+
+'en' => 'The island’s biggest entertainment highlights for families and friends.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'duong-dong',
+            'slug' => 'bien-bai-sao',
+            'type' => 'theme',
+            'sort' => 12,
+            'packageSlugs' => array(
+                'bai-sao-1-ngay-nghi-bien',
+                'lang-chai-ham-ninh-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour biển Bãi Sao & Hàm Ninh',
+
+
+
+
+'en' => 'Bai Sao & Ham Ninh tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cát trắng và làng chài hải sản phía đông nam.',
+
+
+
+
+'en' => 'White sand and the seafood fishing village on the southeast.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Bãi Sao là điểm tắm được nhắc tới nhiều nhất trên đảo ngọc.',
+
+
+
+
+'en' => 'Bai Sao is the most talked-about swim stop on the pearl island.',
+            ),
+            'faqs' => array(),
+        ),
     ),
 
     'listing_faqs' => array(
@@ -1229,16 +2627,24 @@ $__phuquocSeed = array(
         array('q' => 'Nên ở Bãi Trường, Bãi Sao hay gần Grand World?', 'a' => 'Bãi Trường tiện nghỉ và gần nhiều tiện ích; Bãi Sao đẹp tắm (thường day-trip); gần Grand World hợp gia đình mê công viên giải trí. Ông Lang / Bãi Khem hợp couple muốn yên.'),
     ),
 
-    'duration_buckets' => array('half-day' => 'Nửa ngày', '1-day' => '1 ngày', '2-3-days' => '2 – 3 ngày', '4-plus' => '4 ngày trở lên'),
+    'duration_buckets' => array(
+        'half-day' => 'Nửa ngày',
+        '1-day' => '1 ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+    ),
 
     'travel_style_labels' => array(
-        'diving' => 'Lặn biển chuyên sâu', 'beach' => 'Nghỉ dưỡng biển', 'diving-snorkel' => 'Lặn & ngắm san hô',
-        'family' => 'Gia đình', 'honeymoon' => 'Trăng mật', 'culture' => 'Văn hoá & lịch sử',
-        'adventure' => 'Phiêu lưu', 'day-trip' => 'Tour trong ngày', 'multi-day' => 'Tour nhiều ngày',
-        'long-duration' => 'Tour dài ngày', 'small-group' => 'Nhóm nhỏ', 'seafood' => 'Hải sản & làng chài',
-        'theme-park' => 'Công viên giải trí', 'wildlife' => 'Safari & thiên nhiên',
-        'balanced' => 'Kỳ nghỉ cân bằng', 'multi-destination-combo' => 'Kết hợp nhiều điểm đến',
-        'quiet-stay' => 'Nghỉ yên tĩnh', 'luxury' => 'Nghỉ dưỡng cao cấp',
+        'day-trip' => 'Tour trong ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+        'bien-nam-dao' => 'Tour biển nam đảo',
+        'vui-choi-gia-dinh' => 'Tour vui chơi gia đình',
+        'bien-bai-sao' => 'Tour biển Bãi Sao & Hàm Ninh',
     ),
 );
 
@@ -1260,8 +2666,8 @@ $__servicesSeed = array(
         array('cluster' => 'ferry', 'slug' => 'pha-ha-tien-phu-quoc', 'name' => 'Phà Hà Tiên — Phú Quốc', 'sort' => 4, 'intro' => 'Phà từ Hà Tiên ra Phú Quốc — nhiều chuyến hơn tuyến Rạch Giá, phù hợp mang xe hoặc xuất phát khu biên giới.'),
         array('cluster' => 'ferry', 'slug' => 'xe-sai-gon-rach-gia', 'name' => 'Sài Gòn — Rạch Giá / Hà Tiên (nối tàu)', 'sort' => 5, 'intro' => 'Xe limousine / xe khách tới bến tàu hoặc bến phà trước giờ xuất bến ra Phú Quốc.'),
         // FLIGHT
-        array('cluster' => 'flight', 'slug' => 'noi-dia-toi-pqc', 'name' => 'Vé nội địa tới Phú Quốc (PQC)', 'sort' => 1, 'intro' => 'Bay thẳng SGN/HAN và các tỉnh thành tới sân bay quốc tế Phú Quốc.'),
-        array('cluster' => 'flight', 'slug' => 'quoc-te-toi-pqc', 'name' => 'Vé quốc tế tới Phú Quốc (PQC)', 'sort' => 2, 'intro' => 'Chuyến bay quốc tế tới PQC (khi có lịch) hoặc nối chuyến qua SGN/HAN.'),
+        array('cluster' => 'flight', 'slug' => 'noi-dia-toi-pqc', 'name' => 'Vé nội địa tới Phú Quốc (Phú Quốc)', 'sort' => 1, 'intro' => 'Bay thẳng Sài Gòn/Hà Nội và các tỉnh thành tới sân bay quốc tế Phú Quốc.'),
+        array('cluster' => 'flight', 'slug' => 'quoc-te-toi-pqc', 'name' => 'Vé quốc tế tới Phú Quốc (Phú Quốc)', 'sort' => 2, 'intro' => 'Chuyến bay quốc tế tới PQC (khi có lịch) hoặc nối chuyến qua Sài Gòn/Hà Nội.'),
         array('cluster' => 'flight', 'slug' => 'dua-don-san-bay-pqc', 'name' => 'Đưa đón sân bay Phú Quốc', 'sort' => 3, 'intro' => 'Xe riêng từ PQC tới resort / khách sạn trên đảo.'),
         // STAY
         array('cluster' => 'stay', 'slug' => 'resort-bai-truong-duong-dong', 'name' => 'Resort & KS Bãi Trường / Dương Đông', 'sort' => 1, 'intro' => 'Lưu trú sát Long Beach hoặc trung tâm Dương Đông — tiện nghi và gần tiện ích.'),
@@ -1373,9 +2779,9 @@ $__servicesSeed = array(
         // ── FLIGHT (5) ───────────────────────────────────────────────────────
         array(
             'code' => 'flight-sgn-pqc', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-pqc', 'zone_slug' => 'duong-dong',
-            'title' => 'Vé máy bay Sài Gòn — Phú Quốc (SGN → PQC)', 'slug' => 've-may-bay-sai-gon-phu-quoc',
+            'title' => 'Vé máy bay Sài Gòn — Phú Quốc (Sài Gòn → Phú Quốc)', 'slug' => 've-may-bay-sai-gon-phu-quoc',
             'price_from' => 990000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 640,
-            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Bay thẳng', 'location_label' => 'SGN → PQC',
+            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Bay thẳng', 'location_label' => 'Sài Gòn → PQC',
             'summary' => 'Chuyến bay thẳng khoảng 1 giờ tới sân bay quốc tế Phú Quốc — lựa chọn phổ biến nhất từ miền Nam.',
             'highlights' => array('Nhiều khung giờ/ngày', 'Có thể gộp đưa đón sân bay', 'Tư vấn giờ bay hợp lịch tour'),
             'inclusions' => array('Vé economy một chiều', 'Thuế phí sân bay'), 'exclusions' => array('Hành lý mua thêm', 'Đưa đón'),
@@ -1383,9 +2789,9 @@ $__servicesSeed = array(
         ),
         array(
             'code' => 'flight-han-pqc', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-pqc', 'zone_slug' => 'duong-dong',
-            'title' => 'Vé máy bay Hà Nội — Phú Quốc (HAN → PQC)', 'slug' => 've-may-bay-ha-noi-phu-quoc',
+            'title' => 'Vé máy bay Hà Nội — Phú Quốc (Hà Nội → Phú Quốc)', 'slug' => 've-may-bay-ha-noi-phu-quoc',
             'price_from' => 1650000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 412,
-            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Bay thẳng', 'location_label' => 'HAN → PQC',
+            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Bay thẳng', 'location_label' => 'Hà Nội → PQC',
             'summary' => 'Bay thẳng khoảng 2 giờ từ Hà Nội tới PQC — không cần quá cảnh.',
             'highlights' => array('Bay thẳng không nối chuyến', 'Nhiều hãng khai thác', 'Có thể đặt khứ hồi'),
             'inclusions' => array('Vé economy một chiều', 'Thuế phí'), 'exclusions' => array('Hành lý thêm', 'Đưa đón'),
@@ -1393,10 +2799,10 @@ $__servicesSeed = array(
         ),
         array(
             'code' => 'flight-intl-pqc', 'cluster' => 'flight', 'category_slug' => 'quoc-te-toi-pqc', 'zone_slug' => 'duong-dong',
-            'title' => 'Vé máy bay quốc tế tới Phú Quốc (PQC)', 'slug' => 've-may-bay-quoc-te-toi-phu-quoc',
+            'title' => 'Vé máy bay quốc tế tới Phú Quốc (Phú Quốc)', 'slug' => 've-may-bay-quoc-te-toi-phu-quoc',
             'price_from' => 3500000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 88,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Quốc tế → PQC',
-            'summary' => 'Tìm và giữ chỗ chuyến bay quốc tế tới PQC (khi có lịch trực tiếp) hoặc tư vấn nối chuyến qua SGN/HAN.',
+            'summary' => 'Tìm và giữ chỗ chuyến bay quốc tế tới PQC (khi có lịch trực tiếp) hoặc tư vấn nối chuyến qua Sài Gòn/Hà Nội.',
             'highlights' => array('Tư vấn lịch trực tiếp / nối chuyến', 'Hỗ trợ hành lý & visa lưu ý', 'Gộp đưa đón sân bay'),
             'inclusions' => array('Tư vấn & giữ chỗ', 'Báo giá theo ngày'), 'exclusions' => array('Phí visa', 'Bảo hiểm'),
             'notes' => array('Lịch quốc tế thay đổi theo mùa — xác nhận trước.'), 'attrs' => array('from' => 'International', 'to' => 'PQC', 'airlines' => array('Theo lịch khai thác'), 'flight_time' => 'tuỳ chặng'),
@@ -1792,7 +3198,7 @@ $__servicesSeed = array(
 
     'service_listing_faqs' => array(
         array('q' => 'Giá "từ" trên trang dịch vụ có phải giá cố định không?', 'a' => 'Không — giá "từ" là mức tham khảo theo mùa thấp điểm hoặc hạng tiêu chuẩn. Đảo Phú Quốc báo giá chính xác sau khi nhận ngày đi, số khách và yêu cầu cụ thể.'),
-        array('q' => 'Tôi có thể gộp vé máy bay + khách sạn + VinWonders trong một đơn không?', 'a' => 'Có. Chúng tôi thiết kế itinerary tuỳ chỉnh — gộp bay PQC hoặc tàu Rạch Giá, lưu trú, trải nghiệm và dịch vụ hỗ trợ vào một báo giá, một đầu mối chăm sóc.'),
+        array('q' => 'Tôi có thể gộp vé máy bay + khách sạn + VinWonders trong một đơn không?', 'a' => 'Có. Chúng tôi thiết kế lịch trình tuỳ chỉnh — gộp bay PQC hoặc tàu Rạch Giá, lưu trú, trải nghiệm và dịch vụ hỗ trợ vào một báo giá, một đầu mối chăm sóc.'),
         array('q' => 'Chính sách hoàn/hủy khi bay hoặc tàu bị ảnh hưởng thời tiết?', 'a' => 'Vé máy bay theo điều kiện hãng. Vé tàu và tour thuyền thường được đổi ngày miễn phí hoặc hoàn nếu chuyến bị huỷ chính thức. Lưu trú/spa áp dụng điều kiện riêng ghi trên voucher.'),
         array('q' => 'Đảo Phú Quốc có bán vé máy bay / tàu trực tiếp trên website không?', 'a' => 'Website hiển thị tham khảo và form yêu cầu báo giá. Sau khi bạn gửi yêu cầu, tư vấn viên xác nhận chỗ, giá và gửi link thanh toán — không phí ẩn.'),
         array('q' => 'Nên ở Bãi Trường, Bãi Sao hay gần Grand World?', 'a' => 'Bãi Trường tiện nghi và gần nhiều hoạt động; Bãi Sao đẹp tắm (thường day-trip nếu ở tây đảo); gần Grand World hợp gia đình mê VinWonders. Ông Lang / Bãi Khem hợp couple muốn yên.'),
@@ -1843,15 +3249,27 @@ return array_merge(
     array('customize_form' => array(
         'destinations_label' => array(
             'vi' => 'Bạn muốn khám phá khu vực nào trên đảo?',
-            'en' => 'Which parts of the island would you like to explore?',
+
+
+
+
+'en' => 'Which parts of the island would you like to explore?',
         ),
         'accommodation_label' => array(
             'vi' => 'Bạn thích loại lưu trú nào?',
-            'en' => 'What kind of stay do you prefer?',
+
+
+
+
+'en' => 'What kind of stay do you prefer?',
         ),
         'budget_note' => array(
             'vi' => 'Ngân sách dự kiến (chưa gồm vé máy bay PQC / tàu cao tốc cửa ngõ)',
-            'en' => 'Estimated budget (excluding PQC flights / gateway ferries)',
+
+
+
+
+'en' => 'Estimated budget (excluding PQC flights / gateway ferries)',
         ),
         'accommodation' => array(
             'vi' => array(
@@ -1862,7 +3280,11 @@ return array_merge(
                 'Vinpearl / gần Grand World',
                 'Nhờ tư vấn giúp tôi',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'Homestay / hotel in Duong Dong',
                 'Resort at Bai Truong (Long Beach)',
                 'Bai Sao / Bai Khem',
@@ -1875,19 +3297,55 @@ return array_merge(
     array('nav' => array(
         'about_group' => array(
             'vi' => 'Về Đảo Phú Quốc',
-            'en' => 'About Đảo Phú Quốc',
+
+
+
+
+'en' => 'About Đảo Phú Quốc',
         ),
         'cruise' => array(
-            'label' => array('vi' => 'Trải nghiệm', 'en' => 'Experiences'),
-            'all_label' => array('vi' => 'Tất cả thuyền / trải nghiệm biển', 'en' => 'All boat & sea experiences'),
-            'all_meta' => array('vi' => '4 đảo, câu mực đêm, hoàng hôn & lặn nam đảo', 'en' => '4 islands, night squid fishing, sunsets & south snorkels'),
-            'search_hint' => array('vi' => 'Tour, điểm đến, thuyền, cẩm nang…', 'en' => 'Tours, places, boats, guides…'),
-            'search_placeholder' => array('vi' => 'Tìm tour, điểm đến, thuyền, bài viết…', 'en' => 'Search tours, places, boats, articles…'),
-            'hub_title' => array('vi' => 'Thuyền & trải nghiệm biển', 'en' => 'Boats & sea experiences'),
-            'hub_subtitle' => array('vi' => '4 đảo, câu mực đêm, hoàng hôn và lặn nam đảo — chọn trải nghiệm trên mặt nước phù hợp.', 'en' => '4 islands, night squid fishing, sunsets and south snorkels — pick a water experience that fits.'),
+            'label' => array('vi' => 'Trải nghiệm',
+
+
+
+'en' => 'Experiences'),
+            'all_label' => array('vi' => 'Tất cả thuyền / trải nghiệm biển',
+
+
+
+'en' => 'All boat & sea experiences'),
+            'all_meta' => array('vi' => '4 đảo, câu mực đêm, hoàng hôn & lặn nam đảo',
+
+
+
+'en' => '4 islands, night squid fishing, sunsets & south snorkels'),
+            'search_hint' => array('vi' => 'Tour, điểm đến, thuyền, cẩm nang…',
+
+
+
+'en' => 'Tours, places, boats, guides…'),
+            'search_placeholder' => array('vi' => 'Tìm tour, điểm đến, thuyền, bài viết…',
+
+
+
+'en' => 'Search tours, places, boats, articles…'),
+            'hub_title' => array('vi' => 'Thuyền & trải nghiệm biển',
+
+
+
+'en' => 'Boats & sea experiences'),
+            'hub_subtitle' => array('vi' => '4 đảo, câu mực đêm, hoàng hôn và lặn nam đảo — chọn trải nghiệm trên mặt nước phù hợp.',
+
+
+
+'en' => '4 islands, night squid fishing, sunsets and south snorkels — pick a water experience that fits.'),
         ),
         'tours' => array(
-            'label' => array('vi' => 'Tour', 'en' => 'Tours'),
+            'label' => array('vi' => 'Tour',
+
+
+
+'en' => 'Tours'),
         ),
     )),
     array('listing_hubs' => array(
@@ -1895,7 +3353,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Trang tour của :brand tập hợp các hành trình khám phá đảo Phú Quốc — từ Dương Đông, Bãi Sao, Hòn Thơm tới Grand World. Mỗi lịch trình do chuyên gia bản địa thiết kế và có thể tuỳ chỉnh theo nhu cầu của bạn.',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => ':brand tours cover Phu Quoc Island — from Duong Dong and Bai Sao to Hon Thom and Grand World. Every itinerary is designed by local experts and can be tailored to your trip.',
             ),
         ),
@@ -1903,7 +3365,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Trang thuyền & trải nghiệm biển của :brand gồm tour 4 đảo, câu mực đêm, hoàng hôn và lặn nam đảo — chọn trải nghiệm trên mặt nước phù hợp lịch trình của bạn.',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => ':brand boat & sea experiences include 4-island trips, night squid fishing, sunsets and south-island snorkels — pick what fits your schedule.',
             ),
         ),
@@ -1911,7 +3377,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Đặt vé tàu cao tốc, phà và xe nối cửa ngõ ra Phú Quốc qua :brand — lịch chạy rõ ràng, đổi ngày linh hoạt và hỗ trợ e-ticket.',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => 'Book high-speed boats, car ferries and gateway transfers to Phu Quoc via :brand — clear schedules, flexible date changes and e-ticket support.',
             ),
         ),
@@ -1919,7 +3389,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Vé máy bay PQC và đưa đón sân bay Phú Quốc qua :brand — báo giá nhanh, chọn giờ bay phù hợp tour đảo.',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => 'PQC flights and Phu Quoc airport transfers via :brand — fast quotes and flight times that fit your island itinerary.',
             ),
         ),
@@ -1927,7 +3401,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Khách sạn, resort và homestay Phú Quốc được :brand tuyển chọn theo khu vực — Bãi Trường, Bãi Sao, Dương Đông, Ông Lang…',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => 'Hotels, resorts and homestays on Phu Quoc curated by :brand by area — Long Beach, Bai Sao, Duong Dong, Ong Lang and more.',
             ),
         ),
@@ -1935,7 +3413,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Vé vui chơi & trải nghiệm Phú Quốc — VinWonders, cáp treo Hòn Thơm, safari và hoạt động biển — đặt qua :brand.',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => 'Phu Quoc tickets & experiences — VinWonders, Hon Thom cable car, safari and sea activities — book via :brand.',
             ),
         ),
@@ -1943,7 +3425,11 @@ return array_merge(
             'vi' => array(
                 'seo_body' => 'Dịch vụ hỗ trợ trên đảo Phú Quốc: thuê xe, HDV riêng, spa và hỗ trợ trong chuyến đi — đồng hành cùng :brand.',
             ),
-            'en' => array(
+
+
+
+
+'en' => array(
                 'seo_body' => 'On-island support on Phu Quoc: vehicle hire, private guides, spa and trip assistance — with :brand.',
             ),
         ),

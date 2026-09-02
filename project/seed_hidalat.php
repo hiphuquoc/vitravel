@@ -32,9 +32,21 @@ $__hidalatSeed = array(
     ),
 
     'price_guest_types' => array(
-        array('code' => 'adult', 'sort' => 10, 'age_min' => 12, 'age_max' => 59, 'name' => array('vi' => 'Người lớn', 'en' => 'Adult')),
-        array('code' => 'child', 'sort' => 20, 'age_min' => 2, 'age_max' => 11, 'name' => array('vi' => 'Trẻ em', 'en' => 'Child')),
-        array('code' => 'senior', 'sort' => 30, 'age_min' => 60, 'age_max' => null, 'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)')),
+        array('code' => 'adult', 'sort' => 10, 'age_min' => 12, 'age_max' => 59, 'name' => array('vi' => 'Người lớn',
+
+
+
+'en' => 'Adult')),
+        array('code' => 'child', 'sort' => 20, 'age_min' => 2, 'age_max' => 11, 'name' => array('vi' => 'Trẻ em',
+
+
+
+'en' => 'Child')),
+        array('code' => 'senior', 'sort' => 30, 'age_min' => 60, 'age_max' => null, 'name' => array('vi' => 'Cao tuổi (60+)',
+
+
+
+'en' => 'Senior (60+)')),
     ),
 
     'price_table_defaults' => array(
@@ -59,30 +71,100 @@ $__hidalatSeed = array(
     ),
 
     'content_tags' => array(
-        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?', 'en' => 'Where to eat & drink?'),
-        'where-to-stay' => array('vi' => 'Ở đâu?', 'en' => 'Where to stay?'),
-        'what-to-do' => array('vi' => 'Làm gì & xem gì?', 'en' => 'What to do & see?'),
-        'how-to-get-there' => array('vi' => 'Di chuyển tới Đà Lạt thế nào?', 'en' => 'How to get to Da Lat?'),
-        'travel-tips' => array('vi' => 'Mẹo du lịch', 'en' => 'Travel tips'),
-        'trip-report' => array('vi' => 'Cảm nhận chuyến đi', 'en' => 'How was the trip?'),
-        'which-tour' => array('vi' => 'Chọn tour nào?', 'en' => 'Which tour to choose?'),
+        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?',
+
+
+
+'en' => 'Where to eat & drink?'),
+        'where-to-stay' => array('vi' => 'Ở đâu?',
+
+
+
+'en' => 'Where to stay?'),
+        'what-to-do' => array('vi' => 'Làm gì & xem gì?',
+
+
+
+'en' => 'What to do & see?'),
+        'how-to-get-there' => array('vi' => 'Di chuyển tới Đà Lạt thế nào?',
+
+
+
+'en' => 'How to get to Da Lat?'),
+        'travel-tips' => array('vi' => 'Mẹo du lịch',
+
+
+
+'en' => 'Travel tips'),
+        'trip-report' => array('vi' => 'Cảm nhận chuyến đi',
+
+
+
+'en' => 'How was the trip?'),
+        'which-tour' => array('vi' => 'Chọn tour nào?',
+
+
+
+'en' => 'Which tour to choose?'),
     ),
 
     'travel_styles' => array(
-        'romantic' => array('vi' => 'Lãng mạn & cặp đôi', 'en' => 'Romantic & couples'),
-        'coffee-culture' => array('vi' => 'Văn hoá cà phê & trà', 'en' => 'Coffee & tea culture'),
-        'flower' => array('vi' => 'Hoa & lễ hội', 'en' => 'Flowers & festivals'),
-        'adventure' => array('vi' => 'Phiêu lưu & mạo hiểm', 'en' => 'Adventure'),
-        'family' => array('vi' => 'Gia đình', 'en' => 'Family'),
-        'honeymoon' => array('vi' => 'Trăng mật', 'en' => 'Honeymoon'),
-        'trekking' => array('vi' => 'Trekking & leo núi', 'en' => 'Trekking & hiking'),
-        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
-        'multi-day' => array('vi' => 'Tour nhiều ngày', 'en' => 'Multi-day tour'),
-        'photography' => array('vi' => 'Chụp ảnh & check-in', 'en' => 'Photography'),
-        'balanced' => array('vi' => 'Kỳ nghỉ cân bằng', 'en' => 'Balanced'),
-        'multi-destination-combo' => array('vi' => 'Kết hợp nhiều điểm đến', 'en' => 'Multi-destination combo'),
-        'small-group' => array('vi' => 'Nhóm nhỏ', 'en' => 'Small group'),
-        'agri-tourism' => array('vi' => 'Nông trại & nông sản', 'en' => 'Farm & agri tourism'),
+        'day-trip' => array(
+            'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day trip',
+        ),
+        '2n1d' => array(
+            'vi' => '2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+        ),
+        '3n2d' => array(
+            'vi' => '3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+        ),
+        '4n3d' => array(
+            'vi' => '4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+        ),
+        '5-plus-days' => array(
+            'vi' => 'Từ 5 ngày',
+
+
+
+
+'en' => '5+ days',
+        ),
+        'cafe-agri' => array(
+            'vi' => 'Tour cà phê & nông trại',
+
+
+
+
+'en' => 'Coffee & farm tours',
+        ),
+        'phieu-luu' => array(
+            'vi' => 'Tour phiêu lưu',
+
+
+
+
+'en' => 'Adventure tours',
+        ),
     ),
 
     'review_platforms' => array(
@@ -108,7 +190,11 @@ $__hidalatSeed = array(
             'vi' => array('title' => 'Đà Lạt', 'title_accent' => 'thành phố ngàn hoa trên cao nguyên',
                 'description' => 'Nhiệt độ dịu mát quanh năm, hồ Xuân Hương, thung lũng hoa và những đồi chè — không gian lý tưởng để nghỉ ngơi và khám phá.',
                 'button_label' => 'Khám phá Đà Lạt', 'image_alt' => 'Đà Lạt — thành phố ngàn hoa trên cao nguyên Lâm Đồng'),
-            'en' => array('title' => 'Da Lat', 'title_accent' => 'city of a thousand flowers on the plateau',
+
+
+
+
+'en' => array('title' => 'Da Lat', 'title_accent' => 'city of a thousand flowers on the plateau',
                 'description' => 'Mild temperatures year-round, Xuan Huong Lake, flower valleys and tea hills — an ideal space to rest and explore.',
                 'button_label' => 'Discover Da Lat', 'image_alt' => 'Da Lat — flower city on the Lam Dong plateau'),
         ),
@@ -117,7 +203,11 @@ $__hidalatSeed = array(
             'vi' => array('title' => 'Cầu Đất & đồi chè', 'title_accent' => 'cà phê specialty & sương sớm',
                 'description' => 'Cao nguyên trên 1.600m — tour nông trại cà phê, chụp ảnh đồi chè và thưởng thức ly Arabica ngay tại vườn.',
                 'button_label' => 'Xem tour Cầu Đất', 'image_alt' => 'Đồi chè và cà phê Cầu Đất Đà Lạt'),
-            'en' => array('title' => 'Cau Dat & tea hills', 'title_accent' => 'specialty coffee & morning mist',
+
+
+
+
+'en' => array('title' => 'Cau Dat & tea hills', 'title_accent' => 'specialty coffee & morning mist',
                 'description' => 'Plateau above 1,600m — coffee farm tours, tea-hill photography and Arabica tastings right in the garden.',
                 'button_label' => 'View Cau Dat tours', 'image_alt' => 'Cau Dat tea hills and coffee Da Lat'),
         ),
@@ -126,7 +216,11 @@ $__hidalatSeed = array(
             'vi' => array('title' => 'Langbiang & phiêu lưu', 'title_accent' => 'trekking, jeep & canyoning',
                 'description' => 'Chinh phục đỉnh Langbiang, trượt máng Datanla hay canyoning thác — trải nghiệm mạo hiểm an toàn với đội ngũ địa phương.',
                 'button_label' => 'Xem tour phiêu lưu', 'image_alt' => 'Trekking Langbiang và canyoning Đà Lạt'),
-            'en' => array('title' => 'Langbiang & adventure', 'title_accent' => 'trekking, jeep & canyoning',
+
+
+
+
+'en' => array('title' => 'Langbiang & adventure', 'title_accent' => 'trekking, jeep & canyoning',
                 'description' => 'Summit Langbiang, ride the Datanla coaster or canyon the falls — safe adventure with local guides.',
                 'button_label' => 'View adventure tours', 'image_alt' => 'Langbiang trekking and canyoning Da Lat'),
         ),
@@ -144,341 +238,1230 @@ $__hidalatSeed = array(
     ),
 
     'zone_translations' => array(
-        'trung-tam-xuan-huong' => array('vi' => 'Trung tâm & Hồ Xuân Hương', 'en' => 'City centre & Xuan Huong Lake',
-            'tagline' => array('vi' => 'Nhà thờ Con Gà, chợ đêm, Crazy House và nhịp sống phố núi', 'en' => 'Chicken Church, night market, Crazy House and mountain-town life')),
-        'langbiang-ta-nung' => array('vi' => 'Langbiang & Tà Nung', 'en' => 'Langbiang & Ta Nung',
-            'tagline' => array('vi' => 'Đỉnh Langbiang, làng dân tộc và đường rừng thông', 'en' => 'Langbiang summit, ethnic villages and pine forest trails')),
-        'tuyen-lam-truc-lam' => array('vi' => 'Tuyền Lâm & Trúc Lâm', 'en' => 'Tuyen Lam & Truc Lam',
-            'tagline' => array('vi' => 'Hồ núi lớn nhất, thiền viện và thuyền trên hồ', 'en' => 'Largest mountain lake, zen monastery and lake boats')),
-        'datanla-robin-hill' => array('vi' => 'Datanla & Robin Hill', 'en' => 'Datanla & Robin Hill',
-            'tagline' => array('vi' => 'Thác Datanla, máng trượt và cáp treo Robin Hill', 'en' => 'Datanla Falls, alpine coaster and Robin Hill cable car')),
-        'cau-dat' => array('vi' => 'Cao nguyên Cầu Đất', 'en' => 'Cau Dat highlands',
-            'tagline' => array('vi' => 'Cà phê specialty, đồi chè và khí hậu mát quanh năm', 'en' => 'Specialty coffee, tea hills and cool climate year-round')),
-        'ngoai-o-thanh-pho' => array('vi' => 'Ngoại ô & thác nước', 'en' => 'Outskirts & waterfalls',
-            'tagline' => array('vi' => 'Thác Voi, Đường hầm đất sét, làng Cù Lần', 'en' => 'Elephant Falls, Clay Tunnel, Cu Lan village')),
-        'ket-hop-nha-trang' => array('vi' => 'Kết hợp Nha Trang', 'en' => 'Combined with Nha Trang',
-            'tagline' => array('vi' => 'Nối cao nguyên mát và biển Nha Trang trong một hành trình', 'en' => 'Cool highlands and Nha Trang beach in one journey')),
-        'ket-hop-mui-ne' => array('vi' => 'Kết hợp Mũi Né', 'en' => 'Combined with Mui Ne',
-            'tagline' => array('vi' => 'Đà Lạt — đồi cát Phan Thiết: hai khí hậu trong một chuyến', 'en' => 'Da Lat highlands and Mui Ne dunes — two climates in one trip')),
+        'trung-tam-xuan-huong' => array('vi' => 'Trung tâm & Hồ Xuân Hương',
+
+
+
+'en' => 'City centre & Xuan Huong Lake',
+            'tagline' => array('vi' => 'Nhà thờ Con Gà, chợ đêm, Crazy House và nhịp sống phố núi',
+
+
+
+'en' => 'Chicken Church, night market, Crazy House and mountain-town life')),
+        'langbiang-ta-nung' => array('vi' => 'Langbiang & Tà Nung',
+
+
+
+'en' => 'Langbiang & Ta Nung',
+            'tagline' => array('vi' => 'Đỉnh Langbiang, làng dân tộc và đường rừng thông',
+
+
+
+'en' => 'Langbiang summit, ethnic villages and pine forest trails')),
+        'tuyen-lam-truc-lam' => array('vi' => 'Tuyền Lâm & Trúc Lâm',
+
+
+
+'en' => 'Tuyen Lam & Truc Lam',
+            'tagline' => array('vi' => 'Hồ núi lớn nhất, thiền viện và thuyền trên hồ',
+
+
+
+'en' => 'Largest mountain lake, zen monastery and lake boats')),
+        'datanla-robin-hill' => array('vi' => 'Datanla & Robin Hill',
+
+
+
+'en' => 'Datanla & Robin Hill',
+            'tagline' => array('vi' => 'Thác Datanla, máng trượt và cáp treo Robin Hill',
+
+
+
+'en' => 'Datanla Falls, alpine coaster and Robin Hill cable car')),
+        'cau-dat' => array('vi' => 'Cao nguyên Cầu Đất',
+
+
+
+'en' => 'Cau Dat highlands',
+            'tagline' => array('vi' => 'Cà phê specialty, đồi chè và khí hậu mát quanh năm',
+
+
+
+'en' => 'Specialty coffee, tea hills and cool climate year-round')),
+        'ngoai-o-thanh-pho' => array('vi' => 'Ngoại ô & thác nước',
+
+
+
+'en' => 'Outskirts & waterfalls',
+            'tagline' => array('vi' => 'Thác Voi, Đường hầm đất sét, làng Cù Lần',
+
+
+
+'en' => 'Elephant Falls, Clay Tunnel, Cu Lan village')),
+        'ket-hop-nha-trang' => array('vi' => 'Kết hợp Nha Trang',
+
+
+
+'en' => 'Combined with Nha Trang',
+            'tagline' => array('vi' => 'Nối cao nguyên mát và biển Nha Trang trong một hành trình',
+
+
+
+'en' => 'Cool highlands and Nha Trang beach in one journey')),
+        'ket-hop-mui-ne' => array('vi' => 'Kết hợp Mũi Né',
+
+
+
+'en' => 'Combined with Mui Ne',
+            'tagline' => array('vi' => 'Đà Lạt — đồi cát Phan Thiết: hai khí hậu trong một chuyến',
+
+
+
+'en' => 'Da Lat highlands and Mui Ne dunes — two climates in one trip')),
     ),
 
     'tours' => array(
         array(
             'slug' => 'da-lat-3-ngay-tong-quan',
             'title' => 'Đà Lạt 3 ngày 2 đêm — Tổng quan thành phố ngàn hoa',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.9, 'reviewCount' => 186, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('balanced', 'flower', 'coffee-culture'),
-            'quote' => array('text' => 'Ba ngày vừa đủ để cảm nhận Đà Lạt — từ hồ Xuân Hương, thác Datanla đến đồi chè Cầu Đất.', 'author' => 'Chị Minh Anh'),
-            'places' => array('Hồ Xuân Hương', 'Crazy House', 'Thác Datanla', 'Cầu Đất', 'Chợ đêm'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.9,
+            'reviewCount' => 186,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+            ),
+            'quote' => array(
+                'text' => 'Ba ngày vừa đủ để cảm nhận Đà Lạt — từ hồ Xuân Hương, thác Datanla đến đồi chè Cầu Đất.',
+                'author' => 'Chị Minh Anh',
+            ),
+            'places' => array(
+                'Hồ Xuân Hương',
+                'Crazy House',
+                'Thác Datanla',
+                'Cầu Đất',
+                'Chợ đêm',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Lịch trình cân bằng cho lần đầu: city tour, thác nước, cà phê và buổi tối chợ đêm.',
-            'highlights' => array('City tour các điểm biểu tượng', 'Thác Datanla + máng trượt', 'Tour cà phê Cầu Đất', 'Food tour chợ đêm', 'Tự do khám phá phố đi bộ'),
+            'highlights' => array(
+                'City tour các điểm biểu tượng',
+                'Thác Datanla + máng trượt',
+                'Tour cà phê Cầu Đất',
+                'Tour ẩm thực chợ đêm',
+                'Tự do khám phá phố đi bộ',
+            ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Đón — City tour & hồ Xuân Hương', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm Đà Lạt',
-                    'content' => 'Đón sân bay/bến xe, city tour Crazy House, Nhà thờ Con Gà, dạo hồ Xuân Hương. Tối chợ đêm Đà Lạt.'),
-                array('day' => 2, 'title' => 'Datanla — Cầu Đất', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm Đà Lạt',
-                    'content' => 'Sáng thác Datanla và máng trượt. Chiều tour nông trại cà phê Cầu Đát, thưởng thức cupping.'),
-                array('day' => 3, 'title' => 'Tuyền Lâm — Trúc Lâm — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car', 'cable_car'), 'overnight' => null,
-                    'content' => 'Cáp treo Robin Hill, thiền viện Trúc Lâm, hồ Tuyền Lâm. Ăn trưa và tiễn sân bay/bến xe.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Đón — City tour & hồ Xuân Hương',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm Đà Lạt',
+                    'content' => 'Đón sân bay/bến xe, city tour Crazy House, Nhà thờ Con Gà, dạo hồ Xuân Hương. Tối chợ đêm Đà Lạt.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Datanla — Cầu Đất',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm Đà Lạt',
+                    'content' => 'Sáng thác Datanla và máng trượt. Chiều tour nông trại cà phê Cầu Đát, thưởng thức cupping.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Tuyền Lâm — Trúc Lâm — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                        'cable_car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Cáp treo Robin Hill, thiền viện Trúc Lâm, hồ Tuyền Lâm. Ăn trưa và tiễn sân bay/bến xe.',
+                ),
             ),
-            'inclusions' => array('Xe đưa đón trong chương trình', 'Vé tham quan theo lịch', 'HDV địa phương', 'Bữa ăn ghi trong chương trình'),
-            'exclusions' => array('Vé máy bay/xe liên tỉnh (đặt thêm)', 'Lưu trú (đặt thêm)', 'Đồ uống', 'Tip'),
-            'notes' => array('Có thể gộp đặt homestay, villa hoặc resort qua :brand theo khu vực bạn chọn.', 'Lịch có thể đổi theo thời tiết sương mù.'),
+            'inclusions' => array(
+                'Xe đưa đón trong chương trình',
+                'Vé tham quan theo lịch',
+                'HDV địa phương',
+                'Bữa ăn ghi trong chương trình',
+            ),
+            'exclusions' => array(
+                'Vé máy bay/xe liên tỉnh (đặt thêm)',
+                'Lưu trú (đặt thêm)',
+                'Đồ uống',
+                'Tip',
+            ),
+            'notes' => array(
+                'Có thể gộp đặt homestay, villa hoặc resort qua :brand theo khu vực bạn chọn.',
+                'Lịch có thể đổi theo thời tiết sương mù.',
+            ),
             'faqs' => array(
-                array('q' => 'Tour có bao gồm khách sạn không?', 'a' => 'Giá tour chưa gồm phòng nghỉ. :brand hỗ trợ gợi ý và đặt homestay, villa hoặc resort theo ngân sách và khu vực — ghép vào cùng chuyến đi.'),
-                array('q' => 'Đà Lạt mát không, cần áo ấm không?', 'a' => 'Nhiệt độ thường 15–24°C, tối có thể xuống 10–12°C mùa khô — nên mang áo khoác mỏng.'),
+                array(
+                    'q' => 'Tour có bao gồm khách sạn không?',
+                    'a' => 'Giá tour chưa gồm phòng nghỉ. :brand hỗ trợ gợi ý và đặt homestay, villa hoặc resort theo ngân sách và khu vực — ghép vào cùng chuyến đi.',
+                ),
+                array(
+                    'q' => 'Đà Lạt mát không, cần áo ấm không?',
+                    'a' => 'Nhiệt độ thường 15–24°C, tối có thể xuống 10–12°C mùa khô — nên mang áo khoác mỏng.',
+                ),
             ),
-            'galleryCount' => 6, 'priceFrom' => 2850000.0, 'currency' => 'VND',
+            'galleryCount' => 6,
+            'priceFrom' => 2850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'da-lat-2-ngay-lang-man',
             'title' => 'Đà Lạt 2 ngày 1 đêm — Lãng mạn & hoa',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL2D-01', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 124, 'badge' => 'Cặp đôi yêu thích', 'featured' => true,
-            'styles' => array('romantic', 'honeymoon', 'flower', 'photography'),
-            'quote' => array('text' => 'Bó hoa surprise ở vườn hoa và hoàng hôn hồ Tuyền Lâm — đúng kiểu trăng mật mini.', 'author' => 'Vợ chồng Tuấn — Hà'),
-            'places' => array('Vườn hoa thành phố', 'Hồ Tuyền Lâm', 'Lumiere', 'Hồ Xuân Hương'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => 'Dành cho cặp đôi: vườn hoa, chụp ảnh Lumiere, thuyền hoàng hôn Tuyền Lâm.',
-            'highlights' => array('Vườn hoa & setup chụp ảnh', 'Lumiere Light Garden buổi tối', 'Thuyền picnic hoàng hôn Tuyền Lâm', 'Bữa tối lãng mạn gợi ý'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hoa & ánh sáng', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm Đà Lạt',
-                    'content' => 'Vườn hoa, chụp ảnh couple, chiều Lumiere, tối food tour hoặc nhà hàng view hồ.'),
-                array('day' => 2, 'title' => 'Tuyền Lâm buổi sáng — Tiễn', 'meals' => 'Sáng', 'transport' => array('car', 'boat'), 'overnight' => null,
-                    'content' => 'Sáng thuyền Tuyền Lâm, thiền viện Trúc Lâm, tiễn khách.'),
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL2D-01',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 124,
+            'badge' => 'Cặp đôi yêu thích',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('Xe riêng 2 ngày', 'Vé vườn hoa, Lumiere', 'Thuyền Tuyền Lâm', 'HDV chụp ảnh cơ bản'),
-            'exclusions' => array('Lưu trú', 'Bữa tối fine-dining', 'Trang phục chụp ảnh'),
-            'notes' => array('Có thể thêm dịch vụ hoa surprise qua mục Dịch vụ.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 1950000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Bó hoa surprise ở vườn hoa và hoàng hôn hồ Tuyền Lâm — đúng kiểu trăng mật mini.',
+                'author' => 'Vợ chồng Tuấn — Hà',
+            ),
+            'places' => array(
+                'Vườn hoa thành phố',
+                'Hồ Tuyền Lâm',
+                'Lumiere',
+                'Hồ Xuân Hương',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => 'Dành cho cặp đôi: vườn hoa, chụp ảnh Lumiere, thuyền hoàng hôn Tuyền Lâm.',
+            'highlights' => array(
+                'Vườn hoa & setup chụp ảnh',
+                'Lumiere Light Garden buổi tối',
+                'Thuyền picnic hoàng hôn Tuyền Lâm',
+                'Bữa tối lãng mạn gợi ý',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hoa & ánh sáng',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm Đà Lạt',
+                    'content' => 'Vườn hoa, chụp ảnh couple, chiều Lumiere, tối tour ẩm thực hoặc nhà hàng view hồ.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Tuyền Lâm buổi sáng — Tiễn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng thuyền Tuyền Lâm, thiền viện Trúc Lâm, tiễn khách.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe riêng 2 ngày',
+                'Vé vườn hoa, Lumiere',
+                'Thuyền Tuyền Lâm',
+                'HDV chụp ảnh cơ bản',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Bữa tối fine-dining',
+                'Trang phục chụp ảnh',
+            ),
+            'notes' => array(
+                'Có thể thêm dịch vụ hoa surprise qua mục Dịch vụ.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 1950000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'da-lat-4-ngay-kham-pha-sau',
             'title' => 'Đà Lạt 4 ngày 3 đêm — Khám phá sâu cao nguyên',
-            'zoneSlug' => 'langbiang-ta-nung', 'zone' => 'Langbiang & Tà Nung',
-            'tourCode' => 'DL4D-01', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 4.8, 'reviewCount' => 67, 'badge' => null, 'featured' => true,
-            'styles' => array('trekking', 'adventure', 'coffee-culture', 'multi-day'),
-            'quote' => array('text' => 'Bốn ngày mới đủ để leo Langbiang, canyoning và ngủ một đêm gần Cầu Đất.', 'author' => 'Anh Quốc Bảo'),
-            'places' => array('Langbiang', 'Datanla', 'Cầu Đất', 'Cù Lần', 'Thác Voi'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => 'Hành trình đầy đủ: trekking, canyoning, nông trại và ngoại ô thác Voi.',
-            'highlights' => array('Trekking / jeep Langbiang', 'Canyoning Datanla', '2 ngày Cầu Đất cà phê & chè', 'Làng Cù Lần & Thác Voi', 'City tour ngắn ngày cuối'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'City & Datanla', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm', 'content' => 'City tour, chiều Datanla coaster.'),
-                array('day' => 2, 'title' => 'Langbiang & canyoning', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'jeep'), 'overnight' => 'Trung tâm', 'content' => 'Sáng jeep Langbiang, chiều canyoning (tuỳ điều kiện thời tiết).'),
-                array('day' => 3, 'title' => 'Cầu Đất — Cù Lần', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Cầu Đát / trung tâm', 'content' => 'Tour cà phê, chiều làng Cù Lần xe lửa mini.'),
-                array('day' => 4, 'title' => 'Thác Voi — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Thác Voi, Đường hầm đất sét, tiễn khách.'),
+            'zoneSlug' => 'langbiang-ta-nung',
+            'zone' => 'Langbiang & Tà Nung',
+            'tourCode' => 'DL4D-01',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 4.8,
+            'reviewCount' => 67,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                '4n3d',
+                'phieu-luu',
             ),
-            'inclusions' => array('Xe riêng', 'Vé & hoạt động theo lịch', 'HDV', 'Canyoning có HLV'),
-            'exclusions' => array('Lưu trú', 'Xe liên tỉnh', 'Bảo hiểm thể thao canyoning'),
-            'notes' => array('Canyoning có thể thay bằng ATV/jeep khi mưa lớn.'), 'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 4200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Bốn ngày mới đủ để leo Langbiang, canyoning và ngủ một đêm gần Cầu Đất.',
+                'author' => 'Anh Quốc Bảo',
+            ),
+            'places' => array(
+                'Langbiang',
+                'Datanla',
+                'Cầu Đất',
+                'Cù Lần',
+                'Thác Voi',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => 'Hành trình đầy đủ: trekking, canyoning, nông trại và ngoại ô thác Voi.',
+            'highlights' => array(
+                'Trekking / jeep Langbiang',
+                'Canyoning Datanla',
+                '2 ngày Cầu Đất cà phê & chè',
+                'Làng Cù Lần & Thác Voi',
+                'City tour ngắn ngày cuối',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'City & Datanla',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm',
+                    'content' => 'City tour, chiều Datanla coaster.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Langbiang & canyoning',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'jeep',
+                    ),
+                    'overnight' => 'Trung tâm',
+                    'content' => 'Sáng jeep Langbiang, chiều canyoning (tuỳ điều kiện thời tiết).',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Cầu Đất — Cù Lần',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Cầu Đát / trung tâm',
+                    'content' => 'Tour cà phê, chiều làng Cù Lần xe lửa mini.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Thác Voi — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Thác Voi, Đường hầm đất sét, tiễn khách.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe riêng',
+                'Vé & hoạt động theo lịch',
+                'HDV',
+                'Canyoning có HLV',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Xe liên tỉnh',
+                'Bảo hiểm thể thao canyoning',
+            ),
+            'notes' => array(
+                'Canyoning có thể thay bằng ATV/jeep khi mưa lớn.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 4200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'city-tour-da-lat-1-ngay',
-            'title' => 'City tour Đà Lạt 1 ngày — Biểu tượng & linh thiền',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL1D-01', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 312, 'badge' => 'Phổ biến', 'featured' => true,
-            'styles' => array('day-trip', 'balanced', 'photography'),
-            'quote' => array('text' => 'Một ngày gom hết Crazy House, Linh Phước và hồ — không cần tự lái xe.', 'author' => 'Gia đình chị Thảo'),
-            'places' => array('Crazy House', 'Linh Phước', 'Domaine de Marie', 'Hồ Xuân Hương'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'title' => 'Tour thành phố Đà Lạt 1 ngày — Biểu tượng & linh thiền',
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL1D-01',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 312,
+            'badge' => 'Phổ biến',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Một ngày gom hết Crazy House, Linh Phước và hồ — không cần tự lái xe.',
+                'author' => 'Gia đình chị Thảo',
+            ),
+            'places' => array(
+                'Crazy House',
+                'Linh Phước',
+                'Domaine de Marie',
+                'Hồ Xuân Hương',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Tour ghép hoặc riêng — các điểm check-in kinh điển trong một ngày.',
-            'highlights' => array('Crazy House (Hang Nga)', 'Chùa Linh Phước ve chai', 'Domaine de Marie', 'Dạo hồ Xuân Hương'),
-            'itinerary' => array(array('day' => 1, 'title' => 'City tour trọn ngày', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => '08:30–17:00 tham quan các điểm, ăn trưa quán địa phương, chiều tự do chợ Đà Lạt.')),
-            'inclusions' => array('Xe 16 chỗ hoặc riêng', 'Vé Crazy House, Linh Phước', 'HDV', 'Bữa trưa'),
-            'exclusions' => array('Đồ uống', 'Mua sắm chợ'), 'notes' => array('Ghép nhóm max 12 khách.'),
-            'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 650000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Crazy House (Hang Nga)',
+                'Chùa Linh Phước ve chai',
+                'Domaine de Marie',
+                'Dạo hồ Xuân Hương',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tour thành phố trọn ngày',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => '08:30–17:00 tham quan các điểm, ăn trưa quán địa phương, chiều tự do chợ Đà Lạt.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe 16 chỗ hoặc riêng',
+                'Vé Crazy House, Linh Phước',
+                'HDV',
+                'Bữa trưa',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+                'Mua sắm chợ',
+            ),
+            'notes' => array(
+                'Ghép nhóm max 12 khách.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'canyoning-datanla-1-ngay',
             'title' => 'Canyoning thác Datanla — 1 ngày phiêu lưu',
-            'zoneSlug' => 'datanla-robin-hill', 'zone' => 'Datanla & Robin Hill',
-            'tourCode' => 'DL1D-02', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 198, 'badge' => 'Mạo hiểm', 'featured' => true,
-            'styles' => array('adventure', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Nhảy thác 15m — sợ ban đầu nhưng HLV cực kỳ chuyên nghiệp.', 'author' => 'Bạn Minh Khoa'),
-            'places' => array('Thác Datanla', 'Rừng thông Datanla'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => 'Hoạt động signature của Đà Lạt — leo thác, zipline, nhảy nước với HLV chứng nhận.',
-            'highlights' => array('HLV quốc tế', 'Thiết bị đầy đủ', 'Nhảy thác an toàn', 'Nhóm 4–8 khách'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Canyoning Datanla', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Sáng briefing, 3–4 giờ canyoning, trưa tại khu vực thác, về trước 16h.')),
-            'inclusions' => array('HLV', 'Thiết bị', 'Bảo hiểm cơ bản', 'Trưa'), 'exclusions' => array('Đồ cá nhân ướt', 'Video GoPro'),
-            'notes' => array('Biết bơi; từ 16 tuổi; hủy khi mưa lớn.'), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 1200000.0, 'currency' => 'VND',
+            'zoneSlug' => 'datanla-robin-hill',
+            'zone' => 'Datanla & Robin Hill',
+            'tourCode' => 'DL1D-02',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 198,
+            'badge' => 'Mạo hiểm',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'phieu-luu',
+            ),
+            'quote' => array(
+                'text' => 'Nhảy thác 15m — sợ ban đầu nhưng HLV cực kỳ chuyên nghiệp.',
+                'author' => 'Bạn Minh Khoa',
+            ),
+            'places' => array(
+                'Thác Datanla',
+                'Rừng thông Datanla',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => 'Hoạt động đặc trưng của Đà Lạt — leo thác, zipline, nhảy nước với HLV chứng nhận.',
+            'highlights' => array(
+                'HLV quốc tế',
+                'Thiết bị đầy đủ',
+                'Nhảy thác an toàn',
+                'Nhóm 4–8 khách',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Canyoning Datanla',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng briefing, 3–4 giờ canyoning, trưa tại khu vực thác, về trước 16h.',
+                ),
+            ),
+            'inclusions' => array(
+                'HLV',
+                'Thiết bị',
+                'Bảo hiểm cơ bản',
+                'Trưa',
+            ),
+            'exclusions' => array(
+                'Đồ cá nhân ướt',
+                'Video GoPro',
+            ),
+            'notes' => array(
+                'Biết bơi; từ 16 tuổi; hủy khi mưa lớn.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 1200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'langbiang-jeep-trekking-1-ngay',
             'title' => 'Langbiang — Jeep & trekking đỉnh 1 ngày',
-            'zoneSlug' => 'langbiang-ta-nung', 'zone' => 'Langbiang & Tà Nung',
-            'tourCode' => 'DL1D-03', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 156, 'badge' => null, 'featured' => true,
-            'styles' => array('trekking', 'adventure', 'day-trip'),
-            'quote' => array('text' => 'View đỉnh Langbiang nhìn toàn thành phố trong sương — đáng mọi bước chân.', 'author' => 'Anh Đức Thắng'),
-            'places' => array('Núi Langbiang', 'Làng K\'Ho'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'zoneSlug' => 'langbiang-ta-nung',
+            'zone' => 'Langbiang & Tà Nung',
+            'tourCode' => 'DL1D-03',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 156,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'phieu-luu',
+            ),
+            'quote' => array(
+                'text' => 'View đỉnh Langbiang nhìn toàn thành phố trong sương — đáng mọi bước chân.',
+                'author' => 'Anh Đức Thắng',
+            ),
+            'places' => array(
+                'Núi Langbiang',
+                'Làng K\'Ho',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Jeep lên đồi hoặc trekking chân đến đỉnh 2.167m — ngọn cao nhất gần thành phố.',
-            'highlights' => array('Jeep địa hình hoặc trek', 'View toàn cảnh Đà Lạt', 'Gặp gỡ văn hoá K\'Ho', 'Trưa nhà dân / picnic'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Langbiang summit', 'meals' => 'Trưa', 'transport' => array('car', 'jeep', 'trekking'), 'overnight' => null,
-                'content' => 'Sáng xe tới chân núi, jeep hoặc trek lên đỉnh, trưa dã ngoại, chiều về.')),
-            'inclusions' => array('Xe', 'Jeep / HDV trek', 'Vé khu du lịch', 'Trưa'), 'exclusions' => array('Tip', 'Áo ấm (nên tự mang)'),
-            'notes' => array('Sương mù buổi sáng — view phụ thuộc thời tiết.'), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 850000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Jeep địa hình hoặc trek',
+                'View toàn cảnh Đà Lạt',
+                'Gặp gỡ văn hoá K\'Ho',
+                'Trưa nhà dân / picnic',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Langbiang summit',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                        'jeep',
+                        'trekking',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng xe tới chân núi, jeep hoặc trek lên đỉnh, trưa dã ngoại, chiều về.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Jeep / HDV trek',
+                'Vé khu du lịch',
+                'Trưa',
+            ),
+            'exclusions' => array(
+                'Tip',
+                'Áo ấm (nên tự mang)',
+            ),
+            'notes' => array(
+                'Sương mù buổi sáng — view phụ thuộc thời tiết.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cau-dat-cafe-tea-1-ngay',
             'title' => 'Cầu Đất — Tour cà phê & đồi chè 1 ngày',
-            'zoneSlug' => 'cau-dat', 'zone' => 'Cao nguyên Cầu Đất',
-            'tourCode' => 'DL1D-04', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 203, 'badge' => 'Cà phê', 'featured' => true,
-            'styles' => array('coffee-culture', 'agri-tourism', 'photography', 'day-trip'),
-            'quote' => array('text' => 'Hiểu luôn sự khác biệt Arabica Cầu Đất sau buổi cupping — không uống cà phê như trước nữa.', 'author' => 'Chị Lan Coffee'),
-            'places' => array('Cầu Đất Farm', 'Đồi chè', 'Dalat Milk'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => 'Agri-tourism đặc trưng: thu hoạch, chế biến, cupping và chụp đồi chê.',
-            'highlights' => array('Tham quan vườn cà phê', 'Cupping specialty', 'Đồi chè & dâu tây', 'Ghé Dalat Milk (tuỳ chọn)'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Cầu Đất farm tour', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Sáng farm tour, cupping, trưa farm-to-table, chiều đồi chè chụp ảnh.')),
-            'inclusions' => array('Xe', 'HDV cà phê', 'Cupping', 'Trưa'), 'exclusions' => array('Mua cà phê mang về'),
-            'notes' => array('Mùa thu hoạch chính tháng 11–1.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 750000.0, 'currency' => 'VND',
+            'zoneSlug' => 'cau-dat',
+            'zone' => 'Cao nguyên Cầu Đất',
+            'tourCode' => 'DL1D-04',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 203,
+            'badge' => 'Cà phê',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'cafe-agri',
+            ),
+            'quote' => array(
+                'text' => 'Hiểu luôn sự khác biệt Arabica Cầu Đất sau buổi cupping — không uống cà phê như trước nữa.',
+                'author' => 'Chị Lan Coffee',
+            ),
+            'places' => array(
+                'Cầu Đất Farm',
+                'Đồi chè',
+                'Dalat Milk',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => 'Du lịch nông nghiệp đặc trưng: thu hoạch, chế biến, cupping và chụp đồi chê.',
+            'highlights' => array(
+                'Tham quan vườn cà phê',
+                'Cupping specialty',
+                'Đồi chè & dâu tây',
+                'Ghé Dalat Milk (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cầu Đất farm tour',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng farm tour, cupping, trưa farm-to-table, chiều đồi chè chụp ảnh.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV cà phê',
+                'Cupping',
+                'Trưa',
+            ),
+            'exclusions' => array(
+                'Mua cà phê mang về',
+            ),
+            'notes' => array(
+                'Mùa thu hoạch chính tháng 11–1.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 750000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'thac-voi-cu-lan-1-ngay',
             'title' => 'Thác Voi — Đường hầm đất sét — Cù Lần 1 ngày',
-            'zoneSlug' => 'ngoai-o-thanh-pho', 'zone' => 'Ngoại ô & thác nước',
-            'tourCode' => 'DL1D-05', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 134, 'badge' => null, 'featured' => false,
-            'styles' => array('family', 'day-trip', 'balanced'),
-            'quote' => array('text' => 'Con thích xe lửa Cù Lần, bố mẹ thích Thác Voi — ai cũng có kỷ niệm.', 'author' => 'Gia đình anh Việt'),
-            'places' => array('Thác Voi', 'Đường hầm đất sét', 'Làng Cù Lần'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'zoneSlug' => 'ngoai-o-thanh-pho',
+            'zone' => 'Ngoại ô & thác nước',
+            'tourCode' => 'DL1D-05',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 134,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Con thích xe lửa Cù Lần, bố mẹ thích Thác Voi — ai cũng có kỷ niệm.',
+                'author' => 'Gia đình anh Việt',
+            ),
+            'places' => array(
+                'Thác Voi',
+                'Đường hầm đất sét',
+                'Làng Cù Lần',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Tour ngoại ô phù hợp gia đình — thác 30m, hầm điêu khác đất sét và làng cổ tích.',
-            'highlights' => array('Thác Voi (Elephant Falls)', 'Clay Tunnel diorama', 'Cù Lần xe lửa mini', 'Buffet dâu / sữa chua'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Ngoại ô Đà Lạt', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Thác Voi sáng, Clay Tunnel trưa, Cù Lần chiều.')),
-            'inclusions' => array('Xe', 'Vé các điểm', 'HDV', 'Trưa'), 'exclusions' => array('Hoạt động mạo hiểm Cù Lần'),
-            'notes' => array('Đường đèo — say xe nên uống thuốc trước.'), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 720000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Thác Voi (Elephant Falls)',
+                'Clay Tunnel diorama',
+                'Cù Lần xe lửa mini',
+                'Buffet dâu / sữa chua',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Ngoại ô Đà Lạt',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Thác Voi sáng, Clay Tunnel trưa, Cù Lần chiều.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Vé các điểm',
+                'HDV',
+                'Trưa',
+            ),
+            'exclusions' => array(
+                'Hoạt động mạo hiểm Cù Lần',
+            ),
+            'notes' => array(
+                'Đường đèo — say xe nên uống thuốc trước.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 720000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'festival-hoa-da-lat-2n1d',
             'title' => 'Festival hoa Đà Lạt — 2 ngày 1 đêm (cuối tháng 12)',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL2D-02', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 89, 'badge' => 'Mùa hoa', 'featured' => true,
-            'styles' => array('flower', 'romantic', 'photography'),
-            'quote' => array('text' => 'Đúng mùa festival — đường phố ngập hoa, không khí như lễ hội thật sự.', 'author' => 'Chị Hồng Hoa'),
-            'places' => array('Đường hoa', 'Vườn hoa', 'Hồ Xuân Hương'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => 'Gói riêng mùa Festival hoa (thường 20–31/12): đường hoa, parade và chụp ảnh.',
-            'highlights' => array('Tham quan đường hoa', 'Vườn hoa festival', 'Photo walk có HDV', 'Gợi ý homestay view hoa'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Khai mạc & đường hoa', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm', 'content' => 'Chiều tối dạo đường hoa, chụp ảnh.'),
-                array('day' => 2, 'title' => 'Vườn hoa — Tiễn', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Sáng vườn hoa, tiễn khách.'),
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL2D-02',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 89,
+            'badge' => 'Mùa hoa',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('Xe', 'HDV', 'Vé vườn hoa'), 'exclusions' => array('Lưu trú (nên đặt sớm mùa festival)', 'Vé xe vào Đà Lạt mùa festival'),
-            'notes' => array('Chỉ vận hành khoảng cuối tháng 12 — đặt trước 2–4 tuần.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 1650000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đúng mùa festival — đường phố ngập hoa, không khí như lễ hội thật sự.',
+                'author' => 'Chị Hồng Hoa',
+            ),
+            'places' => array(
+                'Đường hoa',
+                'Vườn hoa',
+                'Hồ Xuân Hương',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => 'Gói riêng mùa Festival hoa (thường 20–31/12): đường hoa, parade và chụp ảnh.',
+            'highlights' => array(
+                'Tham quan đường hoa',
+                'Vườn hoa festival',
+                'Photo walk có HDV',
+                'Gợi ý homestay view hoa',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Khai mạc & đường hoa',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm',
+                    'content' => 'Chiều tối dạo đường hoa, chụp ảnh.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Vườn hoa — Tiễn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng vườn hoa, tiễn khách.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV',
+                'Vé vườn hoa',
+            ),
+            'exclusions' => array(
+                'Lưu trú (nên đặt sớm mùa festival)',
+                'Vé xe vào Đà Lạt mùa festival',
+            ),
+            'notes' => array(
+                'Chỉ vận hành khoảng cuối tháng 12 — đặt trước 2–4 tuần.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 1650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'gia-dinh-da-lat-2n1d',
             'title' => 'Đà Lạt gia đình 2 ngày 1 đêm — Nhẹ nhàng & vui',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL2D-03', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.8, 'reviewCount' => 145, 'badge' => 'Gia đình', 'featured' => true,
-            'styles' => array('family', 'balanced', 'day-trip'),
-            'quote' => array('text' => 'Bé 5 tuổi mê Zoodoo và dâu tây — bố mẹ được nghỉ thật sự.', 'author' => 'Chị Ngọc Ánh'),
-            'places' => array('Zoodoo', 'Vườn dâu', 'Datanla coaster', 'Chợ đêm'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => 'Lịch nhẹ cho trẻ nhỏ: thú mini, hái dâu, máng trượt Datanla.',
-            'highlights' => array('Zoodoo petting zoo', 'Hái dâu tây', 'Máng trượt Datanla (an toàn)', 'Chợ đêm ăn vặt'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Zoodoo & dâu', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Trung tâm', 'content' => 'Sáng Zoodoo, chiều vườn dâu.'),
-                array('day' => 2, 'title' => 'Datanla — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Datanla coaster, tiễn.'),
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL2D-03',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.8,
+            'reviewCount' => 145,
+            'badge' => 'Gia đình',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('Xe riêng', 'Vé điểm tham quan', 'HDV gia đình'), 'exclusions' => array('Lưu trú', 'Ăn tối chợ'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 1750000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Bé 5 tuổi mê Zoodoo và dâu tây — bố mẹ được nghỉ thật sự.',
+                'author' => 'Chị Ngọc Ánh',
+            ),
+            'places' => array(
+                'Zoodoo',
+                'Vườn dâu',
+                'Datanla coaster',
+                'Chợ đêm',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => 'Lịch nhẹ cho trẻ nhỏ: thú mini, hái dâu, máng trượt Datanla.',
+            'highlights' => array(
+                'Zoodoo petting zoo',
+                'Hái dâu tây',
+                'Máng trượt Datanla (an toàn)',
+                'Chợ đêm ăn vặt',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Zoodoo & dâu',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Trung tâm',
+                    'content' => 'Sáng Zoodoo, chiều vườn dâu.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Datanla — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Datanla coaster, tiễn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe riêng',
+                'Vé điểm tham quan',
+                'HDV gia đình',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Ăn tối chợ',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 1750000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'da-lat-nha-trang-3n2d',
             'title' => 'Đà Lạt — Nha Trang 3 ngày 2 đêm',
-            'zoneSlug' => 'ket-hop-nha-trang', 'zone' => 'Kết hợp Nha Trang',
-            'tourCode' => 'DLNT3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.8, 'reviewCount' => 76, 'badge' => 'Combo', 'featured' => true,
-            'styles' => array('multi-destination-combo', 'balanced', 'romantic'),
-            'quote' => array('text' => 'Mát ở Đà Lạt, tắm biển Nha Trang — combo hoàn hảo từ Sài Gòn.', 'author' => 'Vợ chồng anh Phong'),
-            'places' => array('Đà Lạt', 'Đèo Khánh Vĩnh', 'Nha Trang'),
-            'start' => 'Đà Lạt', 'end' => 'Nha Trang',
-            'highlightsIntro' => '2 đêm Đà Lạt + 1 đêm Nha Trang (hoặc ngược) — xe limousine/bus nối sẵn.',
-            'highlights' => array('City tour Đà Lạt', 'Cà phê Cầu Đất', 'Xe xuống Nha Trang ~3.5h', 'Gợi ý beach time'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đà Lạt city', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đà Lạt', 'content' => 'City tour, chợ đêm.'),
-                array('day' => 2, 'title' => 'Cầu Đất — xuống Nha Trang', 'meals' => 'Sáng; Tối', 'transport' => array('car', 'bus'), 'overnight' => 'Nha Trang', 'content' => 'Sáng Cầu Đất, chiều xe xuống biển.'),
-                array('day' => 3, 'title' => 'Nha Trang tự do — Kết thúc', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Tự do biển, tiễn sân bay/bến.'),
+            'zoneSlug' => 'ket-hop-nha-trang',
+            'zone' => 'Kết hợp Nha Trang',
+            'tourCode' => 'DLNT3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.8,
+            'reviewCount' => 76,
+            'badge' => 'Combo',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('Xe Đà Lạt', 'Vé tham quan', 'Xe Đà Lạt—Nha Trang', 'HDV Đà Lạt'),
-            'exclusions' => array('Lưu trú', 'Tour biển Nha Trang', 'Vé bay về'),
-            'notes' => array('Có thể đảo chiều bắt đầu từ Nha Trang.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 3200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Mát ở Đà Lạt, tắm biển Nha Trang — combo hoàn hảo từ Sài Gòn.',
+                'author' => 'Vợ chồng anh Phong',
+            ),
+            'places' => array(
+                'Đà Lạt',
+                'Đèo Khánh Vĩnh',
+                'Nha Trang',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Nha Trang',
+            'highlightsIntro' => '2 đêm Đà Lạt + 1 đêm Nha Trang (hoặc ngược) — xe limousine/bus nối sẵn.',
+            'highlights' => array(
+                'City tour Đà Lạt',
+                'Cà phê Cầu Đất',
+                'Xe xuống Nha Trang ~3.5h',
+                'Gợi ý beach time',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đà Lạt city',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đà Lạt',
+                    'content' => 'City tour, chợ đêm.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Cầu Đất — xuống Nha Trang',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                        'bus',
+                    ),
+                    'overnight' => 'Nha Trang',
+                    'content' => 'Sáng Cầu Đất, chiều xe xuống biển.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Nha Trang tự do — Kết thúc',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tự do biển, tiễn sân bay/bến.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe Đà Lạt',
+                'Vé tham quan',
+                'Xe Đà Lạt—Nha Trang',
+                'HDV Đà Lạt',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Tour biển Nha Trang',
+                'Vé bay về',
+            ),
+            'notes' => array(
+                'Có thể đảo chiều bắt đầu từ Nha Trang.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 3200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'da-lat-mui-ne-3n2d',
             'title' => 'Đà Lạt — Mũi Né 3 ngày 2 đêm',
-            'zoneSlug' => 'ket-hop-mui-ne', 'zone' => 'Kết hợp Mũi Né',
-            'tourCode' => 'DLMN3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.7, 'reviewCount' => 54, 'badge' => null, 'featured' => false,
-            'styles' => array('multi-destination-combo', 'adventure', 'photography'),
-            'quote' => array('text' => 'Sương Đà Lạt buổi sáng, đồi cát Mũi Né chiều — contrast tuyệt vời.', 'author' => 'Nhóm bạn Sài Gòn'),
-            'places' => array('Đà Lạt', 'Đồi cát', 'Mũi Né'),
-            'start' => 'Đà Lạt', 'end' => 'Mũi Né',
-            'highlightsIntro' => 'Cao nguyên + sa mạc mini — phổ biến với khách miền Nam.',
-            'highlights' => array('Đà Lạt 2 ngày', 'Xe xuống Phan Thiết', 'Gợi ý đồi cát sunrise', 'Seafood Mũi Né'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đà Lạt', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đà Lạt', 'content' => 'City + Datanla.'),
-                array('day' => 2, 'title' => 'Xuống Mũi Né', 'meals' => 'Sáng; Tối', 'transport' => array('car', 'bus'), 'overnight' => 'Mũi Né', 'content' => 'Xe ~3h xuống biển.'),
-                array('day' => 3, 'title' => 'Mũi Né — Tiễn', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Tự do, tiễn.'),
+            'zoneSlug' => 'ket-hop-mui-ne',
+            'zone' => 'Kết hợp Mũi Né',
+            'tourCode' => 'DLMN3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.7,
+            'reviewCount' => 54,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('Xe Đà Lạt', 'HDV', 'Xe nối Mũi Né'), 'exclusions' => array('Lưu trú', 'Jeep đồi cát'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 2950000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Sương Đà Lạt buổi sáng, đồi cát Mũi Né chiều — contrast tuyệt vời.',
+                'author' => 'Nhóm bạn Sài Gòn',
+            ),
+            'places' => array(
+                'Đà Lạt',
+                'Đồi cát',
+                'Mũi Né',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Mũi Né',
+            'highlightsIntro' => 'Cao nguyên + sa mạc mini — phổ biến với khách miền Nam.',
+            'highlights' => array(
+                'Đà Lạt 2 ngày',
+                'Xe xuống Phan Thiết',
+                'Gợi ý đồi cát sunrise',
+                'Seafood Mũi Né',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đà Lạt',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đà Lạt',
+                    'content' => 'City + Datanla.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Xuống Mũi Né',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                        'bus',
+                    ),
+                    'overnight' => 'Mũi Né',
+                    'content' => 'Xe ~3h xuống biển.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mũi Né — Tiễn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tự do, tiễn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe Đà Lạt',
+                'HDV',
+                'Xe nối Mũi Né',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Jeep đồi cát',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 2950000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'food-tour-cho-dem-nua-dem',
-            'title' => 'Food tour chợ đêm Đà Lạt — Buổi tối',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL0.5D-01', 'duration' => 'Nửa đêm', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 267, 'badge' => 'Ăn uống', 'featured' => true,
-            'styles' => array('day-trip', 'coffee-culture'),
-            'quote' => array('text' => 'Bánh tráng nướng, sữa đậu nành nóng — ăn no mà vẫn muốn quay lại.', 'author' => 'Food blogger Ken'),
-            'places' => array('Chợ đêm Đà Lạt', 'Hồ Xuân Hương'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
-            'highlightsIntro' => '18:00–22:00 — dẫn ăn 6–8 món đặc sản chợ đêm với HDV foodie.',
-            'highlights' => array('Bánh tráng nướng', 'Sữa đậu nành', 'Xiên nướng', 'Kem bơ / dâu'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Chợ đêm', 'meals' => 'Tối', 'transport' => array('walking'), 'overnight' => null,
-                'content' => 'Đi bộ chợ đêm, thử món, kể chuyện ẩm thực Đà Lạt.')),
-            'inclusions' => array('HDV foodie', '7–8 món tasting'), 'exclusions' => array('Đồ uống thêm', 'Mua sắm'),
-            'notes' => array('Báo dị ứng thực phẩm trước.'), 'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 380000.0, 'currency' => 'VND',
+            'title' => 'Tour ẩm thực chợ đêm Đà Lạt — Buổi tối',
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL0.5D-01',
+            'duration' => 'Nửa đêm',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 267,
+            'badge' => 'Ăn uống',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Bánh tráng nướng, sữa đậu nành nóng — ăn no mà vẫn muốn quay lại.',
+                'author' => 'Food blogger Ken',
+            ),
+            'places' => array(
+                'Chợ đêm Đà Lạt',
+                'Hồ Xuân Hương',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
+            'highlightsIntro' => '18:00–22:00 — dẫn ăn 6–8 món đặc sản chợ đêm với HDV am thực.',
+            'highlights' => array(
+                'Bánh tráng nướng',
+                'Sữa đậu nành',
+                'Xiên nướng',
+                'Kem bơ / dâu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Chợ đêm',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'walking',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đi bộ chợ đêm, thử món, kể chuyện ẩm thực Đà Lạt.',
+                ),
+            ),
+            'inclusions' => array(
+                'HDV am thực',
+                '7–8 món tasting',
+            ),
+            'exclusions' => array(
+                'Đồ uống thêm',
+                'Mua sắm',
+            ),
+            'notes' => array(
+                'Báo dị ứng thực phẩm trước.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 3,
+            'priceFrom' => 380000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'tuyen-lam-truc-lam-robin-1-ngay',
             'title' => 'Tuyền Lâm — Trúc Lâm — Robin Hill 1 ngày',
-            'zoneSlug' => 'tuyen-lam-truc-lam', 'zone' => 'Tuyền Lâm & Trúc Lâm',
-            'tourCode' => 'DL1D-06', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 178, 'badge' => null, 'featured' => true,
-            'styles' => array('balanced', 'romantic', 'photography', 'day-trip'),
-            'quote' => array('text' => 'Cáp treo Robin Hill nhìn xuống hồ Tuyền Lâm — view đẹp nhất chuyến đi.', 'author' => 'Chị Thùy Linh'),
-            'places' => array('Robin Hill', 'Trúc Lâm', 'Hồ Tuyền Lâm'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'zoneSlug' => 'tuyen-lam-truc-lam',
+            'zone' => 'Tuyền Lâm & Trúc Lâm',
+            'tourCode' => 'DL1D-06',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 178,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Cáp treo Robin Hill nhìn xuống hồ Tuyền Lâm — view đẹp nhất chuyến đi.',
+                'author' => 'Chị Thùy Linh',
+            ),
+            'places' => array(
+                'Robin Hill',
+                'Trúc Lâm',
+                'Hồ Tuyền Lâm',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Combo cáp treo + thiền viện + thuyền hồ — yên tĩnh và đẹp.',
-            'highlights' => array('Cáp treo Robin Hill', 'Thiền viện Trúc Lâm', 'Thuyền Tuyền Lâm', 'Paddle boat (tuỳ chọn)'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Tuyền Lâm circuit', 'meals' => 'Trưa', 'transport' => array('car', 'cable_car', 'boat'), 'overnight' => null,
-                'content' => 'Cáp treo xuống Trúc Lâm, thuyền hồ, trưa nhà hàng view hồ.')),
-            'inclusions' => array('Xe', 'Vé cáp treo', 'Thuyền', 'HDV'), 'exclusions' => array('Đồ uống'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 680000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Cáp treo Robin Hill',
+                'Thiền viện Trúc Lâm',
+                'Thuyền Tuyền Lâm',
+                'Paddle boat (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tuyền Lâm circuit',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                        'cable_car',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Cáp treo xuống Trúc Lâm, thuyền hồ, trưa nhà hàng view hồ.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Vé cáp treo',
+                'Thuyền',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 680000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'chup-anh-trang-mat-da-lat',
             'title' => 'Tour chụp ảnh & trăng mật Đà Lạt — 1 ngày',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL1D-07', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 92, 'badge' => 'Pre-wedding', 'featured' => false,
-            'styles' => array('honeymoon', 'photography', 'romantic', 'flower'),
-            'quote' => array('text' => 'Photographer biết góc hồ sương sớm — ảnh không cần filter.', 'author' => 'Cặp đôi Huy — Mai'),
-            'places' => array('Hồ Xuân Hương', 'Đồi chè', 'Vườn hoa'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL1D-07',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 92,
+            'badge' => 'Pre-wedding',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Photographer biết góc hồ sương sớm — ảnh không cần filter.',
+                'author' => 'Cặp đôi Huy — Mai',
+            ),
+            'places' => array(
+                'Hồ Xuân Hương',
+                'Đồi chè',
+                'Vườn hoa',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Xe + photographer half-day — góc hồ, đồi chè, vườn hoa cho couple.',
-            'highlights' => array('Photographer 4h', '3–4 địa điểm', 'Gợi ý trang phục', 'Gửi file chỉnh sơ'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Photo tour', 'meals' => null, 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Sáng sớm hồ sương, trưa đồi chè/vườn hoa.')),
-            'inclusions' => array('Xe', 'Photographer', '50+ ảnh chỉnh màu'), 'exclusions' => array('Makeup', 'Trang phục'),
-            'notes' => array('Đặt thêm wedding photo support trong Dịch vụ.'), 'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 2500000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Photographer 4h',
+                '3–4 địa điểm',
+                'Gợi ý trang phục',
+                'Gửi file chỉnh sơ',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tour chụp ảnh',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng sớm hồ sương, trưa đồi chè/vườn hoa.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Photographer',
+                '50+ ảnh chỉnh màu',
+            ),
+            'exclusions' => array(
+                'Makeup',
+                'Trang phục',
+            ),
+            'notes' => array(
+                'Đặt thêm wedding photo support trong Dịch vụ.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 2500000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'nau-an-da-lat-half-day',
             'title' => 'Lớp nấu ăn Đà Lạt — Nửa ngày',
-            'zoneSlug' => 'trung-tam-xuan-huong', 'zone' => 'Trung tâm & Hồ Xuân Hương',
-            'tourCode' => 'DL0.5D-02', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 48, 'badge' => null, 'featured' => false,
-            'styles' => array('coffee-culture', 'day-trip', 'family'),
-            'quote' => array('text' => 'Tự làm bánh căn và salad atiso — mang recipe về nhà.', 'author' => 'Khách Úc'),
-            'places' => array('Farm atiso', 'Bếp lớp học'),
-            'start' => 'Đà Lạt', 'end' => 'Đà Lạt',
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'zone' => 'Trung tâm & Hồ Xuân Hương',
+            'tourCode' => 'DL0.5D-02',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 48,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Tự làm bánh căn và salad atiso — mang recipe về nhà.',
+                'author' => 'Khách Úc',
+            ),
+            'places' => array(
+                'Farm atiso',
+                'Bếp lớp học',
+            ),
+            'start' => 'Đà Lạt',
+            'end' => 'Đà Lạt',
             'highlightsIntro' => 'Chợ → nấu 3 món đặc trưng (atiso, rau củ cao nguyên) — ăn trưa thành quả.',
-            'highlights' => array('Tour chợ sáng', 'Nấu 3 món', 'Recipe card', 'Ăn trưa'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Cooking class', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => '08:00 chợ, 09:30 nấu, 12:00 ăn.')),
-            'inclusions' => array('Nguyên liệu', 'Chef HDV', 'Trưa'), 'exclusions' => array(),
-            'notes' => array('Vegetarian on request.'), 'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 550000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Tour chợ sáng',
+                'Nấu 3 món',
+                'Recipe card',
+                'Ăn trưa',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cooking class',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => '08:00 chợ, 09:30 nấu, 12:00 ăn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Nguyên liệu',
+                'Chef HDV',
+                'Trưa',
+            ),
+            'exclusions' => array(),
+            'notes' => array(
+                'Vegetarian on request.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 3,
+            'priceFrom' => 550000,
+            'currency' => 'VND',
         ),
     ),
 
@@ -517,7 +1500,7 @@ $__hidalatSeed = array(
             'cabinTypes' => array(),
             'highlightsIntro' => '06:30–09:00 — sương mỏng trên mặt hồ, phù hợp người mới.',
             'highlights' => array('SUP hoặc kayak', 'Áo phao & briefing', 'HDV kèm', 'Nước & snack'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Morning paddle', 'meals' => 'Snack', 'transport' => array('kayak'), 'overnight' => null,
+            'itinerary' => array(array('day' => 1, 'title' => 'Chèo kayak buổi sáng', 'meals' => 'Đồ ăn nhẹ', 'transport' => array('kayak'), 'overnight' => null,
                 'content' => 'Briefing, chèo 1.5h quanh bờ rừng thông, về bến.')),
             'inclusions' => array('Thiết bị', 'HDV', 'Snack'), 'exclusions' => array('Xe đón'),
             'notes' => array('Biết bơi cơ bản khuyến nghị.'), 'faqs' => array(),
@@ -570,7 +1553,7 @@ $__hidalatSeed = array(
             'excerpt' => 'So sánh xe giường nằm (5–7h), limousine (5–6h) và bay DLI (~1h + 45 phút ra thành phố) — phù hợp từng kiểu khách.',
             'content' => array(
                 array('type' => 'p', 'text' => 'Phần lớn khách Đà Lạt cuối tuần đến từ TP.HCM. Ba phương án phổ biến: xe giường nằm đêm, limousine ban ngày, hoặc bay sân bay Liên Khương (DLI) cách trung tâm ~30km.'),
-                array('type' => 'h2', 'id' => 'xe-giuong', 'text' => 'I. Xe giường nằm SGN — Đà Lạt'),
+                array('type' => 'h2', 'id' => 'xe-giuong', 'text' => 'I. Xe giường nằm Sài Gòn — Đà Lạt'),
                 array('type' => 'p', 'text' => 'Khởi hành tối (19h–22h), tới sáng hôm sau — tiết kiệm 1 đêm lưu trú, giá 250.000–400.000đ/ghế. Phù hợp sinh viên và nhóm bạn.'),
                 array('type' => 'h2', 'id' => 'limousine', 'text' => 'II. Limousine 9–16 chỗ'),
                 array('type' => 'p', 'text' => 'Đón quận trung tâm Sài Gòn, mất 5–6 giờ, ghế massage — phổ biến với gia đình và cặp đôi. Nên đặt trước thứ 6.'),
@@ -606,7 +1589,7 @@ $__hidalatSeed = array(
             'views' => 1560, 'rating' => 4.8, 'ratingCount' => 36,
             'excerpt' => 'Bánh tráng nướng, lẩu gà lá é, atiso, dâu tây và cà phê — bản đồ ẩm thực cao nguyên.',
             'content' => array(
-                array('type' => 'p', 'text' => 'Ẩm thực Đà Lạt gắn với rau củ mát, atiso và sữa. Chợ đêm là điểm bắt buộc cho food tour.'),
+                array('type' => 'p', 'text' => 'Ẩm thực Đà Lạt gắn với rau củ mát, atiso và sữa. Chợ đêm là điểm bắt buộc cho tour ẩm thực.'),
                 array('type' => 'ul', 'items' => array('Bánh tráng nướng', 'Lẩu gà lá é', 'Bánh căn', 'Atiso & salad', 'Dâu tây & sữa chua')),
             ),
             'faqs' => array(), 'galleryCount' => 4,
@@ -692,7 +1675,7 @@ $__hidalatSeed = array(
             'views' => 1680, 'rating' => 4.9, 'ratingCount' => 52,
             'excerpt' => 'Tối thứ 6 ra Đà Lạt, chủ nhật về — gợi ý city tour, Cầu Đất và chợ đêm.',
             'content' => array(
-                array('type' => 'p', 'text' => 'Combo phổ biến: limousine tối thứ 6, 2 đêm lưu trú, city tour + Cầu Đất + food tour, limousine chiều chủ nhật về.'),
+                array('type' => 'p', 'text' => 'Combo phổ biến: limousine tối thứ 6, 2 đêm lưu trú, city tour + Cầu Đất + tour ẩm thực, limousine chiều chủ nhật về.'),
             ),
             'faqs' => array(), 'galleryCount' => 4,
         ),
@@ -724,7 +1707,7 @@ $__hidalatSeed = array(
         array('name' => 'Diệu Linh', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 5.0,
             'quote' => 'Thuyền hoàng hôn Tuyền Lâm — lãng mạn hơn mọi nhà hàng view.', 'photos' => 3, 'trip' => 'Sunset boat Tuyền Lâm', 'avatar' => null, 'photoUrls' => array()),
         array('name' => 'David Park', 'country' => 'Úc', 'flag' => '🇦🇺', 'rating' => 4.9,
-            'quote' => 'Limousine from Saigon was smooth — they even helped us pick a villa area.', 'photos' => 7, 'trip' => 'Weekend escape SGN', 'avatar' => null, 'photoUrls' => array()),
+            'quote' => 'Limousine from Saigon was smooth — they even helped us pick a villa area.', 'photos' => 7, 'trip' => 'Cuối tuần escape SGN', 'avatar' => null, 'photoUrls' => array()),
     ),
 
     'team' => array(
@@ -745,7 +1728,7 @@ $__hidalatSeed = array(
         ),
         array(
             'slug' => 'nguyen-thi-hoa', 'name' => 'Nguyễn Thị Hoa', 'role' => 'Trưởng phòng thiết kế tour',
-            'bio' => 'Chuyên gia lễ hội hoa, tour cà phê và itinerary cặp đôi/trăng mật...',
+            'bio' => 'Chuyên gia lễ hội hoa, tour cà phê và lịch trình cặp đôi/trăng mật...',
             'phone' => '+84 263 388 8899', 'email' => 'hoa.nguyen@hidalat.dev', 'area' => 'Đà Lạt & Cầu Đất',
             'years_experience' => 10, 'languages' => array('Tiếng Việt', 'English', '한국어'),
             'stat_clients' => 2100, 'stat_tours' => 410, 'stat_awards' => 2, 'is_verified' => true,
@@ -808,16 +1791,32 @@ $__hidalatSeed = array(
     'usps' => array(
         array('icon' => 'compass', 'sort' => 0,
             'vi' => array('title' => 'am hiểu cao nguyên như người Đà Lạt', 'description' => 'Đội ngũ bản địa biết mùa hoa, khu homestay phù hợp và lịch canyoning an toàn.'),
-            'en' => array('title' => 'true highland locals', 'description' => 'Our team knows flower seasons, the right stay areas and safe canyoning windows.')),
+
+
+
+
+'en' => array('title' => 'true highland locals', 'description' => 'Our team knows flower seasons, the right stay areas and safe canyoning windows.')),
         array('icon' => 'refund', 'sort' => 1,
             'vi' => array('title' => 'báo giá minh bạch, không phí ẩn', 'description' => 'Giá tour và dịch vụ liệt kê rõ từng hạng mục; lưu trú chọn theo khu vực và ngân sách của bạn.'),
-            'en' => array('title' => 'transparent pricing, no hidden fees', 'description' => 'Clear line-item quotes for tours and services; stays matched to your area and budget.')),
+
+
+
+
+'en' => array('title' => 'transparent pricing, no hidden fees', 'description' => 'Clear line-item quotes for tours and services; stays matched to your area and budget.')),
         array('icon' => 'flower', 'sort' => 2,
             'vi' => array('title' => 'từ hoa đến cà phê & phiêu lưu', 'description' => 'Một đầu mối cho festival hoa, farm Cầu Đất, canyoning và combo biển.'),
-            'en' => array('title' => 'flowers to coffee & adventure', 'description' => 'One contact for flower festival, Cau Dat farms, canyoning and beach combos.')),
+
+
+
+
+'en' => array('title' => 'flowers to coffee & adventure', 'description' => 'One contact for flower festival, Cau Dat farms, canyoning and beach combos.')),
         array('icon' => 'support', 'sort' => 3,
             'vi' => array('title' => 'hỗ trợ 24/7 trên cao nguyên', 'description' => 'Hotline khi sương mù, trượt lịch canyoning hoặc cần đổi limousine về Sài Gòn.'),
-            'en' => array('title' => '24/7 highland support', 'description' => 'Hotline for fog delays, canyoning reschedules or changing your return limousine.')),
+
+
+
+
+'en' => array('title' => '24/7 highland support', 'description' => 'Hotline for fog delays, canyoning reschedules or changing your return limousine.')),
     ),
 
     'offices' => array(
@@ -826,29 +1825,93 @@ $__hidalatSeed = array(
     ),
 
     'values' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
-        array('vi' => array('name' => 'Am hiểu Đà Lạt', 'desc' => 'Sinh ra trên cao nguyên — hiểu từng mùa sương'), 'en' => array('name' => 'Da Lat expertise', 'desc' => 'Raised on the plateau — we know every mist season')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'), 'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
-        array('vi' => array('name' => 'An toàn', 'desc' => 'Phiêu lưu có HLV chứng nhận và kế hoạch dự phòng'), 'en' => array('name' => 'Safety', 'desc' => 'Adventure with certified guides and backup plans')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
+        array('vi' => array('name' => 'Am hiểu Đà Lạt', 'desc' => 'Sinh ra trên cao nguyên — hiểu từng mùa sương'),
+
+
+
+'en' => array('name' => 'Da Lat expertise', 'desc' => 'Raised on the plateau — we know every mist season')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
+        array('vi' => array('name' => 'An toàn', 'desc' => 'Phiêu lưu có HLV chứng nhận và kế hoạch dự phòng'),
+
+
+
+'en' => array('name' => 'Safety', 'desc' => 'Adventure with certified guides and backup plans')),
     ),
     'value_definitions' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
-        array('vi' => array('name' => 'Am hiểu Đà Lạt', 'desc' => 'Sinh ra trên cao nguyên — hiểu từng mùa sương'), 'en' => array('name' => 'Da Lat expertise', 'desc' => 'Raised on the plateau — we know every mist season')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'), 'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
-        array('vi' => array('name' => 'An toàn', 'desc' => 'Phiêu lưu có HLV chứng nhận và kế hoạch dự phòng'), 'en' => array('name' => 'Safety', 'desc' => 'Adventure with certified guides and backup plans')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm như khách mời tại nhà'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is hosted like a guest at home')),
+        array('vi' => array('name' => 'Am hiểu Đà Lạt', 'desc' => 'Sinh ra trên cao nguyên — hiểu từng mùa sương'),
+
+
+
+'en' => array('name' => 'Da Lat expertise', 'desc' => 'Raised on the plateau — we know every mist season')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép mua thêm dịch vụ'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never upselling you')),
+        array('vi' => array('name' => 'An toàn', 'desc' => 'Phiêu lưu có HLV chứng nhận và kế hoạch dự phòng'),
+
+
+
+'en' => array('name' => 'Safety', 'desc' => 'Adventure with certified guides and backup plans')),
     ),
 
     'reasons' => array(
-        array('vi' => array('title' => 'HDV & HLV bản địa', 'desc' => 'Người Đà Lạt dẫn tour, canyoning và tư vấn khu ở.'), 'en' => array('title' => 'Local guides & coaches', 'desc' => 'Da Lat natives lead tours, canyoning and stay-area advice.')),
-        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay, villa, resort — trung tâm, Tà Nung, Cầu Đất, ven hồ Tuyền Lâm.'), 'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Homestays, villas and resorts — centre, Ta Nung, Cau Dat, Tuyen Lam lakeside.')),
-        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine SGN, shuttle DLI và tour gộp một báo giá.'), 'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'SGN limousines, DLI shuttles and tours in one quote.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi thời tiết đổi lịch canyoning hoặc sương mù.'), 'en' => array('title' => '24/7 support', 'desc' => 'Hotline when weather shifts canyoning or fog delays travel.')),
+        array('vi' => array('title' => 'HDV & HLV bản địa', 'desc' => 'Người Đà Lạt dẫn tour, canyoning và tư vấn khu ở.'),
+
+
+
+'en' => array('title' => 'Local guides & coaches', 'desc' => 'Da Lat natives lead tours, canyoning and stay-area advice.')),
+        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay, villa, resort — trung tâm, Tà Nung, Cầu Đất, ven hồ Tuyền Lâm.'),
+
+
+
+'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Homestays, villas and resorts — centre, Ta Nung, Cau Dat, Tuyen Lam lakeside.')),
+        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine Sài Gòn, shuttle Đà Lạt và tour gộp một báo giá.'),
+
+
+
+'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'limo Sài Gònusines, DLI shuttles and tours in one quote.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi thời tiết đổi lịch canyoning hoặc sương mù.'),
+
+
+
+'en' => array('title' => '24/7 support', 'desc' => 'Hotline when weather shifts canyoning or fog delays travel.')),
     ),
     'reason_definitions' => array(
-        array('vi' => array('title' => 'HDV & HLV bản địa', 'desc' => 'Người Đà Lạt dẫn tour, canyoning và tư vấn khu ở.'), 'en' => array('title' => 'Local guides & coaches', 'desc' => 'Da Lat natives lead tours, canyoning and stay-area advice.')),
-        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay, villa, resort — trung tâm, Tà Nung, Cầu Đất, ven hồ Tuyền Lâm.'), 'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Homestays, villas and resorts — centre, Ta Nung, Cau Dat, Tuyen Lam lakeside.')),
-        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine SGN, shuttle DLI và tour gộp một báo giá.'), 'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'SGN limousines, DLI shuttles and tours in one quote.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi thời tiết đổi lịch canyoning hoặc sương mù.'), 'en' => array('title' => '24/7 support', 'desc' => 'Hotline when weather shifts canyoning or fog delays travel.')),
+        array('vi' => array('title' => 'HDV & HLV bản địa', 'desc' => 'Người Đà Lạt dẫn tour, canyoning và tư vấn khu ở.'),
+
+
+
+'en' => array('title' => 'Local guides & coaches', 'desc' => 'Da Lat natives lead tours, canyoning and stay-area advice.')),
+        array('vi' => array('title' => 'Lưu trú đúng khu, đúng ngân sách', 'desc' => 'Homestay, villa, resort — trung tâm, Tà Nung, Cầu Đất, ven hồ Tuyền Lâm.'),
+
+
+
+'en' => array('title' => 'Stays matched to your trip', 'desc' => 'Homestays, villas and resorts — centre, Ta Nung, Cau Dat, Tuyen Lam lakeside.')),
+        array('vi' => array('title' => 'Một đầu mối xe + bay + tour', 'desc' => 'Limousine Sài Gòn, shuttle Đà Lạt và tour gộp một báo giá.'),
+
+
+
+'en' => array('title' => 'One contact: bus, flights, tours', 'desc' => 'limo Sài Gònusines, DLI shuttles and tours in one quote.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi thời tiết đổi lịch canyoning hoặc sương mù.'),
+
+
+
+'en' => array('title' => '24/7 support', 'desc' => 'Hotline when weather shifts canyoning or fog delays travel.')),
     ),
 
     'reference_persons' => array(
@@ -870,7 +1933,11 @@ $__hidalatSeed = array(
             'reasons_section' => array('title' => 'Vì sao chọn Hi Đà Lạt?', 'eyebrow' => 'Lý do', 'subtitle' => 'Bản địa, minh bạch, an toàn phiêu lưu.', 'cta_label' => 'Bắt đầu hành trình', 'cta_url' => null, 'image' => null, 'imageSrcset' => null),
             'reference_section' => array('title' => 'Đại diện nước ngoài', 'eyebrow' => 'Mạng lưới', 'subtitle' => 'Trao đổi bằng ngôn ngữ của bạn với đại diện Hi Đà Lạt.'),
         ),
-        'en' => array(
+
+
+
+
+'en' => array(
             'seo_title' => 'About us — Hi Da Lat, connecting travellers with Lam Dong highlands',
             'seo_description' => 'Our story, mission and team — tours, services and stay advice by area.',
             'page_title' => 'About us',
@@ -886,8 +1953,16 @@ $__hidalatSeed = array(
     ),
 
     'hero_pills' => array(
-        array('zone_slug' => 'cau-dat', 'vi' => array('label' => 'Cầu Đất cà phê'), 'en' => array('label' => 'Cau Dat coffee'), 'url' => '/diem-den/cau-dat'),
-        array('zone_slug' => 'langbiang-ta-nung', 'vi' => array('label' => 'Langbiang'), 'en' => array('label' => 'Langbiang'), 'url' => '/diem-den/langbiang-ta-nung'),
+        array('zone_slug' => 'cau-dat', 'vi' => array('label' => 'Cầu Đất cà phê'),
+
+
+
+'en' => array('label' => 'Cau Dat coffee'), 'url' => '/diem-den/cau-dat'),
+        array('zone_slug' => 'langbiang-ta-nung', 'vi' => array('label' => 'Langbiang'),
+
+
+
+'en' => array('label' => 'Langbiang'), 'url' => '/diem-den/langbiang-ta-nung'),
     ),
 
     'home_sections' => array(
@@ -895,50 +1970,94 @@ $__hidalatSeed = array(
             'vi' => array('key' => 'company_intro', 'eyebrow' => 'Chuyên gia Đà Lạt', 'title' => 'Mùa xuân vĩnh cửu trên cao nguyên', 'subtitle' => null,
                 'body' => 'Hi Đà Lạt là nền tảng du lịch Đà Lạt do người bản địa xây dựng — <strong class="font-semibold text-ink">một đầu mối</strong> cho tour, vé tham quan, di chuyển và lưu trú từ homestay đến resort. Chúng tôi thiết kế hành trình quanh hồ Xuân Hương, Cầu Đất, Langbiang và Tuyền Lâm để bạn cảm nhận đúng nhịp sống cao nguyên.',
                 'metaLine' => 'Giấy phép lữ hành số 0045/2024/TCDL-GPLHQT', 'ctaLabel' => 'Về chúng tôi', 'ctaUrl' => '/ve-chung-toi', 'image' => null, 'imageAlt' => 'Hi Đà Lạt'),
-            'en' => array('key' => 'company_intro', 'eyebrow' => 'Da Lat experts', 'title' => 'Eternal spring on the plateau', 'subtitle' => null,
+
+
+
+
+'en' => array('key' => 'company_intro', 'eyebrow' => 'Da Lat experts', 'title' => 'Eternal spring on the plateau', 'subtitle' => null,
                 'body' => 'Hi Da Lat is a locally built Da Lat travel platform — <strong class="font-semibold text-ink">one place</strong> for tours, tickets, transfers and stays from homestays to resorts. We craft itineraries around Xuan Huong Lake, Cau Dat, Langbiang and Tuyen Lam so you feel the real highland rhythm.',
                 'metaLine' => 'Travel license No. 0045/2024/TCDL-GPLHQT', 'ctaLabel' => 'About us', 'ctaUrl' => '/ve-chung-toi', 'image' => null, 'imageAlt' => 'Hi Da Lat'),
         ),
         'featured_tours' => array(
             'vi' => array('key' => 'featured_tours', 'eyebrow' => 'Yêu thích', 'title' => 'Tour được đặt nhiều nhất', 'subtitle' => 'Hành trình khách đánh giá cao trong 12 tháng qua.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_tours', 'eyebrow' => 'Popular', 'title' => 'Most booked tours', 'subtitle' => 'Top-rated itineraries over the past 12 months.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_tours', 'eyebrow' => 'Popular', 'title' => 'Most booked tours', 'subtitle' => 'Top-rated itineraries over the past 12 months.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'featured_cruises' => array(
             'vi' => array('key' => 'featured_cruises', 'eyebrow' => 'Hồ Tuyền Lâm', 'title' => 'Thuyền & SUP trên hồ núi', 'subtitle' => 'Hoàng hôn picnic, kayak sáng sớm — trải nghiệm nước đặc trưng Đà Lạt.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_cruises', 'eyebrow' => 'Tuyen Lam Lake', 'title' => 'Boats & SUP on the mountain lake', 'subtitle' => 'Sunset picnics and dawn paddles — Da Lat\'s signature water experiences.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_cruises', 'eyebrow' => 'Tuyen Lam Lake', 'title' => 'Boats & SUP on the mountain lake', 'subtitle' => 'Sunset picnics and dawn paddles — Da Lat\'s đặc trưng water experiences.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'featured_trains' => array(
-            'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Di chuyển', 'title' => 'Xe khách, limousine & shuttle DLI', 'subtitle' => 'Từ Sài Gòn, Hà Nội, Nha Trang — một đầu mối đặt vé và đưa đón.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_trains', 'eyebrow' => 'Getting there', 'title' => 'Buses, limousines & DLI shuttles', 'subtitle' => 'From HCMC, Hanoi, Nha Trang — one place to book transfers.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+            'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Di chuyển', 'title' => 'Xe khách, limousine & shuttle Đà Lạt', 'subtitle' => 'Từ Sài Gòn, Hà Nội, Nha Trang — một đầu mối đặt vé và đưa đón.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_trains', 'eyebrow' => 'Getting there', 'title' => 'Buses, limousines & DLI shuttles', 'subtitle' => 'From Sài Gòn, Hanoi, Nha Trang — one place to book transfers.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'support_services' => array(
             'vi' => array('key' => 'support_services', 'eyebrow' => 'Dịch vụ', 'title' => 'Vé, trải nghiệm & hỗ trợ', 'subtitle' => 'Canyoning, cà phê, HDV riêng và tiện ích trên cao nguyên.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'support_services', 'eyebrow' => 'Services', 'title' => 'Tickets, experiences & support', 'subtitle' => 'Canyoning, coffee tours, private guides and highland extras.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'support_services', 'eyebrow' => 'Services', 'title' => 'Tickets, experiences & support', 'subtitle' => 'Canyoning, coffee tours, private guides and highland extras.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'destinations' => array(
             'vi' => array('key' => 'destinations', 'eyebrow' => 'Khắp Đà Lạt', 'title' => 'Khu vực được yêu thích', 'subtitle' => 'Trung tâm, Langbiang, Cầu Đất, Tuyền Lâm và combo biển.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'destinations', 'eyebrow' => 'Across Da Lat', 'title' => 'Favourite areas', 'subtitle' => 'Centre, Langbiang, Cau Dat, Tuyen Lam and beach combos.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'destinations', 'eyebrow' => 'Across Da Lat', 'title' => 'Favourite areas', 'subtitle' => 'Centre, Langbiang, Cau Dat, Tuyen Lam and beach combos.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'testimonials' => array(
             'vi' => array('key' => 'testimonials', 'eyebrow' => 'Khách kể', 'title' => 'Trải nghiệm thật', 'subtitle' => 'Hơn 4.000 khách đã đồng hành cùng Hi Đà Lạt.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Xem cảm nhận', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences', 'subtitle' => 'Over 4,000 guests have travelled with Hi Da Lat.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences', 'subtitle' => 'Over 4,000 guests have travelled with Hi Da Lat.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
         ),
         'review_platforms' => array(
             'vi' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Đà Lạt được đánh giá cao trên', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Da Lat is highly rated on', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Da Lat is highly rated on', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'team' => array(
             'vi' => array('key' => 'team', 'eyebrow' => 'Con người Hi Đà Lạt', 'title' => 'Đội ngũ bản địa', 'subtitle' => 'Cùng bạn từ ý tưởng đến khi rời cao nguyên.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Gặp đội ngũ', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'team', 'eyebrow' => 'The Hi Da Lat team', 'title' => 'Local experts', 'subtitle' => 'With you from the first idea until you leave the highlands.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Meet the team', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'team', 'eyebrow' => 'The Hi Da Lat team', 'title' => 'Local experts', 'subtitle' => 'With you from the first idea until you leave the highlands.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Meet the team', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
         ),
         'videos' => array(
             'vi' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Đà Lạt qua ống kính', 'subtitle' => 'Sương, hoa và hồ — clip từ khách và đội ngũ.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Xem video', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Da Lat on film', 'subtitle' => 'Mist, flowers and lakes — from guests and our team.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Da Lat on film', 'subtitle' => 'Mist, flowers and lakes — from guests and our team.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
         ),
         'quick_inquiry' => array(
             'vi' => array('key' => 'quick_inquiry', 'eyebrow' => 'Tư vấn miễn phí', 'title' => 'Gửi lời nhắn', 'subtitle' => null,
                 'body' => 'Chưa chọn tour hay khu homestay? Phản hồi trong <strong class="font-semibold text-ink">24 giờ làm việc</strong>, miễn phí.', 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send a message', 'subtitle' => null,
+
+
+
+
+'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send a message', 'subtitle' => null,
                 'body' => 'Not sure which tour or stay area? Reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.', 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
     ),
@@ -954,7 +2073,7 @@ $__hidalatSeed = array(
             array('label' => 'Đà Lạt 3 ngày', 'route' => array('tours.show', array('zone' => 'trung-tam-xuan-huong', 'slug' => 'da-lat-3-ngay-tong-quan'))),
             array('label' => 'Canyoning Datanla', 'route' => array('tours.show', array('zone' => 'datanla-robin-hill', 'slug' => 'canyoning-datanla-1-ngay'))),
             array('label' => 'Cà phê Cầu Đất', 'route' => array('tours.show', array('zone' => 'cau-dat', 'slug' => 'cau-dat-cafe-tea-1-ngay'))),
-            array('label' => 'Festival hoa 2N1Đ', 'route' => array('tours.show', array('zone' => 'trung-tam-xuan-huong', 'slug' => 'festival-hoa-da-lat-2n1d'))),
+            array('label' => 'Festival hoa 2 ngày 1 đêm', 'route' => array('tours.show', array('zone' => 'trung-tam-xuan-huong', 'slug' => 'festival-hoa-da-lat-2n1d'))),
         )),
         array('title' => 'Khu vực', 'links' => array(
             array('label' => 'Cầu Đất', 'route' => array('guide.zone', array('zone' => 'cau-dat'))),
@@ -977,42 +2096,422 @@ $__hidalatSeed = array(
     ),
 
     'tour_categories' => array(
-        array('zoneSlug' => 'trung-tam-xuan-huong', 'slug' => 'nua-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 0, 'maxDays' => 1,
-            'packageSlugs' => array('food-tour-cho-dem-nua-dem', 'nau-an-da-lat-half-day'),
-            'name' => array('vi' => 'Tour nửa ngày / tối', 'en' => 'Half-day / evening'),
-            'subtitle' => array('vi' => 'Food tour chợ đêm, lớp nấu ăn.', 'en' => 'Night market food tour, cooking class.'),
-            'seo_body' => array('vi' => 'Ghép thêm vào chuyến cuối tuần Sài Gòn.', 'en' => 'Easy add-on to an HCMC weekend trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-xuan-huong', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 1, 'maxDays' => 1,
-            'packageSlugs' => array('city-tour-da-lat-1-ngay', 'canyoning-datanla-1-ngay', 'langbiang-jeep-trekking-1-ngay', 'cau-dat-cafe-tea-1-ngay', 'thac-voi-cu-lan-1-ngay', 'tuyen-lam-truc-lam-robin-1-ngay', 'chup-anh-trang-mat-da-lat'),
-            'name' => array('vi' => 'Tour 1 ngày', 'en' => '1-day tours'),
-            'subtitle' => array('vi' => 'City, canyoning, Langbiang, Cầu Đất.', 'en' => 'City, canyoning, Langbiang, Cau Dat.'),
-            'seo_body' => array('vi' => 'Phổ biến với khách 2N1Đ cuối tuần.', 'en' => 'Popular for 2-night weekend visitors.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-xuan-huong', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 2, 'maxDays' => 3,
-            'packageSlugs' => array('da-lat-2-ngay-lang-man', 'festival-hoa-da-lat-2n1d', 'gia-dinh-da-lat-2n1d', 'da-lat-3-ngay-tong-quan', 'da-lat-nha-trang-3n2d', 'da-lat-mui-ne-3n2d'),
-            'name' => array('vi' => 'Tour 2 – 3 ngày', 'en' => '2–3 day tours'),
-            'subtitle' => array('vi' => 'Tổng quan, lãng mạn, gia đình, combo biển.', 'en' => 'Overview, romance, family, beach combos.'),
-            'seo_body' => array('vi' => 'Sweet spot cho khách Sài Gòn cuối tuần.', 'en' => 'Sweet spot for HCMC weekenders.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-xuan-huong', 'slug' => '4-ngay-tro-len', 'type' => 'duration', 'sort' => 3, 'minDays' => 4, 'maxDays' => 10,
-            'packageSlugs' => array('da-lat-4-ngay-kham-pha-sau'),
-            'name' => array('vi' => 'Tour 4 ngày trở lên', 'en' => '4+ day tours'),
-            'subtitle' => array('vi' => 'Khám phá sâu cao nguyên.', 'en' => 'Deep highland exploration.'),
-            'seo_body' => array('vi' => 'Trekking, canyoning, Cầu Đất và ngoại ô.', 'en' => 'Trekking, canyoning, Cau Dat and outskirts.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'cau-dat', 'slug' => 'cafe-agri', 'type' => 'theme', 'sort' => 10,
-            'packageSlugs' => array('cau-dat-cafe-tea-1-ngay'),
-            'name' => array('vi' => 'Tour cà phê & nông trại', 'en' => 'Coffee & farm tours'),
-            'subtitle' => array('vi' => 'Cầu Đất specialty & đồi chè.', 'en' => 'Cau Dat specialty and tea hills.'),
-            'seo_body' => array('vi' => 'Agri-tourism signature của Lâm Đồng.', 'en' => 'Signature Lam Dong agri-tourism.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'langbiang-ta-nung', 'slug' => 'phieu-luu', 'type' => 'theme', 'sort' => 11,
-            'packageSlugs' => array('canyoning-datanla-1-ngay', 'langbiang-jeep-trekking-1-ngay', 'da-lat-4-ngay-kham-pha-sau'),
-            'name' => array('vi' => 'Tour phiêu lưu', 'en' => 'Adventure tours'),
-            'subtitle' => array('vi' => 'Canyoning, Langbiang, jeep.', 'en' => 'Canyoning, Langbiang, jeep.'),
-            'seo_body' => array('vi' => 'HLV chứng nhận, an toàn trước tiên.', 'en' => 'Certified coaches, safety first.'),
-            'faqs' => array()),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'nua-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 0,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'food-tour-cho-dem-nua-dem',
+                'nau-an-da-lat-half-day',
+            ),
+            'name' => array(
+                'vi' => 'Tour nửa ngày / tối',
+
+
+
+
+'en' => 'Half-day / evening',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tour ẩm thực chợ đêm, lớp nấu ăn.',
+
+
+
+
+'en' => 'Night market food tour, cooking class.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Ghép thêm vào chuyến cuối tuần Sài Gòn.',
+
+
+
+
+'en' => 'Easy add-on to an HCMC weekend trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'city-tour-da-lat-1-ngay',
+                'canyoning-datanla-1-ngay',
+                'langbiang-jeep-trekking-1-ngay',
+                'cau-dat-cafe-tea-1-ngay',
+                'thac-voi-cu-lan-1-ngay',
+                'tuyen-lam-truc-lam-robin-1-ngay',
+                'chup-anh-trang-mat-da-lat',
+            ),
+            'name' => array(
+                'vi' => 'Tour 1 ngày',
+
+
+
+
+'en' => '1-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'City, canyoning, Langbiang, Cầu Đất.',
+
+
+
+
+'en' => 'City, canyoning, Langbiang, Cau Dat.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Phổ biến với khách 2 ngày 1 đêm cuối tuần.',
+
+
+
+
+'en' => 'Popular for 2-night weekend visitors.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 2,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'da-lat-2-ngay-lang-man',
+                'festival-hoa-da-lat-2n1d',
+                'gia-dinh-da-lat-2n1d',
+                'da-lat-3-ngay-tong-quan',
+                'da-lat-nha-trang-3n2d',
+                'da-lat-mui-ne-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 – 3 ngày',
+
+
+
+
+'en' => '2–3 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tổng quan, lãng mạn, gia đình, combo biển.',
+
+
+
+
+'en' => 'Overview, romance, family, beach combos.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến cho khách Sài Gòn cuối tuần.',
+
+
+
+
+'en' => 'Sweet spot for HCMC weekenders.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => '4-ngay-tro-len',
+            'type' => 'duration',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 10,
+            'packageSlugs' => array(
+                'da-lat-4-ngay-kham-pha-sau',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày trở lên',
+
+
+
+
+'en' => '4+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu cao nguyên.',
+
+
+
+
+'en' => 'Deep highland exploration.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Trekking, canyoning, Cầu Đất và ngoại ô.',
+
+
+
+
+'en' => 'Trekking, canyoning, Cau Dat and outskirts.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'tour-trong-ngay',
+            'type' => 'theme',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'city-tour-da-lat-1-ngay',
+                'canyoning-datanla-1-ngay',
+                'langbiang-jeep-trekking-1-ngay',
+                'cau-dat-cafe-tea-1-ngay',
+                'thac-voi-cu-lan-1-ngay',
+                'food-tour-cho-dem-nua-dem',
+                'tuyen-lam-truc-lam-robin-1-ngay',
+                'chup-anh-trang-mat-da-lat',
+                'nau-an-da-lat-half-day',
+            ),
+            'name' => array(
+                'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
+
+
+
+
+'en' => 'Full day — no overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
+
+
+
+
+'en' => 'Duration filter — distinct from per-zone GEO category pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'tour-2-ngay-1-dem',
+            'type' => 'theme',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 2,
+            'packageSlugs' => array(
+                'da-lat-2-ngay-lang-man',
+                'festival-hoa-da-lat-2n1d',
+                'gia-dinh-da-lat-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
+
+
+
+
+'en' => 'Short weekend, one-night homestay or resort.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
+
+
+
+
+'en' => '2N1D sweet spot — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'tour-3-ngay-2-dem',
+            'type' => 'theme',
+            'sort' => 2,
+            'minDays' => 3,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'da-lat-3-ngay-tong-quan',
+                'da-lat-nha-trang-3n2d',
+                'da-lat-mui-ne-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
+
+
+
+
+'en' => 'Enough depth — two overnights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
+
+
+
+
+'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'tour-4-ngay-3-dem',
+            'type' => 'theme',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 4,
+            'packageSlugs' => array(
+                'da-lat-4-ngay-kham-pha-sau',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
+
+
+
+
+'en' => 'Deeper exploration, three nights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
+
+
+
+
+'en' => '4N3D itineraries — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'tour-tu-5-ngay',
+            'type' => 'theme',
+            'sort' => 4,
+            'minDays' => 5,
+            'maxDays' => null,
+            'packageSlugs' => array(),
+            'name' => array(
+                'vi' => 'Tour từ 5 ngày',
+
+
+
+
+'en' => '5+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo dài ngày, nhiều điểm đến.',
+
+
+
+
+'en' => 'Extended combos and multi-destination trips.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
+
+
+
+
+'en' => 'Long tours & combos — duration insight, not a GEO page.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'cafe-agri',
+            'type' => 'theme',
+            'sort' => 10,
+            'packageSlugs' => array(
+                'cau-dat-cafe-tea-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour cà phê & nông trại',
+
+
+
+
+'en' => 'Coffee & farm tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cầu Đất specialty & đồi chè.',
+
+
+
+
+'en' => 'Cau Dat specialty and tea hills.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Du lịch nông nghiệp đặc trưng Lâm Đồng.',
+
+
+
+
+'en' => 'Signature Lam Dong agri-tourism.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-xuan-huong',
+            'slug' => 'phieu-luu',
+            'type' => 'theme',
+            'sort' => 11,
+            'packageSlugs' => array(
+                'canyoning-datanla-1-ngay',
+                'langbiang-jeep-trekking-1-ngay',
+                'da-lat-4-ngay-kham-pha-sau',
+            ),
+            'name' => array(
+                'vi' => 'Tour phiêu lưu',
+
+
+
+
+'en' => 'Adventure tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Canyoning, Langbiang, jeep.',
+
+
+
+
+'en' => 'Canyoning, Langbiang, jeep.',
+            ),
+            'seo_body' => array(
+                'vi' => 'HLV chứng nhận, an toàn trước tiên.',
+
+
+
+
+'en' => 'Certified coaches, safety first.',
+            ),
+            'faqs' => array(),
+        ),
     ),
 
     'listing_faqs' => array(
@@ -1022,14 +2521,23 @@ $__hidalatSeed = array(
         array('q' => 'Canyoning hủy khi mưa?', 'a' => 'Đúng — đổi ngày miễn phí hoặc hoàn theo chính sách khi mưa lớn không an toàn.'),
     ),
 
-    'duration_buckets' => array('half-day' => 'Nửa ngày', '1-day' => '1 ngày', '2-3-days' => '2 – 3 ngày', '4-plus' => '4 ngày trở lên'),
+    'duration_buckets' => array(
+        'half-day' => 'Nửa ngày',
+        '1-day' => '1 ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+    ),
 
     'travel_style_labels' => array(
-        'romantic' => 'Lãng mạn', 'coffee-culture' => 'Cà phê & trà', 'flower' => 'Hoa & festival',
-        'adventure' => 'Phiêu lưu', 'family' => 'Gia đình', 'honeymoon' => 'Trăng mật',
-        'trekking' => 'Trekking', 'day-trip' => 'Tour trong ngày', 'multi-day' => 'Nhiều ngày',
-        'photography' => 'Chụp ảnh', 'balanced' => 'Cân bằng', 'multi-destination-combo' => 'Combo đa điểm',
-        'small-group' => 'Nhóm nhỏ', 'agri-tourism' => 'Nông trại',
+        'day-trip' => 'Tour trong ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+        'cafe-agri' => 'Tour cà phê & nông trại',
+        'phieu-luu' => 'Tour phiêu lưu',
     ),
 );
 
@@ -1049,7 +2557,7 @@ $__servicesSeed = [
         ['cluster' => 'train', 'slug' => 'xe-rieng-charter', 'name' => 'Xe riêng & charter liên tỉnh', 'sort' => 5, 'intro' => 'Ô tô 4–16 chỗ theo ngày.', 'seo_body' => 'Phù hợp đoàn hoặc dừng chụp đèo.'],
         ['cluster' => 'train', 'slug' => 'shuttle-san-bay-dli', 'name' => 'Shuttle sân bay Liên Khương (DLI)', 'sort' => 6, 'intro' => 'Sân bay ~30km — shuttle ~45 phút.', 'seo_body' => 'Gộp vé bay qua :brand.'],
         ['cluster' => 'train', 'slug' => 'xe-noi-thanh-da-lat', 'name' => 'Xe đón bến & nội thành', 'sort' => 7, 'intro' => 'Đón bến xe/sân bay trong Đà Lạt.', 'seo_body' => 'Tiện khi mang vali hoặc đi cùng trẻ nhỏ.'],
-        ['cluster' => 'flight', 'slug' => 'noi-dia-dli', 'name' => 'Vé nội địa tới Liên Khương (DLI)', 'sort' => 1, 'intro' => 'Bay SGN/HAN/DAD.', 'seo_body' => 'SGN—DLI ~50 phút.'],
+        ['cluster' => 'flight', 'slug' => 'noi-dia-dli', 'name' => 'Vé nội địa tới Liên Khương (DLI)', 'sort' => 1, 'intro' => 'Bay Sài Gòn/Hà Nội/DAD.', 'seo_body' => 'SGN—DLI ~50 phút.'],
         ['cluster' => 'flight', 'slug' => 'dua-don-dli', 'name' => 'Đưa đón sân bay DLI ↔ thành phố', 'sort' => 2, 'intro' => 'Door-to-city.', 'seo_body' => ':brand theo dõi chuyến bay.'],
         ['cluster' => 'flight', 'slug' => 'combo-bay-shuttle', 'name' => 'Combo vé bay + shuttle', 'sort' => 3, 'intro' => 'Một báo giá bay + xe.', 'seo_body' => 'Tiện khách lần đầu.'],
         ['cluster' => 'experience', 'slug' => 'city-tour-da-lat', 'name' => 'City tour & điểm biểu tượng', 'sort' => 1, 'intro' => 'Crazy House, Linh Phước, hồ Xuân Hương.', 'seo_body' => 'Must-do lần đầu.'],
@@ -1068,7 +2576,7 @@ $__servicesSeed = [
         ['code' => 'train-sleeper-sgn-dl-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
             'title' => 'Xe giường nằm Sài Gòn → Đà Lạt (một chiều)', 'slug' => 'xe-giuong-sai-gon-da-lat-mot-chieu',
             'price_from' => 280000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 892,
-            'is_featured' => true, 'location_label' => 'SGN → Đà Lạt',
+            'is_featured' => true, 'location_label' => 'Sài Gòn → Đà Lạt',
             'summary' => 'Khởi hành tối (~19h–22h), tới sáng — tiết kiệm 1 đêm lưu trú.',
             'highlights' => ['5–7 giờ', 'Giường nằm hoặc ghế ngả', 'Đón bến Miền Đông / quận trung tâm'],
             'inclusions' => ['Vé một chiều'], 'exclusions' => ['Đón tận nhà xa trung tâm'],
@@ -1076,15 +2584,15 @@ $__servicesSeed = [
         ['code' => 'train-sleeper-sgn-dl-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
             'title' => 'Xe giường khứ hồi Sài Gòn ↔ Đà Lạt', 'slug' => 'xe-giuong-khu-hoi-sai-gon-da-lat',
             'price_from' => 520000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 456,
-            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN ↔ Đà Lạt',
-            'summary' => 'Gói weekend — đi tối thứ 6, về tối chủ nhật.',
+            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'Sài Gòn ↔ Đà Lạt',
+            'summary' => 'Gói cuối tuần — đi tối thứ 6, về tối chủ nhật.',
             'highlights' => ['Rẻ hơn 2 chiều lẻ', 'Giữ chỗ chiều về'], 'inclusions' => ['2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Đà Lạt', 'vehicle_type' => 'xe giường nằm']],
         ['code' => 'train-sleeper-hn-dl', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
             'title' => 'Xe giường Hà Nội → Đà Lạt', 'slug' => 'xe-giuong-ha-noi-da-lat',
             'price_from' => 550000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 234,
             'is_featured' => false, 'location_label' => 'Hà Nội → Đà Lạt',
-            'summary' => 'Xe đêm xuyên miền ~30–36h — hoặc cân nhắc bay HAN—DLI.',
+            'summary' => 'Xe đêm xuyên miền ~30–36h — hoặc cân nhắc bay Hà Nội—DLI.',
             'highlights' => ['Giá thấp', 'Ghế ngả/giường'], 'inclusions' => ['Vé một chiều'], 'exclusions' => ['Ăn trên xe'],
             'notes' => ['Tuyến dài — mang snack và áo ấm.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Đà Lạt', 'duration_hours' => 32]],
         ['code' => 'train-limousine-sgn-dl', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
@@ -1141,14 +2649,14 @@ $__servicesSeed = [
         ['code' => 'flight-sgn-dli', 'cluster' => 'flight', 'category_slug' => 'noi-dia-dli', 'zone_slug' => 'trung-tam-xuan-huong',
             'title' => 'Vé máy bay Sài Gòn — Liên Khương (DLI)', 'slug' => 've-may-bay-sgn-dli',
             'price_from' => 890000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 567,
-            'is_featured' => true, 'location_label' => 'SGN → DLI',
+            'is_featured' => true, 'location_label' => 'Sài Gòn → Đà Lạt',
             'summary' => 'Bay ~50 phút — phổ biến khách cuối tuần.',
             'highlights' => ['Nhiều chuyến/ngày', 'Gộp shuttle'], 'inclusions' => ['Vé economy', 'Thuế phí'], 'exclusions' => ['Ra thành phố'],
             'notes' => [], 'attrs' => ['from' => 'SGN', 'to' => 'DLI', 'flight_time' => '50m']],
         ['code' => 'flight-han-dli', 'cluster' => 'flight', 'category_slug' => 'noi-dia-dli', 'zone_slug' => 'trung-tam-xuan-huong',
             'title' => 'Vé máy bay Hà Nội — Liên Khương (DLI)', 'slug' => 've-may-bay-han-dli',
             'price_from' => 1150000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 234,
-            'is_featured' => true, 'location_label' => 'HAN → DLI',
+            'is_featured' => true, 'location_label' => 'Hà Nội → DLI',
             'summary' => 'Bay ~1h40 — nhanh hơn xe đêm 30+ giờ.',
             'highlights' => ['Bay thẳng', 'Gộp shuttle'], 'inclusions' => ['Vé economy'], 'exclusions' => ['Hành lý thêm'],
             'notes' => [], 'attrs' => ['from' => 'HAN', 'to' => 'DLI', 'flight_time' => '1h40m']],
@@ -1162,14 +2670,14 @@ $__servicesSeed = [
         ['code' => 'flight-combo-fly-shuttle', 'cluster' => 'flight', 'category_slug' => 'combo-bay-shuttle', 'zone_slug' => 'trung-tam-xuan-huong',
             'title' => 'Combo vé bay + shuttle Đà Lạt', 'slug' => 'combo-ve-bay-shuttle-da-lat',
             'price_from' => 1150000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 89,
-            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/HAN → thành phố',
+            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/Hà Nội → thành phố',
             'summary' => 'Một báo giá bay + xe ra thành phố — không tự ghép.',
             'highlights' => ['Một đầu mối', 'Đổi ngày linh hoạt'], 'inclusions' => ['Vé bay', 'Shuttle'], 'exclusions' => ['Lưu trú', 'Tour'],
             'notes' => ['Giá theo ngày bay.'], 'attrs' => ['from' => 'SGN / HAN', 'to' => 'Đà Lạt']],
 
         // EXPERIENCE (18)
         ['code' => 'exp-city-tour', 'cluster' => 'experience', 'category_slug' => 'city-tour-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
-            'title' => 'City tour Đà Lạt trọn ngày', 'slug' => 'city-tour-da-lat-tron-ngay',
+            'title' => 'Tour thành phố Đà Lạt trọn ngày', 'slug' => 'city-tour-da-lat-tron-ngay',
             'price_from' => 550000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 412,
             'is_featured' => true, 'location_label' => 'Trung tâm Đà Lạt',
             'summary' => 'Crazy House, Linh Phước, Domaine de Marie, hồ Xuân Hương.',
@@ -1214,7 +2722,7 @@ $__servicesSeed = [
             'title' => 'Crazy House (Hang Nga) — vé tham quan', 'slug' => 'crazy-house-ve-tham-quan',
             'price_from' => 60000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 678,
             'is_featured' => true, 'location_label' => 'Crazy House',
-            'summary' => 'Kiến trúc độc đáo — must-see Đà Lạt.',
+            'summary' => 'Kiến trúc độc đáo — không thể bỏ qua Đà Lạt.',
             'highlights' => ['Vé vào cổng', 'E-ticket'], 'inclusions' => ['Vé'], 'exclusions' => ['HDV'],
             'notes' => [], 'attrs' => ['duration_hours' => 1, 'activity' => 'architecture']],
         ['code' => 'exp-flower-park', 'cluster' => 'experience', 'category_slug' => 'hoa-linh-thien', 'zone_slug' => 'trung-tam-xuan-huong',
@@ -1281,10 +2789,10 @@ $__servicesSeed = [
             'highlights' => ['Khứ hồi', 'E-ticket'], 'inclusions' => ['Vé cáp 2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['activity' => 'cable_car']],
         ['code' => 'exp-night-market-food', 'cluster' => 'experience', 'category_slug' => 'am-thuc-dem', 'zone_slug' => 'trung-tam-xuan-huong',
-            'title' => 'Food tour chợ đêm Đà Lạt', 'slug' => 'food-tour-cho-dem-da-lat',
+            'title' => 'Tour ẩm thực chợ đêm Đà Lạt', 'slug' => 'food-tour-cho-dem-da-lat',
             'price_from' => 380000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 298,
             'is_featured' => true, 'location_label' => 'Chợ đêm',
-            'summary' => '18h–22h — 7–8 món với HDV foodie.',
+            'summary' => '18h–22h — 7–8 món với HDV am thực.',
             'highlights' => ['Bánh tráng nướng', 'Atiso'], 'inclusions' => ['HDV', 'Tasting'], 'exclusions' => ['Đồ uống thêm'],
             'notes' => [], 'attrs' => ['duration_hours' => 3, 'activity' => 'food_tour']],
         ['code' => 'exp-photo-honeymoon', 'cluster' => 'experience', 'category_slug' => 'hoa-linh-thien', 'zone_slug' => 'trung-tam-xuan-huong',
@@ -1351,7 +2859,7 @@ $__servicesSeed = [
     'service_listing_faqs' => [
         ['q' => 'Giá "từ" có cố định không?', 'a' => 'Không — giá tham khảo mùa thấp điểm. Hi Đà Lạt chốt giá sau khi nhận ngày và số khách.'],
         ['q' => 'Đặt lưu trú ở Đà Lạt qua Hi Đà Lạt thế nào?', 'a' => 'Xem mục Lưu trú để tham khảo homestay, villa và resort theo khu (trung tâm, Tà Nung, Cầu Đất, Tuyền Lâm) hoặc liên hệ tư vấn viên để được gợi ý phù hợp ngân sách và lịch trình.'],
-        ['q' => 'Gộp limousine SGN + tour + canyoning một đơn?', 'a' => 'Có — một báo giá minh bạch, một đầu mối chăm sóc.'],
+        ['q' => 'Gộp limousine Sài Gòn + tour + canyoning một đơn?', 'a' => 'Có — một báo giá minh bạch, một đầu mối chăm sóc.'],
         ['q' => 'Canyoning hủy vì mưa?', 'a' => 'Đổi ngày miễn phí hoặc hoàn theo chính sách khi mưa lớn không an toàn.'],
         ['q' => 'Shuttle DLI có chạy đêm không?', 'a' => 'Có phụ phí chuyến bay đêm — đặt trước khi bay.'],
     ],
@@ -1401,15 +2909,27 @@ return array_merge(
     ['customize_form' => [
         'destinations_label' => [
             'vi' => 'Bạn muốn khám phá khu vực nào ở Đà Lạt?',
-            'en' => 'Which areas of Da Lat would you like to explore?',
+
+
+
+
+'en' => 'Which areas of Da Lat would you like to explore?',
         ],
         'accommodation_label' => [
             'vi' => 'Bạn thích loại lưu trú nào?',
-            'en' => 'What kind of stay do you prefer?',
+
+
+
+
+'en' => 'What kind of stay do you prefer?',
         ],
         'budget_note' => [
             'vi' => 'Ngân sách dự kiến (chưa gồm vé xe/bay Sài Gòn—Đà Lạt)',
-            'en' => 'Estimated budget (excluding HCMC—Da Lat bus/flight tickets)',
+
+
+
+
+'en' => 'Estimated budget (excluding HCMC—Da Lat bus/flight tickets)',
         ],
         'accommodation' => [
             'vi' => [
@@ -1419,7 +2939,11 @@ return array_merge(
                 'Villa / resort ven hồ Tuyền Lâm',
                 'Nhờ tư vấn giúp tôi',
             ],
-            'en' => [
+
+
+
+
+'en' => [
                 'City centre / Xuan Huong Lake',
                 'Ta Nung / pine forest views',
                 'Cau Dat / farm stay',
@@ -1429,46 +2953,110 @@ return array_merge(
         ],
     ]],
     ['nav' => [
-        'about_group' => ['vi' => 'Về Hi Đà Lạt', 'en' => 'About Hi Da Lat'],
-        'tours' => ['label' => ['vi' => 'Tour', 'en' => 'Tours']],
+        'about_group' => ['vi' => 'Về Hi Đà Lạt',
+
+
+
+'en' => 'About Hi Da Lat'],
+        'tours' => ['label' => ['vi' => 'Tour',
+
+
+
+'en' => 'Tours']],
         'cruise' => [
-            'label' => ['vi' => 'Thuyền hồ', 'en' => 'Lake boats'],
-            'all_label' => ['vi' => 'Tất cả thuyền hồ', 'en' => 'All lake boats'],
-            'all_meta' => ['vi' => 'Thuyền & SUP hồ Tuyền Lâm', 'en' => 'Tuyen Lam boats & SUP'],
-            'search_hint' => ['vi' => 'Tour, cà phê, canyoning, cẩm nang…', 'en' => 'Tours, coffee, canyoning, guides…'],
-            'search_placeholder' => ['vi' => 'Tìm tour, dịch vụ, bài viết…', 'en' => 'Search tours, services, articles…'],
-            'hub_title' => ['vi' => 'Thuyền hồ', 'en' => 'Lake boats'],
-            'hub_subtitle' => ['vi' => 'Thuyền picnic, SUP và câu cá hồ Tuyền Lâm.', 'en' => 'Tuyen Lam picnic boats, SUP and fishing trips.'],
+            'label' => ['vi' => 'Thuyền hồ',
+
+
+
+'en' => 'Lake boats'],
+            'all_label' => ['vi' => 'Tất cả thuyền hồ',
+
+
+
+'en' => 'All lake boats'],
+            'all_meta' => ['vi' => 'Thuyền & SUP hồ Tuyền Lâm',
+
+
+
+'en' => 'Tuyen Lam boats & SUP'],
+            'search_hint' => ['vi' => 'Tour, cà phê, canyoning, cẩm nang…',
+
+
+
+'en' => 'Tours, coffee, canyoning, guides…'],
+            'search_placeholder' => ['vi' => 'Tìm tour, dịch vụ, bài viết…',
+
+
+
+'en' => 'Search tours, services, articles…'],
+            'hub_title' => ['vi' => 'Thuyền hồ',
+
+
+
+'en' => 'Lake boats'],
+            'hub_subtitle' => ['vi' => 'Thuyền picnic, SUP và câu cá hồ Tuyền Lâm.',
+
+
+
+'en' => 'Tuyen Lam picnic boats, SUP and fishing trips.'],
         ],
     ]],
     ['listing_hubs' => [
         'tours_hub' => [
             'vi' => ['seo_body' => 'Tour :brand gom city tour, canyoning, Cầu Đất và combo biển — thiết kế bởi chuyên gia bản địa.'],
-            'en' => ['seo_body' => ':brand tours cover city highlights, canyoning, Cau Dat coffee and beach combos — designed by local experts.'],
+
+
+
+
+'en' => ['seo_body' => ':brand tours cover city highlights, canyoning, Cau Dat coffee and beach combos — designed by local experts.'],
         ],
         'cruises_hub' => [
             'vi' => ['seo_body' => 'Thuyền hồ Tuyền Lâm — picnic hoàng hôn, SUP sáng sớm và câu cá từ :brand.'],
-            'en' => ['seo_body' => 'Tuyen Lam lake boats — sunset picnics, dawn SUP and fishing from :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Tuyen Lam lake boats — sunset picnics, dawn SUP and fishing from :brand.'],
         ],
         'trains_hub' => [
-            'vi' => ['seo_body' => 'Xe giường, limousine Sài Gòn/Hà Nội, xe Nha Trang/Mũi Né và shuttle DLI qua :brand — e-ticket, đổi ngày linh hoạt.'],
-            'en' => ['seo_body' => 'Sleeper buses, HCMC/Hanoi limousines, Nha Trang/Mui Ne coaches and DLI shuttles via :brand — e-tickets and flexible changes.'],
+            'vi' => ['seo_body' => 'Xe giường, limousine Sài Gòn/Hà Nội, xe Nha Trang/Mũi Né và shuttle Đà Lạt qua :brand — e-ticket, đổi ngày linh hoạt.'],
+
+
+
+
+'en' => ['seo_body' => 'Sleeper buses, HCMC/Hanoi limousines, Nha Trang/Mui Ne coaches and DLI shuttles via :brand — e-tickets and flexible changes.'],
         ],
         'flights_hub' => [
             'vi' => ['seo_body' => 'Vé bay DLI và đưa đón Liên Khương kết nối tour :brand.'],
-            'en' => ['seo_body' => 'DLI flights and Lien Khuong transfers aligned with your :brand itinerary.'],
+
+
+
+
+'en' => ['seo_body' => 'DLI flights and Lien Khuong transfers aligned with your :brand itinerary.'],
         ],
         'stays_hub' => [
             'vi' => ['seo_body' => ':brand tổng hợp lưu trú Đà Lạt theo khu vực — homestay, villa và resort ở trung tâm, Tà Nung, Cầu Đất và ven hồ Tuyền Lâm. Lọc theo ngân sách, phong cách và gần các điểm trong hành trình của bạn.'],
-            'en' => ['seo_body' => ':brand brings together Da Lat stays by area — homestays, villas and resorts in the centre, Ta Nung, Cau Dat and Tuyen Lam lakeside. Filter by budget, style and proximity to your itinerary.'],
+
+
+
+
+'en' => ['seo_body' => ':brand brings together Da Lat stays by area — homestays, villas and resorts in the centre, Ta Nung, Cau Dat and Tuyen Lam lakeside. Filter by budget, style and proximity to your itinerary.'],
         ],
         'experiences_hub' => [
             'vi' => ['seo_body' => 'Trải nghiệm Đà Lạt: canyoning, cà phê Cầu Đất, Langbiang, Crazy House, chợ đêm — đặt lẻ hoặc gộp tour qua :brand.'],
-            'en' => ['seo_body' => 'Da Lat experiences: canyoning, Cau Dat coffee, Langbiang, Crazy House, night market — à la carte or bundled via :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Da Lat experiences: canyoning, Cau Dat coffee, Langbiang, Crazy House, night market — à la carte or bundled via :brand.'],
         ],
         'extras_hub' => [
             'vi' => ['seo_body' => 'HDV riêng, xe có lái, hoa surprise và hỗ trợ 24/7 trên cao nguyên cùng :brand.'],
-            'en' => ['seo_body' => 'Private guides, cars with drivers, flower surprises and 24/7 highland support with :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Private guides, cars with drivers, flower surprises and 24/7 highland support with :brand.'],
         ],
     ]],
 );

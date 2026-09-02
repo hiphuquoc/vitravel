@@ -40,21 +40,33 @@ $__phuquySeed = array(
             'sort' => 10,
             'age_min' => 12,
             'age_max' => 59,
-            'name' => array('vi' => 'Người lớn', 'en' => 'Adult'),
+            'name' => array('vi' => 'Người lớn',
+
+
+
+'en' => 'Adult'),
         ),
         array(
             'code' => 'child',
             'sort' => 20,
             'age_min' => 2,
             'age_max' => 11,
-            'name' => array('vi' => 'Trẻ em', 'en' => 'Child'),
+            'name' => array('vi' => 'Trẻ em',
+
+
+
+'en' => 'Child'),
         ),
         array(
             'code' => 'senior',
             'sort' => 30,
             'age_min' => 60,
             'age_max' => null,
-            'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)'),
+            'name' => array('vi' => 'Cao tuổi (60+)',
+
+
+
+'en' => 'Senior (60+)'),
         ),
     ),
 
@@ -99,32 +111,108 @@ $__phuquySeed = array(
     ),
 
     'content_tags' => array(
-        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?', 'en' => 'Where to eat & drink?'),
-        'where-to-stay' => array('vi' => 'Ở đâu?', 'en' => 'Where to stay?'),
-        'what-to-do' => array('vi' => 'Làm gì & xem gì?', 'en' => 'What to do & see?'),
-        'how-to-get-there' => array('vi' => 'Di chuyển ra đảo thế nào?', 'en' => 'How to get there?'),
-        'travel-tips' => array('vi' => 'Mẹo du lịch', 'en' => 'Travel tips'),
-        'trip-report' => array('vi' => 'Cảm nhận chuyến đi', 'en' => 'How was the trip?'),
-        'which-tour' => array('vi' => 'Chọn tour nào?', 'en' => 'Which tour to choose?'),
+        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?',
+
+
+
+'en' => 'Where to eat & drink?'),
+        'where-to-stay' => array('vi' => 'Ở đâu?',
+
+
+
+'en' => 'Where to stay?'),
+        'what-to-do' => array('vi' => 'Làm gì & xem gì?',
+
+
+
+'en' => 'What to do & see?'),
+        'how-to-get-there' => array('vi' => 'Di chuyển ra đảo thế nào?',
+
+
+
+'en' => 'How to get there?'),
+        'travel-tips' => array('vi' => 'Mẹo du lịch',
+
+
+
+'en' => 'Travel tips'),
+        'trip-report' => array('vi' => 'Cảm nhận chuyến đi',
+
+
+
+'en' => 'How was the trip?'),
+        'which-tour' => array('vi' => 'Chọn tour nào?',
+
+
+
+'en' => 'Which tour to choose?'),
     ),
 
     'travel_styles' => array(
-        'diving' => array('vi' => 'Lặn biển chuyên sâu', 'en' => 'Scuba diving'),
-        'beach' => array('vi' => 'Nghỉ dưỡng biển', 'en' => 'Beach'),
-        'diving-snorkel' => array('vi' => 'Lặn & ngắm san hô', 'en' => 'Diving & snorkeling'),
-        'family' => array('vi' => 'Gia đình', 'en' => 'Family'),
-        'honeymoon' => array('vi' => 'Trăng mật', 'en' => 'Honeymoon'),
-        'culture' => array('vi' => 'Văn hoá & tâm linh', 'en' => 'Culture & spirituality'),
-        'adventure' => array('vi' => 'Phiêu lưu', 'en' => 'Adventure'),
-        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
-        'multi-day' => array('vi' => 'Tour nhiều ngày', 'en' => 'Multi-day tour'),
-        'long-duration' => array('vi' => 'Tour dài ngày', 'en' => 'Long duration'),
-        'small-group' => array('vi' => 'Nhóm nhỏ', 'en' => 'Small group'),
-        'seafood' => array('vi' => 'Hải sản & làng chài', 'en' => 'Seafood & fishing village'),
-        'jeep' => array('vi' => 'Jeep vòng đảo', 'en' => 'Island jeep tour'),
-        'balanced' => array('vi' => 'Kỳ nghỉ cân bằng', 'en' => 'Balanced'),
-        'multi-destination-combo' => array('vi' => 'Kết hợp nhiều điểm đến', 'en' => 'Multi-destination combo'),
-        'quiet-stay' => array('vi' => 'Nghỉ yên tĩnh', 'en' => 'Quiet stay'),
+        'day-trip' => array(
+            'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day trip',
+        ),
+        '2n1d' => array(
+            'vi' => '2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+        ),
+        '3n2d' => array(
+            'vi' => '3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+        ),
+        '4n3d' => array(
+            'vi' => '4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+        ),
+        '5-plus-days' => array(
+            'vi' => 'Từ 5 ngày',
+
+
+
+
+'en' => '5+ days',
+        ),
+        'lan-bien' => array(
+            'vi' => 'Tour lặn & snorkel',
+
+
+
+
+'en' => 'Dive & snorkel tours',
+        ),
+        'bien-bai-nho' => array(
+            'vi' => 'Tour biển Bãi Nhỏ',
+
+
+
+
+'en' => 'Bai Nho beach tours',
+        ),
+        'hai-dang-van-hoa' => array(
+            'vi' => 'Tour hải đăng & văn hoá',
+
+
+
+
+'en' => 'Lighthouse & culture tours',
+        ),
     ),
 
     'review_platforms' => array(
@@ -151,7 +239,11 @@ $__phuquySeed = array(
             'vi' => array('title' => 'Phú Quý', 'title_accent' => 'đảo núi lửa giữa Biển Đông',
                 'description' => 'Bãi cát dài, làng chài và đá bazan đen — nhịp sống chậm trên đảo huyện xa đất liền, chỉ một chuyến tàu cao tốc từ Phan Thiết.',
                 'button_label' => 'Khám phá đảo Phú Quý', 'image_alt' => 'Bãi biển Phú Quý nhìn từ trên cao'),
-            'en' => array('title' => 'Phu Quy Island', 'title_accent' => 'a volcanic island in the East Sea',
+
+
+
+
+'en' => array('title' => 'Phu Quy Island', 'title_accent' => 'a volcanic island in the East Sea',
                 'description' => 'Long beaches, fishing villages and black basalt rock — a slow island rhythm, one high-speed ferry from Phan Thiet.',
                 'button_label' => 'Explore Phu Quy', 'image_alt' => 'Aerial view of Phu Quy beach'),
         ),
@@ -160,7 +252,11 @@ $__phuquySeed = array(
             'vi' => array('title' => 'Rạn san hô Phú Quý', 'title_accent' => 'nước trong, gần bờ, dễ tiếp cận',
                 'description' => 'Snorkel và scuba quanh các điểm san hô cứng còn nguyên — phù hợp người mới lẫn thợ lặn có chứng chỉ, thuyền xuất phát ngay từ đảo.',
                 'button_label' => 'Xem tour lặn', 'image_alt' => 'Snorkel trên rạn san hô Phú Quý'),
-            'en' => array('title' => 'Phu Quy coral reefs', 'title_accent' => 'clear water, close to shore',
+
+
+
+
+'en' => array('title' => 'Phu Quy coral reefs', 'title_accent' => 'clear water, close to shore',
                 'description' => 'Snorkel and scuba at nearshore hard-coral sites — for beginners and certified divers, with boats leaving from the island.',
                 'button_label' => 'View diving tours', 'image_alt' => 'Snorkeling Phu Quy coral reef'),
         ),
@@ -169,7 +265,11 @@ $__phuquySeed = array(
             'vi' => array('title' => 'Mũi Đèn Biển', 'title_accent' => 'bình minh trên đá núi lửa',
                 'description' => 'Hải đăng cổ trên mũi đá bazan — điểm ngắm bình minh và hoàng hôn được yêu thích nhất trên đảo, gần Chùa Hang.',
                 'button_label' => 'Tour hải đăng & Chùa Hang', 'image_alt' => 'Hải đăng Mũi Đèn Biển Phú Quý'),
-            'en' => array('title' => 'Phu Quy Lighthouse', 'title_accent' => 'sunrise on volcanic rock',
+
+
+
+
+'en' => array('title' => 'Phu Quy Lighthouse', 'title_accent' => 'sunrise on volcanic rock',
                 'description' => 'A historic lighthouse on a basalt headland — the island’s favourite sunrise and sunset spot, near Chua Hang.',
                 'button_label' => 'Lighthouse & Chua Hang tour', 'image_alt' => 'Phu Quy lighthouse at Mui Den Bien'),
         ),
@@ -187,33 +287,108 @@ $__phuquySeed = array(
     ),
 
     'zone_translations' => array(
-        'trung-tam-phu-quy' => array('vi' => 'Thị trấn / cảng Phú Quý', 'en' => 'Phu Quy Town & Harbour',
-            'tagline' => array('vi' => 'Cảng tàu, chợ hải sản và nhịp sống phố đảo', 'en' => 'Ferry pier, seafood market and island town life')),
-        'bai-nho' => array('vi' => 'Bãi Nhỏ', 'en' => 'Bai Nho Beach',
-            'tagline' => array('vi' => 'Dải bãi chính — resort, ghế nằm và sóng nhẹ', 'en' => 'Main beach strip — resorts, loungers and gentle waves')),
-        'bai-dai' => array('vi' => 'Bãi Dài', 'en' => 'Bai Dai Beach',
-            'tagline' => array('vi' => 'Bãi cát dài yên tĩnh, ít ồn hơn Bãi Nhỏ', 'en' => 'A long quiet sand stretch, calmer than Bai Nho')),
-        'mui-den-bien' => array('vi' => 'Mũi Đèn Biển', 'en' => 'Mui Den Bien Lighthouse',
-            'tagline' => array('vi' => 'Hải đăng trên đá bazan — bình minh & hoàng hôn', 'en' => 'Lighthouse on basalt rock — sunrise & sunset')),
-        'chua-hang' => array('vi' => 'Chùa Hang', 'en' => 'Chua Hang Cave Pagoda',
-            'tagline' => array('vi' => 'Chùa trong hang đá — điểm tâm linh đặc trưng đảo', 'en' => 'A pagoda inside a cave — the island’s spiritual landmark')),
-        'ran-san-ho' => array('vi' => 'Rạn san hô & điểm lặn', 'en' => 'Coral reefs & dive sites',
-            'tagline' => array('vi' => 'Snorkel và scuba quanh các rạn gần bờ', 'en' => 'Snorkel and scuba around nearshore reefs')),
-        'ket-hop-phan-thiet' => array('vi' => 'Kết hợp Phan Thiết / Mũi Né', 'en' => 'Combined with Phan Thiet / Mui Ne',
-            'tagline' => array('vi' => 'Cửa ngõ đất liền — nối Mũi Né với đảo núi lửa', 'en' => 'Mainland gateway — linking Mui Ne with the volcanic island')),
+        'trung-tam-phu-quy' => array('vi' => 'Thị trấn / cảng Phú Quý',
+
+
+
+'en' => 'Phu Quy Town & Harbour',
+            'tagline' => array('vi' => 'Cảng tàu, chợ hải sản và nhịp sống phố đảo',
+
+
+
+'en' => 'Ferry pier, seafood market and island town life')),
+        'bai-nho' => array('vi' => 'Bãi Nhỏ',
+
+
+
+'en' => 'Bai Nho Beach',
+            'tagline' => array('vi' => 'Dải bãi chính — resort, ghế nằm và sóng nhẹ',
+
+
+
+'en' => 'Main beach strip — resorts, loungers and gentle waves')),
+        'bai-dai' => array('vi' => 'Bãi Dài',
+
+
+
+'en' => 'Bai Dai Beach',
+            'tagline' => array('vi' => 'Bãi cát dài yên tĩnh, ít ồn hơn Bãi Nhỏ',
+
+
+
+'en' => 'A long quiet sand stretch, calmer than Bai Nho')),
+        'mui-den-bien' => array('vi' => 'Mũi Đèn Biển',
+
+
+
+'en' => 'Mui Den Bien Lighthouse',
+            'tagline' => array('vi' => 'Hải đăng trên đá bazan — bình minh & hoàng hôn',
+
+
+
+'en' => 'Lighthouse on basalt rock — sunrise & sunset')),
+        'chua-hang' => array('vi' => 'Chùa Hang',
+
+
+
+'en' => 'Chua Hang Cave Pagoda',
+            'tagline' => array('vi' => 'Chùa trong hang đá — điểm tâm linh đặc trưng đảo',
+
+
+
+'en' => 'A pagoda inside a cave — the island’s spiritual landmark')),
+        'ran-san-ho' => array('vi' => 'Rạn san hô & điểm lặn',
+
+
+
+'en' => 'Coral reefs & dive sites',
+            'tagline' => array('vi' => 'Snorkel và scuba quanh các rạn gần bờ',
+
+
+
+'en' => 'Snorkel and scuba around nearshore reefs')),
+        'ket-hop-phan-thiet' => array('vi' => 'Kết hợp Phan Thiết / Mũi Né',
+
+
+
+'en' => 'Combined with Phan Thiet / Mui Ne',
+            'tagline' => array('vi' => 'Cửa ngõ đất liền — nối Mũi Né với đảo núi lửa',
+
+
+
+'en' => 'Mainland gateway — linking Mui Ne with the volcanic island')),
     ),
 
     'tours' => array(
         array(
             'slug' => 'phu-quy-3-ngay-tong-quan-dao',
             'title' => 'Phú Quý 3 ngày 2 đêm — Tổng quan đảo núi lửa',
-            'zoneSlug' => 'trung-tam-phu-quy', 'zone' => 'Thị trấn / cảng Phú Quý',
-            'tourCode' => 'PQ3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 128, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('beach', 'balanced', 'multi-day'),
-            'quote' => array('text' => 'Ba ngày vừa đủ để cảm nhận nhịp đảo: jeep đá bazan, snorkel gần bờ và hải sản chợ tối.', 'author' => 'Anh Quang Huy'),
-            'places' => array('Cảng Phú Quý', 'Bãi Nhỏ', 'Bãi Dài', 'Mũi Đèn Biển', 'Chùa Hang', 'Rạn san hô'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'zone' => 'Thị trấn / cảng Phú Quý',
+            'tourCode' => 'PQ3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 128,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+            ),
+            'quote' => array(
+                'text' => 'Ba ngày vừa đủ để cảm nhận nhịp đảo: jeep đá bazan, snorkel gần bờ và hải sản chợ tối.',
+                'author' => 'Anh Quang Huy',
+            ),
+            'places' => array(
+                'Cảng Phú Quý',
+                'Bãi Nhỏ',
+                'Bãi Dài',
+                'Mũi Đèn Biển',
+                'Chùa Hang',
+                'Rạn san hô',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
             'highlightsIntro' => 'Lịch trình cân bằng cho lần đầu đến đảo: jeep vòng đảo, một buổi snorkel, hải đăng bình minh và hải sản chợ tối.',
             'highlights' => array(
                 'Jeep hoặc xe máy vòng đảo trên nền đá bazan',
@@ -223,15 +398,38 @@ $__phuquySeed = array(
                 'Ăn hải sản tươi tại chợ / quán ven cảng',
             ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Tàu vào đảo — Nhận phòng Bãi Nhỏ', 'meals' => 'Tối',
-                    'transport' => array('ferry', 'car'), 'overnight' => 'Bãi Nhỏ',
-                    'content' => 'Đón tại cảng Phú Quý sau chuyến tàu từ Phan Thiết / La Gi, nhận phòng khu Bãi Nhỏ. Chiều tự do tắm biển, tối ăn hải sản chợ thị trấn.'),
-                array('day' => 2, 'title' => 'Jeep vòng đảo — Hải đăng & Chùa Hang', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('jeep'), 'overnight' => 'Bãi Nhỏ',
-                    'content' => 'Jeep vòng đảo: Bãi Dài, Mũi Đèn Biển, Chùa Hang, các điểm view đá núi lửa. Trưa hải sản, chiều nghỉ biển, tối tự do.'),
-                array('day' => 3, 'title' => 'Snorkel rạn san hô — Tàu về đất liền', 'meals' => 'Sáng; Trưa',
-                    'transport' => array('boat', 'ferry'), 'overnight' => NULL,
-                    'content' => 'Sáng thuyền ra điểm snorkel gần bờ, ăn trưa nhẹ, chiều lên tàu về Phan Thiết / La Gi theo lịch đã đặt.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Tàu vào đảo — Nhận phòng Bãi Nhỏ',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'ferry',
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Nhỏ',
+                    'content' => 'Đón tại cảng Phú Quý sau chuyến tàu từ Phan Thiết / La Gi, nhận phòng khu Bãi Nhỏ. Chiều tự do tắm biển, tối ăn hải sản chợ thị trấn.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Jeep vòng đảo — Hải đăng & Chùa Hang',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'jeep',
+                    ),
+                    'overnight' => 'Bãi Nhỏ',
+                    'content' => 'Jeep vòng đảo: Bãi Dài, Mũi Đèn Biển, Chùa Hang, các điểm view đá núi lửa. Trưa hải sản, chiều nghỉ biển, tối tự do.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Snorkel rạn san hô — Tàu về đất liền',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'boat',
+                        'ferry',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng thuyền ra điểm snorkel gần bờ, ăn trưa nhẹ, chiều lên tàu về Phan Thiết / La Gi theo lịch đã đặt.',
+                ),
             ),
             'inclusions' => array(
                 'Khách sạn / resort 3* khu Bãi Nhỏ 2 đêm',
@@ -240,365 +438,1051 @@ $__phuquySeed = array(
                 'Thuyền snorkel + thiết bị cơ bản',
                 'Xe đưa đón cảng — khách sạn',
             ),
-            'exclusions' => array('Vé tàu cao tốc Phan Thiết / La Gi — Phú Quý (đặt thêm)', 'Đồ uống ngoài chương trình', 'Tiền tip', 'Bảo hiểm du lịch'),
-            'notes' => array('Lịch trình có thể đổi thứ tự tuỳ giờ tàu và gió mùa.', 'Tour ghép nhóm nhỏ tối đa 12 khách; có phương án private.'),
-            'faqs' => array(
-                array('q' => 'Từ Sài Gòn / Phan Thiết ra Phú Quý mất bao lâu?', 'a' => 'Xe Sài Gòn — Phan Thiết khoảng 3.5–4.5 giờ; tàu cao tốc Phan Thiết — Phú Quý thường 2.5–3.5 giờ tuỳ biển. Tổng hành trình trong ngày hoàn toàn khả thi nếu bắt tàu sớm.'),
-                array('q' => 'Tour 3 ngày có phù hợp gia đình có trẻ nhỏ?', 'a' => 'Có. Snorkel có áo phao; jeep có thể rút ngắn lộ trình. Trẻ từ 5 tuổi thường đi thoải mái.'),
+            'exclusions' => array(
+                'Vé tàu cao tốc Phan Thiết / La Gi — Phú Quý (đặt thêm)',
+                'Đồ uống ngoài chương trình',
+                'Tiền tip',
+                'Bảo hiểm du lịch',
             ),
-            'galleryCount' => 6, 'priceFrom' => 2890000.0, 'currency' => 'VND',
+            'notes' => array(
+                'Lịch trình có thể đổi thứ tự tuỳ giờ tàu và gió mùa.',
+                'Tour ghép nhóm nhỏ tối đa 12 khách; có phương án private.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Từ Sài Gòn / Phan Thiết ra Phú Quý mất bao lâu?',
+                    'a' => 'Xe Sài Gòn — Phan Thiết khoảng 3.5–4.5 giờ; tàu cao tốc Phan Thiết — Phú Quý thường 2.5–3.5 giờ tuỳ biển. Tổng hành trình trong ngày hoàn toàn khả thi nếu bắt tàu sớm.',
+                ),
+                array(
+                    'q' => 'Tour 3 ngày có phù hợp gia đình có trẻ nhỏ?',
+                    'a' => 'Có. Snorkel có áo phao; jeep có thể rút ngắn lộ trình. Trẻ từ 5 tuổi thường đi thoải mái.',
+                ),
+            ),
+            'galleryCount' => 6,
+            'priceFrom' => 2890000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'jeep-vong-dao-phu-quy-1-ngay',
             'title' => 'Jeep vòng đảo Phú Quý — đá núi lửa, bãi biển & hải đăng',
-            'zoneSlug' => 'trung-tam-phu-quy', 'zone' => 'Thị trấn / cảng Phú Quý',
-            'tourCode' => 'PQ1D-02', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 94, 'badge' => 'Được yêu thích', 'featured' => true,
-            'styles' => array('jeep', 'adventure', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Đường quanh đảo ngắn nhưng cảnh đổi liên tục — từ bãi cát sang mũi đá bazan chỉ vài phút.', 'author' => 'Chị Thanh Hà'),
-            'places' => array('Thị trấn', 'Bãi Nhỏ', 'Bãi Dài', 'Mũi Đèn Biển', 'Chùa Hang'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Một ngày trên jeep / xe bán tải mở: đủ điểm “must-see” mà không phải tự lo xe máy đường lạ.',
-            'highlights' => array('Jeep nhóm nhỏ tối đa 6 khách/xe', 'Dừng ảnh tại mũi đá núi lửa', 'Ghé Bãi Dài tắm ngắn', 'Thăm hải đăng & Chùa Hang', 'Ăn trưa hải sản địa phương'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Vòng đảo bằng jeep', 'meals' => 'Trưa',
-                    'transport' => array('jeep'), 'overnight' => NULL,
-                    'content' => 'Đón khách sạn 08:00, vòng Bãi Nhỏ — Bãi Dài — Mũi Đèn Biển — Chùa Hang, ăn trưa, về khoảng 16:00.'),
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'zone' => 'Thị trấn / cảng Phú Quý',
+            'tourCode' => 'PQ1D-02',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 94,
+            'badge' => 'Được yêu thích',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Jeep + tài xế', 'HDV bản địa', 'Bữa trưa hải sản', 'Nước uống'),
-            'exclusions' => array('Đồ uống có cồn', 'Vé vào một số điểm thu phí nhỏ (nếu có)'),
-            'notes' => array('Nên đội mũ, mang kem chống nắng — gió biển mạnh trên jeep mở.'),
-            'faqs' => array(array('q' => 'Có thể thuê jeep private không?', 'a' => 'Có — giá theo xe 2–6 khách, khởi hành linh hoạt hơn tour ghép.')),
-            'galleryCount' => 5, 'priceFrom' => 790000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đường quanh đảo ngắn nhưng cảnh đổi liên tục — từ bãi cát sang mũi đá bazan chỉ vài phút.',
+                'author' => 'Chị Thanh Hà',
+            ),
+            'places' => array(
+                'Thị trấn',
+                'Bãi Nhỏ',
+                'Bãi Dài',
+                'Mũi Đèn Biển',
+                'Chùa Hang',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Một ngày trên jeep / xe bán tải mở: đủ điểm “không thể bỏ qua” mà không phải tự lo xe máy đường lạ.',
+            'highlights' => array(
+                'Jeep nhóm nhỏ tối đa 6 khách/xe',
+                'Dừng ảnh tại mũi đá núi lửa',
+                'Ghé Bãi Dài tắm ngắn',
+                'Thăm hải đăng & Chùa Hang',
+                'Ăn trưa hải sản địa phương',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Vòng đảo bằng jeep',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'jeep',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón khách sạn 08:00, vòng Bãi Nhỏ — Bãi Dài — Mũi Đèn Biển — Chùa Hang, ăn trưa, về khoảng 16:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Jeep + tài xế',
+                'HDV bản địa',
+                'Bữa trưa hải sản',
+                'Nước uống',
+            ),
+            'exclusions' => array(
+                'Đồ uống có cồn',
+                'Vé vào một số điểm thu phí nhỏ (nếu có)',
+            ),
+            'notes' => array(
+                'Nên đội mũ, mang kem chống nắng — gió biển mạnh trên jeep mở.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Có thể thuê jeep private không?',
+                    'a' => 'Có — giá theo xe 2–6 khách, khởi hành linh hoạt hơn tour ghép.',
+                ),
+            ),
+            'galleryCount' => 5,
+            'priceFrom' => 790000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'lang-chai-hai-san-phu-quy-nua-ngay',
             'title' => 'Làng chài & hải sản Phú Quý — nửa ngày',
-            'zoneSlug' => 'trung-tam-phu-quy', 'zone' => 'Thị trấn / cảng Phú Quý',
-            'tourCode' => 'PQHD-03', 'duration' => 'Nửa ngày (3–4 giờ)', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 41, 'badge' => NULL, 'featured' => false,
-            'styles' => array('seafood', 'culture', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Được xem ngư dân cập bến và chọn cá còn nhảy — đúng chất đảo nghề cá.', 'author' => 'Bạn Minh Đức'),
-            'places' => array('Cảng Phú Quý', 'Chợ hải sản', 'Làng chài ven thị trấn'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Buổi sáng hoặc chiều: ghé cảng, chợ và quán chế biến tại chỗ — hiểu đời sống nghề cá trước khi ăn tối.',
-            'highlights' => array('Tham quan cảng & chợ hải sản', 'Nghe kể về mùa gió và lịch tàu', 'Thưởng thức 1–2 món đặc sản (tuỳ gói)', 'Phù hợp ghép sau jeep hoặc trước giờ tàu'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cảng — chợ — quán hải sản', 'meals' => 'Nhẹ',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón tại khách sạn, dạo cảng và chợ, dừng quán đối tác chế biến món đã chọn, về lại chỗ nghỉ.'),
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'zone' => 'Thị trấn / cảng Phú Quý',
+            'tourCode' => 'PQHD-03',
+            'duration' => 'Nửa ngày (3–4 giờ)',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 41,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Xe đưa đón', 'HDV', '1 phần hải sản theo gói'),
-            'exclusions' => array('Đồ uống', 'Món gọi thêm ngoài gói'),
-            'notes' => array('Giờ chợ phụ thuộc tàu cập — khung giờ có thể dịch ±30 phút.'),
+            'quote' => array(
+                'text' => 'Được xem ngư dân cập bến và chọn cá còn nhảy — đúng chất đảo nghề cá.',
+                'author' => 'Bạn Minh Đức',
+            ),
+            'places' => array(
+                'Cảng Phú Quý',
+                'Chợ hải sản',
+                'Làng chài ven thị trấn',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Buổi sáng hoặc chiều: ghé cảng, chợ và quán chế biến tại chỗ — hiểu đời sống nghề cá trước khi ăn tối.',
+            'highlights' => array(
+                'Tham quan cảng & chợ hải sản',
+                'Nghe kể về mùa gió và lịch tàu',
+                'Thưởng thức 1–2 món đặc sản (tuỳ gói)',
+                'Phù hợp ghép sau jeep hoặc trước giờ tàu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cảng — chợ — quán hải sản',
+                    'meals' => 'Nhẹ',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón tại khách sạn, dạo cảng và chợ, dừng quán đối tác chế biến món đã chọn, về lại chỗ nghỉ.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'HDV',
+                '1 phần hải sản theo gói',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+                'Món gọi thêm ngoài gói',
+            ),
+            'notes' => array(
+                'Giờ chợ phụ thuộc tàu cập — khung giờ có thể dịch ±30 phút.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 390000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 390000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'bai-nho-gia-dinh-2-ngay',
             'title' => 'Bãi Nhỏ 2 ngày 1 đêm — Gia đình: biển, snorkel nhẹ & jeep ngắn',
-            'zoneSlug' => 'bai-nho', 'zone' => 'Bãi Nhỏ',
-            'tourCode' => 'PQ2D-04', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 72, 'badge' => 'Gia đình', 'featured' => true,
-            'styles' => array('family', 'beach', 'balanced'),
-            'quote' => array('text' => 'Con 7 tuổi snorkel được nhờ áo phao — lịch trình không vội, đúng kiểu nghỉ cuối tuần.', 'author' => 'Chị Mai Phương'),
-            'places' => array('Bãi Nhỏ', 'Điểm snorkel gần bờ', 'Mũi Đèn Biển (tuỳ chọn ngắn)'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Weekend gọn cho gia đình: một buổi biển + snorkel nhẹ, một buổi jeep ngắn hoặc tự do ghế nằm.',
-            'highlights' => array('Ở sát Bãi Nhỏ', 'Snorkel nước nông có áo phao', 'Jeep ngắn hoặc tự do nghỉ', 'Nhịp độ chậm, phù hợp trẻ từ 5 tuổi'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Nhận phòng — Snorkel nhẹ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('boat'), 'overnight' => 'Bãi Nhỏ',
-                    'content' => 'Nhận phòng, ăn trưa, chiều thuyền snorkel gần bờ. Tối hải sản thị trấn.'),
-                array('day' => 2, 'title' => 'Jeep ngắn / biển — Về', 'meals' => 'Sáng',
-                    'transport' => array('jeep', 'ferry'), 'overnight' => NULL,
-                    'content' => 'Sáng jeep ngắn ghé hải đăng hoặc tự do tắm biển, chiều lên tàu về đất liền.'),
+            'zoneSlug' => 'bai-nho',
+            'zone' => 'Bãi Nhỏ',
+            'tourCode' => 'PQ2D-04',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 72,
+            'badge' => 'Gia đình',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'bien-bai-nho',
             ),
-            'inclusions' => array('Resort/khách sạn Bãi Nhỏ 1 đêm', 'Snorkel nửa ngày', 'Bữa theo chương trình', 'Xe cảng — KS'),
-            'exclusions' => array('Vé tàu ra đảo', 'Bữa trưa ngày 2', 'Tip'),
-            'notes' => array('Có ghế trẻ em / áo phao trẻ theo yêu cầu trước 24 giờ.'),
+            'quote' => array(
+                'text' => 'Con 7 tuổi snorkel được nhờ áo phao — lịch trình không vội, đúng kiểu nghỉ cuối tuần.',
+                'author' => 'Chị Mai Phương',
+            ),
+            'places' => array(
+                'Bãi Nhỏ',
+                'Điểm snorkel gần bờ',
+                'Mũi Đèn Biển (tuỳ chọn ngắn)',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Cuối tuần gọn cho gia đình: một buổi biển + snorkel nhẹ, một buổi jeep ngắn hoặc tự do ghế nằm.',
+            'highlights' => array(
+                'Ở sát Bãi Nhỏ',
+                'Snorkel nước nông có áo phao',
+                'Jeep ngắn hoặc tự do nghỉ',
+                'Nhịp độ chậm, phù hợp trẻ từ 5 tuổi',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Nhận phòng — Snorkel nhẹ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => 'Bãi Nhỏ',
+                    'content' => 'Nhận phòng, ăn trưa, chiều thuyền snorkel gần bờ. Tối hải sản thị trấn.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Jeep ngắn / biển — Về',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'jeep',
+                        'ferry',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng jeep ngắn ghé hải đăng hoặc tự do tắm biển, chiều lên tàu về đất liền.',
+                ),
+            ),
+            'inclusions' => array(
+                'Resort/khách sạn Bãi Nhỏ 1 đêm',
+                'Snorkel nửa ngày',
+                'Bữa theo chương trình',
+                'Xe cảng — KS',
+            ),
+            'exclusions' => array(
+                'Vé tàu ra đảo',
+                'Bữa trưa ngày 2',
+                'Tip',
+            ),
+            'notes' => array(
+                'Có ghế trẻ em / áo phao trẻ theo yêu cầu trước 24 giờ.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 1890000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 1890000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'beach-hopping-bai-nho-bai-dai',
             'title' => 'Beach hopping Bãi Nhỏ — Bãi Dài — 1 ngày',
-            'zoneSlug' => 'bai-nho', 'zone' => 'Bãi Nhỏ',
-            'tourCode' => 'PQ1D-05', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 55, 'badge' => NULL, 'featured' => true,
-            'styles' => array('beach', 'day-trip', 'family'),
-            'quote' => array('text' => 'Hai bãi hai cảm giác — Bãi Nhỏ tiện nghi, Bãi Dài vắng và dài bất tận.', 'author' => 'Gia đình Hùng Anh'),
-            'places' => array('Bãi Nhỏ', 'Bãi Dài'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Tour ngày “chỉ biển”: ghế nằm Bãi Nhỏ buổi sáng, chuyển Bãi Dài buổi chiều, không chạy nhiều điểm văn hoá.',
-            'highlights' => array('Ghế nằm + ô Bãi Nhỏ', 'Di chuyển jeep/xe tới Bãi Dài', 'Thời gian tắm tự do', 'Nước giải khát'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hai bãi trong một ngày', 'meals' => 'Trưa nhẹ',
-                    'transport' => array('car', 'jeep'), 'overnight' => NULL,
-                    'content' => 'Sáng Bãi Nhỏ, trưa nhẹ, chiều chuyển Bãi Dài tắm và chụp ảnh, về khách sạn trước chiều muộn.'),
+            'zoneSlug' => 'bai-nho',
+            'zone' => 'Bãi Nhỏ',
+            'tourCode' => 'PQ1D-05',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 55,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'bien-bai-nho',
             ),
-            'inclusions' => array('Xe/jeep đưa đón', 'Ghế nằm Bãi Nhỏ', 'Trưa nhẹ / nước'),
-            'exclusions' => array('Đồ ăn gọi thêm', 'Thuê SUP (có thể thêm)'),
-            'notes' => array('Không phải tour “chạy điểm” — đúng nghĩa nghỉ biển.'),
+            'quote' => array(
+                'text' => 'Hai bãi hai cảm giác — Bãi Nhỏ tiện nghi, Bãi Dài vắng và dài bất tận.',
+                'author' => 'Gia đình Hùng Anh',
+            ),
+            'places' => array(
+                'Bãi Nhỏ',
+                'Bãi Dài',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Tour ngày “chỉ biển”: ghế nằm Bãi Nhỏ buổi sáng, chuyển Bãi Dài buổi chiều, không chạy nhiều điểm văn hoá.',
+            'highlights' => array(
+                'Ghế nằm + ô Bãi Nhỏ',
+                'Di chuyển jeep/xe tới Bãi Dài',
+                'Thời gian tắm tự do',
+                'Nước giải khát',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hai bãi trong một ngày',
+                    'meals' => 'Trưa nhẹ',
+                    'transport' => array(
+                        'car',
+                        'jeep',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng Bãi Nhỏ, trưa nhẹ, chiều chuyển Bãi Dài tắm và chụp ảnh, về khách sạn trước chiều muộn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe/jeep đưa đón',
+                'Ghế nằm Bãi Nhỏ',
+                'Trưa nhẹ / nước',
+            ),
+            'exclusions' => array(
+                'Đồ ăn gọi thêm',
+                'Thuê SUP (có thể thêm)',
+            ),
+            'notes' => array(
+                'Không phải tour “chạy điểm” — đúng nghĩa nghỉ biển.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 520000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 520000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'honeymoon-bai-dai-3-ngay',
             'title' => 'Trăng mật Bãi Dài 3 ngày 2 đêm — yên tĩnh & hoàng hôn',
-            'zoneSlug' => 'bai-dai', 'zone' => 'Bãi Dài',
-            'tourCode' => 'PQ3D-06', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 38, 'badge' => 'Lãng mạn', 'featured' => true,
-            'styles' => array('honeymoon', 'beach', 'quiet-stay', 'balanced'),
-            'quote' => array('text' => 'Không karaoke, không đông đúc — chỉ gió và cát dài. Đúng chỗ cho hai người.', 'author' => 'Cặp đôi Nam & Linh'),
-            'places' => array('Bãi Dài', 'Mũi Đèn Biển', 'Điểm snorkel riêng'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Ở bungalow/resort yên khu Bãi Dài, một buổi snorkel riêng và một buổi hoàng hôn hải đăng.',
-            'highlights' => array('2 đêm bungalow gần Bãi Dài', 'Snorkel private nửa ngày', 'Hoàng hôn Mũi Đèn Biển', 'Bữa tối set menu hải sản', 'Nhịp độ chậm, ít di chuyển'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đến đảo — Nhận bungalow Bãi Dài', 'meals' => 'Tối',
-                    'transport' => array('ferry', 'car'), 'overnight' => 'Bãi Dài',
-                    'content' => 'Đón cảng, đưa về Bãi Dài, nhận phòng. Tối set menu hải sản.'),
-                array('day' => 2, 'title' => 'Snorkel riêng — Hoàng hôn hải đăng', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('boat', 'car'), 'overnight' => 'Bãi Dài',
-                    'content' => 'Sáng thuyền snorkel nhóm nhỏ/private, chiều nghỉ biển, chiều muộn ra Mũi Đèn Biển ngắm hoàng hôn.'),
-                array('day' => 3, 'title' => 'Sáng tự do — Tàu về', 'meals' => 'Sáng',
-                    'transport' => array('ferry'), 'overnight' => NULL,
-                    'content' => 'Sáng tắm biển hoặc spa tuỳ chọn, chiều lên tàu về đất liền.'),
+            'zoneSlug' => 'bai-dai',
+            'zone' => 'Bãi Dài',
+            'tourCode' => 'PQ3D-06',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 38,
+            'badge' => 'Lãng mạn',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('Bungalow/resort 2 đêm', 'Snorkel private', 'Xe đưa đón', 'Bữa theo chương trình', 'Set tối ngày 1'),
-            'exclusions' => array('Vé tàu', 'Spa', 'Đồ uống có cồn'),
-            'notes' => array('Có thể thêm trang trí phòng honeymoon với phụ phí nhỏ.'),
+            'quote' => array(
+                'text' => 'Không karaoke, không đông đúc — chỉ gió và cát dài. Đúng chỗ cho hai người.',
+                'author' => 'Cặp đôi Nam & Linh',
+            ),
+            'places' => array(
+                'Bãi Dài',
+                'Mũi Đèn Biển',
+                'Điểm snorkel riêng',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Ở bungalow/resort yên khu Bãi Dài, một buổi snorkel riêng và một buổi hoàng hôn hải đăng.',
+            'highlights' => array(
+                '2 đêm bungalow gần Bãi Dài',
+                'Snorkel private nửa ngày',
+                'Hoàng hôn Mũi Đèn Biển',
+                'Bữa tối set menu hải sản',
+                'Nhịp độ chậm, ít di chuyển',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đến đảo — Nhận bungalow Bãi Dài',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'ferry',
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Dài',
+                    'content' => 'Đón cảng, đưa về Bãi Dài, nhận phòng. Tối set menu hải sản.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Snorkel riêng — Hoàng hôn hải đăng',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Dài',
+                    'content' => 'Sáng thuyền snorkel nhóm nhỏ/private, chiều nghỉ biển, chiều muộn ra Mũi Đèn Biển ngắm hoàng hôn.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Sáng tự do — Tàu về',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'ferry',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tắm biển hoặc spa tuỳ chọn, chiều lên tàu về đất liền.',
+                ),
+            ),
+            'inclusions' => array(
+                'Bungalow/resort 2 đêm',
+                'Snorkel private',
+                'Xe đưa đón',
+                'Bữa theo chương trình',
+                'Set tối ngày 1',
+            ),
+            'exclusions' => array(
+                'Vé tàu',
+                'Spa',
+                'Đồ uống có cồn',
+            ),
+            'notes' => array(
+                'Có thể thêm trang trí phòng honeymoon với phụ phí nhỏ.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 4200000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 4200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'camping-homestay-bai-dai-2n1d',
             'title' => 'Camping / Homestay Bãi Dài — 2 ngày 1 đêm yên tĩnh',
-            'zoneSlug' => 'bai-dai', 'zone' => 'Bãi Dài',
-            'tourCode' => 'PQ2D-07', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.8, 'reviewCount' => 29, 'badge' => 'Bản địa', 'featured' => false,
-            'styles' => array('quiet-stay', 'small-group', 'multi-day', 'beach'),
-            'quote' => array('text' => 'Đêm nghe sóng, sáng dậy thấy bãi trống — đúng “reset” khỏi thành phố.', 'author' => 'Bạn Thuỷ Tiên'),
-            'places' => array('Bãi Dài', 'Homestay ven bãi'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Ngủ homestay hoặc lều gần Bãi Dài, ăn cùng chủ nhà, một buổi chiều tự do không lịch trình dày.',
-            'highlights' => array('Homestay/lều 1 đêm', 'Ăn tối cùng gia đình địa phương', 'Bình minh trên bãi', 'Không ép shop / karaoke'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Về Bãi Dài — Nhận chỗ nghỉ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('car'), 'overnight' => 'Bãi Dài',
-                    'content' => 'Đưa tới homestay/camping, nhận chỗ, tắm biển chiều, ăn tối nhà dân.'),
-                array('day' => 2, 'title' => 'Bình minh — Về thị trấn', 'meals' => 'Sáng',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Sáng ngắm bình minh, ăn sáng, về thị trấn / cảng theo lịch tàu.'),
+            'zoneSlug' => 'bai-dai',
+            'zone' => 'Bãi Dài',
+            'tourCode' => 'PQ2D-07',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.8,
+            'reviewCount' => 29,
+            'badge' => 'Bản địa',
+            'featured' => false,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('Homestay hoặc lều 1 đêm', 'Bữa ăn theo chương trình', 'Xe đưa đón', 'HDV hỗ trợ'),
-            'exclusions' => array('Túi ngủ (có thể thuê)', 'Đồ uống'),
-            'notes' => array('Điện và wifi có thể yếu — phù hợp ai muốn offline.'),
-            'faqs' => array(array('q' => 'Có toilet không?', 'a' => 'Homestay có nhà vệ sinh đơn giản; camping dùng khu vệ sinh chung sạch sẽ.')),
-            'galleryCount' => 4, 'priceFrom' => 1250000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đêm nghe sóng, sáng dậy thấy bãi trống — đúng “reset” khỏi thành phố.',
+                'author' => 'Bạn Thuỷ Tiên',
+            ),
+            'places' => array(
+                'Bãi Dài',
+                'Homestay ven bãi',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Ngủ homestay hoặc lều gần Bãi Dài, ăn cùng chủ nhà, một buổi chiều tự do không lịch trình dày.',
+            'highlights' => array(
+                'Homestay/lều 1 đêm',
+                'Ăn tối cùng gia đình địa phương',
+                'Bình minh trên bãi',
+                'Không ép shop / karaoke',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Về Bãi Dài — Nhận chỗ nghỉ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Dài',
+                    'content' => 'Đưa tới homestay/camping, nhận chỗ, tắm biển chiều, ăn tối nhà dân.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Bình minh — Về thị trấn',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng ngắm bình minh, ăn sáng, về thị trấn / cảng theo lịch tàu.',
+                ),
+            ),
+            'inclusions' => array(
+                'Homestay hoặc lều 1 đêm',
+                'Bữa ăn theo chương trình',
+                'Xe đưa đón',
+                'HDV hỗ trợ',
+            ),
+            'exclusions' => array(
+                'Túi ngủ (có thể thuê)',
+                'Đồ uống',
+            ),
+            'notes' => array(
+                'Điện và wifi có thể yếu — phù hợp ai muốn offline.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Có toilet không?',
+                    'a' => 'Homestay có nhà vệ sinh đơn giản; camping dùng khu vệ sinh chung sạch sẽ.',
+                ),
+            ),
+            'galleryCount' => 4,
+            'priceFrom' => 1250000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'mui-den-bien-chua-hang-1-ngay',
             'title' => 'Mũi Đèn Biển & Chùa Hang — văn hoá đảo 1 ngày',
-            'zoneSlug' => 'mui-den-bien', 'zone' => 'Mũi Đèn Biển',
-            'tourCode' => 'PQ1D-08', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 67, 'badge' => NULL, 'featured' => true,
-            'styles' => array('culture', 'day-trip', 'small-group', 'jeep'),
-            'quote' => array('text' => 'Hải đăng trên đá núi lửa và chùa trong hang — hai điểm khiến Phú Quý khác mọi đảo biển tôi từng đi.', 'author' => 'Anh Việt Anh'),
-            'places' => array('Mũi Đèn Biển', 'Chùa Hang', 'Điểm view đá bazan'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Tour văn hoá–cảnh quan: hải đăng, Chùa Hang, câu chuyện núi lửa và đời sống tâm linh trên đảo.',
-            'highlights' => array('Tham quan hải đăng Mũi Đèn Biển', 'Chùa Hang trong hang đá', 'HDV kể lịch sử đảo núi lửa', 'Dừng ảnh đá bazan', 'Ăn trưa hải sản'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hải đăng — Chùa Hang', 'meals' => 'Trưa',
-                    'transport' => array('jeep', 'car'), 'overnight' => NULL,
-                    'content' => 'Đón 08:00, lên Mũi Đèn Biển, thăm Chùa Hang, ăn trưa, chiều về qua các điểm view đá, về KS khoảng 15:30.'),
+            'zoneSlug' => 'mui-den-bien',
+            'zone' => 'Mũi Đèn Biển',
+            'tourCode' => 'PQ1D-08',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 67,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'hai-dang-van-hoa',
             ),
-            'inclusions' => array('Xe/jeep', 'HDV', 'Bữa trưa', 'Nước uống'),
-            'exclusions' => array('Công đức / lễ vật (tuỳ nguyện)', 'Đồ uống có cồn'),
-            'notes' => array('Nên mặc quần áo lịch sự khi vào chùa.'),
+            'quote' => array(
+                'text' => 'Hải đăng trên đá núi lửa và chùa trong hang — hai điểm khiến Phú Quý khác mọi đảo biển tôi từng đi.',
+                'author' => 'Anh Việt Anh',
+            ),
+            'places' => array(
+                'Mũi Đèn Biển',
+                'Chùa Hang',
+                'Điểm view đá bazan',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Tour văn hoá–cảnh quan: hải đăng, Chùa Hang, câu chuyện núi lửa và đời sống tâm linh trên đảo.',
+            'highlights' => array(
+                'Tham quan hải đăng Mũi Đèn Biển',
+                'Chùa Hang trong hang đá',
+                'HDV kể lịch sử đảo núi lửa',
+                'Dừng ảnh đá bazan',
+                'Ăn trưa hải sản',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hải đăng — Chùa Hang',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'jeep',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón 08:00, lên Mũi Đèn Biển, thăm Chùa Hang, ăn trưa, chiều về qua các điểm view đá, về KS khoảng 15:30.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe/jeep',
+                'HDV',
+                'Bữa trưa',
+                'Nước uống',
+            ),
+            'exclusions' => array(
+                'Công đức / lễ vật (tuỳ nguyện)',
+                'Đồ uống có cồn',
+            ),
+            'notes' => array(
+                'Nên mặc quần áo lịch sự khi vào chùa.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 680000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 680000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'binh-minh-hoang-hon-mui-den-bien',
             'title' => 'Bình minh / Hoàng hôn Mũi Đèn Biển — nửa ngày',
-            'zoneSlug' => 'mui-den-bien', 'zone' => 'Mũi Đèn Biển',
-            'tourCode' => 'PQHD-09', 'duration' => 'Nửa ngày (2–3 giờ)', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 83, 'badge' => 'Lãng mạn', 'featured' => true,
-            'styles' => array('honeymoon', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Ánh nắng đỏ trên đá đen — khung hình đẹp nhất chuyến đi của chúng tôi.', 'author' => 'Cặp đôi Đức & My'),
-            'places' => array('Mũi Đèn Biển'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Tour ngắn chuyên “golden hour”: đón bình minh hoặc hoàng hôn tại hải đăng, nhóm nhỏ, ít người.',
-            'highlights' => array('Chọn khung bình minh hoặc hoàng hôn', 'Xe đón tận KS', 'Đồ uống nhẹ', 'Góc chụp đẹp nhất mũi đá'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Golden hour tại hải đăng', 'meals' => 'Đồ uống nhẹ',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón trước bình minh (~05:00) hoặc chiều muộn (~16:30), lên mũi đá, ngắm nắng đổi màu, về lại KS.'),
+            'zoneSlug' => 'mui-den-bien',
+            'zone' => 'Mũi Đèn Biển',
+            'tourCode' => 'PQHD-09',
+            'duration' => 'Nửa ngày (2–3 giờ)',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 83,
+            'badge' => 'Lãng mạn',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'hai-dang-van-hoa',
             ),
-            'inclusions' => array('Xe đưa đón', 'Đồ uống nhẹ', 'HDV/hỗ trợ chụp ảnh cơ bản'),
-            'exclusions' => array('Ăn sáng/tối', 'Ảnh chỉnh chuyên nghiệp'),
-            'notes' => array('Phụ thuộc thời tiết mây; có lịch thay thế nếu mưa lớn.'),
+            'quote' => array(
+                'text' => 'Ánh nắng đỏ trên đá đen — khung hình đẹp nhất chuyến đi của chúng tôi.',
+                'author' => 'Cặp đôi Đức & My',
+            ),
+            'places' => array(
+                'Mũi Đèn Biển',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Tour ngắn chuyên “golden hour”: đón bình minh hoặc hoàng hôn tại hải đăng, nhóm nhỏ, ít người.',
+            'highlights' => array(
+                'Chọn khung bình minh hoặc hoàng hôn',
+                'Xe đón tận KS',
+                'Đồ uống nhẹ',
+                'Góc chụp đẹp nhất mũi đá',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Golden hour tại hải đăng',
+                    'meals' => 'Đồ uống nhẹ',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón trước bình minh (~05:00) hoặc chiều muộn (~16:30), lên mũi đá, ngắm nắng đổi màu, về lại KS.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'Đồ uống nhẹ',
+                'HDV/hỗ trợ chụp ảnh cơ bản',
+            ),
+            'exclusions' => array(
+                'Ăn sáng/tối',
+                'Ảnh chỉnh chuyên nghiệp',
+            ),
+            'notes' => array(
+                'Phụ thuộc thời tiết mây; có lịch thay thế nếu mưa lớn.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 320000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 320000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'chua-hang-van-hoa-nua-ngay',
             'title' => 'Chùa Hang — thăm quan & kể chuyện nửa ngày',
-            'zoneSlug' => 'chua-hang', 'zone' => 'Chùa Hang',
-            'tourCode' => 'PQHD-10', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.6, 'reviewCount' => 34, 'badge' => NULL, 'featured' => false,
-            'styles' => array('culture', 'day-trip', 'family'),
-            'quote' => array('text' => 'Không cần cả ngày — một buổi sáng tại Chùa Hang đã đủ cảm giác “đã đến” điểm linh thiêng của đảo.', 'author' => 'Chị Lan Anh'),
-            'places' => array('Chùa Hang'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Tour ngắn tập trung Chùa Hang: lịch sử, kiến trúc hang đá và không gian yên tĩnh.',
-            'highlights' => array('HDV bản địa', 'Thời gian thăm quan không vội', 'Phù hợp người lớn tuổi', 'Dễ ghép lịch tàu'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Chùa Hang nửa ngày', 'meals' => NULL,
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Đón KS, tới Chùa Hang, thăm quan 60–90 phút, về lại trung tâm hoặc Bãi Nhỏ.'),
+            'zoneSlug' => 'chua-hang',
+            'zone' => 'Chùa Hang',
+            'tourCode' => 'PQHD-10',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.6,
+            'reviewCount' => 34,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'hai-dang-van-hoa',
             ),
-            'inclusions' => array('Xe đưa đón', 'HDV'),
-            'exclusions' => array('Công đức', 'Ăn uống'),
-            'notes' => array('Nên mang giày chống trượt — lối vào hang có đoạn ẩm.'),
+            'quote' => array(
+                'text' => 'Không cần cả ngày — một buổi sáng tại Chùa Hang đã đủ cảm giác “đã đến” điểm linh thiêng của đảo.',
+                'author' => 'Chị Lan Anh',
+            ),
+            'places' => array(
+                'Chùa Hang',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Tour ngắn tập trung Chùa Hang: lịch sử, kiến trúc hang đá và không gian yên tĩnh.',
+            'highlights' => array(
+                'HDV bản địa',
+                'Thời gian thăm quan không vội',
+                'Phù hợp người lớn tuổi',
+                'Dễ ghép lịch tàu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Chùa Hang nửa ngày',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón KS, tới Chùa Hang, thăm quan 60–90 phút, về lại trung tâm hoặc Bãi Nhỏ.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Công đức',
+                'Ăn uống',
+            ),
+            'notes' => array(
+                'Nên mang giày chống trượt — lối vào hang có đoạn ẩm.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 280000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 280000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'lan-ngam-san-ho-phu-quy-1-ngay',
             'title' => 'Lặn ngắm san hô Phú Quý — 1 ngày (snorkel / intro dive)',
-            'zoneSlug' => 'ran-san-ho', 'zone' => 'Rạn san hô & điểm lặn',
-            'tourCode' => 'PQ1D-11', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 112, 'badge' => 'Được yêu thích', 'featured' => true,
-            'styles' => array('diving-snorkel', 'beach', 'day-trip', 'adventure'),
-            'quote' => array('text' => 'San hô cứng còn khá đẹp — hướng dẫn viên chọn điểm nước trong đúng như lời hứa.', 'author' => 'Anh Khoa Diving'),
-            'places' => array('Rạn gần bờ Phú Quý', 'Điểm snorkel theo mùa'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Ngày dưới nước: 2–3 điểm snorkel hoặc 1 intro dive (tuỳ gói), thiết bị đầy đủ, HDV chuyên lặn.',
-            'highlights' => array('2–3 điểm nước / 1 intro dive', 'Mặt nạ, ống thở, áo phao / bình khí theo gói', 'Ăn trưa trên thuyền', 'Ảnh dưới nước tuỳ chọn'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Snorkel / intro dive quanh đảo', 'meals' => 'Trưa',
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Xuất bến sáng, 2–3 điểm lặn ngắm hoặc intro dive, nghỉ trưa trên thuyền, về cảng khoảng 15:30–16:00.'),
+            'zoneSlug' => 'ran-san-ho',
+            'zone' => 'Rạn san hô & điểm lặn',
+            'tourCode' => 'PQ1D-11',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 112,
+            'badge' => 'Được yêu thích',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'lan-bien',
             ),
-            'inclusions' => array('Thuyền', 'Thiết bị snorkel hoặc intro dive', 'Bữa trưa', 'HDV lặn'),
-            'exclusions' => array('Ảnh/video dưới nước', 'Đồ uống có cồn', 'Khóa Open Water đầy đủ'),
-            'notes' => array('Biết bơi cơ bản; trẻ từ 8 tuổi snorkel cùng người lớn.', 'Intro dive yêu cầu khai báo sức khỏe.'),
-            'faqs' => array(array('q' => 'Mùa nào nước trong nhất?', 'a' => 'Thường tháng 3–8 nước ổn định hơn; mùa gió mạnh (khoảng tháng 11–2) có thể đổi điểm hoặc dời lịch.')),
-            'galleryCount' => 5, 'priceFrom' => 950000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'San hô cứng còn khá đẹp — hướng dẫn viên chọn điểm nước trong đúng như lời hứa.',
+                'author' => 'Anh Khoa Diving',
+            ),
+            'places' => array(
+                'Rạn gần bờ Phú Quý',
+                'Điểm snorkel theo mùa',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Ngày dưới nước: 2–3 điểm snorkel hoặc 1 intro dive (tuỳ gói), thiết bị đầy đủ, HDV chuyên lặn.',
+            'highlights' => array(
+                '2–3 điểm nước / 1 intro dive',
+                'Mặt nạ, ống thở, áo phao / bình khí theo gói',
+                'Ăn trưa trên thuyền',
+                'Ảnh dưới nước tuỳ chọn',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Snorkel / intro dive quanh đảo',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Xuất bến sáng, 2–3 điểm lặn ngắm hoặc intro dive, nghỉ trưa trên thuyền, về cảng khoảng 15:30–16:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền',
+                'Thiết bị snorkel hoặc intro dive',
+                'Bữa trưa',
+                'HDV lặn',
+            ),
+            'exclusions' => array(
+                'Ảnh/video dưới nước',
+                'Đồ uống có cồn',
+                'Khóa Open Water đầy đủ',
+            ),
+            'notes' => array(
+                'Biết bơi cơ bản; trẻ từ 8 tuổi snorkel cùng người lớn.',
+                'Intro dive yêu cầu khai báo sức khỏe.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Mùa nào nước trong nhất?',
+                    'a' => 'Thường tháng 3–8 nước ổn định hơn; mùa gió mạnh (khoảng tháng 11–2) có thể đổi điểm hoặc dời lịch.',
+                ),
+            ),
+            'galleryCount' => 5,
+            'priceFrom' => 950000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'diving-nhieu-ngay-phu-quy-3n2d',
             'title' => 'Diving multi-day Phú Quý — 3 ngày 2 đêm (OW / fun dive)',
-            'zoneSlug' => 'ran-san-ho', 'zone' => 'Rạn san hô & điểm lặn',
-            'tourCode' => 'PQ3D-12', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 24, 'badge' => 'Trải nghiệm sâu', 'featured' => true,
-            'styles' => array('diving', 'multi-day', 'adventure', 'small-group'),
-            'quote' => array('text' => 'Ba ngày đủ để có 4–6 lần lặn và vẫn còn thời gian ngồi Bãi Dài không làm gì.', 'author' => 'Bạn Duy Scuba'),
-            'places' => array('Các điểm lặn quanh đảo', 'Bãi Nhỏ / trung tâm'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Dành cho thợ lặn có chứng chỉ hoặc học viên Open Water: lịch lặn dày vừa phải, nhóm nhỏ, boat dive quanh đảo.',
-            'highlights' => array('4–6 lần lặn (tuỳ chứng chỉ & thời tiết)', 'Boat dive nhóm nhỏ', '2 đêm KS gần trung tâm / Bãi Nhỏ', 'Thiết bị đầy đủ (có thể tự mang)', 'Briefing an toàn mỗi buổi'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đến đảo — Check thiết bị — 1–2 lần lặn', 'meals' => 'Tối',
-                    'transport' => array('ferry', 'boat'), 'overnight' => 'Phú Quý',
-                    'content' => 'Nhận phòng, check sức khỏe & thiết bị, chiều 1–2 lần lặn gần bờ nếu biển ổn.'),
-                array('day' => 2, 'title' => 'Full day boat dive', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('boat'), 'overnight' => 'Phú Quý',
-                    'content' => '2–3 lần lặn theo điểm tốt trong ngày, nghỉ trưa trên thuyền, tối debrief.'),
-                array('day' => 3, 'title' => 'Lặn sáng — Tàu về', 'meals' => 'Sáng',
-                    'transport' => array('boat', 'ferry'), 'overnight' => NULL,
-                    'content' => '1 lần lặn sáng (nếu giờ tàu cho phép), trả thiết bị, lên tàu về đất liền.'),
+            'zoneSlug' => 'ran-san-ho',
+            'zone' => 'Rạn san hô & điểm lặn',
+            'tourCode' => 'PQ3D-12',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 24,
+            'badge' => 'Trải nghiệm sâu',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+                'lan-bien',
             ),
-            'inclusions' => array('KS 2 đêm', 'Thuyền & khí nén theo số lần lặn', 'HDV dive master', 'Bữa theo chương trình'),
-            'exclusions' => array('Vé tàu', 'Khóa OW học phí đầy đủ nếu chưa có chứng chỉ (báo riêng)', 'Bảo hiểm dive chuyên biệt'),
-            'notes' => array('Cần chứng chỉ OW trở lên cho fun dive; học viên báo trước để xếp lịch học.'),
+            'quote' => array(
+                'text' => 'Ba ngày đủ để có 4–6 lần lặn và vẫn còn thời gian ngồi Bãi Dài không làm gì.',
+                'author' => 'Bạn Duy Scuba',
+            ),
+            'places' => array(
+                'Các điểm lặn quanh đảo',
+                'Bãi Nhỏ / trung tâm',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Dành cho thợ lặn có chứng chỉ hoặc học viên Open Water: lịch lặn dày vừa phải, nhóm nhỏ, boat dive quanh đảo.',
+            'highlights' => array(
+                '4–6 lần lặn (tuỳ chứng chỉ & thời tiết)',
+                'Boat dive nhóm nhỏ',
+                '2 đêm KS gần trung tâm / Bãi Nhỏ',
+                'Thiết bị đầy đủ (có thể tự mang)',
+                'Briefing an toàn mỗi buổi',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đến đảo — Check thiết bị — 1–2 lần lặn',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'ferry',
+                        'boat',
+                    ),
+                    'overnight' => 'Phú Quý',
+                    'content' => 'Nhận phòng, check sức khỏe & thiết bị, chiều 1–2 lần lặn gần bờ nếu biển ổn.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Full day boat dive',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => 'Phú Quý',
+                    'content' => '2–3 lần lặn theo điểm tốt trong ngày, nghỉ trưa trên thuyền, tối debrief.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Lặn sáng — Tàu về',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'boat',
+                        'ferry',
+                    ),
+                    'overnight' => null,
+                    'content' => '1 lần lặn sáng (nếu giờ tàu cho phép), trả thiết bị, lên tàu về đất liền.',
+                ),
+            ),
+            'inclusions' => array(
+                'KS 2 đêm',
+                'Thuyền & khí nén theo số lần lặn',
+                'HDV dive master',
+                'Bữa theo chương trình',
+            ),
+            'exclusions' => array(
+                'Vé tàu',
+                'Khóa OW học phí đầy đủ nếu chưa có chứng chỉ (báo riêng)',
+                'Bảo hiểm dive chuyên biệt',
+            ),
+            'notes' => array(
+                'Cần chứng chỉ OW trở lên cho fun dive; học viên báo trước để xếp lịch học.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 5600000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 5600000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'snorkel-sup-kayak-nua-ngay',
             'title' => 'Snorkel + SUP / kayak gần bờ — nửa ngày',
-            'zoneSlug' => 'ran-san-ho', 'zone' => 'Rạn san hô & điểm lặn',
-            'tourCode' => 'PQHD-13', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 48, 'badge' => NULL, 'featured' => false,
-            'styles' => array('diving-snorkel', 'adventure', 'day-trip', 'family'),
-            'quote' => array('text' => 'Không cần cả ngày trên biển — nửa buổi vừa snorkel vừa chèo là đủ “đã”.', 'author' => 'Nhóm bạn Sài Gòn'),
-            'places' => array('Rạn gần bờ', 'Vùng nước nông Bãi Nhỏ / Bãi Dài'),
-            'start' => 'Phú Quý', 'end' => 'Phú Quý',
-            'highlightsIntro' => 'Gói nửa ngày linh hoạt: snorkel nước nông + 30–45 phút SUP hoặc kayak (tuỳ sóng).',
-            'highlights' => array('Thiết bị snorkel', 'SUP hoặc kayak', 'HDV / cứu hộ cơ bản', 'Phù hợp người mới'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Nửa ngày dưới nước & trên ván', 'meals' => NULL,
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Đón bãi / thuyền nhỏ ra điểm nông, snorkel, chuyển SUP/kayak, về trước trưa hoặc chiều tùy khung giờ.'),
+            'zoneSlug' => 'ran-san-ho',
+            'zone' => 'Rạn san hô & điểm lặn',
+            'tourCode' => 'PQHD-13',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 48,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'lan-bien',
             ),
-            'inclusions' => array('Thiết bị snorkel', 'SUP/kayak', 'Áo phao', 'HDV'),
-            'exclusions' => array('Ăn uống', 'Ảnh dưới nước'),
-            'notes' => array('SUP chỉ khi sóng nhẹ; nếu sóng lớn chuyển toàn bộ sang snorkel.'),
+            'quote' => array(
+                'text' => 'Không cần cả ngày trên biển — nửa buổi vừa snorkel vừa chèo là đủ “đã”.',
+                'author' => 'Nhóm bạn Sài Gòn',
+            ),
+            'places' => array(
+                'Rạn gần bờ',
+                'Vùng nước nông Bãi Nhỏ / Bãi Dài',
+            ),
+            'start' => 'Phú Quý',
+            'end' => 'Phú Quý',
+            'highlightsIntro' => 'Gói nửa ngày linh hoạt: snorkel nước nông + 30–45 phút SUP hoặc kayak (tuỳ sóng).',
+            'highlights' => array(
+                'Thiết bị snorkel',
+                'SUP hoặc kayak',
+                'HDV / cứu hộ cơ bản',
+                'Phù hợp người mới',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Nửa ngày dưới nước & trên ván',
+                    'meals' => null,
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đón bãi / thuyền nhỏ ra điểm nông, snorkel, chuyển SUP/kayak, về trước trưa hoặc chiều tùy khung giờ.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thiết bị snorkel',
+                'SUP/kayak',
+                'Áo phao',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Ăn uống',
+                'Ảnh dưới nước',
+            ),
+            'notes' => array(
+                'SUP chỉ khi sóng nhẹ; nếu sóng lớn chuyển toàn bộ sang snorkel.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 450000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'phan-thiet-phu-quy-ket-hop-4n3d',
             'title' => 'Phan Thiết / Mũi Né — Phú Quý 4 ngày 3 đêm',
-            'zoneSlug' => 'ket-hop-phan-thiet', 'zone' => 'Kết hợp Phan Thiết / Mũi Né',
-            'tourCode' => 'PQPT4D-14', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 5.0, 'reviewCount' => 31, 'badge' => NULL, 'featured' => true,
-            'styles' => array('multi-destination-combo', 'beach', 'multi-day', 'balanced'),
-            'quote' => array('text' => 'Một đêm Mũi Né, hai đêm đảo — cảm nhận rõ sự khác giữa đất liền ồn và đảo núi lửa yên.', 'author' => 'Anh Hoàng Long'),
-            'places' => array('Mũi Né', 'Phan Thiết', 'Phú Quý', 'Bãi Nhỏ', 'Mũi Đèn Biển'),
-            'start' => 'Phan Thiết', 'end' => 'Phan Thiết',
-            'highlightsIntro' => 'Combo cửa ngõ + đảo: nghỉ Mũi Né, tàu sang Phú Quý, jeep & snorkel, tàu về.',
-            'highlights' => array('1 đêm Mũi Né / Phan Thiết', '2 đêm Phú Quý', 'Vé tàu khứ hồi (tuỳ gói)', 'Jeep nửa ngày + snorkel', 'Đưa đón bến tàu'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đến Phan Thiết / Mũi Né', 'meals' => 'Tối',
-                    'transport' => array('car'), 'overnight' => 'Mũi Né',
-                    'content' => 'Đón Sài Gòn hoặc sân bay, nhận KS Mũi Né, tối tự do đồi cát / hải sản.'),
-                array('day' => 2, 'title' => 'Tàu ra Phú Quý — Nhận phòng', 'meals' => 'Sáng; Tối',
-                    'transport' => array('ferry'), 'overnight' => 'Phú Quý',
-                    'content' => 'Sáng lên tàu cao tốc, chiều nhận phòng đảo, tối hải sản thị trấn.'),
-                array('day' => 3, 'title' => 'Jeep + snorkel trên đảo', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('jeep', 'boat'), 'overnight' => 'Phú Quý',
-                    'content' => 'Jeep vòng đảo nửa ngày, chiều snorkel, tối tự do.'),
-                array('day' => 4, 'title' => 'Tàu về Phan Thiết — Kết thúc', 'meals' => 'Sáng',
-                    'transport' => array('ferry', 'car'), 'overnight' => NULL,
-                    'content' => 'Sáng tàu về Phan Thiết, đưa về KS / sân bay / Sài Gòn theo lịch.'),
+            'zoneSlug' => 'ket-hop-phan-thiet',
+            'zone' => 'Kết hợp Phan Thiết / Mũi Né',
+            'tourCode' => 'PQPT4D-14',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 5,
+            'reviewCount' => 31,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                '4n3d',
             ),
-            'inclusions' => array('3 đêm KS (1 đất liền + 2 đảo)', 'Vé tàu khứ hồi (gói đủ)', 'Jeep + snorkel', 'Xe đưa đón hai đầu', 'Bữa theo chương trình'),
-            'exclusions' => array('Vé máy bay', 'Chi phí cá nhân', 'Tip'),
-            'notes' => array('Có thể đảo chiều: ra đảo trước, về nghỉ Mũi Né sau.'),
-            'faqs' => array(array('q' => 'Tàu có chạy hàng ngày không?', 'a' => 'Hầu hết ngày trong mùa đẹp có chuyến; mùa gió mạnh có thể giảm chuyến — chúng tôi xác nhận lịch trước khi thu tiền.')),
-            'galleryCount' => 6, 'priceFrom' => 6200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Một đêm Mũi Né, hai đêm đảo — cảm nhận rõ sự khác giữa đất liền ồn và đảo núi lửa yên.',
+                'author' => 'Anh Hoàng Long',
+            ),
+            'places' => array(
+                'Mũi Né',
+                'Phan Thiết',
+                'Phú Quý',
+                'Bãi Nhỏ',
+                'Mũi Đèn Biển',
+            ),
+            'start' => 'Phan Thiết',
+            'end' => 'Phan Thiết',
+            'highlightsIntro' => 'Combo cửa ngõ + đảo: nghỉ Mũi Né, tàu sang Phú Quý, jeep & snorkel, tàu về.',
+            'highlights' => array(
+                '1 đêm Mũi Né / Phan Thiết',
+                '2 đêm Phú Quý',
+                'Vé tàu khứ hồi (tuỳ gói)',
+                'Jeep nửa ngày + snorkel',
+                'Đưa đón bến tàu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đến Phan Thiết / Mũi Né',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Mũi Né',
+                    'content' => 'Đón Sài Gòn hoặc sân bay, nhận KS Mũi Né, tối tự do đồi cát / hải sản.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Tàu ra Phú Quý — Nhận phòng',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'ferry',
+                    ),
+                    'overnight' => 'Phú Quý',
+                    'content' => 'Sáng lên tàu cao tốc, chiều nhận phòng đảo, tối hải sản thị trấn.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Jeep + snorkel trên đảo',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'jeep',
+                        'boat',
+                    ),
+                    'overnight' => 'Phú Quý',
+                    'content' => 'Jeep vòng đảo nửa ngày, chiều snorkel, tối tự do.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Tàu về Phan Thiết — Kết thúc',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'ferry',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tàu về Phan Thiết, đưa về KS / sân bay / Sài Gòn theo lịch.',
+                ),
+            ),
+            'inclusions' => array(
+                '3 đêm KS (1 đất liền + 2 đảo)',
+                'Vé tàu khứ hồi (gói đủ)',
+                'Jeep + snorkel',
+                'Xe đưa đón hai đầu',
+                'Bữa theo chương trình',
+            ),
+            'exclusions' => array(
+                'Vé máy bay',
+                'Chi phí cá nhân',
+                'Tip',
+            ),
+            'notes' => array(
+                'Có thể đảo chiều: ra đảo trước, về nghỉ Mũi Né sau.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Tàu có chạy hàng ngày không?',
+                    'a' => 'Hầu hết ngày trong mùa đẹp có chuyến; mùa gió mạnh có thể giảm chuyến — chúng tôi xác nhận lịch trước khi thu tiền.',
+                ),
+            ),
+            'galleryCount' => 6,
+            'priceFrom' => 6200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'phan-thiet-phu-quy-weekend-2n1d',
-            'title' => 'Weekend Phan Thiết — Phú Quý 2 ngày 1 đêm',
-            'zoneSlug' => 'ket-hop-phan-thiet', 'zone' => 'Kết hợp Phan Thiết / Mũi Né',
-            'tourCode' => 'PQPT2D-15', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.8, 'reviewCount' => 46, 'badge' => NULL, 'featured' => false,
-            'styles' => array('multi-destination-combo', 'beach', 'day-trip'),
-            'quote' => array('text' => 'Xuất phát sáng thứ Bảy, về chủ nhật chiều — vừa đủ “đã đảo” cho người bận.', 'author' => 'Nhóm bạn Q.7'),
-            'places' => array('Phan Thiết', 'Phú Quý', 'Bãi Nhỏ'),
-            'start' => 'Phan Thiết', 'end' => 'Phan Thiết',
-            'highlightsIntro' => 'Gói cuối tuần gọn: tàu sáng ra đảo, 1 đêm Bãi Nhỏ, sáng biển / jeep ngắn, chiều tàu về.',
-            'highlights' => array('Vé tàu khứ hồi (tuỳ gói)', '1 đêm sát Bãi Nhỏ', 'Jeep ngắn hoặc snorkel ngắn', 'Đưa đón bến'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Tàu ra đảo — Biển Bãi Nhỏ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('ferry'), 'overnight' => 'Bãi Nhỏ',
-                    'content' => 'Tàu sáng từ Phan Thiết, nhận phòng, chiều tắm biển / jeep ngắn, tối hải sản.'),
-                array('day' => 2, 'title' => 'Sáng tự do — Tàu về', 'meals' => 'Sáng',
-                    'transport' => array('ferry'), 'overnight' => NULL,
-                    'content' => 'Sáng biển hoặc hải đăng nhanh, đúng giờ tàu về Phan Thiết.'),
+            'title' => 'Cuối tuần Phan Thiết — Phú Quý 2 ngày 1 đêm',
+            'zoneSlug' => 'ket-hop-phan-thiet',
+            'zone' => 'Kết hợp Phan Thiết / Mũi Né',
+            'tourCode' => 'PQPT2D-15',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.8,
+            'reviewCount' => 46,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('KS 1 đêm', 'Xe bến — KS', '1 hoạt động ngắn (jeep hoặc snorkel)', 'Bữa theo chương trình'),
-            'exclusions' => array('Vé tàu (có gói gồm / không gồm — chọn lúc đặt)', 'Đồ uống'),
-            'notes' => array('Phụ thuộc giờ tàu cuối tuần — đặt trước ít nhất 3–5 ngày mùa cao điểm.'),
+            'quote' => array(
+                'text' => 'Xuất phát sáng thứ Bảy, về chủ nhật chiều — vừa đủ “đã đảo” cho người bận.',
+                'author' => 'Nhóm bạn Q.7',
+            ),
+            'places' => array(
+                'Phan Thiết',
+                'Phú Quý',
+                'Bãi Nhỏ',
+            ),
+            'start' => 'Phan Thiết',
+            'end' => 'Phan Thiết',
+            'highlightsIntro' => 'Gói cuối tuần gọn: tàu sáng ra đảo, 1 đêm Bãi Nhỏ, sáng biển / jeep ngắn, chiều tàu về.',
+            'highlights' => array(
+                'Vé tàu khứ hồi (tuỳ gói)',
+                '1 đêm sát Bãi Nhỏ',
+                'Jeep ngắn hoặc snorkel ngắn',
+                'Đưa đón bến',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tàu ra đảo — Biển Bãi Nhỏ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'ferry',
+                    ),
+                    'overnight' => 'Bãi Nhỏ',
+                    'content' => 'Tàu sáng từ Phan Thiết, nhận phòng, chiều tắm biển / jeep ngắn, tối hải sản.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Sáng tự do — Tàu về',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'ferry',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng biển hoặc hải đăng nhanh, đúng giờ tàu về Phan Thiết.',
+                ),
+            ),
+            'inclusions' => array(
+                'KS 1 đêm',
+                'Xe bến — KS',
+                '1 hoạt động ngắn (jeep hoặc snorkel)',
+                'Bữa theo chương trình',
+            ),
+            'exclusions' => array(
+                'Vé tàu (có gói gồm / không gồm — chọn lúc đặt)',
+                'Đồ uống',
+            ),
+            'notes' => array(
+                'Phụ thuộc giờ tàu cuối tuần — đặt trước ít nhất 3–5 ngày mùa cao điểm.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 2450000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 2450000,
+            'currency' => 'VND',
         ),
     ),
 
@@ -713,7 +1597,7 @@ $__phuquySeed = array(
                 array('type' => 'h2', 'id' => 'bay-noi', 'text' => 'III. Bay tới Cam Ranh / Phan Thiết rồi nối tàu'),
                 array('type' => 'p', 'text' => 'Khách từ Hà Nội hoặc miền Trung có thể bay Cam Ranh (CXR) hoặc sân bay Phan Thiết (nếu có lịch), thuê xe / đưa đón tới bến tàu rồi ra đảo. Tổng hành trình cần chừa buffer ít nhất 3–4 giờ giữa chuyến bay và giờ tàu.'),
                 array('type' => 'links', 'title' => 'Xem thêm:', 'links' => array(
-                    array('label' => 'Weekend Phan Thiết — Phú Quý 2N1Đ', 'route' => array('tours.show', array('zone' => 'ket-hop-phan-thiet', 'slug' => 'phan-thiet-phu-quy-weekend-2n1d'))),
+                    array('label' => 'Cuối tuần Phan Thiết — Phú Quý 2 ngày 1 đêm', 'route' => array('tours.show', array('zone' => 'ket-hop-phan-thiet', 'slug' => 'phan-thiet-phu-quy-weekend-2n1d'))),
                     array('label' => 'Combo 4 ngày 3 đêm', 'route' => array('tours.show', array('zone' => 'ket-hop-phan-thiet', 'slug' => 'phan-thiet-phu-quy-ket-hop-4n3d'))),
                 )),
             ),
@@ -942,16 +1826,32 @@ $__phuquySeed = array(
     'usps' => array(
         array('icon' => 'compass', 'sort' => 0,
             'vi' => array('title' => 'am hiểu đảo núi lửa', 'description' => 'Đội ngũ lớn lên tại Phú Quý — biết lịch tàu, mùa gió, điểm nước trong và chỗ ăn hải sản thật.'),
-            'en' => array('title' => 'volcanic-island expertise', 'description' => 'Our team grew up on Phu Quy — they know ferry timing, wind seasons, clear-water sites and real seafood spots.')),
+
+
+
+
+'en' => array('title' => 'volcanic-island expertise', 'description' => 'Our team grew up on Phu Quy — they know ferry timing, wind seasons, clear-water sites and real seafood spots.')),
         array('icon' => 'refund', 'sort' => 1,
             'vi' => array('title' => 'giá rõ ràng, minh bạch', 'description' => 'Báo giá trọn gói, không phí ẩn. Đổi lịch linh hoạt khi tàu tạm ngưng vì sóng gió.'),
-            'en' => array('title' => 'clear, transparent pricing', 'description' => 'All-in pricing with no hidden fees. Flexible rescheduling when ferries pause for rough seas.')),
+
+
+
+
+'en' => array('title' => 'clear, transparent pricing', 'description' => 'All-in pricing with no hidden fees. Flexible rescheduling when ferries pause for rough seas.')),
         array('icon' => 'boat', 'sort' => 2,
             'vi' => array('title' => 'nhóm nhỏ, thuyền vừa', 'description' => 'Ưu tiên jeep và thuyền nhóm nhỏ để trải nghiệm riêng tư hơn và giảm áp lực lên rạn.'),
-            'en' => array('title' => 'small groups, right-sized boats', 'description' => 'We favour small jeep and boat groups for a more private experience and lighter reef impact.')),
+
+
+
+
+'en' => array('title' => 'small groups, right-sized boats', 'description' => 'We favour small jeep and boat groups for a more private experience and lighter reef impact.')),
         array('icon' => 'support', 'sort' => 3,
             'vi' => array('title' => 'hỗ trợ trước giờ tàu', 'description' => 'Đồng hành từ lúc chọn tuyến Phan Thiết/La Gi tới khi bạn lên đảo và về lại đất liền.'),
-            'en' => array('title' => 'support around ferry time', 'description' => 'We help from choosing Phan Thiet/La Gi sailings through your island stay and return.')),
+
+
+
+
+'en' => array('title' => 'support around ferry time', 'description' => 'We help from choosing Phan Thiet/La Gi sailings through your island stay and return.')),
     ),
 
     'offices' => array(
@@ -960,31 +1860,103 @@ $__phuquySeed = array(
     ),
 
     'values' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
-        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra tại Phú Quý — hiểu tàu, gió, bãi và rạn'), 'en' => array('name' => 'Island expertise', 'desc' => 'Born on Phu Quy — we know ferries, wind, beaches and reefs')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'), 'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
-        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ rạn san hô và sinh kế ngư dân địa phương'), 'en' => array('name' => 'Responsibility', 'desc' => 'Protecting coral reefs and local fishing livelihoods')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
+        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra tại Phú Quý — hiểu tàu, gió, bãi và rạn'),
+
+
+
+'en' => array('name' => 'Island expertise', 'desc' => 'Born on Phu Quy — we know ferries, wind, beaches and reefs')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
+        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ rạn san hô và sinh kế ngư dân địa phương'),
+
+
+
+'en' => array('name' => 'Responsibility', 'desc' => 'Protecting coral reefs and local fishing livelihoods')),
     ),
     'value_definitions' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
-        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra tại Phú Quý — hiểu tàu, gió, bãi và rạn'), 'en' => array('name' => 'Island expertise', 'desc' => 'Born on Phu Quy — we know ferries, wind, beaches and reefs')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'), 'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
-        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ rạn san hô và sinh kế ngư dân địa phương'), 'en' => array('name' => 'Responsibility', 'desc' => 'Protecting coral reefs and local fishing livelihoods')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
+        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra tại Phú Quý — hiểu tàu, gió, bãi và rạn'),
+
+
+
+'en' => array('name' => 'Island expertise', 'desc' => 'Born on Phu Quy — we know ferries, wind, beaches and reefs')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
+        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ rạn san hô và sinh kế ngư dân địa phương'),
+
+
+
+'en' => array('name' => 'Responsibility', 'desc' => 'Protecting coral reefs and local fishing livelihoods')),
     ),
 
     'reasons' => array(
-        array('vi' => array('title' => 'Hướng dẫn viên và tài xế jeep bản địa', 'desc' => 'Đội ngũ lớn lên trên đảo, hiểu từng cung đường đá và giờ đẹp tại hải đăng.'), 'en' => array('title' => 'Local guides and jeep drivers', 'desc' => 'Our team grew up on the island — they know every basalt road and the best lighthouse light.')),
-        array('vi' => array('title' => 'Cam kết đổi lịch khi tàu tạm ngưng', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi sóng gió buộc dừng tàu.'), 'en' => array('title' => 'Clear ferry weather policy', 'desc' => 'Transparent rebooking and refunds when sailings are suspended for rough seas.')),
-        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'), 'en' => array('title' => 'Direct ferry and homestay partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
-        array('vi' => array('title' => 'Hỗ trợ trước và sau giờ tàu', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh quanh lịch trình ra/vào đảo.'), 'en' => array('title' => 'Support around ferry schedules', 'desc' => 'Real people on hotline and Zalo, responsive around island arrivals and returns.')),
-        array('vi' => array('title' => 'Du lịch có trách nhiệm với rạn san hô', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'), 'en' => array('title' => 'Reef-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
+        array('vi' => array('title' => 'Hướng dẫn viên và tài xế jeep bản địa', 'desc' => 'Đội ngũ lớn lên trên đảo, hiểu từng cung đường đá và giờ đẹp tại hải đăng.'),
+
+
+
+'en' => array('title' => 'Local guides and jeep drivers', 'desc' => 'Our team grew up on the island — they know every basalt road and the best lighthouse light.')),
+        array('vi' => array('title' => 'Cam kết đổi lịch khi tàu tạm ngưng', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi sóng gió buộc dừng tàu.'),
+
+
+
+'en' => array('title' => 'Clear ferry weather policy', 'desc' => 'Transparent rebooking and refunds when sailings are suspended for rough seas.')),
+        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'),
+
+
+
+'en' => array('title' => 'Direct ferry and homestay partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
+        array('vi' => array('title' => 'Hỗ trợ trước và sau giờ tàu', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh quanh lịch trình ra/vào đảo.'),
+
+
+
+'en' => array('title' => 'Support around ferry schedules', 'desc' => 'Real people on hotline and Zalo, responsive around island arrivals and returns.')),
+        array('vi' => array('title' => 'Du lịch có trách nhiệm với rạn san hô', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'),
+
+
+
+'en' => array('title' => 'Reef-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
     ),
     'reason_definitions' => array(
-        array('vi' => array('title' => 'Hướng dẫn viên và tài xế jeep bản địa', 'desc' => 'Đội ngũ lớn lên trên đảo, hiểu từng cung đường đá và giờ đẹp tại hải đăng.'), 'en' => array('title' => 'Local guides and jeep drivers', 'desc' => 'Our team grew up on the island — they know every basalt road and the best lighthouse light.')),
-        array('vi' => array('title' => 'Cam kết đổi lịch khi tàu tạm ngưng', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi sóng gió buộc dừng tàu.'), 'en' => array('title' => 'Clear ferry weather policy', 'desc' => 'Transparent rebooking and refunds when sailings are suspended for rough seas.')),
-        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'), 'en' => array('title' => 'Direct ferry and homestay partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
-        array('vi' => array('title' => 'Hỗ trợ trước và sau giờ tàu', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh quanh lịch trình ra/vào đảo.'), 'en' => array('title' => 'Support around ferry schedules', 'desc' => 'Real people on hotline and Zalo, responsive around island arrivals and returns.')),
-        array('vi' => array('title' => 'Du lịch có trách nhiệm với rạn san hô', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'), 'en' => array('title' => 'Reef-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
+        array('vi' => array('title' => 'Hướng dẫn viên và tài xế jeep bản địa', 'desc' => 'Đội ngũ lớn lên trên đảo, hiểu từng cung đường đá và giờ đẹp tại hải đăng.'),
+
+
+
+'en' => array('title' => 'Local guides and jeep drivers', 'desc' => 'Our team grew up on the island — they know every basalt road and the best lighthouse light.')),
+        array('vi' => array('title' => 'Cam kết đổi lịch khi tàu tạm ngưng', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ khi sóng gió buộc dừng tàu.'),
+
+
+
+'en' => array('title' => 'Clear ferry weather policy', 'desc' => 'Transparent rebooking and refunds when sailings are suspended for rough seas.')),
+        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua nhiều tầng trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'),
+
+
+
+'en' => array('title' => 'Direct ferry and homestay partners', 'desc' => 'Fewer middlemen — better prices and faster support.')),
+        array('vi' => array('title' => 'Hỗ trợ trước và sau giờ tàu', 'desc' => 'Hotline và Zalo người thật, phản hồi nhanh quanh lịch trình ra/vào đảo.'),
+
+
+
+'en' => array('title' => 'Support around ferry schedules', 'desc' => 'Real people on hotline and Zalo, responsive around island arrivals and returns.')),
+        array('vi' => array('title' => 'Du lịch có trách nhiệm với rạn san hô', 'desc' => 'Ưu tiên thuyền vừa, hướng dẫn không đứng lên san hô, hạn chế nhựa dùng một lần.'),
+
+
+
+'en' => array('title' => 'Reef-responsible travel', 'desc' => 'Right-sized boats, no standing on coral, and less single-use plastic.')),
     ),
 
     'reference_persons' => array(
@@ -1016,7 +1988,11 @@ $__phuquySeed = array(
             'reference_section' => array('title' => 'Người đại diện của chúng tôi tại nước ngoài', 'eyebrow' => 'Mạng lưới toàn cầu',
                 'subtitle' => 'Bạn có thể trao đổi trực tiếp bằng ngôn ngữ của mình với đại diện phuquy.net tại châu Á, châu Âu và châu Úc.'),
         ),
-        'en' => array(
+
+
+
+
+'en' => array(
             'seo_title' => 'About us — phuquy.net, your complete travel & service hub for Phu Quy Island',
             'seo_description' => 'Our story, mission and team at phuquy.net — designing journeys and connecting services across Phu Quy Island (Binh Thuan).',
             'page_title' => 'About us',
@@ -1041,8 +2017,16 @@ $__phuquySeed = array(
     ),
 
     'hero_pills' => array(
-        array('zone_slug' => 'ran-san-ho', 'vi' => array('label' => 'Rạn san hô'), 'en' => array('label' => 'Coral reefs'), 'url' => '/diem-den/ran-san-ho'),
-        array('zone_slug' => 'ket-hop-phan-thiet', 'vi' => array('label' => 'Kết hợp Phan Thiết'), 'en' => array('label' => 'Combined with Phan Thiet'), 'url' => '/diem-den/ket-hop-phan-thiet'),
+        array('zone_slug' => 'ran-san-ho', 'vi' => array('label' => 'Rạn san hô'),
+
+
+
+'en' => array('label' => 'Coral reefs'), 'url' => '/diem-den/ran-san-ho'),
+        array('zone_slug' => 'ket-hop-phan-thiet', 'vi' => array('label' => 'Kết hợp Phan Thiết'),
+
+
+
+'en' => array('label' => 'Combined with Phan Thiet'), 'url' => '/diem-den/ket-hop-phan-thiet'),
     ),
 
     'home_sections' => array(
@@ -1050,51 +2034,95 @@ $__phuquySeed = array(
             'vi' => array('key' => 'company_intro', 'eyebrow' => 'Chuyên gia đảo Phú Quý', 'title' => 'Hành trình chân thật, thiết kế bởi người bản địa', 'subtitle' => NULL,
                 'body' => 'phuquy.net là đơn vị lữ hành đặt trụ sở trên đảo núi lửa Bình Thuận, kết nối du khách với Bãi Nhỏ, Bãi Dài, hải đăng, Chùa Hang và rạn san hô. Chúng tôi không bán tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ sinh ra và lớn lên trên đảo.',
                 'metaLine' => 'Giấy phép kinh doanh dịch vụ lữ hành số 0148/2021/TCDL-GPLHQT', 'ctaLabel' => 'Tìm hiểu về chúng tôi', 'ctaUrl' => '/ve-chung-toi', 'image' => NULL, 'imageAlt' => 'Ảnh đội ngũ phuquy.net'),
-            'en' => array('key' => 'company_intro', 'eyebrow' => 'Phu Quy island experts', 'title' => 'Authentic journeys, designed by locals', 'subtitle' => NULL,
+
+
+
+
+'en' => array('key' => 'company_intro', 'eyebrow' => 'Phu Quy island experts', 'title' => 'Authentic journeys, designed by locals', 'subtitle' => NULL,
                 'body' => 'phuquy.net is an island-based travel agency connecting guests with Bai Nho, Bai Dai, the lighthouse, Chua Hang and coral reefs. We do not sell off-the-shelf packages — every itinerary is tailored from real, on-the-ground experience.',
                 'metaLine' => 'Travel service license No. 0148/2021/TCDL-GPLHQT', 'ctaLabel' => 'Learn about us', 'ctaUrl' => '/ve-chung-toi', 'image' => NULL, 'imageAlt' => 'phuquy.net team'),
         ),
         'featured_tours' => array(
             'vi' => array('key' => 'featured_tours', 'eyebrow' => 'Được yêu thích nhất', 'title' => 'Những tour được yêu cầu nhiều nhất', 'subtitle' => 'Những hành trình khách hàng đặt và đánh giá cao nhất trong 12 tháng qua.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_tours', 'eyebrow' => 'Most popular', 'title' => 'Our most requested tours', 'subtitle' => 'Itineraries our guests book and rate highest over the past 12 months.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_tours', 'eyebrow' => 'Most popular', 'title' => 'Our most requested tours', 'subtitle' => 'Itineraries our guests book and rate highest over the past 12 months.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'featured_cruises' => array(
             'vi' => array('key' => 'featured_cruises', 'eyebrow' => 'Hành trình trên biển', 'title' => 'Thuyền vòng đảo, câu mực đêm & lặn rạn', 'subtitle' => 'Những trải nghiệm thuyền được yêu thích nhất — nơi việc ra khơi trở thành một phần của chuyến đi.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_cruises', 'eyebrow' => 'On the water', 'title' => 'Island boat loops, night squid fishing & reef dives', 'subtitle' => 'Our most loved boat experiences — where getting offshore becomes part of the trip.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_cruises', 'eyebrow' => 'On the water', 'title' => 'Island boat loops, night squid fishing & reef dives', 'subtitle' => 'Our most loved boat experiences — where getting offshore becomes part of the trip.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'featured_trains' => array(
             'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Ra đảo dễ dàng', 'title' => 'Vé tàu cao tốc Phan Thiết — Phú Quý', 'subtitle' => 'Superdong, Phú Quốc Express (Trưng Trắc) và Phú Quý Express — chọn hãng theo lịch thủy triều, giữ chỗ trước khi ra cảng.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_trains', 'eyebrow' => 'Easy island access', 'title' => 'High-speed ferry tickets Phan Thiet — Phu Quy', 'subtitle' => 'Superdong, Phu Quoc Express (Trung Trac) and Phu Quy Express — pick by tide schedule and reserve before you reach the port.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_trains', 'eyebrow' => 'Easy island access', 'title' => 'High-speed ferry tickets Phan Thiet — Phu Quy', 'subtitle' => 'Superdong, Phu Quoc Express (Trung Trac) and Phu Quy Express — pick by tide schedule and reserve before you reach the port.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
 
         'support_services' => array(
             'vi' => array('key' => 'support_services', 'eyebrow' => 'Dịch vụ bổ trợ', 'title' => 'Chỉ chọn những gì bạn cần', 'subtitle' => 'Lưu trú, vui chơi và dịch vụ hỗ trợ trên đảo — linh hoạt đặt riêng theo kế hoạch của bạn.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'support_services', 'eyebrow' => 'Add-on services', 'title' => 'Choose only what you need', 'subtitle' => 'Stays, activities, and island support services — book à la carte around your plan.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'support_services', 'eyebrow' => 'Add-on services', 'title' => 'Choose only what you need', 'subtitle' => 'Stays, activities, and island support services — book à la carte around your plan.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'destinations' => array(
             'vi' => array('key' => 'destinations', 'eyebrow' => 'Khắp đảo Phú Quý', 'title' => 'Những điểm đến được yêu thích nhất', 'subtitle' => 'Từ thị trấn/cảng tới Bãi Nhỏ, Bãi Dài, hải đăng và rạn san hô — chọn nơi bạn muốn khám phá.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'destinations', 'eyebrow' => 'Across Phu Quy Island', 'title' => 'Our most loved destinations', 'subtitle' => 'From the harbour town to Bai Nho, Bai Dai, the lighthouse and coral reefs — choose where to explore.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'destinations', 'eyebrow' => 'Across Phu Quy Island', 'title' => 'Our most loved destinations', 'subtitle' => 'From the harbour town to Bai Nho, Bai Dai, the lighthouse and coral reefs — choose where to explore.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'testimonials' => array(
             'vi' => array('key' => 'testimonials', 'eyebrow' => 'Khách hàng kể lại', 'title' => 'Trải nghiệm chân thật từ khách hàng', 'subtitle' => 'Hàng nghìn du khách đã đồng hành cùng chúng tôi trên đảo — đây là những gì họ kể lại.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Xem tất cả cảm nhận', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences from our travellers', 'subtitle' => 'Thousands of guests have travelled with us on the island — here is what they say.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Read all reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences from our travellers', 'subtitle' => 'Thousands of guests have travelled with us on the island — here is what they say.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Read all reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'review_platforms' => array(
             'vi' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'phuquy.net được đánh giá cao trên', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'phuquy.net is highly rated on', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'phuquy.net is highly rated on', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'team' => array(
             'vi' => array('key' => 'team', 'eyebrow' => 'Con người phuquy.net', 'title' => 'Đội ngũ tận tâm của chúng tôi', 'subtitle' => 'Những con người bản địa hiểu đảo hơn bất kỳ ai — đồng hành từ lúc lên ý tưởng tới khi rời đảo.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Gặp gỡ cả đội ngũ', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'team', 'eyebrow' => 'The phuquy.net team', 'title' => 'Our dedicated local experts', 'subtitle' => 'People who know the island better than anyone — with you from the first idea until you leave.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Meet the full team', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'team', 'eyebrow' => 'The phuquy.net team', 'title' => 'Our dedicated local experts', 'subtitle' => 'People who know the island better than anyone — with you from the first idea until you leave.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Meet the full team', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'videos' => array(
             'vi' => array('key' => 'videos', 'eyebrow' => 'Trải nghiệm thật', 'title' => 'Đảo Phú Quý qua từng thước phim đẹp', 'subtitle' => 'Video chân thật do khách hàng và đội ngũ phuquy.net ghi lại.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Xem tất cả video', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'videos', 'eyebrow' => 'Real experiences', 'title' => 'Phu Quy Island in unforgettable frames', 'subtitle' => 'Authentic films from guests and our local team.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'View all videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'videos', 'eyebrow' => 'Real experiences', 'title' => 'Phu Quy Island in unforgettable frames', 'subtitle' => 'Authentic films from guests and our local team.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'View all videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'quick_inquiry' => array(
             'vi' => array('key' => 'quick_inquiry', 'eyebrow' => 'Tư vấn miễn phí', 'title' => 'Gửi lời nhắn cho chúng tôi', 'subtitle' => NULL,
                 'body' => 'Bạn chưa chắc nên chọn Bãi Nhỏ hay Bãi Dài, mùa nào đẹp, hãng tàu nào, ngân sách bao nhiêu? Để lại lời nhắn — đội ngũ phuquy.net sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.', 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send us a message', 'subtitle' => NULL,
+
+
+
+
+'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send us a message', 'subtitle' => NULL,
                 'body' => 'Not sure between Bai Nho or Bai Dai, which season, which ferry operator, or your budget? Leave a note — the phuquy.net team will reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.', 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
 
@@ -1141,29 +2169,91 @@ $__phuquySeed = array(
     ),
 
     'tour_categories' => array(
-        array('zoneSlug' => 'trung-tam-phu-quy', 'slug' => 'nua-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 0, 'maxDays' => 1,
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'nua-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 0,
+            'maxDays' => 1,
             'packageSlugs' => array(
                 'lang-chai-hai-san-phu-quy-nua-ngay',
                 'binh-minh-hoang-hon-mui-den-bien',
                 'chua-hang-van-hoa-nua-ngay',
                 'snorkel-sup-kayak-nua-ngay',
             ),
-            'name' => array('vi' => 'Tour nửa ngày', 'en' => 'Half-day tours'),
-            'subtitle' => array('vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.', 'en' => 'A compact option for a free morning or afternoon.'),
-            'seo_body' => array('vi' => 'Các tour nửa ngày ở Phú Quý phù hợp ghép thêm trước hoặc sau chuyến đi chính.', 'en' => 'Half-day Phu Quy tours are easy to add before or after your main trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-phu-quy', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 1, 'maxDays' => 1,
+            'name' => array(
+                'vi' => 'Tour nửa ngày',
+
+
+
+
+'en' => 'Half-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.',
+
+
+
+
+'en' => 'A compact option for a free morning or afternoon.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Các tour nửa ngày ở Phú Quý phù hợp ghép thêm trước hoặc sau chuyến đi chính.',
+
+
+
+
+'en' => 'Half-day Phu Quy tours are easy to add before or after your main trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 1,
+            'maxDays' => 1,
             'packageSlugs' => array(
                 'jeep-vong-dao-phu-quy-1-ngay',
                 'beach-hopping-bai-nho-bai-dai',
                 'mui-den-bien-chua-hang-1-ngay',
                 'lan-ngam-san-ho-phu-quy-1-ngay',
             ),
-            'name' => array('vi' => 'Tour 1 ngày', 'en' => '1-day tours'),
-            'subtitle' => array('vi' => 'Jeep vòng đảo, beach hopping, hải đăng hoặc lặn — không cần ngủ đêm thêm.', 'en' => 'Island jeep, beach hopping, lighthouse or diving — no extra overnight needed.'),
-            'seo_body' => array('vi' => 'Tour 1 ngày phổ biến với khách đã có phòng và chỉ muốn thêm trải nghiệm.', 'en' => '1-day tours suit guests who already have lodging and want add-on experiences.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-phu-quy', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 2, 'maxDays' => 3,
+            'name' => array(
+                'vi' => 'Tour 1 ngày',
+
+
+
+
+'en' => '1-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Jeep vòng đảo, beach hopping, hải đăng hoặc lặn — không cần ngủ đêm thêm.',
+
+
+
+
+'en' => 'Island jeep, beach hopping, lighthouse or diving — no extra overnight needed.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour 1 ngày phổ biến với khách đã có phòng và chỉ muốn thêm trải nghiệm.',
+
+
+
+
+'en' => '1-day tours suit guests who already have lodging and want add-on experiences.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 2,
+            'maxDays' => 3,
             'packageSlugs' => array(
                 'phu-quy-3-ngay-tong-quan-dao',
                 'bai-nho-gia-dinh-2-ngay',
@@ -1172,45 +2262,365 @@ $__phuquySeed = array(
                 'diving-nhieu-ngay-phu-quy-3n2d',
                 'phan-thiet-phu-quy-weekend-2n1d',
             ),
-            'name' => array('vi' => 'Tour 2 – 3 ngày', 'en' => '2–3 day tours'),
-            'subtitle' => array('vi' => 'Kết hợp biển, jeep, lặn hoặc nghỉ yên trên đảo.', 'en' => 'Combine beach, jeep, diving or a quiet island stay.'),
-            'seo_body' => array('vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn nhịp chậm của Phú Quý.', 'en' => 'A 2–3 day tour lets you feel Phu Quy’s slower island rhythm.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-phu-quy', 'slug' => '4-ngay-tro-len', 'type' => 'duration', 'sort' => 3, 'minDays' => 4, 'maxDays' => 10,
-            'packageSlugs' => array('phan-thiet-phu-quy-ket-hop-4n3d'),
-            'name' => array('vi' => 'Tour 4 ngày trở lên', 'en' => '4+ day tours'),
-            'subtitle' => array('vi' => 'Combo cửa ngõ Phan Thiết / Mũi Né với đảo núi lửa.', 'en' => 'Mainland gateway combos with the volcanic island.'),
-            'seo_body' => array('vi' => 'Tour dài ngày dành cho ai muốn cả đất liền lẫn đảo trong một hành trình.', 'en' => 'Longer tours for travellers who want both mainland and island in one trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ran-san-ho', 'slug' => 'lan-bien', 'type' => 'theme', 'sort' => 10,
+            'name' => array(
+                'vi' => 'Tour 2 – 3 ngày',
+
+
+
+
+'en' => '2–3 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Kết hợp biển, jeep, lặn hoặc nghỉ yên trên đảo.',
+
+
+
+
+'en' => 'Combine beach, jeep, diving or a quiet island stay.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn nhịp chậm của Phú Quý.',
+
+
+
+
+'en' => 'A 2–3 day tour lets you feel Phu Quy’s slower island rhythm.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => '4-ngay-tro-len',
+            'type' => 'duration',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 10,
+            'packageSlugs' => array(
+                'phan-thiet-phu-quy-ket-hop-4n3d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày trở lên',
+
+
+
+
+'en' => '4+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo cửa ngõ Phan Thiết / Mũi Né với đảo núi lửa.',
+
+
+
+
+'en' => 'Mainland gateway combos with the volcanic island.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài ngày dành cho ai muốn cả đất liền lẫn đảo trong một hành trình.',
+
+
+
+
+'en' => 'Longer tours for travellers who want both mainland and island in one trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'tour-trong-ngay',
+            'type' => 'theme',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'jeep-vong-dao-phu-quy-1-ngay',
+                'lang-chai-hai-san-phu-quy-nua-ngay',
+                'beach-hopping-bai-nho-bai-dai',
+                'mui-den-bien-chua-hang-1-ngay',
+                'binh-minh-hoang-hon-mui-den-bien',
+                'chua-hang-van-hoa-nua-ngay',
+                'lan-ngam-san-ho-phu-quy-1-ngay',
+                'snorkel-sup-kayak-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
+
+
+
+
+'en' => 'Full day — no overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
+
+
+
+
+'en' => 'Duration filter — distinct from per-zone GEO category pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'tour-2-ngay-1-dem',
+            'type' => 'theme',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 2,
+            'packageSlugs' => array(
+                'bai-nho-gia-dinh-2-ngay',
+                'camping-homestay-bai-dai-2n1d',
+                'phan-thiet-phu-quy-weekend-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
+
+
+
+
+'en' => 'Short weekend, one-night homestay or resort.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
+
+
+
+
+'en' => '2N1D sweet spot — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'tour-3-ngay-2-dem',
+            'type' => 'theme',
+            'sort' => 2,
+            'minDays' => 3,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'phu-quy-3-ngay-tong-quan-dao',
+                'honeymoon-bai-dai-3-ngay',
+                'diving-nhieu-ngay-phu-quy-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
+
+
+
+
+'en' => 'Enough depth — two overnights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
+
+
+
+
+'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'tour-4-ngay-3-dem',
+            'type' => 'theme',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 4,
+            'packageSlugs' => array(
+                'phan-thiet-phu-quy-ket-hop-4n3d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
+
+
+
+
+'en' => 'Deeper exploration, three nights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
+
+
+
+
+'en' => '4N3D itineraries — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'tour-tu-5-ngay',
+            'type' => 'theme',
+            'sort' => 4,
+            'minDays' => 5,
+            'maxDays' => null,
+            'packageSlugs' => array(),
+            'name' => array(
+                'vi' => 'Tour từ 5 ngày',
+
+
+
+
+'en' => '5+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo dài ngày, nhiều điểm đến.',
+
+
+
+
+'en' => 'Extended combos and multi-destination trips.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
+
+
+
+
+'en' => 'Long tours & combos — duration insight, not a GEO page.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'lan-bien',
+            'type' => 'theme',
+            'sort' => 10,
             'packageSlugs' => array(
                 'lan-ngam-san-ho-phu-quy-1-ngay',
                 'diving-nhieu-ngay-phu-quy-3n2d',
                 'snorkel-sup-kayak-nua-ngay',
                 'thuyen-lan-ran-san-ho-phu-quy',
             ),
-            'name' => array('vi' => 'Tour lặn & snorkel', 'en' => 'Dive & snorkel tours'),
-            'subtitle' => array('vi' => 'Từ nửa ngày gần bờ tới multi-day fun dive quanh đảo.', 'en' => 'From nearshore half-days to multi-day fun dives around the island.'),
-            'seo_body' => array('vi' => 'Rạn san hô là lý do nhiều khách chọn Phú Quý thay vì đảo đông đúc hơn.', 'en' => 'Coral reefs are why many guests choose Phu Quy over busier islands.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'bai-nho', 'slug' => 'bien-bai-nho', 'type' => 'theme', 'sort' => 11,
-            'packageSlugs' => array('bai-nho-gia-dinh-2-ngay', 'beach-hopping-bai-nho-bai-dai'),
-            'name' => array('vi' => 'Tour biển Bãi Nhỏ', 'en' => 'Bai Nho beach tours'),
-            'subtitle' => array('vi' => 'Dải bãi chính — gia đình, ghế nằm và beach hopping.', 'en' => 'The main beach strip — families, loungers and beach hopping.'),
-            'seo_body' => array('vi' => 'Bãi Nhỏ là nơi tiện nghi nhất để ở và tắm trong lần đầu tới đảo.', 'en' => 'Bai Nho is the most convenient first stop for lodging and swimming.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'mui-den-bien', 'slug' => 'hai-dang-van-hoa', 'type' => 'theme', 'sort' => 12,
-            'packageSlugs' => array('mui-den-bien-chua-hang-1-ngay', 'binh-minh-hoang-hon-mui-den-bien', 'chua-hang-van-hoa-nua-ngay'),
-            'name' => array('vi' => 'Tour hải đăng & văn hoá', 'en' => 'Lighthouse & culture tours'),
-            'subtitle' => array('vi' => 'Mũi Đèn Biển, Chùa Hang và khung giờ vàng trên đá bazan.', 'en' => 'Mui Den Bien, Chua Hang and golden hour on basalt rock.'),
-            'seo_body' => array('vi' => 'Hai điểm biểu tượng giúp khách hiểu “chất núi lửa” của Phú Quý.', 'en' => 'Two landmarks that show Phu Quy’s volcanic character.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ket-hop-phan-thiet', 'slug' => 'ket-hop-phan-thiet', 'type' => 'package', 'sort' => 15, 'minDays' => 2, 'maxDays' => 4,
-            'packageSlugs' => array('phan-thiet-phu-quy-ket-hop-4n3d', 'phan-thiet-phu-quy-weekend-2n1d'),
-            'name' => array('vi' => 'Tour kết hợp Phan Thiết', 'en' => 'Combined Phan Thiet tours'),
-            'subtitle' => array('vi' => 'Nối Mũi Né / Phan Thiết với đảo bằng tàu cao tốc.', 'en' => 'Link Mui Ne / Phan Thiet with the island by speed ferry.'),
-            'seo_body' => array('vi' => 'Tour kết hợp giúp khách không phải tự lo nối xe–tàu hai đầu.', 'en' => 'Combined tours remove the stress of connecting road and ferry yourself.'),
-            'faqs' => array()),
+            'name' => array(
+                'vi' => 'Tour lặn & snorkel',
+
+
+
+
+'en' => 'Dive & snorkel tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Từ nửa ngày gần bờ tới multi-day fun dive quanh đảo.',
+
+
+
+
+'en' => 'From nearshore half-days to multi-day fun dives around the island.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Rạn san hô là lý do nhiều khách chọn Phú Quý thay vì đảo đông đúc hơn.',
+
+
+
+
+'en' => 'Coral reefs are why many guests choose Phu Quy over busier islands.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'bien-bai-nho',
+            'type' => 'theme',
+            'sort' => 11,
+            'packageSlugs' => array(
+                'bai-nho-gia-dinh-2-ngay',
+                'beach-hopping-bai-nho-bai-dai',
+            ),
+            'name' => array(
+                'vi' => 'Tour biển Bãi Nhỏ',
+
+
+
+
+'en' => 'Bai Nho beach tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Dải bãi chính — gia đình, ghế nằm và beach hopping.',
+
+
+
+
+'en' => 'The main beach strip — families, loungers and beach hopping.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Bãi Nhỏ là nơi tiện nghi nhất để ở và tắm trong lần đầu tới đảo.',
+
+
+
+
+'en' => 'Bai Nho is the most convenient first stop for lodging and swimming.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-phu-quy',
+            'slug' => 'hai-dang-van-hoa',
+            'type' => 'theme',
+            'sort' => 12,
+            'packageSlugs' => array(
+                'mui-den-bien-chua-hang-1-ngay',
+                'binh-minh-hoang-hon-mui-den-bien',
+                'chua-hang-van-hoa-nua-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour hải đăng & văn hoá',
+
+
+
+
+'en' => 'Lighthouse & culture tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Mũi Đèn Biển, Chùa Hang và khung giờ vàng trên đá bazan.',
+
+
+
+
+'en' => 'Mui Den Bien, Chua Hang and golden hour on basalt rock.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Hai điểm biểu tượng giúp khách hiểu “chất núi lửa” của Phú Quý.',
+
+
+
+
+'en' => 'Two landmarks that show Phu Quy’s volcanic character.',
+            ),
+            'faqs' => array(),
+        ),
     ),
 
     'listing_faqs' => array(
@@ -1221,15 +2631,24 @@ $__phuquySeed = array(
         array('q' => 'Phú Quý có đông khách không?', 'a' => 'Nhịp đảo chậm hơn các trung tâm nghỉ dưỡng lớn — phù hợp khách tìm làng chài, rạn san hô gần bờ và lịch trình không vội.'),
     ),
 
-    'duration_buckets' => array('half-day' => 'Nửa ngày', '1-day' => '1 ngày', '2-3-days' => '2 – 3 ngày', '4-plus' => '4 ngày trở lên'),
+    'duration_buckets' => array(
+        'half-day' => 'Nửa ngày',
+        '1-day' => '1 ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+    ),
 
     'travel_style_labels' => array(
-        'diving' => 'Lặn biển chuyên sâu', 'beach' => 'Nghỉ dưỡng biển', 'diving-snorkel' => 'Lặn & ngắm san hô',
-        'family' => 'Gia đình', 'honeymoon' => 'Trăng mật', 'culture' => 'Văn hoá & tâm linh',
-        'adventure' => 'Phiêu lưu', 'day-trip' => 'Tour trong ngày', 'multi-day' => 'Tour nhiều ngày',
-        'long-duration' => 'Tour dài ngày', 'small-group' => 'Nhóm nhỏ', 'seafood' => 'Hải sản & làng chài',
-        'jeep' => 'Jeep vòng đảo', 'balanced' => 'Kỳ nghỉ cân bằng',
-        'multi-destination-combo' => 'Kết hợp nhiều điểm đến', 'quiet-stay' => 'Nghỉ yên tĩnh',
+        'day-trip' => 'Tour trong ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+        'lan-bien' => 'Tour lặn & snorkel',
+        'bien-bai-nho' => 'Tour biển Bãi Nhỏ',
+        'hai-dang-van-hoa' => 'Tour hải đăng & văn hoá',
     ),
 );
 
@@ -1332,7 +2751,7 @@ $__servicesSeed = [
             'code' => 'flight-han-cam-ranh', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-cam-ranh', 'zone_slug' => 'ket-hop-phan-thiet',
             'title' => 'Vé máy bay Hà Nội — Cam Ranh (CXR)', 'slug' => 've-may-bay-ha-noi-cam-ranh',
             'price_from' => 1350000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 288,
-            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'HAN → CXR',
+            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'Hà Nội → CXR',
             'summary' => 'Bay Cam Ranh rồi đưa đón về Phan Thiết / La Gi bắt tàu ra Phú Quý — lộ trình phổ biến từ miền Bắc.',
             'highlights' => ['Nhiều khung giờ/ngày', 'Có thể gộp đưa đón sân bay — bến tàu', 'Tư vấn buffer trước giờ tàu'],
             'inclusions' => ['Vé economy một chiều', 'Thuế phí sân bay'], 'exclusions' => ['Hành lý mua thêm', 'Đưa đón'],
@@ -1635,7 +3054,7 @@ $__servicesSeed = [
 
     'service_listing_faqs' => [
         ['q' => 'Giá "từ" trên trang dịch vụ có phải giá cố định không?', 'a' => 'Không — giá "từ" là mức tham khảo theo mùa thấp điểm hoặc hạng tiêu chuẩn. phuquy.net báo giá chính xác sau khi nhận ngày đi, số khách và yêu cầu cụ thể.'],
-        ['q' => 'Tôi có thể gộp vé tàu + khách sạn + jeep trong một đơn không?', 'a' => 'Có. Chúng tôi thiết kế itinerary tuỳ chỉnh — gộp tàu Phan Thiết/La Gi, lưu trú, trải nghiệm và dịch vụ hỗ trợ vào một báo giá, một đầu mối chăm sóc.'],
+        ['q' => 'Tôi có thể gộp vé tàu + khách sạn + jeep trong một đơn không?', 'a' => 'Có. Chúng tôi thiết kế lịch trình tuỳ chỉnh — gộp tàu Phan Thiết/La Gi, lưu trú, trải nghiệm và dịch vụ hỗ trợ vào một báo giá, một đầu mối chăm sóc.'],
         ['q' => 'Chính sách hoàn/hủy khi tàu tạm ngưng vì sóng gió?', 'a' => 'Vé tàu và tour thuyền thường được đổi ngày miễn phí hoặc hoàn 100% nếu chuyến bị huỷ chính thức. Lưu trú/spa áp dụng điều kiện riêng ghi trên voucher.'],
         ['q' => 'phuquy.net có bán vé tàu trực tiếp trên website không?', 'a' => 'Website hiển thị tham khảo và form yêu cầu báo giá. Sau khi bạn gửi yêu cầu, tư vấn viên xác nhận chỗ, giá và gửi link thanh toán — không phí ẩn.'],
         ['q' => 'Nên chọn Bãi Nhỏ hay Bãi Dài để ở?', 'a' => 'Bãi Nhỏ tiện nghi, gần quán và hoạt động hơn; Bãi Dài yên và dài hơn, hợp couple/nghỉ chậm. Homestay thị trấn hợp giờ tàu và ngân sách tiết kiệm.'],
@@ -1686,15 +3105,27 @@ return array_merge(
     ['customize_form' => [
         'destinations_label' => [
             'vi' => 'Bạn muốn khám phá khu vực nào trên đảo?',
-            'en' => 'Which parts of the island would you like to explore?',
+
+
+
+
+'en' => 'Which parts of the island would you like to explore?',
         ],
         'accommodation_label' => [
             'vi' => 'Bạn thích loại lưu trú nào?',
-            'en' => 'What kind of stay do you prefer?',
+
+
+
+
+'en' => 'What kind of stay do you prefer?',
         ],
         'budget_note' => [
             'vi' => 'Ngân sách dự kiến (chưa gồm vé tàu cao tốc / đưa đón cửa ngõ)',
-            'en' => 'Estimated budget (excluding high-speed ferry / gateway transfers)',
+
+
+
+
+'en' => 'Estimated budget (excluding high-speed ferry / gateway transfers)',
         ],
         // Để trống → lấy zones/countries có show_in_customize_form
         'accommodation' => [
@@ -1704,7 +3135,11 @@ return array_merge(
                 'Bungalow Bãi Dài',
                 'Nhờ tư vấn giúp tôi',
             ],
-            'en' => [
+
+
+
+
+'en' => [
                 'Homestay near the harbour / town',
                 'Resort / hotel at Bai Nho',
                 'Bungalow at Bai Dai',
@@ -1715,46 +3150,106 @@ return array_merge(
     ['nav' => [
         'about_group' => [
             'vi' => 'Về phuquy.net',
-            'en' => 'About phuquy.net',
+
+
+
+
+'en' => 'About phuquy.net',
         ],
         'cruise' => [
-            'label' => ['vi' => 'Thuyền & trải nghiệm', 'en' => 'Boats & experiences'],
-            'all_label' => ['vi' => 'Tất cả thuyền / trải nghiệm', 'en' => 'All boat experiences'],
-            'all_meta' => ['vi' => 'Vòng đảo, câu mực đêm & lặn rạn', 'en' => 'Island loops, night squid fishing & reef dives'],
-            'search_hint' => ['vi' => 'Tour, điểm đến, thuyền, cẩm nang…', 'en' => 'Tours, places, boats, guides…'],
-            'search_placeholder' => ['vi' => 'Tìm tour, điểm đến, thuyền, bài viết…', 'en' => 'Search tours, places, boats, articles…'],
-            'hub_title' => ['vi' => 'Thuyền & trải nghiệm', 'en' => 'Boats & experiences'],
-            'hub_subtitle' => ['vi' => 'Vòng đảo, câu mực đêm và lặn rạn — chọn trải nghiệm trên mặt nước phù hợp.', 'en' => 'Island loops, night squid fishing and reef dives — pick a water experience that fits.'],
+            'label' => ['vi' => 'Thuyền & trải nghiệm',
+
+
+
+'en' => 'Boats & experiences'],
+            'all_label' => ['vi' => 'Tất cả thuyền / trải nghiệm',
+
+
+
+'en' => 'All boat experiences'],
+            'all_meta' => ['vi' => 'Vòng đảo, câu mực đêm & lặn rạn',
+
+
+
+'en' => 'Island loops, night squid fishing & reef dives'],
+            'search_hint' => ['vi' => 'Tour, điểm đến, thuyền, cẩm nang…',
+
+
+
+'en' => 'Tours, places, boats, guides…'],
+            'search_placeholder' => ['vi' => 'Tìm tour, điểm đến, thuyền, bài viết…',
+
+
+
+'en' => 'Search tours, places, boats, articles…'],
+            'hub_title' => ['vi' => 'Thuyền & trải nghiệm',
+
+
+
+'en' => 'Boats & experiences'],
+            'hub_subtitle' => ['vi' => 'Vòng đảo, câu mực đêm và lặn rạn — chọn trải nghiệm trên mặt nước phù hợp.',
+
+
+
+'en' => 'Island loops, night squid fishing and reef dives — pick a water experience that fits.'],
         ],
     ]],
     ['listing_hubs' => [
         'tours_hub' => [
             'vi' => ['seo_body' => 'Trang tour của :brand tập hợp hành trình khám phá đảo Phú Quý — vòng đảo, làng chài và combo cửa ngõ. Mỗi lịch trình do chuyên gia bản địa thiết kế.'],
-            'en' => ['seo_body' => ':brand tours explore Phu Quy Island — loops, fishing villages and gateway combos, designed by local experts.'],
+
+
+
+
+'en' => ['seo_body' => ':brand tours explore Phu Quy Island — loops, fishing villages and gateway combos, designed by local experts.'],
         ],
         'cruises_hub' => [
             'vi' => ['seo_body' => 'Thuyền & trải nghiệm biển Phú Quý từ :brand: vòng đảo, câu mực đêm và lặn rạn — chọn lịch phù hợp.'],
-            'en' => ['seo_body' => 'Phu Quy boat & sea experiences from :brand: island loops, night squid fishing and reef dives.'],
+
+
+
+
+'en' => ['seo_body' => 'Phu Quy boat & sea experiences from :brand: island loops, night squid fishing and reef dives.'],
         ],
         'ferries_hub' => [
             'vi' => ['seo_body' => 'Vé tàu cao tốc và xe cửa ngõ ra Phú Quý qua :brand — lịch chạy rõ, đổi ngày linh hoạt, e-ticket.'],
-            'en' => ['seo_body' => 'High-speed ferry and gateway transfers to Phu Quy via :brand — clear schedules, flexible changes, e-tickets.'],
+
+
+
+
+'en' => ['seo_body' => 'High-speed ferry and gateway transfers to Phu Quy via :brand — clear schedules, flexible changes, e-tickets.'],
         ],
         'flights_hub' => [
             'vi' => ['seo_body' => 'Vé máy bay & đưa đón kết nối đảo Phú Quý qua :brand — báo giá nhanh theo lịch tour.'],
-            'en' => ['seo_body' => 'Flights and transfers connecting to Phu Quy via :brand — fast quotes for your tour dates.'],
+
+
+
+
+'en' => ['seo_body' => 'Flights and transfers connecting to Phu Quy via :brand — fast quotes for your tour dates.'],
         ],
         'stays_hub' => [
             'vi' => ['seo_body' => 'Homestay, resort và bungalow Phú Quý do :brand tuyển chọn theo khu vực trên đảo.'],
-            'en' => ['seo_body' => 'Phu Quy homestays, resorts and bungalows curated by :brand by island area.'],
+
+
+
+
+'en' => ['seo_body' => 'Phu Quy homestays, resorts and bungalows curated by :brand by island area.'],
         ],
         'experiences_hub' => [
             'vi' => ['seo_body' => 'Vé vui chơi & trải nghiệm Phú Quý — đặt qua :brand, hỗ trợ trước và trong chuyến đi.'],
-            'en' => ['seo_body' => 'Phu Quy tickets & experiences — book via :brand with support before and during your trip.'],
+
+
+
+
+'en' => ['seo_body' => 'Phu Quy tickets & experiences — book via :brand with support before and during your trip.'],
         ],
         'extras_hub' => [
             'vi' => ['seo_body' => 'Dịch vụ hỗ trợ trên đảo Phú Quý: thuê xe, HDV và hỗ trợ khẩn cấp cùng :brand.'],
-            'en' => ['seo_body' => 'On-island support on Phu Quy: vehicle hire, guides and trip assistance with :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'On-island support on Phu Quy: vehicle hire, guides and trip assistance with :brand.'],
         ],
     ]],
 );

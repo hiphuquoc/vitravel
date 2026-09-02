@@ -32,9 +32,21 @@ $__hihagiangSeed = array(
     ),
 
     'price_guest_types' => array(
-        array('code' => 'adult', 'sort' => 10, 'age_min' => 12, 'age_max' => 59, 'name' => array('vi' => 'Người lớn', 'en' => 'Adult')),
-        array('code' => 'child', 'sort' => 20, 'age_min' => 2, 'age_max' => 11, 'name' => array('vi' => 'Trẻ em', 'en' => 'Child')),
-        array('code' => 'senior', 'sort' => 30, 'age_min' => 60, 'age_max' => null, 'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)')),
+        array('code' => 'adult', 'sort' => 10, 'age_min' => 12, 'age_max' => 59, 'name' => array('vi' => 'Người lớn',
+
+
+
+'en' => 'Adult')),
+        array('code' => 'child', 'sort' => 20, 'age_min' => 2, 'age_max' => 11, 'name' => array('vi' => 'Trẻ em',
+
+
+
+'en' => 'Child')),
+        array('code' => 'senior', 'sort' => 30, 'age_min' => 60, 'age_max' => null, 'name' => array('vi' => 'Cao tuổi (60+)',
+
+
+
+'en' => 'Senior (60+)')),
     ),
 
     'price_table_defaults' => array(
@@ -59,29 +71,132 @@ $__hihagiangSeed = array(
     ),
 
     'content_tags' => array(
-        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?', 'en' => 'Where to eat & drink?'),
-        'where-to-stay' => array('vi' => 'Ở đâu?', 'en' => 'Where to stay?'),
-        'what-to-do' => array('vi' => 'Làm gì & xem gì?', 'en' => 'What to do & see?'),
-        'how-to-get-there' => array('vi' => 'Di chuyển tới Hà Giang thế nào?', 'en' => 'How to get to Ha Giang?'),
-        'travel-tips' => array('vi' => 'Mẹo du lịch', 'en' => 'Travel tips'),
-        'trip-report' => array('vi' => 'Cảm nhận chuyến đi', 'en' => 'How was the trip?'),
-        'which-tour' => array('vi' => 'Chọn tour nào?', 'en' => 'Which tour to choose?'),
+        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?',
+
+
+
+'en' => 'Where to eat & drink?'),
+        'where-to-stay' => array('vi' => 'Ở đâu?',
+
+
+
+'en' => 'Where to stay?'),
+        'what-to-do' => array('vi' => 'Làm gì & xem gì?',
+
+
+
+'en' => 'What to do & see?'),
+        'how-to-get-there' => array('vi' => 'Di chuyển tới Hà Giang thế nào?',
+
+
+
+'en' => 'How to get to Ha Giang?'),
+        'travel-tips' => array('vi' => 'Mẹo du lịch',
+
+
+
+'en' => 'Travel tips'),
+        'trip-report' => array('vi' => 'Cảm nhận chuyến đi',
+
+
+
+'en' => 'How was the trip?'),
+        'which-tour' => array('vi' => 'Chọn tour nào?',
+
+
+
+'en' => 'Which tour to choose?'),
     ),
 
     'travel_styles' => array(
-        'adventure' => array('vi' => 'Phiêu lưu & mạo hiểm', 'en' => 'Adventure'),
-        'motorcycle-loop' => array('vi' => 'Loop bằng xe máy', 'en' => 'Motorbike loop'),
-        'ethnic-culture' => array('vi' => 'Văn hoá dân tộc & homestay', 'en' => 'Ethnic culture & homestay'),
-        'photography' => array('vi' => 'Chụp ảnh & check-in', 'en' => 'Photography'),
-        'flower-season' => array('vi' => 'Mùa hoa & mùa màng', 'en' => 'Flower & harvest seasons'),
-        'trekking' => array('vi' => 'Trekking & leo núi', 'en' => 'Trekking & hiking'),
-        'family' => array('vi' => 'Gia đình', 'en' => 'Family'),
-        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
-        'multi-day' => array('vi' => 'Tour nhiều ngày', 'en' => 'Multi-day tour'),
-        'balanced' => array('vi' => 'Kỳ nghỉ cân bằng', 'en' => 'Balanced'),
-        'multi-destination-combo' => array('vi' => 'Kết hợp nhiều điểm đến', 'en' => 'Multi-destination combo'),
-        'small-group' => array('vi' => 'Nhóm nhỏ', 'en' => 'Small group'),
-        'geopark' => array('vi' => 'Di sản địa chất UNESCO', 'en' => 'UNESCO geopark'),
+        'day-trip' => array(
+            'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day trip',
+        ),
+        '2n1d' => array(
+            'vi' => '2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+        ),
+        '3n2d' => array(
+            'vi' => '3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+        ),
+        '4n3d' => array(
+            'vi' => '4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+        ),
+        '5-plus-days' => array(
+            'vi' => 'Từ 5 ngày',
+
+
+
+
+'en' => '5+ days',
+        ),
+        'loop-cao-nguyen' => array(
+            'vi' => 'Loop cao nguyên đá',
+
+
+
+
+'en' => 'Karst plateau loop',
+        ),
+        'homestay-dan-toc' => array(
+            'vi' => 'Homestay dân tộc',
+
+
+
+
+'en' => 'Ethnic homestays',
+        ),
+        'xe-may' => array(
+            'vi' => 'Loop xe máy',
+
+
+
+
+'en' => 'Motorbike loop',
+        ),
+        'mua-hoa' => array(
+            'vi' => 'Tour mùa hoa',
+
+
+
+
+'en' => 'Flower season tours',
+        ),
+        'weekend-hanoi' => array(
+            'vi' => 'Cuối tuần từ Hà Nội',
+
+
+
+
+'en' => 'Weekend from Hanoi',
+        ),
+        'gia-dinh-nhom-nho' => array(
+            'vi' => 'Gia đình & nhóm nhỏ',
+
+
+
+
+'en' => 'Family & small group',
+        ),
     ),
 
     'review_platforms' => array(
@@ -107,7 +222,11 @@ $__hihagiangSeed = array(
             'vi' => array('title' => 'Hà Giang Loop', 'title_accent' => 'cao nguyên đá UNESCO & đèo Mã Pí Lèng',
                 'description' => 'Cung đường huyền thoại qua Cổng trời Quản Bạ, đỉnh Mã Pí Lèng, phố cổ Đồng Văn và sông Nho Quế xanh ngọc — hành trình định nghĩa du lịch Đông Bắc.',
                 'button_label' => 'Khám phá Hà Giang Loop', 'image_alt' => 'Hà Giang Loop — đèo Mã Pí Lèng và cao nguyên đá'),
-            'en' => array('title' => 'Ha Giang Loop', 'title_accent' => 'UNESCO karst plateau & Ma Pi Leng Pass',
+
+
+
+
+'en' => array('title' => 'Ha Giang Loop', 'title_accent' => 'UNESCO karst plateau & Ma Pi Leng Pass',
                 'description' => 'The legendary route through Quan Ba Heaven Gate, Ma Pi Leng summit, Dong Van old town and emerald Nho Que River — the journey that defines Northeast Vietnam.',
                 'button_label' => 'Explore the Ha Giang Loop', 'image_alt' => 'Ha Giang Loop — Ma Pi Leng Pass and karst plateau'),
         ),
@@ -116,7 +235,11 @@ $__hihagiangSeed = array(
             'vi' => array('title' => 'Quản Bạ', 'title_accent' => 'Cổng trời & núi đôi Quản Bạ',
                 'description' => 'Điểm mở đầu loop — sương mù buổi sáng, ruộng bậc thang và câu chuyện núi đôi Cô Tiên trong truyền thuyết Mông.',
                 'button_label' => 'Xem tour Quản Bạ', 'image_alt' => 'Cổng trời Quản Bạ và núi đôi'),
-            'en' => array('title' => 'Quan Ba', 'title_accent' => 'Heaven Gate & Twin Mountains',
+
+
+
+
+'en' => array('title' => 'Quan Ba', 'title_accent' => 'Heaven Gate & Twin Mountains',
                 'description' => 'The loop\'s gateway — morning mist, terraced fields and the Twin Mountains legend of the Hmong people.',
                 'button_label' => 'View Quan Ba tours', 'image_alt' => 'Quan Ba Heaven Gate and Twin Mountains'),
         ),
@@ -125,7 +248,11 @@ $__hihagiangSeed = array(
             'vi' => array('title' => 'Homestay & mùa hoa', 'title_accent' => 'tam giác mạch, hoa đào & ruộng Hoàng Su Phì',
                 'description' => 'Ngủ nhà dân H\'Mông, Dao, Tày — thức dậy giữa tam giác mạch (tháng 10–11), hoa đào (tháng 1–2) hoặc mùa nước đổ Hoàng Su Phì.',
                 'button_label' => 'Xem homestay & mùa hoa', 'image_alt' => 'Homestay dân tộc và tam giác mạch Hà Giang'),
-            'en' => array('title' => 'Homestays & flower seasons', 'title_accent' => 'buckwheat, peach blossom & Hoang Su Phi terraces',
+
+
+
+
+'en' => array('title' => 'Homestays & flower seasons', 'title_accent' => 'buckwheat, peach blossom & Hoang Su Phi terraces',
                 'description' => 'Stay with Hmong, Dao and Tay families — wake to buckwheat (Oct–Nov), peach blossom (Jan–Feb) or Hoang Su Phi pouring-water season.',
                 'button_label' => 'View homestays & seasons', 'image_alt' => 'Ethnic homestay and buckwheat fields Ha Giang'),
         ),
@@ -144,367 +271,1436 @@ $__hihagiangSeed = array(
     ),
 
     'zone_translations' => array(
-        'thanh-pho-ha-giang' => array('vi' => 'Thành phố Hà Giang', 'en' => 'Ha Giang City',
-            'tagline' => array('vi' => 'Cửa ngõ loop, chợ đêm và chuẩn bị giấy phép biên giới', 'en' => 'Loop gateway, night market and border permit prep')),
-        'quan-ba' => array('vi' => 'Quản Bạ', 'en' => 'Quan Ba',
-            'tagline' => array('vi' => 'Cổng trời, núi đôi Cô Tiên và thung lũng sương mù', 'en' => 'Heaven Gate, Twin Mountains and misty valleys')),
-        'yen-minh' => array('vi' => 'Yên Minh', 'en' => 'Yen Minh',
-            'tagline' => array('vi' => 'Rừng thông, thị trấn phố cao và chuyển tiếp lên Đồng Văn', 'en' => 'Pine forests, highland town and gateway to Dong Van')),
-        'dong-van' => array('vi' => 'Đồng Văn', 'en' => 'Dong Van',
-            'tagline' => array('vi' => 'Phố cổ, chợ phiên và trung tâm Công viên địa chất toàn cầu', 'en' => 'Old quarter, Sunday market and UNESCO geopark heart')),
-        'meo-vac' => array('vi' => 'Mèo Vạc', 'en' => 'Meo Vac',
-            'tagline' => array('vi' => 'Đèo Mã Pí Lèng, sông Nho Quế và vách đá Tu Sản', 'en' => 'Ma Pi Leng Pass, Nho Que River and Tu San Canyon')),
-        'hoang-su-phi' => array('vi' => 'Hoàng Su Phì', 'en' => 'Hoang Su Phi',
-            'tagline' => array('vi' => 'Ruộng bậc thang đẹp nhất Việt Nam và bản làng Dao đỏ', 'en' => 'Vietnam\'s finest terraces and Red Dao villages')),
-        'bac-me' => array('vi' => 'Bắc Mê', 'en' => 'Bac Me',
-            'tagline' => array('vi' => 'Hồ Thác Bà, hang động và lối về Cao Bằng', 'en' => 'Thac Ba Lake, caves and route to Cao Bang')),
-        'ket-hop-sapa' => array('vi' => 'Kết hợp Sapa', 'en' => 'Combined with Sapa',
-            'tagline' => array('vi' => 'Nối cao nguyên đá Hà Giang và Fansipan trong một hành trình', 'en' => 'Link Ha Giang karst plateau and Fansipan in one journey')),
-        'ket-hop-cao-bang' => array('vi' => 'Kết hợp Cao Bằng', 'en' => 'Combined with Cao Bang',
-            'tagline' => array('vi' => 'Hà Giang Loop + thác Bản Giốc & hồ Ba Bể', 'en' => 'Ha Giang Loop plus Ban Gioc Falls and Ba Be Lake')),
+        'thanh-pho-ha-giang' => array('vi' => 'Thành phố Hà Giang',
+
+
+
+'en' => 'Ha Giang City',
+            'tagline' => array('vi' => 'Cửa ngõ loop, chợ đêm và chuẩn bị giấy phép biên giới',
+
+
+
+'en' => 'Loop gateway, night market and border permit prep')),
+        'quan-ba' => array('vi' => 'Quản Bạ',
+
+
+
+'en' => 'Quan Ba',
+            'tagline' => array('vi' => 'Cổng trời, núi đôi Cô Tiên và thung lũng sương mù',
+
+
+
+'en' => 'Heaven Gate, Twin Mountains and misty valleys')),
+        'yen-minh' => array('vi' => 'Yên Minh',
+
+
+
+'en' => 'Yen Minh',
+            'tagline' => array('vi' => 'Rừng thông, thị trấn phố cao và chuyển tiếp lên Đồng Văn',
+
+
+
+'en' => 'Pine forests, highland town and gateway to Dong Van')),
+        'dong-van' => array('vi' => 'Đồng Văn',
+
+
+
+'en' => 'Dong Van',
+            'tagline' => array('vi' => 'Phố cổ, chợ phiên và trung tâm Công viên địa chất toàn cầu',
+
+
+
+'en' => 'Old quarter, Sunday market and UNESCO geopark heart')),
+        'meo-vac' => array('vi' => 'Mèo Vạc',
+
+
+
+'en' => 'Meo Vac',
+            'tagline' => array('vi' => 'Đèo Mã Pí Lèng, sông Nho Quế và vách đá Tu Sản',
+
+
+
+'en' => 'Ma Pi Leng Pass, Nho Que River and Tu San Canyon')),
+        'hoang-su-phi' => array('vi' => 'Hoàng Su Phì',
+
+
+
+'en' => 'Hoang Su Phi',
+            'tagline' => array('vi' => 'Ruộng bậc thang đẹp nhất Việt Nam và bản làng Dao đỏ',
+
+
+
+'en' => 'Vietnam\'s finest terraces and Red Dao villages')),
+        'bac-me' => array('vi' => 'Bắc Mê',
+
+
+
+'en' => 'Bac Me',
+            'tagline' => array('vi' => 'Hồ Thác Bà, hang động và lối về Cao Bằng',
+
+
+
+'en' => 'Thac Ba Lake, caves and route to Cao Bang')),
+        'ket-hop-sapa' => array('vi' => 'Kết hợp Sapa',
+
+
+
+'en' => 'Combined with Sapa',
+            'tagline' => array('vi' => 'Nối cao nguyên đá Hà Giang và Fansipan trong một hành trình',
+
+
+
+'en' => 'Link Ha Giang karst plateau and Fansipan in one journey')),
+        'ket-hop-cao-bang' => array('vi' => 'Kết hợp Cao Bằng',
+
+
+
+'en' => 'Combined with Cao Bang',
+            'tagline' => array('vi' => 'Hà Giang Loop + thác Bản Giốc & hồ Ba Bể',
+
+
+
+'en' => 'Ha Giang Loop plus Ban Gioc Falls and Ba Be Lake')),
     ),
 
     'tours' => array(
         array(
             'slug' => 'ha-giang-loop-3-ngay-2-dem',
             'title' => 'Hà Giang Loop 3 ngày 2 đêm — Cổng trời & Mã Pí Lèng',
-            'zoneSlug' => 'meo-vac', 'zone' => 'Mèo Vạc',
-            'tourCode' => 'HG3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.9, 'reviewCount' => 312, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('balanced', 'geopark', 'multi-day', 'photography'),
-            'quote' => array('text' => 'Ba ngày vừa đủ để cảm nhận loop — từ Cổng trời đến Mã Pí Lèng và phố cổ Đồng Văn.', 'author' => 'Chị Minh Anh'),
-            'places' => array('Cổng trời Quản Bạ', 'Yên Minh', 'Đồng Văn', 'Mã Pí Lèng', 'Sông Nho Quế'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
+            'zoneSlug' => 'meo-vac',
+            'zone' => 'Mèo Vạc',
+            'tourCode' => 'HG3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.9,
+            'reviewCount' => 312,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+                'weekend-hanoi',
+                'loop-cao-nguyen',
+                'homestay-dan-toc',
+            ),
+            'quote' => array(
+                'text' => 'Ba ngày vừa đủ để cảm nhận loop — từ Cổng trời đến Mã Pí Lèng và phố cổ Đồng Văn.',
+                'author' => 'Chị Minh Anh',
+            ),
+            'places' => array(
+                'Cổng trời Quản Bạ',
+                'Yên Minh',
+                'Đồng Văn',
+                'Mã Pí Lèng',
+                'Sông Nho Quế',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
             'highlightsIntro' => 'Lịch trình kinh điển cho lần đầu: loop ô tô, homestay dân tộc và giấy phép biên giới xử lý sẵn.',
-            'highlights' => array('Giấy phép biên giới (loop)', 'Cổng trời Quản Bạ', 'Đèo Mã Pí Lèng & Tu Sản', 'Homestay H\'Mông Đồng Văn', 'Thuyền Nho Quế (tuỳ chọn)'),
+            'highlights' => array(
+                'Giấy phép biên giới (loop)',
+                'Cổng trời Quản Bạ',
+                'Đèo Mã Pí Lèng & Tu Sản',
+                'Homestay H\'Mông Đồng Văn',
+                'Thuyền Nho Quế (tuỳ chọn)',
+            ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ — Yên Minh', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Yên Minh',
-                    'content' => 'Đón bến xe Hà Giang, làm giấy phép, qua Cổng trời Quản Bạ, núi đôi, về Yên Minh nghỉ.'),
-                array('day' => 2, 'title' => 'Đồng Văn — Mã Pí Lèng — Mèo Vạc', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn / Mèo Vạc',
-                    'content' => 'Sáng phố cổ Đồng Văn, chiều đèo Mã Pí Lèng, dừng check-in vách Tu Sản, tối homestay.'),
-                array('day' => 3, 'title' => 'Nho Quế — về Hà Giang', 'meals' => 'Sáng; Trưa', 'transport' => array('car', 'boat'), 'overnight' => null,
-                    'content' => 'Sáng thuyền sông Nho Quế (tuỳ chọn), chiều về Hà Giang, tiễn bến xe/sân bay Hà Nội.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ — Yên Minh',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Yên Minh',
+                    'content' => 'Đón bến xe Hà Giang, làm giấy phép, qua Cổng trời Quản Bạ, núi đôi, về Yên Minh nghỉ.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Đồng Văn — Mã Pí Lèng — Mèo Vạc',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn / Mèo Vạc',
+                    'content' => 'Sáng phố cổ Đồng Văn, chiều đèo Mã Pí Lèng, dừng check-in vách Tu Sản, tối homestay.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Nho Quế — về Hà Giang',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng thuyền sông Nho Quế (tuỳ chọn), chiều về Hà Giang, tiễn bến xe/sân bay Hà Nội.',
+                ),
             ),
-            'inclusions' => array('Xe ô tô loop 3 ngày', 'Giấy phép biên giới', 'HDV địa phương', 'Bữa ăn ghi trong chương trình', 'Homestay 2 đêm'),
-            'exclusions' => array('Xe Hà Nội—Hà Giang (đặt thêm)', 'Thuyền Nho Quế', 'Tip', 'Bảo hiểm cá nhân'),
-            'notes' => array('Mang CMND/hộ chiếu gốc để làm giấy phép.', 'Đường đèo — dễ say xe, nên chuẩn bị thuốc.'),
+            'inclusions' => array(
+                'Xe ô tô loop 3 ngày',
+                'Giấy phép biên giới',
+                'HDV địa phương',
+                'Bữa ăn ghi trong chương trình',
+                'Homestay 2 đêm',
+            ),
+            'exclusions' => array(
+                'Xe Hà Nội—Hà Giang (đặt thêm)',
+                'Thuyền Nho Quế',
+                'Tip',
+                'Bảo hiểm cá nhân',
+            ),
+            'notes' => array(
+                'Mang CMND/hộ chiếu gốc để làm giấy phép.',
+                'Đường đèo — dễ say xe, nên chuẩn bị thuốc.',
+            ),
             'faqs' => array(
-                array('q' => 'Loop có cần giấy phép không?', 'a' => 'Có — vùng biên giới cần giấy phép du lịch. :brand xử lý trước khi khởi hành nếu bạn gửi ảnh CMND/hộ chiếu trước 2–3 ngày.'),
-                array('q' => '3 ngày có đủ không?', 'a' => 'Đủ cho các điểm chính. Nếu muốn thêm Hoàng Su Phì hoặc đi chậm hơn, nên chọn tour 4–5 ngày.'),
+                array(
+                    'q' => 'Loop có cần giấy phép không?',
+                    'a' => 'Có — vùng biên giới cần giấy phép du lịch. :brand xử lý trước khi khởi hành nếu bạn gửi ảnh CMND/hộ chiếu trước 2–3 ngày.',
+                ),
+                array(
+                    'q' => '3 ngày có đủ không?',
+                    'a' => 'Đủ cho các điểm chính. Nếu muốn thêm Hoàng Su Phì hoặc đi chậm hơn, nên chọn tour 4–5 ngày.',
+                ),
             ),
-            'galleryCount' => 8, 'priceFrom' => 3200000.0, 'currency' => 'VND',
+            'galleryCount' => 8,
+            'priceFrom' => 3200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'ha-giang-loop-4-ngay-3-dem',
             'title' => 'Hà Giang Loop 4 ngày 3 đêm — Khám phá sâu cao nguyên đá',
-            'zoneSlug' => 'dong-van', 'zone' => 'Đồng Văn',
-            'tourCode' => 'HG4D-01', 'duration' => '4 ngày 3 đêm', 'days' => 4,
-            'rating' => 4.9, 'reviewCount' => 198, 'badge' => 'Đề xuất', 'featured' => true,
-            'styles' => array('geopark', 'ethnic-culture', 'multi-day', 'photography'),
-            'quote' => array('text' => 'Bốn ngày mới đủ thời gian ngủ 3 đêm homestay, chợ phiên và thuyền Nho Quế không vội.', 'author' => 'Anh Quốc Bảo'),
-            'places' => array('Quản Bạ', 'Lũng Cú', 'Đồng Văn', 'Mã Pí Lèng', 'Nho Quế', 'Lũng Tám'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Loop đầy đủ nhất: thêm Lũng Cú, chợ phiên và 1 đêm tại Mèo Vạc.',
-            'highlights' => array('Lũng Cú — mốc Tổ quốc', 'Chợ phiên Đồng Văn (Chủ nhật)', '3 đêm homestay dân tộc', 'Thuyền Nho Quế', 'Cung đường Mã Pí Lèng'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Quản Bạ / Yên Minh', 'content' => 'Làm giấy phép, Cổng trời, núi đôi, homestay.'),
-                array('day' => 2, 'title' => 'Yên Minh — Lũng Cú — Đồng Văn', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Lên Lũng Cú, chiều dạo phố cổ, tối chợ đêm.'),
-                array('day' => 3, 'title' => 'Mã Pí Lèng — Mèo Vạc — Nho Quế', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Mèo Vạc', 'content' => 'Đèo Mã Pí Lèng, thuyền Nho Quế, homestay Mèo Vạc.'),
-                array('day' => 4, 'title' => 'Về Hà Giang — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Đường về qua Yên Minh, tiễn khách.'),
+            'zoneSlug' => 'dong-van',
+            'zone' => 'Đồng Văn',
+            'tourCode' => 'HG4D-01',
+            'duration' => '4 ngày 3 đêm',
+            'days' => 4,
+            'rating' => 4.9,
+            'reviewCount' => 198,
+            'badge' => 'Đề xuất',
+            'featured' => true,
+            'styles' => array(
+                '4n3d',
+                'loop-cao-nguyen',
+                'homestay-dan-toc',
+                'gia-dinh-nhom-nho',
             ),
-            'inclusions' => array('Xe riêng 4 ngày', 'Giấy phép', 'HDV', 'Homestay 3 đêm', 'Bữa ăn theo lịch'),
-            'exclusions' => array('Xe Hà Nội—Hà Giang', 'Đồ uống', 'Tip'),
-            'notes' => array('Chợ phiên Đồng Văn chỉ Chủ nhật — lên lịch phù hợp.'), 'faqs' => array(),
-            'galleryCount' => 8, 'priceFrom' => 3850000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Bốn ngày mới đủ thời gian ngủ 3 đêm homestay, chợ phiên và thuyền Nho Quế không vội.',
+                'author' => 'Anh Quốc Bảo',
+            ),
+            'places' => array(
+                'Quản Bạ',
+                'Lũng Cú',
+                'Đồng Văn',
+                'Mã Pí Lèng',
+                'Nho Quế',
+                'Lũng Tám',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Loop đầy đủ nhất: thêm Lũng Cú, chợ phiên và 1 đêm tại Mèo Vạc.',
+            'highlights' => array(
+                'Lũng Cú — mốc Tổ quốc',
+                'Chợ phiên Đồng Văn (Chủ nhật)',
+                '3 đêm homestay dân tộc',
+                'Thuyền Nho Quế',
+                'Cung đường Mã Pí Lèng',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Quản Bạ / Yên Minh',
+                    'content' => 'Làm giấy phép, Cổng trời, núi đôi, homestay.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Yên Minh — Lũng Cú — Đồng Văn',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Lên Lũng Cú, chiều dạo phố cổ, tối chợ đêm.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mã Pí Lèng — Mèo Vạc — Nho Quế',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Mèo Vạc',
+                    'content' => 'Đèo Mã Pí Lèng, thuyền Nho Quế, homestay Mèo Vạc.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Về Hà Giang — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đường về qua Yên Minh, tiễn khách.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe riêng 4 ngày',
+                'Giấy phép',
+                'HDV',
+                'Homestay 3 đêm',
+                'Bữa ăn theo lịch',
+            ),
+            'exclusions' => array(
+                'Xe Hà Nội—Hà Giang',
+                'Đồ uống',
+                'Tip',
+            ),
+            'notes' => array(
+                'Chợ phiên Đồng Văn chỉ Chủ nhật — lên lịch phù hợp.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 8,
+            'priceFrom' => 3850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'ha-giang-loop-5-ngay-4-dem',
             'title' => 'Hà Giang Loop 5 ngày 4 đêm — Loop + Hoàng Su Phì',
-            'zoneSlug' => 'hoang-su-phi', 'zone' => 'Hoàng Su Phì',
-            'tourCode' => 'HG5D-01', 'duration' => '5 ngày 4 đêm', 'days' => 5,
-            'rating' => 4.8, 'reviewCount' => 87, 'badge' => null, 'featured' => true,
-            'styles' => array('geopark', 'flower-season', 'multi-day', 'ethnic-culture'),
-            'quote' => array('text' => 'Kết hợp loop và ruộng Hoàng Su Phì — hai biểu tượng Hà Giang trong một chuyến.', 'author' => 'Nhóm bạn Hà Nội'),
-            'places' => array('Loop đầy đủ', 'Hoàng Su Phì', 'Bản Phùng', 'Lũng Cú'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Dành cho người có thời gian: loop 3 ngày + 2 ngày ruộng bậc thang Hoàng Su Phì.',
-            'highlights' => array('Loop đầy đủ 3 ngày', 'Ruộng bậc thang Hoàng Su Phì', 'Bản làng Dao đỏ', 'Homestay đa dân tộc'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ — Yên Minh', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Yên Minh', 'content' => 'Giấy phép, Cổng trời, Yên Minh.'),
-                array('day' => 2, 'title' => 'Đồng Văn — Lũng Cú', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Phố cổ, Lũng Cú, homestay.'),
-                array('day' => 3, 'title' => 'Mã Pí Lèng — Nho Quế — Mèo Vạc', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Mèo Vạc', 'content' => 'Đèo, thuyền, homestay.'),
-                array('day' => 4, 'title' => 'Hoàng Su Phì', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Hoàng Su Phì', 'content' => 'Ruộng bậc thang, bản Phùng / Thông Nguyên.'),
-                array('day' => 5, 'title' => 'Hoàng Su Phì — Hà Giang — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Sáng chụp ruộng, chiều về Hà Giang.'),
+            'zoneSlug' => 'hoang-su-phi',
+            'zone' => 'Hoàng Su Phì',
+            'tourCode' => 'HG5D-01',
+            'duration' => '5 ngày 4 đêm',
+            'days' => 5,
+            'rating' => 4.8,
+            'reviewCount' => 87,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                '5-plus-days',
+                'loop-cao-nguyen',
+                'homestay-dan-toc',
             ),
-            'inclusions' => array('Xe 5 ngày', 'Giấy phép', 'HDV', 'Homestay 4 đêm', 'Bữa ăn theo lịch'),
-            'exclusions' => array('Xe Hà Nội', 'Tip'), 'notes' => array('Mùa ruộng đẹp: tháng 5–6 (nước đổ), 9–10 (lúa chín).'),
-            'faqs' => array(), 'galleryCount' => 8, 'priceFrom' => 4500000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Kết hợp loop và ruộng Hoàng Su Phì — hai biểu tượng Hà Giang trong một chuyến.',
+                'author' => 'Nhóm bạn Hà Nội',
+            ),
+            'places' => array(
+                'Loop đầy đủ',
+                'Hoàng Su Phì',
+                'Bản Phùng',
+                'Lũng Cú',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Dành cho người có thời gian: loop 3 ngày + 2 ngày ruộng bậc thang Hoàng Su Phì.',
+            'highlights' => array(
+                'Loop đầy đủ 3 ngày',
+                'Ruộng bậc thang Hoàng Su Phì',
+                'Bản làng Dao đỏ',
+                'Homestay đa dân tộc',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ — Yên Minh',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Yên Minh',
+                    'content' => 'Giấy phép, Cổng trời, Yên Minh.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Đồng Văn — Lũng Cú',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Phố cổ, Lũng Cú, homestay.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mã Pí Lèng — Nho Quế — Mèo Vạc',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Mèo Vạc',
+                    'content' => 'Đèo, thuyền, homestay.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Hoàng Su Phì',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Hoàng Su Phì',
+                    'content' => 'Ruộng bậc thang, bản Phùng / Thông Nguyên.',
+                ),
+                array(
+                    'day' => 5,
+                    'title' => 'Hoàng Su Phì — Hà Giang — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng chụp ruộng, chiều về Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe 5 ngày',
+                'Giấy phép',
+                'HDV',
+                'Homestay 4 đêm',
+                'Bữa ăn theo lịch',
+            ),
+            'exclusions' => array(
+                'Xe Hà Nội',
+                'Tip',
+            ),
+            'notes' => array(
+                'Mùa ruộng đẹp: tháng 5–6 (nước đổ), 9–10 (lúa chín).',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 8,
+            'priceFrom' => 4500000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'ha-giang-loop-xe-may-3-ngay',
             'title' => 'Hà Giang Loop xe máy 3 ngày 2 đêm — Tự do trên đèo',
-            'zoneSlug' => 'meo-vac', 'zone' => 'Mèo Vạc',
-            'tourCode' => 'HG3D-MOTO', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.9, 'reviewCount' => 245, 'badge' => 'Xe máy', 'featured' => true,
-            'styles' => array('motorcycle-loop', 'adventure', 'multi-day', 'small-group'),
-            'quote' => array('text' => 'Lái xe qua Mã Pí Lèng tự tay — cảm giác không tour ô tô nào thay được.', 'author' => 'Bạn Minh Khoa'),
-            'places' => array('Quản Bạ', 'Đồng Văn', 'Mã Pí Lèng', 'Nho Quế'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Xe máy Honda Winner/Exciter + xe hỗ trợ chở hành lý — an toàn với leader có kinh nghiệm.',
-            'highlights' => array('Xe máy + mũ bảo hiểm', 'Xe hỗ trợ chở đồ', 'Leader loop kinh nghiệm', 'Giấy phép biên giới', 'Homestay 2 đêm'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ — Yên Minh', 'meals' => 'Trưa; Tối', 'transport' => array('motorbike'), 'overnight' => 'Yên Minh', 'content' => 'Nhận xe, briefing an toàn, chạy Cổng trời, về Yên Minh.'),
-                array('day' => 2, 'title' => 'Đồng Văn — Mã Pí Lèng', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('motorbike'), 'overnight' => 'Đồng Văn', 'content' => 'Phố cổ sáng, chiều Mã Pí Lèng, tối homestay.'),
-                array('day' => 3, 'title' => 'Nho Quế — về Hà Giang', 'meals' => 'Sáng; Trưa', 'transport' => array('motorbike', 'boat'), 'overnight' => null, 'content' => 'Thuyền Nho Quế, trả xe Hà Giang.'),
+            'zoneSlug' => 'meo-vac',
+            'zone' => 'Mèo Vạc',
+            'tourCode' => 'HG3D-MOTO',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.9,
+            'reviewCount' => 245,
+            'badge' => 'Xe máy',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+                'xe-may',
+                'loop-cao-nguyen',
             ),
-            'inclusions' => array('Xe máy 3 ngày', 'Xe hỗ trợ', 'Leader', 'Giấy phép', 'Homestay', 'Mũ BH'),
-            'exclusions' => array('Xăng', 'Thuyền Nho Quế', 'Bảo hiểm tai nạn mở rộng'),
-            'notes' => array('Cần bằng A2 và kinh nghiệm đèo.', 'Không khuyến khích người mới lái xe lần đầu.'),
-            'faqs' => array(array('q' => 'Tôi không tự lái được?', 'a' => 'Chọn ngồi sau leader (phụ phí) hoặc chuyển sang tour ô tô loop 3 ngày.')),
-            'galleryCount' => 7, 'priceFrom' => 2950000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Lái xe qua Mã Pí Lèng tự tay — cảm giác không tour ô tô nào thay được.',
+                'author' => 'Bạn Minh Khoa',
+            ),
+            'places' => array(
+                'Quản Bạ',
+                'Đồng Văn',
+                'Mã Pí Lèng',
+                'Nho Quế',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Xe máy Honda Winner/Exciter + xe hỗ trợ chở hành lý — an toàn với leader có kinh nghiệm.',
+            'highlights' => array(
+                'Xe máy + mũ bảo hiểm',
+                'Xe hỗ trợ chở đồ',
+                'Leader loop kinh nghiệm',
+                'Giấy phép biên giới',
+                'Homestay 2 đêm',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ — Yên Minh',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'motorbike',
+                    ),
+                    'overnight' => 'Yên Minh',
+                    'content' => 'Nhận xe, briefing an toàn, chạy Cổng trời, về Yên Minh.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Đồng Văn — Mã Pí Lèng',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'motorbike',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Phố cổ sáng, chiều Mã Pí Lèng, tối homestay.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Nho Quế — về Hà Giang',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'motorbike',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Thuyền Nho Quế, trả xe Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe máy 3 ngày',
+                'Xe hỗ trợ',
+                'Leader',
+                'Giấy phép',
+                'Homestay',
+                'Mũ BH',
+            ),
+            'exclusions' => array(
+                'Xăng',
+                'Thuyền Nho Quế',
+                'Bảo hiểm tai nạn mở rộng',
+            ),
+            'notes' => array(
+                'Cần bằng A2 và kinh nghiệm đèo.',
+                'Không khuyến khích người mới lái xe lần đầu.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Tôi không tự lái được?',
+                    'a' => 'Chọn ngồi sau leader (phụ phí) hoặc chuyển sang tour ô tô loop 3 ngày.',
+                ),
+            ),
+            'galleryCount' => 7,
+            'priceFrom' => 2950000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'quan-ba-co-tien-2-ngay-1-dem',
             'title' => 'Quản Bạ 2 ngày 1 đêm — Cổng trời & núi đôi',
-            'zoneSlug' => 'quan-ba', 'zone' => 'Quản Bạ',
-            'tourCode' => 'QB2D-01', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.8, 'reviewCount' => 134, 'badge' => 'Ngắn ngày', 'featured' => true,
-            'styles' => array('balanced', 'day-trip', 'photography'),
-            'quote' => array('text' => 'Hai ngày chill ở Quản Bạ — không cần loop hết nếu thiếu thời gian.', 'author' => 'Chị Thùy Linh'),
-            'places' => array('Cổng trời Quản Bạ', 'Núi đôi Cô Tiên', 'Làng văn hoá'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Phù hợp khách ít ngày — chỉ khám phá Quản Bạ và Yên Minh nhẹ nhàng.',
-            'highlights' => array('Cổng trời sunrise', 'Núi đôi Quản Bạ', 'Homestay Dao/Tày', 'Ruộng bậc thang'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Quản Bạ', 'content' => 'Cổng trời, núi đôi, homestay.'),
-                array('day' => 2, 'title' => 'Yên Minh — về Hà Giang', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Rừng thông Yên Minh, về Hà Giang.'),
+            'zoneSlug' => 'quan-ba',
+            'zone' => 'Quản Bạ',
+            'tourCode' => 'QB2D-01',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.8,
+            'reviewCount' => 134,
+            'badge' => 'Ngắn ngày',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'weekend-hanoi',
+                'gia-dinh-nhom-nho',
             ),
-            'inclusions' => array('Xe 2 ngày', 'HDV', 'Homestay', 'Bữa ăn theo lịch'),
-            'exclusions' => array('Giấy phép loop (không cần nếu không vào Đồng Văn)'),
-            'notes' => array(), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 1850000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Hai ngày chill ở Quản Bạ — không cần loop hết nếu thiếu thời gian.',
+                'author' => 'Chị Thùy Linh',
+            ),
+            'places' => array(
+                'Cổng trời Quản Bạ',
+                'Núi đôi Cô Tiên',
+                'Làng văn hoá',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Phù hợp khách ít ngày — chỉ khám phá Quản Bạ và Yên Minh nhẹ nhàng.',
+            'highlights' => array(
+                'Cổng trời sunrise',
+                'Núi đôi Quản Bạ',
+                'Homestay Dao/Tày',
+                'Ruộng bậc thang',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Quản Bạ',
+                    'content' => 'Cổng trời, núi đôi, homestay.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Yên Minh — về Hà Giang',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Rừng thông Yên Minh, về Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe 2 ngày',
+                'HDV',
+                'Homestay',
+                'Bữa ăn theo lịch',
+            ),
+            'exclusions' => array(
+                'Giấy phép loop (không cần nếu không vào Đồng Văn)',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 1850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'ma-pi-leng-nho-que-1-ngay',
             'title' => 'Mã Pí Lèng & thuyền Nho Quế — 1 ngày',
-            'zoneSlug' => 'meo-vac', 'zone' => 'Mèo Vạc',
-            'tourCode' => 'MV1D-01', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 278, 'badge' => 'Must-see', 'featured' => true,
-            'styles' => array('day-trip', 'geopark', 'photography'),
-            'quote' => array('text' => 'Đứng trên Mã Pí Lèng nhìn sông Nho Quế — khoảnh khắc đáng mọi công sức đi Hà Giang.', 'author' => 'Anh Đức Thắng'),
-            'places' => array('Đèo Mã Pí Lèng', 'Vách Tu Sản', 'Sông Nho Quế'),
-            'start' => 'Đồng Văn / Mèo Vạc', 'end' => 'Đồng Văn / Mèo Vạc',
+            'zoneSlug' => 'meo-vac',
+            'zone' => 'Mèo Vạc',
+            'tourCode' => 'MV1D-01',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 278,
+            'badge' => 'Must-see',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Đứng trên Mã Pí Lèng nhìn sông Nho Quế — khoảnh khắc đáng mọi công sức đi Hà Giang.',
+                'author' => 'Anh Đức Thắng',
+            ),
+            'places' => array(
+                'Đèo Mã Pí Lèng',
+                'Vách Tu Sản',
+                'Sông Nho Quế',
+            ),
+            'start' => 'Đồng Văn / Mèo Vạc',
+            'end' => 'Đồng Văn / Mèo Vạc',
             'highlightsIntro' => 'Tour trong ngày từ Đồng Văn hoặc Mèo Vạc — điểm đẹp nhất loop.',
-            'highlights' => array('Check-in Mã Pí Lèng', 'Vách đá Tu Sản', 'Thuyền sông Nho Quế', 'HDV địa phương'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Mã Pí Lèng & Nho Quế', 'meals' => 'Trưa', 'transport' => array('car', 'boat'), 'overnight' => null,
-                'content' => '07:00–17:00: đèo Mã Pí Lèng, thuyền Nho Quế, ăn trưa bản địa.')),
-            'inclusions' => array('Xe', 'Thuyền Nho Quế', 'HDV', 'Trưa'), 'exclusions' => array('Homestay'),
-            'notes' => array('Cần giấy phép nếu khởi hành từ Hà Giang city — gộp vào tour loop.'), 'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 750000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Check-in Mã Pí Lèng',
+                'Vách đá Tu Sản',
+                'Thuyền sông Nho Quế',
+                'HDV địa phương',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Mã Pí Lèng & Nho Quế',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => '07:00–17:00: đèo Mã Pí Lèng, thuyền Nho Quế, ăn trưa bản địa.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Thuyền Nho Quế',
+                'HDV',
+                'Trưa',
+            ),
+            'exclusions' => array(
+                'Homestay',
+            ),
+            'notes' => array(
+                'Cần giấy phép nếu khởi hành từ Hà Giang city — gộp vào tour loop.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 750000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'dong-van-homestay-2-ngay',
             'title' => 'Homestay Đồng Văn 2 ngày 1 đêm — Sống cùng người H\'Mông',
-            'zoneSlug' => 'dong-van', 'zone' => 'Đồng Văn',
-            'tourCode' => 'DV2D-01', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 156, 'badge' => 'Homestay', 'featured' => true,
-            'styles' => array('ethnic-culture', 'balanced', 'multi-day'),
-            'quote' => array('text' => 'Ăn thắng cố, ngủ nhà sàn, sáng dậy trong sương phố cổ — trải nghiệm thật sự.', 'author' => 'Khách Úc'),
-            'places' => array('Phố cổ Đồng Văn', 'Lũng Cú', 'Chợ phiên'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Trải nghiệm văn hoá: nấu ăn cùng chủ nhà, chợ phiên (Chủ nhật), phố cổ đêm.',
-            'highlights' => array('Homestay H\'Mông/Dao', 'Bữa tối bản địa', 'Phố cổ Đồng Văn', 'Lũng Cú (tuỳ chọn)'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Lên Đồng Văn — Homestay', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Qua Yên Minh, vào phố cổ, tối ăn cùng gia đình.'),
-                array('day' => 2, 'title' => 'Chợ phiên / Lũng Cú — Về', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Sáng chợ hoặc Lũng Cú, chiều về Hà Giang.'),
+            'zoneSlug' => 'dong-van',
+            'zone' => 'Đồng Văn',
+            'tourCode' => 'DV2D-01',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 156,
+            'badge' => 'Homestay',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'weekend-hanoi',
+                'homestay-dan-toc',
             ),
-            'inclusions' => array('Xe', 'HDV', 'Homestay', 'Bữa ăn'), 'exclusions' => array('Giấy phép (nếu chưa có)'),
-            'notes' => array('Điều kiện homestay đơn giản — mang túi ngủ nếu nhạy cảm.'), 'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 1650000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Ăn thắng cố, ngủ nhà sàn, sáng dậy trong sương phố cổ — trải nghiệm thật sự.',
+                'author' => 'Khách Úc',
+            ),
+            'places' => array(
+                'Phố cổ Đồng Văn',
+                'Lũng Cú',
+                'Chợ phiên',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Trải nghiệm văn hoá: nấu ăn cùng chủ nhà, chợ phiên (Chủ nhật), phố cổ đêm.',
+            'highlights' => array(
+                'Homestay H\'Mông/Dao',
+                'Bữa tối bản địa',
+                'Phố cổ Đồng Văn',
+                'Lũng Cú (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Lên Đồng Văn — Homestay',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Qua Yên Minh, vào phố cổ, tối ăn cùng gia đình.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Chợ phiên / Lũng Cú — Về',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng chợ hoặc Lũng Cú, chiều về Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV',
+                'Homestay',
+                'Bữa ăn',
+            ),
+            'exclusions' => array(
+                'Giấy phép (nếu chưa có)',
+            ),
+            'notes' => array(
+                'Điều kiện homestay đơn giản — mang túi ngủ nếu nhạy cảm.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 5,
+            'priceFrom' => 1650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'hoang-su-phi-2-ngay-1-dem',
             'title' => 'Hoàng Su Phì 2 ngày 1 đêm — Ruộng bậc thang & Dao đỏ',
-            'zoneSlug' => 'hoang-su-phi', 'zone' => 'Hoàng Su Phì',
-            'tourCode' => 'HSP2D-01', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.8, 'reviewCount' => 112, 'badge' => 'Ruộng bậc thang', 'featured' => true,
-            'styles' => array('flower-season', 'photography', 'ethnic-culture'),
-            'quote' => array('text' => 'Ruộng bậc thang Hoàng Su Phì đẹp hơn cả ảnh trên mạng — đặc biệt mùa nước đổ.', 'author' => 'Photographer Ken'),
-            'places' => array('Bản Phùng', 'Thông Nguyên', 'Hoàng Su Phì'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Tách khỏi loop — dành riêng cho người yêu ruộng bậc thang và văn hoá Dao đỏ.',
-            'highlights' => array('Ruộng bậc thang UNESCO', 'Bản Phùng / Thông Nguyên', 'Homestay Dao đỏ', 'Trek nhẹ 2–3km'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Hoàng Su Phì', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Hoàng Su Phì', 'content' => 'Xe ~3h, chiều trek ruộng, tối homestay.'),
-                array('day' => 2, 'title' => 'Sunrise ruộng — Về', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Sáng sớm chụp ruộng, trưa về Hà Giang.'),
+            'zoneSlug' => 'hoang-su-phi',
+            'zone' => 'Hoàng Su Phì',
+            'tourCode' => 'HSP2D-01',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.8,
+            'reviewCount' => 112,
+            'badge' => 'Ruộng bậc thang',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'weekend-hanoi',
             ),
-            'inclusions' => array('Xe', 'HDV', 'Homestay', 'Bữa ăn'), 'exclusions' => array(),
-            'notes' => array('Mùa đẹp: tháng 5–6, 9–10.'), 'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 1950000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Ruộng bậc thang Hoàng Su Phì đẹp hơn cả ảnh trên mạng — đặc biệt mùa nước đổ.',
+                'author' => 'Photographer Ken',
+            ),
+            'places' => array(
+                'Bản Phùng',
+                'Thông Nguyên',
+                'Hoàng Su Phì',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Tách khỏi loop — dành riêng cho người yêu ruộng bậc thang và văn hoá Dao đỏ.',
+            'highlights' => array(
+                'Ruộng bậc thang UNESCO',
+                'Bản Phùng / Thông Nguyên',
+                'Homestay Dao đỏ',
+                'Trek nhẹ 2–3km',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Hoàng Su Phì',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Hoàng Su Phì',
+                    'content' => 'Xe ~3h, chiều trek ruộng, tối homestay.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Sunrise ruộng — Về',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng sớm chụp ruộng, trưa về Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV',
+                'Homestay',
+                'Bữa ăn',
+            ),
+            'exclusions' => array(),
+            'notes' => array(
+                'Mùa đẹp: tháng 5–6, 9–10.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 1950000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'mua-tam-giac-mach-3-ngay',
             'title' => 'Mùa tam giác mạch 3 ngày 2 đêm — Hoa tím cao nguyên',
-            'zoneSlug' => 'dong-van', 'zone' => 'Đồng Văn',
-            'tourCode' => 'HG3D-FLOWER', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.9, 'reviewCount' => 167, 'badge' => 'Tháng 10–11', 'featured' => true,
-            'styles' => array('flower-season', 'photography', 'multi-day'),
-            'quote' => array('text' => 'Biển hoa tam giác mạch giữa đá — đúng mùa thì không thể bỏ lỡ.', 'author' => 'Chị Hồng Hoa'),
-            'places' => array('Phố Cáo', 'Sủng Là', 'Đồng Văn', 'Lũng Tám'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Tour mùa (tháng 10–11): loop + các điểm hoa tam giác mạch nổi tiếng.',
-            'highlights' => array('Điểm hoa Phố Cáo, Sủng Là', 'Loop + homestay', 'Photo spots có HDV', 'Lễ hội hoa (tuỳ năm)'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ — Yên Minh', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Yên Minh', 'content' => 'Giấy phép, Cổng trời, dừng ruộng hoa dọc đường.'),
-                array('day' => 2, 'title' => 'Đồng Văn — ruộng hoa', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Phố Cáo, Sủng Là chụp hoa, tối phố cổ.'),
-                array('day' => 3, 'title' => 'Mã Pí Lèng — về', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Mã Pí Lèng, về Hà Giang.'),
+            'zoneSlug' => 'dong-van',
+            'zone' => 'Đồng Văn',
+            'tourCode' => 'HG3D-FLOWER',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.9,
+            'reviewCount' => 167,
+            'badge' => 'Tháng 10–11',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+                'mua-hoa',
+                'loop-cao-nguyen',
             ),
-            'inclusions' => array('Xe', 'Giấy phép', 'HDV', 'Homestay', 'Bữa ăn'),
-            'exclusions' => array('Xe Hà Nội'), 'notes' => array('Chỉ vận hành khoảng tháng 10–11 — đặt trước 2–4 tuần.'),
-            'faqs' => array(array('q' => 'Hoa nở khi nào?', 'a' => 'Thường cuối tháng 10 đến hết tháng 11 — phụ thuộc thời tiết từng năm.')),
-            'galleryCount' => 7, 'priceFrom' => 3450000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Biển hoa tam giác mạch giữa đá — đúng mùa thì không thể bỏ lỡ.',
+                'author' => 'Chị Hồng Hoa',
+            ),
+            'places' => array(
+                'Phố Cáo',
+                'Sủng Là',
+                'Đồng Văn',
+                'Lũng Tám',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Tour mùa (tháng 10–11): loop + các điểm hoa tam giác mạch nổi tiếng.',
+            'highlights' => array(
+                'Điểm hoa Phố Cáo, Sủng Là',
+                'Loop + homestay',
+                'Photo spots có HDV',
+                'Lễ hội hoa (tuỳ năm)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ — Yên Minh',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Yên Minh',
+                    'content' => 'Giấy phép, Cổng trời, dừng ruộng hoa dọc đường.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Đồng Văn — ruộng hoa',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Phố Cáo, Sủng Là chụp hoa, tối phố cổ.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mã Pí Lèng — về',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Mã Pí Lèng, về Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Giấy phép',
+                'HDV',
+                'Homestay',
+                'Bữa ăn',
+            ),
+            'exclusions' => array(
+                'Xe Hà Nội',
+            ),
+            'notes' => array(
+                'Chỉ vận hành khoảng tháng 10–11 — đặt trước 2–4 tuần.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Hoa nở khi nào?',
+                    'a' => 'Thường cuối tháng 10 đến hết tháng 11 — phụ thuộc thời tiết từng năm.',
+                ),
+            ),
+            'galleryCount' => 7,
+            'priceFrom' => 3450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'mua-hoa-dao-3-ngay',
             'title' => 'Mùa hoa đào 3 ngày 2 đêm — Xuân trên cao nguyên đá',
-            'zoneSlug' => 'quan-ba', 'zone' => 'Quản Bạ',
-            'tourCode' => 'HG3D-PEACH', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 4.8, 'reviewCount' => 98, 'badge' => 'Tháng 1–2', 'featured' => true,
-            'styles' => array('flower-season', 'photography', 'balanced'),
-            'quote' => array('text' => 'Hoa đào nở giữa đá — Tết trên cao nguyên khác hẳn đồng bằng.', 'author' => 'Gia đình chị Thảo'),
-            'places' => array('Quản Bạ', 'Yên Minh', 'Đồng Văn', 'Lũng Cú'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => 'Tour mùa Tết (tháng 1–2): loop + các thung lũng hoa đào, mận.',
-            'highlights' => array('Hoa đào, mận các bản', 'Loop đầy đủ', 'Homestay Tết bản địa', 'Chợ Tết Đồng Văn'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Quản Bạ', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Quản Bạ', 'content' => 'Hoa đào dọc đường, homestay.'),
-                array('day' => 2, 'title' => 'Yên Minh — Đồng Văn', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Rừng thông, phố cổ, hoa đào bản.'),
-                array('day' => 3, 'title' => 'Mã Pí Lèng — về', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Mã Pí Lèng, về Hà Giang.'),
+            'zoneSlug' => 'quan-ba',
+            'zone' => 'Quản Bạ',
+            'tourCode' => 'HG3D-PEACH',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 4.8,
+            'reviewCount' => 98,
+            'badge' => 'Tháng 1–2',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+                'mua-hoa',
             ),
-            'inclusions' => array('Xe', 'Giấy phép', 'HDV', 'Homestay', 'Bữa ăn'),
-            'exclusions' => array(), 'notes' => array('Dịp Tết giá xe Hà Nội—Hà Giang tăng — đặt sớm.'),
-            'faqs' => array(), 'galleryCount' => 6, 'priceFrom' => 3350000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Hoa đào nở giữa đá — Tết trên cao nguyên khác hẳn đồng bằng.',
+                'author' => 'Gia đình chị Thảo',
+            ),
+            'places' => array(
+                'Quản Bạ',
+                'Yên Minh',
+                'Đồng Văn',
+                'Lũng Cú',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => 'Tour mùa Tết (tháng 1–2): loop + các thung lũng hoa đào, mận.',
+            'highlights' => array(
+                'Hoa đào, mận các bản',
+                'Loop đầy đủ',
+                'Homestay Tết bản địa',
+                'Chợ Tết Đồng Văn',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Quản Bạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Quản Bạ',
+                    'content' => 'Hoa đào dọc đường, homestay.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Yên Minh — Đồng Văn',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Rừng thông, phố cổ, hoa đào bản.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mã Pí Lèng — về',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Mã Pí Lèng, về Hà Giang.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Giấy phép',
+                'HDV',
+                'Homestay',
+                'Bữa ăn',
+            ),
+            'exclusions' => array(),
+            'notes' => array(
+                'Dịp Tết giá xe Hà Nội—Hà Giang tăng — đặt sớm.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 3350000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'thanh-pho-ha-giang-1-ngay',
             'title' => 'Thành phố Hà Giang 1 ngày — Chuẩn bị loop & chợ đêm',
-            'zoneSlug' => 'thanh-pho-ha-giang', 'zone' => 'Thành phố Hà Giang',
-            'tourCode' => 'HG1D-01', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 89, 'badge' => null, 'featured' => false,
-            'styles' => array('day-trip', 'balanced'),
-            'quote' => array('text' => 'Một ngày ở thành phố để làm giấy phép và mua đồ trước khi lên loop.', 'author' => 'Bạn đi phượt'),
-            'places' => array('Chợ Hà Giang', 'Nhà văn hoá', 'Sông Lô'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'zone' => 'Thành phố Hà Giang',
+            'tourCode' => 'HG1D-01',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 89,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'gia-dinh-nhom-nho',
+            ),
+            'quote' => array(
+                'text' => 'Một ngày ở thành phố để làm giấy phép và mua đồ trước khi lên loop.',
+                'author' => 'Bạn đi phượt',
+            ),
+            'places' => array(
+                'Chợ Hà Giang',
+                'Nhà văn hoá',
+                'Sông Lô',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
             'highlightsIntro' => 'Dành cho khách tự túc — hỗ trợ giấy phép, city walk và mua sắm.',
-            'highlights' => array('Làm giấy phép biên giới', 'Chợ trung tâm', 'Gợi ý đồ đi loop', 'Chợ đêm (nếu có)'),
-            'itinerary' => array(array('day' => 1, 'title' => 'City & giấy phép', 'meals' => 'Trưa', 'transport' => array('walking', 'car'), 'overnight' => null,
-                'content' => 'Sáng làm giấy phép, chiều dạo chợ, tư vấn lên loop.')),
-            'inclusions' => array('Hỗ trợ giấy phép', 'HDV nửa ngày'), 'exclusions' => array('Lưu trú', 'Xe loop'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 3, 'priceFrom' => 550000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Làm giấy phép biên giới',
+                'Chợ trung tâm',
+                'Gợi ý đồ đi loop',
+                'Chợ đêm (nếu có)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'City & giấy phép',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'walking',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng làm giấy phép, chiều dạo chợ, tư vấn lên loop.',
+                ),
+            ),
+            'inclusions' => array(
+                'Hỗ trợ giấy phép',
+                'HDV nửa ngày',
+            ),
+            'exclusions' => array(
+                'Lưu trú',
+                'Xe loop',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 3,
+            'priceFrom' => 550000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'yen-minh-rung-thong-1-ngay',
             'title' => 'Yên Minh — Rừng thông & phố cao 1 ngày',
-            'zoneSlug' => 'yen-minh', 'zone' => 'Yên Minh',
-            'tourCode' => 'YM1D-01', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 67, 'badge' => null, 'featured' => false,
-            'styles' => array('day-trip', 'photography', 'balanced'),
-            'quote' => array('text' => 'Đoạn rừng thông Yên Minh đẹp như tranh — dừng chân giữa loop.', 'author' => 'Chị Lan'),
-            'places' => array('Rừng thông Yên Minh', 'Thị trấn Yên Minh'),
-            'start' => 'Hà Giang / Yên Minh', 'end' => 'Hà Giang / Yên Minh',
+            'zoneSlug' => 'yen-minh',
+            'zone' => 'Yên Minh',
+            'tourCode' => 'YM1D-01',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 67,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'gia-dinh-nhom-nho',
+            ),
+            'quote' => array(
+                'text' => 'Đoạn rừng thông Yên Minh đẹp như tranh — dừng chân giữa loop.',
+                'author' => 'Chị Lan',
+            ),
+            'places' => array(
+                'Rừng thông Yên Minh',
+                'Thị trấn Yên Minh',
+            ),
+            'start' => 'Hà Giang / Yên Minh',
+            'end' => 'Hà Giang / Yên Minh',
             'highlightsIntro' => 'Nửa ngày hoặc cả ngày — chụp ảnh rừng thông, cafe phố cao.',
-            'highlights' => array('Rừng thông nguyên sinh', 'Cafe view núi', 'Chụp ảnh sương sớm'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Yên Minh pine forest', 'meals' => 'Trưa', 'transport' => array('car'), 'overnight' => null,
-                'content' => 'Sáng sớm rừng thông, trưa phố Yên Minh, chiều về.')),
-            'inclusions' => array('Xe', 'HDV'), 'exclusions' => array('Ăn'),
-            'notes' => array(), 'faqs' => array(), 'galleryCount' => 4, 'priceFrom' => 650000.0, 'currency' => 'VND',
+            'highlights' => array(
+                'Rừng thông nguyên sinh',
+                'Cafe view núi',
+                'Chụp ảnh sương sớm',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Yên Minh pine forest',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng sớm rừng thông, trưa phố Yên Minh, chiều về.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Ăn',
+            ),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'ha-giang-sapa-5-ngay',
             'title' => 'Hà Giang — Sapa 5 ngày 4 đêm',
-            'zoneSlug' => 'ket-hop-sapa', 'zone' => 'Kết hợp Sapa',
-            'tourCode' => 'HGSP5D-01', 'duration' => '5 ngày 4 đêm', 'days' => 5,
-            'rating' => 4.8, 'reviewCount' => 54, 'badge' => 'Combo', 'featured' => true,
-            'styles' => array('multi-destination-combo', 'multi-day', 'ethnic-culture'),
-            'quote' => array('text' => 'Hai cao nguyên trong một chuyến — loop Hà Giang rồi xuống Sapa.', 'author' => 'Vợ chồng anh Phong'),
-            'places' => array('Hà Giang Loop', 'Lào Cai', 'Sapa', 'Fansipan'),
-            'start' => 'Hà Giang', 'end' => 'Sapa / Lào Cai',
-            'highlightsIntro' => '3 ngày loop + 2 ngày Sapa — xe nối tuyến sẵn.',
-            'highlights' => array('Loop 3 ngày đầy đủ', 'Xe Hà Giang—Lào Cai', 'Sapa trek / Fansipan (tuỳ chọn)', 'Homestay đa vùng'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Loop ngày 1', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Yên Minh', 'content' => 'Quản Bạ, Yên Minh.'),
-                array('day' => 2, 'title' => 'Loop ngày 2', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Đồng Văn, Lũng Cú.'),
-                array('day' => 3, 'title' => 'Loop ngày 3 — xuống Lào Cai', 'meals' => 'Sáng; Tối', 'transport' => array('car', 'bus'), 'overnight' => 'Sapa', 'content' => 'Mã Pí Lèng sáng, chiều xe xuống Sapa.'),
-                array('day' => 4, 'title' => 'Sapa', 'meals' => 'Sáng; Tối', 'transport' => array('car', 'trekking'), 'overnight' => 'Sapa', 'content' => 'Trek bản Lao Chải / Fansipan cable car.'),
-                array('day' => 5, 'title' => 'Sapa — Kết thúc', 'meals' => 'Sáng', 'transport' => array('car'), 'overnight' => null, 'content' => 'Tự do, tiễn tàu/bến Lào Cai.'),
+            'zoneSlug' => 'ket-hop-sapa',
+            'zone' => 'Kết hợp Sapa',
+            'tourCode' => 'HGSP5D-01',
+            'duration' => '5 ngày 4 đêm',
+            'days' => 5,
+            'rating' => 4.8,
+            'reviewCount' => 54,
+            'badge' => 'Combo',
+            'featured' => true,
+            'styles' => array(
+                '5-plus-days',
             ),
-            'inclusions' => array('Xe loop', 'Giấy phép', 'HDV Hà Giang', 'Xe Hà Giang—Sapa', 'Homestay 4 đêm'),
-            'exclusions' => array('Tour Sapa chi tiết', 'Cáp treo Fansipan', 'Về Hà Nội'),
-            'notes' => array('Có thể đảo chiều bắt đầu từ Sapa.'), 'faqs' => array(),
-            'galleryCount' => 6, 'priceFrom' => 5200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Hai cao nguyên trong một chuyến — loop Hà Giang rồi xuống Sapa.',
+                'author' => 'Vợ chồng anh Phong',
+            ),
+            'places' => array(
+                'Hà Giang Loop',
+                'Lào Cai',
+                'Sapa',
+                'Fansipan',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Sapa / Lào Cai',
+            'highlightsIntro' => '3 ngày loop + 2 ngày Sapa — xe nối tuyến sẵn.',
+            'highlights' => array(
+                'Loop 3 ngày đầy đủ',
+                'Xe Hà Giang—Lào Cai',
+                'Sapa trek / Fansipan (tuỳ chọn)',
+                'Homestay đa vùng',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Loop ngày 1',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Yên Minh',
+                    'content' => 'Quản Bạ, Yên Minh.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Loop ngày 2',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Đồng Văn, Lũng Cú.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Loop ngày 3 — xuống Lào Cai',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                        'bus',
+                    ),
+                    'overnight' => 'Sapa',
+                    'content' => 'Mã Pí Lèng sáng, chiều xe xuống Sapa.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Sapa',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                        'trekking',
+                    ),
+                    'overnight' => 'Sapa',
+                    'content' => 'Trek bản Lao Chải / Fansipan cable car.',
+                ),
+                array(
+                    'day' => 5,
+                    'title' => 'Sapa — Kết thúc',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tự do, tiễn tàu/bến Lào Cai.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe loop',
+                'Giấy phép',
+                'HDV Hà Giang',
+                'Xe Hà Giang—Sapa',
+                'Homestay 4 đêm',
+            ),
+            'exclusions' => array(
+                'Tour Sapa chi tiết',
+                'Cáp treo Fansipan',
+                'Về Hà Nội',
+            ),
+            'notes' => array(
+                'Có thể đảo chiều bắt đầu từ Sapa.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 6,
+            'priceFrom' => 5200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'ha-giang-cao-bang-6-ngay',
             'title' => 'Hà Giang Loop — Cao Bằng 6 ngày 5 đêm',
-            'zoneSlug' => 'ket-hop-cao-bang', 'zone' => 'Kết hợp Cao Bằng',
-            'tourCode' => 'HGCB6D-01', 'duration' => '6 ngày 5 đêm', 'days' => 6,
-            'rating' => 4.8, 'reviewCount' => 41, 'badge' => 'Combo', 'featured' => false,
-            'styles' => array('multi-destination-combo', 'geopark', 'multi-day'),
-            'quote' => array('text' => 'Loop xong đi thẳng Bản Giốc — combo Đông Bắc hoàn hảo.', 'author' => 'Nhóm phượt Hà Nội'),
-            'places' => array('Hà Giang Loop', 'Bắc Mê', 'Cao Bằng', 'Thác Bản Giốc', 'Hồ Ba Bể'),
-            'start' => 'Hà Giang', 'end' => 'Cao Bằng / Hà Nội',
-            'highlightsIntro' => '4 ngày loop + 2 ngày Cao Bằng — thác Bản Giốc và Ba Bể.',
-            'highlights' => array('Loop 4 ngày', 'Đường Bắc Mê—Cao Bằng', 'Thác Bản Giốc', 'Hồ Ba Bể (tuỳ chọn)'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Loop — Quản Bạ', 'meals' => 'Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Yên Minh', 'content' => 'Cổng trời, Yên Minh.'),
-                array('day' => 2, 'title' => 'Đồng Văn', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Đồng Văn', 'content' => 'Phố cổ, Lũng Cú.'),
-                array('day' => 3, 'title' => 'Mã Pí Lèng', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Mèo Vạc', 'content' => 'Đèo, Nho Quế.'),
-                array('day' => 4, 'title' => 'Về Hà Giang — Bắc Mê', 'meals' => 'Sáng; Tối', 'transport' => array('car'), 'overnight' => 'Bắc Mê / Cao Bằng', 'content' => 'Về qua Bắc Mê, đi Cao Bằng.'),
-                array('day' => 5, 'title' => 'Bản Giốc', 'meals' => 'Sáng; Trưa; Tối', 'transport' => array('car'), 'overnight' => 'Cao Bằng', 'content' => 'Thác Bản Giốc trọn ngày.'),
-                array('day' => 6, 'title' => 'Ba Bể — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car', 'boat'), 'overnight' => null, 'content' => 'Hồ Ba Bể, tiễn về Hà Nội.'),
+            'zoneSlug' => 'ket-hop-cao-bang',
+            'zone' => 'Kết hợp Cao Bằng',
+            'tourCode' => 'HGCB6D-01',
+            'duration' => '6 ngày 5 đêm',
+            'days' => 6,
+            'rating' => 4.8,
+            'reviewCount' => 41,
+            'badge' => 'Combo',
+            'featured' => false,
+            'styles' => array(
+                '5-plus-days',
             ),
-            'inclusions' => array('Xe 6 ngày', 'Giấy phép loop', 'HDV', 'Homestay 5 đêm'),
-            'exclusions' => array('Vé Bản Giốc', 'Thuyền Ba Bể', 'Về Hà Nội'),
-            'notes' => array('Đường Bắc Mê đẹp nhưng ít xe — cần xe riêng.'), 'faqs' => array(),
-            'galleryCount' => 7, 'priceFrom' => 5800000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Loop xong đi thẳng Bản Giốc — combo Đông Bắc hoàn hảo.',
+                'author' => 'Nhóm phượt Hà Nội',
+            ),
+            'places' => array(
+                'Hà Giang Loop',
+                'Bắc Mê',
+                'Cao Bằng',
+                'Thác Bản Giốc',
+                'Hồ Ba Bể',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Cao Bằng / Hà Nội',
+            'highlightsIntro' => '4 ngày loop + 2 ngày Cao Bằng — thác Bản Giốc và Ba Bể.',
+            'highlights' => array(
+                'Loop 4 ngày',
+                'Đường Bắc Mê—Cao Bằng',
+                'Thác Bản Giốc',
+                'Hồ Ba Bể (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Loop — Quản Bạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Yên Minh',
+                    'content' => 'Cổng trời, Yên Minh.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Đồng Văn',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Đồng Văn',
+                    'content' => 'Phố cổ, Lũng Cú.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Mã Pí Lèng',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Mèo Vạc',
+                    'content' => 'Đèo, Nho Quế.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Về Hà Giang — Bắc Mê',
+                    'meals' => 'Sáng; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Bắc Mê / Cao Bằng',
+                    'content' => 'Về qua Bắc Mê, đi Cao Bằng.',
+                ),
+                array(
+                    'day' => 5,
+                    'title' => 'Bản Giốc',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => 'Cao Bằng',
+                    'content' => 'Thác Bản Giốc trọn ngày.',
+                ),
+                array(
+                    'day' => 6,
+                    'title' => 'Ba Bể — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Hồ Ba Bể, tiễn về Hà Nội.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe 6 ngày',
+                'Giấy phép loop',
+                'HDV',
+                'Homestay 5 đêm',
+            ),
+            'exclusions' => array(
+                'Vé Bản Giốc',
+                'Thuyền Ba Bể',
+                'Về Hà Nội',
+            ),
+            'notes' => array(
+                'Đường Bắc Mê đẹp nhưng ít xe — cần xe riêng.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 7,
+            'priceFrom' => 5800000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'food-tour-ha-giang-toi',
-            'title' => 'Food tour Hà Giang — Thắng cố & đặc sản tối',
-            'zoneSlug' => 'thanh-pho-ha-giang', 'zone' => 'Thành phố Hà Giang',
-            'tourCode' => 'HG0.5D-01', 'duration' => 'Nửa đêm', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 123, 'badge' => 'Ăn uống', 'featured' => true,
-            'styles' => array('day-trip', 'ethnic-culture'),
-            'quote' => array('text' => 'Thắng cố, thịt trâu gác bếp, rượu ngô — ẩm thực cao nguyên đá khác hẳn.', 'author' => 'Food blogger Ken'),
-            'places' => array('Chợ Hà Giang', 'Quán địa phương'),
-            'start' => 'Hà Giang', 'end' => 'Hà Giang',
-            'highlightsIntro' => '18:00–22:00 — dẫn ăn 6–8 món đặc sản với HDV foodie.',
-            'highlights' => array('Thắng cố', 'Thịt trâu gác bếp', 'Rượu ngô men lá', 'Chè Shan tuyết'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Food tour tối', 'meals' => 'Tối', 'transport' => array('walking'), 'overnight' => null,
-                'content' => 'Đi bộ quán địa phương, thử món, kể chuyện ẩm thực vùng cao.')),
-            'inclusions' => array('HDV foodie', '7–8 món tasting'), 'exclusions' => array('Rượu thêm'),
-            'notes' => array('Thắng cố có nội tạng — báo trước nếu không ăn được.'), 'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 420000.0, 'currency' => 'VND',
+            'title' => 'Tour ẩm thực Hà Giang — Thắng cố & đặc sản tối',
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'zone' => 'Thành phố Hà Giang',
+            'tourCode' => 'HG0.5D-01',
+            'duration' => 'Nửa đêm',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 123,
+            'badge' => 'Ăn uống',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+            ),
+            'quote' => array(
+                'text' => 'Thắng cố, thịt trâu gác bếp, rượu ngô — ẩm thực cao nguyên đá khác hẳn.',
+                'author' => 'Food blogger Ken',
+            ),
+            'places' => array(
+                'Chợ Hà Giang',
+                'Quán địa phương',
+            ),
+            'start' => 'Hà Giang',
+            'end' => 'Hà Giang',
+            'highlightsIntro' => '18:00–22:00 — dẫn ăn 6–8 món đặc sản với HDV am thực.',
+            'highlights' => array(
+                'Thắng cố',
+                'Thịt trâu gác bếp',
+                'Rượu ngô men lá',
+                'Chè Shan tuyết',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Tour ẩm thực tối',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'walking',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Đi bộ quán địa phương, thử món, kể chuyện ẩm thực vùng cao.',
+                ),
+            ),
+            'inclusions' => array(
+                'HDV am thực',
+                '7–8 món tasting',
+            ),
+            'exclusions' => array(
+                'Rượu thêm',
+            ),
+            'notes' => array(
+                'Thắng cố có nội tạng — báo trước nếu không ăn được.',
+            ),
+            'faqs' => array(),
+            'galleryCount' => 3,
+            'priceFrom' => 420000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'bac-me-thac-ba-2-ngay',
             'title' => 'Bắc Mê — Hồ Thác Bà 2 ngày 1 đêm',
-            'zoneSlug' => 'bac-me', 'zone' => 'Bắc Mê',
-            'tourCode' => 'BM2D-01', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.7, 'reviewCount' => 38, 'badge' => null, 'featured' => false,
-            'styles' => array('balanced', 'multi-day', 'family'),
-            'quote' => array('text' => 'Hồ Thác Bà yên tĩnh — ít khách hơn loop nhưng cảnh đẹp không kém.', 'author' => 'Gia đình anh Việt'),
-            'places' => array('Bắc Mê', 'Hồ Thác Bà', 'Hang Pác Bó (gần)'),
-            'start' => 'Hà Giang / Bắc Mê', 'end' => 'Hà Giang / Cao Bằng',
-            'highlightsIntro' => 'Nghỉ dưỡng nhẹ hoặc chuyển tiếp sang Cao Bằng.',
-            'highlights' => array('Thuyền hồ Thác Bà', 'Homestay Tày', 'Đường đèo ít đông'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hà Giang — Bắc Mê — Thác Bà', 'meals' => 'Trưa; Tối', 'transport' => array('car', 'boat'), 'overnight' => 'Bắc Mê', 'content' => 'Xe ~2.5h, chiều thuyền hồ.'),
-                array('day' => 2, 'title' => 'Thác Bà — Tiễn', 'meals' => 'Sáng; Trưa', 'transport' => array('car'), 'overnight' => null, 'content' => 'Sáng thuyền, chiều về Hà Giang hoặc đi Cao Bằng.'),
+            'zoneSlug' => 'bac-me',
+            'zone' => 'Bắc Mê',
+            'tourCode' => 'BM2D-01',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.7,
+            'reviewCount' => 38,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                '2n1d',
+                'weekend-hanoi',
             ),
-            'inclusions' => array('Xe', 'Thuyền', 'HDV', 'Homestay', 'Bữa ăn'),
-            'exclusions' => array(), 'notes' => array(), 'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 1750000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Hồ Thác Bà yên tĩnh — ít khách hơn loop nhưng cảnh đẹp không kém.',
+                'author' => 'Gia đình anh Việt',
+            ),
+            'places' => array(
+                'Bắc Mê',
+                'Hồ Thác Bà',
+                'Hang Pác Bó (gần)',
+            ),
+            'start' => 'Hà Giang / Bắc Mê',
+            'end' => 'Hà Giang / Cao Bằng',
+            'highlightsIntro' => 'Nghỉ dưỡng nhẹ hoặc chuyển tiếp sang Cao Bằng.',
+            'highlights' => array(
+                'Thuyền hồ Thác Bà',
+                'Homestay Tày',
+                'Đường đèo ít đông',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hà Giang — Bắc Mê — Thác Bà',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Bắc Mê',
+                    'content' => 'Xe ~2.5h, chiều thuyền hồ.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Thác Bà — Tiễn',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng thuyền, chiều về Hà Giang hoặc đi Cao Bằng.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe',
+                'Thuyền',
+                'HDV',
+                'Homestay',
+                'Bữa ăn',
+            ),
+            'exclusions' => array(),
+            'notes' => array(),
+            'faqs' => array(),
+            'galleryCount' => 4,
+            'priceFrom' => 1750000,
+            'currency' => 'VND',
         ),
     ),
 
@@ -523,7 +1719,7 @@ $__hihagiangSeed = array(
             'cabinTypes' => array(),
             'highlightsIntro' => '45–60 phút trên sông — ngắm vách đá Tu Sản từ dưới lên, góc chụp khác hẳn trên đèo.',
             'highlights' => array('Nước xanh ngọc', 'Vách đá Tu Sản', 'Áo phao đầy đủ', 'HDV địa phương'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Boat Nho Que', 'meals' => null, 'transport' => array('boat'), 'overnight' => null,
+            'itinerary' => array(array('day' => 1, 'title' => 'Thuyền sông Nho Quế', 'meals' => null, 'transport' => array('boat'), 'overnight' => null,
                 'content' => 'Xuống bến từ Mã Pí Lèng, chèo thuyền 45–60 phút qua hẻm núi, về bến.')),
             'inclusions' => array('Thuyền', 'Áo phao', 'HDV'), 'exclusions' => array('Xe từ Đồng Văn/Mèo Vạc'),
             'notes' => array('Mùa mưa nước dâng — có thể rút ngắn tuyến.'), 'faqs' => array(),
@@ -543,7 +1739,7 @@ $__hihagiangSeed = array(
             'cabinTypes' => array(),
             'highlightsIntro' => '06:30–09:30 — khởi hành sớm, trà nóng trên thuyền, góc chụp ít khách.',
             'highlights' => array('Khởi hành 6h30', 'Trà & bánh địa phương', 'Nhóm max 8 khách', 'Góc chụp sương sớm'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Morning boat', 'meals' => 'Trà & snack', 'transport' => array('boat'), 'overnight' => null,
+            'itinerary' => array(array('day' => 1, 'title' => 'Thuyền buổi sáng', 'meals' => 'Trà & snack', 'transport' => array('boat'), 'overnight' => null,
                 'content' => 'Sáng sớm xuống thuyền, dạo sông, dừng điểm chụp, về trước 10h.')),
             'inclusions' => array('Thuyền', 'Trà & snack', 'HDV'), 'exclusions' => array('Xe đón'),
             'notes' => array('Nên ở Mèo Vạc/Đồng Văn đêm trước.'), 'faqs' => array(),
@@ -563,7 +1759,7 @@ $__hihagiangSeed = array(
             'cabinTypes' => array(),
             'highlightsIntro' => '07:00–09:30 — SUP hoặc kayak đôi, phù hợp người biết bơi cơ bản.',
             'highlights' => array('SUP hoặc kayak', 'Áo phao & briefing', 'HDV kèm', 'Nước & snack'),
-            'itinerary' => array(array('day' => 1, 'title' => 'Morning paddle', 'meals' => 'Snack', 'transport' => array('kayak'), 'overnight' => null,
+            'itinerary' => array(array('day' => 1, 'title' => 'Chèo kayak buổi sáng', 'meals' => 'Đồ ăn nhẹ', 'transport' => array('kayak'), 'overnight' => null,
                 'content' => 'Briefing, chèo 1.5h quanh hẻm Tu Sản, về bến.')),
             'inclusions' => array('Thiết bị', 'HDV', 'Snack'), 'exclusions' => array('Xe đón'),
             'notes' => array('Biết bơi khuyến nghị; hủy khi mưa lớn.'), 'faqs' => array(),
@@ -616,7 +1812,7 @@ $__hihagiangSeed = array(
             'views' => 2890, 'rating' => 4.9, 'ratingCount' => 58,
             'excerpt' => 'Mỗi mùa một vẻ: tam giác mạch (10–11), hoa đào Tết (1–2), ruộng nước đổ Hoàng Su Phì (5–6), lúa chín (9–10).',
             'content' => array(
-                array('type' => 'p', 'text' => 'Hà Giang đẹp quanh năm nhưng có những "peak season" rõ ràng. Tháng 10–11 là mùa tam giác mạch — đông khách nhất. Tháng 1–2 hoa đào, mận nở giữa đá.'),
+                array('type' => 'p', 'text' => 'Hà Giang đẹp quanh năm nhưng có những mùa cao điểm rõ ràng. Tháng 10–11 là mùa tam giác mạch — đông khách nhất. Tháng 1–2 hoa đào, mận nở giữa đá.'),
                 array('type' => 'h2', 'id' => 'tam-giac-mach', 'text' => 'Mùa tam giác mạch (tháng 10–11)'),
                 array('type' => 'p', 'text' => 'Hoa tím hồng phủ các thung lũng Phố Cáo, Sủng Là, Lũng Tám — đặt xe và homestay trước 3–4 tuần.'),
                 array('type' => 'h2', 'id' => 'hoang-su-phi', 'text' => 'Ruộng Hoàng Su Phì'),
@@ -741,7 +1937,7 @@ $__hihagiangSeed = array(
         array('name' => 'Diệu Linh', 'country' => 'Việt Nam', 'flag' => '🇻🇳', 'rating' => 5.0,
             'quote' => 'Mùa tam giác mạch đúng như ảnh — đặt sớm qua Hi Hà Giang là quyết định đúng.', 'photos' => 5, 'trip' => 'Mùa tam giác mạch', 'avatar' => null, 'photoUrls' => array()),
         array('name' => 'David Park', 'country' => 'Úc', 'flag' => '🇦🇺', 'rating' => 4.9,
-            'quote' => 'Sleeper bus from Hanoi was smooth — they even arranged homestay in Dong Van for Sunday market.', 'photos' => 8, 'trip' => 'Weekend from Hanoi', 'avatar' => null, 'photoUrls' => array()),
+            'quote' => 'Sleeper bus from Hanoi was smooth — they even arranged homestay in Dong Van for Sunday market.', 'photos' => 8, 'trip' => 'Cuối tuần from Hanoi', 'avatar' => null, 'photoUrls' => array()),
     ),
 
     'team' => array(
@@ -825,16 +2021,32 @@ $__hihagiangSeed = array(
     'usps' => array(
         array('icon' => 'compass', 'sort' => 0,
             'vi' => array('title' => 'am hiểu loop như người Hà Giang', 'description' => 'Đội ngũ bản địa biết mùa hoa, homestay từng bản và lịch an toàn trên đèo Mã Pí Lèng.'),
-            'en' => array('title' => 'true loop locals', 'description' => 'Our team knows flower seasons, village homestays and safe windows on Ma Pi Leng Pass.')),
+
+
+
+
+'en' => array('title' => 'true loop locals', 'description' => 'Our team knows flower seasons, village homestays and safe windows on Ma Pi Leng Pass.')),
         array('icon' => 'refund', 'sort' => 1,
             'vi' => array('title' => 'báo giá minh bạch, không phí ẩn', 'description' => 'Giá tour và dịch vụ liệt kê rõ từng hạng mục; homestay chọn theo ngày loop và ngân sách của bạn.'),
-            'en' => array('title' => 'transparent pricing, no hidden fees', 'description' => 'Clear line-item quotes; homestays matched to each loop day and your budget.')),
+
+
+
+
+'en' => array('title' => 'transparent pricing, no hidden fees', 'description' => 'Clear line-item quotes; homestays matched to each loop day and your budget.')),
         array('icon' => 'mountain', 'sort' => 2,
             'vi' => array('title' => 'từ giấy phép đến thuyền Nho Quế', 'description' => 'Một đầu mối cho giấy phép biên giới, loop ô tô/xe máy, homestay và thuyền sông.'),
-            'en' => array('title' => 'permits to Nho Que boats', 'description' => 'One contact for border permits, car/motorbike loops, homestays and river boats.')),
+
+
+
+
+'en' => array('title' => 'permits to Nho Que boats', 'description' => 'One contact for border permits, car/motorbike loops, homestays and river boats.')),
         array('icon' => 'support', 'sort' => 3,
             'vi' => array('title' => 'hỗ trợ 24/7 trên cao nguyên', 'description' => 'Hotline khi sương mù, trượt lịch loop hoặc cần đổi xe về Hà Nội.'),
-            'en' => array('title' => '24/7 plateau support', 'description' => 'Hotline for fog delays, loop reschedules or changing your return bus to Hanoi.')),
+
+
+
+
+'en' => array('title' => '24/7 plateau support', 'description' => 'Hotline for fog delays, loop reschedules or changing your return bus to Hanoi.')),
     ),
 
     'offices' => array(
@@ -843,29 +2055,93 @@ $__hihagiangSeed = array(
     ),
 
     'values' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến loop được chăm như khách mời vào nhà dân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every loop is hosted like a guest in a local home')),
-        array('vi' => array('name' => 'Am hiểu Hà Giang', 'desc' => 'Sinh ra trên cao nguyên đá — hiểu từng mùa hoa'), 'en' => array('name' => 'Ha Giang expertise', 'desc' => 'Raised on the karst plateau — we know every bloom season')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép tour dài hơn cần thiết'), 'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never pushing longer tours than you need')),
-        array('vi' => array('name' => 'An toàn', 'desc' => 'Loop có leader kinh nghiệm và kế hoạch dự phòng trên đèo'), 'en' => array('name' => 'Safety', 'desc' => 'Loops with experienced leaders and backup plans on the passes')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến loop được chăm như khách mời vào nhà dân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every loop is hosted like a guest in a local home')),
+        array('vi' => array('name' => 'Am hiểu Hà Giang', 'desc' => 'Sinh ra trên cao nguyên đá — hiểu từng mùa hoa'),
+
+
+
+'en' => array('name' => 'Ha Giang expertise', 'desc' => 'Raised on the karst plateau — we know every bloom season')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép tour dài hơn cần thiết'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never pushing longer tours than you need')),
+        array('vi' => array('name' => 'An toàn', 'desc' => 'Loop có leader kinh nghiệm và kế hoạch dự phòng trên đèo'),
+
+
+
+'en' => array('name' => 'Safety', 'desc' => 'Loops with experienced leaders and backup plans on the passes')),
     ),
     'value_definitions' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến loop được chăm như khách mời vào nhà dân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every loop is hosted like a guest in a local home')),
-        array('vi' => array('name' => 'Am hiểu Hà Giang', 'desc' => 'Sinh ra trên cao nguyên đá — hiểu từng mùa hoa'), 'en' => array('name' => 'Ha Giang expertise', 'desc' => 'Raised on the karst plateau — we know every bloom season')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép tour dài hơn cần thiết'), 'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never pushing longer tours than you need')),
-        array('vi' => array('name' => 'An toàn', 'desc' => 'Loop có leader kinh nghiệm và kế hoạch dự phòng trên đèo'), 'en' => array('name' => 'Safety', 'desc' => 'Loops with experienced leaders and backup plans on the passes')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến loop được chăm như khách mời vào nhà dân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every loop is hosted like a guest in a local home')),
+        array('vi' => array('name' => 'Am hiểu Hà Giang', 'desc' => 'Sinh ra trên cao nguyên đá — hiểu từng mùa hoa'),
+
+
+
+'en' => array('name' => 'Ha Giang expertise', 'desc' => 'Raised on the karst plateau — we know every bloom season')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn đúng nhu cầu — không ép tour dài hơn cần thiết'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Advice that fits your trip — never pushing longer tours than you need')),
+        array('vi' => array('name' => 'An toàn', 'desc' => 'Loop có leader kinh nghiệm và kế hoạch dự phòng trên đèo'),
+
+
+
+'en' => array('name' => 'Safety', 'desc' => 'Loops with experienced leaders and backup plans on the passes')),
     ),
 
     'reasons' => array(
-        array('vi' => array('title' => 'HDV & leader bản địa', 'desc' => 'Người Hà Giang dẫn loop, homestay và tư vấn giấy phép.'), 'en' => array('title' => 'Local guides & leaders', 'desc' => 'Ha Giang natives lead loops, homestays and permit advice.')),
-        array('vi' => array('title' => 'Homestay đúng bản, đúng ngày', 'desc' => 'Yên Minh, Đồng Văn, Mèo Vạc — H\'Mông, Dao, Tày.'), 'en' => array('title' => 'Homestays matched to each day', 'desc' => 'Yen Minh, Dong Van, Meo Vac — Hmong, Dao and Tay families.')),
-        array('vi' => array('title' => 'Một đầu mối xe + giấy phép + loop', 'desc' => 'Xe Hà Nội, giấy phép biên giới và tour gộp một báo giá.'), 'en' => array('title' => 'One contact: bus, permits, loop', 'desc' => 'Hanoi buses, border permits and tours in one quote.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi sương mù hoặc thời tiết đổi lịch loop.'), 'en' => array('title' => '24/7 support', 'desc' => 'Hotline when fog or weather shifts your loop schedule.')),
+        array('vi' => array('title' => 'HDV & leader bản địa', 'desc' => 'Người Hà Giang dẫn loop, homestay và tư vấn giấy phép.'),
+
+
+
+'en' => array('title' => 'Local guides & leaders', 'desc' => 'Ha Giang natives lead loops, homestays and permit advice.')),
+        array('vi' => array('title' => 'Homestay đúng bản, đúng ngày', 'desc' => 'Yên Minh, Đồng Văn, Mèo Vạc — H\'Mông, Dao, Tày.'),
+
+
+
+'en' => array('title' => 'Homestays matched to each day', 'desc' => 'Yen Minh, Dong Van, Meo Vac — Hmong, Dao and Tay families.')),
+        array('vi' => array('title' => 'Một đầu mối xe + giấy phép + loop', 'desc' => 'Xe Hà Nội, giấy phép biên giới và tour gộp một báo giá.'),
+
+
+
+'en' => array('title' => 'One contact: bus, permits, loop', 'desc' => 'Hanoi buses, border permits and tours in one quote.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi sương mù hoặc thời tiết đổi lịch loop.'),
+
+
+
+'en' => array('title' => '24/7 support', 'desc' => 'Hotline when fog or weather shifts your loop schedule.')),
     ),
     'reason_definitions' => array(
-        array('vi' => array('title' => 'HDV & leader bản địa', 'desc' => 'Người Hà Giang dẫn loop, homestay và tư vấn giấy phép.'), 'en' => array('title' => 'Local guides & leaders', 'desc' => 'Ha Giang natives lead loops, homestays and permit advice.')),
-        array('vi' => array('title' => 'Homestay đúng bản, đúng ngày', 'desc' => 'Yên Minh, Đồng Văn, Mèo Vạc — H\'Mông, Dao, Tày.'), 'en' => array('title' => 'Homestays matched to each day', 'desc' => 'Yen Minh, Dong Van, Meo Vac — Hmong, Dao and Tay families.')),
-        array('vi' => array('title' => 'Một đầu mối xe + giấy phép + loop', 'desc' => 'Xe Hà Nội, giấy phép biên giới và tour gộp một báo giá.'), 'en' => array('title' => 'One contact: bus, permits, loop', 'desc' => 'Hanoi buses, border permits and tours in one quote.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi sương mù hoặc thời tiết đổi lịch loop.'), 'en' => array('title' => '24/7 support', 'desc' => 'Hotline when fog or weather shifts your loop schedule.')),
+        array('vi' => array('title' => 'HDV & leader bản địa', 'desc' => 'Người Hà Giang dẫn loop, homestay và tư vấn giấy phép.'),
+
+
+
+'en' => array('title' => 'Local guides & leaders', 'desc' => 'Ha Giang natives lead loops, homestays and permit advice.')),
+        array('vi' => array('title' => 'Homestay đúng bản, đúng ngày', 'desc' => 'Yên Minh, Đồng Văn, Mèo Vạc — H\'Mông, Dao, Tày.'),
+
+
+
+'en' => array('title' => 'Homestays matched to each day', 'desc' => 'Yen Minh, Dong Van, Meo Vac — Hmong, Dao and Tay families.')),
+        array('vi' => array('title' => 'Một đầu mối xe + giấy phép + loop', 'desc' => 'Xe Hà Nội, giấy phép biên giới và tour gộp một báo giá.'),
+
+
+
+'en' => array('title' => 'One contact: bus, permits, loop', 'desc' => 'Hanoi buses, border permits and tours in one quote.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7', 'desc' => 'Hotline khi sương mù hoặc thời tiết đổi lịch loop.'),
+
+
+
+'en' => array('title' => '24/7 support', 'desc' => 'Hotline when fog or weather shifts your loop schedule.')),
     ),
 
     'reference_persons' => array(
@@ -887,7 +2163,11 @@ $__hihagiangSeed = array(
             'reasons_section' => array('title' => 'Vì sao chọn Hi Hà Giang?', 'eyebrow' => 'Lý do', 'subtitle' => 'Bản địa, minh bạch, an toàn loop.', 'cta_label' => 'Bắt đầu hành trình', 'cta_url' => null, 'image' => null, 'imageSrcset' => null),
             'reference_section' => array('title' => 'Đại diện nước ngoài', 'eyebrow' => 'Mạng lưới', 'subtitle' => 'Trao đổi bằng ngôn ngữ của bạn với đại diện Hi Hà Giang.'),
         ),
-        'en' => array(
+
+
+
+
+'en' => array(
             'seo_title' => 'About us — Hi Ha Giang, connecting travellers with the karst plateau',
             'seo_description' => 'Our story, mission and team — loops, services and ethnic homestays.',
             'page_title' => 'About us',
@@ -903,8 +2183,16 @@ $__hihagiangSeed = array(
     ),
 
     'hero_pills' => array(
-        array('zone_slug' => 'meo-vac', 'vi' => array('label' => 'Mã Pí Lèng'), 'en' => array('label' => 'Ma Pi Leng'), 'url' => '/diem-den/meo-vac'),
-        array('zone_slug' => 'dong-van', 'vi' => array('label' => 'Đồng Văn'), 'en' => array('label' => 'Dong Van'), 'url' => '/diem-den/dong-van'),
+        array('zone_slug' => 'meo-vac', 'vi' => array('label' => 'Mã Pí Lèng'),
+
+
+
+'en' => array('label' => 'Ma Pi Leng'), 'url' => '/diem-den/meo-vac'),
+        array('zone_slug' => 'dong-van', 'vi' => array('label' => 'Đồng Văn'),
+
+
+
+'en' => array('label' => 'Dong Van'), 'url' => '/diem-den/dong-van'),
     ),
 
     'home_sections' => array(
@@ -912,50 +2200,94 @@ $__hihagiangSeed = array(
             'vi' => array('key' => 'company_intro', 'eyebrow' => 'Chuyên gia Hà Giang', 'title' => 'Cao nguyên đá — hành trình loop huyền thoại', 'subtitle' => null,
                 'body' => 'Hi Hà Giang là nền tảng du lịch Hà Giang do người bản địa xây dựng — <strong class="font-semibold text-ink">một đầu mối</strong> cho loop, giấy phép biên giới, xe Hà Nội, homestay dân tộc và thuyền sông Nho Quế. Chúng tôi thiết kế hành trình quanh Cổng trời Quản Bạ, Mã Pí Lèng, Đồng Văn và Hoàng Su Phì để bạn cảm nhận đúng cao nguyên đá UNESCO.',
                 'metaLine' => 'Giấy phép lữ hành số 0052/2024/TCDL-GPLHQT', 'ctaLabel' => 'Về chúng tôi', 'ctaUrl' => '/ve-chung-toi', 'image' => null, 'imageAlt' => 'Hi Hà Giang'),
-            'en' => array('key' => 'company_intro', 'eyebrow' => 'Ha Giang experts', 'title' => 'Karst plateau — the legendary loop', 'subtitle' => null,
+
+
+
+
+'en' => array('key' => 'company_intro', 'eyebrow' => 'Ha Giang experts', 'title' => 'Karst plateau — the legendary loop', 'subtitle' => null,
                 'body' => 'Hi Ha Giang is a locally built travel platform — <strong class="font-semibold text-ink">one place</strong> for loops, border permits, Hanoi buses, ethnic homestays and Nho Que river boats. We craft itineraries around Quan Ba Heaven Gate, Ma Pi Leng, Dong Van and Hoang Su Phi so you feel the real UNESCO geopark.',
                 'metaLine' => 'Travel license No. 0052/2024/TCDL-GPLHQT', 'ctaLabel' => 'About us', 'ctaUrl' => '/ve-chung-toi', 'image' => null, 'imageAlt' => 'Hi Ha Giang'),
         ),
         'featured_tours' => array(
             'vi' => array('key' => 'featured_tours', 'eyebrow' => 'Yêu thích', 'title' => 'Tour loop được đặt nhiều nhất', 'subtitle' => 'Hành trình khách đánh giá cao trong 12 tháng qua.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_tours', 'eyebrow' => 'Popular', 'title' => 'Most booked loop tours', 'subtitle' => 'Top-rated itineraries over the past 12 months.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_tours', 'eyebrow' => 'Popular', 'title' => 'Most booked loop tours', 'subtitle' => 'Top-rated itineraries over the past 12 months.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'featured_cruises' => array(
             'vi' => array('key' => 'featured_cruises', 'eyebrow' => 'Sông Nho Quế', 'title' => 'Thuyền & kayak trên sông xanh', 'subtitle' => 'Thuyền Tu Sản, SUP sáng sớm — trải nghiệm nước đặc trưng Hà Giang.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_cruises', 'eyebrow' => 'Nho Que River', 'title' => 'Boats & kayaks on emerald water', 'subtitle' => 'Tu San canyon boats and dawn SUP — Ha Giang\'s signature water experiences.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_cruises', 'eyebrow' => 'Nho Que River', 'title' => 'Boats & kayaks on emerald water', 'subtitle' => 'Tu San canyon boats and dawn SUP — Ha Giang\'s đặc trưng water experiences.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'featured_trains' => array(
             'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Di chuyển', 'title' => 'Xe khách, limousine Hà Nội', 'subtitle' => 'Từ Hà Nội ~6–7h — một đầu mối đặt vé và đưa đón bến xe.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'featured_trains', 'eyebrow' => 'Getting there', 'title' => 'Buses & limousines from Hanoi', 'subtitle' => '~6–7 hours from Hanoi — one place to book and meet at the bus station.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'featured_trains', 'eyebrow' => 'Getting there', 'title' => 'Buses & limousines from Hanoi', 'subtitle' => '~6–7 hours from Hanoi — one place to book and meet at the bus station.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'support_services' => array(
             'vi' => array('key' => 'support_services', 'eyebrow' => 'Dịch vụ', 'title' => 'Giấy phép, loop & hỗ trợ', 'subtitle' => 'Giấy phép biên giới, thuê xe máy, HDV riêng và tiện ích trên loop.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'support_services', 'eyebrow' => 'Services', 'title' => 'Permits, loops & support', 'subtitle' => 'Border permits, motorbike rental, private guides and loop extras.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'support_services', 'eyebrow' => 'Services', 'title' => 'Permits, loops & support', 'subtitle' => 'Border permits, motorbike rental, private guides and loop extras.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'destinations' => array(
             'vi' => array('key' => 'destinations', 'eyebrow' => 'Khắp Hà Giang', 'title' => 'Khu vực được yêu thích', 'subtitle' => 'Quản Bạ, Đồng Văn, Mèo Vạc, Hoàng Su Phì và combo Sapa/Cao Bằng.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'destinations', 'eyebrow' => 'Across Ha Giang', 'title' => 'Favourite areas', 'subtitle' => 'Quan Ba, Dong Van, Meo Vac, Hoang Su Phi and Sapa/Cao Bang combos.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'destinations', 'eyebrow' => 'Across Ha Giang', 'title' => 'Favourite areas', 'subtitle' => 'Quan Ba, Dong Van, Meo Vac, Hoang Su Phi and Sapa/Cao Bang combos.', 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'testimonials' => array(
             'vi' => array('key' => 'testimonials', 'eyebrow' => 'Khách kể', 'title' => 'Trải nghiệm thật', 'subtitle' => 'Hơn 3.500 khách đã đồng hành cùng Hi Hà Giang.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Xem cảm nhận', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences', 'subtitle' => 'Over 3,500 guests have travelled with Hi Ha Giang.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences', 'subtitle' => 'Over 3,500 guests have travelled with Hi Ha Giang.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => null, 'imageAlt' => null),
         ),
         'review_platforms' => array(
             'vi' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Hà Giang được đánh giá cao trên', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Ha Giang is highly rated on', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'review_platforms', 'eyebrow' => null, 'title' => 'Hi Ha Giang is highly rated on', 'subtitle' => null, 'body' => null, 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
         'team' => array(
             'vi' => array('key' => 'team', 'eyebrow' => 'Con người Hi Hà Giang', 'title' => 'Đội ngũ bản địa', 'subtitle' => 'Cùng bạn từ ý tưởng đến khi rời cao nguyên đá.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Gặp đội ngũ', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'team', 'eyebrow' => 'The Hi Ha Giang team', 'title' => 'Local experts', 'subtitle' => 'With you from the first idea until you leave the karst plateau.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Meet the team', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'team', 'eyebrow' => 'The Hi Ha Giang team', 'title' => 'Local experts', 'subtitle' => 'With you from the first idea until you leave the karst plateau.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Meet the team', 'ctaUrl' => '/doi-ngu', 'image' => null, 'imageAlt' => null),
         ),
         'videos' => array(
             'vi' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Hà Giang qua ống kính', 'subtitle' => 'Đèo, sông và homestay — clip từ khách và đội ngũ.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'Xem video', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Ha Giang on film', 'subtitle' => 'Passes, rivers and homestays — from guests and our team.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
+
+
+
+
+'en' => array('key' => 'videos', 'eyebrow' => 'Video', 'title' => 'Ha Giang on film', 'subtitle' => 'Passes, rivers and homestays — from guests and our team.', 'body' => null, 'metaLine' => null, 'ctaLabel' => 'All videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => null, 'imageAlt' => null),
         ),
         'quick_inquiry' => array(
             'vi' => array('key' => 'quick_inquiry', 'eyebrow' => 'Tư vấn miễn phí', 'title' => 'Gửi lời nhắn', 'subtitle' => null,
                 'body' => 'Chưa chọn loop hay homestay? Phản hồi trong <strong class="font-semibold text-ink">24 giờ làm việc</strong>, miễn phí.', 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
-            'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send a message', 'subtitle' => null,
+
+
+
+
+'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send a message', 'subtitle' => null,
                 'body' => 'Not sure which loop or homestay? Reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.', 'metaLine' => null, 'ctaLabel' => null, 'ctaUrl' => null, 'image' => null, 'imageAlt' => null),
         ),
     ),
@@ -994,72 +2326,677 @@ $__hihagiangSeed = array(
     ),
 
     'tour_categories' => array(
-        array('zoneSlug' => 'meo-vac', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 1, 'maxDays' => 1,
-            'packageSlugs' => array('ma-pi-leng-nho-que-1-ngay', 'thanh-pho-ha-giang-1-ngay', 'yen-minh-rung-thong-1-ngay', 'food-tour-ha-giang-toi'),
-            'name' => array('vi' => 'Tour 1 ngày', 'en' => '1-day tours'),
-            'subtitle' => array('vi' => 'Mã Pí Lèng, Nho Quế, Yên Minh, food tour.', 'en' => 'Ma Pi Leng, Nho Que, Yen Minh, food tour.'),
-            'seo_body' => array('vi' => 'Ghép vào loop hoặc đi lẻ từ Đồng Văn/Mèo Vạc.', 'en' => 'Add to a loop or book standalone from Dong Van/Meo Vac.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'meo-vac', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 2, 'maxDays' => 3,
-            'packageSlugs' => array('ha-giang-loop-3-ngay-2-dem', 'ha-giang-loop-xe-may-3-ngay', 'quan-ba-co-tien-2-ngay-1-dem', 'dong-van-homestay-2-ngay', 'hoang-su-phi-2-ngay-1-dem', 'mua-tam-giac-mach-3-ngay', 'mua-hoa-dao-3-ngay', 'bac-me-thac-ba-2-ngay'),
-            'name' => array('vi' => 'Tour 2 – 3 ngày', 'en' => '2–3 day tours'),
-            'subtitle' => array('vi' => 'Loop 3 ngày, Quản Bạ, homestay, mùa hoa.', 'en' => '3-day loop, Quan Ba, homestay, flower seasons.'),
-            'seo_body' => array('vi' => 'Sweet spot cho khách Hà Nội cuối tuần.', 'en' => 'Sweet spot for Hanoi weekenders.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'meo-vac', 'slug' => '4-5-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 4, 'maxDays' => 5,
-            'packageSlugs' => array('ha-giang-loop-4-ngay-3-dem', 'ha-giang-loop-5-ngay-4-dem', 'ha-giang-sapa-5-ngay'),
-            'name' => array('vi' => 'Tour 4 – 5 ngày', 'en' => '4–5 day tours'),
-            'subtitle' => array('vi' => 'Loop sâu, Hoàng Su Phì, combo Sapa.', 'en' => 'Deep loop, Hoang Su Phi, Sapa combo.'),
-            'seo_body' => array('vi' => 'Đủ thời gian Lũng Cú, chợ phiên và đi chậm.', 'en' => 'Enough time for Lung Cu, Sunday market and a slower pace.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'dong-van', 'slug' => 'loop-cao-nguyen', 'type' => 'theme', 'sort' => 10,
-            'packageSlugs' => array('ha-giang-loop-3-ngay-2-dem', 'ha-giang-loop-4-ngay-3-dem', 'ha-giang-loop-5-ngay-4-dem'),
-            'name' => array('vi' => 'Loop cao nguyên đá', 'en' => 'Karst plateau loop'),
-            'subtitle' => array('vi' => 'Công viên địa chất UNESCO Đồng Văn.', 'en' => 'UNESCO Dong Van Geopark circuit.'),
-            'seo_body' => array('vi' => 'Hành trình định nghĩa Hà Giang — Cổng trời đến Mã Pí Lèng.', 'en' => 'The journey that defines Ha Giang — Heaven Gate to Ma Pi Leng.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'dong-van', 'slug' => 'homestay-dan-toc', 'type' => 'theme', 'sort' => 11,
-            'packageSlugs' => array('dong-van-homestay-2-ngay', 'ha-giang-loop-3-ngay-2-dem', 'ha-giang-loop-4-ngay-3-dem'),
-            'name' => array('vi' => 'Homestay dân tộc', 'en' => 'Ethnic homestays'),
-            'subtitle' => array('vi' => 'H\'Mông, Dao, Tày — ăn ngủ cùng gia đình bản địa.', 'en' => 'Hmong, Dao, Tay — eat and sleep with local families.'),
-            'seo_body' => array('vi' => 'Trải nghiệm văn hoá không thể thiếu trên loop.', 'en' => 'Essential cultural experience on the loop.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'meo-vac', 'slug' => 'xe-may', 'type' => 'theme', 'sort' => 12,
-            'packageSlugs' => array('ha-giang-loop-xe-may-3-ngay'),
-            'name' => array('vi' => 'Loop xe máy', 'en' => 'Motorbike loop'),
-            'subtitle' => array('vi' => 'Tự lái với xe hỗ trợ và leader an toàn.', 'en' => 'Self-ride with support van and safety leader.'),
-            'seo_body' => array('vi' => 'Trải nghiệm signature cho người có kinh nghiệm đèo.', 'en' => 'Signature experience for experienced mountain riders.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'quan-ba', 'slug' => 'mua-hoa', 'type' => 'theme', 'sort' => 13,
-            'packageSlugs' => array('mua-tam-giac-mach-3-ngay', 'mua-hoa-dao-3-ngay'),
-            'name' => array('vi' => 'Tour mùa hoa', 'en' => 'Flower season tours'),
-            'subtitle' => array('vi' => 'Tam giác mạch (10–11), hoa đào Tết (1–2).', 'en' => 'Buckwheat (Oct–Nov), peach blossom Tet (Jan–Feb).'),
-            'seo_body' => array('vi' => 'Peak season — đặt xe và homestay trước 3–4 tuần.', 'en' => 'Peak season — book buses and homestays 3–4 weeks ahead.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'quan-ba', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 1, 'maxDays' => 1,
-            'packageSlugs' => array('yen-minh-rung-thong-1-ngay'),
-            'name' => array('vi' => 'Tour 1 ngày Quản Bạ', 'en' => '1-day Quan Ba'),
-            'subtitle' => array('vi' => 'Rừng thông Yên Minh, cafe phố cao.', 'en' => 'Yen Minh pine forest, highland cafes.'),
-            'seo_body' => array('vi' => 'Dừng chân giữa loop hoặc tour ngắn.', 'en' => 'Stopover on the loop or short escape.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'hoang-su-phi', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 2, 'maxDays' => 3,
-            'packageSlugs' => array('hoang-su-phi-2-ngay-1-dem'),
-            'name' => array('vi' => 'Tour Hoàng Su Phì', 'en' => 'Hoang Su Phi tours'),
-            'subtitle' => array('vi' => 'Ruộng bậc thang & bản Dao đỏ.', 'en' => 'Terraced fields & Red Dao villages.'),
-            'seo_body' => array('vi' => 'Tách khỏi loop — hoặc gộp tour 5 ngày.', 'en' => 'Standalone — or bundled in the 5-day tour.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ket-hop-sapa', 'slug' => '4-5-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 4, 'maxDays' => 6,
-            'packageSlugs' => array('ha-giang-sapa-5-ngay'),
-            'name' => array('vi' => 'Combo Sapa', 'en' => 'Sapa combo'),
-            'subtitle' => array('vi' => 'Loop Hà Giang + Fansipan/Sapa.', 'en' => 'Ha Giang loop plus Fansipan/Sapa.'),
-            'seo_body' => array('vi' => 'Hai cao nguyên Tây Bắc trong một chuyến.', 'en' => 'Two Northwest highlands in one trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ket-hop-cao-bang', 'slug' => '4-5-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 5, 'maxDays' => 6,
-            'packageSlugs' => array('ha-giang-cao-bang-6-ngay'),
-            'name' => array('vi' => 'Combo Cao Bằng', 'en' => 'Cao Bang combo'),
-            'subtitle' => array('vi' => 'Loop + thác Bản Giốc & Ba Bể.', 'en' => 'Loop plus Ban Gioc Falls & Ba Be.'),
-            'seo_body' => array('vi' => 'Đông Bắc mở rộng — geopark và thác nước.', 'en' => 'Extended Northeast — geopark and waterfalls.'),
-            'faqs' => array()),
+        array(
+            'zoneSlug' => 'meo-vac',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'ma-pi-leng-nho-que-1-ngay',
+                'thanh-pho-ha-giang-1-ngay',
+                'yen-minh-rung-thong-1-ngay',
+                'food-tour-ha-giang-toi',
+            ),
+            'name' => array(
+                'vi' => 'Tour 1 ngày',
+
+
+
+
+'en' => '1-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Mã Pí Lèng, Nho Quế, Yên Minh, tour ẩm thực.',
+
+
+
+
+'en' => 'Ma Pi Leng, Nho Que, Yen Minh, food tour.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Ghép vào loop hoặc đi lẻ từ Đồng Văn/Mèo Vạc.',
+
+
+
+
+'en' => 'Add to a loop or book standalone from Dong Van/Meo Vac.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'meo-vac',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'ha-giang-loop-3-ngay-2-dem',
+                'ha-giang-loop-xe-may-3-ngay',
+                'quan-ba-co-tien-2-ngay-1-dem',
+                'dong-van-homestay-2-ngay',
+                'hoang-su-phi-2-ngay-1-dem',
+                'mua-tam-giac-mach-3-ngay',
+                'mua-hoa-dao-3-ngay',
+                'bac-me-thac-ba-2-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 – 3 ngày',
+
+
+
+
+'en' => '2–3 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Loop 3 ngày, Quản Bạ, homestay, mùa hoa.',
+
+
+
+
+'en' => '3-day loop, Quan Ba, homestay, flower seasons.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến cho khách Hà Nội cuối tuần.',
+
+
+
+
+'en' => 'Sweet spot for Hanoi weekenders.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'meo-vac',
+            'slug' => '4-5-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 4,
+            'maxDays' => 5,
+            'packageSlugs' => array(
+                'ha-giang-loop-4-ngay-3-dem',
+                'ha-giang-loop-5-ngay-4-dem',
+                'ha-giang-sapa-5-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 – 5 ngày',
+
+
+
+
+'en' => '4–5 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Loop sâu, Hoàng Su Phì, combo Sapa.',
+
+
+
+
+'en' => 'Deep loop, Hoang Su Phi, Sapa combo.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Đủ thời gian Lũng Cú, chợ phiên và đi chậm.',
+
+
+
+
+'en' => 'Enough time for Lung Cu, Sunday market and a slower pace.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'quan-ba',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'yen-minh-rung-thong-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour 1 ngày Quản Bạ',
+
+
+
+
+'en' => '1-day Quan Ba',
+            ),
+            'subtitle' => array(
+                'vi' => 'Rừng thông Yên Minh, cafe phố cao.',
+
+
+
+
+'en' => 'Yen Minh pine forest, highland cafes.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Dừng chân giữa loop hoặc tour ngắn.',
+
+
+
+
+'en' => 'Stopover on the loop or short escape.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'hoang-su-phi',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'hoang-su-phi-2-ngay-1-dem',
+            ),
+            'name' => array(
+                'vi' => 'Tour Hoàng Su Phì',
+
+
+
+
+'en' => 'Hoang Su Phi tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Ruộng bậc thang & bản Dao đỏ.',
+
+
+
+
+'en' => 'Terraced fields & Red Dao villages.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tách khỏi loop — hoặc gộp tour 5 ngày.',
+
+
+
+
+'en' => 'Standalone — or bundled in the 5-day tour.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-sapa',
+            'slug' => '4-5-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 4,
+            'maxDays' => 6,
+            'packageSlugs' => array(
+                'ha-giang-sapa-5-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Combo Sapa',
+
+
+
+
+'en' => 'Sapa combo',
+            ),
+            'subtitle' => array(
+                'vi' => 'Loop Hà Giang + Fansipan/Sapa.',
+
+
+
+
+'en' => 'Ha Giang loop plus Fansipan/Sapa.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Hai cao nguyên Tây Bắc trong một chuyến.',
+
+
+
+
+'en' => 'Two Northwest highlands in one trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'ket-hop-cao-bang',
+            'slug' => '4-5-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 5,
+            'maxDays' => 6,
+            'packageSlugs' => array(
+                'ha-giang-cao-bang-6-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Combo Cao Bằng',
+
+
+
+
+'en' => 'Cao Bang combo',
+            ),
+            'subtitle' => array(
+                'vi' => 'Loop + thác Bản Giốc & Ba Bể.',
+
+
+
+
+'en' => 'Loop plus Ban Gioc Falls & Ba Be.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Đông Bắc mở rộng — geopark và thác nước.',
+
+
+
+
+'en' => 'Extended Northeast — geopark and waterfalls.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'tour-trong-ngay',
+            'type' => 'theme',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'ma-pi-leng-nho-que-1-ngay',
+                'thanh-pho-ha-giang-1-ngay',
+                'yen-minh-rung-thong-1-ngay',
+                'food-tour-ha-giang-toi',
+            ),
+            'name' => array(
+                'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
+
+
+
+
+'en' => 'Full day — no overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
+
+
+
+
+'en' => 'Duration filter — distinct from per-zone GEO category pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'tour-2-ngay-1-dem',
+            'type' => 'theme',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 2,
+            'packageSlugs' => array(
+                'quan-ba-co-tien-2-ngay-1-dem',
+                'dong-van-homestay-2-ngay',
+                'hoang-su-phi-2-ngay-1-dem',
+                'bac-me-thac-ba-2-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
+
+
+
+
+'en' => 'Short weekend, one-night homestay or resort.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
+
+
+
+
+'en' => '2N1D sweet spot — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'tour-3-ngay-2-dem',
+            'type' => 'theme',
+            'sort' => 2,
+            'minDays' => 3,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'ha-giang-loop-3-ngay-2-dem',
+                'ha-giang-loop-xe-may-3-ngay',
+                'mua-tam-giac-mach-3-ngay',
+                'mua-hoa-dao-3-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour 3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
+
+
+
+
+'en' => 'Enough depth — two overnights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
+
+
+
+
+'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'tour-4-ngay-3-dem',
+            'type' => 'theme',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 4,
+            'packageSlugs' => array(
+                'ha-giang-loop-4-ngay-3-dem',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
+
+
+
+
+'en' => 'Deeper exploration, three nights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
+
+
+
+
+'en' => '4N3D itineraries — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'tour-tu-5-ngay',
+            'type' => 'theme',
+            'sort' => 4,
+            'minDays' => 5,
+            'maxDays' => null,
+            'packageSlugs' => array(
+                'ha-giang-loop-5-ngay-4-dem',
+                'ha-giang-sapa-5-ngay',
+                'ha-giang-cao-bang-6-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour từ 5 ngày',
+
+
+
+
+'en' => '5+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo dài ngày, nhiều điểm đến.',
+
+
+
+
+'en' => 'Extended combos and multi-destination trips.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
+
+
+
+
+'en' => 'Long tours & combos — duration insight, not a GEO page.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'loop-cao-nguyen',
+            'type' => 'theme',
+            'sort' => 10,
+            'packageSlugs' => array(
+                'ha-giang-loop-3-ngay-2-dem',
+                'ha-giang-loop-4-ngay-3-dem',
+                'ha-giang-loop-5-ngay-4-dem',
+            ),
+            'name' => array(
+                'vi' => 'Loop cao nguyên đá',
+
+
+
+
+'en' => 'Karst plateau loop',
+            ),
+            'subtitle' => array(
+                'vi' => 'Công viên địa chất UNESCO Đồng Văn.',
+
+
+
+
+'en' => 'UNESCO Dong Van Geopark circuit.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Hành trình định nghĩa Hà Giang — Cổng trời đến Mã Pí Lèng.',
+
+
+
+
+'en' => 'The journey that defines Ha Giang — Heaven Gate to Ma Pi Leng.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'homestay-dan-toc',
+            'type' => 'theme',
+            'sort' => 11,
+            'packageSlugs' => array(
+                'dong-van-homestay-2-ngay',
+                'ha-giang-loop-3-ngay-2-dem',
+                'ha-giang-loop-4-ngay-3-dem',
+            ),
+            'name' => array(
+                'vi' => 'Homestay dân tộc',
+
+
+
+
+'en' => 'Ethnic homestays',
+            ),
+            'subtitle' => array(
+                'vi' => 'H\'Mông, Dao, Tày — ăn ngủ cùng gia đình bản địa.',
+
+
+
+
+'en' => 'Hmong, Dao, Tay — eat and sleep with local families.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Trải nghiệm văn hoá không thể thiếu trên loop.',
+
+
+
+
+'en' => 'Essential cultural experience on the loop.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'xe-may',
+            'type' => 'theme',
+            'sort' => 12,
+            'packageSlugs' => array(
+                'ha-giang-loop-xe-may-3-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Loop xe máy',
+
+
+
+
+'en' => 'Motorbike loop',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tự lái với xe hỗ trợ và leader an toàn.',
+
+
+
+
+'en' => 'Self-ride with support van and safety leader.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Trải nghiệm đặc trưng cho người có kinh nghiệm đèo.',
+
+
+
+
+'en' => 'Signature experience for experienced mountain riders.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'mua-hoa',
+            'type' => 'theme',
+            'sort' => 13,
+            'packageSlugs' => array(
+                'mua-tam-giac-mach-3-ngay',
+                'mua-hoa-dao-3-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour mùa hoa',
+
+
+
+
+'en' => 'Flower season tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Tam giác mạch (10–11), hoa đào Tết (1–2).',
+
+
+
+
+'en' => 'Buckwheat (Oct–Nov), peach blossom Tet (Jan–Feb).',
+            ),
+            'seo_body' => array(
+                'vi' => 'Mùa cao điểm — đặt xe và homestay trước 3–4 tuần.',
+
+
+
+
+'en' => 'Peak season — book buses and homestays 3–4 weeks ahead.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'cuoi-tuan-ha-noi',
+            'type' => 'theme',
+            'sort' => 14,
+            'packageSlugs' => array(
+                'ha-giang-loop-3-ngay-2-dem',
+                'quan-ba-co-tien-2-ngay-1-dem',
+                'dong-van-homestay-2-ngay',
+                'hoang-su-phi-2-ngay-1-dem',
+                'bac-me-thac-ba-2-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Cuối tuần từ Hà Nội',
+
+
+
+
+'en' => 'Weekend from Hanoi',
+            ),
+            'subtitle' => array(
+                'vi' => 'Loop 2–3 ngày, xe đêm Hà Nội — phù hợp dân văn phòng.',
+
+
+
+
+'en' => '2–3 day loops, overnight bus from Hanoi.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Bộ lọc khách Hà Nội — không trùng danh mục theo từng huyện.',
+
+
+
+
+'en' => 'Intent filter for Hanoi weekenders — not per-district GEO pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'thanh-pho-ha-giang',
+            'slug' => 'gia-dinh-nhom-nho',
+            'type' => 'theme',
+            'sort' => 15,
+            'packageSlugs' => array(
+                'quan-ba-co-tien-2-ngay-1-dem',
+                'ha-giang-loop-4-ngay-3-dem',
+                'thanh-pho-ha-giang-1-ngay',
+                'yen-minh-rung-thong-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Gia đình & nhóm nhỏ',
+
+
+
+
+'en' => 'Family & small group',
+            ),
+            'subtitle' => array(
+                'vi' => 'O to an toan, lich nhe — khong bat buoc xe may.',
+
+
+
+
+'en' => 'Safe car travel, light pace, no motorbike required.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Phan khuc gia dinh/nhom ban — loc theo nhu cau, khong theo vung.',
+
+
+
+
+'en' => 'Family/friends segment — need-based filter, not regional.',
+            ),
+            'faqs' => array(),
+        ),
     ),
 
     'listing_faqs' => array(
@@ -1070,14 +3007,27 @@ $__hihagiangSeed = array(
         array('q' => 'Mùa tam giác mạch khi nào?', 'a' => 'Thường cuối tháng 10 đến hết tháng 11 — đặt xe Hà Nội và homestay trước 3–4 tuần.'),
     ),
 
-    'duration_buckets' => array('half-day' => 'Nửa ngày', '1-day' => '1 ngày', '2-3-days' => '2 – 3 ngày', '4-plus' => '4 – 5 ngày'),
+    'duration_buckets' => array(
+        'half-day' => 'Nửa ngày',
+        '1-day' => '1 ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+    ),
 
     'travel_style_labels' => array(
-        'adventure' => 'Phiêu lưu', 'motorcycle-loop' => 'Loop xe máy', 'ethnic-culture' => 'Văn hoá dân tộc',
-        'photography' => 'Chụp ảnh', 'flower-season' => 'Mùa hoa', 'trekking' => 'Trekking',
-        'family' => 'Gia đình', 'day-trip' => 'Tour trong ngày', 'multi-day' => 'Nhiều ngày',
-        'balanced' => 'Cân bằng', 'multi-destination-combo' => 'Combo đa điểm',
-        'small-group' => 'Nhóm nhỏ', 'geopark' => 'Di sản UNESCO',
+        'day-trip' => 'Tour trong ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+        'loop-cao-nguyen' => 'Loop cao nguyên đá',
+        'homestay-dan-toc' => 'Homestay dân tộc',
+        'xe-may' => 'Loop xe máy',
+        'mua-hoa' => 'Tour mùa hoa',
+        'weekend-hanoi' => 'Cuối tuần từ Hà Nội',
+        'gia-dinh-nhom-nho' => 'Gia đình & nhóm nhỏ',
     ),
 );
 
@@ -1105,7 +3055,7 @@ $__servicesSeed = [
         ['cluster' => 'experience', 'slug' => 'thuyen-nho-que', 'name' => 'Thuyền & kayak Nho Quế', 'sort' => 2, 'intro' => 'Tu Sản canyon từ dưới sông.', 'seo_body' => 'Must-do cùng Mã Pí Lèng.'],
         ['cluster' => 'experience', 'slug' => 'xe-may-loop', 'name' => 'Thuê xe máy loop', 'sort' => 3, 'intro' => 'Honda Winner/Exciter + mũ BH.', 'seo_body' => 'Cần bằng A2 — nên đi theo leader.'],
         ['cluster' => 'experience', 'slug' => 'trek-hoang-su-phi', 'name' => 'Trek ruộng Hoàng Su Phì', 'sort' => 4, 'intro' => 'Bản làng & ruộng bậc thang.', 'seo_body' => 'Half-day hoặc full-day trek.'],
-        ['cluster' => 'experience', 'slug' => 'am-thuc-vung-cao', 'name' => 'Ẩm thực & food tour', 'sort' => 5, 'intro' => 'Thắng cố, food tour tối.', 'seo_body' => 'Đặc sản cao nguyên đá.'],
+        ['cluster' => 'experience', 'slug' => 'am-thuc-vung-cao', 'name' => 'Ẩm thực & tour ẩm thực', 'sort' => 5, 'intro' => 'Thắng cố, tour ẩm thực tối.', 'seo_body' => 'Đặc sản cao nguyên đá.'],
         ['cluster' => 'other', 'slug' => 'huong-dan-rieng', 'name' => 'HDV riêng & leader loop', 'sort' => 1, 'intro' => 'Guide tiếng Anh, leader xe máy.'],
         ['cluster' => 'other', 'slug' => 'xe-tien-ich', 'name' => 'Xe có lái, gửi đồ', 'sort' => 2, 'intro' => 'Ô tô loop, gửi hành lý.'],
         ['cluster' => 'other', 'slug' => 'ho-tro-dac-biet', 'name' => 'Khẩn cấp & hỗ trợ 24/7', 'sort' => 3, 'intro' => 'Hotline trên đèo, y tế.'],
@@ -1123,7 +3073,7 @@ $__servicesSeed = [
             'title' => 'Xe giường khứ hồi Hà Nội ↔ Hà Giang', 'slug' => 'xe-giuong-khu-hoi-ha-noi-ha-giang',
             'price_from' => 520000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 678,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'Hà Nội ↔ Hà Giang',
-            'summary' => 'Gói weekend loop — đi tối thứ 6, về tối chủ nhật.',
+            'summary' => 'Gói loop cuối tuần — đi tối thứ 6, về tối chủ nhật.',
             'highlights' => ['Rẻ hơn 2 chiều lẻ', 'Giữ chỗ chiều về'], 'inclusions' => ['2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Hà Giang', 'vehicle_type' => 'xe giường nằm']],
         ['code' => 'train-limousine-hn-hg', 'cluster' => 'train', 'category_slug' => 'limousine-ha-noi-ha-giang', 'zone_slug' => 'thanh-pho-ha-giang',
@@ -1178,7 +3128,7 @@ $__servicesSeed = [
         ['code' => 'flight-combo-fly-bus', 'cluster' => 'flight', 'category_slug' => 'combo-bay-xe', 'zone_slug' => 'thanh-pho-ha-giang',
             'title' => 'Combo vé bay + xe đêm Hà Giang', 'slug' => 'combo-ve-bay-xe-dem-ha-giang',
             'price_from' => 1280000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 78,
-            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/HAN → Hà Giang',
+            'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/Hà Nội → Hà Giang',
             'summary' => 'Bay vào Hà Nội chiều, xe đêm lên Hà Giang — một báo giá.',
             'highlights' => ['Một đầu mối', 'Đổi ngày linh hoạt'], 'inclusions' => ['Vé bay', 'Xe giường'], 'exclusions' => ['Loop tour'],
             'notes' => ['Giá theo ngày bay.'], 'attrs' => ['from' => 'HAN / SGN', 'to' => 'Hà Giang']],
@@ -1226,11 +3176,11 @@ $__servicesSeed = [
             'highlights' => ['HDV Dao', 'Nước & snack'], 'inclusions' => ['HDV', 'Nước'], 'exclusions' => ['Xe từ Hà Giang'],
             'notes' => ['Mùa đẹp tháng 5–6, 9–10.'], 'attrs' => ['duration_hours' => 4, 'activity' => 'trekking']],
         ['code' => 'exp-food-tour', 'cluster' => 'experience', 'category_slug' => 'am-thuc-vung-cao', 'zone_slug' => 'thanh-pho-ha-giang',
-            'title' => 'Food tour Hà Giang buổi tối', 'slug' => 'food-tour-ha-giang-toi-dich-vu',
+            'title' => 'Tour ẩm thực Hà Giang buổi tối', 'slug' => 'food-tour-ha-giang-toi-dich-vu',
             'price_from' => 420000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 156,
             'is_featured' => true, 'location_label' => 'Thành phố Hà Giang',
             'summary' => 'Thắng cố, thịt trâu, rượu ngô — 7–8 món.',
-            'highlights' => ['HDV foodie'], 'inclusions' => ['HDV', 'Tasting'], 'exclusions' => ['Rượu thêm'],
+            'highlights' => ['HDV am thực'], 'inclusions' => ['HDV', 'Tasting'], 'exclusions' => ['Rượu thêm'],
             'notes' => [], 'attrs' => ['duration_hours' => 3, 'activity' => 'food_tour']],
         ['code' => 'exp-ma-pi-leng-half', 'cluster' => 'experience', 'category_slug' => 'thuyen-nho-que', 'zone_slug' => 'meo-vac',
             'title' => 'Tour Mã Pí Lèng + Nho Quế — nửa ngày', 'slug' => 'tour-ma-pi-leng-nho-que-nua-ngay',
@@ -1365,15 +3315,27 @@ return array_merge(
     ['customize_form' => [
         'destinations_label' => [
             'vi' => 'Bạn muốn khám phá khu vực nào trên loop?',
-            'en' => 'Which areas of the loop would you like to explore?',
+
+
+
+
+'en' => 'Which areas of the loop would you like to explore?',
         ],
         'accommodation_label' => [
             'vi' => 'Bạn thích loại lưu trú nào trên loop?',
-            'en' => 'What kind of stay do you prefer on the loop?',
+
+
+
+
+'en' => 'What kind of stay do you prefer on the loop?',
         ],
         'budget_note' => [
             'vi' => 'Ngân sách dự kiến (chưa gồm vé xe Hà Nội—Hà Giang)',
-            'en' => 'Estimated budget (excluding Hanoi—Ha Giang bus tickets)',
+
+
+
+
+'en' => 'Estimated budget (excluding Hanoi—Ha Giang bus tickets)',
         ],
         'accommodation' => [
             'vi' => [
@@ -1383,7 +3345,11 @@ return array_merge(
                 'Hoàng Su Phì — homestay Dao đỏ',
                 'Nhờ tư vấn giúp tôi',
             ],
-            'en' => [
+
+
+
+
+'en' => [
                 'Hmong / Dao homestay (on the loop)',
                 'Tay homestay Quan Ba / Yen Minh',
                 'Ha Giang city hotel (night before loop)',
@@ -1393,46 +3359,110 @@ return array_merge(
         ],
     ]],
     ['nav' => [
-        'about_group' => ['vi' => 'Về Hi Hà Giang', 'en' => 'About Hi Ha Giang'],
-        'tours' => ['label' => ['vi' => 'Tour', 'en' => 'Tours']],
+        'about_group' => ['vi' => 'Về Hi Hà Giang',
+
+
+
+'en' => 'About Hi Ha Giang'],
+        'tours' => ['label' => ['vi' => 'Tour',
+
+
+
+'en' => 'Tours']],
         'cruise' => [
-            'label' => ['vi' => 'Thuyền sông', 'en' => 'River boats'],
-            'all_label' => ['vi' => 'Tất cả thuyền sông', 'en' => 'All river boats'],
-            'all_meta' => ['vi' => 'Thuyền & SUP sông Nho Quế', 'en' => 'Nho Que river boats & SUP'],
-            'search_hint' => ['vi' => 'Tour loop, homestay, giấy phép, cẩm nang…', 'en' => 'Loop tours, homestays, permits, guides…'],
-            'search_placeholder' => ['vi' => 'Tìm tour, dịch vụ, bài viết…', 'en' => 'Search tours, services, articles…'],
-            'hub_title' => ['vi' => 'Thuyền sông', 'en' => 'River boats'],
-            'hub_subtitle' => ['vi' => 'Thuyền Tu Sản, SUP và kayak sông Nho Quế.', 'en' => 'Tu San canyon boats, SUP and kayaks on the Nho Que River.'],
+            'label' => ['vi' => 'Thuyền sông',
+
+
+
+'en' => 'River boats'],
+            'all_label' => ['vi' => 'Tất cả thuyền sông',
+
+
+
+'en' => 'All river boats'],
+            'all_meta' => ['vi' => 'Thuyền & SUP sông Nho Quế',
+
+
+
+'en' => 'Nho Que river boats & SUP'],
+            'search_hint' => ['vi' => 'Tour loop, homestay, giấy phép, cẩm nang…',
+
+
+
+'en' => 'Loop tours, homestays, permits, guides…'],
+            'search_placeholder' => ['vi' => 'Tìm tour, dịch vụ, bài viết…',
+
+
+
+'en' => 'Search tours, services, articles…'],
+            'hub_title' => ['vi' => 'Thuyền sông',
+
+
+
+'en' => 'River boats'],
+            'hub_subtitle' => ['vi' => 'Thuyền Tu Sản, SUP và kayak sông Nho Quế.',
+
+
+
+'en' => 'Tu San canyon boats, SUP and kayaks on the Nho Que River.'],
         ],
     ]],
     ['listing_hubs' => [
         'tours_hub' => [
             'vi' => ['seo_body' => 'Tour :brand gom loop 3–5 ngày, homestay dân tộc, mùa hoa và combo Sapa/Cao Bằng — thiết kế bởi chuyên gia bản địa.'],
-            'en' => ['seo_body' => ':brand tours cover 3–5 day loops, ethnic homestays, flower seasons and Sapa/Cao Bang combos — designed by local experts.'],
+
+
+
+
+'en' => ['seo_body' => ':brand tours cover 3–5 day loops, ethnic homestays, flower seasons and Sapa/Cao Bang combos — designed by local experts.'],
         ],
         'cruises_hub' => [
             'vi' => ['seo_body' => 'Thuyền sông Nho Quế — Tu Sản canyon, SUP sáng sớm và kayak từ :brand.'],
-            'en' => ['seo_body' => 'Nho Que river boats — Tu San canyon, dawn SUP and kayaking from :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Nho Que river boats — Tu San canyon, dawn SUP and kayaking from :brand.'],
         ],
         'trains_hub' => [
             'vi' => ['seo_body' => 'Xe giường, limousine Hà Nội, xe Lào Cai/Cao Bằng và đón bến Hà Giang qua :brand — e-ticket, đổi ngày linh hoạt.'],
-            'en' => ['seo_body' => 'Sleeper buses, Hanoi limousines, Lao Cai/Cao Bang coaches and Ha Giang station pickups via :brand — e-tickets and flexible changes.'],
+
+
+
+
+'en' => ['seo_body' => 'Sleeper buses, Hanoi limousines, Lao Cai/Cao Bang coaches and Ha Giang station pickups via :brand — e-tickets and flexible changes.'],
         ],
         'flights_hub' => [
             'vi' => ['seo_body' => 'Kết nối bay Nội Bài và đưa đón bến xe kết hợp loop :brand — Hà Giang không có sân bay.'],
-            'en' => ['seo_body' => 'Noi Bai flight connections and bus-station transfers aligned with your :brand loop — Ha Giang has no airport.'],
+
+
+
+
+'en' => ['seo_body' => 'Noi Bai flight connections and bus-station transfers aligned with your :brand loop — Ha Giang has no airport.'],
         ],
         'stays_hub' => [
             'vi' => ['seo_body' => ':brand tổng hợp homestay trên loop — H\'Mông, Dao, Tày ở Yên Minh, Đồng Văn, Mèo Vạc và Hoàng Su Phì. Lọc theo ngày loop, ngân sách và văn hoá dân tộc.'],
-            'en' => ['seo_body' => ':brand brings together loop homestays — Hmong, Dao and Tay in Yen Minh, Dong Van, Meo Vac and Hoang Su Phi. Filter by loop day, budget and ethnic culture.'],
+
+
+
+
+'en' => ['seo_body' => ':brand brings together loop homestays — Hmong, Dao and Tay in Yen Minh, Dong Van, Meo Vac and Hoang Su Phi. Filter by loop day, budget and ethnic culture.'],
         ],
         'experiences_hub' => [
             'vi' => ['seo_body' => 'Trải nghiệm Hà Giang: giấy phép biên giới, thuyền Nho Quế, xe máy loop, trek Hoàng Su Phì — đặt lẻ hoặc gộp tour qua :brand.'],
-            'en' => ['seo_body' => 'Ha Giang experiences: border permits, Nho Que boats, motorbike loops, Hoang Su Phi treks — à la carte or bundled via :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Ha Giang experiences: border permits, Nho Que boats, motorbike loops, Hoang Su Phi treks — à la carte or bundled via :brand.'],
         ],
         'extras_hub' => [
             'vi' => ['seo_body' => 'HDV riêng, leader xe máy, xe loop và hỗ trợ 24/7 trên đèo cùng :brand.'],
-            'en' => ['seo_body' => 'Private guides, motorbike leaders, loop cars and 24/7 pass support with :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Private guides, motorbike leaders, loop cars and 24/7 pass support with :brand.'],
         ],
     ]],
 );

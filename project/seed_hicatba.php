@@ -40,21 +40,33 @@ $__hicatbaSeed = array(
             'sort' => 10,
             'age_min' => 12,
             'age_max' => 59,
-            'name' => array('vi' => 'Người lớn', 'en' => 'Adult'),
+            'name' => array('vi' => 'Người lớn',
+
+
+
+'en' => 'Adult'),
         ),
         array(
             'code' => 'child',
             'sort' => 20,
             'age_min' => 2,
             'age_max' => 11,
-            'name' => array('vi' => 'Trẻ em', 'en' => 'Child'),
+            'name' => array('vi' => 'Trẻ em',
+
+
+
+'en' => 'Child'),
         ),
         array(
             'code' => 'senior',
             'sort' => 30,
             'age_min' => 60,
             'age_max' => null,
-            'name' => array('vi' => 'Cao tuổi (60+)', 'en' => 'Senior (60+)'),
+            'name' => array('vi' => 'Cao tuổi (60+)',
+
+
+
+'en' => 'Senior (60+)'),
         ),
     ),
 
@@ -99,31 +111,124 @@ $__hicatbaSeed = array(
     ),
 
     'content_tags' => array(
-        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?', 'en' => 'Where to eat & drink?'),
-        'where-to-stay' => array('vi' => 'Ở đâu?', 'en' => 'Where to stay?'),
-        'what-to-do' => array('vi' => 'Làm gì & xem gì?', 'en' => 'What to do & see?'),
-        'how-to-get-there' => array('vi' => 'Di chuyển ra đảo thế nào?', 'en' => 'How to get there?'),
-        'travel-tips' => array('vi' => 'Mẹo du lịch', 'en' => 'Travel tips'),
-        'trip-report' => array('vi' => 'Cảm nhận chuyến đi', 'en' => 'How was the trip?'),
-        'which-tour' => array('vi' => 'Chọn tour nào?', 'en' => 'Which tour to choose?'),
+        'where-to-eat' => array('vi' => 'Ăn uống ở đâu?',
+
+
+
+'en' => 'Where to eat & drink?'),
+        'where-to-stay' => array('vi' => 'Ở đâu?',
+
+
+
+'en' => 'Where to stay?'),
+        'what-to-do' => array('vi' => 'Làm gì & xem gì?',
+
+
+
+'en' => 'What to do & see?'),
+        'how-to-get-there' => array('vi' => 'Di chuyển ra đảo thế nào?',
+
+
+
+'en' => 'How to get there?'),
+        'travel-tips' => array('vi' => 'Mẹo du lịch',
+
+
+
+'en' => 'Travel tips'),
+        'trip-report' => array('vi' => 'Cảm nhận chuyến đi',
+
+
+
+'en' => 'How was the trip?'),
+        'which-tour' => array('vi' => 'Chọn tour nào?',
+
+
+
+'en' => 'Which tour to choose?'),
     ),
 
     'travel_styles' => array(
-        'trekking' => array('vi' => 'Trekking & khám phá', 'en' => 'Trekking & exploration'),
-        'beach' => array('vi' => 'Nghỉ dưỡng biển', 'en' => 'Beach'),
-        'diving-snorkel' => array('vi' => 'Lặn & ngắm san hô', 'en' => 'Diving & snorkeling'),
-        'kayak-adventure' => array('vi' => 'Chèo kayak & phiêu lưu nước', 'en' => 'Kayak & water adventure'),
-        'family' => array('vi' => 'Gia đình', 'en' => 'Family'),
-        'honeymoon' => array('vi' => 'Trăng mật', 'en' => 'Honeymoon'),
-        'nature-park' => array('vi' => 'Thiên nhiên & vườn quốc gia', 'en' => 'Nature & national park'),
-        'floating-village-culture' => array('vi' => 'Văn hoá làng chài', 'en' => 'Fishing village culture'),
-        'day-trip' => array('vi' => 'Tour trong ngày', 'en' => 'Day trip'),
-        'multi-day' => array('vi' => 'Tour nhiều ngày', 'en' => 'Multi-day tour'),
-        'long-duration' => array('vi' => 'Tour dài ngày', 'en' => 'Long duration'),
-        'small-group' => array('vi' => 'Nhóm nhỏ', 'en' => 'Small group'),
-        'climbing' => array('vi' => 'Leo núi đá vôi', 'en' => 'Rock climbing'),
-        'balanced' => array('vi' => 'Kỳ nghỉ cân bằng', 'en' => 'Balanced'),
-        'multi-destination-combo' => array('vi' => 'Kết hợp nhiều điểm đến', 'en' => 'Multi-destination combo'),
+        'day-trip' => array(
+            'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day trip',
+        ),
+        '2n1d' => array(
+            'vi' => '2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+        ),
+        '3n2d' => array(
+            'vi' => '3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+        ),
+        '4n3d' => array(
+            'vi' => '4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+        ),
+        '5-plus-days' => array(
+            'vi' => 'Từ 5 ngày',
+
+
+
+
+'en' => '5+ days',
+        ),
+        'vinh-lan-ha' => array(
+            'vi' => 'Tour vịnh Lan Hạ',
+
+
+
+
+'en' => 'Lan Ha Bay tours',
+        ),
+        'trekking-vqg' => array(
+            'vi' => 'Tour trekking vườn quốc gia',
+
+
+
+
+'en' => 'National park trekking tours',
+        ),
+        'dao-khi-tam-bien' => array(
+            'vi' => 'Tour Đảo Khỉ & tắm biển',
+
+
+
+
+'en' => 'Monkey Island & beach tours',
+        ),
+        'lang-viet-hai' => array(
+            'vi' => 'Tour làng Việt Hải',
+
+
+
+
+'en' => 'Viet Hai village tours',
+        ),
+        'lang-chai-cai-beo' => array(
+            'vi' => 'Tour làng chài Cái Bèo',
+
+
+
+
+'en' => 'Cai Beo fishing village tours',
+        ),
     ),
 
     'review_platforms' => array(
@@ -150,7 +255,11 @@ $__hicatbaSeed = array(
             'vi' => array('title' => 'Cát Bà', 'title_accent' => 'khu dự trữ sinh quyển thế giới',
                 'description' => 'Quần đảo hội tụ rừng nhiệt đới, vịnh đá vôi và biển xanh trong một không gian — vẻ đẹp có một không hai, nơi núi rừng chạm sóng vịnh.',
                 'button_label' => 'Khám phá Cát Bà', 'image_alt' => 'Quần đảo Cát Bà — khu dự trữ sinh quyển'),
-            'en' => array('title' => 'Cat Ba', 'title_accent' => 'a UNESCO biosphere reserve',
+
+
+
+
+'en' => array('title' => 'Cat Ba', 'title_accent' => 'a UNESCO biosphere reserve',
                 'description' => 'An archipelago where tropical forest, limestone karst and open sea meet — a one-of-a-kind landscape where jungle hills roll straight into the bay.',
                 'button_label' => 'Discover Cat Ba', 'image_alt' => 'Cat Ba Archipelago biosphere reserve'),
         ),
@@ -159,7 +268,11 @@ $__hicatbaSeed = array(
             'vi' => array('title' => 'Vịnh Lan Hạ', 'title_accent' => 'kayak, tàu nhỏ & đêm trên vịnh',
                 'description' => 'Hơn 400 đảo đá vôi, hang Luồn và bãi tắm hoang sơ — tour ngày từ bến Bèo hoặc ngủ đêm trên du thuyền giữa vịnh.',
                 'button_label' => 'Khám phá vịnh Lan Hạ', 'image_alt' => 'Kayak và du thuyền trên vịnh Lan Hạ'),
-            'en' => array('title' => 'Lan Ha Bay', 'title_accent' => 'kayak, small boats & nights on the water',
+
+
+
+
+'en' => array('title' => 'Lan Ha Bay', 'title_accent' => 'kayak, small boats & nights on the water',
                 'description' => 'Over 400 limestone islands, Luon Cave and hidden beaches — day trips from Ben Beo pier or an overnight cruise in the bay.',
                 'button_label' => 'Explore Lan Ha Bay', 'image_alt' => 'Kayak and cruise on Lan Ha Bay'),
         ),
@@ -168,7 +281,11 @@ $__hicatbaSeed = array(
             'vi' => array('title' => 'Rừng & làng Việt Hải', 'title_accent' => 'trekking & homestay giữa vườn quốc gia',
                 'description' => 'Đi bộ xuyên rừng nguyên sinh, ghé Ao Ếch và ăn cùng người dân — làng không xe máy, yên tĩnh sau giờ tàu về.',
                 'button_label' => 'Xem tour trekking', 'image_alt' => 'Trekking vườn quốc gia Cát Bà tới làng Việt Hải'),
-            'en' => array('title' => 'Forest & Viet Hai village', 'title_accent' => 'trekking & homestay in the national park',
+
+
+
+
+'en' => array('title' => 'Forest & Viet Hai village', 'title_accent' => 'trekking & homestay in the national park',
                 'description' => 'Hike through primary forest, visit Ao Ech lake and share meals with locals — a motorbike-free village, quiet after the day boats leave.',
                 'button_label' => 'View trekking tours', 'image_alt' => 'Trekking Cat Ba National Park to Viet Hai village'),
         ),
@@ -185,33 +302,107 @@ $__hicatbaSeed = array(
     ),
 
     'zone_translations' => array(
-        'trung-tam-cat-ba' => array('vi' => 'Trung tâm đảo Cát Bà', 'en' => 'Cat Ba Town Centre',
-            'tagline' => array('vi' => 'Bến Bèo, bãi Cát Cò và nhịp sống phố đảo', 'en' => 'Ben Beo pier, Cat Co beaches and island town life')),
-        'vinh-lan-ha' => array('vi' => 'Vịnh Lan Hạ', 'en' => 'Lan Ha Bay',
-            'tagline' => array('vi' => 'Hơn 400 đảo đá vôi, vịnh xanh vắng dấu chân người', 'en' => 'Over 400 limestone islands, an untouched blue bay')),
-        'vuon-quoc-gia' => array('vi' => 'Vườn quốc gia Cát Bà', 'en' => 'Cat Ba National Park',
-            'tagline' => array('vi' => 'Rừng nguyên sinh, hang động và voọc Cát Bà quý hiếm', 'en' => 'Primary forest, caves and the rare Cat Ba langur')),
-        'dao-khi' => array('vi' => 'Đảo Khỉ (Cát Dứa)', 'en' => 'Monkey Island (Cat Dua)',
-            'tagline' => array('vi' => 'Bãi cát trắng và đàn khỉ hoang dã', 'en' => 'White sand beach and wild monkeys')),
-        'lang-viet-hai' => array('vi' => 'Làng Việt Hải', 'en' => 'Viet Hai Village',
-            'tagline' => array('vi' => 'Bản làng giữa vườn quốc gia, không tiếng xe máy', 'en' => 'A village inside the national park, free of motorbikes')),
-        'cai-beo' => array('vi' => 'Làng chài Cái Bèo', 'en' => 'Cai Beo Fishing Village',
-            'tagline' => array('vi' => 'Làng chài cổ trên vịnh, gắn với di chỉ khảo cổ hơn 6.000 năm', 'en' => 'An ancient floating village linked to a 6,000-year-old archaeological site')),
-        'ket-hop-ha-long' => array('vi' => 'Kết hợp Hạ Long', 'en' => 'Combined with Halong Bay',
-            'tagline' => array('vi' => 'Nối liền hai vịnh di sản trong một hành trình', 'en' => 'Two heritage bays in a single journey')),
+        'trung-tam-cat-ba' => array('vi' => 'Trung tâm đảo Cát Bà',
+
+
+
+'en' => 'Cat Ba Town Centre',
+            'tagline' => array('vi' => 'Bến Bèo, bãi Cát Cò và nhịp sống phố đảo',
+
+
+
+'en' => 'Ben Beo pier, Cat Co beaches and island town life')),
+        'vinh-lan-ha' => array('vi' => 'Vịnh Lan Hạ',
+
+
+
+'en' => 'Lan Ha Bay',
+            'tagline' => array('vi' => 'Hơn 400 đảo đá vôi, vịnh xanh vắng dấu chân người',
+
+
+
+'en' => 'Over 400 limestone islands, an untouched blue bay')),
+        'vuon-quoc-gia' => array('vi' => 'Vườn quốc gia Cát Bà',
+
+
+
+'en' => 'Cat Ba National Park',
+            'tagline' => array('vi' => 'Rừng nguyên sinh, hang động và voọc Cát Bà quý hiếm',
+
+
+
+'en' => 'Primary forest, caves and the rare Cat Ba langur')),
+        'dao-khi' => array('vi' => 'Đảo Khỉ (Cát Dứa)',
+
+
+
+'en' => 'Monkey Island (Cat Dua)',
+            'tagline' => array('vi' => 'Bãi cát trắng và đàn khỉ hoang dã',
+
+
+
+'en' => 'White sand beach and wild monkeys')),
+        'lang-viet-hai' => array('vi' => 'Làng Việt Hải',
+
+
+
+'en' => 'Viet Hai Village',
+            'tagline' => array('vi' => 'Bản làng giữa vườn quốc gia, không tiếng xe máy',
+
+
+
+'en' => 'A village inside the national park, free of motorbikes')),
+        'cai-beo' => array('vi' => 'Làng chài Cái Bèo',
+
+
+
+'en' => 'Cai Beo Fishing Village',
+            'tagline' => array('vi' => 'Làng chài cổ trên vịnh, gắn với di chỉ khảo cổ hơn 6.000 năm',
+
+
+
+'en' => 'An ancient floating village linked to a 6,000-year-old archaeological site')),
+        'ket-hop-ha-long' => array('vi' => 'Kết hợp Hạ Long',
+
+
+
+'en' => 'Combined with Halong Bay',
+            'tagline' => array('vi' => 'Nối liền hai vịnh di sản trong một hành trình',
+
+
+
+'en' => 'Two heritage bays in a single journey')),
     ),
 
     'tours' => array(
         array(
             'slug' => 'cat-ba-3-ngay-tong-quan-dao',
             'title' => 'Cát Bà 3 ngày 2 đêm — Tổng quan đảo ngọc',
-            'zoneSlug' => 'trung-tam-cat-ba', 'zone' => 'Trung tâm đảo Cát Bà',
-            'tourCode' => 'CB3D-01', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 142, 'badge' => 'Bán chạy nhất', 'featured' => true,
-            'styles' => array('beach', 'nature-park', 'balanced'),
-            'quote' => array('text' => 'Ba ngày vừa đủ để thấy hết vẻ đẹp của Cát Bà — từ vịnh, rừng đến bãi biển.', 'author' => 'Anh Trọng Nghĩa'),
-            'places' => array('Bến Bèo', 'Vịnh Lan Hạ', 'Đảo Khỉ', 'Vườn quốc gia Cát Bà', 'Bãi Cát Cò'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'zone' => 'Trung tâm đảo Cát Bà',
+            'tourCode' => 'CB3D-01',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 142,
+            'badge' => 'Bán chạy nhất',
+            'featured' => true,
+            'styles' => array(
+                '3n2d',
+            ),
+            'quote' => array(
+                'text' => 'Ba ngày vừa đủ để thấy hết vẻ đẹp của Cát Bà — từ vịnh, rừng đến bãi biển.',
+                'author' => 'Anh Trọng Nghĩa',
+            ),
+            'places' => array(
+                'Bến Bèo',
+                'Vịnh Lan Hạ',
+                'Đảo Khỉ',
+                'Vườn quốc gia Cát Bà',
+                'Bãi Cát Cò',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
             'highlightsIntro' => 'Lịch trình cân bằng cho lần đầu đến Cát Bà: một đêm ngủ vịnh, một ngày trekking rừng, một buổi tắm biển thư thái.',
             'highlights' => array(
                 'Ngủ đêm trên du thuyền giữa vịnh Lan Hạ',
@@ -221,15 +412,41 @@ $__hicatbaSeed = array(
                 'Thưởng thức hải sản tại chợ Cát Bà về đêm',
             ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Cát Bà — Lên du thuyền vịnh Lan Hạ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('car', 'cruise', 'kayak'), 'overnight' => 'Trên du thuyền',
-                    'content' => 'Đón tại bến tàu/khách sạn, di chuyển ra vịnh Lan Hạ. Ăn trưa hải sản trên du thuyền, chiều chèo kayak qua hang Luồn và tắm tại bãi Ba Trái Đào. Tối tiệc BBQ trên boong, câu mực đêm.'),
-                array('day' => 2, 'title' => 'Bình minh vịnh — Trekking vườn quốc gia', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('cruise', 'car', 'trekking'), 'overnight' => 'Trung tâm Cát Bà',
-                    'content' => 'Đón bình minh trên vịnh, trả tàu về bến Bèo. Chiều trekking 2 giờ trong vườn quốc gia, ghé hang Trung Trang. Tối tự do khám phá chợ đêm Cát Bà.'),
-                array('day' => 3, 'title' => 'Đảo Khỉ — Tạm biệt Cát Bà', 'meals' => 'Sáng; Trưa',
-                    'transport' => array('boat', 'car'), 'overnight' => NULL,
-                    'content' => 'Tàu ra Đảo Khỉ (Cát Dứa), tắm biển và lặn ngắm san hô buổi sáng. Ăn trưa hải sản, chiều xe/tàu đưa về Hải Phòng hoặc Hà Nội theo lịch đã đặt.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Cát Bà — Lên du thuyền vịnh Lan Hạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'car',
+                        'cruise',
+                        'kayak',
+                    ),
+                    'overnight' => 'Trên du thuyền',
+                    'content' => 'Đón tại bến tàu/khách sạn, di chuyển ra vịnh Lan Hạ. Ăn trưa hải sản trên du thuyền, chiều chèo kayak qua hang Luồn và tắm tại bãi Ba Trái Đào. Tối tiệc BBQ trên boong, câu mực đêm.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Bình minh vịnh — Trekking vườn quốc gia',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'cruise',
+                        'car',
+                        'trekking',
+                    ),
+                    'overnight' => 'Trung tâm Cát Bà',
+                    'content' => 'Đón bình minh trên vịnh, trả tàu về bến Bèo. Chiều trekking 2 giờ trong vườn quốc gia, ghé hang Trung Trang. Tối tự do khám phá chợ đêm Cát Bà.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Đảo Khỉ — Tạm biệt Cát Bà',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu ra Đảo Khỉ (Cát Dứa), tắm biển và lặn ngắm san hô buổi sáng. Ăn trưa hải sản, chiều xe/tàu đưa về Hải Phòng hoặc Hà Nội theo lịch đã đặt.',
+                ),
             ),
             'inclusions' => array(
                 'Cabin du thuyền 1 đêm + khách sạn 3* trung tâm 1 đêm',
@@ -238,480 +455,1361 @@ $__hicatbaSeed = array(
                 'Kayak, hướng dẫn viên trekking địa phương',
                 'Xe đưa đón trong đảo',
             ),
-            'exclusions' => array('Vé phà/xe từ Hà Nội hoặc Hải Phòng ra Cát Bà (đặt thêm)', 'Đồ uống ngoài chương trình', 'Tiền tip', 'Bảo hiểm du lịch'),
-            'notes' => array('Lịch trình có thể đổi thứ tự tuỳ thời tiết và giờ tàu.', 'Tour ghép nhóm nhỏ tối đa 15 khách; có phương án tour riêng.'),
-            'faqs' => array(
-                array('q' => 'Cát Bà cách Hà Nội bao xa và đi bằng gì?', 'a' => 'Khoảng 150km, đi limousine gộp vé phà mất 2.5–3 giờ, hoặc kết hợp cao tốc Hải Phòng và tàu cao tốc Bến Bính — Cát Bà.'),
-                array('q' => 'Tour 3 ngày có phù hợp gia đình có trẻ nhỏ?', 'a' => 'Có. Ngày trekking có phương án đi ngắn hơn cho trẻ em, và du thuyền, Đảo Khỉ đều an toàn cho trẻ từ 5 tuổi.'),
+            'exclusions' => array(
+                'Vé phà/xe từ Hà Nội hoặc Hải Phòng ra Cát Bà (đặt thêm)',
+                'Đồ uống ngoài chương trình',
+                'Tiền tip',
+                'Bảo hiểm du lịch',
             ),
-            'galleryCount' => 6, 'priceFrom' => 2450000.0, 'currency' => 'VND',
+            'notes' => array(
+                'Lịch trình có thể đổi thứ tự tuỳ thời tiết và giờ tàu.',
+                'Tour ghép nhóm nhỏ tối đa 15 khách; có phương án tour riêng.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Cát Bà cách Hà Nội bao xa và đi bằng gì?',
+                    'a' => 'Khoảng 150km, đi limousine gộp vé phà mất 2.5–3 giờ, hoặc kết hợp cao tốc Hải Phòng và tàu cao tốc Bến Bính — Cát Bà.',
+                ),
+                array(
+                    'q' => 'Tour 3 ngày có phù hợp gia đình có trẻ nhỏ?',
+                    'a' => 'Có. Ngày trekking có phương án đi ngắn hơn cho trẻ em, và du thuyền, Đảo Khỉ đều an toàn cho trẻ từ 5 tuổi.',
+                ),
+            ),
+            'galleryCount' => 6,
+            'priceFrom' => 2450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'trekking-viet-hai-vqg-1-ngay',
             'title' => 'Trekking Việt Hải xuyên Vườn quốc gia Cát Bà — 1 ngày',
-            'zoneSlug' => 'vuon-quoc-gia', 'zone' => 'Vườn quốc gia Cát Bà',
-            'tourCode' => 'CB1D-02', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 76, 'badge' => NULL, 'featured' => true,
-            'styles' => array('trekking', 'nature-park', 'small-group'),
-            'quote' => array('text' => 'Đường rừng mát, làng Việt Hải yên bình đến lạ — cảm giác như tách hẳn khỏi thị trấn.', 'author' => 'Chị Hải Yến'),
-            'places' => array('Trung tâm VQG', 'Ao Ếch', 'Làng Việt Hải'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Một ngày trekking 10km xuyên rừng nguyên sinh tới làng Việt Hải — nơi không có xe máy và điện lưới chỉ mới về gần đây.',
-            'highlights' => array('Rừng nguyên sinh và khả năng gặp voọc Cát Bà', 'Ao Ếch — hồ nước ngọt tự nhiên giữa rừng', 'Ăn trưa tại nhà dân làng Việt Hải', 'Thuyền về qua vịnh, ngắm núi đá vôi'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Trekking Việt Hải — Ao Ếch', 'meals' => 'Sáng; Trưa',
-                    'transport' => array('car', 'trekking', 'boat'), 'overnight' => NULL,
-                    'content' => 'Xe đưa tới cửa rừng, trekking 10km qua Ao Ếch tới làng Việt Hải, ăn trưa tại nhà dân. Chiều đi thuyền từ Việt Hải về lại bến Bèo, ngắm vịnh trên đường về.'),
+            'zoneSlug' => 'vuon-quoc-gia',
+            'zone' => 'Vườn quốc gia Cát Bà',
+            'tourCode' => 'CB1D-02',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 76,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'trekking-vqg',
+                'lang-viet-hai',
             ),
-            'inclusions' => array('Hướng dẫn viên trekking địa phương', 'Vé vào vườn quốc gia', 'Bữa trưa tại làng', 'Thuyền về Việt Hải — bến Bèo'),
-            'exclusions' => array('Xe đón tại khách sạn (có thể gộp thêm)', 'Đồ uống', 'Giày trekking (nên tự mang)'),
-            'notes' => array('Độ khó trung bình, cần giày chống trượt.', 'Không phù hợp mùa mưa lớn tháng 7–8 do đường trơn.'),
-            'faqs' => array(array('q' => 'Có thể rút ngắn lộ trình không?', 'a' => 'Có — có thể đi thuyền một chiều và trekking một chiều để giảm còn khoảng 6km cho người mới.')),
-            'galleryCount' => 4, 'priceFrom' => 850000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đường rừng mát, làng Việt Hải yên bình đến lạ — cảm giác như tách hẳn khỏi thị trấn.',
+                'author' => 'Chị Hải Yến',
+            ),
+            'places' => array(
+                'Trung tâm VQG',
+                'Ao Ếch',
+                'Làng Việt Hải',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Một ngày trekking 10km xuyên rừng nguyên sinh tới làng Việt Hải — nơi không có xe máy và điện lưới chỉ mới về gần đây.',
+            'highlights' => array(
+                'Rừng nguyên sinh và khả năng gặp voọc Cát Bà',
+                'Ao Ếch — hồ nước ngọt tự nhiên giữa rừng',
+                'Ăn trưa tại nhà dân làng Việt Hải',
+                'Thuyền về qua vịnh, ngắm núi đá vôi',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Trekking Việt Hải — Ao Ếch',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'car',
+                        'trekking',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Xe đưa tới cửa rừng, trekking 10km qua Ao Ếch tới làng Việt Hải, ăn trưa tại nhà dân. Chiều đi thuyền từ Việt Hải về lại bến Bèo, ngắm vịnh trên đường về.',
+                ),
+            ),
+            'inclusions' => array(
+                'Hướng dẫn viên trekking địa phương',
+                'Vé vào vườn quốc gia',
+                'Bữa trưa tại làng',
+                'Thuyền về Việt Hải — bến Bèo',
+            ),
+            'exclusions' => array(
+                'Xe đón tại khách sạn (có thể gộp thêm)',
+                'Đồ uống',
+                'Giày trekking (nên tự mang)',
+            ),
+            'notes' => array(
+                'Độ khó trung bình, cần giày chống trượt.',
+                'Không phù hợp mùa mưa lớn tháng 7–8 do đường trơn.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Có thể rút ngắn lộ trình không?',
+                    'a' => 'Có — có thể đi thuyền một chiều và trekking một chiều để giảm còn khoảng 6km cho người mới.',
+                ),
+            ),
+            'galleryCount' => 4,
+            'priceFrom' => 850000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vinh-lan-ha-kayak-dao-khi-1-ngay',
             'title' => 'Vịnh Lan Hạ 1 ngày — Kayak, tắm biển & Đảo Khỉ',
-            'zoneSlug' => 'vinh-lan-ha', 'zone' => 'Vịnh Lan Hạ',
-            'tourCode' => 'CB1D-03', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 210, 'badge' => 'Được yêu thích', 'featured' => true,
-            'styles' => array('kayak-adventure', 'beach', 'day-trip', 'family'),
-            'quote' => array('text' => 'Nước trong đến mức nhìn thấy đáy — đúng như quảng cáo, không hề bị thổi phồng.', 'author' => 'Gia đình chị Thu Hằng'),
-            'places' => array('Vịnh Lan Hạ', 'Hang Luồn', 'Đảo Khỉ'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Tour ngày kinh điển nhất của Cát Bà: tàu gỗ, kayak, tắm biển và ghé Đảo Khỉ — không cần ngủ đêm.',
-            'highlights' => array('Chèo kayak qua hang Luồn', 'Tắm và lặn ngắm san hô tại vịnh', 'Ghé Đảo Khỉ chơi với khỉ hoang dã', 'Ăn trưa hải sản trên tàu'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Vịnh Lan Hạ — Đảo Khỉ', 'meals' => 'Trưa',
-                    'transport' => array('boat', 'kayak'), 'overnight' => NULL,
-                    'content' => 'Tàu đón tại bến Bèo, ra vịnh Lan Hạ chèo kayak, tắm biển tại các bãi hoang sơ. Ăn trưa trên tàu, chiều ghé Đảo Khỉ trước khi về lại bến.'),
+            'zoneSlug' => 'vinh-lan-ha',
+            'zone' => 'Vịnh Lan Hạ',
+            'tourCode' => 'CB1D-03',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 210,
+            'badge' => 'Được yêu thích',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'vinh-lan-ha',
+                'dao-khi-tam-bien',
             ),
-            'inclusions' => array('Tàu tham quan cả ngày', 'Kayak', 'Bữa trưa hải sản', 'Vé vào Đảo Khỉ'),
-            'exclusions' => array('Đồ uống', 'Xe đón tại khách sạn (đặt thêm phí nhỏ)'),
-            'notes' => array('Khởi hành 08:30, về khoảng 16:00 — không cần ngủ đêm.'),
+            'quote' => array(
+                'text' => 'Nước trong đến mức nhìn thấy đáy — đúng như quảng cáo, không hề bị thổi phồng.',
+                'author' => 'Gia đình chị Thu Hằng',
+            ),
+            'places' => array(
+                'Vịnh Lan Hạ',
+                'Hang Luồn',
+                'Đảo Khỉ',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Tour ngày kinh điển nhất của Cát Bà: tàu gỗ, kayak, tắm biển và ghé Đảo Khỉ — không cần ngủ đêm.',
+            'highlights' => array(
+                'Chèo kayak qua hang Luồn',
+                'Tắm và lặn ngắm san hô tại vịnh',
+                'Ghé Đảo Khỉ chơi với khỉ hoang dã',
+                'Ăn trưa hải sản trên tàu',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Vịnh Lan Hạ — Đảo Khỉ',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'boat',
+                        'kayak',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu đón tại bến Bèo, ra vịnh Lan Hạ chèo kayak, tắm biển tại các bãi hoang sơ. Ăn trưa trên tàu, chiều ghé Đảo Khỉ trước khi về lại bến.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu tham quan cả ngày',
+                'Kayak',
+                'Bữa trưa hải sản',
+                'Vé vào Đảo Khỉ',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+                'Xe đón tại khách sạn (đặt thêm phí nhỏ)',
+            ),
+            'notes' => array(
+                'Khởi hành 08:30, về khoảng 16:00 — không cần ngủ đêm.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 650000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cat-ba-ha-long-ket-hop-2n1d',
             'title' => 'Cát Bà — Hạ Long kết hợp 2 ngày 1 đêm',
-            'zoneSlug' => 'ket-hop-ha-long', 'zone' => 'Kết hợp Hạ Long',
-            'tourCode' => 'CBHL2D-04', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 58, 'badge' => NULL, 'featured' => true,
-            'styles' => array('multi-destination-combo', 'balanced', 'beach'),
-            'quote' => array('text' => 'Đi một lần thấy cả hai vịnh — không còn phải chọn Cát Bà hay Hạ Long nữa.', 'author' => 'Anh David Chen'),
-            'places' => array('Cát Bà', 'Vịnh Lan Hạ', 'Tuần Châu', 'Vịnh Hạ Long'),
-            'start' => 'Cát Bà', 'end' => 'Hạ Long',
-            'highlightsIntro' => 'Kết hợp trọn vẹn hai vịnh di sản chỉ trong 2 ngày, nối tuyến bằng tàu cao tốc Tuần Châu — Cát Bà.',
-            'highlights' => array('Ngủ đêm trên du thuyền vịnh Lan Hạ', 'Chèo kayak, tắm biển hoang sơ', 'Tàu cao tốc xuyên vịnh sang Hạ Long', 'Tham quan hang Sửng Sốt trước khi kết thúc'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cát Bà — Vịnh Lan Hạ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('boat', 'kayak', 'cruise'), 'overnight' => 'Trên du thuyền',
-                    'content' => 'Đón tại Cát Bà, ra vịnh Lan Hạ, kayak và tắm biển. Ngủ đêm trên du thuyền, tiệc tối trên boong.'),
-                array('day' => 2, 'title' => 'Sang Hạ Long — Hang Sửng Sốt', 'meals' => 'Sáng; Trưa',
-                    'transport' => array('cruise', 'boat'), 'overnight' => NULL,
-                    'content' => 'Sáng dậy sớm ngắm bình minh, tàu cao tốc đưa sang Tuần Châu (Hạ Long), thăm hang Sửng Sốt trước khi kết thúc hành trình tại Hạ Long hoặc quay lại Hà Nội.'),
+            'zoneSlug' => 'ket-hop-ha-long',
+            'zone' => 'Kết hợp Hạ Long',
+            'tourCode' => 'CBHL2D-04',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 58,
+            'badge' => null,
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('Cabin du thuyền 1 đêm', 'Bữa ăn theo chương trình', 'Tàu cao tốc Cát Bà — Tuần Châu', 'Vé tham quan hang Sửng Sốt'),
-            'exclusions' => array('Xe từ Hà Nội đến Cát Bà và từ Hạ Long về Hà Nội (đặt thêm)', 'Đồ uống', 'Tip'),
-            'notes' => array('Có thể đổi chiều: khởi hành từ Hạ Long, kết thúc tại Cát Bà.'),
-            'faqs' => array(array('q' => 'Tàu cao tốc Cát Bà — Tuần Châu mất bao lâu?', 'a' => 'Khoảng 45–60 phút, chạy trực tiếp qua vịnh, không cần quay lại đất liền.')),
-            'galleryCount' => 5, 'priceFrom' => 3200000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đi một lần thấy cả hai vịnh — không còn phải chọn Cát Bà hay Hạ Long nữa.',
+                'author' => 'Anh David Chen',
+            ),
+            'places' => array(
+                'Cát Bà',
+                'Vịnh Lan Hạ',
+                'Tuần Châu',
+                'Vịnh Hạ Long',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Hạ Long',
+            'highlightsIntro' => 'Kết hợp trọn vẹn hai vịnh di sản chỉ trong 2 ngày, nối tuyến bằng tàu cao tốc Tuần Châu — Cát Bà.',
+            'highlights' => array(
+                'Ngủ đêm trên du thuyền vịnh Lan Hạ',
+                'Chèo kayak, tắm biển hoang sơ',
+                'Tàu cao tốc xuyên vịnh sang Hạ Long',
+                'Tham quan hang Sửng Sốt trước khi kết thúc',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cát Bà — Vịnh Lan Hạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'kayak',
+                        'cruise',
+                    ),
+                    'overnight' => 'Trên du thuyền',
+                    'content' => 'Đón tại Cát Bà, ra vịnh Lan Hạ, kayak và tắm biển. Ngủ đêm trên du thuyền, tiệc tối trên boong.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Sang Hạ Long — Hang Sửng Sốt',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'cruise',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng dậy sớm ngắm bình minh, tàu cao tốc đưa sang Tuần Châu (Hạ Long), thăm hang Sửng Sốt trước khi kết thúc hành trình tại Hạ Long hoặc quay lại Hà Nội.',
+                ),
+            ),
+            'inclusions' => array(
+                'Cabin du thuyền 1 đêm',
+                'Bữa ăn theo chương trình',
+                'Tàu cao tốc Cát Bà — Tuần Châu',
+                'Vé tham quan hang Sửng Sốt',
+            ),
+            'exclusions' => array(
+                'Xe từ Hà Nội đến Cát Bà và từ Hạ Long về Hà Nội (đặt thêm)',
+                'Đồ uống',
+                'Tip',
+            ),
+            'notes' => array(
+                'Có thể đổi chiều: khởi hành từ Hạ Long, kết thúc tại Cát Bà.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Tàu cao tốc Cát Bà — Tuần Châu mất bao lâu?',
+                    'a' => 'Khoảng 45–60 phút, chạy trực tiếp qua vịnh, không cần quay lại đất liền.',
+                ),
+            ),
+            'galleryCount' => 5,
+            'priceFrom' => 3200000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cat-ba-5-ngay-nghi-duong-kham-pha',
             'title' => 'Cát Bà 5 ngày 4 đêm — Nghỉ dưỡng, lặn biển & trekking trọn vẹn',
-            'zoneSlug' => 'trung-tam-cat-ba', 'zone' => 'Trung tâm đảo Cát Bà',
-            'tourCode' => 'CB5D-05', 'duration' => '5 ngày 4 đêm', 'days' => 5,
-            'rating' => 5.0, 'reviewCount' => 34, 'badge' => 'Trải nghiệm sâu', 'featured' => true,
-            'styles' => array('long-duration', 'beach', 'diving-snorkel', 'nature-park'),
-            'quote' => array('text' => 'Năm ngày đủ để không vội — có cả ngày chỉ nằm biển, có ngày leo núi mệt nhoài, rất đáng.', 'author' => 'Cặp đôi Minh & Diệu'),
-            'places' => array('Bãi Cát Cò', 'Vịnh Lan Hạ', 'Vườn quốc gia', 'Làng Việt Hải', 'Đảo Khỉ', 'Cái Bèo'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'zone' => 'Trung tâm đảo Cát Bà',
+            'tourCode' => 'CB5D-05',
+            'duration' => '5 ngày 4 đêm',
+            'days' => 5,
+            'rating' => 5,
+            'reviewCount' => 34,
+            'badge' => 'Trải nghiệm sâu',
+            'featured' => true,
+            'styles' => array(
+                '5-plus-days',
+            ),
+            'quote' => array(
+                'text' => 'Năm ngày đủ để không vội — có cả ngày chỉ nằm biển, có ngày leo núi mệt nhoài, rất đáng.',
+                'author' => 'Cặp đôi Minh & Diệu',
+            ),
+            'places' => array(
+                'Bãi Cát Cò',
+                'Vịnh Lan Hạ',
+                'Vườn quốc gia',
+                'Làng Việt Hải',
+                'Đảo Khỉ',
+                'Cái Bèo',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
             'highlightsIntro' => 'Lịch trình sâu nhất của chúng tôi: đủ thời gian cho biển, rừng, làng chài và cả những buổi chiều không làm gì.',
-            'highlights' => array('1 đêm du thuyền vịnh Lan Hạ + 3 đêm resort Cát Cò', 'Trekking Việt Hải cả ngày', 'Lặn ngắm san hô trên vịnh', 'Một ngày tự do tại resort bãi Cát Cò', 'Buổi sáng Đảo Khỉ trước khi về'),
+            'highlights' => array(
+                '1 đêm du thuyền vịnh Lan Hạ + 3 đêm resort Cát Cò',
+                'Trekking Việt Hải cả ngày',
+                'Lặn ngắm san hô trên vịnh',
+                'Một ngày tự do tại resort bãi Cát Cò',
+                'Buổi sáng Đảo Khỉ trước khi về',
+            ),
             'itinerary' => array(
-                array('day' => 1, 'title' => 'Đến Cát Bà — Nhận phòng bãi Cát Cò', 'meals' => 'Tối',
-                    'transport' => array('car', 'boat'), 'overnight' => 'Bãi Cát Cò',
-                    'content' => 'Đón tại Hải Phòng/Hà Nội, ra đảo, nhận phòng resort. Tối dạo chợ Cát Bà, ăn hải sản.'),
-                array('day' => 2, 'title' => 'Vịnh Lan Hạ — Lên du thuyền', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('boat', 'kayak', 'cruise'), 'overnight' => 'Trên du thuyền',
-                    'content' => 'Ra vịnh, kayak và lặn ngắm san hô, ngủ đêm trên du thuyền.'),
-                array('day' => 3, 'title' => 'Trekking Việt Hải xuyên vườn quốc gia', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('trekking', 'boat', 'car'), 'overnight' => 'Bãi Cát Cò',
-                    'content' => 'Trả tàu về bến Bèo, trekking tới làng Việt Hải và Ao Ếch, thuyền về. Tối nghỉ lại resort.'),
-                array('day' => 4, 'title' => 'Ngày tự do nghỉ dưỡng bãi Cát Cò', 'meals' => 'Sáng',
-                    'transport' => array(), 'overnight' => 'Bãi Cát Cò',
-                    'content' => 'Buổi sáng tắm biển, spa tùy chọn. Chiều có thể thuê xe máy dạo thị trấn hoặc ghé làng chài Cái Bèo.'),
-                array('day' => 5, 'title' => 'Đảo Khỉ — Tạm biệt đảo', 'meals' => 'Sáng; Trưa',
-                    'transport' => array('boat', 'car'), 'overnight' => NULL,
-                    'content' => 'Tàu ra Đảo Khỉ buổi sáng, ăn trưa hải sản, chiều xe/tàu về Hải Phòng hoặc Hà Nội.'),
+                array(
+                    'day' => 1,
+                    'title' => 'Đến Cát Bà — Nhận phòng bãi Cát Cò',
+                    'meals' => 'Tối',
+                    'transport' => array(
+                        'car',
+                        'boat',
+                    ),
+                    'overnight' => 'Bãi Cát Cò',
+                    'content' => 'Đón tại Hải Phòng/Hà Nội, ra đảo, nhận phòng resort. Tối dạo chợ Cát Bà, ăn hải sản.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Vịnh Lan Hạ — Lên du thuyền',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'kayak',
+                        'cruise',
+                    ),
+                    'overnight' => 'Trên du thuyền',
+                    'content' => 'Ra vịnh, kayak và lặn ngắm san hô, ngủ đêm trên du thuyền.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Trekking Việt Hải xuyên vườn quốc gia',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'trekking',
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => 'Bãi Cát Cò',
+                    'content' => 'Trả tàu về bến Bèo, trekking tới làng Việt Hải và Ao Ếch, thuyền về. Tối nghỉ lại resort.',
+                ),
+                array(
+                    'day' => 4,
+                    'title' => 'Ngày tự do nghỉ dưỡng bãi Cát Cò',
+                    'meals' => 'Sáng',
+                    'transport' => array(),
+                    'overnight' => 'Bãi Cát Cò',
+                    'content' => 'Buổi sáng tắm biển, spa tùy chọn. Chiều có thể thuê xe máy dạo thị trấn hoặc ghé làng chài Cái Bèo.',
+                ),
+                array(
+                    'day' => 5,
+                    'title' => 'Đảo Khỉ — Tạm biệt đảo',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu ra Đảo Khỉ buổi sáng, ăn trưa hải sản, chiều xe/tàu về Hải Phòng hoặc Hà Nội.',
+                ),
             ),
-            'inclusions' => array('Resort 4* bãi Cát Cò 3 đêm + du thuyền 1 đêm', 'Toàn bộ bữa ăn theo chương trình', 'Vé vườn quốc gia, Đảo Khỉ, lặn ngắm san hô', 'Hướng dẫn viên suốt tuyến'),
-            'exclusions' => array('Vé phà/xe khởi hành và kết thúc', 'Chi phí cá nhân', 'Bảo hiểm du lịch'),
-            'notes' => array('Có thể đổi ngày tự do thành tour leo núi đá vôi hoặc lặn chuyên sâu theo yêu cầu.'),
+            'inclusions' => array(
+                'Resort 4* bãi Cát Cò 3 đêm + du thuyền 1 đêm',
+                'Toàn bộ bữa ăn theo chương trình',
+                'Vé vườn quốc gia, Đảo Khỉ, lặn ngắm san hô',
+                'Hướng dẫn viên suốt tuyến',
+            ),
+            'exclusions' => array(
+                'Vé phà/xe khởi hành và kết thúc',
+                'Chi phí cá nhân',
+                'Bảo hiểm du lịch',
+            ),
+            'notes' => array(
+                'Có thể đổi ngày tự do thành tour leo núi đá vôi hoặc lặn chuyên sâu theo yêu cầu.',
+            ),
             'faqs' => array(
-                array('q' => 'Tour 5 ngày có phù hợp cặp đôi trăng mật?', 'a' => 'Có — nhiều cặp chọn cabin ban công trên du thuyền và ngày tự do tại resort cho riêng tư.'),
+                array(
+                    'q' => 'Tour 5 ngày có phù hợp cặp đôi trăng mật?',
+                    'a' => 'Có — nhiều cặp chọn cabin ban công trên du thuyền và ngày tự do tại resort cho riêng tư.',
+                ),
             ),
-            'galleryCount' => 6, 'priceFrom' => 5900000.0, 'currency' => 'VND',
+            'galleryCount' => 6,
+            'priceFrom' => 5900000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'lang-chai-cai-beo-hang-trung-trang-nua-ngay',
             'title' => 'Làng chài Cái Bèo & hang Trung Trang — nửa ngày',
-            'zoneSlug' => 'cai-beo', 'zone' => 'Làng chài Cái Bèo',
-            'tourCode' => 'CBHD-06', 'duration' => 'Nửa ngày (4 giờ)', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 41, 'badge' => NULL, 'featured' => false,
-            'styles' => array('floating-village-culture', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Tour ngắn nhưng đúng chất địa phương — được lên nhà bè, xem người dân nuôi cá.', 'author' => 'Bạn Anh Khoa'),
-            'places' => array('Làng chài Cái Bèo', 'Hang Trung Trang'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Lựa chọn lý tưởng cho buổi chiều còn trống trước hoặc sau chuyến đi chính — ghé làng chài cổ và một hang động ngắn.',
-            'highlights' => array('Thuyền nan tham quan làng chài nổi Cái Bèo', 'Nghe kể về di chỉ khảo cổ hơn 6.000 năm', 'Hang Trung Trang mát mẻ, dễ đi'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cái Bèo — Trung Trang', 'meals' => NULL,
-                    'transport' => array('boat', 'car'), 'overnight' => NULL,
-                    'content' => 'Thuyền nan dạo quanh làng chài Cái Bèo, sau đó xe đưa tới hang Trung Trang tham quan khoảng 30 phút rồi về lại trung tâm.'),
+            'zoneSlug' => 'cai-beo',
+            'zone' => 'Làng chài Cái Bèo',
+            'tourCode' => 'CBHD-06',
+            'duration' => 'Nửa ngày (4 giờ)',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 41,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'lang-chai-cai-beo',
             ),
-            'inclusions' => array('Thuyền nan làng chài', 'Vé hang Trung Trang', 'Xe di chuyển'),
-            'exclusions' => array('Ăn uống', 'HDV tiếng Anh (có phụ phí nhỏ)'),
-            'notes' => array('Phù hợp ghép cùng buổi sáng hoặc buổi tối tự do trong ngày.'),
+            'quote' => array(
+                'text' => 'Tour ngắn nhưng đúng chất địa phương — được lên nhà bè, xem người dân nuôi cá.',
+                'author' => 'Bạn Anh Khoa',
+            ),
+            'places' => array(
+                'Làng chài Cái Bèo',
+                'Hang Trung Trang',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Lựa chọn lý tưởng cho buổi chiều còn trống trước hoặc sau chuyến đi chính — ghé làng chài cổ và một hang động ngắn.',
+            'highlights' => array(
+                'Thuyền nan tham quan làng chài nổi Cái Bèo',
+                'Nghe kể về di chỉ khảo cổ hơn 6.000 năm',
+                'Hang Trung Trang mát mẻ, dễ đi',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cái Bèo — Trung Trang',
+                    'meals' => null,
+                    'transport' => array(
+                        'boat',
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Thuyền nan dạo quanh làng chài Cái Bèo, sau đó xe đưa tới hang Trung Trang tham quan khoảng 30 phút rồi về lại trung tâm.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền nan làng chài',
+                'Vé hang Trung Trang',
+                'Xe di chuyển',
+            ),
+            'exclusions' => array(
+                'Ăn uống',
+                'HDV tiếng Anh (có phụ phí nhỏ)',
+            ),
+            'notes' => array(
+                'Phù hợp ghép cùng buổi sáng hoặc buổi tối tự do trong ngày.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 350000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 350000,
+            'currency' => 'VND',
         ),
-        // ── Tours bổ sung theo zone (lấp khoảng trống danh mục) ──────────────
         array(
             'slug' => 'cat-ba-2-ngay-gia-dinh-bien-dao',
             'title' => 'Cát Bà 2 ngày 1 đêm — Gia đình: biển, vịnh & Đảo Khỉ',
-            'zoneSlug' => 'trung-tam-cat-ba', 'zone' => 'Trung tâm đảo Cát Bà',
-            'tourCode' => 'CB2D-07', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 88, 'badge' => 'Gia đình', 'featured' => true,
-            'styles' => array('family', 'beach', 'day-trip', 'balanced'),
-            'quote' => array('text' => 'Con tôi 6 tuổi cũng đi kayak được — lịch trình vừa sức, không vội.', 'author' => 'Chị Mai Anh'),
-            'places' => array('Bãi Cát Cò', 'Vịnh Lan Hạ', 'Đảo Khỉ'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Weekend gọn cho gia đình: một ngày vịnh + Đảo Khỉ, một buổi sáng tắm biển Cát Cò trước khi về.',
-            'highlights' => array('Tour vịnh Lan Hạ & Đảo Khỉ cả ngày', 'Ngủ khách sạn trung tâm gần biển', 'Buổi sáng tự do tắm Cát Cò 1–3', 'Nhịp độ chậm, phù hợp trẻ từ 5 tuổi'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Vịnh Lan Hạ — Đảo Khỉ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('boat', 'kayak'), 'overnight' => 'Trung tâm Cát Bà',
-                    'content' => 'Tàu ra vịnh, kayak nhẹ, tắm biển, ghé Đảo Khỉ. Tối ăn hải sản chợ Cát Bà.'),
-                array('day' => 2, 'title' => 'Bãi Cát Cò — Về', 'meals' => 'Sáng',
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Sáng tắm biển Cát Cò, nhận phòng muộn / gửi đồ, chiều về Hải Phòng hoặc Hà Nội.'),
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'zone' => 'Trung tâm đảo Cát Bà',
+            'tourCode' => 'CB2D-07',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 88,
+            'badge' => 'Gia đình',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
             ),
-            'inclusions' => array('Khách sạn 3* 1 đêm', 'Tour vịnh + Đảo Khỉ', 'Bữa trưa ngày 1', 'Xe đưa đón trong đảo'),
-            'exclusions' => array('Vé phà/xe ra đảo', 'Bữa tối, đồ uống', 'Tip'),
-            'notes' => array('Có ghế trẻ em trên tàu theo yêu cầu trước 24 giờ.'),
+            'quote' => array(
+                'text' => 'Con tôi 6 tuổi cũng đi kayak được — lịch trình vừa sức, không vội.',
+                'author' => 'Chị Mai Anh',
+            ),
+            'places' => array(
+                'Bãi Cát Cò',
+                'Vịnh Lan Hạ',
+                'Đảo Khỉ',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Cuối tuần gọn cho gia đình: một ngày vịnh + Đảo Khỉ, một buổi sáng tắm biển Cát Cò trước khi về.',
+            'highlights' => array(
+                'Tour vịnh Lan Hạ & Đảo Khỉ cả ngày',
+                'Ngủ khách sạn trung tâm gần biển',
+                'Buổi sáng tự do tắm Cát Cò 1–3',
+                'Nhịp độ chậm, phù hợp trẻ từ 5 tuổi',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Vịnh Lan Hạ — Đảo Khỉ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'kayak',
+                    ),
+                    'overnight' => 'Trung tâm Cát Bà',
+                    'content' => 'Tàu ra vịnh, kayak nhẹ, tắm biển, ghé Đảo Khỉ. Tối ăn hải sản chợ Cát Bà.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Bãi Cát Cò — Về',
+                    'meals' => 'Sáng',
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng tắm biển Cát Cò, nhận phòng muộn / gửi đồ, chiều về Hải Phòng hoặc Hà Nội.',
+                ),
+            ),
+            'inclusions' => array(
+                'Khách sạn 3* 1 đêm',
+                'Tour vịnh + Đảo Khỉ',
+                'Bữa trưa ngày 1',
+                'Xe đưa đón trong đảo',
+            ),
+            'exclusions' => array(
+                'Vé phà/xe ra đảo',
+                'Bữa tối, đồ uống',
+                'Tip',
+            ),
+            'notes' => array(
+                'Có ghế trẻ em trên tàu theo yêu cầu trước 24 giờ.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 1650000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 1650000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'dap-xe-xuyen-dao-cat-ba-nua-ngay',
             'title' => 'Đạp xe xuyên đảo Cát Bà — làng chài & đồi chè',
-            'zoneSlug' => 'trung-tam-cat-ba', 'zone' => 'Trung tâm đảo Cát Bà',
-            'tourCode' => 'CBHD-08', 'duration' => 'Nửa ngày (3–4 giờ)', 'days' => 1,
-            'rating' => 4.6, 'reviewCount' => 29, 'badge' => NULL, 'featured' => false,
-            'styles' => array('day-trip', 'small-group', 'balanced'),
-            'quote' => array('text' => 'Gió biển, đường ít xe — cách xem đảo khác hẳn ngồi ô tô.', 'author' => 'Anh Phong'),
-            'places' => array('Thị trấn Cát Bà', 'Đồi chè', 'Làng ven biển'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Tour nửa ngày trên xe đạp địa hình nhẹ: ven biển, đồi chè và làng nhỏ quanh thị trấn.',
-            'highlights' => array('Xe đạp + mũ bảo hiểm', 'Dừng ảnh đồi chè và view vịnh', 'HDV bản địa dẫn đường'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đạp xe quanh đảo', 'meals' => NULL,
-                    'transport' => array('bike'), 'overnight' => NULL,
-                    'content' => 'Nhận xe tại trung tâm, đạp ~15–20km vòng đồi chè và làng ven biển, nghỉ nước dừa, về lại điểm xuất phát.'),
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'zone' => 'Trung tâm đảo Cát Bà',
+            'tourCode' => 'CBHD-08',
+            'duration' => 'Nửa ngày (3–4 giờ)',
+            'days' => 1,
+            'rating' => 4.6,
+            'reviewCount' => 29,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Thuê xe đạp', 'Mũ bảo hiểm', 'Nước uống', 'HDV'),
-            'exclusions' => array('Ăn uống', 'Bảo hiểm cá nhân'),
-            'notes' => array('Độ khó dễ; có xe điện hỗ trợ người lớn tuổi.'),
+            'quote' => array(
+                'text' => 'Gió biển, đường ít xe — cách xem đảo khác hẳn ngồi ô tô.',
+                'author' => 'Anh Phong',
+            ),
+            'places' => array(
+                'Thị trấn Cát Bà',
+                'Đồi chè',
+                'Làng ven biển',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Tour nửa ngày trên xe đạp địa hình nhẹ: ven biển, đồi chè và làng nhỏ quanh thị trấn.',
+            'highlights' => array(
+                'Xe đạp + mũ bảo hiểm',
+                'Dừng ảnh đồi chè và view vịnh',
+                'HDV bản địa dẫn đường',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đạp xe quanh đảo',
+                    'meals' => null,
+                    'transport' => array(
+                        'bike',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Nhận xe tại trung tâm, đạp ~15–20km vòng đồi chè và làng ven biển, nghỉ nước dừa, về lại điểm xuất phát.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuê xe đạp',
+                'Mũ bảo hiểm',
+                'Nước uống',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Ăn uống',
+                'Bảo hiểm cá nhân',
+            ),
+            'notes' => array(
+                'Độ khó dễ; có xe điện hỗ trợ người lớn tuổi.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 290000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 290000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'bai-cat-co-tam-bien-spa-nua-ngay',
             'title' => 'Bãi Cát Cò — Tắm biển & thư giãn nửa ngày',
-            'zoneSlug' => 'trung-tam-cat-ba', 'zone' => 'Trung tâm đảo Cát Bà',
-            'tourCode' => 'CBHD-09', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.5, 'reviewCount' => 22, 'badge' => NULL, 'featured' => false,
-            'styles' => array('beach', 'day-trip', 'honeymoon'),
-            'quote' => array('text' => 'Chỉ cần một buổi chiều Cát Cò là đã “reset” cả tuần làm việc.', 'author' => 'Chị Hà My'),
-            'places' => array('Bãi Cát Cò 1', 'Bãi Cát Cò 2', 'Bãi Cát Cò 3'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Buổi chiều nhàn: ghế nằm, nước trong, có thể thêm massage chân ven biển.',
-            'highlights' => array('Ghế nằm + ô tại Cát Cò', 'Nước dừa / nước trái cây', 'Tuỳ chọn spa 30 phút'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Thư giãn Cát Cò', 'meals' => NULL,
-                    'transport' => array('car'), 'overnight' => NULL,
-                    'content' => 'Xe đưa tới bãi, nhận ghế nằm, tự do tắm biển 2–3 giờ, tuỳ chọn spa rồi về khách sạn.'),
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'zone' => 'Trung tâm đảo Cát Bà',
+            'tourCode' => 'CBHD-09',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.5,
+            'reviewCount' => 22,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
             ),
-            'inclusions' => array('Xe đưa đón', 'Ghế nằm', '1 nước giải khát'),
-            'exclusions' => array('Spa (phụ phí)', 'Đồ ăn'),
-            'notes' => array('Không phải tour “chạy điểm” — đúng nghĩa nghỉ.'),
+            'quote' => array(
+                'text' => 'Chỉ cần một buổi chiều Cát Cò là đã “reset” cả tuần làm việc.',
+                'author' => 'Chị Hà My',
+            ),
+            'places' => array(
+                'Bãi Cát Cò 1',
+                'Bãi Cát Cò 2',
+                'Bãi Cát Cò 3',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Buổi chiều nhàn: ghế nằm, nước trong, có thể thêm massage chân ven biển.',
+            'highlights' => array(
+                'Ghế nằm + ô tại Cát Cò',
+                'Nước dừa / nước trái cây',
+                'Tuỳ chọn spa 30 phút',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Thư giãn Cát Cò',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Xe đưa tới bãi, nhận ghế nằm, tự do tắm biển 2–3 giờ, tuỳ chọn spa rồi về khách sạn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Xe đưa đón',
+                'Ghế nằm',
+                '1 nước giải khát',
+            ),
+            'exclusions' => array(
+                'Spa (phụ phí)',
+                'Đồ ăn',
+            ),
+            'notes' => array(
+                'Không phải tour “chạy điểm” — đúng nghĩa nghỉ.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 250000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 250000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vinh-lan-ha-hoang-hon-nua-ngay',
             'title' => 'Hoàng hôn vịnh Lan Hạ — nửa ngày trên tàu',
-            'zoneSlug' => 'vinh-lan-ha', 'zone' => 'Vịnh Lan Hạ',
-            'tourCode' => 'CBHD-10', 'duration' => 'Nửa ngày (15:00–19:30)', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 67, 'badge' => 'Lãng mạn', 'featured' => true,
-            'styles' => array('honeymoon', 'day-trip', 'small-group'),
-            'quote' => array('text' => 'Ánh nắng vàng trên đá vôi — khoảnh khắc đẹp nhất chuyến đi của chúng tôi.', 'author' => 'Cặp đôi Nam & Linh'),
-            'places' => array('Vịnh Lan Hạ', 'Bãi hoàng hôn'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Tour chiều–tối: tàu nhỏ, đồ uống nhẹ, ngắm hoàng hôn và trở về khi đèn làng chài lấp lánh.',
-            'highlights' => array('Tàu nhỏ nhóm tối đa 12 khách', 'Đồ uống chào mừng', 'Góc chụp hoàng hôn đẹp nhất vịnh'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Hoàng hôn Lan Hạ', 'meals' => 'Đồ uống nhẹ',
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Lên tàu 15:00 tại bến Bèo, dạo vịnh, dừng bãi ngắm hoàng hôn, về bến khoảng 19:30.'),
+            'zoneSlug' => 'vinh-lan-ha',
+            'zone' => 'Vịnh Lan Hạ',
+            'tourCode' => 'CBHD-10',
+            'duration' => 'Nửa ngày (15:00–19:30)',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 67,
+            'badge' => 'Lãng mạn',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'vinh-lan-ha',
             ),
-            'inclusions' => array('Tàu', 'Đồ uống nhẹ', 'HDV'),
-            'exclusions' => array('Bữa tối', 'Xe khách sạn (có thể thêm)'),
-            'notes' => array('Phụ thuộc thời tiết nắng chiều; có lịch thay thế nếu mưa lớn.'),
+            'quote' => array(
+                'text' => 'Ánh nắng vàng trên đá vôi — khoảnh khắc đẹp nhất chuyến đi của chúng tôi.',
+                'author' => 'Cặp đôi Nam & Linh',
+            ),
+            'places' => array(
+                'Vịnh Lan Hạ',
+                'Bãi hoàng hôn',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Tour chiều–tối: tàu nhỏ, đồ uống nhẹ, ngắm hoàng hôn và trở về khi đèn làng chài lấp lánh.',
+            'highlights' => array(
+                'Tàu nhỏ nhóm tối đa 12 khách',
+                'Đồ uống chào mừng',
+                'Góc chụp hoàng hôn đẹp nhất vịnh',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Hoàng hôn Lan Hạ',
+                    'meals' => 'Đồ uống nhẹ',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Lên tàu 15:00 tại bến Bèo, dạo vịnh, dừng bãi ngắm hoàng hôn, về bến khoảng 19:30.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu',
+                'Đồ uống nhẹ',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Bữa tối',
+                'Xe khách sạn (có thể thêm)',
+            ),
+            'notes' => array(
+                'Phụ thuộc thời tiết nắng chiều; có lịch thay thế nếu mưa lớn.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 480000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 480000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vinh-lan-ha-lan-ngam-san-ho-1-ngay',
             'title' => 'Lặn ngắm san hô vịnh Lan Hạ — 1 ngày',
-            'zoneSlug' => 'vinh-lan-ha', 'zone' => 'Vịnh Lan Hạ',
-            'tourCode' => 'CB1D-11', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 54, 'badge' => NULL, 'featured' => false,
-            'styles' => array('diving-snorkel', 'beach', 'day-trip'),
-            'quote' => array('text' => 'San hô còn khá nguyên — hướng dẫn viên chỉ đúng điểm nước trong.', 'author' => 'Anh Khoa Diving'),
-            'places' => array('Vịnh Lan Hạ', 'Vạn Bội', 'Ba Trái Đào'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Ngày tập trung dưới nước: 2–3 điểm snorkel, thiết bị đầy đủ, HDV chuyên lặn.',
-            'highlights' => array('2–3 điểm lặn ngắm', 'Mặt nạ, ống thở, áo phao', 'Ăn trưa trên tàu', 'Ảnh dưới nước (tuỳ chọn)'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Snorkel Lan Hạ', 'meals' => 'Trưa',
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Tàu ra các điểm san hô sáng–chiều, nghỉ trưa trên tàu, về bến khoảng 16:00.'),
+            'zoneSlug' => 'vinh-lan-ha',
+            'zone' => 'Vịnh Lan Hạ',
+            'tourCode' => 'CB1D-11',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 54,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'vinh-lan-ha',
             ),
-            'inclusions' => array('Tàu', 'Thiết bị snorkel', 'Bữa trưa', 'HDV lặn'),
-            'exclusions' => array('Ảnh/video dưới nước', 'Đồ uống có cồn'),
-            'notes' => array('Biết bơi cơ bản; trẻ từ 8 tuổi đi cùng người lớn.'),
+            'quote' => array(
+                'text' => 'San hô còn khá nguyên — hướng dẫn viên chỉ đúng điểm nước trong.',
+                'author' => 'Anh Khoa Diving',
+            ),
+            'places' => array(
+                'Vịnh Lan Hạ',
+                'Vạn Bội',
+                'Ba Trái Đào',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Ngày tập trung dưới nước: 2–3 điểm snorkel, thiết bị đầy đủ, HDV chuyên lặn.',
+            'highlights' => array(
+                '2–3 điểm lặn ngắm',
+                'Mặt nạ, ống thở, áo phao',
+                'Ăn trưa trên tàu',
+                'Ảnh dưới nước (tuỳ chọn)',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Snorkel Lan Hạ',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu ra các điểm san hô sáng–chiều, nghỉ trưa trên tàu, về bến khoảng 16:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu',
+                'Thiết bị snorkel',
+                'Bữa trưa',
+                'HDV lặn',
+            ),
+            'exclusions' => array(
+                'Ảnh/video dưới nước',
+                'Đồ uống có cồn',
+            ),
+            'notes' => array(
+                'Biết bơi cơ bản; trẻ từ 8 tuổi đi cùng người lớn.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 890000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 890000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'vinh-lan-ha-private-kayak-1-ngay',
             'title' => 'Kayak riêng vịnh Lan Hạ — tour private 1 ngày',
-            'zoneSlug' => 'vinh-lan-ha', 'zone' => 'Vịnh Lan Hạ',
-            'tourCode' => 'CB1D-12', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 5.0, 'reviewCount' => 19, 'badge' => 'Private', 'featured' => false,
-            'styles' => array('kayak-adventure', 'small-group', 'honeymoon'),
-            'quote' => array('text' => 'Không đông đúc như tour ghép — được chèo vào những ngách không tàu lớn vào được.', 'author' => 'Chị Quỳnh'),
-            'places' => array('Hang Luồn', 'Bãi kín', 'Vịnh Lan Hạ'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Tàu riêng + kayak riêng cho 2–6 khách: lịch trình linh hoạt theo sức và sở thích.',
-            'highlights' => array('Tàu & HDV riêng', 'Kayak vào hang hẹp', 'Bữa trưa picnic trên bãi', 'Giờ khởi hành linh hoạt'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Kayak private', 'meals' => 'Trưa',
-                    'transport' => array('boat', 'kayak'), 'overnight' => NULL,
-                    'content' => 'Theo lịch riêng: chèo hang, tắm bãi kín, picnic, về theo giờ thỏa thuận.'),
+            'zoneSlug' => 'vinh-lan-ha',
+            'zone' => 'Vịnh Lan Hạ',
+            'tourCode' => 'CB1D-12',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 5,
+            'reviewCount' => 19,
+            'badge' => 'Private',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'vinh-lan-ha',
             ),
-            'inclusions' => array('Tàu riêng', 'Kayak', 'Picnic trưa', 'HDV'),
-            'exclusions' => array('Đồ uống có cồn', 'Tip'),
-            'notes' => array('Giá theo nhóm 2 khách; thêm khách tính phụ phí.'),
+            'quote' => array(
+                'text' => 'Không đông đúc như tour ghép — được chèo vào những ngách không tàu lớn vào được.',
+                'author' => 'Chị Quỳnh',
+            ),
+            'places' => array(
+                'Hang Luồn',
+                'Bãi kín',
+                'Vịnh Lan Hạ',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Tàu riêng + kayak riêng cho 2–6 khách: lịch trình linh hoạt theo sức và sở thích.',
+            'highlights' => array(
+                'Tàu & HDV riêng',
+                'Kayak vào hang hẹp',
+                'Bữa trưa picnic trên bãi',
+                'Giờ khởi hành linh hoạt',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Kayak private',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'boat',
+                        'kayak',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Theo lịch riêng: chèo hang, tắm bãi kín, picnic, về theo giờ thỏa thuận.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu riêng',
+                'Kayak',
+                'Picnic trưa',
+                'HDV',
+            ),
+            'exclusions' => array(
+                'Đồ uống có cồn',
+                'Tip',
+            ),
+            'notes' => array(
+                'Giá theo nhóm 2 khách; thêm khách tính phụ phí.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 2100000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 2100000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'trekking-vqg-nua-ngay-de',
             'title' => 'Trekking vườn quốc gia nửa ngày — dễ, phù hợp mọi lứa tuổi',
-            'zoneSlug' => 'vuon-quoc-gia', 'zone' => 'Vườn quốc gia Cát Bà',
-            'tourCode' => 'CBHD-13', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.7, 'reviewCount' => 45, 'badge' => NULL, 'featured' => false,
-            'styles' => array('trekking', 'nature-park', 'family', 'day-trip'),
-            'quote' => array('text' => 'Không phải 10km — chỉ vài km rừng mát, vẫn thấy được “chất” vườn quốc gia.', 'author' => 'Gia đình Hùng'),
-            'places' => array('Cửa rừng VQG', 'Hang Trung Trang', 'Điểm view'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Phiên bản rút gọn của trekking Việt Hải: 3–4km, hang Trung Trang, không đòi hỏi thể lực cao.',
-            'highlights' => array('Độ khó dễ', 'Hang Trung Trang', 'HDV bản địa', 'Xe đưa đón'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Rừng nhẹ — hang Trung Trang', 'meals' => NULL,
-                    'transport' => array('car', 'trekking'), 'overnight' => NULL,
-                    'content' => 'Xe tới cửa rừng, đi bộ nhẹ, thăm hang, nghỉ nước, về trung tâm trước trưa hoặc chiều tùy khung giờ chọn.'),
+            'zoneSlug' => 'vuon-quoc-gia',
+            'zone' => 'Vườn quốc gia Cát Bà',
+            'tourCode' => 'CBHD-13',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.7,
+            'reviewCount' => 45,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'trekking-vqg',
             ),
-            'inclusions' => array('Vé VQG', 'HDV', 'Xe đưa đón', 'Nước'),
-            'exclusions' => array('Ăn uống'),
-            'notes' => array('Phù hợp người lớn tuổi và trẻ em từ 6 tuổi.'),
+            'quote' => array(
+                'text' => 'Không phải 10km — chỉ vài km rừng mát, vẫn thấy được “chất” vườn quốc gia.',
+                'author' => 'Gia đình Hùng',
+            ),
+            'places' => array(
+                'Cửa rừng VQG',
+                'Hang Trung Trang',
+                'Điểm view',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Phiên bản rút gọn của trekking Việt Hải: 3–4km, hang Trung Trang, không đòi hỏi thể lực cao.',
+            'highlights' => array(
+                'Độ khó dễ',
+                'Hang Trung Trang',
+                'HDV bản địa',
+                'Xe đưa đón',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Rừng nhẹ — hang Trung Trang',
+                    'meals' => null,
+                    'transport' => array(
+                        'car',
+                        'trekking',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Xe tới cửa rừng, đi bộ nhẹ, thăm hang, nghỉ nước, về trung tâm trước trưa hoặc chiều tùy khung giờ chọn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Vé VQG',
+                'HDV',
+                'Xe đưa đón',
+                'Nước',
+            ),
+            'exclusions' => array(
+                'Ăn uống',
+            ),
+            'notes' => array(
+                'Phù hợp người lớn tuổi và trẻ em từ 6 tuổi.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 420000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 420000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'camping-viet-hai-2n1d',
             'title' => 'Camping / Homestay làng Việt Hải — 2 ngày 1 đêm',
-            'zoneSlug' => 'lang-viet-hai', 'zone' => 'Làng Việt Hải',
-            'tourCode' => 'CB2D-14', 'duration' => '2 ngày 1 đêm', 'days' => 2,
-            'rating' => 4.9, 'reviewCount' => 37, 'badge' => 'Bản địa', 'featured' => true,
-            'styles' => array('nature-park', 'trekking', 'small-group', 'multi-day'),
-            'quote' => array('text' => 'Đêm không sóng điện thoại — chỉ tiếng côn trùng và đèn dầu nhà dân.', 'author' => 'Bạn Minh Quân'),
-            'places' => array('Vườn quốc gia', 'Ao Ếch', 'Làng Việt Hải'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Trekking vào làng, ngủ homestay hoặc lều, ăn cùng người dân, thuyền về ngày hôm sau.',
-            'highlights' => array('Ngủ homestay / camping tại làng', 'Ăn tối cùng gia đình địa phương', 'Bình minh Ao Ếch', 'Thuyền về qua vịnh'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Trekking vào Việt Hải', 'meals' => 'Trưa; Tối',
-                    'transport' => array('trekking'), 'overnight' => 'Làng Việt Hải',
-                    'content' => 'Trekking xuyên rừng tới làng, nhận chỗ nghỉ, tắm giếng/ao, ăn tối nhà dân.'),
-                array('day' => 2, 'title' => 'Ao Ếch — Thuyền về', 'meals' => 'Sáng; Trưa',
-                    'transport' => array('trekking', 'boat'), 'overnight' => NULL,
-                    'content' => 'Sáng đi Ao Ếch, ăn trưa nhẹ, thuyền từ Việt Hải về bến Bèo.'),
+            'zoneSlug' => 'lang-viet-hai',
+            'zone' => 'Làng Việt Hải',
+            'tourCode' => 'CB2D-14',
+            'duration' => '2 ngày 1 đêm',
+            'days' => 2,
+            'rating' => 4.9,
+            'reviewCount' => 37,
+            'badge' => 'Bản địa',
+            'featured' => true,
+            'styles' => array(
+                '2n1d',
+                'trekking-vqg',
+                'lang-viet-hai',
             ),
-            'inclusions' => array('Homestay/lều 1 đêm', 'Bữa ăn theo chương trình', 'Vé VQG', 'HDV + thuyền về'),
-            'exclusions' => array('Túi ngủ (có thể thuê)', 'Đồ uống'),
-            'notes' => array('Sóng điện thoại yếu; nên báo gia đình trước.'),
-            'faqs' => array(array('q' => 'Có toilet không?', 'a' => 'Homestay có nhà vệ sinh đơn giản; camping dùng khu vệ sinh chung của làng.')),
-            'galleryCount' => 5, 'priceFrom' => 1450000.0, 'currency' => 'VND',
+            'quote' => array(
+                'text' => 'Đêm không sóng điện thoại — chỉ tiếng côn trùng và đèn dầu nhà dân.',
+                'author' => 'Bạn Minh Quân',
+            ),
+            'places' => array(
+                'Vườn quốc gia',
+                'Ao Ếch',
+                'Làng Việt Hải',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Trekking vào làng, ngủ homestay hoặc lều, ăn cùng người dân, thuyền về ngày hôm sau.',
+            'highlights' => array(
+                'Ngủ homestay / camping tại làng',
+                'Ăn tối cùng gia đình địa phương',
+                'Bình minh Ao Ếch',
+                'Thuyền về qua vịnh',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Trekking vào Việt Hải',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'trekking',
+                    ),
+                    'overnight' => 'Làng Việt Hải',
+                    'content' => 'Trekking xuyên rừng tới làng, nhận chỗ nghỉ, tắm giếng/ao, ăn tối nhà dân.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Ao Ếch — Thuyền về',
+                    'meals' => 'Sáng; Trưa',
+                    'transport' => array(
+                        'trekking',
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Sáng đi Ao Ếch, ăn trưa nhẹ, thuyền từ Việt Hải về bến Bèo.',
+                ),
+            ),
+            'inclusions' => array(
+                'Homestay/lều 1 đêm',
+                'Bữa ăn theo chương trình',
+                'Vé VQG',
+                'HDV + thuyền về',
+            ),
+            'exclusions' => array(
+                'Túi ngủ (có thể thuê)',
+                'Đồ uống',
+            ),
+            'notes' => array(
+                'Sóng điện thoại yếu; nên báo gia đình trước.',
+            ),
+            'faqs' => array(
+                array(
+                    'q' => 'Có toilet không?',
+                    'a' => 'Homestay có nhà vệ sinh đơn giản; camping dùng khu vệ sinh chung của làng.',
+                ),
+            ),
+            'galleryCount' => 5,
+            'priceFrom' => 1450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'lang-viet-hai-thuyen-nua-ngay',
             'title' => 'Làng Việt Hải bằng thuyền — nửa ngày không trekking',
-            'zoneSlug' => 'lang-viet-hai', 'zone' => 'Làng Việt Hải',
-            'tourCode' => 'CBHD-15', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.6, 'reviewCount' => 31, 'badge' => NULL, 'featured' => false,
-            'styles' => array('floating-village-culture', 'day-trip', 'family'),
-            'quote' => array('text' => 'Muốn thấy làng mà không đi bộ 10km — thuyền là lựa chọn đúng.', 'author' => 'Chị Lan'),
-            'places' => array('Làng Việt Hải', 'Vịnh gần làng'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Đi thuyền thẳng tới Việt Hải, dạo làng, uống nước chè nhà dân, không cần trekking.',
-            'highlights' => array('Không trekking', 'Thăm nhà dân', 'Phù hợp trẻ nhỏ / người lớn tuổi'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Thuyền tới Việt Hải', 'meals' => NULL,
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Tàu từ bến Bèo vào Việt Hải, dạo làng 60–90 phút, về lại trung tâm.'),
+            'zoneSlug' => 'lang-viet-hai',
+            'zone' => 'Làng Việt Hải',
+            'tourCode' => 'CBHD-15',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.6,
+            'reviewCount' => 31,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'lang-viet-hai',
             ),
-            'inclusions' => array('Tàu khứ hồi', 'HDV', 'Trà nước nhà dân'),
-            'exclusions' => array('Ăn trưa', 'Quà lưu niệm'),
-            'notes' => array('Phụ thuộc thuỷ triều — giờ xuất phát có thể dịch ±30 phút.'),
+            'quote' => array(
+                'text' => 'Muốn thấy làng mà không đi bộ 10km — thuyền là lựa chọn đúng.',
+                'author' => 'Chị Lan',
+            ),
+            'places' => array(
+                'Làng Việt Hải',
+                'Vịnh gần làng',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Đi thuyền thẳng tới Việt Hải, dạo làng, uống nước chè nhà dân, không cần trekking.',
+            'highlights' => array(
+                'Không trekking',
+                'Thăm nhà dân',
+                'Phù hợp trẻ nhỏ / người lớn tuổi',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Thuyền tới Việt Hải',
+                    'meals' => null,
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu từ bến Bèo vào Việt Hải, dạo làng 60–90 phút, về lại trung tâm.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu khứ hồi',
+                'HDV',
+                'Trà nước nhà dân',
+            ),
+            'exclusions' => array(
+                'Ăn trưa',
+                'Quà lưu niệm',
+            ),
+            'notes' => array(
+                'Phụ thuộc thuỷ triều — giờ xuất phát có thể dịch ±30 phút.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 520000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 520000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'dao-khi-1-ngay-tam-bien-lan',
             'title' => 'Đảo Khỉ (Cát Dứa) 1 ngày — Tắm biển & lặn ngắm',
-            'zoneSlug' => 'dao-khi', 'zone' => 'Đảo Khỉ (Cát Dứa)',
-            'tourCode' => 'CB1D-16', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 102, 'badge' => 'Được yêu thích', 'featured' => true,
-            'styles' => array('beach', 'diving-snorkel', 'family', 'day-trip'),
-            'quote' => array('text' => 'Bãi cát trắng, khỉ hoang dã, nước trong — đúng “must-do” của Cát Bà.', 'author' => 'Gia đình Đức'),
-            'places' => array('Đảo Khỉ', 'Bãi tắm Cát Dứa'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Tour tập trung Đảo Khỉ cả ngày: tắm, snorkel, chơi với khỉ (có hướng dẫn an toàn), không chạy nhiều điểm.',
-            'highlights' => array('Cả ngày tại Đảo Khỉ', 'Snorkel gần bãi', 'Ăn trưa hải sản', 'HDV hướng dẫn tiếp xúc khỉ an toàn'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cả ngày Đảo Khỉ', 'meals' => 'Trưa',
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Tàu ra đảo sáng, tắm–lặn–nghỉ trưa, chiều tự do trước khi về bến.'),
+            'zoneSlug' => 'dao-khi',
+            'zone' => 'Đảo Khỉ (Cát Dứa)',
+            'tourCode' => 'CB1D-16',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 102,
+            'badge' => 'Được yêu thích',
+            'featured' => true,
+            'styles' => array(
+                'day-trip',
+                'dao-khi-tam-bien',
             ),
-            'inclusions' => array('Tàu', 'Vé đảo', 'Bữa trưa', 'Thiết bị snorkel cơ bản'),
-            'exclusions' => array('Đồ uống', 'Thức ăn cho khỉ (không khuyến khích)'),
-            'notes' => array('Không cho khỉ ăn đồ ngọt; giữ túi xách cẩn thận.'),
+            'quote' => array(
+                'text' => 'Bãi cát trắng, khỉ hoang dã, nước trong — đúng “must-do” của Cát Bà.',
+                'author' => 'Gia đình Đức',
+            ),
+            'places' => array(
+                'Đảo Khỉ',
+                'Bãi tắm Cát Dứa',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Tour tập trung Đảo Khỉ cả ngày: tắm, snorkel, chơi với khỉ (có hướng dẫn an toàn), không chạy nhiều điểm.',
+            'highlights' => array(
+                'Cả ngày tại Đảo Khỉ',
+                'Snorkel gần bãi',
+                'Ăn trưa hải sản',
+                'HDV hướng dẫn tiếp xúc khỉ an toàn',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cả ngày Đảo Khỉ',
+                    'meals' => 'Trưa',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu ra đảo sáng, tắm–lặn–nghỉ trưa, chiều tự do trước khi về bến.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu',
+                'Vé đảo',
+                'Bữa trưa',
+                'Thiết bị snorkel cơ bản',
+            ),
+            'exclusions' => array(
+                'Đồ uống',
+                'Thức ăn cho khỉ (không khuyến khích)',
+            ),
+            'notes' => array(
+                'Không cho khỉ ăn đồ ngọt; giữ túi xách cẩn thận.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 4, 'priceFrom' => 550000.0, 'currency' => 'VND',
+            'galleryCount' => 4,
+            'priceFrom' => 550000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'dao-khi-nua-ngay',
             'title' => 'Đảo Khỉ nửa ngày — gọn, dễ ghép lịch',
-            'zoneSlug' => 'dao-khi', 'zone' => 'Đảo Khỉ (Cát Dứa)',
-            'tourCode' => 'CBHD-17', 'duration' => 'Nửa ngày', 'days' => 1,
-            'rating' => 4.6, 'reviewCount' => 58, 'badge' => NULL, 'featured' => false,
-            'styles' => array('beach', 'day-trip', 'family'),
-            'quote' => array('text' => 'Chỉ nửa ngày nhưng đã đủ cảm giác “đã đến Đảo Khỉ”.', 'author' => 'Bạn Hạnh'),
-            'places' => array('Đảo Khỉ'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Buổi sáng hoặc chiều: tàu ra đảo, tắm biển ngắn, về kịp giờ ăn hoặc chuyến phà.',
-            'highlights' => array('3–4 giờ trên đảo', 'Tắm biển', 'Linh hoạt khung giờ sáng/chiều'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Đảo Khỉ nửa ngày', 'meals' => NULL,
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Tàu ra đảo, tắm–chụp ảnh–nghỉ nước, về lại bến theo khung giờ đã chọn.'),
+            'zoneSlug' => 'dao-khi',
+            'zone' => 'Đảo Khỉ (Cát Dứa)',
+            'tourCode' => 'CBHD-17',
+            'duration' => 'Nửa ngày',
+            'days' => 1,
+            'rating' => 4.6,
+            'reviewCount' => 58,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'dao-khi-tam-bien',
             ),
-            'inclusions' => array('Tàu khứ hồi', 'Vé đảo'),
-            'exclusions' => array('Ăn uống', 'Snorkel (có thể thuê thêm)'),
-            'notes' => array('Lý tưởng ghép sau trekking hoặc trước giờ về đất liền.'),
+            'quote' => array(
+                'text' => 'Chỉ nửa ngày nhưng đã đủ cảm giác “đã đến Đảo Khỉ”.',
+                'author' => 'Bạn Hạnh',
+            ),
+            'places' => array(
+                'Đảo Khỉ',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Buổi sáng hoặc chiều: tàu ra đảo, tắm biển ngắn, về kịp giờ ăn hoặc chuyến phà.',
+            'highlights' => array(
+                '3–4 giờ trên đảo',
+                'Tắm biển',
+                'Linh hoạt khung giờ sáng/chiều',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Đảo Khỉ nửa ngày',
+                    'meals' => null,
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu ra đảo, tắm–chụp ảnh–nghỉ nước, về lại bến theo khung giờ đã chọn.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu khứ hồi',
+                'Vé đảo',
+            ),
+            'exclusions' => array(
+                'Ăn uống',
+                'Snorkel (có thể thuê thêm)',
+            ),
+            'notes' => array(
+                'Lý tưởng ghép sau trekking hoặc trước giờ về đất liền.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 320000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 320000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cau-muc-dem-lang-chai-cai-beo',
             'title' => 'Câu mực đêm làng chài Cái Bèo',
-            'zoneSlug' => 'cai-beo', 'zone' => 'Làng chài Cái Bèo',
-            'tourCode' => 'CBNT-18', 'duration' => 'Buổi tối (2.5–3 giờ)', 'days' => 1,
-            'rating' => 4.8, 'reviewCount' => 49, 'badge' => 'Đêm', 'featured' => false,
-            'styles' => array('floating-village-culture', 'small-group', 'day-trip'),
-            'quote' => array('text' => 'Đèn mực trên vịnh lung linh — trẻ con thích điên lên khi câu được con đầu tiên.', 'author' => 'Anh Tuấn'),
-            'places' => array('Làng chài Cái Bèo', 'Vịnh đêm'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Ra vịnh ban đêm cùng ngư dân, câu mực, ăn hải sản nướng nhẹ trên thuyền.',
-            'highlights' => array('Thuyền câu mực đêm', 'Dụng cụ câu đầy đủ', 'Đồ nướng nhẹ trên thuyền', 'HDV/ngư dân hướng dẫn'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Câu mực đêm', 'meals' => 'Đồ nướng nhẹ',
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Tối lên thuyền tại Cái Bèo, ra điểm câu, trải nghiệm 2 giờ, về bến khoảng 21:30–22:00.'),
+            'zoneSlug' => 'cai-beo',
+            'zone' => 'Làng chài Cái Bèo',
+            'tourCode' => 'CBNT-18',
+            'duration' => 'Buổi tối (2.5–3 giờ)',
+            'days' => 1,
+            'rating' => 4.8,
+            'reviewCount' => 49,
+            'badge' => 'Đêm',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'lang-chai-cai-beo',
             ),
-            'inclusions' => array('Thuyền', 'Cần câu', 'Đồ nướng nhẹ', 'Áo phao'),
-            'exclusions' => array('Đồ uống có cồn', 'Mực mang về chế biến thêm (có thể mua)'),
-            'notes' => array('Không đi khi sóng lớn / cấm tàu đêm.'),
+            'quote' => array(
+                'text' => 'Đèn mực trên vịnh lung linh — trẻ con thích điên lên khi câu được con đầu tiên.',
+                'author' => 'Anh Tuấn',
+            ),
+            'places' => array(
+                'Làng chài Cái Bèo',
+                'Vịnh đêm',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Ra vịnh ban đêm cùng ngư dân, câu mực, ăn hải sản nướng nhẹ trên thuyền.',
+            'highlights' => array(
+                'Thuyền câu mực đêm',
+                'Dụng cụ câu đầy đủ',
+                'Đồ nướng nhẹ trên thuyền',
+                'HDV/ngư dân hướng dẫn',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Câu mực đêm',
+                    'meals' => 'Đồ nướng nhẹ',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tối lên thuyền tại Cái Bèo, ra điểm câu, trải nghiệm 2 giờ, về bến khoảng 21:30–22:00.',
+                ),
+            ),
+            'inclusions' => array(
+                'Thuyền',
+                'Cần câu',
+                'Đồ nướng nhẹ',
+                'Áo phao',
+            ),
+            'exclusions' => array(
+                'Đồ uống có cồn',
+                'Mực mang về chế biến thêm (có thể mua)',
+            ),
+            'notes' => array(
+                'Không đi khi sóng lớn / cấm tàu đêm.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 450000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 450000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'cat-ba-ha-long-ket-hop-3n2d',
             'title' => 'Cát Bà — Hạ Long 3 ngày 2 đêm — Hai vịnh trọn vẹn',
-            'zoneSlug' => 'ket-hop-ha-long', 'zone' => 'Kết hợp Hạ Long',
-            'tourCode' => 'CBHL3D-19', 'duration' => '3 ngày 2 đêm', 'days' => 3,
-            'rating' => 5.0, 'reviewCount' => 27, 'badge' => NULL, 'featured' => false,
-            'styles' => array('multi-destination-combo', 'multi-day', 'balanced'),
-            'quote' => array('text' => 'Một đêm Lan Hạ, một đêm Hạ Long — cảm nhận rõ sự khác biệt của hai vịnh.', 'author' => 'Anh Việt'),
-            'places' => array('Cát Bà', 'Vịnh Lan Hạ', 'Tuần Châu', 'Vịnh Hạ Long', 'Hang Sửng Sốt'),
-            'start' => 'Cát Bà', 'end' => 'Hạ Long',
-            'highlightsIntro' => 'Phiên bản sâu hơn tour 2N1Đ: ngủ 1 đêm Lan Hạ + 1 đêm du thuyền Hạ Long, tàu cao tốc nối tuyến.',
-            'highlights' => array('1 đêm du thuyền Lan Hạ', '1 đêm du thuyền Hạ Long', 'Tàu cao tốc xuyên vịnh', 'Hang Sửng Sốt & kayak'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Cát Bà — Lan Hạ', 'meals' => 'Trưa; Tối',
-                    'transport' => array('cruise', 'kayak'), 'overnight' => 'Du thuyền Lan Hạ',
-                    'content' => 'Lên tàu Lan Hạ, kayak, BBQ tối.'),
-                array('day' => 2, 'title' => 'Sang Hạ Long', 'meals' => 'Sáng; Trưa; Tối',
-                    'transport' => array('boat', 'cruise'), 'overnight' => 'Du thuyền Hạ Long',
-                    'content' => 'Tàu cao tốc sang Tuần Châu, chuyển du thuyền Hạ Long, thăm hang, kayak.'),
-                array('day' => 3, 'title' => 'Kết thúc tại Hạ Long', 'meals' => 'Sáng; Trưa nhẹ',
-                    'transport' => array('cruise'), 'overnight' => NULL,
-                    'content' => 'Bình minh trên vịnh, brunch, trả khách tại Hạ Long / xe về Hà Nội (đặt thêm).'),
+            'zoneSlug' => 'ket-hop-ha-long',
+            'zone' => 'Kết hợp Hạ Long',
+            'tourCode' => 'CBHL3D-19',
+            'duration' => '3 ngày 2 đêm',
+            'days' => 3,
+            'rating' => 5,
+            'reviewCount' => 27,
+            'badge' => null,
+            'featured' => false,
+            'styles' => array(
+                '3n2d',
             ),
-            'inclusions' => array('2 đêm cabin du thuyền', 'Bữa ăn theo chương trình', 'Tàu cao tốc nối tuyến', 'Vé thắng cảnh'),
-            'exclusions' => array('Xe Hà Nội hai đầu', 'Tip', 'Đồ uống'),
-            'notes' => array('Có thể đảo chiều khởi hành từ Hạ Long.'),
+            'quote' => array(
+                'text' => 'Một đêm Lan Hạ, một đêm Hạ Long — cảm nhận rõ sự khác biệt của hai vịnh.',
+                'author' => 'Anh Việt',
+            ),
+            'places' => array(
+                'Cát Bà',
+                'Vịnh Lan Hạ',
+                'Tuần Châu',
+                'Vịnh Hạ Long',
+                'Hang Sửng Sốt',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Hạ Long',
+            'highlightsIntro' => 'Phiên bản sâu hơn tour 2 ngày 1 đêm: ngủ 1 đêm Lan Hạ + 1 đêm du thuyền Hạ Long, tàu cao tốc nối tuyến.',
+            'highlights' => array(
+                '1 đêm du thuyền Lan Hạ',
+                '1 đêm du thuyền Hạ Long',
+                'Tàu cao tốc xuyên vịnh',
+                'Hang Sửng Sốt & kayak',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Cát Bà — Lan Hạ',
+                    'meals' => 'Trưa; Tối',
+                    'transport' => array(
+                        'cruise',
+                        'kayak',
+                    ),
+                    'overnight' => 'Du thuyền Lan Hạ',
+                    'content' => 'Lên tàu Lan Hạ, kayak, BBQ tối.',
+                ),
+                array(
+                    'day' => 2,
+                    'title' => 'Sang Hạ Long',
+                    'meals' => 'Sáng; Trưa; Tối',
+                    'transport' => array(
+                        'boat',
+                        'cruise',
+                    ),
+                    'overnight' => 'Du thuyền Hạ Long',
+                    'content' => 'Tàu cao tốc sang Tuần Châu, chuyển du thuyền Hạ Long, thăm hang, kayak.',
+                ),
+                array(
+                    'day' => 3,
+                    'title' => 'Kết thúc tại Hạ Long',
+                    'meals' => 'Sáng; Trưa nhẹ',
+                    'transport' => array(
+                        'cruise',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Bình minh trên vịnh, brunch, trả khách tại Hạ Long / xe về Hà Nội (đặt thêm).',
+                ),
+            ),
+            'inclusions' => array(
+                '2 đêm cabin du thuyền',
+                'Bữa ăn theo chương trình',
+                'Tàu cao tốc nối tuyến',
+                'Vé thắng cảnh',
+            ),
+            'exclusions' => array(
+                'Xe Hà Nội hai đầu',
+                'Tip',
+                'Đồ uống',
+            ),
+            'notes' => array(
+                'Có thể đảo chiều khởi hành từ Hạ Long.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 5, 'priceFrom' => 5600000.0, 'currency' => 'VND',
+            'galleryCount' => 5,
+            'priceFrom' => 5600000,
+            'currency' => 'VND',
         ),
         array(
             'slug' => 'leo-nui-da-voi-lan-ha-1-ngay',
             'title' => 'Leo núi đá vôi / deep water solo vịnh Lan Hạ — 1 ngày',
-            'zoneSlug' => 'vinh-lan-ha', 'zone' => 'Vịnh Lan Hạ',
-            'tourCode' => 'CB1D-20', 'duration' => '1 ngày', 'days' => 1,
-            'rating' => 4.9, 'reviewCount' => 16, 'badge' => 'Mạo hiểm', 'featured' => false,
-            'styles' => array('climbing', 'kayak-adventure', 'small-group'),
-            'quote' => array('text' => 'Nhảy xuống nước sau mỗi đường leo — adrenaline đúng nghĩa.', 'author' => 'Bạn Duy Climb'),
-            'places' => array('Vách đá Lan Hạ', 'Điểm deep water solo'),
-            'start' => 'Cát Bà', 'end' => 'Cát Bà',
-            'highlightsIntro' => 'Tour mạo hiểm có hướng dẫn viên chuyên leo: deep water solo hoặc top-rope trên vách đá vịnh.',
-            'highlights' => array('HDV leo núi chuyên nghiệp', 'Thiết bị an toàn', 'Tàu riêng nhóm nhỏ', 'Cứu hộ trên nước'),
-            'itinerary' => array(
-                array('day' => 1, 'title' => 'Leo núi trên vịnh', 'meals' => 'Trưa nhẹ',
-                    'transport' => array('boat'), 'overnight' => NULL,
-                    'content' => 'Tàu ra vách, khởi động, leo 2–4 đường tuỳ sức, nhảy nước an toàn, về chiều.'),
+            'zoneSlug' => 'vinh-lan-ha',
+            'zone' => 'Vịnh Lan Hạ',
+            'tourCode' => 'CB1D-20',
+            'duration' => '1 ngày',
+            'days' => 1,
+            'rating' => 4.9,
+            'reviewCount' => 16,
+            'badge' => 'Mạo hiểm',
+            'featured' => false,
+            'styles' => array(
+                'day-trip',
+                'vinh-lan-ha',
             ),
-            'inclusions' => array('Tàu', 'Dây/yếm/mũ', 'HDV', 'Trưa nhẹ'),
-            'exclusions' => array('Bảo hiểm thể thao chuyên biệt (khuyến nghị tự mua)', 'Ảnh GoPro'),
-            'notes' => array('Yêu cầu biết bơi; từ 14 tuổi; khai báo sức khỏe.'),
+            'quote' => array(
+                'text' => 'Nhảy xuống nước sau mỗi đường leo — adrenaline đúng nghĩa.',
+                'author' => 'Bạn Duy Climb',
+            ),
+            'places' => array(
+                'Vách đá Lan Hạ',
+                'Điểm deep water solo',
+            ),
+            'start' => 'Cát Bà',
+            'end' => 'Cát Bà',
+            'highlightsIntro' => 'Tour mạo hiểm có hướng dẫn viên chuyên leo: deep water solo hoặc top-rope trên vách đá vịnh.',
+            'highlights' => array(
+                'HDV leo núi chuyên nghiệp',
+                'Thiết bị an toàn',
+                'Tàu riêng nhóm nhỏ',
+                'Cứu hộ trên nước',
+            ),
+            'itinerary' => array(
+                array(
+                    'day' => 1,
+                    'title' => 'Leo núi trên vịnh',
+                    'meals' => 'Trưa nhẹ',
+                    'transport' => array(
+                        'boat',
+                    ),
+                    'overnight' => null,
+                    'content' => 'Tàu ra vách, khởi động, leo 2–4 đường tuỳ sức, nhảy nước an toàn, về chiều.',
+                ),
+            ),
+            'inclusions' => array(
+                'Tàu',
+                'Dây/yếm/mũ',
+                'HDV',
+                'Trưa nhẹ',
+            ),
+            'exclusions' => array(
+                'Bảo hiểm thể thao chuyên biệt (khuyến nghị tự mua)',
+                'Ảnh GoPro',
+            ),
+            'notes' => array(
+                'Yêu cầu biết bơi; từ 14 tuổi; khai báo sức khỏe.',
+            ),
             'faqs' => array(),
-            'galleryCount' => 3, 'priceFrom' => 1800000.0, 'currency' => 'VND',
+            'galleryCount' => 3,
+            'priceFrom' => 1800000,
+            'currency' => 'VND',
         ),
     ),
 
@@ -1001,7 +2099,7 @@ $__hicatbaSeed = array(
                 array('type' => 'h2', 'id' => 'khach-ngan-ngay', 'text' => 'I. Chỉ có 1 ngày trên đảo'),
                 array('type' => 'p', 'text' => 'Tour ngày tàu gỗ + kayak + Đảo Khỉ là combo phổ biến nhất. Nếu muốn yên hơn, chọn tour hoàng hôn chiều–tối hoặc kayak private cho nhóm 2–4 người.'),
                 array('type' => 'h2', 'id' => 'khach-ngu-dem', 'text' => 'II. Muốn ngủ trên vịnh'),
-                array('type' => 'p', 'text' => 'Du thuyền 2N1Đ hoặc cabin đặt riêng là trải nghiệm signature. Bungalow nổi phù hợp cặp đôi muốn riêng tư tuyệt đối — số lượng hạn chế, nên đặt trước.'),
+                array('type' => 'p', 'text' => 'Du thuyền 2 ngày 1 đêm hoặc cabin đặt riêng là trải nghiệm đặc trưng. Bungalow nổi phù hợp cặp đôi muốn riêng tư tuyệt đối — số lượng hạn chế, nên đặt trước.'),
                 array('type' => 'links', 'title' => 'Gợi ý tour:', 'links' => array(
                     array('label' => 'Vịnh Lan Hạ 1 ngày — Kayak & Đảo Khỉ', 'route' => array('tours.show', array('zone' => 'vinh-lan-ha', 'slug' => 'vinh-lan-ha-kayak-dao-khi-1-ngay'))),
                     array('label' => 'Du thuyền Lan Hạ 2 ngày 1 đêm', 'route' => array('cruises.show', array('type' => 'du-thuyen-lan-ha', 'slug' => 'du-thuyen-lan-ha-2-ngay'))),
@@ -1044,7 +2142,7 @@ $__hicatbaSeed = array(
                 array('type' => 'ul', 'items' => array(
                     'Lan Hạ: ít khách hơn, phù hợp kayak/snorkel/ngủ đêm, gần vườn quốc gia Cát Bà',
                     'Hạ Long: nhiều lựa chọn du thuyền, dễ kết hợp Hà Nội — Hạ Long classic, hang Sửng Sốt nổi tiếng',
-                    'Kết hợp: tàu cao tốc xuyên vịnh ~45–60 phút, tour 2N1Đ hoặc 3N2Đ của Hi Cát Bà',
+                    'Kết hợp: tàu cao tốc xuyên vịnh ~45–60 phút, tour 2 ngày 1 đêm hoặc 3N2Đ của Hi Cát Bà',
                 )),
                 array('type' => 'h2', 'id' => 'ket-luan', 'text' => 'II. Kết luận'),
                 array('type' => 'p', 'text' => 'Lần đầu đến miền Bắc và muốn “check-in Hạ Long” — cân nhắc combo. Nếu ưu tiên thiên nhiên và trekking — ở lại Cát Bà, dành thời gian Lan Hạ sâu hơn.'),
@@ -1182,16 +2280,32 @@ $__hicatbaSeed = array(
     'usps' => array(
         array('icon' => 'compass', 'sort' => 0,
             'vi' => array('title' => 'am hiểu đảo như dân bản địa', 'description' => 'Đội ngũ sinh ra và lớn lên tại Cát Bà, biết chính xác luồng nước an toàn, mùa trekking đẹp và bãi tắm ít người.'),
-            'en' => array('title' => 'local-island expertise', 'description' => 'Our team was born and raised on Cat Ba — they know the safe currents, best trekking seasons and quiet beaches.')),
+
+
+
+
+'en' => array('title' => 'local-island expertise', 'description' => 'Our team was born and raised on Cat Ba — they know the safe currents, best trekking seasons and quiet beaches.')),
         array('icon' => 'refund', 'sort' => 1,
             'vi' => array('title' => 'giá rõ ràng, minh bạch', 'description' => 'Báo giá trọn gói, không phí ẩn. Chính sách đổi ngày linh hoạt khi thời tiết xấu ảnh hưởng tàu/vịnh.'),
-            'en' => array('title' => 'clear, transparent pricing', 'description' => 'All-in pricing with no hidden fees. Flexible rescheduling when weather affects boats.')),
+
+
+
+
+'en' => array('title' => 'clear, transparent pricing', 'description' => 'All-in pricing with no hidden fees. Flexible rescheduling when weather affects boats.')),
         array('icon' => 'boat', 'sort' => 2,
             'vi' => array('title' => 'tàu nhỏ, nhóm nhỏ', 'description' => 'Ưu tiên tàu và nhóm nhỏ để giảm tác động lên vịnh và mang lại trải nghiệm riêng tư hơn.'),
-            'en' => array('title' => 'small boats, small groups', 'description' => 'We favour small boats and small groups to protect the bay and give a more private experience.')),
+
+
+
+
+'en' => array('title' => 'small boats, small groups', 'description' => 'We favour small boats and small groups to protect the bay and give a more private experience.')),
         array('icon' => 'support', 'sort' => 3,
             'vi' => array('title' => 'hỗ trợ xuyên suốt', 'description' => 'Đội ngũ đồng hành trước, trong và sau chuyến đi — kể cả khi cần đổi lịch vì tàu tạm ngưng do thời tiết.'),
-            'en' => array('title' => 'seamless island support', 'description' => 'Dedicated support before, during and after your trip — including weather-related rescheduling.')),
+
+
+
+
+'en' => array('title' => 'seamless island support', 'description' => 'Dedicated support before, during and after your trip — including weather-related rescheduling.')),
     ),
 
     'offices' => array(
@@ -1201,31 +2315,103 @@ $__hicatbaSeed = array(
     ),
 
     'values' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
-        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra và lớn lên tại Cát Bà — hiểu từng bãi tắm, con đường'), 'en' => array('name' => 'Island expertise', 'desc' => 'Born and raised on Cat Ba — we know every beach and trail')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'), 'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
-        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ vịnh, rừng và cộng đồng làng chài địa phương'), 'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the bay, the forest and local fishing communities')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
+        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra và lớn lên tại Cát Bà — hiểu từng bãi tắm, con đường'),
+
+
+
+'en' => array('name' => 'Island expertise', 'desc' => 'Born and raised on Cat Ba — we know every beach and trail')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
+        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ vịnh, rừng và cộng đồng làng chài địa phương'),
+
+
+
+'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the bay, the forest and local fishing communities')),
     ),
     'value_definitions' => array(
-        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'), 'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
-        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra và lớn lên tại Cát Bà — hiểu từng bãi tắm, con đường'), 'en' => array('name' => 'Island expertise', 'desc' => 'Born and raised on Cat Ba — we know every beach and trail')),
-        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'), 'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
-        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ vịnh, rừng và cộng đồng làng chài địa phương'), 'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the bay, the forest and local fishing communities')),
+        array('vi' => array('name' => 'Tận tâm', 'desc' => 'Mỗi chuyến đi được chăm chút như dành cho người thân'),
+
+
+
+'en' => array('name' => 'Dedication', 'desc' => 'Every trip is crafted with the care we give our own family')),
+        array('vi' => array('name' => 'Am hiểu đảo', 'desc' => 'Sinh ra và lớn lên tại Cát Bà — hiểu từng bãi tắm, con đường'),
+
+
+
+'en' => array('name' => 'Island expertise', 'desc' => 'Born and raised on Cat Ba — we know every beach and trail')),
+        array('vi' => array('name' => 'Chân thành', 'desc' => 'Tư vấn trung thực, giá cả minh bạch'),
+
+
+
+'en' => array('name' => 'Sincerity', 'desc' => 'Honest advice and transparent pricing')),
+        array('vi' => array('name' => 'Trách nhiệm', 'desc' => 'Bảo vệ vịnh, rừng và cộng đồng làng chài địa phương'),
+
+
+
+'en' => array('name' => 'Responsibility', 'desc' => 'Protecting the bay, the forest and local fishing communities')),
     ),
 
     'reasons' => array(
-        array('vi' => array('title' => 'Hướng dẫn viên và thuyền trưởng bản địa', 'desc' => 'Đội ngũ sinh ra tại Cát Bà, hiểu từng luồng nước và lối mòn rừng.'), 'en' => array('title' => 'Local guides and boat captains', 'desc' => 'Our team grew up on Cat Ba — they know every current and forest trail.')),
-        array('vi' => array('title' => 'Cam kết đổi lịch minh bạch khi thời tiết xấu', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ ràng khi tàu tạm ngưng do bão.'), 'en' => array('title' => 'Clear weather rescheduling policy', 'desc' => 'Transparent rebooking and refund terms when boats are suspended due to storms.')),
-        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'), 'en' => array('title' => 'Direct partnerships with boat owners and homestays', 'desc' => 'No middlemen — better prices and faster support.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7 trong suốt hành trình', 'desc' => 'Hotline và Zalo trực người thật, phản hồi trong vòng 15 phút.'), 'en' => array('title' => '24/7 support throughout your trip', 'desc' => 'Real people on hotline and Zalo, responding within 15 minutes.')),
-        array('vi' => array('title' => 'Du lịch có trách nhiệm với vịnh và rừng', 'desc' => 'Ưu tiên tàu nhỏ, hạn chế nhựa dùng một lần, đóng góp bảo tồn voọc Cát Bà.'), 'en' => array('title' => 'Responsible travel for the bay and forest', 'desc' => 'We favour small boats, minimise single-use plastic and support Cat Ba langur conservation.')),
+        array('vi' => array('title' => 'Hướng dẫn viên và thuyền trưởng bản địa', 'desc' => 'Đội ngũ sinh ra tại Cát Bà, hiểu từng luồng nước và lối mòn rừng.'),
+
+
+
+'en' => array('title' => 'Local guides and boat captains', 'desc' => 'Our team grew up on Cat Ba — they know every current and forest trail.')),
+        array('vi' => array('title' => 'Cam kết đổi lịch minh bạch khi thời tiết xấu', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ ràng khi tàu tạm ngưng do bão.'),
+
+
+
+'en' => array('title' => 'Clear weather rescheduling policy', 'desc' => 'Transparent rebooking and refund terms when boats are suspended due to storms.')),
+        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'),
+
+
+
+'en' => array('title' => 'Direct partnerships with boat owners and homestays', 'desc' => 'No middlemen — better prices and faster support.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7 trong suốt hành trình', 'desc' => 'Hotline và Zalo trực người thật, phản hồi trong vòng 15 phút.'),
+
+
+
+'en' => array('title' => '24/7 support throughout your trip', 'desc' => 'Real people on hotline and Zalo, responding within 15 minutes.')),
+        array('vi' => array('title' => 'Du lịch có trách nhiệm với vịnh và rừng', 'desc' => 'Ưu tiên tàu nhỏ, hạn chế nhựa dùng một lần, đóng góp bảo tồn voọc Cát Bà.'),
+
+
+
+'en' => array('title' => 'Responsible travel for the bay and forest', 'desc' => 'We favour small boats, minimise single-use plastic and support Cat Ba langur conservation.')),
     ),
     'reason_definitions' => array(
-        array('vi' => array('title' => 'Hướng dẫn viên và thuyền trưởng bản địa', 'desc' => 'Đội ngũ sinh ra tại Cát Bà, hiểu từng luồng nước và lối mòn rừng.'), 'en' => array('title' => 'Local guides and boat captains', 'desc' => 'Our team grew up on Cat Ba — they know every current and forest trail.')),
-        array('vi' => array('title' => 'Cam kết đổi lịch minh bạch khi thời tiết xấu', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ ràng khi tàu tạm ngưng do bão.'), 'en' => array('title' => 'Clear weather rescheduling policy', 'desc' => 'Transparent rebooking and refund terms when boats are suspended due to storms.')),
-        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'), 'en' => array('title' => 'Direct partnerships with boat owners and homestays', 'desc' => 'No middlemen — better prices and faster support.')),
-        array('vi' => array('title' => 'Hỗ trợ 24/7 trong suốt hành trình', 'desc' => 'Hotline và Zalo trực người thật, phản hồi trong vòng 15 phút.'), 'en' => array('title' => '24/7 support throughout your trip', 'desc' => 'Real people on hotline and Zalo, responding within 15 minutes.')),
-        array('vi' => array('title' => 'Du lịch có trách nhiệm với vịnh và rừng', 'desc' => 'Ưu tiên tàu nhỏ, hạn chế nhựa dùng một lần, đóng góp bảo tồn voọc Cát Bà.'), 'en' => array('title' => 'Responsible travel for the bay and forest', 'desc' => 'We favour small boats, minimise single-use plastic and support Cat Ba langur conservation.')),
+        array('vi' => array('title' => 'Hướng dẫn viên và thuyền trưởng bản địa', 'desc' => 'Đội ngũ sinh ra tại Cát Bà, hiểu từng luồng nước và lối mòn rừng.'),
+
+
+
+'en' => array('title' => 'Local guides and boat captains', 'desc' => 'Our team grew up on Cat Ba — they know every current and forest trail.')),
+        array('vi' => array('title' => 'Cam kết đổi lịch minh bạch khi thời tiết xấu', 'desc' => 'Chính sách đổi ngày/hoàn tiền rõ ràng khi tàu tạm ngưng do bão.'),
+
+
+
+'en' => array('title' => 'Clear weather rescheduling policy', 'desc' => 'Transparent rebooking and refund terms when boats are suspended due to storms.')),
+        array('vi' => array('title' => 'Làm việc trực tiếp với chủ tàu và homestay', 'desc' => 'Không qua trung gian — giá tốt hơn, hỗ trợ nhanh hơn.'),
+
+
+
+'en' => array('title' => 'Direct partnerships with boat owners and homestays', 'desc' => 'No middlemen — better prices and faster support.')),
+        array('vi' => array('title' => 'Hỗ trợ 24/7 trong suốt hành trình', 'desc' => 'Hotline và Zalo trực người thật, phản hồi trong vòng 15 phút.'),
+
+
+
+'en' => array('title' => '24/7 support throughout your trip', 'desc' => 'Real people on hotline and Zalo, responding within 15 minutes.')),
+        array('vi' => array('title' => 'Du lịch có trách nhiệm với vịnh và rừng', 'desc' => 'Ưu tiên tàu nhỏ, hạn chế nhựa dùng một lần, đóng góp bảo tồn voọc Cát Bà.'),
+
+
+
+'en' => array('title' => 'Responsible travel for the bay and forest', 'desc' => 'We favour small boats, minimise single-use plastic and support Cat Ba langur conservation.')),
     ),
 
     'reference_persons' => array(
@@ -1257,7 +2443,11 @@ $__hicatbaSeed = array(
             'reference_section' => array('title' => 'Người đại diện của chúng tôi tại nước ngoài', 'eyebrow' => 'Mạng lưới toàn cầu',
                 'subtitle' => 'Bạn có thể trao đổi trực tiếp bằng ngôn ngữ của mình với đại diện Hi Cát Bà tại châu Á, châu Âu và châu Úc.'),
         ),
-        'en' => array(
+
+
+
+
+'en' => array(
             'seo_title' => 'About us — Hi Cat Ba, connecting travellers with Cat Ba Island',
             'seo_description' => 'Our story, mission and team at Hi Cat Ba — designing journeys and connecting services across Cat Ba Island.',
             'page_title' => 'About us',
@@ -1282,8 +2472,16 @@ $__hicatbaSeed = array(
     ),
 
     'hero_pills' => array(
-        array('zone_slug' => 'vinh-lan-ha', 'vi' => array('label' => 'Vịnh Lan Hạ'), 'en' => array('label' => 'Lan Ha Bay'), 'url' => '/diem-den/vinh-lan-ha'),
-        array('zone_slug' => 'ket-hop-ha-long', 'vi' => array('label' => 'Kết hợp Hạ Long'), 'en' => array('label' => 'Combined with Halong'), 'url' => '/diem-den/ket-hop-ha-long'),
+        array('zone_slug' => 'vinh-lan-ha', 'vi' => array('label' => 'Vịnh Lan Hạ'),
+
+
+
+'en' => array('label' => 'Lan Ha Bay'), 'url' => '/diem-den/vinh-lan-ha'),
+        array('zone_slug' => 'ket-hop-ha-long', 'vi' => array('label' => 'Kết hợp Hạ Long'),
+
+
+
+'en' => array('label' => 'Combined with Halong'), 'url' => '/diem-den/ket-hop-ha-long'),
     ),
 
     'home_sections' => array(
@@ -1291,50 +2489,94 @@ $__hicatbaSeed = array(
             'vi' => array('key' => 'company_intro', 'eyebrow' => 'Chuyên gia đảo Cát Bà', 'title' => 'Hành trình chân thật, thiết kế bởi người bản địa', 'subtitle' => NULL,
                 'body' => 'Hi Cát Bà là đơn vị lữ hành đặt trụ sở ngay trên đảo, kết nối du khách với vịnh Lan Hạ, vườn quốc gia và các làng chài Cát Bà. Chúng tôi không bán tour đóng gói sẵn — mỗi hành trình đều được <strong class="font-semibold text-ink">thiết kế riêng từ trải nghiệm thật</strong> của đội ngũ sinh ra và lớn lên trên đảo.',
                 'metaLine' => 'Giấy phép kinh doanh dịch vụ lữ hành số 0034/2019/TCDL-GPLHQT', 'ctaLabel' => 'Tìm hiểu về chúng tôi', 'ctaUrl' => '/ve-chung-toi', 'image' => NULL, 'imageAlt' => 'Ảnh đội ngũ Hi Cát Bà'),
-            'en' => array('key' => 'company_intro', 'eyebrow' => 'Cat Ba island experts', 'title' => 'Authentic journeys, designed by locals', 'subtitle' => NULL,
+
+
+
+
+'en' => array('key' => 'company_intro', 'eyebrow' => 'Cat Ba island experts', 'title' => 'Authentic journeys, designed by locals', 'subtitle' => NULL,
                 'body' => 'Hi Cat Ba is an island-based travel agency connecting guests with Lan Ha Bay, the national park and Cat Ba\'s fishing villages. We do not sell off-the-shelf packages — every itinerary is tailored from real, on-the-ground experience.',
                 'metaLine' => 'Travel service license No. 0034/2019/TCDL-GPLHQT', 'ctaLabel' => 'Learn about us', 'ctaUrl' => '/ve-chung-toi', 'image' => NULL, 'imageAlt' => 'Hi Cat Ba team'),
         ),
         'featured_tours' => array(
             'vi' => array('key' => 'featured_tours', 'eyebrow' => 'Được yêu thích nhất', 'title' => 'Những tour được yêu cầu nhiều nhất', 'subtitle' => 'Những hành trình khách hàng đặt và đánh giá cao nhất trong 12 tháng qua.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_tours', 'eyebrow' => 'Most popular', 'title' => 'Our most requested tours', 'subtitle' => 'Itineraries our guests book and rate highest over the past 12 months.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_tours', 'eyebrow' => 'Most popular', 'title' => 'Our most requested tours', 'subtitle' => 'Itineraries our guests book and rate highest over the past 12 months.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'featured_cruises' => array(
             'vi' => array('key' => 'featured_cruises', 'eyebrow' => 'Hành trình vịnh', 'title' => 'Trải nghiệm trên mặt nước đáng nhớ', 'subtitle' => 'Những hải trình vịnh Lan Hạ được yêu thích nhất — nơi việc di chuyển trở thành một phần của trải nghiệm.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_cruises', 'eyebrow' => 'Bay journeys', 'title' => 'Memorable experiences on the water', 'subtitle' => 'Our most loved Lan Ha Bay voyages — where getting there becomes part of the experience.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_cruises', 'eyebrow' => 'Bay journeys', 'title' => 'Memorable experiences on the water', 'subtitle' => 'Our most loved Lan Ha Bay voyages — where getting there becomes part of the experience.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'featured_trains' => array(
             'vi' => array('key' => 'featured_trains', 'eyebrow' => 'Ra đảo dễ dàng', 'title' => 'Vé tàu cao tốc & xe khách ra Cát Bà', 'subtitle' => 'Chọn limousine gộp phà, xe khách hay tàu cao tốc từ Hạ Long. Chủ động thời gian, dễ dàng tích hợp vào lịch trình riêng của bạn.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'featured_trains', 'eyebrow' => 'Easy island access', 'title' => 'Ferry, speedboat & bus tickets to Cat Ba', 'subtitle' => 'Choose a ferry-inclusive limousine, a public bus, or a speedboat from Halong. Stay in control of your schedule.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'featured_trains', 'eyebrow' => 'Easy island access', 'title' => 'Ferry, speedboat & bus tickets to Cat Ba', 'subtitle' => 'Choose a ferry-inclusive limousine, a public bus, or a speedboat from Halong. Stay in control of your schedule.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'support_services' => array(
             'vi' => array('key' => 'support_services', 'eyebrow' => 'Dịch vụ bổ trợ', 'title' => 'Ra đảo, vui chơi & hỗ trợ trên đảo', 'subtitle' => 'Vé tàu/phà, trải nghiệm vịnh — rừng — làng chài và các tiện ích thực tế khi bạn tự ghép lịch trình.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'support_services', 'eyebrow' => 'Add-on services', 'title' => 'Island access, activities & on-island support', 'subtitle' => 'Ferry tickets, bay — forest — village experiences and practical extras for your own itinerary.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'support_services', 'eyebrow' => 'Add-on services', 'title' => 'Island access, activities & on-island support', 'subtitle' => 'Ferry tickets, bay — forest — village experiences and practical extras for your own itinerary.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'destinations' => array(
             'vi' => array('key' => 'destinations', 'eyebrow' => 'Khắp đảo Cát Bà', 'title' => 'Những điểm đến được yêu thích nhất', 'subtitle' => 'Từ trung tâm thị trấn tới vịnh Lan Hạ, vườn quốc gia và Đảo Khỉ — chọn nơi bạn muốn khám phá.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'destinations', 'eyebrow' => 'Across Cat Ba Island', 'title' => 'Our most loved destinations', 'subtitle' => 'From the town centre to Lan Ha Bay, the national park and Monkey Island — choose where to explore.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'destinations', 'eyebrow' => 'Across Cat Ba Island', 'title' => 'Our most loved destinations', 'subtitle' => 'From the town centre to Lan Ha Bay, the national park and Monkey Island — choose where to explore.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'testimonials' => array(
             'vi' => array('key' => 'testimonials', 'eyebrow' => 'Khách hàng kể lại', 'title' => 'Trải nghiệm chân thật từ khách hàng', 'subtitle' => 'Hơn 3.000 du khách đã đồng hành cùng chúng tôi trên đảo — đây là những gì họ kể lại.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Xem tất cả cảm nhận', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences from our travellers', 'subtitle' => 'Over 3,000 guests have travelled with us on the island — here is what they say.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Read all reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'testimonials', 'eyebrow' => 'Guest stories', 'title' => 'Real experiences from our travellers', 'subtitle' => 'Over 3,000 guests have travelled with us on the island — here is what they say.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Read all reviews', 'ctaUrl' => '/cam-nhan-khach-hang', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'review_platforms' => array(
             'vi' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'Hi Cát Bà được đánh giá cao trên', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'Hi Cat Ba is highly rated on', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'review_platforms', 'eyebrow' => NULL, 'title' => 'Hi Cat Ba is highly rated on', 'subtitle' => NULL, 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
         'team' => array(
             'vi' => array('key' => 'team', 'eyebrow' => 'Con người Hi Cát Bà', 'title' => 'Đội ngũ tận tâm của chúng tôi', 'subtitle' => 'Những con người bản địa hiểu đảo hơn bất kỳ ai — đồng hành cùng bạn từ lúc lên ý tưởng tới khi rời đảo.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Gặp gỡ cả đội ngũ', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'team', 'eyebrow' => 'The Hi Cat Ba team', 'title' => 'Our dedicated local experts', 'subtitle' => 'People who know the island better than anyone — with you from the first idea until you leave.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Meet the full team', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'team', 'eyebrow' => 'The Hi Cat Ba team', 'title' => 'Our dedicated local experts', 'subtitle' => 'People who know the island better than anyone — with you from the first idea until you leave.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Meet the full team', 'ctaUrl' => '/doi-ngu', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'videos' => array(
             'vi' => array('key' => 'videos', 'eyebrow' => 'Trải nghiệm thật', 'title' => 'Đảo Cát Bà qua từng thước phim đẹp', 'subtitle' => 'Video chân thật do khách hàng và đội ngũ Hi Cát Bà ghi lại.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'Xem tất cả video', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'videos', 'eyebrow' => 'Real experiences', 'title' => 'Cat Ba Island in unforgettable frames', 'subtitle' => 'Authentic films from guests and our local team.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'View all videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
+
+
+
+
+'en' => array('key' => 'videos', 'eyebrow' => 'Real experiences', 'title' => 'Cat Ba Island in unforgettable frames', 'subtitle' => 'Authentic films from guests and our local team.', 'body' => NULL, 'metaLine' => NULL, 'ctaLabel' => 'View all videos', 'ctaUrl' => '/video-trai-nghiem', 'image' => NULL, 'imageAlt' => NULL),
         ),
         'quick_inquiry' => array(
             'vi' => array('key' => 'quick_inquiry', 'eyebrow' => 'Tư vấn miễn phí', 'title' => 'Gửi lời nhắn cho chúng tôi', 'subtitle' => NULL,
                 'body' => 'Bạn chưa chắc nên đi vịnh hay trekking, mùa nào đẹp, ngân sách bao nhiêu? Để lại lời nhắn — chuyên gia bản địa của chúng tôi sẽ phản hồi trong vòng <strong class="font-semibold text-ink">24 giờ làm việc</strong>, hoàn toàn miễn phí.', 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
-            'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send us a message', 'subtitle' => NULL,
+
+
+
+
+'en' => array('key' => 'quick_inquiry', 'eyebrow' => 'Free advice', 'title' => 'Send us a message', 'subtitle' => NULL,
                 'body' => 'Not sure between the bay or trekking, which season, or your budget? Leave a note — our local experts will reply within <strong class="font-semibold text-ink">1 business day</strong>, free of charge.', 'metaLine' => NULL, 'ctaLabel' => NULL, 'ctaUrl' => NULL, 'image' => NULL, 'imageAlt' => NULL),
         ),
     ),
@@ -1349,7 +2591,7 @@ $__hicatbaSeed = array(
         )),
         array('title' => 'Tour được yêu thích', 'links' => array(
             array('label' => 'Cát Bà 3 ngày 2 đêm', 'route' => array('tours.show', array('zone' => 'trung-tam-cat-ba', 'slug' => 'cat-ba-3-ngay-tong-quan-dao'))),
-            array('label' => 'Tour gia đình 2N1Đ', 'route' => array('tours.show', array('zone' => 'trung-tam-cat-ba', 'slug' => 'cat-ba-2-ngay-gia-dinh-bien-dao'))),
+            array('label' => 'Tour gia đình 2 ngày 1 đêm', 'route' => array('tours.show', array('zone' => 'trung-tam-cat-ba', 'slug' => 'cat-ba-2-ngay-gia-dinh-bien-dao'))),
             array('label' => 'Đảo Khỉ 1 ngày', 'route' => array('tours.show', array('zone' => 'dao-khi', 'slug' => 'dao-khi-1-ngay-tam-bien-lan'))),
             array('label' => 'Camping Việt Hải', 'route' => array('tours.show', array('zone' => 'lang-viet-hai', 'slug' => 'camping-viet-hai-2n1d'))),
             array('label' => 'Hoàng hôn Lan Hạ', 'route' => array('tours.show', array('zone' => 'vinh-lan-ha', 'slug' => 'vinh-lan-ha-hoang-hon-nua-ngay'))),
@@ -1380,7 +2622,13 @@ $__hicatbaSeed = array(
     ),
 
     'tour_categories' => array(
-        array('zoneSlug' => 'trung-tam-cat-ba', 'slug' => 'nua-ngay', 'type' => 'duration', 'sort' => 0, 'minDays' => 0, 'maxDays' => 1,
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'nua-ngay',
+            'type' => 'duration',
+            'sort' => 0,
+            'minDays' => 0,
+            'maxDays' => 1,
             'packageSlugs' => array(
                 'dap-xe-xuyen-dao-cat-ba-nua-ngay',
                 'bai-cat-co-tam-bien-spa-nua-ngay',
@@ -1391,11 +2639,39 @@ $__hicatbaSeed = array(
                 'dao-khi-nua-ngay',
                 'cau-muc-dem-lang-chai-cai-beo',
             ),
-            'name' => array('vi' => 'Tour nửa ngày', 'en' => 'Half-day tours'),
-            'subtitle' => array('vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.', 'en' => 'A compact option for a free morning or afternoon.'),
-            'seo_body' => array('vi' => 'Các tour nửa ngày ở Cát Bà phù hợp ghép thêm trước hoặc sau chuyến đi chính.', 'en' => 'Half-day Cat Ba tours are easy to add before or after your main trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-cat-ba', 'slug' => '1-ngay', 'type' => 'duration', 'sort' => 1, 'minDays' => 1, 'maxDays' => 1,
+            'name' => array(
+                'vi' => 'Tour nửa ngày',
+
+
+
+
+'en' => 'Half-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Lựa chọn gọn cho buổi sáng hoặc chiều còn trống.',
+
+
+
+
+'en' => 'A compact option for a free morning or afternoon.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Các tour nửa ngày ở Cát Bà phù hợp ghép thêm trước hoặc sau chuyến đi chính.',
+
+
+
+
+'en' => 'Half-day Cat Ba tours are easy to add before or after your main trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => '1-ngay',
+            'type' => 'duration',
+            'sort' => 1,
+            'minDays' => 1,
+            'maxDays' => 1,
             'packageSlugs' => array(
                 'trekking-viet-hai-vqg-1-ngay',
                 'vinh-lan-ha-kayak-dao-khi-1-ngay',
@@ -1404,11 +2680,39 @@ $__hicatbaSeed = array(
                 'dao-khi-1-ngay-tam-bien-lan',
                 'leo-nui-da-voi-lan-ha-1-ngay',
             ),
-            'name' => array('vi' => 'Tour 1 ngày', 'en' => '1-day tours'),
-            'subtitle' => array('vi' => 'Vịnh Lan Hạ, Đảo Khỉ hoặc trekking Việt Hải — không cần ngủ đêm.', 'en' => 'Lan Ha Bay, Monkey Island or Viet Hai trekking — no overnight needed.'),
-            'seo_body' => array('vi' => 'Tour 1 ngày là lựa chọn phổ biến nhất cho khách chỉ ghé Cát Bà ngắn ngày.', 'en' => '1-day tours are the most popular pick for short visits to Cat Ba.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-cat-ba', 'slug' => '2-3-ngay', 'type' => 'duration', 'sort' => 2, 'minDays' => 2, 'maxDays' => 3,
+            'name' => array(
+                'vi' => 'Tour 1 ngày',
+
+
+
+
+'en' => '1-day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Vịnh Lan Hạ, Đảo Khỉ hoặc trekking Việt Hải — không cần ngủ đêm.',
+
+
+
+
+'en' => 'Lan Ha Bay, Monkey Island or Viet Hai trekking — no overnight needed.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour 1 ngày là lựa chọn phổ biến nhất cho khách chỉ ghé Cát Bà ngắn ngày.',
+
+
+
+
+'en' => '1-day tours are the most popular pick for short visits to Cat Ba.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => '2-3-ngay',
+            'type' => 'duration',
+            'sort' => 2,
+            'minDays' => 2,
+            'maxDays' => 3,
             'packageSlugs' => array(
                 'cat-ba-3-ngay-tong-quan-dao',
                 'cat-ba-2-ngay-gia-dinh-bien-dao',
@@ -1416,17 +2720,267 @@ $__hicatbaSeed = array(
                 'cat-ba-ha-long-ket-hop-2n1d',
                 'cat-ba-ha-long-ket-hop-3n2d',
             ),
-            'name' => array('vi' => 'Tour 2 – 3 ngày', 'en' => '2–3 day tours'),
-            'subtitle' => array('vi' => 'Kết hợp du thuyền qua đêm với trekking hoặc nghỉ dưỡng biển.', 'en' => 'Combine an overnight cruise with trekking or a beach day.'),
-            'seo_body' => array('vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn vẹn cả vịnh và rừng của Cát Bà.', 'en' => 'A 2–3 day tour lets you experience both the bay and the forest of Cat Ba.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'trung-tam-cat-ba', 'slug' => '4-ngay-tro-len', 'type' => 'duration', 'sort' => 3, 'minDays' => 4, 'maxDays' => 10,
-            'packageSlugs' => array('cat-ba-5-ngay-nghi-duong-kham-pha'),
-            'name' => array('vi' => 'Tour 4 ngày trở lên', 'en' => '4+ day tours'),
-            'subtitle' => array('vi' => 'Lịch trình sâu nhất: nghỉ dưỡng, lặn biển, trekking và làng chài.', 'en' => 'Our deepest itineraries: beach, diving, trekking and fishing villages.'),
-            'seo_body' => array('vi' => 'Tour dài ngày dành cho ai muốn trải nghiệm Cát Bà không vội vàng.', 'en' => 'Longer tours are for travellers who want an unhurried Cat Ba experience.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'vinh-lan-ha', 'slug' => 'vinh-lan-ha', 'type' => 'theme', 'sort' => 10,
+            'name' => array(
+                'vi' => 'Tour 2 – 3 ngày',
+
+
+
+
+'en' => '2–3 day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Kết hợp du thuyền qua đêm với trekking hoặc nghỉ dưỡng biển.',
+
+
+
+
+'en' => 'Combine an overnight cruise with trekking or a beach day.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour 2–3 ngày cho phép cảm nhận trọn vẹn cả vịnh và rừng của Cát Bà.',
+
+
+
+
+'en' => 'A 2–3 day tour lets you experience both the bay and the forest of Cat Ba.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => '4-ngay-tro-len',
+            'type' => 'duration',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 10,
+            'packageSlugs' => array(
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
+            ),
+            'name' => array(
+                'vi' => 'Tour 4 ngày trở lên',
+
+
+
+
+'en' => '4+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Lịch trình sâu nhất: nghỉ dưỡng, lặn biển, trekking và làng chài.',
+
+
+
+
+'en' => 'Our deepest itineraries: beach, diving, trekking and fishing villages.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài ngày dành cho ai muốn trải nghiệm Cát Bà không vội vàng.',
+
+
+
+
+'en' => 'Longer tours are for travellers who want an unhurried Cat Ba experience.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'tour-trong-ngay',
+            'type' => 'theme',
+            'sort' => 0,
+            'minDays' => 1,
+            'maxDays' => 1,
+            'packageSlugs' => array(
+                'trekking-viet-hai-vqg-1-ngay',
+                'vinh-lan-ha-kayak-dao-khi-1-ngay',
+                'lang-chai-cai-beo-hang-trung-trang-nua-ngay',
+                'dap-xe-xuyen-dao-cat-ba-nua-ngay',
+                'bai-cat-co-tam-bien-spa-nua-ngay',
+                'vinh-lan-ha-hoang-hon-nua-ngay',
+                'vinh-lan-ha-lan-ngam-san-ho-1-ngay',
+                'vinh-lan-ha-private-kayak-1-ngay',
+                'trekking-vqg-nua-ngay-de',
+                'lang-viet-hai-thuyen-nua-ngay',
+                'dao-khi-1-ngay-tam-bien-lan',
+                'dao-khi-nua-ngay',
+                'cau-muc-dem-lang-chai-cai-beo',
+                'leo-nui-da-voi-lan-ha-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour trong ngày',
+
+
+
+
+'en' => 'Day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Trọn vẹn trong ngày — không qua đêm.',
+
+
+
+
+'en' => 'Full day — no overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lọc theo thời lượng — khác trang danh mục theo từng vùng.',
+
+
+
+
+'en' => 'Duration filter — distinct from per-zone GEO category pages.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'tour-2-ngay-1-dem',
+            'type' => 'theme',
+            'sort' => 1,
+            'minDays' => 2,
+            'maxDays' => 2,
+            'packageSlugs' => array(
+                'cat-ba-ha-long-ket-hop-2n1d',
+                'cat-ba-2-ngay-gia-dinh-bien-dao',
+                'camping-viet-hai-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 2 ngày 1 đêm',
+
+
+
+
+'en' => '2 days 1 night',
+            ),
+            'subtitle' => array(
+                'vi' => 'Cuối tuần ngắn, homestay hoặc resort một đêm.',
+
+
+
+
+'en' => 'Short weekend, one-night homestay or resort.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lựa chọn phổ biến 2 ngày 1 đêm — lọc theo số ngày.',
+
+
+
+
+'en' => '2N1D sweet spot — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'tour-3-ngay-2-dem',
+            'type' => 'theme',
+            'sort' => 2,
+            'minDays' => 3,
+            'maxDays' => 3,
+            'packageSlugs' => array(
+                'cat-ba-3-ngay-tong-quan-dao',
+                'cat-ba-ha-long-ket-hop-3n2d',
+            ),
+            'name' => array(
+                'vi' => 'Tour 3 ngày 2 đêm',
+
+
+
+
+'en' => '3 days 2 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá vừa đủ — hai đêm nghỉ.',
+
+
+
+
+'en' => 'Enough depth — two overnights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Gói 3 ngày 2 đêm phổ biến — không trùng danh mục theo vùng.',
+
+
+
+
+'en' => 'Popular 3N2D packages — not a GEO zone duplicate.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'tour-4-ngay-3-dem',
+            'type' => 'theme',
+            'sort' => 3,
+            'minDays' => 4,
+            'maxDays' => 4,
+            'packageSlugs' => array(),
+            'name' => array(
+                'vi' => 'Tour 4 ngày 3 đêm',
+
+
+
+
+'en' => '4 days 3 nights',
+            ),
+            'subtitle' => array(
+                'vi' => 'Khám phá sâu, ba đêm trải nghiệm.',
+
+
+
+
+'en' => 'Deeper exploration, three nights.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Lịch 4 ngày 3 đêm — lọc theo thời lượng.',
+
+
+
+
+'en' => '4N3D itineraries — hub duration filter.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'tour-tu-5-ngay',
+            'type' => 'theme',
+            'sort' => 4,
+            'minDays' => 5,
+            'maxDays' => null,
+            'packageSlugs' => array(
+                'cat-ba-5-ngay-nghi-duong-kham-pha',
+            ),
+            'name' => array(
+                'vi' => 'Tour từ 5 ngày',
+
+
+
+
+'en' => '5+ day tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Combo dài ngày, nhiều điểm đến.',
+
+
+
+
+'en' => 'Extended combos and multi-destination trips.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Tour dài và combo — lọc theo thời lượng, không trùng danh mục vùng.',
+
+
+
+
+'en' => 'Long tours & combos — duration insight, not a GEO page.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'vinh-lan-ha',
+            'type' => 'theme',
+            'sort' => 10,
             'packageSlugs' => array(
                 'vinh-lan-ha-kayak-dao-khi-1-ngay',
                 'vinh-lan-ha-hoang-hon-nua-ngay',
@@ -1436,40 +2990,175 @@ $__hicatbaSeed = array(
                 'du-thuyen-lan-ha-2-ngay',
                 'du-thuyen-lan-ha-3-ngay',
             ),
-            'name' => array('vi' => 'Tour vịnh Lan Hạ', 'en' => 'Lan Ha Bay tours'),
-            'subtitle' => array('vi' => 'Kayak, tắm biển, hoàng hôn và du thuyền giữa hơn 400 đảo đá vôi.', 'en' => 'Kayak, swim, sunset and cruise among 400+ limestone islands.'),
-            'seo_body' => array('vi' => 'Vịnh Lan Hạ được xem là phiên bản hoang sơ và ít khách hơn của Hạ Long.', 'en' => 'Lan Ha Bay is considered the wilder, quieter version of Halong Bay.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'vuon-quoc-gia', 'slug' => 'trekking-vqg', 'type' => 'theme', 'sort' => 11,
-            'packageSlugs' => array('trekking-viet-hai-vqg-1-ngay', 'trekking-vqg-nua-ngay-de', 'camping-viet-hai-2n1d'),
-            'name' => array('vi' => 'Tour trekking vườn quốc gia', 'en' => 'National park trekking tours'),
-            'subtitle' => array('vi' => 'Rừng nguyên sinh, Ao Ếch và làng Việt Hải — từ nửa ngày tới overnight.', 'en' => 'Primary forest, Ao Ech and Viet Hai — from half-day to overnight.'),
-            'seo_body' => array('vi' => 'Trekking vườn quốc gia là hoạt động được đánh giá cao nhất tại Cát Bà.', 'en' => 'National park trekking is the highest-rated activity on Cat Ba.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'dao-khi', 'slug' => 'dao-khi-tam-bien', 'type' => 'theme', 'sort' => 12,
-            'packageSlugs' => array('dao-khi-1-ngay-tam-bien-lan', 'dao-khi-nua-ngay', 'vinh-lan-ha-kayak-dao-khi-1-ngay'),
-            'name' => array('vi' => 'Tour Đảo Khỉ & tắm biển', 'en' => 'Monkey Island & beach tours'),
-            'subtitle' => array('vi' => 'Bãi cát trắng Cát Dứa, snorkel và trải nghiệm gần khỉ hoang dã.', 'en' => 'Cat Dua white sand, snorkel and safe monkey encounters.'),
-            'seo_body' => array('vi' => 'Đảo Khỉ là điểm “must-do” gần như bắt buộc trong mọi chuyến Cát Bà ngắn ngày.', 'en' => 'Monkey Island is a near must-do on any short Cat Ba trip.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'lang-viet-hai', 'slug' => 'lang-viet-hai', 'type' => 'theme', 'sort' => 13,
-            'packageSlugs' => array('camping-viet-hai-2n1d', 'lang-viet-hai-thuyen-nua-ngay', 'trekking-viet-hai-vqg-1-ngay'),
-            'name' => array('vi' => 'Tour làng Việt Hải', 'en' => 'Viet Hai village tours'),
-            'subtitle' => array('vi' => 'Homestay/camping hoặc thuyền vào làng giữa vườn quốc gia.', 'en' => 'Homestay/camping or boat access to the village inside the park.'),
-            'seo_body' => array('vi' => 'Việt Hải là trải nghiệm “off-grid” đặc trưng nhất của đảo Cát Bà.', 'en' => 'Viet Hai is Cat Ba’s most distinctive off-grid village experience.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'cai-beo', 'slug' => 'lang-chai-cai-beo', 'type' => 'theme', 'sort' => 14,
-            'packageSlugs' => array('lang-chai-cai-beo-hang-trung-trang-nua-ngay', 'cau-muc-dem-lang-chai-cai-beo'),
-            'name' => array('vi' => 'Tour làng chài Cái Bèo', 'en' => 'Cai Beo fishing village tours'),
-            'subtitle' => array('vi' => 'Thuyền nan, di chỉ khảo cổ và câu mực đêm trên vịnh.', 'en' => 'Sampan rides, archaeology and night squid fishing on the bay.'),
-            'seo_body' => array('vi' => 'Cái Bèo gắn với di chỉ khảo cổ hơn 6.000 năm — điểm văn hoá gần trung tâm nhất.', 'en' => 'Cai Beo links to 6,000+ year archaeology — the closest cultural stop to town.'),
-            'faqs' => array()),
-        array('zoneSlug' => 'ket-hop-ha-long', 'slug' => 'ket-hop-ha-long', 'type' => 'package', 'sort' => 15, 'minDays' => 2, 'maxDays' => 3,
-            'packageSlugs' => array('cat-ba-ha-long-ket-hop-2n1d', 'cat-ba-ha-long-ket-hop-3n2d'),
-            'name' => array('vi' => 'Tour kết hợp Hạ Long', 'en' => 'Combined Halong Bay tours'),
-            'subtitle' => array('vi' => 'Nối hai vịnh di sản bằng tàu cao tốc xuyên vịnh.', 'en' => 'Link two heritage bays via a direct cross-bay speedboat.'),
-            'seo_body' => array('vi' => 'Tour kết hợp giúp khách không phải chọn giữa Cát Bà và Hạ Long.', 'en' => 'Combined tours mean guests do not have to choose between Cat Ba and Halong.'),
-            'faqs' => array()),
+            'name' => array(
+                'vi' => 'Tour vịnh Lan Hạ',
+
+
+
+
+'en' => 'Lan Ha Bay tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Kayak, tắm biển, hoàng hôn và du thuyền giữa hơn 400 đảo đá vôi.',
+
+
+
+
+'en' => 'Kayak, swim, sunset and cruise among 400+ limestone islands.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Vịnh Lan Hạ được xem là phiên bản hoang sơ và ít khách hơn của Hạ Long.',
+
+
+
+
+'en' => 'Lan Ha Bay is considered the wilder, quieter version of Halong Bay.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'trekking-vqg',
+            'type' => 'theme',
+            'sort' => 11,
+            'packageSlugs' => array(
+                'trekking-viet-hai-vqg-1-ngay',
+                'trekking-vqg-nua-ngay-de',
+                'camping-viet-hai-2n1d',
+            ),
+            'name' => array(
+                'vi' => 'Tour trekking vườn quốc gia',
+
+
+
+
+'en' => 'National park trekking tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Rừng nguyên sinh, Ao Ếch và làng Việt Hải — từ nửa ngày tới qua đêm.',
+
+
+
+
+'en' => 'Primary forest, Ao Ech and Viet Hai — from half-day to overnight.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Trekking vườn quốc gia là hoạt động được đánh giá cao nhất tại Cát Bà.',
+
+
+
+
+'en' => 'National park trekking is the highest-rated activity on Cat Ba.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'dao-khi-tam-bien',
+            'type' => 'theme',
+            'sort' => 12,
+            'packageSlugs' => array(
+                'dao-khi-1-ngay-tam-bien-lan',
+                'dao-khi-nua-ngay',
+                'vinh-lan-ha-kayak-dao-khi-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour Đảo Khỉ & tắm biển',
+
+
+
+
+'en' => 'Monkey Island & beach tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Bãi cát trắng Cát Dứa, snorkel và trải nghiệm gần khỉ hoang dã.',
+
+
+
+
+'en' => 'Cat Dua white sand, snorkel and safe monkey encounters.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Đảo Khỉ là điểm “must-do” gần như bắt buộc trong mọi chuyến Cát Bà ngắn ngày.',
+
+
+
+
+'en' => 'Monkey Island is a near must-do on any short Cat Ba trip.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'lang-viet-hai',
+            'type' => 'theme',
+            'sort' => 13,
+            'packageSlugs' => array(
+                'camping-viet-hai-2n1d',
+                'lang-viet-hai-thuyen-nua-ngay',
+                'trekking-viet-hai-vqg-1-ngay',
+            ),
+            'name' => array(
+                'vi' => 'Tour làng Việt Hải',
+
+
+
+
+'en' => 'Viet Hai village tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Homestay/camping hoặc thuyền vào làng giữa vườn quốc gia.',
+
+
+
+
+'en' => 'Homestay/camping or boat access to the village inside the park.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Việt Hải là trải nghiệm “off-grid” đặc trưng nhất của đảo Cát Bà.',
+
+
+
+
+'en' => 'Viet Hai is Cat Ba’s most distinctive off-grid village experience.',
+            ),
+            'faqs' => array(),
+        ),
+        array(
+            'zoneSlug' => 'trung-tam-cat-ba',
+            'slug' => 'lang-chai-cai-beo',
+            'type' => 'theme',
+            'sort' => 14,
+            'packageSlugs' => array(
+                'lang-chai-cai-beo-hang-trung-trang-nua-ngay',
+                'cau-muc-dem-lang-chai-cai-beo',
+            ),
+            'name' => array(
+                'vi' => 'Tour làng chài Cái Bèo',
+
+
+
+
+'en' => 'Cai Beo fishing village tours',
+            ),
+            'subtitle' => array(
+                'vi' => 'Thuyền nan, di chỉ khảo cổ và câu mực đêm trên vịnh.',
+
+
+
+
+'en' => 'Sampan rides, archaeology and night squid fishing on the bay.',
+            ),
+            'seo_body' => array(
+                'vi' => 'Cái Bèo gắn với di chỉ khảo cổ hơn 6.000 năm — điểm văn hoá gần trung tâm nhất.',
+
+
+
+
+'en' => 'Cai Beo links to 6,000+ year archaeology — the closest cultural stop to town.',
+            ),
+            'faqs' => array(),
+        ),
     ),
 
     'listing_faqs' => array(
@@ -1480,15 +3169,26 @@ $__hicatbaSeed = array(
         array('q' => 'Khách quốc tế có cần visa để đến Cát Bà không?', 'a' => 'Cát Bà thuộc Việt Nam nên áp dụng chính sách visa nhập cảnh Việt Nam thông thường — nhiều quốc tịch được miễn visa ngắn hạn hoặc dùng e-visa, vui lòng kiểm tra quy định mới nhất trước ngày bay.'),
     ),
 
-    'duration_buckets' => array('half-day' => 'Nửa ngày', '1-day' => '1 ngày', '2-3-days' => '2 – 3 ngày', '4-plus' => '4 ngày trở lên'),
+    'duration_buckets' => array(
+        'half-day' => 'Nửa ngày',
+        '1-day' => '1 ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+    ),
 
     'travel_style_labels' => array(
-        'trekking' => 'Trekking & khám phá', 'beach' => 'Nghỉ dưỡng biển', 'diving-snorkel' => 'Lặn & ngắm san hô',
-        'kayak-adventure' => 'Chèo kayak & phiêu lưu nước', 'family' => 'Gia đình', 'honeymoon' => 'Trăng mật',
-        'nature-park' => 'Thiên nhiên & vườn quốc gia', 'floating-village-culture' => 'Văn hoá làng chài',
-        'day-trip' => 'Tour trong ngày', 'multi-day' => 'Tour nhiều ngày', 'long-duration' => 'Tour dài ngày',
-        'small-group' => 'Nhóm nhỏ', 'climbing' => 'Leo núi đá vôi', 'balanced' => 'Kỳ nghỉ cân bằng',
-        'multi-destination-combo' => 'Kết hợp nhiều điểm đến',
+        'day-trip' => 'Tour trong ngày',
+        '2n1d' => '2 ngày 1 đêm',
+        '3n2d' => '3 ngày 2 đêm',
+        '4n3d' => '4 ngày 3 đêm',
+        '5-plus-days' => 'Từ 5 ngày',
+        'vinh-lan-ha' => 'Tour vịnh Lan Hạ',
+        'trekking-vqg' => 'Tour trekking vườn quốc gia',
+        'dao-khi-tam-bien' => 'Tour Đảo Khỉ & tắm biển',
+        'lang-viet-hai' => 'Tour làng Việt Hải',
+        'lang-chai-cai-beo' => 'Tour làng chài Cái Bèo',
     ),
 );
 
@@ -1562,7 +3262,7 @@ $__servicesSeed = [
             'intro' => 'Bãi Cát Dứa, snorkel gần bờ — “must-do” của khách lần đầu, đặc biệt gia đình có trẻ.',
             'seo_body' => 'Có vé tàu lẻ hoặc ghép tour ngày vịnh. Lưu ý an toàn khi tiếp xúc khỉ hoang dã — HDV hướng dẫn trên chỗ.'],
         ['cluster' => 'experience', 'slug' => 'leo-nui-phieu-luu', 'name' => 'Leo núi & phiêu lưu trên vịnh', 'sort' => 6,
-            'intro' => 'Deep water solo và leo núi có dây trên vách đá Lan Hạ — phân khúc khách trẻ, FIT quốc tế.',
+            'intro' => 'Deep water solo và leo núi có dây trên vách đá Lan Hạ — phân khúc khách trẻ, khách lẻ quốc tế.',
             'seo_body' => 'Cát Bà là một trong ít điểm DWS ở Việt Nam. Yêu cầu biết bơi; :brand chỉ đặt với HLV chứng nhận.'],
         ['cluster' => 'experience', 'slug' => 'kinh-nghiem-dem', 'name' => 'Trải nghiệm buổi tối trên vịnh', 'sort' => 7,
             'intro' => 'Hoàng hôn trên tàu, câu mực đêm, BBQ trên boong du thuyền.',
@@ -1633,7 +3333,7 @@ $__servicesSeed = [
             'title' => 'Limousine khứ hồi Hà Nội ↔ Cát Bà', 'slug' => 'limousine-khu-hoi-ha-noi-cat-ba',
             'price_from' => 550000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 198,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Hà Nội ↔ Cát Bà',
-            'summary' => 'Gói weekend phổ biến — đi và về gộp một giá, chọn ngày về linh hoạt trong tuần.',
+            'summary' => 'Gói cuối tuần phổ biến — đi và về gộp một giá, chọn ngày về linh hoạt trong tuần.',
             'highlights' => ['Tiết kiệm hơn 2 chiều lẻ', 'Giữ chỗ chiều về', 'Đón tận nơi hai đầu', 'Phù hợp gia đình 2–4 người'],
             'inclusions' => ['2 lượt limousine', 'Vé qua đảo mỗi chiều'], 'exclusions' => ['Phụ phí đón xa trung tâm'],
             'notes' => ['Chiều về thường 14:00–16:00 từ Cát Bà.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Cát Bà', 'duration_hours' => 3, 'vehicle_type' => 'limousine'],
@@ -1684,7 +3384,7 @@ $__servicesSeed = [
             'code' => 'flight-han-hph', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-hai-phong', 'zone_slug' => 'trung-tam-cat-ba',
             'title' => 'Vé máy bay Hà Nội — Hải Phòng (Cát Bi)', 'slug' => 've-may-bay-ha-noi-hai-phong',
             'price_from' => 890000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 312,
-            'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'HAN → HPH',
+            'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Hà Nội → HPH',
             'summary' => 'Bay ~1 giờ — gần Cát Bà hơn ở lại Hà Nội nếu bạn đi thẳng ra đảo trong ngày.',
             'highlights' => ['Nhiều chuyến/ngày', 'Gộp đưa đón Cát Bi — Cát Bà', 'E-ticket nhanh'],
             'inclusions' => ['Vé economy một chiều', 'Thuế phí sân bay'], 'exclusions' => ['Hành lý ký gửi', 'Ra đảo'],
@@ -1694,7 +3394,7 @@ $__servicesSeed = [
             'code' => 'flight-sgn-hph', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-hai-phong', 'zone_slug' => 'trung-tam-cat-ba',
             'title' => 'Vé máy bay Sài Gòn — Hải Phòng (Cát Bi)', 'slug' => 've-may-bay-sai-gon-hai-phong',
             'price_from' => 1450000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 421,
-            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'SGN → HPH',
+            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'Sài Gòn → HPH',
             'summary' => 'Bay thẳng ~2 giờ tới Cát Bi — sau đó tàu/phà ra Cát Bà khoảng 1 giờ.',
             'highlights' => ['Bay thẳng', 'Cát Bi gần bến tàu', 'Gộp transfer + tàu'],
             'inclusions' => ['Vé economy', 'Thuế phí'], 'exclusions' => ['Ra đảo', 'Hành lý thêm'],
@@ -1724,7 +3424,7 @@ $__servicesSeed = [
             'code' => 'flight-combo-fly-island', 'cluster' => 'flight', 'category_slug' => 'combo-bay-ra-dao', 'zone_slug' => 'trung-tam-cat-ba',
             'title' => 'Combo vé bay + đưa đón + ra đảo Cát Bà', 'slug' => 'combo-ve-bay-dua-don-ra-dao-cat-ba',
             'price_from' => 2350000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 58,
-            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Một đầu mối', 'location_label' => 'HAN/SGN → Cát Bà',
+            'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Một đầu mối', 'location_label' => 'Hà Nội/Sài Gòn → Cát Bà',
             'summary' => 'Một báo giá: bay tới Hải Phòng, xe đón và tàu/phà ra đảo — không tự ghép từng khâu.',
             'highlights' => ['Một đầu mối', 'Tính giờ nối chuyến', 'Đổi ngày khi biển động', 'Phù hợp lần đầu'],
             'inclusions' => ['Vé bay economy một chiều', 'Transfer sân bay', 'Vé qua đảo'], 'exclusions' => ['Lưu trú', 'Tour vịnh'],
@@ -1975,7 +3675,7 @@ $__servicesSeed = [
 
     'service_listing_faqs' => [
         ['q' => 'Giá "từ" trên trang dịch vụ có phải giá cố định không?', 'a' => 'Không — giá "từ" là mức tham khảo theo mùa thấp điểm hoặc loại tiêu chuẩn. Hi Cát Bà báo giá chính xác sau khi nhận ngày sử dụng, số lượng khách và yêu cầu cụ thể, trước khi bạn thanh toán.'],
-        ['q' => 'Tôi có thể gộp vé ra đảo + tour vịnh + trekking trong một đơn không?', 'a' => 'Có. Chúng tôi thiết kế itinerary tuỳ chỉnh — gộp tàu/phà, limousine, vé vui chơi, homestay Việt Hải hoặc cabin vịnh vào một báo giá minh bạch, một đầu mối chăm sóc. Catalogue không liệt kê khách sạn — nếu cần lưu trú đất liền, tư vấn viên gợi ý riêng theo ngân sách.'],
+        ['q' => 'Tôi có thể gộp vé ra đảo + tour vịnh + trekking trong một đơn không?', 'a' => 'Có. Chúng tôi thiết kế lịch trình tuỳ chỉnh — gộp tàu/phà, limousine, vé vui chơi, homestay Việt Hải hoặc cabin vịnh vào một báo giá minh bạch, một đầu mối chăm sóc. Catalogue không liệt kê khách sạn — nếu cần lưu trú đất liền, tư vấn viên gợi ý riêng theo ngân sách.'],
         ['q' => 'Chính sách hoàn/hủy khi tàu tạm ngưng do thời tiết xấu như thế nào?', 'a' => 'Vé tàu cao tốc/phà và tour vịnh thường được đổi ngày miễn phí hoặc hoàn 100% nếu cơ quan chức năng cấm tàu ra biển. Cabin du thuyền, bungalow nổi và homestay áp dụng điều kiện hoàn riêng, ghi rõ trên voucher.'],
         ['q' => 'Hi Cát Bà có bán vé tàu và vé máy bay trực tiếp trên website không?', 'a' => 'Website hiển thị tham khảo và form yêu cầu báo giá. Sau khi bạn gửi yêu cầu, tư vấn viên xác nhận chỗ, giá và gửi link thanh toán hoặc hóa đơn — đảm bảo không phí ẩn.'],
         ['q' => 'Dịch vụ hỗ trợ y tế/khẩn cấp 24/7 áp dụng khi nào?', 'a' => 'Miễn phí cho khách đã đặt tour hoặc dịch vụ qua Hi Cát Bà. Hotline hỗ trợ tai nạn khi trekking/lặn biển, mất giấy tờ và phối hợp bệnh viện tại Hải Phòng — số điện thoại ghi trên voucher xác nhận.'],
@@ -2027,15 +3727,27 @@ return array_merge(
     ['customize_form' => [
         'destinations_label' => [
             'vi' => 'Bạn muốn khám phá khu vực nào trên đảo?',
-            'en' => 'Which parts of the island would you like to explore?',
+
+
+
+
+'en' => 'Which parts of the island would you like to explore?',
         ],
         'accommodation_label' => [
             'vi' => 'Bạn thích loại lưu trú nào?',
-            'en' => 'What kind of stay do you prefer?',
+
+
+
+
+'en' => 'What kind of stay do you prefer?',
         ],
         'budget_note' => [
             'vi' => 'Ngân sách dự kiến (chưa gồm vé tàu/phà / đưa đón cửa ngõ)',
-            'en' => 'Estimated budget (excluding ferry tickets / gateway transfers)',
+
+
+
+
+'en' => 'Estimated budget (excluding ferry tickets / gateway transfers)',
         ],
         'accommodation' => [
             'vi' => [
@@ -2044,7 +3756,11 @@ return array_merge(
                 'Trung tâm đảo / bãi Cát Cò (tư vấn riêng, không đặt qua web)',
                 'Nhờ tư vấn giúp tôi',
             ],
-            'en' => [
+
+
+
+
+'en' => [
                 'Overnight cruise / Lan Ha floating bungalow',
                 'Viet Hai village homestay',
                 'Town centre / Cat Co (advised separately, not booked on site)',
@@ -2055,49 +3771,113 @@ return array_merge(
     ['nav' => [
         'about_group' => [
             'vi' => 'Về Hi Cát Bà',
-            'en' => 'About Hi Cat Ba',
+
+
+
+
+'en' => 'About Hi Cat Ba',
         ],
         'tours' => [
-            'label' => ['vi' => 'Tour', 'en' => 'Tours'],
+            'label' => ['vi' => 'Tour',
+
+
+
+'en' => 'Tours'],
         ],
         'cruise' => [
-            'label' => ['vi' => 'Du thuyền', 'en' => 'Cruises'],
-            'all_label' => ['vi' => 'Tất cả du thuyền', 'en' => 'All cruises'],
-            'all_meta' => ['vi' => 'Xem toàn bộ lịch trình du thuyền & vịnh', 'en' => 'Browse all bay cruises & day trips'],
-            'search_hint' => ['vi' => 'Tour, điểm đến, du thuyền, cẩm nang…', 'en' => 'Tours, places, cruises, guides…'],
-            'search_placeholder' => ['vi' => 'Tìm tour, điểm đến, du thuyền, bài viết…', 'en' => 'Search tours, places, cruises, articles…'],
-            'hub_title' => ['vi' => 'Du thuyền', 'en' => 'Cruises'],
-            'hub_subtitle' => ['vi' => 'Du thuyền Lan Hạ, tour ngày vịnh và thuyền Việt Hải — chọn lịch trình phù hợp.', 'en' => 'Lan Ha cruises, bay day trips and Viet Hai boats — choose a fitting itinerary.'],
+            'label' => ['vi' => 'Du thuyền',
+
+
+
+'en' => 'Cruises'],
+            'all_label' => ['vi' => 'Tất cả du thuyền',
+
+
+
+'en' => 'All cruises'],
+            'all_meta' => ['vi' => 'Xem toàn bộ lịch trình du thuyền & vịnh',
+
+
+
+'en' => 'Browse all bay cruises & day trips'],
+            'search_hint' => ['vi' => 'Tour, điểm đến, du thuyền, cẩm nang…',
+
+
+
+'en' => 'Tours, places, cruises, guides…'],
+            'search_placeholder' => ['vi' => 'Tìm tour, điểm đến, du thuyền, bài viết…',
+
+
+
+'en' => 'Search tours, places, cruises, articles…'],
+            'hub_title' => ['vi' => 'Du thuyền',
+
+
+
+'en' => 'Cruises'],
+            'hub_subtitle' => ['vi' => 'Du thuyền Lan Hạ, tour ngày vịnh và thuyền Việt Hải — chọn lịch trình phù hợp.',
+
+
+
+'en' => 'Lan Ha cruises, bay day trips and Viet Hai boats — choose a fitting itinerary.'],
         ],
     ]],
     ['listing_hubs' => [
         'tours_hub' => [
             'vi' => ['seo_body' => 'Trang tour của :brand tập hợp hành trình trekking, vịnh và combo cửa ngõ Cát Bà — thiết kế bởi chuyên gia bản địa, tuỳ chỉnh theo lịch trình của bạn.'],
-            'en' => ['seo_body' => ':brand tours cover Cat Ba trekking, bay days and gateway combos — designed by local experts and tailored to your schedule.'],
+
+
+
+
+'en' => ['seo_body' => ':brand tours cover Cat Ba trekking, bay days and gateway combos — designed by local experts and tailored to your schedule.'],
         ],
         'cruises_hub' => [
             'vi' => ['seo_body' => 'Du thuyền Lan Hạ, tour ngày vịnh và thuyền Việt Hải từ :brand — chọn lịch trình ngủ đêm hoặc trong ngày phù hợp.'],
-            'en' => ['seo_body' => 'Lan Ha cruises, bay day trips and Viet Hai boats from :brand — overnight or day trips that fit your plan.'],
+
+
+
+
+'en' => ['seo_body' => 'Lan Ha cruises, bay day trips and Viet Hai boats from :brand — overnight or day trips that fit your plan.'],
         ],
         'ferries_hub' => [
             'vi' => ['seo_body' => 'Vé tàu cao tốc, phà và limousine Hà Nội / Hải Phòng / Hạ Long — Cát Bà qua :brand: lịch rõ, đổi ngày linh hoạt, e-ticket.'],
-            'en' => ['seo_body' => 'High-speed boats, car ferries and limousines Hanoi / Hai Phong / Ha Long — Cat Ba via :brand: clear schedules, flexible changes, e-tickets.'],
+
+
+
+
+'en' => ['seo_body' => 'High-speed boats, car ferries and limousines Hanoi / Hai Phong / Ha Long — Cat Ba via :brand: clear schedules, flexible changes, e-tickets.'],
         ],
         'flights_hub' => [
             'vi' => ['seo_body' => 'Vé máy bay và đưa đón sân bay kết nối Cát Bà qua :brand — báo giá nhanh, khớp lịch tour đảo.'],
-            'en' => ['seo_body' => 'Flights and airport transfers connecting to Cat Ba via :brand — fast quotes aligned with your island itinerary.'],
+
+
+
+
+'en' => ['seo_body' => 'Flights and airport transfers connecting to Cat Ba via :brand — fast quotes aligned with your island itinerary.'],
         ],
         'stays_hub' => [
             'vi' => ['seo_body' => 'Ngủ trên vịnh Lan Hạ — cabin du thuyền, bungalow nổi và homestay Việt Hải do :brand đặt hộ. Không catalogue khách sạn đất liền; cần gợi ý lưu trú trung tâm/Cát Cò, liên hệ tư vấn.'],
-            'en' => ['seo_body' => 'Overnight on Lan Ha Bay — cruise cabins, floating bungalows and Viet Hai homestays booked via :brand. No mainland hotel catalogue; ask us for town or Cat Co stay suggestions.'],
+
+
+
+
+'en' => ['seo_body' => 'Overnight on Lan Ha Bay — cruise cabins, floating bungalows and Viet Hai homestays booked via :brand. No mainland hotel catalogue; ask us for town or Cat Co stay suggestions.'],
         ],
         'experiences_hub' => [
             'vi' => ['seo_body' => 'Trải nghiệm Cát Bà theo đúng lý do bạn đến: vịnh Lan Hạ, trekking vườn quốc gia, làng chài Cái Bèo, Đảo Khỉ và hoạt động ban đêm — đặt lẻ hoặc gộp tour qua :brand.'],
-            'en' => ['seo_body' => 'Cat Ba experiences by intent: Lan Ha Bay, national park trekking, Cai Beo fishing village, Monkey Island and evening activities — à la carte or bundled via :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'Cat Ba experiences by intent: Lan Ha Bay, national park trekking, Cai Beo fishing village, Monkey Island and evening activities — à la carte or bundled via :brand.'],
         ],
         'extras_hub' => [
             'vi' => ['seo_body' => 'Dịch vụ hỗ trợ trên đảo Cát Bà: thuê xe, HDV riêng và hỗ trợ trong chuyến đi cùng :brand.'],
-            'en' => ['seo_body' => 'On-island support on Cat Ba: vehicle hire, private guides and trip assistance with :brand.'],
+
+
+
+
+'en' => ['seo_body' => 'On-island support on Cat Ba: vehicle hire, private guides and trip assistance with :brand.'],
         ],
     ]],
 );
