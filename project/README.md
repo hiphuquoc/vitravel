@@ -35,7 +35,7 @@ php artisan project:seed hitamdao --domain=hitamdao.dev --domain=hitamdao.com --
 # Sa Pa: hisapa.dev (local) + hisapa.vn (prod)
 php artisan project:seed hisapa --domain=hisapa.dev --domain=hisapa.vn --name="Hi Sa Pa"
 
-# Chỉ seed lại taxonomy tour (chủ đề + danh mục + travel_styles + gắn package) — không đụng bài viết/home/services
+# Chỉ seed lại cụm tour — XÓA SẠCH chủ đề/danh mục/SEO/chi tiết tour rồi tạo lại (không đụng bài viết/home/services/cruises)
 php artisan project:seed hidalat --only=tours
 
 # Xóa toàn bộ data 1 project rồi seed lại (giữ project khác)
@@ -159,13 +159,13 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 - Danh mục **không** đặt tên “Tour 1 ngày / 2–3 ngày…”.
 - `travel_styles` = mã filter khớp chủ đề (duration + insight) — **không** tạo trang SEO riêng; trang SEO = `tour_categories`.
 
-**Seed lại riêng cụm taxonomy tour** (không đụng bài viết / home / catalogue dịch vụ khác):
+**Seed lại riêng cụm taxonomy + chi tiết tour** (xóa sạch chủ đề/danh mục/SEO/packages type=tour rồi tạo lại; không đụng bài viết/home/services/cruises):
 
 ```bash
 php artisan project:seed hidalat --only=tours
 ```
 
-**Seed đè toàn bộ 1 project:**
+**Seed đè toàn bộ 1 project** (xóa sạch data project rồi seed lại):
 
 ```bash
 php artisan project:seed hihagiang --fresh-project --domain=hihagiang.dev --name="Hi Hà Giang"
