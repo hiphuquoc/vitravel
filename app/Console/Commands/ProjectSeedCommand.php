@@ -350,14 +350,27 @@ class ProjectSeedCommand extends Command
 
     private function callSilentSeeders(): void
     {
-        $seeders = $this->seederList();
+        $only = strtolower(trim((string) $this->option('only')));
+        $tourOnly = in_array($only, ['tours', 'tour', 'tour-taxonomy', 'themes'], true);
 
-        foreach ($seeders as $seeder) {
-            $this->info(' → '.class_basename($seeder));
-            $instance = $this->laravel->make($seeder);
-            $instance->setContainer($this->laravel);
-            $instance->setCommand($this);
-            $instance->__invoke();
+        if ($tourOnly) {
+            PriceTableSeeder::$onlyTourPackages = true;
+            PriceTableSeeder::$onlyPackages = true;
+        }
+
+        try {
+            $seeders = $this->seederList();
+
+            foreach ($seeders as $seeder) {
+                $this->info(' → '.class_basename($seeder));
+                $instance = $this->laravel->make($seeder);
+                $instance->setContainer($this->laravel);
+                $instance->setCommand($this);
+                $instance->__invoke();
+            }
+        } finally {
+            PriceTableSeeder::$onlyTourPackages = false;
+            PriceTableSeeder::$onlyPackages = false;
         }
     }
 

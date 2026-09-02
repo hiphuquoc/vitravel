@@ -380,7 +380,7 @@ class PriceTableService
                 }
                 $name = (string) ($cabin->translation($locale)?->name ?? 'Cabin #'.$cabin->id);
                 $out[] = [
-                    'code' => Str::slug($name) ?: 'cabin-'.$cabin->id,
+                    'code' => PriceVariant::normalizeCode(Str::slug($name) ?: 'cabin-'.$cabin->id, (int) $cabin->id),
                     'name' => $name,
                     'description' => $cabin->translation($locale)?->description,
                     'source' => PriceVariant::SOURCE_CABIN,
@@ -400,7 +400,10 @@ class PriceTableService
                     continue;
                 }
                 $name = (string) ($option->name ?: ($option->code ?: 'Option #'.$option->id));
-                $code = $option->code ?: (Str::slug($name) ?: 'option-'.$option->id);
+                $code = PriceVariant::normalizeCode(
+                    $option->code ?: (Str::slug($name) ?: 'option-'.$option->id),
+                    (int) $option->id,
+                );
                 if (isset($existing['code:'.$code])) {
                     continue;
                 }
@@ -445,6 +448,7 @@ class PriceTableService
             if ($code === '') {
                 $code = Str::slug((string) ($row['name'] ?? '')) ?: 'option-'.($sort + 1);
             }
+            $code = PriceVariant::normalizeCode($code, isset($row['source_id']) ? (int) $row['source_id'] : null);
 
             $variant = null;
             if (! empty($row['id'])) {

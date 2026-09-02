@@ -6,6 +6,7 @@ namespace App\Support;
 
 use App\Models\Package;
 use App\Models\PriceGuestType;
+use App\Models\PriceVariant;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -126,7 +127,10 @@ final class PriceTableSample
                     ?: $option->code
                     ?: 'Tuỳ chọn '.($i + 1));
                 $out[] = [
-                    'code' => $option->code ?: (Str::slug($name) ?: 'opt-'.$option->id),
+                    'code' => PriceVariant::normalizeCode(
+                        $option->code ?: (Str::slug($name) ?: 'opt-'.$option->id),
+                        (int) $option->id,
+                    ),
                     'name' => $name,
                     'description' => $option->description,
                     'source' => 'service_option',
@@ -145,7 +149,7 @@ final class PriceTableSample
             foreach ($cabins as $i => $cabin) {
                 $name = (string) ($cabin->translation('vi')?->name ?: 'Cabin '.($i + 1));
                 $out[] = [
-                    'code' => Str::slug($name) ?: 'cabin-'.$cabin->id,
+                    'code' => PriceVariant::normalizeCode(Str::slug($name) ?: 'cabin-'.$cabin->id, (int) $cabin->id),
                     'name' => $name,
                     'description' => $cabin->description,
                     'source' => 'cabin',

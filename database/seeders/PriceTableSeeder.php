@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Package;
+use App\Models\PriceTable;
 use App\Models\Project;
 use App\Models\Service;
 use App\Services\PriceTableService;
@@ -18,9 +21,19 @@ use Illuminate\Support\Facades\DB;
  * An toàn: bỏ qua chương trình đã có rate; không ghi đè bảng giá admin đã nhập.
  *
  *   php artisan db:seed --class=PriceTableSeeder
+ *
+ * Tuỳ chọn static (set trước khi gọi từ project:seed --only=tours):
+ *   PriceTableSeeder::$onlyPackages = true;  // chỉ tour/cruise packages, không đụng services
+ *   PriceTableSeeder::$onlyTourPackages = true; // chỉ packages type=tour
  */
 class PriceTableSeeder extends Seeder
 {
+    /** Chỉ seed bảng giá cho Package (bỏ Service). */
+    public static bool $onlyPackages = false;
+
+    /** Chỉ packages type=tour (ngầm bật $onlyPackages). */
+    public static bool $onlyTourPackages = false;
+
     public function run(): void
     {
         $current = ProjectContext::get();
@@ -63,10 +76,16 @@ class PriceTableSeeder extends Seeder
         $filled = 0;
         $skipped = 0;
 
-        $packages = Package::query()
-            ->with(['cabinTypes.translations', 'priceTable.periods.rates'])
-            ->get();
-        foreach ($packages as $package) {
+        $onlyTours = self::$onlyTourPackages;
+        $onlyPackages = self::$onlyPackages || $onlyTours;
+
+        $packagesQuery = Package::query()
+            ->with(['cabinTypes.translations', 'priceTable.periods.rates']);
+        if ($onlyTours) {
+            $packagesQuery->where('type', Package::TYPE_TOUR);
+        }
+
+        foreach ($packagesQuery->get() as $package) {
             if ($this->seedPriceable($prices, $package, $defaults, $overrides[$package->code ?? ''] ?? null)) {
                 $filled++;
             } else {
@@ -74,19 +93,22 @@ class PriceTableSeeder extends Seeder
             }
         }
 
-        $services = Service::query()
-            ->with(['options.translations', 'priceTable.periods.rates'])
-            ->get();
-        foreach ($services as $service) {
-            if ($this->seedPriceable($prices, $service, $defaults, $overrides[$service->code ?? ''] ?? null)) {
-                $filled++;
-            } else {
-                $skipped++;
+        if (! $onlyPackages) {
+            $services = Service::query()
+                ->with(['options.translations', 'priceTable.periods.rates'])
+                ->get();
+            foreach ($services as $service) {
+                if ($this->seedPriceable($prices, $service, $defaults, $overrides[$service->code ?? ''] ?? null)) {
+                    $filled++;
+                } else {
+                    $skipped++;
+                }
             }
         }
 
+        $scope = $onlyTours ? 'tours' : ($onlyPackages ? 'packages' : 'all');
         $this->command?->info(
-            "Price tables [{$project->code}]: +{$filled} mới, {$skipped} bỏ qua (đã có giá / không dựng được)."
+            "Price tables [{$project->code}/{$scope}]: +{$filled} mới, {$skipped} bỏ qua (đã có giá / không dựng được)."
         );
     }
 
@@ -121,7 +143,11 @@ class PriceTableSeeder extends Seeder
 
     private function hasRates(Model $priceable): bool
     {
-        $table = $priceable->priceTable;
+        /** @var PriceTable|null $table */
+        $table = $priceable->relationLoaded('priceTable')
+            ? $priceable->getRelation('priceTable')
+            : $priceable->priceTable()->with('periods.rates')->first();
+
         if (! $table) {
             return false;
         }
@@ -135,42 +161,37 @@ class PriceTableSeeder extends Seeder
         return false;
     }
 
-    /** @return array<string, mixed> */
+    /**
+     * @return array<string, mixed>
+     */
     private function defaults(): array
     {
-        $fromSeed = [];
-        try {
-            $fromSeed = ProjectSeed::get('price_table_defaults', []);
-        } catch (\RuntimeException) {
-            $fromSeed = [];
-        }
+        $fromSeed = ProjectSeed::get('price_table_defaults', []);
 
-        $fallback = config('pricing.sample', []);
-
-        return is_array($fromSeed) && $fromSeed !== []
-            ? array_replace_recursive($fallback, $fromSeed)
-            : $fallback;
+        return is_array($fromSeed) ? $fromSeed : [];
     }
 
-    /** @return array<string, array<string, mixed>> */
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     private function overridesByCode(): array
     {
         $out = [];
-        try {
-            foreach (['tours', 'cruises', 'services'] as $key) {
-                foreach (ProjectSeed::get($key, []) as $row) {
-                    if (! is_array($row) || empty($row['price_table']) || ! is_array($row['price_table'])) {
-                        continue;
-                    }
-                    $code = (string) ($row['tourCode'] ?? $row['code'] ?? $row['slug'] ?? '');
-                    if ($code === '') {
-                        continue;
-                    }
-                    $out[$code] = $row['price_table'];
-                }
+        foreach (['tours', 'cruises', 'services'] as $key) {
+            $rows = ProjectSeed::get($key, []);
+            if (! is_array($rows)) {
+                continue;
             }
-        } catch (\RuntimeException) {
-            return [];
+            foreach ($rows as $row) {
+                if (! is_array($row) || empty($row['price_table']) || ! is_array($row['price_table'])) {
+                    continue;
+                }
+                $code = (string) ($row['tourCode'] ?? $row['code'] ?? $row['slug'] ?? '');
+                if ($code === '') {
+                    continue;
+                }
+                $out[$code] = $row['price_table'];
+            }
         }
 
         return $out;
