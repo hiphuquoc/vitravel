@@ -20,14 +20,16 @@ php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="
 php artisan project:seed phuquoc --domain=phuquocangiang.dev --domain=phuquocangiang.com --name="Đảo Phú Quốc"
 # culaocham.net: culaocham.dev (local) + culaocham.net (prod)
 php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net --name="culaocham.net"
-# Đà Lạt: hidalat.dev (local) + hidalat.com (prod)
-php artisan project:seed hidalat --domain=hidalat.dev --domain=hidalat.com --name="Hi Đà Lạt"
+# Đà Lạt: hidalat.dev (local) + hidalat.com (prod) + hidalat.vn
+php artisan project:seed hidalat --domain=hidalat.dev --domain=hidalat.com --domain=hidalat.vn --name="Hi Đà Lạt"
 # Cần Thơ: hicantho.dev (local) + hicantho.com (prod)
 php artisan project:seed hicantho --domain=hicantho.dev --domain=hicantho.com --name="Hi Cần Thơ"
-# Hà Giang: hihagiang.dev (local) + hihagiang.vn (prod)
-php artisan project:seed hihagiang --domain=hihagiang.dev --domain=hihagiang.vn --name="Hi Hà Giang"
+# Hà Giang: hihagiang.dev (local) + hihagiang.com (prod chính) + hihagiang.vn
+php artisan project:seed hihagiang --domain=hihagiang.dev --domain=hihagiang.com --domain=hihagiang.vn --name="Hi Hà Giang"
 # Hạ Long: hihalong.dev (local) + hihalong.vn (prod)
 php artisan project:seed hihalong --domain=hihalong.dev --domain=hihalong.vn --name="Hi Hạ Long"
+# Mũi Né: himuine.dev (local) + himuine.com (prod)
+php artisan project:seed himuine --domain=himuine.dev --domain=himuine.com --name="Hi Mũi Né"
 ```
 
 | Profile | File | Domain |
@@ -37,10 +39,11 @@ php artisan project:seed hihalong --domain=hihalong.dev --domain=hihalong.vn --n
 | `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` / `phuquy.net` |
 | `phuquoc` | `project/seed_phuquoc.php` | `phuquocangiang.dev` / `phuquocangiang.com` |
 | `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` / `culaocham.net` |
-| `hidalat` | `project/seed_hidalat.php` | `hidalat.dev` / `hidalat.com` |
+| `hidalat` | `project/seed_hidalat.php` | `hidalat.dev` / `hidalat.com` / `hidalat.vn` |
 | `hicantho` | `project/seed_hicantho.php` | `hicantho.dev` / `hicantho.com` |
-| `hihagiang` | `project/seed_hihagiang.php` | `hihagiang.dev` / `hihagiang.vn` |
+| `hihagiang` | `project/seed_hihagiang.php` | `hihagiang.dev` / `hihagiang.com` / `hihagiang.vn` |
 | `hihalong` | `project/seed_hihalong.php` | `hihalong.dev` / `hihalong.vn` |
+| `himuine` | `project/seed_himuine.php` | `himuine.dev` / `himuine.com` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
 
@@ -64,6 +67,7 @@ project/
   seed_hicantho.php        ← Cần Thơ (ĐBSCL): hicantho.dev / hicantho.com — Hi Cần Thơ
   seed_hihagiang.php       ← Hà Giang (cao nguyên đá): hihagiang.dev / hihagiang.vn — Hi Hà Giang
   seed_hihalong.php        ← Hạ Long (vịnh UNESCO): hihalong.dev / hihalong.vn — Hi Hạ Long
+  seed_himuine.php         ← Mũi Né (Bình Thuận): himuine.dev / himuine.com — Hi Mũi Né
 ```
 
 **Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.

@@ -27,7 +27,7 @@ $__hihagiangSeed = array(
             'password' => '111111',
         ),
         'primary_domain' => 'hihagiang.dev',
-        'domains' => array('hihagiang.dev', 'www.hihagiang.dev', 'hihagiang.vn', 'www.hihagiang.vn'),
+        'domains' => array('hihagiang.dev', 'www.hihagiang.dev', 'hihagiang.vn', 'www.hihagiang.vn', 'hihagiang.com', 'www.hihagiang.com'),
         'exported_at' => '2026-08-28T00:00:00+00:00',
     ),
 

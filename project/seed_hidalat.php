@@ -27,7 +27,7 @@ $__hidalatSeed = array(
             'password' => '111111',
         ),
         'primary_domain' => 'hidalat.dev',
-        'domains' => array('hidalat.dev', 'www.hidalat.dev', 'hidalat.com', 'www.hidalat.com'),
+        'domains' => array('hidalat.dev', 'www.hidalat.dev', 'hidalat.com', 'www.hidalat.com', 'hidalat.vn', 'www.hidalat.vn'),
         'exported_at' => '2026-08-28T00:00:00+00:00',
     ),
 
