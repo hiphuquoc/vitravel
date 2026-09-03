@@ -142,7 +142,7 @@ final class StayContentGalleryUrlRewriter
     }
 
     /**
-     * basename file → path GCS hiện tại (projects/.../stays/crawler-*/file.webp).
+     * basename ảnh → path GCS hiện tại (projects/.../stays/crawler-gallery|cover|room/...).
      *
      * @return array<string, string>
      */
