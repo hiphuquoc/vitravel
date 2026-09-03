@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Sửa URL ảnh cứng trong HTML «Về chỗ nghỉ» (service_translations.content)
- * sau khi stay:migrate-crawler-media-folders đã chuyển file gallery|cover → crawler-*.
+ * Sua URL anh cung trong HTML "Ve cho nghi" (service_translations.content)
+ * sau khi stay:migrate-crawler-media-folders da chuyen file gallery|cover sang crawler-*.
  *
- * Không đụng vitravel/services (upload admin thủ công).
+ * Khong dung upload admin thu cong (vitravel/services).
  */
 final class StayContentGalleryUrlRewriter
 {
@@ -117,7 +117,7 @@ final class StayContentGalleryUrlRewriter
                 }
             });
 
-        // attrs.photos[].url trên service (gallery gắn JSON) — cùng path cũ
+        // attrs.photos[].url tren service (gallery gan JSON)
         Service::withoutGlobalScope('project')
             ->where('project_id', $projectId)
             ->where('cluster', Service::CLUSTER_STAY)
@@ -142,7 +142,7 @@ final class StayContentGalleryUrlRewriter
     }
 
     /**
-     * basename ảnh → path GCS hiện tại (projects/.../stays/crawler-gallery|cover|room/...).
+     * basename anh -> path GCS hien tai (projects/.../stays/crawler-gallery|cover|room/...).
      *
      * @return array<string, string>
      */
@@ -168,7 +168,7 @@ final class StayContentGalleryUrlRewriter
                     $path = trim(str_replace('\\', '/', (string) $media->path), '/');
                     $base = basename($path);
                     if ($base !== '' && $base !== '.' && $base !== '/') {
-                        // Ưu tiên crawler-* (path mới) — ghi đè gallery cũ nếu còn cả hai
+                        // Uu tien crawler- (path moi)
                         $preferNew = str_contains($path, '/stays/crawler-');
                         if ($preferNew || ! isset($index[$base])) {
                             $index[$base] = $path;
@@ -208,8 +208,9 @@ final class StayContentGalleryUrlRewriter
         $rewritten = 0;
         $unmatched = 0;
 
+        // Delimiter ~ — tranh xung dot voi ky tu # trong URL/hash
         $updated = preg_replace_callback(
-            '#https?://[^\s"\'<>]+/stays/(gallery|cover)/[^\s"\'<>]+#i',
+            '~https?://[^\s"\'<>]+/stays/(?:gallery|cover)/[^\s"\'<>]+~i',
             function (array $m) use ($pathByBasename, &$rewritten, &$unmatched): string {
                 $url = $m[0];
                 $next = $this->rewriteUrl($url, $pathByBasename);
@@ -275,28 +276,47 @@ final class StayContentGalleryUrlRewriter
      */
     private function rewriteUrl(string $url, array $pathByBasename): ?string
     {
-        if (! preg_match('#^(https?://[^/]+)/(.+)/stays/(gallery|cover)/([^?\s#]+)#i', $url, $m)) {
+        $parts = parse_url($url);
+        if (! is_array($parts) || empty($parts['scheme']) || empty($parts['host']) || empty($parts['path'])) {
             return null;
         }
 
-        $host = $m[1];
-        $beforeStays = trim($m[2], '/'); // projects/phuquoc
-        $oldFolder = strtolower($m[3]); // gallery|cover
-        $filename = $m[4];
-        $basename = rawurldecode(basename(strtok($filename, '?') ?: $filename));
+        $path = (string) $parts['path'];
+        if (! str_contains($path, '/stays/gallery/') && ! str_contains($path, '/stays/cover/')) {
+            return null;
+        }
+
+        $basename = rawurldecode(basename($path));
+        if ($basename === '' || $basename === '/' || $basename === '.') {
+            return null;
+        }
 
         $suffix = '';
-        if (preg_match('/([?#].*)$/', $url, $sm)) {
-            $suffix = $sm[1];
+        if (! empty($parts['query'])) {
+            $suffix .= '?'.$parts['query'];
         }
+        if (! empty($parts['fragment'])) {
+            $suffix .= '#'.$parts['fragment'];
+        }
+
+        $hostBase = $parts['scheme'].'://'.$parts['host']
+            .(isset($parts['port']) ? ':'.$parts['port'] : '');
 
         if (isset($pathByBasename[$basename])) {
-            return $host.'/'.ltrim($pathByBasename[$basename], '/').$suffix;
+            return $hostBase.'/'.ltrim($pathByBasename[$basename], '/').$suffix;
         }
 
-        // Fallback: đổi folder theo quy ước migrator (gallery→crawler-gallery, cover→crawler-cover)
-        $newFolder = $oldFolder === 'cover' ? 'crawler-cover' : 'crawler-gallery';
+        // Fallback: gallery -> crawler-gallery, cover -> crawler-cover
+        $newPath = str_replace(
+            ['/stays/gallery/', '/stays/cover/'],
+            ['/stays/crawler-gallery/', '/stays/crawler-cover/'],
+            $path,
+            $count
+        );
+        if ($count < 1) {
+            return null;
+        }
 
-        return $host.'/'.$beforeStays.'/stays/'.$newFolder.'/'.$filename.$suffix;
+        return $hostBase.$newPath.$suffix;
     }
 }
