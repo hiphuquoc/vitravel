@@ -20,6 +20,7 @@ use Illuminate\Validation\ValidationException;
 class BlogCategoryApiController extends Controller
 {
     use ManagesTranslations;
+    use Concerns\ReportsDeleteImpact;
 
     public function index(Request $request): JsonResponse
     {
@@ -111,6 +112,11 @@ class BlogCategoryApiController extends Controller
         app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa chuyên mục (kèm quan hệ)');
+    }
+
+    public function deleteImpact(Request $request, int $id): JsonResponse
+    {
+        return $this->deleteImpactResponse($request, BlogCategory::query()->findOrFail($id));
     }
 
     private function save(Request $request): JsonResponse

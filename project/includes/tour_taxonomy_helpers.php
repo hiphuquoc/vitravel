@@ -3,13 +3,16 @@
 /**
  * Shared taxonomy builders for hub seed profiles.
  *
- * RULES (sync with project/README.md):
+ * RULES (sync with project/README.md §3):
+ * - ZONES (→ countries): phân khu theo insight search/book; hub zone đứng đầu;
+ *   GEO = chỗ nghỉ/vé riêng; ket-hop-* = combo only. SEO country = root (không trang cha).
  * - DANH MỤC = type `region` → khu vực / combo (zoneSlug = vùng hoặc ket-hop-*). Không chia theo số ngày.
  * - CHỦ ĐỀ   = type `theme`  → gắn hub zone:
  *     (A) thời lượng: tour-trong-ngay, tour-2-ngay-1-dem, tour-3-ngay-2-dem, tour-4-ngay-3-dem, tour-tu-5-ngay
  *     (B) tính chất / insight địa phương — KHÔNG clone tên zone GEO.
  * - Package ↔ category: nhiều–nhiều qua packageSlugs[] (+ minDays/maxDays cho theme thời lượng, project-wide).
  * - travel_styles: mã khớp chủ đề (filter card), không tạo trang SEO riêng.
+ * - stay/experience/other: bắt buộc zone_slug = GEO hoặc hub; ferry/flight/train: KHÔNG zone_slug.
  */
 
 declare(strict_types=1);

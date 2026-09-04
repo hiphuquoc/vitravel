@@ -136,21 +136,46 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 - `review_platforms` — `{ code, name, rating, … }[]`
 - `duration_buckets` — filter thời lượng
 
-### 3. Điểm đến + phân luồng Danh mục / Chủ đề tour
+### 3. Điểm đến / khu vực + phân luồng Danh mục / Chủ đề tour
 
-- `countries` — `{ slug, name, size, tagline }[]` → SEO `country` (CMS entity). Runtime listing: `tagline` → `subtitle`; `long_form`/`intro_text` (nếu có) → `seoBody`
-- Alias dự án 1 điểm đến: **`zones` / `zoneSlug` / `zone_translations`** được `ProjectSeed` chuẩn hoá thành `countries` / `countrySlug` / `country_translations` lúc load
-- `country_translations` — i18n theo slug (hoặc `zone_translations`)
+- `countries` — `{ slug, name, size, tagline }[]` → SEO type `country` (CMS entity, admin: **Điểm đến / khu vực**).
+  Runtime listing: `tagline` → `subtitle`; `long_form`/`intro_text` (nếu có) → `seoBody`
+- Alias hub 1 địa danh: **`zones` / `zoneSlug` / `zone_translations`** → chuẩn hoá thành `countries` / `countrySlug` / `country_translations` lúc load (`ProjectSeed`)
+- `country_translations` / `zone_translations` — i18n theo slug
 - `meta.country_codes` — optional; nếu thiếu, tự sinh từ slug
+
+#### SEO — trang địa điểm **không có trang cha**
+
+> Bắt buộc mọi seed / seeder / rebuild: `parent_id = null` cho SEO type `country`.
+> URL public = `/{slug}` (vd `/vinh-lan-ha`), **không** `/tours/{slug}`.
+> Danh mục tour (`tour_category`) và gói tour vẫn có thể gắn **dưới** điểm đến → `/{zone}/{category}` / `/{zone}/{tour}`.
+> `SeoService::attachCountriesToToursHub()` là no-op (không ép về tours_hub).
+
+#### Quy tắc phân khu vực (zones) — mẫu cho dự án mới
+
+Phân khu theo **insight tìm kiếm / đặt chỗ** của khách, không theo ranh giới hành chính cứng:
+
+| Loại zone | Ví dụ slug | Khi nào tạo | Gắn sản phẩm |
+|-----------|------------|-------------|--------------|
+| **Hub zone** (1 cái, đứng đầu) | `trung-tam-*`, `thi-tran-*`, `duong-dong` | Thị trấn / cửa ngõ khách nghĩ tới khi gõ tên địa danh | Chủ đề tour (`theme`) gắn đây; stay trung tâm; không gắn train/ferry/flight |
+| **GEO zone** | `vinh-lan-ha`, `bai-sao`, `dong-van` | Khu khách **search / chọn KS / book vé** riêng (bãi, vịnh, cao nguyên…) | `tours.zoneSlug`, `services.zone_slug` (stay/experience/other), danh mục `type=region` |
+| **Combo** `ket-hop-*` | `ket-hop-ha-long` | Tuyến nối địa danh khác — **không** phải chỗ nghỉ vật lý | Chỉ tour combo + danh mục region; **không** gắn stay “ảo” |
+
+**Không làm:**
+- Clone POI nhỏ thành zone nếu khách không search / không ở khu đó (gom vào hub hoặc GEO cha).
+- Gắn `zone_slug` cho `ferry` / `flight` / `train` — cụm di chuyển **không** dùng điểm đến (`country_id` luôn null).
+- Trùng tên zone với chủ đề tour (theme không được tên “Vịnh Lan Hạ” khi đã có zone `vinh-lan-ha`).
+
+**Checklist seed 1 hub mới:** khai báo `zones` + `zone_translations` → map mọi `tours[].zoneSlug` / `stay|experience|other.zone_slug` → tạo `tour_categories` region (1/zone + ket-hop) → theme gắn hub zone → ghi chú insight ngay đầu file seed.
 
 #### Admin UI (phân luồng menu)
 
 | CMS | Menu admin | Ghi chú |
 |-----|------------|---------|
-| `countries` (điểm đến / khu vực) | **Nội dung / Thông tin → Điểm đến** | Không nằm trong nhóm Sản phẩm tour; **không** gắn train/ferry/flight |
+| `countries` (điểm đến / khu vực) | **Nội dung / Thông tin → Điểm đến** | Không nằm trong nhóm Sản phẩm tour; **không** gắn train/ferry/flight; SEO không trang cha |
 | `tour_categories` (region + theme) | **Sản phẩm → Danh mục Tour** | Drawer menu Tour public lấy các bản ghi `type=theme` |
 
-#### Quy tắc phân tách (bắt buộc — mọi hub)
+#### Quy tắc phân tách danh mục / chủ đề (bắt buộc — mọi hub)
 
 > Package ↔ category/theme đã là **nhiều–nhiều** (`package_tour_category` + `packageSlugs[]`).
 > Một tour có thể thuộc nhiều danh mục GEO **và** nhiều chủ đề cùng lúc.

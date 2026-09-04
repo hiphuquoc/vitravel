@@ -23,6 +23,20 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO type=country KHÔNG có parent; URL /{slug}):
+ * Hub (đứng đầu — themes gắn đây):
+ *   ninh-kieu-trung-tam — bến Ninh Kiều, cầu đi bộ, nhịp sống thành phố
+ * GEO (search/book riêng):
+ *   cho-noi-cai-rang — chợ nổi lớn nhất ĐBSCL (sáng sớm)
+ *   cho-noi-phong-dien — chợ nổi nhỏ hơn, trải nghiệm địa phương
+ *   vuon-trai-mien-tay — Mỹ Khánh, Cái Mơn, agri-tourism
+ *   lang-mien-tay — nhà cổ Bình Thủy, chùa Ông/Khmer, bảo tàng
+ *   con-son-cu-lao — cù lao giữa sông, homestay, đạp xe
+ *   song-hau-kenh-rach — thuyền hoàng hôn, sampan, xuồng máy kênh
+ * Combo only (ket-hop-* — KHÔNG gắn stay vật lý):
+ *   ket-hop-dbscl — Châu Đốc/Tra Su, Cà Mau, Phú Quốc qua Rạch Giá
+ * Services: stay/experience/other → zone_slug hub|GEO; train/flight → KHÔNG zone_slug.
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hicantho')
  *
  * @return array<string, mixed>
@@ -202,6 +216,8 @@ $__hicanthoSeed = array(
         ),
     ),
 
+    // Zones → countries. Hub đầu; GEO = search/book riêng; ket-hop-* = combo only (no fake stays).
+    // SEO country: parent_id=null; public URL /{slug}. Themes gắn hub ninh-kieu-trung-tam.
     'zones' => array(
         array('slug' => 'ninh-kieu-trung-tam', 'name' => 'Ninh Kiều & trung tâm', 'size' => 'large', 'tourCount' => 5, 'tagline' => 'Bến Ninh Kiều, cầu đi bộ, nhà cổ Bình Thủy và nhịp sống thành phố'),
         array('slug' => 'cho-noi-cai-rang', 'name' => 'Chợ nổi Cái Răng', 'size' => 'large', 'tourCount' => 4, 'tagline' => 'Chợ nổi lớn nhất ĐBSCL — 5:30–7h sáng, ghe trái cây và hủ tiếu'),
@@ -2495,7 +2511,7 @@ $__servicesSeed = [
     ],
     'services' => [
         // TRAIN (10)
-        ['code' => 'train-sleeper-sgn-ct-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-sleeper-sgn-ct-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-can-tho',
             'title' => 'Xe giường nằm Sài Gòn → Cần Thơ (một chiều)', 'slug' => 'xe-giuong-sai-gon-can-tho-mot-chieu',
             'price_from' => 180000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 1024,
             'is_featured' => true, 'location_label' => 'Sài Gòn → Cần Thơ',
@@ -2503,63 +2519,63 @@ $__servicesSeed = [
             'highlights' => ['3–4 giờ', 'Giường nằm hoặc ghế ngả', 'Đón bến Miền Tây / quận trung tâm'],
             'inclusions' => ['Vé một chiều'], 'exclusions' => ['Đón tận nhà xa trung tâm'],
             'notes' => ['Giá theo hãng xe — chốt khi đặt.'], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Cần Thơ', 'duration_hours' => 3.5, 'vehicle_type' => 'xe giường nằm']],
-        ['code' => 'train-sleeper-sgn-ct-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-sleeper-sgn-ct-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-can-tho',
             'title' => 'Xe giường khứ hồi Sài Gòn ↔ Cần Thơ', 'slug' => 'xe-giuong-khu-hoi-sai-gon-can-tho',
             'price_from' => 340000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 567,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN ↔ Cần Thơ',
             'summary' => 'Gói cuối tuần — đi tối thứ 6, về chiều chủ nhật.',
             'highlights' => ['Rẻ hơn 2 chiều lẻ', 'Giữ chỗ chiều về'], 'inclusions' => ['2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Cần Thơ', 'vehicle_type' => 'xe giường nằm']],
-        ['code' => 'train-limousine-sgn-ct', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-limousine-sgn-ct', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-can-tho',
             'title' => 'Limousine Sài Gòn → Cần Thơ', 'slug' => 'limousine-sai-gon-can-tho',
             'price_from' => 220000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 892,
             'is_featured' => true, 'location_label' => 'TP.HCM → Cần Thơ',
             'summary' => '9–16 chỗ, đón trung tâm, ~3–4h ban ngày.',
             'highlights' => ['Đón quận 1/3', 'Wifi', 'Ghế massage'], 'inclusions' => ['Limousine một chiều'], 'exclusions' => ['Phụ phí đón xa'],
             'notes' => ['Đặt trước cuối tuần.'], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Cần Thơ', 'duration_hours' => 3.5, 'vehicle_type' => 'limousine']],
-        ['code' => 'train-bus-chaudoc-ct', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dbscl', 'zone_slug' => 'ket-hop-dbscl',
+        ['code' => 'train-bus-chaudoc-ct', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dbscl',
             'title' => 'Xe khách Châu Đốc → Cần Thơ', 'slug' => 'xe-khach-chau-doc-can-tho',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 234,
             'is_featured' => true, 'location_label' => 'Châu Đốc → Cần Thơ',
             'summary' => '~3h — nền tảng combo Tra Su & Cần Thơ.',
             'highlights' => ['Nhiều chuyến/ngày', 'Ghế ngồi/limousine'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Châu Đốc', 'to' => 'Cần Thơ', 'duration_hours' => 3]],
-        ['code' => 'train-bus-rachgia-ct', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dbscl', 'zone_slug' => 'ket-hop-dbscl',
+        ['code' => 'train-bus-rachgia-ct', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dbscl',
             'title' => 'Xe khách Rạch Giá → Cần Thơ', 'slug' => 'xe-khach-rach-gia-can-tho',
             'price_from' => 100000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 178,
             'is_featured' => false, 'location_label' => 'Rạch Giá → Cần Thơ',
             'summary' => '~2.5h — kết nối Phú Quốc qua phà Rạch Giá.',
             'highlights' => ['Open bus / xe khách'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Rạch Giá', 'to' => 'Cần Thơ', 'duration_hours' => 2.5]],
-        ['code' => 'train-bus-camau-ct', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dbscl', 'zone_slug' => 'ket-hop-dbscl',
+        ['code' => 'train-bus-camau-ct', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dbscl',
             'title' => 'Xe khách Cà Mau → Cần Thơ', 'slug' => 'xe-khach-ca-mau-can-tho',
             'price_from' => 150000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 145,
             'is_featured' => false, 'location_label' => 'Cà Mau → Cần Thơ',
             'summary' => '~4h — cực Nam về thủ phủ miền Tây.',
             'highlights' => ['Tần suất cao'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Cà Mau', 'to' => 'Cần Thơ', 'duration_hours' => 4]],
-        ['code' => 'train-private-charter', 'cluster' => 'train', 'category_slug' => 'xe-rieng-charter', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-private-charter', 'cluster' => 'train', 'category_slug' => 'xe-rieng-charter',
             'title' => 'Xe riêng charter liên tỉnh (4–16 chỗ)', 'slug' => 'xe-rieng-charter-lien-tinh-can-tho',
             'price_from' => 2800000, 'currency' => 'VND', 'rating' => 4.9, 'review_count' => 78,
             'is_featured' => true, 'location_label' => 'Theo tuyến',
             'summary' => 'SGN/Châu Đốc/Rạch Giá—Cần Thơ một chiều hoặc theo ngày.',
             'highlights' => ['Lịch linh hoạt', 'Phù hợp đoàn'], 'inclusions' => ['Xe + tài xế'], 'exclusions' => ['Xăng ngoài km', 'Phí cầu đường'],
             'notes' => ['Báo giá theo tuyến và loại xe.'], 'attrs' => ['service_type' => 'private_charter', 'vehicle_type' => '4–16 chỗ']],
-        ['code' => 'train-shuttle-vca', 'cluster' => 'train', 'category_slug' => 'shuttle-san-bay-vca', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-shuttle-vca', 'cluster' => 'train', 'category_slug' => 'shuttle-san-bay-vca',
             'title' => 'Shuttle sân bay VCA ↔ trung tâm Cần Thơ', 'slug' => 'shuttle-san-bay-vca-can-tho',
             'price_from' => 80000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 612,
             'is_featured' => true, 'location_label' => 'VCA ↔ Cần Thơ',
             'summary' => '~8km, ~20 phút — đón sảnh đến, trả homestay/khách sạn.',
             'highlights' => ['Theo dõi chuyến bay', 'Ghép hoặc riêng'], 'inclusions' => ['Shuttle một chiều'], 'exclusions' => ['Phụ phí đêm khuya'],
             'notes' => ['Gửi số hiệu chuyến bay trước 24h.'], 'attrs' => ['from' => 'VCA', 'to' => 'Cần Thơ', 'duration_hours' => 0.35]],
-        ['code' => 'train-city-transfer', 'cluster' => 'train', 'category_slug' => 'xe-noi-thanh-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-city-transfer', 'cluster' => 'train', 'category_slug' => 'xe-noi-thanh-can-tho',
             'title' => 'Xe đón bến xe / nội thành Cần Thơ', 'slug' => 'xe-don-ben-noi-thanh-can-tho',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 312,
             'is_featured' => false, 'location_label' => 'Trong Cần Thơ',
             'summary' => 'Đón bến xe, đưa homestay hoặc điểm tour chợ nổi.',
             'highlights' => ['Bảng tên đón', '4–7 chỗ'], 'inclusions' => ['Xe một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['service_type' => 'city_transfer']],
-        ['code' => 'train-limousine-ct-sgn', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-can-tho', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'train-limousine-ct-sgn', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-can-tho',
             'title' => 'Limousine Cần Thơ → Sài Gòn', 'slug' => 'limousine-can-tho-sai-gon',
             'price_from' => 220000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 534,
             'is_featured' => true, 'location_label' => 'Cần Thơ → TP.HCM',
@@ -2568,28 +2584,28 @@ $__servicesSeed = [
             'notes' => ['Đặt trước chủ nhật chiều.'], 'attrs' => ['from' => 'Cần Thơ', 'to' => 'TP.HCM', 'duration_hours' => 3.5, 'vehicle_type' => 'limousine']],
 
         // FLIGHT (4)
-        ['code' => 'flight-sgn-vca', 'cluster' => 'flight', 'category_slug' => 'noi-dia-vca', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'flight-sgn-vca', 'cluster' => 'flight', 'category_slug' => 'noi-dia-vca',
             'title' => 'Vé máy bay Sài Gòn — Cần Thơ (VCA)', 'slug' => 've-may-bay-sgn-vca',
             'price_from' => 750000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 489,
             'is_featured' => true, 'location_label' => 'Sài Gòn → VCA',
             'summary' => 'Bay ~45 phút — sân bay gần trung tâm (~8km).',
             'highlights' => ['Nhiều chuyến/ngày', 'Gộp shuttle'], 'inclusions' => ['Vé economy', 'Thuế phí'], 'exclusions' => ['Ra thành phố'],
             'notes' => [], 'attrs' => ['from' => 'SGN', 'to' => 'VCA', 'flight_time' => '45m']],
-        ['code' => 'flight-han-vca', 'cluster' => 'flight', 'category_slug' => 'noi-dia-vca', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'flight-han-vca', 'cluster' => 'flight', 'category_slug' => 'noi-dia-vca',
             'title' => 'Vé máy bay Hà Nội — Cần Thơ (VCA)', 'slug' => 've-may-bay-han-vca',
             'price_from' => 1050000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 198,
             'is_featured' => true, 'location_label' => 'Hà Nội → VCA',
             'summary' => 'Bay ~2h — nhanh hơn xe liên tỉnh.',
             'highlights' => ['Bay thẳng', 'Gộp shuttle'], 'inclusions' => ['Vé economy'], 'exclusions' => ['Hành lý thêm'],
             'notes' => [], 'attrs' => ['from' => 'HAN', 'to' => 'VCA', 'flight_time' => '2h']],
-        ['code' => 'flight-transfer-vca', 'cluster' => 'flight', 'category_slug' => 'dua-don-vca', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'flight-transfer-vca', 'cluster' => 'flight', 'category_slug' => 'dua-don-vca',
             'title' => 'Đưa đón sân bay VCA — door to hotel', 'slug' => 'dua-don-vca-door-to-hotel',
             'price_from' => 180000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 234,
             'is_featured' => true, 'location_label' => 'VCA → Cần Thơ',
             'summary' => 'Xe riêng đón sảnh, trả tận homestay — canh giờ chuyến bay.',
             'highlights' => ['Theo dõi flight', 'Hỗ trợ vali'], 'inclusions' => ['Xe 4 chỗ'], 'exclusions' => ['Vé bay'],
             'notes' => [], 'attrs' => ['from' => 'VCA', 'to' => 'Cần Thơ', 'duration_hours' => 0.35]],
-        ['code' => 'flight-combo-fly-shuttle', 'cluster' => 'flight', 'category_slug' => 'combo-bay-shuttle', 'zone_slug' => 'ninh-kieu-trung-tam',
+        ['code' => 'flight-combo-fly-shuttle', 'cluster' => 'flight', 'category_slug' => 'combo-bay-shuttle',
             'title' => 'Combo vé bay + shuttle Cần Thơ', 'slug' => 'combo-ve-bay-shuttle-can-tho',
             'price_from' => 950000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 112,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/Hà Nội → thành phố',

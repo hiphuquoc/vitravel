@@ -22,6 +22,7 @@ use Illuminate\Validation\ValidationException;
 class CountryApiController extends Controller
 {
     use ManagesTranslations;
+    use Concerns\ReportsDeleteImpact;
 
     public function index(Request $request): JsonResponse
     {
@@ -70,7 +71,8 @@ class CountryApiController extends Controller
         app()->setLocale($locale);
 
         $hubSeo = $this->seoService()->ensureToursHub($locale);
-        $parents = $this->seoService()->parentOptions('tours_hub');
+        // Điểm đến không có trang cha — seo_parents rỗng (config parent_type = null).
+        $parents = $this->seoService()->parentOptionsForType('country');
 
         return ApiResponse::success([
             'languages' => Language::adminOptions(),
@@ -119,13 +121,14 @@ class CountryApiController extends Controller
     {
         $row = Country::query()->findOrFail($id);
 
-        try {
-            app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return ApiResponse::fromValidation($e);
-        }
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa điểm đến (kèm media & quan hệ)');
+    }
+
+    public function deleteImpact(Request $request, int $id): JsonResponse
+    {
+        return $this->deleteImpactResponse($request, Country::query()->findOrFail($id));
     }
 
     public function setActive(Request $request, int $id): JsonResponse
@@ -203,8 +206,10 @@ class CountryApiController extends Controller
         }
 
         $country = DB::transaction(function () use ($request, $validated, $locale) {
-            $hubSeo = $this->seoService()->ensureToursHub($locale);
-            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
+            // Điểm đến không có trang cha — chỉ dùng seo_parent_id khi admin chọn tường minh.
+            $parentId = $request->has('seo_parent_id')
+                ? ((int) $request->input('seo_parent_id') ?: null)
+                : null;
 
             $country = isset($validated['id'])
                 ? Country::query()->findOrFail($validated['id'])

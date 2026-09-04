@@ -26,6 +26,19 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO country KHÔNG có parent — URL /{slug}):
+ * Hub (đứng đầu; themes gắn đây):
+ * - trung-tam-cat-ba — phố đảo, Cát Cò, Bến Bèo; KS bến/pier & xuất phát ngày
+ * GEO (khách search/book riêng):
+ * - vinh-lan-ha — vịnh Lan Hạ, cruise qua đêm, kayak/snorkel
+ * - vuon-quoc-gia — trekking, voọc, Ao Ech
+ * - dao-khi — Cát Dứa / Monkey Island, tắm biển ngày
+ * - lang-viet-hai — homestay làng không xe máy
+ * - cai-beo — làng chài Cái Bèo, sampan / đêm
+ * Combo (chỉ itinerary — KHÔNG gắn stay vật lý):
+ * - ket-hop-ha-long — nối Hạ Long ↔ Cát Bà
+ * ferry/flight: KHÔNG zone_slug (country_id null).
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hicatba')
  *
  * @return array<string, mixed>
@@ -236,6 +249,7 @@ $__hicatbaSeed = array(
         ),
     ),
 
+    // Zones: HUB trung-tam-cat-ba | GEO vinh-lan-ha, vuon-quoc-gia, dao-khi, lang-viet-hai, cai-beo | COMBO ket-hop-ha-long (itinerary only)
     'zones' => array(
         array('slug' => 'trung-tam-cat-ba', 'name' => 'Trung tâm đảo Cát Bà', 'size' => 'large', 'tourCount' => 5, 'tagline' => 'Bến Bèo, bãi Cát Cò và nhịp sống phố đảo'),
         array('slug' => 'vinh-lan-ha', 'name' => 'Vịnh Lan Hạ', 'size' => 'large', 'tourCount' => 5, 'tagline' => 'Hơn 400 đảo đá vôi, vịnh xanh vắng dấu chân người'),
@@ -3016,7 +3030,7 @@ $__servicesSeed = [
     'services' => [
         // ── FERRY (9) ────────────────────────────────────────────────────────
         [
-            'code' => 'ferry-benbinh-catba-oneway', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-hai-phong-cat-ba', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-benbinh-catba-oneway', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-hai-phong-cat-ba',
             'title' => 'Tàu cao tốc Bến Bính → Cát Bà (một chiều)', 'slug' => 'tau-cao-toc-ben-binh-cat-ba',
             'price_from' => 90000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 214,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Bến Bính, Hải Phòng → Bến Bèo, Cát Bà',
@@ -3026,7 +3040,7 @@ $__servicesSeed = [
             'notes' => ['Giá tham khảo — chốt theo ngày đi và nhà xe.'], 'attrs' => ['from' => 'Hải Phòng (Bến Bính)', 'to' => 'Cát Bà (Bến Bèo)', 'duration_hours' => 1, 'operator' => 'Đội tàu cao tốc Cát Bà', 'vehicle_type' => 'tàu cao tốc'],
         ],
         [
-            'code' => 'ferry-benbinh-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-hai-phong-cat-ba', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-benbinh-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-hai-phong-cat-ba',
             'title' => 'Vé tàu cao tốc khứ hồi Bến Bính ↔ Cát Bà', 'slug' => 've-tau-cao-toc-khu-hoi-ben-binh',
             'price_from' => 170000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 156,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Khứ hồi', 'location_label' => 'Bến Bính ↔ Bến Bèo',
@@ -3036,7 +3050,7 @@ $__servicesSeed = [
             'notes' => ['Chiều về thường 14:00–17:00 — xác nhận khung giờ khi đặt.'], 'attrs' => ['from' => 'Bến Bính', 'to' => 'Bến Bèo', 'duration_hours' => 1, 'vehicle_type' => 'tàu cao tốc'],
         ],
         [
-            'code' => 'ferry-dongbai-caivieng', 'cluster' => 'ferry', 'category_slug' => 'pha-oto-xe-may-dong-bai', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-dongbai-caivieng', 'cluster' => 'ferry', 'category_slug' => 'pha-oto-xe-may-dong-bai',
             'title' => 'Phà Đồng Bài — Cái Viềng (ô tô / xe máy)', 'slug' => 'pha-dong-bai-cai-vieng',
             'price_from' => 25000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 132,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Đồng Bài, Cát Hải → Cái Viềng, Cát Bà',
@@ -3048,7 +3062,7 @@ $__servicesSeed = [
             'options' => [['code' => 'pha-xe-may', 'name' => 'Xe máy', 'price_from' => 25000], ['code' => 'pha-oto', 'name' => 'Ô tô 4–7 chỗ', 'price_from' => 60000]],
         ],
         [
-            'code' => 'ferry-limousine-hanoi-oneway', 'cluster' => 'ferry', 'category_slug' => 'limousine-xe-ha-noi-cat-ba', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-limousine-hanoi-oneway', 'cluster' => 'ferry', 'category_slug' => 'limousine-xe-ha-noi-cat-ba',
             'title' => 'Limousine Hà Nội → Cát Bà (gộp phà/tàu)', 'slug' => 'limousine-ha-noi-cat-ba-gop-pha',
             'price_from' => 300000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 356,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Đón tận nơi', 'location_label' => 'Hà Nội → Cát Bà',
@@ -3058,7 +3072,7 @@ $__servicesSeed = [
             'notes' => ['Đặt trước 12 giờ, đặc biệt thứ 6–CN.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Cát Bà', 'duration_hours' => 3, 'vehicle_type' => 'limousine 9 chỗ'],
         ],
         [
-            'code' => 'ferry-limousine-hanoi-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'limousine-xe-ha-noi-cat-ba', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-limousine-hanoi-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'limousine-xe-ha-noi-cat-ba',
             'title' => 'Limousine khứ hồi Hà Nội ↔ Cát Bà', 'slug' => 'limousine-khu-hoi-ha-noi-cat-ba',
             'price_from' => 550000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 198,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Hà Nội ↔ Cát Bà',
@@ -3068,7 +3082,7 @@ $__servicesSeed = [
             'notes' => ['Chiều về thường 14:00–16:00 từ Cát Bà.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Cát Bà', 'duration_hours' => 3, 'vehicle_type' => 'limousine'],
         ],
         [
-            'code' => 'ferry-speedboat-tuanchau-oneway', 'cluster' => 'ferry', 'category_slug' => 'tau-tuan-chau-cat-ba', 'zone_slug' => 'ket-hop-ha-long',
+            'code' => 'ferry-speedboat-tuanchau-oneway', 'cluster' => 'ferry', 'category_slug' => 'tau-tuan-chau-cat-ba',
             'title' => 'Tàu cao tốc Tuần Châu → Cát Bà', 'slug' => 'tau-cao-toc-tuan-chau-cat-ba',
             'price_from' => 450000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 97,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Tuần Châu, Hạ Long → Bến Bèo',
@@ -3078,7 +3092,7 @@ $__servicesSeed = [
             'notes' => ['Có thể tạm ngưng khi biển động.'], 'attrs' => ['from' => 'Tuần Châu', 'to' => 'Cát Bà', 'duration_hours' => 1, 'vehicle_type' => 'tàu cao tốc'],
         ],
         [
-            'code' => 'ferry-speedboat-tuanchau-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-tuan-chau-cat-ba', 'zone_slug' => 'ket-hop-ha-long',
+            'code' => 'ferry-speedboat-tuanchau-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-tuan-chau-cat-ba',
             'title' => 'Tàu cao tốc khứ hồi Tuần Châu ↔ Cát Bà', 'slug' => 'tau-cao-toc-khu-hoi-tuan-chau-cat-ba',
             'price_from' => 850000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 54,
             'is_featured' => false, 'is_hot_deal' => true, 'discount_badge' => 'Combo vịnh', 'location_label' => 'Tuần Châu ↔ Cát Bà',
@@ -3088,7 +3102,7 @@ $__servicesSeed = [
             'notes' => ['Kiểm tra lịch chạy theo mùa trước khi thanh toán.'], 'attrs' => ['from' => 'Tuần Châu', 'to' => 'Cát Bà', 'vehicle_type' => 'tàu cao tốc'],
         ],
         [
-            'code' => 'ferry-transfer-catbi-benbinh', 'cluster' => 'ferry', 'category_slug' => 'xe-hai-phong-ben-tau', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-transfer-catbi-benbinh', 'cluster' => 'ferry', 'category_slug' => 'xe-hai-phong-ben-tau',
             'title' => 'Xe sân bay Cát Bi → Bến Bính (nối tàu cao tốc)', 'slug' => 'xe-cat-bi-ben-binh',
             'price_from' => 180000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 89,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Sân bay Cát Bi → Bến Bính',
@@ -3098,7 +3112,7 @@ $__servicesSeed = [
             'notes' => ['Gửi số hiệu chuyến bay trước 24 giờ.'], 'attrs' => ['from' => 'Sân bay Cát Bi', 'to' => 'Bến Bính', 'duration_hours' => 0.5, 'vehicle_type' => 'xe 4 chỗ'],
         ],
         [
-            'code' => 'ferry-island-pickup', 'cluster' => 'ferry', 'category_slug' => 'xe-noi-dao-don-ben', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'ferry-island-pickup', 'cluster' => 'ferry', 'category_slug' => 'xe-noi-dao-don-ben',
             'title' => 'Xe đón bến Bèo / Cái Viềng → khách sạn / điểm tour', 'slug' => 'xe-don-ben-cat-ba',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 167,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Bến tàu/phà → trong đảo',
@@ -3110,7 +3124,7 @@ $__servicesSeed = [
 
         // ── FLIGHT (5) ───────────────────────────────────────────────────────
         [
-            'code' => 'flight-han-hph', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-hai-phong', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'flight-han-hph', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-hai-phong',
             'title' => 'Vé máy bay Hà Nội — Hải Phòng (Cát Bi)', 'slug' => 've-may-bay-ha-noi-hai-phong',
             'price_from' => 890000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 312,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Hà Nội → HPH',
@@ -3120,7 +3134,7 @@ $__servicesSeed = [
             'notes' => ['Giá theo ngày bay — báo lại khi chốt.'], 'attrs' => ['from' => 'HAN', 'to' => 'HPH', 'flight_time' => '1h00m'],
         ],
         [
-            'code' => 'flight-sgn-hph', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-hai-phong', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'flight-sgn-hph', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-hai-phong',
             'title' => 'Vé máy bay Sài Gòn — Hải Phòng (Cát Bi)', 'slug' => 've-may-bay-sai-gon-hai-phong',
             'price_from' => 1450000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 421,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'Sài Gòn → HPH',
@@ -3130,7 +3144,7 @@ $__servicesSeed = [
             'notes' => ['Chọn chuyến sáng nếu muốn kịp tàu chiều cùng ngày.'], 'attrs' => ['from' => 'SGN', 'to' => 'HPH', 'flight_time' => '2h05m'],
         ],
         [
-            'code' => 'flight-transfer-catbi-catba', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-cat-bi', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'flight-transfer-catbi-catba', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-cat-bi',
             'title' => 'Đưa đón sân bay Cát Bi → Cát Bà (xe + tàu/phà)', 'slug' => 'dua-don-san-bay-cat-bi-cat-ba',
             'price_from' => 550000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 65,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Cát Bi → đảo Cát Bà',
@@ -3140,7 +3154,7 @@ $__servicesSeed = [
             'notes' => ['Gửi số hiệu chuyến bay trước 24 giờ.'], 'attrs' => ['from' => 'Sân bay Cát Bi', 'to' => 'Cát Bà', 'duration_hours' => 2],
         ],
         [
-            'code' => 'flight-transfer-noibai-catba', 'cluster' => 'flight', 'category_slug' => 'dua-don-noi-bai-cat-ba', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'flight-transfer-noibai-catba', 'cluster' => 'flight', 'category_slug' => 'dua-don-noi-bai-cat-ba',
             'title' => 'Limousine Nội Bài → Cát Bà (gộp phà)', 'slug' => 'limousine-noi-bai-cat-ba',
             'price_from' => 420000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 143,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Nội Bài → Cát Bà',
@@ -3150,7 +3164,7 @@ $__servicesSeed = [
             'notes' => ['Chuyến đêm có thể nghỉ Hà Nội 1 đêm rồi ra đảo sáng hôm sau.'], 'attrs' => ['from' => 'Nội Bài', 'to' => 'Cát Bà', 'duration_hours' => 3],
         ],
         [
-            'code' => 'flight-combo-fly-island', 'cluster' => 'flight', 'category_slug' => 'combo-bay-ra-dao', 'zone_slug' => 'trung-tam-cat-ba',
+            'code' => 'flight-combo-fly-island', 'cluster' => 'flight', 'category_slug' => 'combo-bay-ra-dao',
             'title' => 'Combo vé bay + đưa đón + ra đảo Cát Bà', 'slug' => 'combo-ve-bay-dua-don-ra-dao-cat-ba',
             'price_from' => 2350000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 58,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Một đầu mối', 'location_label' => 'Hà Nội/Sài Gòn → Cát Bà',

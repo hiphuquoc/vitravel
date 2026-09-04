@@ -15,6 +15,17 @@
  * - Package ↔ category: nhiều–nhiều qua packageSlugs[].
  * - travel_styles: mã intent/filter — không ép bộ day-trip/2n1d của hub.
  * ---------------------------------------------------------------------------
+ * COUNTRIES / ĐIỂM ĐẾN (SEO type=country KHÔNG có parent; URL /{slug} — không /tours/{slug}):
+ * Quốc gia thật (stay/experience dùng country_slug):
+ *   viet-nam — hành trình trong nước từ Bắc tới Nam
+ *   campuchia — Angkor, Phnom Penh, Tonlé Sap
+ *   bali — đảo thần Indonesia
+ *   thai-lan — Bangkok, biển, chùa vàng
+ *   lao — Luang Prabang / Mekong nhịp chậm
+ * Combo only (KHÔNG phải quốc gia nghỉ chân; show_in_customize_form=false):
+ *   tour-ket-hop — package xuyên biên giới Đông Dương (type=package)
+ * Services: stay/experience/other → country_slug quốc gia; train/flight → KHÔNG country_slug.
+ * ---------------------------------------------------------------------------
  *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('vitravel')
  *
@@ -293,7 +304,7 @@ $__vitravelSeed = array (
     array (
       'sort' => 0,
       'text_align' => 'center',
-      'link_url' => '/tours/viet-nam',
+      'link_url' => '/viet-nam',
       'vi' => 
       array (
         'title' => 'Du lịch Việt Nam',
@@ -315,7 +326,7 @@ $__vitravelSeed = array (
     array (
       'sort' => 1,
       'text_align' => 'center',
-      'link_url' => '/tours/campuchia',
+      'link_url' => '/campuchia',
       'vi' => 
       array (
         'title' => 'Campuchia huyền bí',
@@ -334,6 +345,8 @@ $__vitravelSeed = array (
       ),
     ),
   ),
+  // Countries = quốc gia thật + tour-ket-hop (combo only). SEO country: parent_id=null; URL /{slug}.
+  // stay/experience dùng country_slug; train/flight không gắn country_slug.
   'countries' => 
   array (
     0 => 
@@ -382,7 +395,8 @@ $__vitravelSeed = array (
       'name' => 'Tour kết hợp',
       'size' => 'normal',
       'tourCount' => 15,
-      'tagline' => 'Đông Dương trong một hành trình',
+      'tagline' => 'Combo xuyên biên giới — không phải điểm nghỉ chân',
+      'show_in_customize_form' => false,
     ),
   ),
   'country_translations' => 
@@ -443,8 +457,8 @@ $__vitravelSeed = array (
       'en' => 'Multi-country Tours',
       'tagline' => 
       array (
-        'vi' => 'Đông Dương trong một hành trình',
-        'en' => 'Indochina in one journey',
+        'vi' => 'Combo xuyên biên giới — không phải điểm nghỉ chân',
+        'en' => 'Cross-border combo itineraries — not a stay destination',
       ),
     ),
   ),
@@ -3908,7 +3922,7 @@ $__vitravelSeed = array (
       array (
         'label' => 'Vietnam 3 Weeks',
       ),
-      'url' => '/tours/viet-nam/viet-nam-3-tuan',
+      'url' => '/viet-nam/viet-nam-3-tuan',
     ),
     1 => 
     array (
@@ -3921,7 +3935,7 @@ $__vitravelSeed = array (
       array (
         'label' => 'Combined Tours',
       ),
-      'url' => '/tours/tour-ket-hop',
+      'url' => '/tour-ket-hop',
     ),
   ),
   'home_sections' => 
@@ -5462,7 +5476,6 @@ $__servicesSeed = [
             'code' => 'train-se1-soft-han-dad',
             'cluster' => 'train',
             'category_slug' => 'ha-noi-da-nang',
-            'country_slug' => 'viet-nam',
             'title' => 'Tàu SE1 — Hà Nội → Đà Nẵng (Ghế mềm điều hoà)',
             'slug' => 'tau-se1-ha-noi-da-nang-ghe-mem',
             'price_from' => 450000,
@@ -5507,7 +5520,6 @@ $__servicesSeed = [
             'code' => 'train-se1-sleeper-han-dad',
             'cluster' => 'train',
             'category_slug' => 'ha-noi-da-nang',
-            'country_slug' => 'viet-nam',
             'title' => 'Tàu SE1 — Hà Nội → Đà Nẵng (Giường nằm 4–6 chỗ)',
             'slug' => 'tau-se1-ha-noi-da-nang-giuong-nam',
             'price_from' => 780000,
@@ -5546,7 +5558,6 @@ $__servicesSeed = [
             'code' => 'train-se3-soft-han-sgn',
             'cluster' => 'train',
             'category_slug' => 'ha-noi-sai-gon',
-            'country_slug' => 'viet-nam',
             'title' => 'Tàu SE3 — Hà Nội → Sài Gòn (Ghế mềm điều hoà)',
             'slug' => 'tau-se3-ha-noi-sai-gon-ghe-mem',
             'price_from' => 850000,
@@ -5580,7 +5591,6 @@ $__servicesSeed = [
             'code' => 'train-se3-sleeper-han-sgn',
             'cluster' => 'train',
             'category_slug' => 'ha-noi-sai-gon',
-            'country_slug' => 'viet-nam',
             'title' => 'Tàu SE3/SE4 — Hà Nội ↔ Sài Gòn (Giường nằm)',
             'slug' => 'tau-se3-se4-ha-noi-sai-gon-giuong-nam',
             'price_from' => 1350000,
@@ -5620,7 +5630,6 @@ $__servicesSeed = [
             'code' => 'flight-sgn-han-economy',
             'cluster' => 'flight',
             'category_slug' => 'noi-dia',
-            'country_slug' => 'viet-nam',
             'title' => 'Vé máy bay Sài Gòn — Hà Nội (Economy)',
             'slug' => 've-may-bay-sai-gon-ha-noi',
             'price_from' => 1290000,
@@ -5654,7 +5663,6 @@ $__servicesSeed = [
             'code' => 'flight-han-dad-economy',
             'cluster' => 'flight',
             'category_slug' => 'noi-dia',
-            'country_slug' => 'viet-nam',
             'title' => 'Vé máy bay Hà Nội — Đà Nẵng (Economy)',
             'slug' => 've-may-bay-ha-noi-da-nang',
             'price_from' => 990000,
@@ -5686,7 +5694,6 @@ $__servicesSeed = [
             'code' => 'flight-han-bkk-package',
             'cluster' => 'flight',
             'category_slug' => 'quoc-te-chau-a',
-            'country_slug' => 'viet-nam',
             'title' => 'Gói vé Hà Nội — Bangkok + tour nối chuyến',
             'slug' => 'goi-ve-ha-noi-bangkok-tour',
             'price_from' => 3200000,
@@ -5721,7 +5728,6 @@ $__servicesSeed = [
             'code' => 'flight-private-charter',
             'cluster' => 'flight',
             'category_slug' => 'thue-may-bay-rieng',
-            'country_slug' => 'viet-nam',
             'title' => 'Thuê máy bay riêng & charter nội địa',
             'slug' => 'thue-may-bay-rieng-charter',
             'price_from' => 85000000,

@@ -28,6 +28,21 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO country KHÔNG có parent — URL /{slug}):
+ * Hub (đứng đầu; themes gắn đây):
+ * - duong-dong — thị trấn Dương Đông, chợ đêm, cảng; homestay / KS phố
+ * GEO (bãi khách search/book riêng):
+ * - bai-truong — Long Beach / Bãi Trường, resort tây đảo
+ * - bai-sao — cát trắng nam đảo
+ * - bai-khem — bãi cao cấp đông nam
+ * - ong-lang — boutique / hoàng hôn tây bắc
+ * - an-thoi-hon-thom — cảng An Thới, cáp treo & 4 đảo
+ * - ganh-dau-rach-vem — Gành Dầu / Rạch Vẹm, kayak
+ * - vinpearl-grand-world — VinWonders, Safari, Grand World
+ * Combo (chỉ itinerary — KHÔNG gắn stay vật lý):
+ * - ket-hop-rach-gia — cửa ngõ Rạch Giá / Hà Tiên
+ * ferry/flight: KHÔNG zone_slug (country_id null).
+ * ---------------------------------------------------------------------------
  *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('phuquoc')
  *
@@ -291,6 +306,7 @@ $__phuquocSeed = array(
         ),
     ),
 
+    // Zones: HUB duong-dong | GEO bai-truong, bai-sao, bai-khem, ong-lang, an-thoi-hon-thom, ganh-dau-rach-vem, vinpearl-grand-world | COMBO ket-hop-rach-gia (itinerary only)
     'zones' => array(
         array('slug' => 'duong-dong', 'name' => 'Dương Đông', 'size' => 'large', 'tourCount' => 3, 'tagline' => 'Thị trấn trung tâm — chợ đêm, cảng Dương Đông và nhịp sống phố đảo'),
         array('slug' => 'bai-truong', 'name' => 'Bãi Trường (Long Beach)', 'size' => 'large', 'tourCount' => 2, 'tagline' => 'Dải bãi dài phía tây — resort, ghế nằm và hoàng hôn'),
@@ -2836,7 +2852,7 @@ $__servicesSeed = array(
     'services' => array(
         // ── FERRY (theo tuyến / điểm đến) ─────────────────────────────────────
         array(
-            'code' => 'ferry-tau-rach-gia-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-rach-gia-phu-quoc', 'zone_slug' => 'ket-hop-rach-gia',
+            'code' => 'ferry-tau-rach-gia-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-rach-gia-phu-quoc',
             'title' => 'Vé khứ hồi tàu cao tốc Rạch Giá ↔ Phú Quốc', 'slug' => 've-khu-hoi-tau-cao-toc-rach-gia-phu-quoc',
             'price_from' => 640000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 198,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Rạch Giá ↔ Phú Quốc',
@@ -2847,7 +2863,7 @@ $__servicesSeed = array(
             'attrs' => array('from' => 'Rạch Giá', 'to' => 'Phú Quốc', 'duration_hours' => 2.5, 'operator' => 'Theo chuyến đã chọn', 'vehicle_type' => 'tàu cao tốc'),
         ),
         array(
-            'code' => 'ferry-tau-ha-tien-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-ha-tien-phu-quoc', 'zone_slug' => 'ket-hop-rach-gia',
+            'code' => 'ferry-tau-ha-tien-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'tau-cao-toc-ha-tien-phu-quoc',
             'title' => 'Vé khứ hồi tàu cao tốc Hà Tiên ↔ Phú Quốc', 'slug' => 've-khu-hoi-tau-cao-toc-ha-tien-phu-quoc',
             'price_from' => 440000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 142,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Hà Tiên ↔ Phú Quốc',
@@ -2858,7 +2874,7 @@ $__servicesSeed = array(
             'attrs' => array('from' => 'Hà Tiên', 'to' => 'Phú Quốc', 'duration_hours' => 1.5, 'operator' => 'Theo chuyến đã chọn', 'vehicle_type' => 'tàu cao tốc'),
         ),
         array(
-            'code' => 'ferry-pha-rach-gia-thanh-thoi', 'cluster' => 'ferry', 'category_slug' => 'pha-cao-toc-rach-gia-thanh-thoi', 'zone_slug' => 'ket-hop-rach-gia',
+            'code' => 'ferry-pha-rach-gia-thanh-thoi', 'cluster' => 'ferry', 'category_slug' => 'pha-cao-toc-rach-gia-thanh-thoi',
             'title' => 'Phà cao tốc Rạch Giá — Phú Quốc (Thạnh Thới)', 'slug' => 'pha-cao-toc-rach-gia-phu-quoc-thanh-thoi',
             'price_from' => 290000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 268,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Mang được xe', 'location_label' => 'Bến phà Rạch Giá → Bãi Vòng',
@@ -2874,7 +2890,7 @@ $__servicesSeed = array(
             ),
         ),
         array(
-            'code' => 'ferry-pha-ha-tien', 'cluster' => 'ferry', 'category_slug' => 'pha-ha-tien-phu-quoc', 'zone_slug' => 'ket-hop-rach-gia',
+            'code' => 'ferry-pha-ha-tien', 'cluster' => 'ferry', 'category_slug' => 'pha-ha-tien-phu-quoc',
             'title' => 'Phà Hà Tiên — Phú Quốc', 'slug' => 'pha-ha-tien-phu-quoc',
             'price_from' => 185000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 340,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Bến phà Hà Tiên → Phú Quốc',
@@ -2890,7 +2906,7 @@ $__servicesSeed = array(
             ),
         ),
         array(
-            'code' => 'bus-sg-rach-gia-ferry-connect', 'cluster' => 'ferry', 'category_slug' => 'xe-sai-gon-rach-gia', 'zone_slug' => 'ket-hop-rach-gia',
+            'code' => 'bus-sg-rach-gia-ferry-connect', 'cluster' => 'ferry', 'category_slug' => 'xe-sai-gon-rach-gia',
             'title' => 'Limousine Sài Gòn → bến tàu / phà Rạch Giá (nối Phú Quốc)', 'slug' => 'limousine-sai-gon-ben-tau-rach-gia',
             'price_from' => 280000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 245,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối tàu', 'location_label' => 'TP.HCM → Bến Rạch Giá',
@@ -2901,7 +2917,7 @@ $__servicesSeed = array(
             'attrs' => array('from' => 'TP.HCM', 'to' => 'Rạch Giá', 'duration_hours' => 5, 'operator' => 'Đối tác xe Đảo Phú Quốc', 'vehicle_type' => 'limousine / xe giường'),
         ),
         array(
-            'code' => 'bus-sg-ha-tien-ferry-connect', 'cluster' => 'ferry', 'category_slug' => 'xe-sai-gon-rach-gia', 'zone_slug' => 'ket-hop-rach-gia',
+            'code' => 'bus-sg-ha-tien-ferry-connect', 'cluster' => 'ferry', 'category_slug' => 'xe-sai-gon-rach-gia',
             'title' => 'Limousine Sài Gòn → bến tàu / phà Hà Tiên (nối Phú Quốc)', 'slug' => 'limousine-sai-gon-ben-tau-ha-tien',
             'price_from' => 300000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 178,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối tàu', 'location_label' => 'TP.HCM → Bến Hà Tiên',
@@ -2914,7 +2930,7 @@ $__servicesSeed = array(
 
         // ── FLIGHT (5) ───────────────────────────────────────────────────────
         array(
-            'code' => 'flight-sgn-pqc', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-pqc', 'zone_slug' => 'duong-dong',
+            'code' => 'flight-sgn-pqc', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-pqc',
             'title' => 'Vé máy bay Sài Gòn — Phú Quốc (Sài Gòn → Phú Quốc)', 'slug' => 've-may-bay-sai-gon-phu-quoc',
             'price_from' => 990000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 640,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Bay thẳng', 'location_label' => 'Sài Gòn → PQC',
@@ -2924,7 +2940,7 @@ $__servicesSeed = array(
             'notes' => array('Giá tham khảo — báo lại theo ngày bay.'), 'attrs' => array('from' => 'SGN', 'to' => 'PQC', 'airlines' => array('Vietnam Airlines', 'Vietjet Air', 'Bamboo Airways'), 'flight_time' => '1h'),
         ),
         array(
-            'code' => 'flight-han-pqc', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-pqc', 'zone_slug' => 'duong-dong',
+            'code' => 'flight-han-pqc', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-pqc',
             'title' => 'Vé máy bay Hà Nội — Phú Quốc (Hà Nội → Phú Quốc)', 'slug' => 've-may-bay-ha-noi-phu-quoc',
             'price_from' => 1650000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 412,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Bay thẳng', 'location_label' => 'Hà Nội → PQC',
@@ -2934,7 +2950,7 @@ $__servicesSeed = array(
             'notes' => array('Mùa lễ giá tăng mạnh — đặt sớm.'), 'attrs' => array('from' => 'HAN', 'to' => 'PQC', 'airlines' => array('Vietnam Airlines', 'Vietjet Air', 'Bamboo Airways'), 'flight_time' => '2h'),
         ),
         array(
-            'code' => 'flight-intl-pqc', 'cluster' => 'flight', 'category_slug' => 'quoc-te-toi-pqc', 'zone_slug' => 'duong-dong',
+            'code' => 'flight-intl-pqc', 'cluster' => 'flight', 'category_slug' => 'quoc-te-toi-pqc',
             'title' => 'Vé máy bay quốc tế tới Phú Quốc (Phú Quốc)', 'slug' => 've-may-bay-quoc-te-toi-phu-quoc',
             'price_from' => 3500000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 88,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Quốc tế → PQC',
@@ -2944,7 +2960,7 @@ $__servicesSeed = array(
             'notes' => array('Lịch quốc tế thay đổi theo mùa — xác nhận trước.'), 'attrs' => array('from' => 'International', 'to' => 'PQC', 'airlines' => array('Theo lịch khai thác'), 'flight_time' => 'tuỳ chặng'),
         ),
         array(
-            'code' => 'transfer-pqc-bai-truong', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-pqc', 'zone_slug' => 'bai-truong',
+            'code' => 'transfer-pqc-bai-truong', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-pqc',
             'title' => 'Đưa đón sân bay PQC → Bãi Trường / Dương Đông', 'slug' => 'dua-don-san-bay-pqc-bai-truong',
             'price_from' => 250000, 'currency' => 'VND', 'rating' => 4.9, 'review_count' => 320,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'PQC → Bãi Trường / Dương Đông',
@@ -2954,7 +2970,7 @@ $__servicesSeed = array(
             'notes' => array('Gửi số hiệu chuyến bay trước 24 giờ.'), 'attrs' => array('from' => 'PQC', 'to' => 'Bai Truong / Duong Dong', 'duration_hours' => 0.5, 'operator' => 'Đối tác vận chuyển Đảo Phú Quốc', 'vehicle_type' => 'xe riêng'),
         ),
         array(
-            'code' => 'transfer-pqc-nam-dao', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-pqc', 'zone_slug' => 'bai-sao',
+            'code' => 'transfer-pqc-nam-dao', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-pqc',
             'title' => 'Đưa đón sân bay PQC → Bãi Sao / Bãi Khem / An Thới', 'slug' => 'dua-don-san-bay-pqc-nam-dao',
             'price_from' => 450000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 142,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'PQC → Nam đảo',

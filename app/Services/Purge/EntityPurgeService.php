@@ -21,6 +21,8 @@ use App\Models\HomeSlide;
 use App\Models\Media;
 use App\Models\Office;
 use App\Models\Package;
+use App\Models\PriceGuestType;
+use App\Models\PriceRate;
 use App\Models\ReferencePerson;
 use App\Models\Review;
 use App\Models\Service;
@@ -34,7 +36,6 @@ use App\Services\MediaService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Validation\ValidationException;
 
 /**
  * Xóa cứng mọi trang/entity admin — relations, SEO, media GCS orphan.
@@ -64,9 +65,10 @@ final class EntityPurgeService
             $model instanceof HomeSlide => $this->purgeHomeSlide($model),
             $model instanceof Destination => $this->purgeDestination($model),
             $model instanceof Media => $this->purgeMedia($model),
+            $model instanceof TravelStyle => $this->purgeTravelStyle($model),
+            $model instanceof PriceGuestType => $this->purgePriceGuestType($model),
             $model instanceof Office,
             $model instanceof ReferencePerson,
-            $model instanceof TravelStyle,
             $model instanceof \App\Models\CompanyValue,
             $model instanceof \App\Models\ReasonToChooseUs => $this->purgeSimpleTranslatable($model),
             default => $this->purgeGeneric($model),
@@ -244,21 +246,6 @@ final class EntityPurgeService
     public function purgeCountry(Country $country): void
     {
         $countryId = (int) $country->id;
-
-        $packageCount = Package::query()->where('country_id', $countryId)->count();
-        if ($packageCount > 0) {
-            throw ValidationException::withMessages([
-                'id' => "Không thể xóa điểm đến: còn {$packageCount} tour/du thuyền đang gắn. Hãy gỡ hoặc xóa các gói trước.",
-            ]);
-        }
-
-        $categoryCount = TourCategory::query()->where('country_id', $countryId)->count();
-        if ($categoryCount > 0) {
-            throw ValidationException::withMessages([
-                'id' => "Không thể xóa điểm đến: còn {$categoryCount} danh mục tour đang gắn. Hãy gỡ hoặc xóa danh mục trước.",
-            ]);
-        }
-
         $mediaIds = [];
         $cacheKeys = [];
 
@@ -284,7 +271,9 @@ final class EntityPurgeService
             $this->support->purgeMediaAttachments('country', $countryId, $mediaIds);
             $this->support->purgeTranslations($country);
 
-            // Quan hệ tùy chọn tới trang chi tiết / brand — gỡ FK, không xóa entity.
+            // Gỡ sạch quan hệ — không xóa entity liên kết (admin đã xác nhận qua modal).
+            Package::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            TourCategory::query()->where('country_id', $countryId)->update(['country_id' => null]);
             Article::query()->where('country_id', $countryId)->update(['country_id' => null]);
             BlogCategory::query()->where('country_id', $countryId)->update(['country_id' => null]);
             Destination::query()->where('country_id', $countryId)->update(['country_id' => null]);
@@ -402,21 +391,17 @@ final class EntityPurgeService
     public function purgeCruiseType(CruiseType $type): void
     {
         $slug = (string) $type->slug;
-        $linked = Package::query()->where('cruise_type', $slug)->count();
-        if ($linked > 0) {
-            throw ValidationException::withMessages([
-                'id' => "Không thể xóa loại du thuyền: còn {$linked} gói cruise đang gắn.",
-            ]);
-        }
-
         $mediaIds = [];
         $cacheKeys = [];
 
-        DB::transaction(function () use ($type, &$mediaIds, &$cacheKeys): void {
+        DB::transaction(function () use ($type, $slug, &$mediaIds, &$cacheKeys): void {
             $row = CruiseType::query()->with(['seoEntry.translations'])->find($type->id);
             if (! $row) {
                 return;
             }
+
+            // Gỡ loại khỏi gói cruise — không xóa gói.
+            Package::query()->where('cruise_type', $slug)->update(['cruise_type' => null]);
 
             $this->support->pushMediaId((int) ($row->banner_media_id ?? 0), $mediaIds);
             $this->support->pushMediaId((int) ($row->cover_media_id ?? 0), $mediaIds);
@@ -427,6 +412,34 @@ final class EntityPurgeService
         });
 
         $this->support->finish($mediaIds, $cacheKeys);
+    }
+
+    public function purgeTravelStyle(TravelStyle $style): void
+    {
+        DB::transaction(function () use ($style): void {
+            $row = TravelStyle::query()->find($style->id);
+            if (! $row) {
+                return;
+            }
+
+            $row->packages()->detach();
+            $this->support->purgeTranslations($row);
+            $row->delete();
+        });
+    }
+
+    public function purgePriceGuestType(PriceGuestType $type): void
+    {
+        DB::transaction(function () use ($type): void {
+            $row = PriceGuestType::query()->find($type->id);
+            if (! $row) {
+                return;
+            }
+
+            PriceRate::query()->where('guest_type_id', (int) $row->id)->delete();
+            $this->support->purgeTranslations($row);
+            $row->delete();
+        });
     }
 
     public function purgeTeamMember(TeamMember $member): void

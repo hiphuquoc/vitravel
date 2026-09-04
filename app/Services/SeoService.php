@@ -805,9 +805,8 @@ class SeoService
             return $full;
         }
 
-        $hub = $this->hubSlugFullPath('tours_hub', $locale);
-
-        return $this->normalizeSlugFull(rtrim($hub, '/').'/'.$countrySlug);
+        // Điểm đến / khu vực là root SEO — fallback /{slug} (không prepend /tours).
+        return $this->normalizeSlugFull('/'.$countrySlug);
     }
 
     protected function tourCategorySlugFullPath(?string $countrySlug, ?string $categorySlug, string $locale): ?string
@@ -1282,9 +1281,12 @@ class SeoService
         return $hub;
     }
 
+    /**
+     * @deprecated Điểm đến không gắn tours_hub — giữ method tương thích lệnh cũ (no-op).
+     */
     public function attachCountriesToToursHub(string $locale = 'vi'): SeoEntry
     {
-        return $this->attachChildrenToHub('country', 'tours_hub', $locale);
+        return $this->ensureToursHub($locale);
     }
 
     public function attachCruiseTypesToCruisesHub(string $locale = 'vi'): SeoEntry
@@ -1387,9 +1389,10 @@ class SeoService
     {
         $hub = $this->ensureToursHub($locale);
 
+        // Điểm đến / khu vực = trang SEO root (không gắn tours_hub).
         Country::query()
             ->with(['translations', 'seoEntry.translations'])
-            ->each(function (Country $country) use ($hub, $locale) {
+            ->each(function (Country $country) use ($locale) {
                 $trans = $country->translation($locale);
                 if (! filled($trans?->slug)) {
                     return;
@@ -1402,13 +1405,13 @@ class SeoService
                     'description' => $trans->tagline,
                     'seo_description' => $trans->tagline,
                     'status' => 'published',
-                    'parent_id' => $hub->id,
+                    'parent_id' => null,
                     'country_code' => $country->code,
                     'reclaim_slug_full' => true,
                 ]);
             });
 
-        $this->attachCountriesToToursHub($locale);
+        // Không gọi attachCountriesToToursHub — sẽ ép parent về hub.
 
         Package::query()
             ->tours()

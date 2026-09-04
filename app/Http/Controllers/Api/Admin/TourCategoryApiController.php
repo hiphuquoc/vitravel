@@ -22,6 +22,7 @@ use Illuminate\Validation\ValidationException;
 class TourCategoryApiController extends Controller
 {
     use ManagesCoverImage, ManagesTranslations;
+    use Concerns\ReportsDeleteImpact;
 
     public function index(Request $request): JsonResponse
     {
@@ -103,6 +104,11 @@ class TourCategoryApiController extends Controller
         app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa danh mục tour (kèm media & quan hệ)');
+    }
+
+    public function deleteImpact(Request $request, int $id): JsonResponse
+    {
+        return $this->deleteImpactResponse($request, TourCategory::query()->findOrFail($id));
     }
 
     public function meta(Request $request): JsonResponse

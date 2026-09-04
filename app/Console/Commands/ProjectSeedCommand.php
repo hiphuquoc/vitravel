@@ -45,7 +45,7 @@ class ProjectSeedCommand extends Command
 {
     protected $signature = 'project:seed
         {profile : Mã seed / project (vd: vitravel, hicatba)}
-        {--domain= : Domain map Host → project (vd: hicatba.dev)}
+        {--domain=* : Domain map Host → project (có thể lặp; domain đầu = primary)}
         {--name= : Tên hiển thị project}
         {--only= : Chỉ chạy nhóm seeder: services | tours (xóa sạch chủ đề/danh mục/chi tiết tour rồi seed lại). Không đụng cụm khác}
         {--fresh-project : Xóa toàn bộ data của project này rồi seed lại (giữ project khác)}';
@@ -84,8 +84,15 @@ class ProjectSeedCommand extends Command
             $code = trim($code, '-') ?: $profile;
 
             $ensureArgs = ['profile' => $profile];
-            if ($this->option('domain')) {
-                $ensureArgs['--domain'] = (string) $this->option('domain');
+            $domains = array_values(array_filter(
+                array_map(
+                    static fn ($d) => is_string($d) ? trim($d) : '',
+                    (array) $this->option('domain'),
+                ),
+                static fn (string $d) => $d !== '',
+            ));
+            if ($domains !== []) {
+                $ensureArgs['--domain'] = $domains;
             }
             if ($this->option('name')) {
                 $ensureArgs['--name'] = (string) $this->option('name');

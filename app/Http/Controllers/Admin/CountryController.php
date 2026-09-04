@@ -65,8 +65,8 @@ class CountryController extends Controller
         $seoTranslation = $country?->seoEntry?->translation($locale);
         $language = $locale;
         $title = $country ? 'Chỉnh sửa điểm đến' : 'Thêm điểm đến';
-        $parents = $this->seoService()->parentOptions('tours_hub');
-        $defaultParentId = $country ? $country->seoEntry?->parent_id : $hubSeo->id;
+        $parents = $this->seoService()->parentOptionsForType('country');
+        $defaultParentId = $country ? $country->seoEntry?->parent_id : null;
 
         return view('admin.country.view', compact(
             'country', 'locale', 'language', 'languages', 'translation', 'seoTranslation',
@@ -106,8 +106,9 @@ class CountryController extends Controller
         ]);
 
         $country = DB::transaction(function () use ($request, $validated, $locale) {
-            $hubSeo = $this->seoService()->ensureToursHub($locale);
-            $parentId = $request->has('seo_parent_id') ? ((int) $request->input('seo_parent_id') ?: null) : $hubSeo->id;
+            $parentId = $request->has('seo_parent_id')
+                ? ((int) $request->input('seo_parent_id') ?: null)
+                : null;
 
             $country = isset($validated['id'])
                 ? Country::query()->findOrFail($validated['id'])

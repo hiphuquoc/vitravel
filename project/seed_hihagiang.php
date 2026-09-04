@@ -23,6 +23,21 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO type=country KHÔNG có parent; URL /{slug}):
+ * Hub (đứng đầu — themes gắn đây):
+ *   thanh-pho-ha-giang — cửa ngõ loop, giấy phép biên giới, KS đêm đầu
+ * GEO loop (search/book/homestay theo huyện):
+ *   quan-ba — Cổng trời, núi đôi Cô Tiên
+ *   yen-minh — rừng thông, chuyển tiếp lên Đồng Văn
+ *   dong-van — phố cổ, chợ phiên, geopark; homestay H'Mông/Dao
+ *   meo-vac — đèo Mã Pí Lèng, sông Nho Quế; homestay view đèo
+ *   hoang-su-phi — ruộng bậc thang, bản Dao đỏ
+ *   bac-me — hồ Thác Bà, lối về Cao Bằng
+ * Combo only (ket-hop-* — KHÔNG gắn stay vật lý):
+ *   ket-hop-sapa — Hà Giang Loop + Fansipan/Sa Pa
+ *   ket-hop-cao-bang — loop + Bản Giốc / Ba Bể
+ * Homestay → đúng huyện GEO (không gắn ket-hop). train/flight → KHÔNG zone_slug.
+ * ---------------------------------------------------------------------------
  *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hihagiang')
  *
@@ -271,6 +286,8 @@ $__hihagiangSeed = array(
         ),
     ),
 
+    // Zones → countries. Hub đầu; GEO = huyện trên loop (homestay đúng huyện); ket-hop-* = combo only.
+    // SEO country: parent_id=null; public URL /{slug}. Themes gắn hub thanh-pho-ha-giang.
     'zones' => array(
         array('slug' => 'thanh-pho-ha-giang', 'name' => 'Thành phố Hà Giang', 'size' => 'large', 'tourCount' => 3, 'tagline' => 'Cửa ngõ loop, chợ đêm và chuẩn bị giấy phép biên giới'),
         array('slug' => 'quan-ba', 'name' => 'Quản Bạ', 'size' => 'large', 'tourCount' => 4, 'tagline' => 'Cổng trời, núi đôi Cô Tiên và thung lũng sương mù'),
@@ -3124,7 +3141,7 @@ $__servicesSeed = [
         ['cluster' => 'other', 'slug' => 'ho-tro-dac-biet', 'name' => 'Khẩn cấp & hỗ trợ 24/7', 'sort' => 3, 'intro' => 'Hotline trên đèo, y tế.'],
     ],
     'services' => [
-        ['code' => 'train-sleeper-hn-hg-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-ha-giang', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'train-sleeper-hn-hg-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-ha-giang',
             'title' => 'Xe giường nằm Hà Nội → Hà Giang (một chiều)', 'slug' => 'xe-giuong-ha-noi-ha-giang-mot-chieu',
             'price_from' => 280000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 1245,
             'is_featured' => true, 'location_label' => 'Hà Nội → Hà Giang',
@@ -3132,63 +3149,63 @@ $__servicesSeed = [
             'highlights' => ['6–7 giờ', 'Giường nằm', 'Mỹ Đình / Giáp Bát'],
             'inclusions' => ['Vé một chiều'], 'exclusions' => ['Đón tận nhà xa trung tâm'],
             'notes' => ['Giá theo hãng xe — chốt khi đặt.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Hà Giang', 'duration_hours' => 6.5, 'vehicle_type' => 'xe giường nằm']],
-        ['code' => 'train-sleeper-hn-hg-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-ha-giang', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'train-sleeper-hn-hg-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-ha-giang',
             'title' => 'Xe giường khứ hồi Hà Nội ↔ Hà Giang', 'slug' => 'xe-giuong-khu-hoi-ha-noi-ha-giang',
             'price_from' => 520000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 678,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'Hà Nội ↔ Hà Giang',
             'summary' => 'Gói loop cuối tuần — đi tối thứ 6, về tối chủ nhật.',
             'highlights' => ['Rẻ hơn 2 chiều lẻ', 'Giữ chỗ chiều về'], 'inclusions' => ['2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Hà Giang', 'vehicle_type' => 'xe giường nằm']],
-        ['code' => 'train-limousine-hn-hg', 'cluster' => 'train', 'category_slug' => 'limousine-ha-noi-ha-giang', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'train-limousine-hn-hg', 'cluster' => 'train', 'category_slug' => 'limousine-ha-noi-ha-giang',
             'title' => 'Limousine Hà Nội → Hà Giang', 'slug' => 'limousine-ha-noi-ha-giang',
             'price_from' => 350000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 534,
             'is_featured' => true, 'location_label' => 'Hà Nội → Hà Giang',
             'summary' => '9–16 chỗ, đón trung tâm, ~6–7h ban ngày.',
             'highlights' => ['Đón Ba Đình/Hoàn Kiếm', 'Wifi', 'Ghế massage'], 'inclusions' => ['Limousine một chiều'], 'exclusions' => ['Phụ phí đón xa'],
             'notes' => ['Đặt trước cuối tuần và mùa tam giác mạch.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Hà Giang', 'duration_hours' => 6.5, 'vehicle_type' => 'limousine']],
-        ['code' => 'train-bus-laocai-hg', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dong-bac', 'zone_slug' => 'ket-hop-sapa',
+        ['code' => 'train-bus-laocai-hg', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dong-bac',
             'title' => 'Xe khách Lào Cai → Hà Giang', 'slug' => 'xe-khach-lao-cai-ha-giang',
             'price_from' => 220000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 198,
             'is_featured' => true, 'location_label' => 'Lào Cai → Hà Giang',
             'summary' => 'Qua Xin Man ~7–8h — nền tảng combo Sapa + loop.',
             'highlights' => ['Combo Sapa', 'Ghế ngồi'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => ['Đường đèo dài — nên đi ban ngày.'], 'attrs' => ['from' => 'Lào Cai', 'to' => 'Hà Giang', 'duration_hours' => 7.5]],
-        ['code' => 'train-bus-caobang-hg', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dong-bac', 'zone_slug' => 'ket-hop-cao-bang',
+        ['code' => 'train-bus-caobang-hg', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-dong-bac',
             'title' => 'Xe khách Cao Bằng → Hà Giang', 'slug' => 'xe-khach-cao-bang-ha-giang',
             'price_from' => 180000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 112,
             'is_featured' => false, 'location_label' => 'Cao Bằng → Hà Giang',
             'summary' => 'Qua Bắc Mê ~5–6h — combo Bản Giốc + loop.',
             'highlights' => ['Open bus'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Cao Bằng', 'to' => 'Hà Giang', 'duration_hours' => 5.5]],
-        ['code' => 'train-private-charter', 'cluster' => 'train', 'category_slug' => 'xe-rieng-charter', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'train-private-charter', 'cluster' => 'train', 'category_slug' => 'xe-rieng-charter',
             'title' => 'Xe riêng charter Hà Nội — Hà Giang (4–16 chỗ)', 'slug' => 'xe-rieng-charter-ha-noi-ha-giang',
             'price_from' => 3800000, 'currency' => 'VND', 'rating' => 4.9, 'review_count' => 89,
             'is_featured' => true, 'location_label' => 'Hà Nội → Hà Giang',
             'summary' => 'Một chiều hoặc theo ngày loop — dừng đèo Tân Trình, Thẩm Mã tự do.',
             'highlights' => ['Lịch linh hoạt', 'Phù hợp đoàn loop'], 'inclusions' => ['Xe + tài xế'], 'exclusions' => ['Xăng ngoài km', 'Phí cầu đường'],
             'notes' => ['Báo giá theo loại xe.'], 'attrs' => ['service_type' => 'private_charter', 'vehicle_type' => '4–16 chỗ']],
-        ['code' => 'train-city-transfer-hg', 'cluster' => 'train', 'category_slug' => 'xe-don-ben-ha-giang', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'train-city-transfer-hg', 'cluster' => 'train', 'category_slug' => 'xe-don-ben-ha-giang',
             'title' => 'Xe đón bến xe Hà Giang ↔ homestay/khách sạn', 'slug' => 'xe-don-ben-ha-giang',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 356,
             'is_featured' => true, 'location_label' => 'Bến xe Hà Giang',
             'summary' => 'Đón sáng khi xe đêm tới — đưa làm giấy phép hoặc homestay.',
             'highlights' => ['Bảng tên đón', '4–7 chỗ'], 'inclusions' => ['Xe một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['service_type' => 'city_transfer']],
-        ['code' => 'flight-han-connect', 'cluster' => 'flight', 'category_slug' => 'noi-bai-ket-noi', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'flight-han-connect', 'cluster' => 'flight', 'category_slug' => 'noi-bai-ket-noi',
             'title' => 'Tư vấn kết nối bay Nội Bài → Hà Giang', 'slug' => 'tu-van-bay-noi-bai-ha-giang',
             'price_from' => 0, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 67,
             'is_featured' => true, 'location_label' => 'Nội Bài → Hà Giang',
             'summary' => 'Không có sân bay Hà Giang — ghép vé bay + xe đêm/luxury car.',
             'highlights' => ['Một đầu mối', 'Tư vấn miễn phí'], 'inclusions' => ['Tư vấn'], 'exclusions' => ['Vé bay', 'Xe'],
             'notes' => ['Giá thực tế = vé bay + xe 6–7h.'], 'attrs' => ['price_label' => 'Liên hệ']],
-        ['code' => 'flight-transfer-noibai', 'cluster' => 'flight', 'category_slug' => 'dua-don-noi-bai', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'flight-transfer-noibai', 'cluster' => 'flight', 'category_slug' => 'dua-don-noi-bai',
             'title' => 'Đưa đón Nội Bài ↔ bến xe Mỹ Đình', 'slug' => 'dua-don-noi-bai-my-dinh',
             'price_from' => 350000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 145,
             'is_featured' => true, 'location_label' => 'Nội Bài → Mỹ Đình',
             'summary' => 'Xe riêng đón sảnh bay, trả bến xe đi Hà Giang.',
             'highlights' => ['Theo dõi flight', 'Ghép vé xe đêm'], 'inclusions' => ['Xe 4 chỗ'], 'exclusions' => ['Vé xe Hà Giang'],
             'notes' => [], 'attrs' => ['from' => 'HAN', 'to' => 'Mỹ Đình', 'duration_hours' => 0.75]],
-        ['code' => 'flight-combo-fly-bus', 'cluster' => 'flight', 'category_slug' => 'combo-bay-xe', 'zone_slug' => 'thanh-pho-ha-giang',
+        ['code' => 'flight-combo-fly-bus', 'cluster' => 'flight', 'category_slug' => 'combo-bay-xe',
             'title' => 'Combo vé bay + xe đêm Hà Giang', 'slug' => 'combo-ve-bay-xe-dem-ha-giang',
             'price_from' => 1280000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 78,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/Hà Nội → Hà Giang',

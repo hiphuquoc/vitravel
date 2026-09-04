@@ -23,6 +23,7 @@ use Illuminate\Validation\ValidationException;
 class ServiceCategoryApiController extends Controller
 {
     use ManagesTranslations;
+    use Concerns\ReportsDeleteImpact;
 
     public function index(Request $request): JsonResponse
     {
@@ -129,6 +130,11 @@ class ServiceCategoryApiController extends Controller
         app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa danh mục dịch vụ (kèm media & quan hệ)');
+    }
+
+    public function deleteImpact(Request $request, int $id): JsonResponse
+    {
+        return $this->deleteImpactResponse($request, ServiceCategory::query()->findOrFail($id));
     }
 
     private function save(Request $request): JsonResponse

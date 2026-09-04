@@ -21,6 +21,7 @@ use Illuminate\Validation\ValidationException;
 class CruiseTypeApiController extends Controller
 {
     use ManagesTranslations;
+    use Concerns\ReportsDeleteImpact;
 
     public function index(Request $request): JsonResponse
     {
@@ -87,14 +88,14 @@ class CruiseTypeApiController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $row = CruiseType::query()->findOrFail($id);
-
-        try {
-            app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return ApiResponse::fromValidation($e);
-        }
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
         return ApiResponse::success(null, 'Đã xóa loại du thuyền (kèm media & quan hệ)');
+    }
+
+    public function deleteImpact(Request $request, int $id): JsonResponse
+    {
+        return $this->deleteImpactResponse($request, CruiseType::query()->findOrFail($id));
     }
 
     public function meta(Request $request): JsonResponse

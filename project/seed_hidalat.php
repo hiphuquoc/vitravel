@@ -23,6 +23,20 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO type=country KHÔNG có parent; URL /{slug}):
+ * Hub (đứng đầu — themes gắn đây):
+ *   trung-tam-xuan-huong — phố núi, Hồ Xuân Hương, chợ đêm; KS/homestay trung tâm
+ * GEO (search/book riêng):
+ *   langbiang-ta-nung — đỉnh Langbiang, jeep, làng dân tộc, rừng thông
+ *   tuyen-lam-truc-lam — hồ Tuyền Lâm, thiền viện Trúc Lâm, thuyền/SUP
+ *   datanla-robin-hill — thác Datanla, máng trượt, cáp treo Robin Hill
+ *   cau-dat — cao nguyên cà phê specialty, đồi chè (~1.600m)
+ *   ngoai-o-thanh-pho — thác Voi, Clay Tunnel, làng Cù Lần
+ * Combo only (ket-hop-* — KHÔNG gắn stay vật lý):
+ *   ket-hop-nha-trang — Đà Lạt + biển Nha Trang (đèo ~4h)
+ *   ket-hop-mui-ne — Đà Lạt + đồi cát Phan Thiết
+ * Services: stay/experience/other → zone_slug hub|GEO; train/flight → KHÔNG zone_slug.
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('hidalat')
  *
  * @return array<string, mixed>
@@ -196,6 +210,8 @@ $__hidalatSeed = array(
         ),
     ),
 
+    // Zones → countries. Hub đầu; GEO = search/book riêng; ket-hop-* = combo only (no fake stays).
+    // SEO country: parent_id=null; public URL /{slug}. Themes gắn hub trung-tam-xuan-huong.
     'zones' => array(
         array('slug' => 'trung-tam-xuan-huong', 'name' => 'Trung tâm & Hồ Xuân Hương', 'size' => 'large', 'tourCount' => 6, 'tagline' => 'Nhà thờ Con Gà, chợ đêm, Crazy House và nhịp sống phố núi'),
         array('slug' => 'langbiang-ta-nung', 'name' => 'Langbiang & Tà Nung', 'size' => 'large', 'tourCount' => 4, 'tagline' => 'Đỉnh Langbiang, làng dân tộc và đường rừng thông'),
@@ -2468,7 +2484,7 @@ $__servicesSeed = [
     ],
     'services' => [
         // TRAIN (10)
-        ['code' => 'train-sleeper-sgn-dl-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-sleeper-sgn-dl-oneway', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-da-lat',
             'title' => 'Xe giường nằm Sài Gòn → Đà Lạt (một chiều)', 'slug' => 'xe-giuong-sai-gon-da-lat-mot-chieu',
             'price_from' => 280000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 892,
             'is_featured' => true, 'location_label' => 'Sài Gòn → Đà Lạt',
@@ -2476,63 +2492,63 @@ $__servicesSeed = [
             'highlights' => ['5–7 giờ', 'Giường nằm hoặc ghế ngả', 'Đón bến Miền Đông / quận trung tâm'],
             'inclusions' => ['Vé một chiều'], 'exclusions' => ['Đón tận nhà xa trung tâm'],
             'notes' => ['Giá theo hãng xe — chốt khi đặt.'], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Đà Lạt', 'duration_hours' => 6, 'vehicle_type' => 'xe giường nằm']],
-        ['code' => 'train-sleeper-sgn-dl-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-sleeper-sgn-dl-round', 'cluster' => 'train', 'category_slug' => 'xe-giuong-sgn-da-lat',
             'title' => 'Xe giường khứ hồi Sài Gòn ↔ Đà Lạt', 'slug' => 'xe-giuong-khu-hoi-sai-gon-da-lat',
             'price_from' => 520000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 456,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'Sài Gòn ↔ Đà Lạt',
             'summary' => 'Gói cuối tuần — đi tối thứ 6, về tối chủ nhật.',
             'highlights' => ['Rẻ hơn 2 chiều lẻ', 'Giữ chỗ chiều về'], 'inclusions' => ['2 chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Đà Lạt', 'vehicle_type' => 'xe giường nằm']],
-        ['code' => 'train-sleeper-hn-dl', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-sleeper-hn-dl', 'cluster' => 'train', 'category_slug' => 'xe-giuong-ha-noi-da-lat',
             'title' => 'Xe giường Hà Nội → Đà Lạt', 'slug' => 'xe-giuong-ha-noi-da-lat',
             'price_from' => 550000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 234,
             'is_featured' => false, 'location_label' => 'Hà Nội → Đà Lạt',
             'summary' => 'Xe đêm xuyên miền ~30–36h — hoặc cân nhắc bay Hà Nội—DLI.',
             'highlights' => ['Giá thấp', 'Ghế ngả/giường'], 'inclusions' => ['Vé một chiều'], 'exclusions' => ['Ăn trên xe'],
             'notes' => ['Tuyến dài — mang snack và áo ấm.'], 'attrs' => ['from' => 'Hà Nội', 'to' => 'Đà Lạt', 'duration_hours' => 32]],
-        ['code' => 'train-limousine-sgn-dl', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-limousine-sgn-dl', 'cluster' => 'train', 'category_slug' => 'limousine-sai-gon-da-lat',
             'title' => 'Limousine Sài Gòn → Đà Lạt', 'slug' => 'limousine-sai-gon-da-lat',
             'price_from' => 320000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 678,
             'is_featured' => true, 'location_label' => 'TP.HCM → Đà Lạt',
             'summary' => '9–16 chỗ, đón trung tâm, ~5–6h ban ngày.',
             'highlights' => ['Đón quận 1/3', 'Wifi', 'Ghế massage'], 'inclusions' => ['Limousine một chiều'], 'exclusions' => ['Phụ phí đón xa'],
             'notes' => ['Đặt trước cuối tuần.'], 'attrs' => ['from' => 'TP.HCM', 'to' => 'Đà Lạt', 'duration_hours' => 5.5, 'vehicle_type' => 'limousine']],
-        ['code' => 'train-bus-nhatrang-dl', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-bien-cao-nguyen', 'zone_slug' => 'ket-hop-nha-trang',
+        ['code' => 'train-bus-nhatrang-dl', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-bien-cao-nguyen',
             'title' => 'Xe khách Nha Trang → Đà Lạt', 'slug' => 'xe-khach-nha-trang-da-lat',
             'price_from' => 180000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 312,
             'is_featured' => true, 'location_label' => 'Nha Trang → Đà Lạt',
             'summary' => 'Qua đèo Khánh Vĩnh ~3.5–4h — nền tảng combo biển + cao nguyên.',
             'highlights' => ['Nhiều chuyến/ngày', 'Ghế ngồi/limousine'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => ['Đường đèo — dễ say xe.'], 'attrs' => ['from' => 'Nha Trang', 'to' => 'Đà Lạt', 'duration_hours' => 4]],
-        ['code' => 'train-bus-muine-dl', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-bien-cao-nguyen', 'zone_slug' => 'ket-hop-mui-ne',
+        ['code' => 'train-bus-muine-dl', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-bien-cao-nguyen',
             'title' => 'Xe khách Mũi Né → Đà Lạt', 'slug' => 'xe-khach-mui-ne-da-lat',
             'price_from' => 200000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 145,
             'is_featured' => false, 'location_label' => 'Mũi Né → Đà Lạt',
             'summary' => 'Đèo Ngoạn Mục ~4h — combo sa mạc mini + cao nguyên.',
             'highlights' => ['Open bus / xe khách'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Mũi Né', 'to' => 'Đà Lạt', 'duration_hours' => 4]],
-        ['code' => 'train-bus-bmt-dl', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-bien-cao-nguyen', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-bus-bmt-dl', 'cluster' => 'train', 'category_slug' => 'xe-lien-tinh-bien-cao-nguyen',
             'title' => 'Xe Buôn Ma Thuột → Đà Lạt', 'slug' => 'xe-buon-ma-thuot-da-lat',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 98,
             'is_featured' => false, 'location_label' => 'BMT → Đà Lạt',
             'summary' => '~3h qua Lâm Hà — kết nối Tây Nguyên.',
             'highlights' => ['Tần suất cao'], 'inclusions' => ['Vé một chiều'], 'exclusions' => [],
             'notes' => [], 'attrs' => ['from' => 'Buôn Ma Thuột', 'to' => 'Đà Lạt', 'duration_hours' => 3]],
-        ['code' => 'train-private-charter', 'cluster' => 'train', 'category_slug' => 'xe-rieng-charter', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-private-charter', 'cluster' => 'train', 'category_slug' => 'xe-rieng-charter',
             'title' => 'Xe riêng charter liên tỉnh (4–16 chỗ)', 'slug' => 'xe-rieng-charter-lien-tinh',
             'price_from' => 3500000, 'currency' => 'VND', 'rating' => 4.9, 'review_count' => 67,
             'is_featured' => true, 'location_label' => 'Theo tuyến',
             'summary' => 'SGN/NT/MN—Đà Lạt một chiều hoặc theo ngày — dừng đèo tự do.',
             'highlights' => ['Lịch linh hoạt', 'Phù hợp đoàn'], 'inclusions' => ['Xe + tài xế'], 'exclusions' => ['Xăng ngoài km', 'Phí cầu đường'],
             'notes' => ['Báo giá theo tuyến và loại xe.'], 'attrs' => ['service_type' => 'private_charter', 'vehicle_type' => '4–16 chỗ']],
-        ['code' => 'train-shuttle-dli', 'cluster' => 'train', 'category_slug' => 'shuttle-san-bay-dli', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-shuttle-dli', 'cluster' => 'train', 'category_slug' => 'shuttle-san-bay-dli',
             'title' => 'Shuttle sân bay Liên Khương ↔ trung tâm Đà Lạt', 'slug' => 'shuttle-san-bay-lien-khuong',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 534,
             'is_featured' => true, 'location_label' => 'DLI ↔ Đà Lạt',
             'summary' => '~30km, ~45 phút — đón sảnh đến, trả homestay/khách sạn.',
             'highlights' => ['Theo dõi chuyến bay', 'Ghép hoặc riêng'], 'inclusions' => ['Shuttle một chiều'], 'exclusions' => ['Phụ phí đêm khuya'],
             'notes' => ['Gửi số hiệu chuyến bay trước 24h.'], 'attrs' => ['from' => 'DLI', 'to' => 'Đà Lạt', 'duration_hours' => 0.75]],
-        ['code' => 'train-city-transfer', 'cluster' => 'train', 'category_slug' => 'xe-noi-thanh-da-lat', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'train-city-transfer', 'cluster' => 'train', 'category_slug' => 'xe-noi-thanh-da-lat',
             'title' => 'Xe đón bến xe / nội thành Đà Lạt', 'slug' => 'xe-don-ben-noi-thanh-da-lat',
             'price_from' => 150000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 289,
             'is_featured' => false, 'location_label' => 'Trong Đà Lạt',
@@ -2541,28 +2557,28 @@ $__servicesSeed = [
             'notes' => [], 'attrs' => ['service_type' => 'city_transfer']],
 
         // FLIGHT (4)
-        ['code' => 'flight-sgn-dli', 'cluster' => 'flight', 'category_slug' => 'noi-dia-dli', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'flight-sgn-dli', 'cluster' => 'flight', 'category_slug' => 'noi-dia-dli',
             'title' => 'Vé máy bay Sài Gòn — Liên Khương (DLI)', 'slug' => 've-may-bay-sgn-dli',
             'price_from' => 890000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 567,
             'is_featured' => true, 'location_label' => 'Sài Gòn → Đà Lạt',
             'summary' => 'Bay ~50 phút — phổ biến khách cuối tuần.',
             'highlights' => ['Nhiều chuyến/ngày', 'Gộp shuttle'], 'inclusions' => ['Vé economy', 'Thuế phí'], 'exclusions' => ['Ra thành phố'],
             'notes' => [], 'attrs' => ['from' => 'SGN', 'to' => 'DLI', 'flight_time' => '50m']],
-        ['code' => 'flight-han-dli', 'cluster' => 'flight', 'category_slug' => 'noi-dia-dli', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'flight-han-dli', 'cluster' => 'flight', 'category_slug' => 'noi-dia-dli',
             'title' => 'Vé máy bay Hà Nội — Liên Khương (DLI)', 'slug' => 've-may-bay-han-dli',
             'price_from' => 1150000, 'currency' => 'VND', 'rating' => 4.5, 'review_count' => 234,
             'is_featured' => true, 'location_label' => 'Hà Nội → DLI',
             'summary' => 'Bay ~1h40 — nhanh hơn xe đêm 30+ giờ.',
             'highlights' => ['Bay thẳng', 'Gộp shuttle'], 'inclusions' => ['Vé economy'], 'exclusions' => ['Hành lý thêm'],
             'notes' => [], 'attrs' => ['from' => 'HAN', 'to' => 'DLI', 'flight_time' => '1h40m']],
-        ['code' => 'flight-transfer-dli', 'cluster' => 'flight', 'category_slug' => 'dua-don-dli', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'flight-transfer-dli', 'cluster' => 'flight', 'category_slug' => 'dua-don-dli',
             'title' => 'Đưa đón sân bay DLI — door to hotel', 'slug' => 'dua-don-dli-door-to-hotel',
             'price_from' => 280000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 198,
             'is_featured' => true, 'location_label' => 'DLI → Đà Lạt',
             'summary' => 'Xe riêng đón sảnh, trả tận homestay — canh giờ chuyến bay.',
             'highlights' => ['Theo dõi flight', 'Hỗ trợ vali'], 'inclusions' => ['Xe 4 chỗ'], 'exclusions' => ['Vé bay'],
             'notes' => [], 'attrs' => ['from' => 'DLI', 'to' => 'Đà Lạt', 'duration_hours' => 0.75]],
-        ['code' => 'flight-combo-fly-shuttle', 'cluster' => 'flight', 'category_slug' => 'combo-bay-shuttle', 'zone_slug' => 'trung-tam-xuan-huong',
+        ['code' => 'flight-combo-fly-shuttle', 'cluster' => 'flight', 'category_slug' => 'combo-bay-shuttle',
             'title' => 'Combo vé bay + shuttle Đà Lạt', 'slug' => 'combo-ve-bay-shuttle-da-lat',
             'price_from' => 1150000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 89,
             'is_featured' => true, 'is_hot_deal' => true, 'location_label' => 'SGN/Hà Nội → thành phố',

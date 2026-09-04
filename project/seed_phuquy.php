@@ -26,6 +26,19 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO country KHÔNG có parent — URL /{slug}):
+ * Hub (đứng đầu; themes gắn đây):
+ * - trung-tam-phu-quy — thị trấn / cảng, chợ hải sản, homestay gần bến
+ * GEO (khách search/book riêng):
+ * - bai-nho — dải bãi chính, resort
+ * - bai-dai — bãi cát dài yên tĩnh
+ * - mui-den-bien — hải đăng / bình minh hoàng hôn
+ * - chua-hang — chùa trong hang đá
+ * - ran-san-ho — snorkel / scuba quanh rạn
+ * Combo (chỉ itinerary — KHÔNG gắn stay vật lý):
+ * - ket-hop-phan-thiet — cửa ngõ Phan Thiết / Mũi Né
+ * ferry/flight: KHÔNG zone_slug (country_id null).
+ * ---------------------------------------------------------------------------
  *
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('phuquy')
  *
@@ -285,6 +298,7 @@ $__phuquySeed = array(
     ),
 
 
+    // Zones: HUB trung-tam-phu-quy | GEO bai-nho, bai-dai, mui-den-bien, chua-hang, ran-san-ho | COMBO ket-hop-phan-thiet (itinerary only)
     'zones' => array(
         array('slug' => 'trung-tam-phu-quy', 'name' => 'Thị trấn / cảng Phú Quý', 'size' => 'large', 'tourCount' => 3, 'tagline' => 'Cảng tàu, chợ hải sản và nhịp sống phố đảo'),
         array('slug' => 'bai-nho', 'name' => 'Bãi Nhỏ', 'size' => 'large', 'tourCount' => 2, 'tagline' => 'Dải bãi chính — resort, ghế nằm và sóng nhẹ'),
@@ -2812,7 +2826,7 @@ $__servicesSeed = [
     'services' => [
         // ── FERRY — hãng phổ biến tuyến Phan Thiết ↔ Phú Quý ───────────────
         [
-            'code' => 'ferry-superdong-phan-thiet', 'cluster' => 'ferry', 'category_slug' => 'superdong-phan-thiet-phu-quy', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'ferry-superdong-phan-thiet', 'cluster' => 'ferry', 'category_slug' => 'superdong-phan-thiet-phu-quy',
             'title' => 'Superdong — Tàu cao tốc Phan Thiết → Phú Quý', 'slug' => 'superdong-tau-cao-toc-phan-thiet-phu-quy',
             'price_from' => 350000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 420,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Hãng quen thuộc', 'location_label' => 'Cảng Phan Thiết → Cảng Phú Quý',
@@ -2822,7 +2836,7 @@ $__servicesSeed = [
             'notes' => ['Tuyến không có giờ cố định cả năm — xác nhận lịch theo ngày đi trước khi thanh toán.'], 'attrs' => ['from' => 'Phan Thiết', 'to' => 'Phú Quý', 'duration_hours' => 2.5, 'operator' => 'Superdong', 'vehicle_type' => 'tàu cao tốc'],
         ],
         [
-            'code' => 'ferry-pqe-trung-trac', 'cluster' => 'ferry', 'category_slug' => 'phu-quoc-express-phan-thiet', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'ferry-pqe-trung-trac', 'cluster' => 'ferry', 'category_slug' => 'phu-quoc-express-phan-thiet',
             'title' => 'Phú Quốc Express — tàu Trưng Trắc Phan Thiết → Phú Quý', 'slug' => 'phu-quoc-express-tau-trung-trac-phan-thiet-phu-quy',
             'price_from' => 370000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 385,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Tàu hai thân', 'location_label' => 'Cảng Phan Thiết → Cảng Phú Quý',
@@ -2832,7 +2846,7 @@ $__servicesSeed = [
             'notes' => ['Giá tham khảo ECO người lớn; VIP cao hơn. Trẻ em / cao tuổi có bảng giá riêng theo hãng.'], 'attrs' => ['from' => 'Phan Thiết', 'to' => 'Phú Quý', 'duration_hours' => 2, 'operator' => 'Phú Quốc Express', 'vehicle_type' => 'tàu cao tốc hai thân'],
         ],
         [
-            'code' => 'ferry-phu-quy-express', 'cluster' => 'ferry', 'category_slug' => 'phu-quy-express-phan-thiet', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'ferry-phu-quy-express', 'cluster' => 'ferry', 'category_slug' => 'phu-quy-express-phan-thiet',
             'title' => 'Phú Quý Express — tàu cao tốc Phan Thiết → Phú Quý', 'slug' => 'phu-quy-express-tau-cao-toc-phan-thiet-phu-quy',
             'price_from' => 350000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 210,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Cảng Phan Thiết → Cảng Phú Quý',
@@ -2842,7 +2856,7 @@ $__servicesSeed = [
             'notes' => ['Lịch khai thác có thể tạm ngưng theo thời tiết — đổi ngày/hoàn theo chính sách hãng.'], 'attrs' => ['from' => 'Phan Thiết', 'to' => 'Phú Quý', 'duration_hours' => 2.25, 'operator' => 'Phú Quý Express', 'vehicle_type' => 'tàu cao tốc hai thân'],
         ],
         [
-            'code' => 'ferry-superdong-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'superdong-phan-thiet-phu-quy', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'ferry-superdong-roundtrip', 'cluster' => 'ferry', 'category_slug' => 'superdong-phan-thiet-phu-quy',
             'title' => 'Vé khứ hồi Superdong Phan Thiết ↔ Phú Quý', 'slug' => 've-khu-hoi-superdong-phan-thiet-phu-quy',
             'price_from' => 680000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 198,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Phan Thiết ↔ Phú Quý',
@@ -2852,7 +2866,7 @@ $__servicesSeed = [
             'notes' => ['Chiều về nên chừa buffer nếu có hoạt động sáng trên đảo.'], 'attrs' => ['from' => 'Phan Thiết', 'to' => 'Phú Quý', 'duration_hours' => 2.5, 'operator' => 'Superdong', 'vehicle_type' => 'tàu cao tốc'],
         ],
         [
-            'code' => 'bus-sg-phan-thiet-ferry-connect', 'cluster' => 'ferry', 'category_slug' => 'xe-sai-gon-phan-thiet', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'bus-sg-phan-thiet-ferry-connect', 'cluster' => 'ferry', 'category_slug' => 'xe-sai-gon-phan-thiet',
             'title' => 'Limousine Sài Gòn → cảng tàu Phan Thiết (nối Phú Quý)', 'slug' => 'limousine-sai-gon-ben-tau-phan-thiet',
             'price_from' => 220000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 205,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối tàu', 'location_label' => 'TP.HCM → Cảng tàu khách Phan Thiết',
@@ -2865,7 +2879,7 @@ $__servicesSeed = [
 
         // ── FLIGHT (4) ───────────────────────────────────────────────────────
         [
-            'code' => 'flight-han-cam-ranh', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-cam-ranh', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'flight-han-cam-ranh', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-cam-ranh',
             'title' => 'Vé máy bay Hà Nội — Cam Ranh (CXR)', 'slug' => 've-may-bay-ha-noi-cam-ranh',
             'price_from' => 1350000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 288,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'Hà Nội → CXR',
@@ -2875,7 +2889,7 @@ $__servicesSeed = [
             'notes' => ['Giá tham khảo — báo lại theo ngày bay.'], 'attrs' => ['from' => 'HAN', 'to' => 'CXR', 'airlines' => ['Vietnam Airlines', 'Vietjet Air', 'Bamboo Airways'], 'flight_time' => '1h45m'],
         ],
         [
-            'code' => 'flight-sgn-phan-thiet', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-phan-thiet', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'flight-sgn-phan-thiet', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-phan-thiet',
             'title' => 'Vé máy bay nội địa tới Phan Thiết (khi có lịch)', 'slug' => 've-may-bay-toi-phan-thiet',
             'price_from' => 990000, 'currency' => 'VND', 'rating' => 4.4, 'review_count' => 74,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Nội địa → Sân bay Phan Thiết',
@@ -2885,7 +2899,7 @@ $__servicesSeed = [
             'notes' => ['Không giả định bay hàng ngày — xác nhận trước.'], 'attrs' => ['from' => 'Domestic', 'to' => 'Phan Thiet Airport', 'airlines' => ['Theo lịch khai thác'], 'flight_time' => 'tuỳ chặng'],
         ],
         [
-            'code' => 'transfer-cxr-phan-thiet-port', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-ben-tau', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'transfer-cxr-phan-thiet-port', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-ben-tau',
             'title' => 'Đưa đón sân bay Cam Ranh → bến tàu Phan Thiết', 'slug' => 'dua-don-cam-ranh-ben-tau-phan-thiet',
             'price_from' => 950000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 91,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'CXR → Bến tàu Phan Thiết',
@@ -2895,7 +2909,7 @@ $__servicesSeed = [
             'notes' => ['Gửi số hiệu chuyến bay trước 24 giờ.'], 'attrs' => ['from' => 'Cam Ranh', 'to' => 'Phan Thiết port', 'duration_hours' => 2, 'operator' => 'Đối tác vận chuyển phuquy.net', 'vehicle_type' => 'xe riêng'],
         ],
         [
-            'code' => 'transfer-phan-thiet-airport-port', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-ben-tau', 'zone_slug' => 'ket-hop-phan-thiet',
+            'code' => 'transfer-phan-thiet-airport-port', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-ben-tau',
             'title' => 'Đưa đón sân bay Phan Thiết → bến tàu', 'slug' => 'dua-don-san-bay-phan-thiet-ben-tau',
             'price_from' => 350000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 39,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Sân bay Phan Thiết → bến tàu',

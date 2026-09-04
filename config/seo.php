@@ -46,8 +46,9 @@ return [
             'parent_relation' => null,
         ],
         'country' => [
-            'label' => 'Điểm đến',
-            'parent_type' => 'tours_hub',
+            'label' => 'Điểm đến / khu vực',
+            // Trang địa điểm là root SEO — không gắn tours_hub (URL /{slug}, không /tours/{slug}).
+            'parent_type' => null,
             'parent_relation' => null,
         ],
         'package_tour' => [
@@ -58,8 +59,8 @@ return [
         ],
         'tour_category' => [
             'label' => 'Danh mục Tour',
-            // Cùng cấp với điểm đến — chỉ gắn hub, không chọn lẫn nhau
-            'parent_type' => 'tours_hub',
+            // Gắn dưới điểm đến / khu vực (URL /{zone}/{category}); hub chỉ fallback.
+            'parent_type' => ['country', 'tours_hub'],
             'parent_relation' => null,
         ],
 

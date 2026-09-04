@@ -118,6 +118,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/tour-categories/meta', [TourCategoryApiController::class, 'meta']);
             Route::get('/tour-categories', [TourCategoryApiController::class, 'index']);
             Route::post('/tour-categories', [TourCategoryApiController::class, 'store']);
+            Route::get('/tour-categories/{id}/delete-impact', [TourCategoryApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::get('/tour-categories/{id}', [TourCategoryApiController::class, 'show'])->whereNumber('id');
             Route::put('/tour-categories/{id}', [TourCategoryApiController::class, 'update'])->whereNumber('id');
             Route::delete('/tour-categories/{id}', [TourCategoryApiController::class, 'destroy'])->whereNumber('id');
@@ -125,12 +126,14 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/cruise-types/meta', [CruiseTypeApiController::class, 'meta']);
             Route::get('/cruise-types', [CruiseTypeApiController::class, 'index']);
             Route::post('/cruise-types', [CruiseTypeApiController::class, 'store']);
+            Route::get('/cruise-types/{id}/delete-impact', [CruiseTypeApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::get('/cruise-types/{id}', [CruiseTypeApiController::class, 'show'])->whereNumber('id');
             Route::put('/cruise-types/{id}', [CruiseTypeApiController::class, 'update'])->whereNumber('id');
             Route::delete('/cruise-types/{id}', [CruiseTypeApiController::class, 'destroy'])->whereNumber('id');
 
             Route::get('/travel-styles', [TravelStyleApiController::class, 'index']);
             Route::post('/travel-styles', [TravelStyleApiController::class, 'store']);
+            Route::get('/travel-styles/{id}/delete-impact', [TravelStyleApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::get('/travel-styles/{id}', [TravelStyleApiController::class, 'show'])->whereNumber('id');
             Route::put('/travel-styles/{id}', [TravelStyleApiController::class, 'update'])->whereNumber('id');
             Route::delete('/travel-styles/{id}', [TravelStyleApiController::class, 'destroy'])->whereNumber('id');
@@ -138,6 +141,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/countries/meta', [CountryApiController::class, 'meta']);
             Route::get('/countries', [CountryApiController::class, 'index']);
             Route::post('/countries', [CountryApiController::class, 'store']);
+            Route::get('/countries/{id}/delete-impact', [CountryApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::get('/countries/{id}', [CountryApiController::class, 'show'])->whereNumber('id');
             Route::put('/countries/{id}', [CountryApiController::class, 'update'])->whereNumber('id');
             Route::patch('/countries/{id}/active', [CountryApiController::class, 'setActive'])->whereNumber('id');
@@ -146,6 +150,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/service-categories/meta', [ServiceCategoryApiController::class, 'meta']);
             Route::get('/service-categories', [ServiceCategoryApiController::class, 'index']);
             Route::post('/service-categories', [ServiceCategoryApiController::class, 'store']);
+            Route::get('/service-categories/{id}/delete-impact', [ServiceCategoryApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::get('/service-categories/{id}', [ServiceCategoryApiController::class, 'show'])->whereNumber('id');
             Route::put('/service-categories/{id}', [ServiceCategoryApiController::class, 'update'])->whereNumber('id');
             Route::delete('/service-categories/{id}', [ServiceCategoryApiController::class, 'destroy'])->whereNumber('id');
@@ -193,6 +198,7 @@ Route::prefix('v1/admin')->group(function () {
 
             Route::get('/price-guest-types', [PriceGuestTypeApiController::class, 'index']);
             Route::post('/price-guest-types', [PriceGuestTypeApiController::class, 'store']);
+            Route::get('/price-guest-types/{id}/delete-impact', [PriceGuestTypeApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::put('/price-guest-types/{id}', [PriceGuestTypeApiController::class, 'update'])->whereNumber('id');
             Route::delete('/price-guest-types/{id}', [PriceGuestTypeApiController::class, 'destroy'])->whereNumber('id');
 
@@ -213,6 +219,7 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/blog-categories/meta', [BlogCategoryApiController::class, 'meta']);
             Route::get('/blog-categories', [BlogCategoryApiController::class, 'index']);
             Route::post('/blog-categories', [BlogCategoryApiController::class, 'store']);
+            Route::get('/blog-categories/{id}/delete-impact', [BlogCategoryApiController::class, 'deleteImpact'])->whereNumber('id');
             Route::get('/blog-categories/{id}', [BlogCategoryApiController::class, 'show'])->whereNumber('id');
             Route::put('/blog-categories/{id}', [BlogCategoryApiController::class, 'update'])->whereNumber('id');
             Route::delete('/blog-categories/{id}', [BlogCategoryApiController::class, 'destroy'])->whereNumber('id');

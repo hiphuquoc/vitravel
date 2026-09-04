@@ -84,9 +84,6 @@ class ContentSeeder extends Seeder
         $codes = ProjectSeed::countryCodes();
         $translations = ProjectSeed::get('country_translations', []);
 
-        $toursHub = $this->seo->ensureToursHub('vi');
-        $toursHubEn = $this->enId ? $this->seo->ensureToursHub('en') : null;
-
         foreach (ProjectSeed::get('countries', []) as $sort => $row) {
             $country = Country::query()->updateOrCreate(
                 ['code' => $codes[$row['slug']] ?? strtoupper(substr($row['slug'], 0, 2))],
@@ -118,17 +115,18 @@ class ContentSeeder extends Seeder
 
             $this->countryIds[$row['slug']] = $country->id;
 
+            // Điểm đến / khu vực = trang SEO root — không trang cha (không gắn tours_hub).
             $this->seo->syncSeo($country, 'vi', [
                 'slug' => $row['slug'],
                 'title' => $viName,
                 'description' => $viTagline,
                 'status' => 'published',
-                'parent_id' => $toursHub->id,
+                'parent_id' => null,
                 'country_code' => $country->code,
                 'reclaim_slug_full' => true,
             ]);
 
-            if ($this->enId && $toursHubEn) {
+            if ($this->enId) {
                 $enName = $i18n['en'] ?? $viName;
                 $enTagline = is_array($i18n['tagline'] ?? null)
                     ? ($i18n['tagline']['en'] ?? $viTagline)
@@ -148,7 +146,7 @@ class ContentSeeder extends Seeder
                     'title' => $enName,
                     'description' => $enTagline,
                     'status' => 'published',
-                    'parent_id' => $toursHubEn->id,
+                    'parent_id' => null,
                     'country_code' => $country->code,
                     'reclaim_slug_full' => true,
                 ]);

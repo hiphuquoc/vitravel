@@ -19,6 +19,7 @@ use Illuminate\Validation\ValidationException;
 class PriceGuestTypeApiController extends Controller
 {
     use ManagesTranslations;
+    use Concerns\ReportsDeleteImpact;
 
     public function index(Request $request): JsonResponse
     {
@@ -55,18 +56,14 @@ class PriceGuestTypeApiController extends Controller
     public function destroy(int $id): JsonResponse
     {
         $type = PriceGuestType::query()->findOrFail($id);
-        if ($type->rates()->exists()) {
-            return ApiResponse::error(
-                'Không xóa được: đối tượng khách đang được dùng trong bảng giá.',
-                'IN_USE',
-                422,
-            );
-        }
+        app(\App\Services\Purge\EntityPurgeService::class)->purge($type);
 
-        $type->translations()->delete();
-        $type->delete();
+        return ApiResponse::success(null, 'Đã xóa đối tượng khách (kèm dòng giá liên quan)');
+    }
 
-        return ApiResponse::success(null, 'Đã xóa đối tượng khách');
+    public function deleteImpact(Request $request, int $id): JsonResponse
+    {
+        return $this->deleteImpactResponse($request, PriceGuestType::query()->findOrFail($id));
     }
 
     private function save(Request $request): JsonResponse

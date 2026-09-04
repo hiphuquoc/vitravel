@@ -86,9 +86,6 @@ class TourCategorySeeder extends Seeder
 
     protected function ensureCountrySeo(): void
     {
-        $toursHub = $this->seo->ensureToursHub('vi');
-        $toursHubEn = $this->enId ? $this->seo->ensureToursHub('en') : null;
-
         foreach ($this->countryIds as $slug => $countryId) {
             $country = Country::query()->with('translations')->find($countryId);
             if (! $country) {
@@ -101,8 +98,7 @@ class TourCategorySeeder extends Seeder
                     continue;
                 }
 
-                $hubId = $locale === 'en' && $toursHubEn ? $toursHubEn->id : $toursHub->id;
-
+                // Điểm đến / khu vực = root SEO — không gắn tours_hub.
                 $this->seo->ensureSeoFor($country, 'country', $locale, [
                     'slug' => $slug,
                     'title' => $translation->name,
@@ -111,7 +107,8 @@ class TourCategorySeeder extends Seeder
                     'seo_description' => $translation->tagline,
                     'status' => 'published',
                     'country_code' => $country->code,
-                    'parent_id' => $hubId,
+                    'parent_id' => null,
+                    'reclaim_slug_full' => true,
                 ]);
             }
         }

@@ -31,6 +31,21 @@
  * - travel_styles: mã filter khớp chủ đề; không tạo trang SEO riêng.
  * - Cấm type=duration trên hub (trùng chủ đề thời lượng).
  * ---------------------------------------------------------------------------
+ * ZONES / ĐIỂM ĐẾN (→ CMS countries; SEO country KHÔNG có parent — URL /{slug}):
+ * Hub (đứng đầu; themes gắn đây):
+ * - bai-lang — bến cano, chợ Tân Hiệp, homestay trung tâm xã đảo
+ * GEO (khách search/book riêng):
+ * - bai-chong — bãi tắm biểu tượng, bungalow/glamping
+ * - bai-xep — vịnh kín gió, kayak / cắm trại
+ * - bai-huong — làng chài nam, homestay yên
+ * - ran-san-ho — khu bảo tồn biển, snorkel/scuba
+ * - hai-dang — trek hải đăng Hòn Lao
+ * Combo (chỉ itinerary — KHÔNG gắn stay vật lý):
+ * - ket-hop-hoi-an — phố cổ / Cửa Đại / Đà Nẵng
+ * Gateway mainland (hotel Cửa Đại, gửi vali bến, spa Hội An): zone_slug = hub
+ * bai-lang (trip-staging) — location_label giữ Hội An/Cửa Đại; KHÔNG gắn ket-hop.
+ * ferry/flight: KHÔNG zone_slug (country_id null).
+ * ---------------------------------------------------------------------------
  * Schema: project/README.md | Loader: App\Support\ProjectSeed::useProfile('culaocham')
  *
  * @return array<string, mixed>
@@ -246,6 +261,7 @@ $__culaochamSeed = array(
         ),
     ),
 
+    // Zones: HUB bai-lang | GEO bai-chong, bai-xep, bai-huong, ran-san-ho, hai-dang | COMBO ket-hop-hoi-an (itinerary only; no physical stays)
     'zones' => array(
         array('slug' => 'bai-lang', 'name' => 'Làng Bãi Làng', 'size' => 'large', 'tourCount' => 3, 'tagline' => 'Bến cano, chợ Tân Hiệp và chùa Hải Tạng 300 năm'),
         array('slug' => 'bai-chong', 'name' => 'Bãi Chồng', 'size' => 'large', 'tourCount' => 2, 'tagline' => 'Bãi tắm biểu tượng — nước trong, cát mịn, ghế nằm'),
@@ -2689,7 +2705,7 @@ $__servicesSeed = [
     'services' => [
         // ── FERRY — tuyến biển Cửa Đại ↔ Cù Lao Chàm (6) ─────────────────────
         [
-            'code' => 'ferry-cano-cua-dai-clc', 'cluster' => 'ferry', 'category_slug' => 'cano-cua-dai-cu-lao-cham', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'ferry-cano-cua-dai-clc', 'cluster' => 'ferry', 'category_slug' => 'cano-cua-dai-cu-lao-cham',
             'title' => 'Cano cao tốc Cửa Đại → Cù Lao Chàm (một chiều)', 'slug' => 'cano-cao-toc-cua-dai-cu-lao-cham',
             'price_from' => 250000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 612,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nhanh nhất', 'location_label' => 'Bến Cửa Đại → Bến Bãi Làng',
@@ -2699,7 +2715,7 @@ $__servicesSeed = [
             'notes' => ['Cano có thể tạm ngưng khi biển động — xác nhận lịch theo ngày đi trước khi thanh toán.', 'Không mang túi ni lông ra đảo theo quy định của xã Tân Hiệp.'], 'attrs' => ['from' => 'Cửa Đại (Hội An)', 'to' => 'Bãi Làng (Cù Lao Chàm)', 'duration_hours' => 0.5, 'operator' => 'Đối tác cano culaocham.net', 'vehicle_type' => 'cano cao tốc'],
         ],
         [
-            'code' => 'ferry-cano-khu-hoi', 'cluster' => 'ferry', 'category_slug' => 'cano-cua-dai-cu-lao-cham', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'ferry-cano-khu-hoi', 'cluster' => 'ferry', 'category_slug' => 'cano-cua-dai-cu-lao-cham',
             'title' => 'Vé cano khứ hồi Cửa Đại ↔ Cù Lao Chàm (gồm phí bảo tồn)', 'slug' => 've-cano-khu-hoi-cua-dai-cu-lao-cham',
             'price_from' => 450000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 488,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Trọn gói', 'location_label' => 'Cửa Đại ↔ Cù Lao Chàm',
@@ -2709,7 +2725,7 @@ $__servicesSeed = [
             'notes' => ['Chiều về thường trong khoảng 13:30 – 15:30; khách ngủ lại đảo cần báo trước để chuyển vé ngày hôm sau.'], 'attrs' => ['from' => 'Cửa Đại', 'to' => 'Cù Lao Chàm', 'duration_hours' => 0.5, 'operator' => 'Đối tác cano culaocham.net', 'vehicle_type' => 'cano cao tốc'],
         ],
         [
-            'code' => 'ferry-cano-charter', 'cluster' => 'ferry', 'category_slug' => 'cano-cua-dai-cu-lao-cham', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'ferry-cano-charter', 'cluster' => 'ferry', 'category_slug' => 'cano-cua-dai-cu-lao-cham',
             'title' => 'Thuê nguyên cano đi Cù Lao Chàm (charter theo nhóm)', 'slug' => 'thue-nguyen-cano-di-cu-lao-cham',
             'price_from' => 5500000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 64,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Bến Cửa Đại → Cù Lao Chàm',
@@ -2719,7 +2735,7 @@ $__servicesSeed = [
             'notes' => ['Giá tham khảo theo cano 12 chỗ; báo lại theo ngày và số khách thực tế.'], 'attrs' => ['from' => 'Cửa Đại', 'to' => 'Cù Lao Chàm', 'duration_hours' => 0.5, 'operator' => 'Đối tác cano culaocham.net', 'vehicle_type' => 'cano charter'],
         ],
         [
-            'code' => 'ferry-tau-go-cho', 'cluster' => 'ferry', 'category_slug' => 'tau-go-cua-dai-cu-lao-cham', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'ferry-tau-go-cho', 'cluster' => 'ferry', 'category_slug' => 'tau-go-cua-dai-cu-lao-cham',
             'title' => 'Tàu gỗ chợ Cửa Đại → Bãi Làng', 'slug' => 'tau-go-cho-cua-dai-bai-lang',
             'price_from' => 80000, 'currency' => 'VND', 'rating' => 4.3, 'review_count' => 96,
             'is_featured' => false, 'is_hot_deal' => false, 'location_label' => 'Bến Cửa Đại → Bến Bãi Làng',
@@ -2729,7 +2745,7 @@ $__servicesSeed = [
             'notes' => ['Thường chỉ 1–2 chuyến mỗi ngày và khởi hành sớm — không phù hợp lịch trình đi về trong ngày.'], 'attrs' => ['from' => 'Cửa Đại', 'to' => 'Bãi Làng', 'duration_hours' => 1.75, 'operator' => 'Hợp tác xã tàu Cù Lao Chàm', 'vehicle_type' => 'tàu gỗ chở khách'],
         ],
         [
-            'code' => 'transfer-hoi-an-cua-dai', 'cluster' => 'ferry', 'category_slug' => 'xe-hoi-an-cua-dai', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'transfer-hoi-an-cua-dai', 'cluster' => 'ferry', 'category_slug' => 'xe-hoi-an-cua-dai',
             'title' => 'Xe đưa đón phố cổ Hội An → bến cano Cửa Đại', 'slug' => 'xe-dua-don-hoi-an-ben-cua-dai',
             'price_from' => 120000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 274,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Phố cổ Hội An → Bến Cửa Đại',
@@ -2739,7 +2755,7 @@ $__servicesSeed = [
             'notes' => ['Nên đặt trước tối hôm trước; giờ đón thường 06:45 – 07:15 cho cano sáng.'], 'attrs' => ['from' => 'Hội An', 'to' => 'Bến Cửa Đại', 'duration_hours' => 0.35, 'operator' => 'Đối tác vận chuyển culaocham.net', 'vehicle_type' => 'xe 4–7 chỗ'],
         ],
         [
-            'code' => 'limousine-da-nang-cua-dai', 'cluster' => 'ferry', 'category_slug' => 'limousine-da-nang-cua-dai', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'limousine-da-nang-cua-dai', 'cluster' => 'ferry', 'category_slug' => 'limousine-da-nang-cua-dai',
             'title' => 'Limousine Đà Nẵng → bến cano Cửa Đại (nối Cù Lao Chàm)', 'slug' => 'limousine-da-nang-ben-cano-cua-dai',
             'price_from' => 250000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 188,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối cano', 'location_label' => 'Đà Nẵng → Bến Cửa Đại',
@@ -2751,7 +2767,7 @@ $__servicesSeed = [
 
         // ── FLIGHT — cửa ngõ Đà Nẵng (DAD) (4) ───────────────────────────────
         [
-            'code' => 'flight-han-dad', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-da-nang', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'flight-han-dad', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-da-nang',
             'title' => 'Vé máy bay Hà Nội — Đà Nẵng (DAD)', 'slug' => 've-may-bay-ha-noi-da-nang',
             'price_from' => 1150000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 342,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Nối đảo', 'location_label' => 'Hà Nội → DAD',
@@ -2761,7 +2777,7 @@ $__servicesSeed = [
             'notes' => ['Giá tham khảo — báo lại theo ngày bay và hạng vé.'], 'attrs' => ['from' => 'HAN', 'to' => 'DAD', 'airlines' => ['Vietnam Airlines', 'Vietjet Air', 'Bamboo Airways'], 'flight_time' => '1h20m'],
         ],
         [
-            'code' => 'flight-sgn-dad', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-da-nang', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'flight-sgn-dad', 'cluster' => 'flight', 'category_slug' => 'noi-dia-toi-da-nang',
             'title' => 'Vé máy bay TP.HCM — Đà Nẵng (DAD)', 'slug' => 've-may-bay-tphcm-da-nang',
             'price_from' => 1050000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 296,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Sài Gòn → DAD',
@@ -2771,7 +2787,7 @@ $__servicesSeed = [
             'notes' => ['Nên chọn chuyến hạ cánh trước 15:00 nếu muốn ra đảo ngay hôm sau.'], 'attrs' => ['from' => 'SGN', 'to' => 'DAD', 'airlines' => ['Vietnam Airlines', 'Vietjet Air', 'Bamboo Airways'], 'flight_time' => '1h15m'],
         ],
         [
-            'code' => 'transfer-dad-airport-cua-dai', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-da-nang', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'transfer-dad-airport-cua-dai', 'cluster' => 'flight', 'category_slug' => 'dua-don-san-bay-da-nang',
             'title' => 'Đưa đón sân bay Đà Nẵng → Hội An / bến Cửa Đại', 'slug' => 'dua-don-san-bay-da-nang-hoi-an-cua-dai',
             'price_from' => 380000, 'currency' => 'VND', 'rating' => 4.8, 'review_count' => 231,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'DAD → Hội An / Cửa Đại',
@@ -2781,7 +2797,7 @@ $__servicesSeed = [
             'notes' => ['Gửi số hiệu chuyến bay trước 24 giờ để tài xế theo dõi giờ hạ cánh.'], 'attrs' => ['from' => 'Sân bay Đà Nẵng', 'to' => 'Hội An / Cửa Đại', 'duration_hours' => 1, 'operator' => 'Đối tác vận chuyển culaocham.net', 'vehicle_type' => 'xe riêng 4–16 chỗ'],
         ],
         [
-            'code' => 'combo-flight-transfer-clc', 'cluster' => 'flight', 'category_slug' => 'combo-bay-va-dua-don', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'combo-flight-transfer-clc', 'cluster' => 'flight', 'category_slug' => 'combo-bay-va-dua-don',
             'title' => 'Combo vé bay + đưa đón + cano khứ hồi Cù Lao Chàm', 'slug' => 'combo-ve-bay-dua-don-cano-cu-lao-cham',
             'price_from' => 2450000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 74,
             'is_featured' => true, 'is_hot_deal' => true, 'discount_badge' => 'Một đầu mối', 'location_label' => 'Hà Nội/Sài Gòn → DAD → Cù Lao Chàm',
@@ -2947,7 +2963,7 @@ $__servicesSeed = [
             ],
         ],
         [
-            'code' => 'stay-khach-san-hoi-an-cua-dai', 'cluster' => 'stay', 'category_slug' => 'khach-san-hoi-an-cua-dai', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'stay-khach-san-hoi-an-cua-dai', 'cluster' => 'stay', 'category_slug' => 'khach-san-hoi-an-cua-dai', 'zone_slug' => 'bai-lang',
             'title' => 'Khách sạn Hội An gần bến Cửa Đại', 'slug' => 'khach-san-hoi-an-gan-ben-cua-dai',
             'price_from' => 750000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 204,
             'is_featured' => true, 'is_hot_deal' => false, 'star_rating' => 3, 'location_label' => 'Cửa Đại — Hội An',
@@ -3089,7 +3105,7 @@ $__servicesSeed = [
             'notes' => ['Dịp lễ Tết phụ phí 20–30%.'], 'attrs' => ['service_type' => 'local_guide', 'languages' => ['vi', 'en']],
         ],
         [
-            'code' => 'other-luggage-storage', 'cluster' => 'other', 'category_slug' => 'gui-hanh-ly', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'other-luggage-storage', 'cluster' => 'other', 'category_slug' => 'gui-hanh-ly', 'zone_slug' => 'bai-lang',
             'title' => 'Gửi hành lý tại bến Cửa Đại', 'slug' => 'gui-hanh-ly-ben-cua-dai',
             'price_from' => 60000, 'currency' => 'VND', 'rating' => 4.7, 'review_count' => 152,
             'is_featured' => true, 'is_hot_deal' => false, 'location_label' => 'Gần bến cano Cửa Đại',
@@ -3109,7 +3125,7 @@ $__servicesSeed = [
             'notes' => ['Không thay thế 115 trong tình huống nguy hiểm tính mạng.', 'Tai nạn lặn cần báo ngay để phối hợp phương án buồng cao áp tại đất liền.'], 'attrs' => ['service_type' => 'medical_assistance', 'availability' => '24/7', 'price_label' => 'Liên hệ'],
         ],
         [
-            'code' => 'other-spa-massage', 'cluster' => 'other', 'category_slug' => 'spa-massage', 'zone_slug' => 'ket-hop-hoi-an',
+            'code' => 'other-spa-massage', 'cluster' => 'other', 'category_slug' => 'spa-massage', 'zone_slug' => 'bai-lang',
             'title' => 'Spa & massage tại Hội An sau ngày ra đảo', 'slug' => 'spa-massage-hoi-an-sau-ngay-ra-dao',
             'price_from' => 250000, 'currency' => 'VND', 'rating' => 4.6, 'review_count' => 118,
             'is_featured' => false, 'is_hot_deal' => true, 'discount_badge' => 'Sau chuyến đảo', 'location_label' => 'Hội An / Cửa Đại',
