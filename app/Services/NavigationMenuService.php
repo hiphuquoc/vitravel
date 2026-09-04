@@ -460,7 +460,7 @@ final class NavigationMenuService
                     'icon' => $cfg['icon'] ?? 'sparkles',
                     'hub_key' => $cfg['hub_key'] ?? null,
                     'sort' => $cfg['sort'] ?? 0,
-                    'show_in_main_bar' => ! in_array($code, ['train', 'flight'], true),
+                    'show_in_main_bar' => ($cfg['show_in_main_bar'] ?? true) !== false,
                 ];
             }
             usort($out, static fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
@@ -477,7 +477,7 @@ final class NavigationMenuService
                 'icon' => (string) ($row['icon'] ?? 'sparkles'),
                 'hub_key' => (string) ($row['hub_key'] ?? ''),
                 'sort' => (int) ($row['sort'] ?? 0),
-                'show_in_main_bar' => ! in_array((string) ($row['code'] ?? ''), ['train', 'flight'], true),
+                'show_in_main_bar' => ($row['show_in_main_bar'] ?? true) !== false,
             ];
         }, $seed));
     }

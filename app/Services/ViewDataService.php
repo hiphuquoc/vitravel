@@ -1613,15 +1613,25 @@ class ViewDataService
             $entries = $this->filterNavEntriesBySlugs($this->serviceCategories($code), $slugs, 'slug');
             $extras = [];
 
+            // Chỉ gộp ferry/train/flight vào drawer «Khác» khi cụm đó chưa có mục riêng trên header.
             if ($code === 'other') {
-                if ($transportHub) {
+                $onMain = collect($items)
+                    ->filter(static fn (array $row): bool => ($row['kind'] ?? '') === NavigationItem::KIND_SERVICE_CLUSTER
+                        && (($row['show_in_main_bar'] ?? true) !== false)
+                        && (($row['is_active'] ?? true) !== false))
+                    ->map(static fn (array $row): string => (string) ($row['reference'] ?? ''))
+                    ->filter()
+                    ->values()
+                    ->all();
+
+                if ($transportHub && ! in_array($transportCluster, $onMain, true)) {
                     $extras[] = [
                         'label' => ($transportCluster === 'ferry') ? 'Vé tàu cao tốc / phà' : 'Vé tàu hỏa',
                         'url' => locale_route('services.hub', ['cluster' => $transportCluster]),
                         'count' => $this->serviceCount($transportCluster),
                     ];
                 }
-                if ($flightHub) {
+                if ($flightHub && ! in_array('flight', $onMain, true)) {
                     $extras[] = [
                         'label' => 'Vé máy bay',
                         'url' => locale_route('services.hub', ['cluster' => 'flight']),
