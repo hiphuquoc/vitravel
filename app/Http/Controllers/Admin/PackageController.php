@@ -360,20 +360,25 @@ class PackageController extends Controller
      */
     private function syncItineraryDays(Package $package, array $rows, string $locale): void
     {
+        $byDay = [];
+        foreach ($rows as $index => $row) {
+            if (! is_array($row) || empty($row['title'])) {
+                continue;
+            }
+            $dayNumber = (int) ($row['day_number'] ?? ($index + 1));
+            if ($dayNumber < 1) {
+                $dayNumber = $index + 1;
+            }
+            $byDay[$dayNumber] = $row;
+        }
+
         $keepIds = [];
 
-        foreach ($rows as $row) {
-            if (empty($row['title'])) {
-                continue;
-            }
-
-            $day = ! empty($row['id'])
-                ? PackageItineraryDay::query()->find($row['id'])
-                : new PackageItineraryDay(['package_id' => $package->id]);
-
-            if (! $day) {
-                continue;
-            }
+        foreach ($byDay as $dayNumber => $row) {
+            $day = PackageItineraryDay::query()->firstOrNew([
+                'package_id' => $package->id,
+                'day_number' => $dayNumber,
+            ]);
 
             $transport = array_values(array_filter(array_map(
                 'trim',
@@ -382,11 +387,11 @@ class PackageController extends Controller
 
             $day->fill([
                 'package_id' => $package->id,
-                'day_number' => (int) ($row['day_number'] ?? 1),
+                'day_number' => $dayNumber,
                 'meals_included' => $row['meals_included'] ?? null,
                 'transport_icons' => $transport !== [] ? $transport : null,
                 'distance_info' => $row['distance_info'] ?? null,
-                'sort' => (int) ($row['sort'] ?? $row['day_number'] ?? 0),
+                'sort' => (int) ($row['sort'] ?? $dayNumber),
             ]);
             $day->save();
             $keepIds[] = $day->id;
@@ -404,7 +409,12 @@ class PackageController extends Controller
             }
         }
 
-        $package->itineraryDays()->whereNotIn('id', $keepIds)->delete();
+        $query = $package->itineraryDays();
+        if ($keepIds === []) {
+            $query->delete();
+        } else {
+            $query->whereNotIn('id', $keepIds)->delete();
+        }
     }
 
     /** @param  array<int, array<string, mixed>>  $rows */
