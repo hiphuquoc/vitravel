@@ -135,6 +135,43 @@ class ViewDataService
         return $country ? $this->mapCountry($country) : SampleData::country($slug);
     }
 
+    /**
+     * Danh mục tour (theme) cho drawer menu Tour — không dùng điểm đến / khu vực GEO.
+     *
+     * @return list<array{slug: string, name: string, countrySlug: string, tagline: string, description: string, tourCount: int}>
+     */
+    public function tourThemesForNav(): array
+    {
+        if (! TourCategory::query()->where('is_active', true)->where('type', TourCategory::TYPE_THEME)->exists()) {
+            return [];
+        }
+
+        return TourCategory::query()
+            ->where('is_active', true)
+            ->where('type', TourCategory::TYPE_THEME)
+            ->with(['translations', 'country.translations'])
+            ->withCount(['packages as tour_count' => fn ($q) => $q->published()->tours()])
+            ->orderBy('sort')
+            ->orderBy('id')
+            ->get()
+            ->map(function (TourCategory $category) {
+                $translation = $category->translation($this->locale());
+                $countryTrans = $category->country?->translation($this->locale());
+
+                return [
+                    'slug' => (string) ($translation?->slug ?? ''),
+                    'name' => (string) ($translation?->name ?? ''),
+                    'countrySlug' => (string) ($countryTrans?->slug ?? ''),
+                    'tagline' => (string) ($translation?->description ?? ''),
+                    'description' => (string) ($translation?->description ?? ''),
+                    'tourCount' => (int) ($category->tour_count ?? 0),
+                ];
+            })
+            ->filter(fn (array $row) => $row['slug'] !== '' && $row['countrySlug'] !== '')
+            ->values()
+            ->all();
+    }
+
     public function travelStyles(): array
     {
         if (! TravelStyle::query()->where('is_active', true)->exists()) {
@@ -1518,7 +1555,12 @@ class ViewDataService
             $slugs = $item['category_slugs'] ?? null;
 
             if ($kind === NavigationItem::KIND_TOURS_MENU) {
-                $entries = $this->filterNavEntriesBySlugs($this->countries(), $slugs, 'slug');
+                $allThemes = $this->tourThemesForNav();
+                $entries = $this->filterNavEntriesBySlugs($allThemes, $slugs, 'slug');
+                // Menu cũ có thể còn slug điểm đến — nếu không khớp theme nào thì hiện toàn bộ danh mục.
+                if (is_array($slugs) && $slugs !== [] && $entries === [] && $allThemes !== []) {
+                    $entries = $allThemes;
+                }
                 $drawers[] = [
                     'menu_key' => 'dest',
                     'kind' => $kind,
@@ -1624,9 +1666,12 @@ class ViewDataService
     protected function mapTourNavEntries(array $rows): array
     {
         return array_values(array_map(fn (array $row): array => [
-            'name' => tour_listing_label((string) ($row['name'] ?? '')),
-            'url' => locale_route('tours.index', (string) ($row['slug'] ?? '')),
-            'meta' => (string) ($row['tagline'] ?? ''),
+            'name' => tour_listing_label((string) ($row['name'] ?? ''), prefixIfMissing: false),
+            'url' => locale_route('tours.category', [
+                'country' => (string) ($row['countrySlug'] ?? ''),
+                'slug' => (string) ($row['slug'] ?? ''),
+            ]),
+            'meta' => (string) ($row['tagline'] ?? $row['description'] ?? ''),
             'count' => (int) ($row['tourCount'] ?? 0),
         ], $rows));
     }

@@ -17,7 +17,7 @@
         <div class="adminFormPage_content">
             @include('admin.components.pageHeader', [
                 'title' => $title,
-                'desc' => 'Quốc gia làm trang cha cho tour — slug_full = /tours/{slug} (vd. /tours/viet-nam).',
+                'desc' => 'Điểm đến / khu vực làm trang cha listing tour — slug_full = /tours/{slug}. Không gắn vé tàu / máy bay.',
                 'icon' => '<path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3"/>',
                 'backUrl' => route('admin.countries.list'),
                 'backText' => 'Quay lại',

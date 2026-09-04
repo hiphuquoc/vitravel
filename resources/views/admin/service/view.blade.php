@@ -198,13 +198,19 @@
                                     'name' => 'location_label',
                                     'value' => old('location_label', $translation?->location_label),
                                 ])
-                                @include('admin.components.formField', [
-                                    'label' => 'Quốc gia',
-                                    'name' => 'country_id',
-                                    'type' => 'select',
-                                    'value' => old('country_id', $service?->country_id),
-                                    'options' => ['' => '— Không chọn —'] + $countryOptions,
-                                ])
+                                @php
+                                    $serviceCluster = old('cluster', $service?->cluster ?? $cluster);
+                                    $showDestinationCountry = \App\Models\Service::clusterUsesDestination($serviceCluster);
+                                @endphp
+                                @if ($showDestinationCountry)
+                                    @include('admin.components.formField', [
+                                        'label' => 'Điểm đến',
+                                        'name' => 'country_id',
+                                        'type' => 'select',
+                                        'value' => old('country_id', $service?->country_id),
+                                        'options' => ['' => '— Không chọn —'] + $countryOptions,
+                                    ])
+                                @endif
                                 @include('admin.components.formField', [
                                     'label' => 'Giá từ',
                                     'name' => 'price_from',

@@ -92,7 +92,7 @@ final class ApiResponse
             'meals_included' => 'Bữa ăn',
             'currency' => 'Tiền tệ',
             'duration_days' => 'Số ngày',
-            'country_id' => 'Quốc gia',
+            'country_id' => 'Điểm đến',
             'cruise_type' => 'Loại du thuyền',
             'content' => 'Nội dung',
             default => $attribute !== '' ? $attribute : '',

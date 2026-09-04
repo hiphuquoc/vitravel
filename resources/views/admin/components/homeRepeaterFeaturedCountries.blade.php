@@ -16,8 +16,8 @@
 <div class="adminFormSection adminFormSection--repeater repeater" data-repeater-container>
     <div class="adminFormSection_header">
         <div class="adminFormSection_header_info">
-            <h2 class="adminFormSection_title">Quốc gia hiển thị trên trang chủ</h2>
-            <p class="adminFormSection_description">Chọn quốc gia từ danh mục. Kích thước lưới lớn/thường chỉnh trong mục Quốc gia. Kéo thả để đổi thứ tự.</p>
+            <h2 class="adminFormSection_title">Điểm đến hiển thị trên trang chủ</h2>
+            <p class="adminFormSection_description">Chọn điểm đến từ danh mục. Kích thước lưới lớn/thường chỉnh trong mục Điểm đến. Kéo thả để đổi thứ tự.</p>
         </div>
         <button type="button" class="adminFormSection_header_action" data-repeater-create>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -43,11 +43,11 @@
                             <input type="hidden" name="id" value="{{ $row['id'] }}">
                         @endif
                         @include('admin.components.formField', [
-                            'label' => 'Quốc gia',
+                            'label' => 'Điểm đến',
                             'name' => 'country_id',
                             'type' => 'select',
                             'value' => $row['country_id'] ?? '',
-                            'options' => ['' => '— Chọn quốc gia —'] + $countryOptions,
+                            'options' => ['' => '— Chọn điểm đến —'] + $countryOptions,
                             'class' => 'adminFormGrid__full adminFormRepeater_item_field',
                         ])
                     </div>

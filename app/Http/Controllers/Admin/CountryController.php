@@ -41,7 +41,7 @@ class CountryController extends Controller
             'countries' => $countries,
             'hubSeo' => $hubSeo,
             'locale' => $locale,
-            'title' => 'Danh mục Tour / điểm đến',
+            'title' => 'Điểm đến',
         ]);
     }
 
@@ -64,7 +64,7 @@ class CountryController extends Controller
         $translation = $country?->translation($locale);
         $seoTranslation = $country?->seoEntry?->translation($locale);
         $language = $locale;
-        $title = $country ? 'Chỉnh sửa quốc gia' : 'Thêm quốc gia mới';
+        $title = $country ? 'Chỉnh sửa điểm đến' : 'Thêm điểm đến';
         $parents = $this->seoService()->parentOptions('tours_hub');
         $defaultParentId = $country ? $country->seoEntry?->parent_id : $hubSeo->id;
 
@@ -182,6 +182,6 @@ class CountryController extends Controller
         $row = Country::query()->findOrFail($request->integer('id'));
         app(\App\Services\Purge\EntityPurgeService::class)->purge($row);
 
-        return redirect()->route('admin.countries.list')->with('success', 'Đã xóa quốc gia thành công.');
+        return redirect()->route('admin.countries.list')->with('success', 'Đã xóa điểm đến thành công.');
     }
 }

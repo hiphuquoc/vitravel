@@ -276,10 +276,13 @@ class ServiceController extends Controller
             }
 
             $status = $validated['status'];
+            $countryId = Service::clusterUsesDestination($cluster)
+                ? ($validated['country_id'] ?? null)
+                : null;
             $service->fill([
                 'cluster' => $cluster,
                 'service_category_id' => $category?->id,
-                'country_id' => $validated['country_id'] ?? null,
+                'country_id' => $countryId,
                 'code' => $validated['code'] ?? null,
                 'price_from' => $validated['price_from'] ?? null,
                 'currency' => strtoupper($validated['currency'] ?? 'VND'),

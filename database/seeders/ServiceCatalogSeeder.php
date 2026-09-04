@@ -126,10 +126,13 @@ class ServiceCatalogSeeder extends Seeder
 
             $categoryKey = $cluster.'|'.($row['category_slug'] ?? '');
             $categoryId = $this->categoryIds[$categoryKey] ?? null;
-            $destSlug = (string) ($row['country_slug'] ?? $row['zone_slug'] ?? '');
-            $countryId = $destSlug !== '' ? ($this->countryIds[$destSlug] ?? null) : null;
-            if (! $countryId && $this->countryIds !== []) {
-                $countryId = reset($this->countryIds) ?: null;
+            $countryId = null;
+            if (Service::clusterUsesDestination($cluster)) {
+                $destSlug = (string) ($row['country_slug'] ?? $row['zone_slug'] ?? '');
+                $countryId = $destSlug !== '' ? ($this->countryIds[$destSlug] ?? null) : null;
+                if (! $countryId && $this->countryIds !== []) {
+                    $countryId = reset($this->countryIds) ?: null;
+                }
             }
 
             $service = Service::query()->updateOrCreate(

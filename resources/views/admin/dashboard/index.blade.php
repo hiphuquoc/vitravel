@@ -15,7 +15,7 @@
             @foreach ([
                 ['Gói Tour', $stats['tours']],
                 ['Gói Cruise', $stats['cruises']],
-                ['Quốc gia', $stats['countries']],
+                ['Điểm đến', $stats['countries']],
                 ['Danh mục Tour', $stats['tour_categories']],
                 ['Bài viết', $stats['articles']],
                 ['Yêu cầu nhanh', $stats['quick_inquiries']],

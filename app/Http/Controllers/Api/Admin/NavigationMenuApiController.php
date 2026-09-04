@@ -84,9 +84,9 @@ class NavigationMenuApiController extends Controller
                     'slug' => (string) ($row['slug'] ?? ''),
                     'label' => (string) ($row['name'] ?? ''),
                     'count' => (int) ($row['tourCount'] ?? 0),
-                    'meta' => (string) ($row['tagline'] ?? ''),
+                    'meta' => (string) ($row['tagline'] ?? $row['description'] ?? ''),
                 ],
-                $views->countries(),
+                $views->tourThemesForNav(),
             ),
             'cruise' => array_map(
                 static fn (array $row): array => [

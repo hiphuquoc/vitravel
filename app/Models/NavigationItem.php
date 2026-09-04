@@ -79,7 +79,7 @@ class NavigationItem extends Model
     public static function kindLabels(): array
     {
         return [
-            self::KIND_TOURS_MENU => 'Menu Tour (dropdown quốc gia)',
+            self::KIND_TOURS_MENU => 'Menu Tour (dropdown danh mục)',
             self::KIND_CRUISE_MENU => 'Menu Du thuyền / Trải nghiệm',
             self::KIND_SERVICE_CLUSTER => 'Cụm dịch vụ (hub + danh mục)',
             self::KIND_ROUTE_LINK => 'Liên kết trang',

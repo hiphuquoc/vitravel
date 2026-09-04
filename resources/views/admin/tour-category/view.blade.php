@@ -17,7 +17,7 @@
         <div class="adminFormPage_content">
             @include('admin.components.pageHeader', [
                 'title' => $title,
-                'desc' => 'Danh mục tour dùng cho trang listing (VD: Tour 10 ngày Việt Nam). URL thường nằm dưới quốc gia.',
+                'desc' => 'Danh mục tour (thời lượng, vùng, tính chất) — dùng cho listing và drawer menu Tour. URL thường nằm dưới điểm đến / hub.',
                 'icon' => '<path d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125v-1.5M3.375 19.5h-.375A1.125 1.125 0 012.25 18.375v-1.5m15.75 0h.375a1.125 1.125 0 001.125-1.125v-1.5m-15.75 0v-3.375A1.125 1.125 0 014.125 12h15.75a1.125 1.125 0 011.125 1.125v3.375"/>',
                 'backUrl' => route('admin.tourCategories.list'),
                 'backText' => 'Quay lại',
@@ -62,19 +62,19 @@
                             </div>
                             <div class="adminFormSection_header_info">
                                 <h2 class="adminFormSection_title">Thông tin chung</h2>
-                                <p class="adminFormSection_description">Cấu hình loại danh mục và quốc gia liên kết.</p>
+                                <p class="adminFormSection_description">Cấu hình loại danh mục và điểm đến liên kết.</p>
                             </div>
                         </div>
                         <div class="adminFormSection_body">
                             <div class="adminFormGrid adminFormGrid--2cols">
                                 @include('admin.components.formField', [
-                                    'label' => 'Quốc gia',
+                                    'label' => 'Điểm đến',
                                     'name' => 'country_id',
                                     'type' => 'select',
                                     'value' => old('country_id', $category?->country_id),
                                     'options' => $countryOptions,
-                                    'placeholder' => '— Chọn quốc gia —',
-                                    'tooltip' => 'Quốc gia của danh mục. Mặc định dùng làm trang cha SEO.',
+                                    'placeholder' => '— Chọn điểm đến —',
+                                    'tooltip' => 'Điểm đến / khu vực của danh mục (URL /tours/{điểm-đến}/…).',
                                 ])
                                 @include('admin.components.formField', [
                                     'label' => 'Loại danh mục',

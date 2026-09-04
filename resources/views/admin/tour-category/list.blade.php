@@ -7,7 +7,7 @@
     <div class="adminContentPage_content">
         @include('admin.components.pageHeader', [
             'title' => $title,
-            'desc' => 'Trang danh mục tour theo thời lượng, vùng, chủ đề — dùng cho listing tour.',
+            'desc' => 'Trang danh mục tour theo thời lượng, vùng, tính chất — dùng cho listing và drawer menu Tour.',
             'icon' => '<path d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125v-1.5M3.375 19.5h-.375A1.125 1.125 0 012.25 18.375v-1.5m15.75 0h.375a1.125 1.125 0 001.125-1.125v-1.5m-15.75 0v-3.375A1.125 1.125 0 014.125 12h15.75a1.125 1.125 0 011.125 1.125v3.375"/>',
             'actionUrl' => route('admin.tourCategories.view'),
             'actionText' => 'Thêm mới',
@@ -19,7 +19,7 @@
                     <div class="adminContentPage_searchBar_inputWrapper">
                         <input type="text" class="adminContentPage_searchBar_input" name="search" placeholder="Tìm theo tên..." value="{{ request('search') }}">
                         <select name="country_id" class="adminFormField_input adminFormField_input--select">
-                            <option value="">Tất cả quốc gia</option>
+                            <option value="">Tất cả điểm đến</option>
                             @foreach ($countries as $country)
                                 <option value="{{ $country->id }}" @selected(request('country_id') == $country->id)>{{ $country->name }}</option>
                             @endforeach

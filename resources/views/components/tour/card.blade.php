@@ -95,9 +95,7 @@
                         </button>
                     @endif
 
-                    <a href="{{ $href }}" class="btn-primary-sm ml-auto">
-                        Xem chi tiết <x-icon name="arrow-right" class="size-4" />
-                    </a>
+                    <x-shared.card-cta :href="$href" />
                 </div>
 
                 @if (!empty($item['highlights']))

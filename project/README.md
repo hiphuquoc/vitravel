@@ -143,6 +143,13 @@ Runtime: `CompanyProfile::contact()` / `view_data()->companyContact()`. `config/
 - `country_translations` — i18n theo slug (hoặc `zone_translations`)
 - `meta.country_codes` — optional; nếu thiếu, tự sinh từ slug
 
+#### Admin UI (phân luồng menu)
+
+| CMS | Menu admin | Ghi chú |
+|-----|------------|---------|
+| `countries` (điểm đến / khu vực) | **Nội dung / Thông tin → Điểm đến** | Không nằm trong nhóm Sản phẩm tour; **không** gắn train/ferry/flight |
+| `tour_categories` (region + theme) | **Sản phẩm → Danh mục Tour** | Drawer menu Tour public lấy các bản ghi `type=theme` |
+
 #### Quy tắc phân tách (bắt buộc — mọi hub)
 
 > Package ↔ category/theme đã là **nhiều–nhiều** (`package_tour_category` + `packageSlugs[]`).

@@ -248,7 +248,14 @@ final class EntityPurgeService
         $packageCount = Package::query()->where('country_id', $countryId)->count();
         if ($packageCount > 0) {
             throw ValidationException::withMessages([
-                'id' => "Không thể xóa quốc gia: còn {$packageCount} tour/du thuyền đang gắn. Hãy gỡ hoặc xóa các gói trước.",
+                'id' => "Không thể xóa điểm đến: còn {$packageCount} tour/du thuyền đang gắn. Hãy gỡ hoặc xóa các gói trước.",
+            ]);
+        }
+
+        $categoryCount = TourCategory::query()->where('country_id', $countryId)->count();
+        if ($categoryCount > 0) {
+            throw ValidationException::withMessages([
+                'id' => "Không thể xóa điểm đến: còn {$categoryCount} danh mục tour đang gắn. Hãy gỡ hoặc xóa danh mục trước.",
             ]);
         }
 
@@ -277,9 +284,20 @@ final class EntityPurgeService
             $this->support->purgeMediaAttachments('country', $countryId, $mediaIds);
             $this->support->purgeTranslations($country);
 
+            // Quan hệ tùy chọn tới trang chi tiết / brand — gỡ FK, không xóa entity.
             Article::query()->where('country_id', $countryId)->update(['country_id' => null]);
             BlogCategory::query()->where('country_id', $countryId)->update(['country_id' => null]);
             Destination::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            Office::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            ReferencePerson::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            ExperienceVideo::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            ExperienceAlbum::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            Review::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            // Lưu trú / vui chơi / other có thể gắn điểm đến; train|ferry|flight đã không dùng.
+            Service::query()->where('country_id', $countryId)->update(['country_id' => null]);
+            DB::table('package_country')->where('country_id', $countryId)->delete();
+            DB::table('home_featured_countries')->where('country_id', $countryId)->delete();
+            DB::table('hero_pills')->where('country_id', $countryId)->update(['country_id' => null]);
 
             $this->support->purgeSeo($country->seoEntry, $mediaIds);
             $country->delete();

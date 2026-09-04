@@ -30,7 +30,7 @@ class TourCategory extends Model
         return [
             self::TYPE_DURATION => 'Theo thời lượng',
             self::TYPE_REGION => 'Theo vùng',
-            self::TYPE_THEME => 'Theo chủ đề',
+            self::TYPE_THEME => 'Theo thời lượng / tính chất',
             self::TYPE_DAY_TRIP => 'Tour trong ngày',
             self::TYPE_PACKAGE => 'Gói combo',
         ];

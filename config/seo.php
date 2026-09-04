@@ -46,19 +46,19 @@ return [
             'parent_relation' => null,
         ],
         'country' => [
-            'label' => 'Quốc gia (Tour)',
+            'label' => 'Điểm đến',
             'parent_type' => 'tours_hub',
             'parent_relation' => null,
         ],
         'package_tour' => [
             'label' => 'Gói Tour',
-            // Chi tiết: chọn hub hoặc danh mục cùng cấp dưới hub (điểm đến / chủ đề)
+            // Chi tiết: chọn hub / điểm đến / danh mục tour
             'parent_type' => ['tours_hub', 'country', 'tour_category'],
             'parent_relation' => null,
         ],
         'tour_category' => [
-            'label' => 'Chủ đề Tour',
-            // Cùng cấp với country — chỉ gắn hub, không chọn lẫn nhau
+            'label' => 'Danh mục Tour',
+            // Cùng cấp với điểm đến — chỉ gắn hub, không chọn lẫn nhau
             'parent_type' => 'tours_hub',
             'parent_relation' => null,
         ],

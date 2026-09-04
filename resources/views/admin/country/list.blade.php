@@ -15,15 +15,15 @@
             </p>
         </div>
         <div class="flex flex-wrap gap-2">
-            <a href="{{ route('admin.countries.view') }}" class="admin-btn admin-btn--primary">+ Thêm quốc gia</a>
+            <a href="{{ route('admin.countries.view') }}" class="admin-btn admin-btn--primary">+ Thêm điểm đến</a>
         </div>
     </div>
 
     <form method="GET" class="admin-card mb-6">
         <div class="flex flex-wrap gap-4">
             <div class="min-w-[240px] flex-1">
-                <label class="admin-form-label">Tìm kiếm quốc gia</label>
-                <input type="text" name="search" value="{{ request('search') }}" class="admin-form-input" placeholder="Tên quốc gia...">
+                <label class="admin-form-label">Tìm kiếm điểm đến</label>
+                <input type="text" name="search" value="{{ request('search') }}" class="admin-form-input" placeholder="Tên điểm đến...">
             </div>
             <div class="flex items-end gap-2">
                 <button type="submit" class="admin-btn admin-btn--primary">Lọc</button>
@@ -84,7 +84,7 @@
                         </td>
                         <td class="text-right">
                             <a href="{{ route('admin.countries.view', ['id' => $country->id]) }}" class="text-emerald-700 hover:underline">Sửa</a>
-                            <a href="{{ route('admin.countries.delete', ['id' => $country->id]) }}" class="ml-3 text-red-600 hover:underline" onclick="return confirm('Xóa quốc gia này?')">Xóa</a>
+                            <a href="{{ route('admin.countries.delete', ['id' => $country->id]) }}" class="ml-3 text-red-600 hover:underline" onclick="return confirm('Xóa điểm đến này?')">Xóa</a>
                         </td>
                     </tr>
                 @empty

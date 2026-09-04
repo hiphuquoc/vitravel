@@ -139,14 +139,14 @@
                             <span class="tour-card-price__value">
                                 {{ $item['priceFormatted'] }}
                                 @if (! empty($item['priceUnitLabel']))
-                                    <span class="text-xs font-normal text-muted">{{ $item['priceUnitLabel'] }}</span>
+                                    <span class="tour-card-price__unit">{{ $item['priceUnitLabel'] }}</span>
                                 @endif
                             </span>
                         </div>
                     @else
                         <div class="tour-card-price">
                             <span class="tour-card-price__label">Giá từ</span>
-                            <span class="tour-card-price__value text-base">Liên hệ</span>
+                            <span class="tour-card-price__value tour-card-price__value--contact">Liên hệ</span>
                         </div>
                     @endif
 
@@ -159,9 +159,7 @@
                         </button>
                     @endif
 
-                    <a href="{{ $href }}" class="btn-ghost ml-auto whitespace-nowrap">
-                        Xem chi tiết <x-icon name="arrow-right" class="size-4" />
-                    </a>
+                    <x-shared.card-cta :href="$href" />
                 </div>
 
                 @if ($cardHighlights !== [])

@@ -525,8 +525,139 @@
         gap: var(--space-gap-sm) var(--space-gap);
     }
 
+    /* Chân card: giá + CTA — luôn 1 hàng; giá dài thì thu font / cắt ellipsis */
     .card-footer-row--price {
+        flex-wrap: nowrap;
         align-items: flex-end;
+        justify-content: space-between;
+        gap: 0.5rem 0.65rem;
+        container-type: inline-size;
+        container-name: card-price-row;
+    }
+
+    .card-footer-row--price .tour-card-price {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .card-footer-row--price .tour-card-price__value {
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        /* Giữ cỡ display mặc định; chỉ thu khi hàng thật sự hẹp */
+        font-size: 1.25rem;
+    }
+
+    .card-footer-row--price .card-cta {
+        flex: 0 0 auto;
+        margin-left: 0;
+    }
+
+    @container card-price-row (max-width: 18rem) {
+        .tour-card-price__value {
+            font-size: 1.125rem;
+        }
+    }
+
+    @container card-price-row (max-width: 15.5rem) {
+        .tour-card-price__value {
+            font-size: 1.05rem;
+        }
+
+        .card-cta {
+            padding-inline: 0.55rem;
+            gap: 0.25rem;
+            font-size: 0.75rem;
+            min-height: 2rem;
+        }
+    }
+
+    /* Dự phòng cực hẹp: ẩn chữ, giữ icon (+ aria từ label trong DOM) */
+    @container card-price-row (max-width: 13.5rem) {
+        .tour-card-price__value {
+            font-size: 1rem;
+        }
+
+        .card-cta__label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .card-cta {
+            padding-inline: 0.5rem;
+            min-width: 2rem;
+        }
+    }
+
+    /* CTA lưới dùng chung (tour / cruise / service) — gọn hơn btn-primary-sm */
+    .card-cta {
+        @apply relative inline-flex cursor-pointer items-center justify-center overflow-hidden font-semibold transition duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 active:scale-[.98] bg-primary-500 text-white shadow-sm;
+        gap: 0.35rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 10px;
+        font-size: 0.8125rem;
+        line-height: 1.2;
+        min-height: 2.15rem;
+        white-space: nowrap;
+        isolation: isolate;
+        text-decoration: none;
+    }
+
+    .card-cta::after {
+        content: '';
+        position: absolute;
+        inset: -8% -30%;
+        z-index: 1;
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+        background: linear-gradient(
+            105deg,
+            transparent 12%,
+            rgb(255 255 255 / 0.28) 32%,
+            rgb(255 255 255 / 0.92) 48%,
+            rgb(255 255 255 / 0.92) 52%,
+            rgb(255 255 255 / 0.28) 68%,
+            transparent 88%
+        );
+        transform: translateX(-130%);
+        transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .card-cta:hover::after {
+        transform: translateX(130%);
+    }
+
+    .card-cta__label,
+    .card-cta__icon {
+        position: relative;
+        z-index: 2;
+    }
+
+    .card-cta__icon {
+        width: 0.9rem;
+        height: 0.9rem;
+        flex-shrink: 0;
+    }
+
+    .tour-card-price__unit {
+        margin-left: 0.15em;
+        font-size: 0.7rem;
+        font-weight: 400;
+        font-family: var(--font-sans), system-ui, sans-serif;
+        letter-spacing: normal;
+        color: var(--color-muted, #817d6e);
+    }
+
+    .tour-card-price__value--contact {
+        font-size: 1rem;
     }
 
     .tour-card-duration {
@@ -2200,20 +2331,24 @@
         }
 
         .listing-results .card-footer-row--price {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+            display: flex;
+            flex-wrap: nowrap;
             gap: 0.45rem 0.65rem;
-            align-items: center;
+            align-items: flex-end;
+            justify-content: space-between;
         }
 
         .listing-results .card-footer-row--price .tour-card-price {
-            grid-column: 1 / -1;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
+        .listing-results .card-footer-row--price > .card-cta,
         .listing-results .card-footer-row--price > .btn-ghost,
         .listing-results .card-footer-row--price > a.btn-ghost {
+            flex: 0 0 auto;
             margin-left: 0;
-            justify-self: end;
+            justify-self: unset;
         }
     }
 
@@ -7333,7 +7468,7 @@
 
     @media (min-width: 640px) {
         .hero-search__grid {
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) max-content;
             align-items: end;
             gap: 1rem;
         }
@@ -7348,15 +7483,26 @@
 
     .hero-search__action {
         display: flex;
+        flex-shrink: 0;
+        min-width: max-content;
     }
 
     .hero-search__submit {
-        @apply inline-flex h-11 w-full min-w-[9.5rem] items-center justify-center gap-2.5 px-8;
+        @apply inline-flex h-11 items-center justify-center gap-2.5 px-6;
+        width: 100%;
+        min-width: 9.75rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .hero-search__submit span {
+        white-space: nowrap;
     }
 
     @media (min-width: 640px) {
         .hero-search__submit {
             width: auto;
+            padding-inline: 1.75rem;
         }
     }
 }

@@ -70,13 +70,13 @@
                         <div class="adminFormSection_body">
                             <div class="adminFormGrid adminFormGrid--2cols">
                                 @include('admin.components.formField', [
-                                    'label' => 'Quốc gia chính (URL / SEO)',
+                                    'label' => 'Điểm đến chính (URL / SEO)',
                                     'name' => 'country_id',
                                     'type' => 'select',
                                     'required' => true,
                                     'value' => old('country_id', $package?->country_id),
                                     'options' => $countryOptions,
-                                    'tooltip' => 'Quốc gia dùng trong URL (/tours/{slug}/…) và SEO parent mặc định. Phải nằm trong danh sách quốc gia bên dưới.',
+                                    'tooltip' => 'Điểm đến dùng trong URL (/tours/{slug}/…) và SEO parent mặc định. Phải nằm trong danh sách điểm đến bên dưới.',
                                 ])
                                 @include('admin.components.formField', [
                                     'label' => 'Mã gói',
@@ -191,12 +191,12 @@
                         </div>
                     </div>
 
-                    {{-- Quốc gia bộ lọc (multi) --}}
+                    {{-- Điểm đến bộ lọc (multi) --}}
                     <div class="adminFormSection">
                         <div class="adminFormSection_header">
                             <div class="adminFormSection_header_info">
-                                <h2 class="adminFormSection_title">Quốc gia / điểm đến (bộ lọc)</h2>
-                                <p class="adminFormSection_description">Chọn một hoặc nhiều quốc gia. Tour kết hợp (VD: Việt Nam + Campuchia) sẽ hiện khi lọc bất kỳ quốc gia nào trong danh sách này.</p>
+                                <h2 class="adminFormSection_title">Điểm đến (bộ lọc)</h2>
+                                <p class="adminFormSection_description">Chọn một hoặc nhiều điểm đến. Tour kết hợp sẽ hiện khi lọc bất kỳ điểm đến nào trong danh sách này.</p>
                             </div>
                         </div>
                         <div class="adminFormSection_body">

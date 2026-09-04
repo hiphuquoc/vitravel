@@ -125,7 +125,7 @@ class CountryApiController extends Controller
             return ApiResponse::fromValidation($e);
         }
 
-        return ApiResponse::success(null, 'Đã xóa quốc gia (kèm media & quan hệ)');
+        return ApiResponse::success(null, 'Đã xóa điểm đến (kèm media & quan hệ)');
     }
 
     public function setActive(Request $request, int $id): JsonResponse

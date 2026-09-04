@@ -30,6 +30,13 @@ class Service extends Model
 
     public const CLUSTER_OTHER = 'other';
 
+    /** Cụm di chuyển / máy bay — không gắn điểm đến (country). */
+    public const CLUSTERS_WITHOUT_DESTINATION = [
+        self::CLUSTER_TRAIN,
+        self::CLUSTER_FERRY,
+        self::CLUSTER_FLIGHT,
+    ];
+
     /** @var list<string> */
     protected array $translatable = [
         'title', 'location_label', 'summary', 'featured_quote_text', 'featured_quote_author',
@@ -80,6 +87,13 @@ class Service extends Model
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);
+    }
+
+    public static function clusterUsesDestination(?string $cluster): bool
+    {
+        return $cluster !== null
+            && $cluster !== ''
+            && ! in_array($cluster, self::CLUSTERS_WITHOUT_DESTINATION, true);
     }
 
     public function options(): HasMany

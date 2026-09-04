@@ -111,12 +111,14 @@ class ServiceApiController extends Controller
                 'cluster' => $c->cluster,
             ]);
 
-        $countries = Country::query()->with('translations')->orderBy('sort')->get()
-            ->map(fn (Country $c) => [
-                'id' => $c->id,
-                'name' => $c->translation($locale)?->name,
-                'code' => $c->code,
-            ]);
+        $countries = Service::clusterUsesDestination($cluster)
+            ? Country::query()->with('translations')->orderBy('sort')->get()
+                ->map(fn (Country $c) => [
+                    'id' => $c->id,
+                    'name' => $c->translation($locale)?->name,
+                    'code' => $c->code,
+                ])
+            : collect();
 
         return ApiResponse::success([
             'languages' => Language::adminOptions(),
@@ -125,6 +127,7 @@ class ServiceApiController extends Controller
             'clusters' => $viewData->adminServiceClusterOptions(),
             'categories' => $categories,
             'countries' => $countries,
+            'uses_destination' => Service::clusterUsesDestination($cluster),
             'property_types' => $cluster === Service::CLUSTER_STAY
                 ? collect(config('stay.property_types', []))->map(fn ($label, $value) => ['value' => $value, 'label' => $label])->values()->all()
                 : [],
@@ -487,7 +490,9 @@ class ServiceApiController extends Controller
             $fill = [
                 'cluster' => $cluster,
                 'service_category_id' => $category?->id,
-                'country_id' => $validated['country_id'] ?? null,
+                'country_id' => Service::clusterUsesDestination($cluster)
+                    ? ($validated['country_id'] ?? null)
+                    : null,
                 'code' => $validated['code'] ?? null,
                 'price_from' => $validated['price_from'] ?? null,
                 'currency' => strtoupper($validated['currency'] ?? 'VND'),
