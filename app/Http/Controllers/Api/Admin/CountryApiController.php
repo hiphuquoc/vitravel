@@ -206,10 +206,8 @@ class CountryApiController extends Controller
         }
 
         $country = DB::transaction(function () use ($request, $validated, $locale) {
-            // Điểm đến không có trang cha — chỉ dùng seo_parent_id khi admin chọn tường minh.
-            $parentId = $request->has('seo_parent_id')
-                ? ((int) $request->input('seo_parent_id') ?: null)
-                : null;
+            // Điểm đến = trang SEO gốc (config parent_type = null) — không nhận hub Tour làm cha.
+            $parentId = null;
 
             $country = isset($validated['id'])
                 ? Country::query()->findOrFail($validated['id'])

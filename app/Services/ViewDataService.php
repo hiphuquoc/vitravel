@@ -136,19 +136,23 @@ class ViewDataService
     }
 
     /**
-     * Danh mục tour (theme) cho drawer menu Tour — không dùng điểm đến / khu vực GEO.
+     * Mục drawer menu Tour (header).
+     * Lấy type theme + duration (chủ đề / thời lượng) — không lấy region / package.
+     * Seed cũ / một số project lưu thời lượng là `duration`; seed mới dùng `theme`.
      *
      * @return list<array{slug: string, name: string, countrySlug: string, tagline: string, description: string, tourCount: int}>
      */
     public function tourThemesForNav(): array
     {
-        if (! TourCategory::query()->where('is_active', true)->where('type', TourCategory::TYPE_THEME)->exists()) {
+        $navTypes = [TourCategory::TYPE_THEME, TourCategory::TYPE_DURATION];
+
+        if (! TourCategory::query()->where('is_active', true)->whereIn('type', $navTypes)->exists()) {
             return [];
         }
 
         return TourCategory::query()
             ->where('is_active', true)
-            ->where('type', TourCategory::TYPE_THEME)
+            ->whereIn('type', $navTypes)
             ->with(['translations', 'country.translations'])
             ->withCount(['packages as tour_count' => fn ($q) => $q->published()->tours()])
             ->orderBy('sort')
@@ -165,6 +169,7 @@ class ViewDataService
                     'tagline' => (string) ($translation?->description ?? ''),
                     'description' => (string) ($translation?->description ?? ''),
                     'tourCount' => (int) ($category->tour_count ?? 0),
+                    'type' => (string) ($category->type ?? ''),
                 ];
             })
             ->filter(fn (array $row) => $row['slug'] !== '' && $row['countrySlug'] !== '')
@@ -1557,8 +1562,8 @@ class ViewDataService
             if ($kind === NavigationItem::KIND_TOURS_MENU) {
                 $allThemes = $this->tourThemesForNav();
                 $entries = $this->filterNavEntriesBySlugs($allThemes, $slugs, 'slug');
-                // Menu cũ có thể còn slug điểm đến — nếu không khớp theme nào thì hiện toàn bộ danh mục.
-                if (is_array($slugs) && $slugs !== [] && $entries === [] && $allThemes !== []) {
+                // Whitelist rỗng / không khớp mục nào → hiện đủ theme+duration.
+                if ($entries === [] && $allThemes !== []) {
                     $entries = $allThemes;
                 }
                 $drawers[] = [

@@ -39,6 +39,10 @@ class SeoService
         }
 
         $parentEntry = $this->resolveParentEntry($model, $seoType, $data['parent_id'] ?? null);
+        // parent_type = null trong config → luôn là trang gốc (bỏ qua parent_id client gửi lên).
+        if ($seoType && $this->parentTypesFor($seoType) === []) {
+            $parentEntry = null;
+        }
         if ($parentEntry) {
             $this->assertParentHasLocale($parentEntry, $locale);
         }
