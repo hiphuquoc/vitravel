@@ -1613,11 +1613,10 @@ class ViewDataService
             $entries = $this->filterNavEntriesBySlugs($this->serviceCategories($code), $slugs, 'slug');
             $extras = [];
 
-            // Chỉ gộp ferry/train/flight vào drawer «Khác» khi cụm đó chưa có mục riêng trên header.
+            // «Khác»: chỉ gắn thêm ferry/train/flight khi chưa có mục riêng trên menu.
             if ($code === 'other') {
                 $onMain = collect($items)
                     ->filter(static fn (array $row): bool => ($row['kind'] ?? '') === NavigationItem::KIND_SERVICE_CLUSTER
-                        && (($row['show_in_main_bar'] ?? true) !== false)
                         && (($row['is_active'] ?? true) !== false))
                     ->map(static fn (array $row): string => (string) ($row['reference'] ?? ''))
                     ->filter()

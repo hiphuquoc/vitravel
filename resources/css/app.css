@@ -1046,7 +1046,9 @@
         flex: 1 1 auto;
         align-items: center;
         justify-content: center;
-        gap: 0.125rem;
+        flex-wrap: wrap;
+        column-gap: 0.05rem;
+        row-gap: 0.15rem;
         min-width: 0;
     }
 

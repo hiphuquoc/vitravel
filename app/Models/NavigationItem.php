@@ -96,11 +96,7 @@ class NavigationItem extends Model
 
     public function showInMainBar(): bool
     {
-        if ($this->kind !== self::KIND_SERVICE_CLUSTER) {
-            return true;
-        }
-
-        return ($this->config['show_in_main_bar'] ?? true) !== false;
+        return true;
     }
 
     /**

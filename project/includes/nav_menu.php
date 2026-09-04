@@ -61,8 +61,6 @@ function vitravel_build_nav_menu(array $seedData): array
             'key' => 'svc_'.$code,
             'reference' => $code,
             'sort' => (int) ($row['sort'] ?? $sortBase),
-            // Mọi cụm trong seed (train/ferry/flight/stay…) hiện trên header theo cấu hình.
-            'show_in_main_bar' => ($row['show_in_main_bar'] ?? true) !== false,
             'label' => $pick($row['nav_label'] ?? null, $code),
             'lead_label' => [
                 'vi' => 'Tất cả '.mb_strtolower((string) ($row['nav_label'] ?? $code)),

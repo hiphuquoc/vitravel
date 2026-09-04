@@ -42,20 +42,14 @@ final class NavigationMenuService
     }
 
     /**
+     * Mục trên thanh menu chính — mọi item zone main đang active.
+     * Không khóa theo show_in_main_bar (mặc định seed hay cấu hình admin đều hiện đủ).
+     *
      * @return list<array<string, mixed>>
      */
     public function mainBarItems(?string $locale = null): array
     {
-        return array_values(array_filter(
-            $this->itemsForZone(NavigationItem::ZONE_MAIN, $locale),
-            static function (array $row): bool {
-                if (($row['kind'] ?? '') !== NavigationItem::KIND_SERVICE_CLUSTER) {
-                    return true;
-                }
-
-                return ($row['show_in_main_bar'] ?? true) !== false;
-            },
-        ));
+        return $this->itemsForZone(NavigationItem::ZONE_MAIN, $locale);
     }
 
     /**
@@ -85,7 +79,7 @@ final class NavigationMenuService
                 'icon' => (string) ($catalog['icon'] ?? 'sparkles'),
                 'hub_key' => (string) ($catalog['hub_key'] ?? ''),
                 'sort' => (int) ($row['sort'] ?? 0),
-                'show_in_main_bar' => ($row['show_in_main_bar'] ?? true) !== false,
+                'show_in_main_bar' => true,
             ];
         }
 
@@ -460,7 +454,7 @@ final class NavigationMenuService
                     'icon' => $cfg['icon'] ?? 'sparkles',
                     'hub_key' => $cfg['hub_key'] ?? null,
                     'sort' => $cfg['sort'] ?? 0,
-                    'show_in_main_bar' => ($cfg['show_in_main_bar'] ?? true) !== false,
+                    'show_in_main_bar' => true,
                 ];
             }
             usort($out, static fn ($a, $b) => ($a['sort'] ?? 0) <=> ($b['sort'] ?? 0));
@@ -477,7 +471,7 @@ final class NavigationMenuService
                 'icon' => (string) ($row['icon'] ?? 'sparkles'),
                 'hub_key' => (string) ($row['hub_key'] ?? ''),
                 'sort' => (int) ($row['sort'] ?? 0),
-                'show_in_main_bar' => ($row['show_in_main_bar'] ?? true) !== false,
+                'show_in_main_bar' => true,
             ];
         }, $seed));
     }
