@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Schema;
 
 final class StayCatalogRebuildService
 {
+    /** @var callable(string, int, int): void|null */
+    private $progress = null;
+
     public function __construct(
         private readonly StayAreaResolver $areas,
         private readonly StayPropertySyncService $properties,
@@ -34,6 +37,7 @@ final class StayCatalogRebuildService
      */
     public function stats(): array
     {
+        $this->prepareRuntime();
         $stay = Service::withoutGlobalScopes()->where('cluster', Service::CLUSTER_STAY);
         $total = (clone $stay)->count();
         $withKey = 0;
@@ -41,7 +45,7 @@ final class StayCatalogRebuildService
         $withArea = 0;
         $scoreSum = 0;
         $unmatched = 0;
-        foreach ((clone $stay)->select('id', 'lat', 'lng', 'stay_area_id', 'stay_property_id', 'attrs')->cursor() as $svc) {
+        $this->eachStayService(0, 0, 40, ['id', 'lat', 'lng', 'stay_area_id', 'stay_property_id', 'attrs'], function (Service $svc) use (&$withKey, &$withGeo, &$withArea, &$unmatched, &$scoreSum): void {
             $attrs = is_array($svc->attrs) ? $svc->attrs : [];
             $crawl = is_array($attrs['crawl'] ?? null) ? $attrs['crawl'] : [];
             if (filled($crawl['source_hotel_key'] ?? null) || $svc->stay_property_id) {
@@ -58,7 +62,7 @@ final class StayCatalogRebuildService
                 $unmatched++;
             }
             $scoreSum += StayCompleteness::fromAttrs($attrs, $crawl['source_hotel_key'] ?? null)['score'];
-        }
+        });
 
         return [
             'stays' => $total,
@@ -74,15 +78,27 @@ final class StayCatalogRebuildService
     }
 
     /**
+     * @param  callable(string, int, int): void|null  $progress
      * @return array<string, mixed>
      */
-    public function run(string $layer, bool $dryRun = false, int $limit = 0, bool $seedAreas = true): array
-    {
+    public function run(
+        string $layer,
+        bool $dryRun = false,
+        int $limit = 0,
+        bool $seedAreas = true,
+        int $chunk = 40,
+        int $fromId = 0,
+        ?callable $progress = null,
+    ): array {
+        $this->prepareRuntime();
+        $this->progress = $progress;
+        $chunk = max(5, min(200, $chunk));
+
         return match ($layer) {
-            'offline', 'r1' => $this->offline($dryRun, $limit),
-            'areas', 'r2' => $this->assignAreas($dryRun, $limit, $seedAreas),
-            'properties', 'r7' => $this->materializeProperties($dryRun, $limit),
-            'improve', 'r4' => $this->queueImprove($dryRun, $limit),
+            'offline', 'r1' => $this->offline($dryRun, $limit, $chunk, $fromId),
+            'areas', 'r2' => $this->assignAreas($dryRun, $limit, $seedAreas, $chunk, $fromId),
+            'properties', 'r7' => $this->materializeProperties($dryRun, $limit, $chunk, $fromId),
+            'improve', 'r4' => $this->queueImprove($dryRun, $limit, $chunk, $fromId),
             default => throw new \InvalidArgumentException('Layer không hợp lệ: '.$layer),
         };
     }
@@ -92,7 +108,7 @@ final class StayCatalogRebuildService
      *
      * @return array<string, mixed>
      */
-    public function offline(bool $dryRun, int $limit = 0): array
+    public function offline(bool $dryRun, int $limit = 0, int $chunk = 40, int $fromId = 0): array
     {
         $report = [
             'layer' => 'offline',
@@ -107,36 +123,45 @@ final class StayCatalogRebuildService
             'rows' => [],
         ];
 
-        $itemQ = StayCrawlItem::withoutGlobalScopes()->orderBy('id');
-        if ($limit > 0) {
-            $itemQ->limit($limit);
-        }
-        foreach ($itemQ->cursor() as $item) {
-            $identity = StayIdentity::fromUrl((string) ($item->canonical_url ?: $item->source_url));
-            if (! $identity['source_hotel_key']) {
-                continue;
-            }
-            $report['items_keyed']++;
-            if (! $dryRun) {
-                $item->source = $identity['source'];
-                $item->source_hotel_key = $identity['source_hotel_key'];
-                $item->booking_cc = $identity['booking_cc'];
-                $item->saveQuietly();
-            }
-        }
+        $itemN = 0;
+        StayCrawlItem::withoutGlobalScopes()
+            ->select(['id', 'canonical_url', 'source_url', 'source', 'source_hotel_key', 'booking_cc'])
+            ->when($fromId > 0, fn ($q) => $q->where('id', '>=', $fromId))
+            ->orderBy('id')
+            ->chunkById($chunk, function ($items) use (&$report, &$itemN, $dryRun, $limit): bool {
+                foreach ($items as $item) {
+                    if ($limit > 0 && $itemN >= $limit) {
+                        return false;
+                    }
+                    $itemN++;
+                    $identity = StayIdentity::fromUrl((string) ($item->canonical_url ?: $item->source_url));
+                    if (! $identity['source_hotel_key']) {
+                        continue;
+                    }
+                    $report['items_keyed']++;
+                    if (! $dryRun) {
+                        $item->source = $identity['source'];
+                        $item->source_hotel_key = $identity['source_hotel_key'];
+                        $item->booking_cc = $identity['booking_cc'];
+                        $item->saveQuietly();
+                    }
+                }
+                $this->tick('offline.items', $itemN, (int) $items->last()?->id);
+                unset($items);
 
-        $svcQ = Service::withoutGlobalScopes()->where('cluster', Service::CLUSTER_STAY)->orderBy('id');
-        if ($limit > 0) {
-            $svcQ->limit($limit);
-        }
-        foreach ($svcQ->cursor() as $service) {
+                return $limit <= 0 || $itemN < $limit;
+            });
+
+        $this->eachStayService($limit, $fromId, $chunk, ['id', 'code', 'lat', 'lng', 'attrs'], function (Service $service) use (&$report, $dryRun): void {
             $attrs = is_array($service->attrs) ? $service->attrs : [];
             $crawl = is_array($attrs['crawl'] ?? null) ? $attrs['crawl'] : [];
             $url = (string) ($crawl['canonical_url'] ?? $crawl['source_url'] ?? '');
             if ($url === '' && is_string($service->code) && str_starts_with($service->code, 'bk-')) {
                 $url = 'https://www.booking.com/hotel/vn/'.substr($service->code, 3).'.html';
             }
-            $identity = $url !== '' ? StayIdentity::fromUrl($url) : ['source_hotel_key' => $crawl['source_hotel_key'] ?? null, 'booking_cc' => null, 'canonical_url' => $url, 'source' => StayIdentity::SOURCE_BOOKING];
+            $identity = $url !== ''
+                ? StayIdentity::fromUrl($url)
+                : ['source_hotel_key' => $crawl['source_hotel_key'] ?? null, 'booking_cc' => null, 'canonical_url' => $url, 'source' => StayIdentity::SOURCE_BOOKING];
             if ($identity['source_hotel_key']) {
                 $report['services_keyed']++;
                 $crawl['source'] = $identity['source'] ?? StayIdentity::SOURCE_BOOKING;
@@ -173,7 +198,7 @@ final class StayCatalogRebuildService
                 }
                 $service->saveQuietly();
             }
-        }
+        }, 'offline.services');
 
         $merged = $this->mergeAliases($dryRun);
         $report['amenity_aliases'] = $merged['amenity_aliases'];
@@ -187,7 +212,7 @@ final class StayCatalogRebuildService
     /**
      * @return array<string, mixed>
      */
-    public function assignAreas(bool $dryRun, int $limit = 0, bool $seedAreas = true): array
+    public function assignAreas(bool $dryRun, int $limit = 0, bool $seedAreas = true, int $chunk = 40, int $fromId = 0): array
     {
         if ($seedAreas && ! $dryRun) {
             $this->areaSeed->seed();
@@ -199,12 +224,8 @@ final class StayCatalogRebuildService
             'unmatched' => 0,
             'rows' => [],
         ];
-        $q = Service::withoutGlobalScopes()->where('cluster', Service::CLUSTER_STAY)->orderBy('id');
-        if ($limit > 0) {
-            $q->limit($limit);
-        }
         $pool = \App\Models\StayArea::query()->where('is_active', true)->with('translations')->get();
-        foreach ($q->cursor() as $service) {
+        $this->eachStayService($limit, $fromId, $chunk, ['id', 'lat', 'lng', 'stay_area_id', 'attrs'], function (Service $service) use (&$report, $dryRun, $pool): void {
             $attrs = is_array($service->attrs) ? $service->attrs : [];
             $crawl = is_array($attrs['crawl'] ?? null) ? $attrs['crawl'] : [];
             $lat = is_numeric($service->lat) ? (float) $service->lat : (is_numeric($attrs['lat'] ?? null) ? (float) $attrs['lat'] : null);
@@ -234,7 +255,7 @@ final class StayCatalogRebuildService
                     ];
                 }
             }
-        }
+        }, 'areas');
 
         return $report;
     }
@@ -244,25 +265,23 @@ final class StayCatalogRebuildService
      *
      * @return array<string, mixed>
      */
-    public function materializeProperties(bool $dryRun, int $limit = 0): array
+    public function materializeProperties(bool $dryRun, int $limit = 0, int $chunk = 20, int $fromId = 0): array
     {
         $report = ['layer' => 'properties', 'dry_run' => $dryRun, 'properties' => 0, 'projections' => 0, 'skipped' => 0];
-        $q = Service::withoutGlobalScopes()
-            ->where('cluster', Service::CLUSTER_STAY)
-            ->orderBy('id');
-        if ($limit > 0) {
-            $q->limit($limit);
-        }
         $seen = [];
-        foreach ($q->with(['options', 'translations'])->cursor() as $service) {
+        $this->eachStayService($limit, $fromId, max(5, min($chunk, 20)), ['id', 'code', 'lat', 'lng', 'stay_area_id', 'stay_property_id', 'star_rating', 'rating', 'review_count', 'attrs'], function (Service $service) use (&$report, &$seen, $dryRun): void {
             $attrs = is_array($service->attrs) ? $service->attrs : [];
             $key = data_get($attrs, 'crawl.source_hotel_key');
             if (! is_string($key) || $key === '') {
                 $report['skipped']++;
-                continue;
+
+                return;
             }
             if (! $dryRun) {
+                $service->load(['options.translations', 'translations']);
                 $property = $this->properties->upsertFromService($service);
+                $service->unsetRelation('options');
+                $service->unsetRelation('translations');
                 if ($property) {
                     if (! isset($seen[$key])) {
                         $seen[$key] = true;
@@ -278,7 +297,7 @@ final class StayCatalogRebuildService
             } else {
                 $report['projections']++;
             }
-        }
+        }, 'properties');
 
         return $report;
     }
@@ -288,25 +307,23 @@ final class StayCatalogRebuildService
      *
      * @return array<string, mixed>
      */
-    public function queueImprove(bool $dryRun, int $limit = 0): array
+    public function queueImprove(bool $dryRun, int $limit = 0, int $chunk = 40, int $fromId = 0): array
     {
         $threshold = (int) config('stay.catalog.improve_score_below', 70);
         $max = $limit > 0 ? $limit : (int) config('stay.catalog.improve_batch', 40);
         $queued = [];
-        $q = Service::withoutGlobalScopes()
-            ->where('cluster', Service::CLUSTER_STAY)
-            ->orderBy('id');
-        foreach ($q->cursor() as $service) {
+        $this->eachStayService(0, $fromId, $chunk, ['id', 'attrs'], function (Service $service) use (&$queued, $dryRun, $max, $threshold): bool {
             if (count($queued) >= $max) {
-                break;
+                return false;
             }
             $attrs = is_array($service->attrs) ? $service->attrs : [];
             $flags = StayCompleteness::fromAttrs($attrs, data_get($attrs, 'crawl.source_hotel_key'));
             if ($flags['score'] >= $threshold && $flags['geo'] && $flags['gallery']) {
-                continue;
+                return true;
             }
             $from = ! $flags['geo'] || ! $flags['amenities'] ? 'basic' : (! $flags['gallery'] ? 'gallery' : 'rooms');
             $item = StayCrawlItem::withoutGlobalScopes()
+                ->select(['id', 'job_id', 'status', 'error'])
                 ->where('service_id', $service->id)
                 ->orderByDesc('id')
                 ->first();
@@ -330,7 +347,9 @@ final class StayCatalogRebuildService
                 }
                 \App\Jobs\ProcessStayCrawlItemJob::dispatch((int) $item->id, 'vi', false, false);
             }
-        }
+
+            return count($queued) < $max;
+        }, 'improve');
 
         return [
             'layer' => 'improve',
@@ -353,54 +372,67 @@ final class StayCatalogRebuildService
         }
 
         $groups = [];
-        foreach (StayAmenityTranslation::query()->where('language_id', $langId)->cursor() as $tr) {
-            $fold = StayText::foldAmenity((string) $tr->name);
-            if ($fold === '') {
-                continue;
-            }
-            $groups[$fold][] = $tr;
-        }
+        StayAmenityTranslation::query()
+            ->where('language_id', $langId)
+            ->select(['id', 'stay_amenity_id', 'name'])
+            ->orderBy('id')
+            ->chunkById(200, function ($rows) use (&$groups): void {
+                foreach ($rows as $tr) {
+                    $fold = StayText::foldAmenity((string) $tr->name);
+                    if ($fold === '') {
+                        continue;
+                    }
+                    $groups[$fold][] = ['id' => (int) $tr->stay_amenity_id, 'name' => (string) $tr->name];
+                }
+            });
         foreach ($groups as $fold => $rows) {
-            $masterId = (int) collect($rows)->min('stay_amenity_id');
-            foreach ($rows as $tr) {
+            $masterId = (int) min(array_column($rows, 'id'));
+            foreach ($rows as $row) {
                 if (! $dryRun) {
                     StayAmenityAlias::query()->updateOrCreate(
                         ['normalized' => $fold],
-                        ['stay_amenity_id' => $masterId, 'alias' => $tr->name],
+                        ['stay_amenity_id' => $masterId, 'alias' => $row['name']],
                     );
                     $out['amenity_aliases']++;
                 }
-                if ((int) $tr->stay_amenity_id !== $masterId) {
+                if ($row['id'] !== $masterId) {
                     $out['amenity_merged']++;
                     if (! $dryRun) {
-                        $this->repointAmenity((int) $tr->stay_amenity_id, $masterId);
+                        $this->repointAmenity($row['id'], $masterId);
                     }
                 }
             }
         }
+        unset($groups);
 
         $placeGroups = [];
-        foreach (StayPlaceTranslation::query()->where('language_id', $langId)->cursor() as $tr) {
-            $fold = StayText::fold((string) $tr->name);
-            if ($fold === '') {
-                continue;
-            }
-            $placeGroups[$fold][] = $tr;
-        }
+        StayPlaceTranslation::query()
+            ->where('language_id', $langId)
+            ->select(['id', 'stay_place_id', 'name'])
+            ->orderBy('id')
+            ->chunkById(200, function ($rows) use (&$placeGroups): void {
+                foreach ($rows as $tr) {
+                    $fold = StayText::fold((string) $tr->name);
+                    if ($fold === '') {
+                        continue;
+                    }
+                    $placeGroups[$fold][] = ['id' => (int) $tr->stay_place_id, 'name' => (string) $tr->name];
+                }
+            });
         foreach ($placeGroups as $fold => $rows) {
-            $masterId = (int) collect($rows)->min('stay_place_id');
-            foreach ($rows as $tr) {
+            $masterId = (int) min(array_column($rows, 'id'));
+            foreach ($rows as $row) {
                 if (! $dryRun) {
                     StayPlaceAlias::query()->updateOrCreate(
                         ['normalized' => $fold],
-                        ['stay_place_id' => $masterId, 'alias' => $tr->name],
+                        ['stay_place_id' => $masterId, 'alias' => $row['name']],
                     );
                     $out['place_aliases']++;
                 }
-                if ((int) $tr->stay_place_id !== $masterId) {
+                if ($row['id'] !== $masterId) {
                     $out['place_merged']++;
                     if (! $dryRun) {
-                        $this->repointPlace((int) $tr->stay_place_id, $masterId);
+                        $this->repointPlace($row['id'], $masterId);
                     }
                 }
             }
@@ -414,15 +446,17 @@ final class StayCatalogRebuildService
         if ($fromId === $toId) {
             return;
         }
-        DB::table('stay_amenity_service')->where('stay_amenity_id', $fromId)->orderBy('service_id')->each(function ($row) use ($toId, $fromId): void {
-            $exists = DB::table('stay_amenity_service')
-                ->where('service_id', $row->service_id)
-                ->where('stay_amenity_id', $toId)
-                ->exists();
-            if ($exists) {
-                DB::table('stay_amenity_service')->where('service_id', $row->service_id)->where('stay_amenity_id', $fromId)->delete();
-            } else {
-                DB::table('stay_amenity_service')->where('service_id', $row->service_id)->where('stay_amenity_id', $fromId)->update(['stay_amenity_id' => $toId]);
+        DB::table('stay_amenity_service')->where('stay_amenity_id', $fromId)->orderBy('service_id')->chunk(200, function ($rows) use ($toId, $fromId): void {
+            foreach ($rows as $row) {
+                $exists = DB::table('stay_amenity_service')
+                    ->where('service_id', $row->service_id)
+                    ->where('stay_amenity_id', $toId)
+                    ->exists();
+                if ($exists) {
+                    DB::table('stay_amenity_service')->where('service_id', $row->service_id)->where('stay_amenity_id', $fromId)->delete();
+                } else {
+                    DB::table('stay_amenity_service')->where('service_id', $row->service_id)->where('stay_amenity_id', $fromId)->update(['stay_amenity_id' => $toId]);
+                }
             }
         });
         StayAmenity::query()->whereKey($fromId)->delete();
@@ -433,17 +467,73 @@ final class StayCatalogRebuildService
         if ($fromId === $toId) {
             return;
         }
-        DB::table('stay_place_service')->where('stay_place_id', $fromId)->orderBy('service_id')->each(function ($row) use ($toId, $fromId): void {
-            $exists = DB::table('stay_place_service')
-                ->where('service_id', $row->service_id)
-                ->where('stay_place_id', $toId)
-                ->exists();
-            if ($exists) {
-                DB::table('stay_place_service')->where('service_id', $row->service_id)->where('stay_place_id', $fromId)->delete();
-            } else {
-                DB::table('stay_place_service')->where('service_id', $row->service_id)->where('stay_place_id', $fromId)->update(['stay_place_id' => $toId]);
+        DB::table('stay_place_service')->where('stay_place_id', $fromId)->orderBy('service_id')->chunk(200, function ($rows) use ($toId, $fromId): void {
+            foreach ($rows as $row) {
+                $exists = DB::table('stay_place_service')
+                    ->where('service_id', $row->service_id)
+                    ->where('stay_place_id', $toId)
+                    ->exists();
+                if ($exists) {
+                    DB::table('stay_place_service')->where('service_id', $row->service_id)->where('stay_place_id', $fromId)->delete();
+                } else {
+                    DB::table('stay_place_service')->where('service_id', $row->service_id)->where('stay_place_id', $fromId)->update(['stay_place_id' => $toId]);
+                }
             }
         });
         StayPlace::query()->whereKey($fromId)->delete();
+    }
+
+    /**
+     * @param  list<string>  $columns
+     * @param  callable(Service): (void|bool)  $callback  return false để dừng
+     */
+    private function eachStayService(int $limit, int $fromId, int $chunk, array $columns, callable $callback, string $label = 'stay'): void
+    {
+        $n = 0;
+        $stop = false;
+        if (! in_array('id', $columns, true)) {
+            array_unshift($columns, 'id');
+        }
+        Service::withoutGlobalScopes()
+            ->where('cluster', Service::CLUSTER_STAY)
+            ->when($fromId > 0, fn ($q) => $q->where('id', '>=', $fromId))
+            ->select($columns)
+            ->orderBy('id')
+            ->chunkById($chunk, function ($rows) use (&$n, &$stop, $limit, $callback, $label): bool {
+                foreach ($rows as $service) {
+                    if ($stop || ($limit > 0 && $n >= $limit)) {
+                        return false;
+                    }
+                    $n++;
+                    $cont = $callback($service);
+                    if ($cont === false) {
+                        $stop = true;
+
+                        return false;
+                    }
+                }
+                $this->tick($label, $n, (int) $rows->last()?->id);
+                unset($rows);
+                gc_collect_cycles();
+
+                return ! $stop && ($limit <= 0 || $n < $limit);
+            });
+    }
+
+    private function tick(string $label, int $n, int $id): void
+    {
+        if ($n > 0 && $n % 100 !== 0) {
+            return;
+        }
+        $fn = $this->progress;
+        if (is_callable($fn)) {
+            $fn($label, $n, $id);
+        }
+    }
+
+    private function prepareRuntime(): void
+    {
+        DB::disableQueryLog();
+        gc_enable();
     }
 }

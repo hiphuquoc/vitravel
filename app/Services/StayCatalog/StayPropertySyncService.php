@@ -44,7 +44,7 @@ final class StayPropertySyncService
         );
 
         $options = [];
-        if ($service->relationLoaded('options') || $service->exists) {
+        if ($service->relationLoaded('options')) {
             foreach ($service->options as $opt) {
                 $options[] = [
                     'name' => $opt->translation()?->name ?? $opt->code,
