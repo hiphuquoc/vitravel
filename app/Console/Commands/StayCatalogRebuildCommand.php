@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 class StayCatalogRebuildCommand extends Command
 {
     protected $signature = 'stay:catalog-rebuild
-        {layer=offline : offline|areas|properties|improve}
+        {layer=offline : offline|aliases|areas|properties|improve}
         {--dry-run : Không ghi DB}
         {--limit=0 : Giới hạn số hàng}
         {--chunk=40 : Số hàng mỗi lô (tránh OOM attrs/html)}

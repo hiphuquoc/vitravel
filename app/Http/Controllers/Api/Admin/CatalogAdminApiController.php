@@ -154,7 +154,7 @@ final class CatalogAdminApiController extends Controller
     public function rebuild(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'layer' => ['required', 'in:offline,areas,properties,improve,r1,r2,r4,r7'],
+            'layer' => ['required', 'in:offline,aliases,areas,properties,improve,r1,r1b,r2,r4,r7'],
             'dry_run' => ['sometimes', 'boolean'],
             'limit' => ['sometimes', 'integer', 'min:0', 'max:20000'],
         ]);

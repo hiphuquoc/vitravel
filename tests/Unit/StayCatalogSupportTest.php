@@ -115,6 +115,8 @@ class StayCatalogSupportTest extends TestCase
         $this->assertSame('wifi', StayText::foldAmenity('Free WiFi'));
         $this->assertSame(StayText::fold('Cát Cò 1'), StayText::fold('Cat Co 1'));
         $this->assertSame('catco1', StayText::fold('Cát Cò 1'));
+        $this->assertNotNull(StayText::aliasPair('Wifi miễn phí'));
+        $this->assertNull(StayText::aliasPair('Kiểu lục địa, Kiểu Ý, Kiểu Anh/ Ai Len, Thực đơn chay, Halal, Kosher'));
     }
 
     public function test_completeness_score(): void

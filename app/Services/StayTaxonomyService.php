@@ -99,10 +99,10 @@ final class StayTaxonomyService
                 $amenity->update(['is_highlight' => true]);
             }
             $this->amenityCache[$cacheKey] = $amenity->id;
-            if ($fold !== '') {
+            if ($pair = StayText::aliasPair($name, true)) {
                 StayAmenityAlias::query()->firstOrCreate(
-                    ['normalized' => $fold],
-                    ['stay_amenity_id' => $amenity->id, 'alias' => $name],
+                    ['normalized' => $pair['normalized']],
+                    ['stay_amenity_id' => $amenity->id, 'alias' => $pair['alias']],
                 );
             }
 
@@ -199,10 +199,10 @@ final class StayTaxonomyService
             'name' => $name,
             'slug' => Str::slug($name) ?: Str::slug(Str::ascii($name)) ?: null,
         ]);
-        if ($fold !== '') {
+        if ($pair = StayText::aliasPair($name, false)) {
             StayPlaceAlias::query()->firstOrCreate(
-                ['normalized' => $fold],
-                ['stay_place_id' => $place->id, 'alias' => $name],
+                ['normalized' => $pair['normalized']],
+                ['stay_place_id' => $place->id, 'alias' => $pair['alias']],
             );
         }
 

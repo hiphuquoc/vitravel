@@ -48,4 +48,26 @@ final class StayText
 
         return $value;
     }
+
+    /**
+     * Cặp cột alias (varchar 191). Bỏ chuỗi dán nhiều nhãn / quá dài (crawler).
+     *
+     * @return array{normalized: string, alias: string}|null
+     */
+    public static function aliasPair(string $name, bool $amenity = true): ?array
+    {
+        $name = self::collapse($name);
+        if ($name === '' || mb_strlen($name) > 120 || substr_count($name, ',') >= 3) {
+            return null;
+        }
+        $fold = $amenity ? self::foldAmenity($name) : self::fold($name);
+        if ($fold === '' || strlen($fold) > 191) {
+            return null;
+        }
+
+        return [
+            'normalized' => $fold,
+            'alias' => mb_substr($name, 0, 191),
+        ];
+    }
 }

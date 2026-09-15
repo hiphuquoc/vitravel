@@ -96,6 +96,7 @@ final class StayCatalogRebuildService
 
         return match ($layer) {
             'offline', 'r1' => $this->offline($dryRun, $limit, $chunk, $fromId),
+            'aliases', 'r1b' => $this->mergeAliases($dryRun),
             'areas', 'r2' => $this->assignAreas($dryRun, $limit, $seedAreas, $chunk, $fromId),
             'properties', 'r7' => $this->materializeProperties($dryRun, $limit, $chunk, $fromId),
             'improve', 'r4' => $this->queueImprove($dryRun, $limit, $chunk, $fromId),
@@ -361,11 +362,19 @@ final class StayCatalogRebuildService
     }
 
     /**
-     * @return array{amenity_aliases: int, place_aliases: int, amenity_merged: int, place_merged: int}
+     * @return array{layer?: string, amenity_aliases: int, place_aliases: int, amenity_merged: int, place_merged: int, skipped: int}
      */
-    private function mergeAliases(bool $dryRun): array
+    public function mergeAliases(bool $dryRun): array
     {
-        $out = ['amenity_aliases' => 0, 'place_aliases' => 0, 'amenity_merged' => 0, 'place_merged' => 0];
+        $out = [
+            'layer' => 'aliases',
+            'dry_run' => $dryRun,
+            'amenity_aliases' => 0,
+            'place_aliases' => 0,
+            'amenity_merged' => 0,
+            'place_merged' => 0,
+            'skipped' => 0,
+        ];
         $langId = Language::idByCode('vi') ?: Language::query()->value('id');
         if (! $langId) {
             return $out;
@@ -376,13 +385,17 @@ final class StayCatalogRebuildService
             ->where('language_id', $langId)
             ->select(['id', 'stay_amenity_id', 'name'])
             ->orderBy('id')
-            ->chunkById(200, function ($rows) use (&$groups): void {
+            ->chunkById(200, function ($rows) use (&$groups, &$out): void {
                 foreach ($rows as $tr) {
-                    $fold = StayText::foldAmenity((string) $tr->name);
-                    if ($fold === '') {
+                    $pair = StayText::aliasPair((string) $tr->name, true);
+                    if ($pair === null) {
+                        $out['skipped']++;
                         continue;
                     }
-                    $groups[$fold][] = ['id' => (int) $tr->stay_amenity_id, 'name' => (string) $tr->name];
+                    $groups[$pair['normalized']][] = [
+                        'id' => (int) $tr->stay_amenity_id,
+                        'name' => $pair['alias'],
+                    ];
                 }
             });
         foreach ($groups as $fold => $rows) {
@@ -410,13 +423,17 @@ final class StayCatalogRebuildService
             ->where('language_id', $langId)
             ->select(['id', 'stay_place_id', 'name'])
             ->orderBy('id')
-            ->chunkById(200, function ($rows) use (&$placeGroups): void {
+            ->chunkById(200, function ($rows) use (&$placeGroups, &$out): void {
                 foreach ($rows as $tr) {
-                    $fold = StayText::fold((string) $tr->name);
-                    if ($fold === '') {
+                    $pair = StayText::aliasPair((string) $tr->name, false);
+                    if ($pair === null) {
+                        $out['skipped']++;
                         continue;
                     }
-                    $placeGroups[$fold][] = ['id' => (int) $tr->stay_place_id, 'name' => (string) $tr->name];
+                    $placeGroups[$pair['normalized']][] = [
+                        'id' => (int) $tr->stay_place_id,
+                        'name' => $pair['alias'],
+                    ];
                 }
             });
         foreach ($placeGroups as $fold => $rows) {
