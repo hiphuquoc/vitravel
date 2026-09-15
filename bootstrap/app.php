@@ -27,6 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin.can' => \App\Http\Middleware\AuthorizeAdminPermission::class,
             'detectLocale' => \App\Http\Middleware\DetectLocale::class,
             'detectCurrency' => \App\Http\Middleware\DetectCurrency::class,
+            'super.admin' => \App\Http\Middleware\RequireSuperAdmin::class,
+            'catalog.token' => \App\Http\Middleware\CatalogApiToken::class,
         ]);
 
         $middleware->api(prepend: [

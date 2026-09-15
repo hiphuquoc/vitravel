@@ -2,7 +2,7 @@
  * Mở Booking.com bằng Chrome (Puppeteer) — chờ JS render như người dùng.
  *
  * Usage: node browser.cjs <input.json> <output.json>
- * input: { url, mode?: basic|gallery|rooms_list|room|list, room_index?: number,
+ * input: { url, mode?: basic|gallery|rooms_list|room|list|list_discover, room_index?: number,
  *          skip_html?: boolean, download_images?: boolean, images_dir?: string,
  *          max_images?: number, proxy?, timeout? }
  * output: { pack, final_url, status_code } | { error }
@@ -212,7 +212,8 @@ async function main() {
             concurrency: Math.max(1, Number(input.download_concurrency) || 8),
         };
         const isHotel = /\/hotel\/[a-z]{2}\//i.test(url);
-        const isListing = !isHotel || mode === 'list';
+        const isDiscover = mode === 'list_discover';
+        const isListing = isDiscover || !isHotel || mode === 'list';
         // Cùng ngày/khách + lang với hotel detail — listing thiếu checkin hay ra skeleton / card mỏng.
         let gotoUrl = withStayDates(url);
         if (isHotel && mode === 'gallery') {
@@ -251,44 +252,55 @@ async function main() {
                     // ignore write error
                 }
             };
-            emitStreamProgress({ phase: 'listing_init', message: 'Đã mở trang danh mục, bắt đầu tải kết quả…', urls_count: 0, urls: [] });
-            
-            const expandDebug = await expandListingResults(page, async (roundInfo) => {
-                try {
-                    const batchUrls = await collectListingUrlsOnly(page);
-                    const newFound = [];
-                    for (const u of batchUrls) {
-                        const key = u.split('?')[0].toLowerCase();
-                        if (!streamSeen[key]) {
-                            streamSeen[key] = true;
-                            newFound.push(u);
+            if (isDiscover) {
+                emitStreamProgress({ phase: 'discover_init', message: 'Đang bung bộ lọc sidebar…', urls_count: 0, urls: [] });
+                pack = await collectDiscoverPack(page);
+                emitStreamProgress({
+                    phase: 'discover_done',
+                    urls_count: Array.isArray(pack.hotel_urls) ? pack.hotel_urls.length : 0,
+                    filters_count: Array.isArray(pack.filters) ? pack.filters.length : 0,
+                    message: 'Đã scrape filter (' + (pack.filters || []).length + ' mục)',
+                });
+            } else {
+                emitStreamProgress({ phase: 'listing_init', message: 'Đã mở trang danh mục, bắt đầu tải kết quả…', urls_count: 0, urls: [] });
+
+                const expandDebug = await expandListingResults(page, async (roundInfo) => {
+                    try {
+                        const batchUrls = await collectListingUrlsOnly(page);
+                        const newFound = [];
+                        for (const u of batchUrls) {
+                            const key = u.split('?')[0].toLowerCase();
+                            if (!streamSeen[key]) {
+                                streamSeen[key] = true;
+                                newFound.push(u);
+                            }
                         }
+                        emitStreamProgress({
+                            phase: 'listing_scroll',
+                            round: roundInfo.round,
+                            scrolls: roundInfo.scrolls,
+                            load_more_clicks: roundInfo.load_more_clicks,
+                            cards_count: roundInfo.cards_count,
+                            urls_count: Object.keys(streamSeen).length,
+                            new_urls: newFound,
+                            urls: Object.keys(streamSeen),
+                            message: 'Đang tải danh sách: ' + Object.keys(streamSeen).length + ' chỗ nghỉ (cuộn ' + roundInfo.scrolls + ', click ' + roundInfo.load_more_clicks + ')'
+                        });
+                    } catch (err) {
+                        // ignore
                     }
-                    emitStreamProgress({
-                        phase: 'listing_scroll',
-                        round: roundInfo.round,
-                        scrolls: roundInfo.scrolls,
-                        load_more_clicks: roundInfo.load_more_clicks,
-                        cards_count: roundInfo.cards_count,
-                        urls_count: Object.keys(streamSeen).length,
-                        new_urls: newFound,
-                        urls: Object.keys(streamSeen),
-                        message: 'Đang tải danh sách: ' + Object.keys(streamSeen).length + ' chỗ nghỉ (cuộn ' + roundInfo.scrolls + ', click ' + roundInfo.load_more_clicks + ')'
-                    });
-                } catch (err) {
-                    // ignore
-                }
-            });
-            pack = await collectListingPack(page, expandDebug);
-            emitStreamProgress({
-                phase: 'listing_done',
-                stopped: expandDebug.stopped,
-                scrolls: expandDebug.scrolls,
-                load_more_clicks: expandDebug.load_more_clicks,
-                urls_count: pack.hotel_urls.length,
-                urls: pack.hotel_urls,
-                message: 'Đã hoàn tất lấy danh sách (' + pack.hotel_urls.length + ' URL chỗ nghỉ)'
-            });
+                });
+                pack = await collectListingPack(page, expandDebug);
+                emitStreamProgress({
+                    phase: 'listing_done',
+                    stopped: expandDebug.stopped,
+                    scrolls: expandDebug.scrolls,
+                    load_more_clicks: expandDebug.load_more_clicks,
+                    urls_count: pack.hotel_urls.length,
+                    urls: pack.hotel_urls,
+                    message: 'Đã hoàn tất lấy danh sách (' + pack.hotel_urls.length + ' URL chỗ nghỉ)'
+                });
+            }
         } else if (mode === 'gallery') {
             pack = await collectGalleryPack(page, downloadOpts);
         } else if (mode === 'rooms_list') {
@@ -861,6 +873,137 @@ async function expandListingResults(page, onProgress = null) {
     return debug;
 }
 
+
+async function collectDiscoverPack(page) {
+    await waitQuiet(page, 400);
+    try {
+        await page.waitForSelector('[data-testid="filters-sidebar"]', { timeout: 12000 });
+    } catch {
+        // dest khác có thể gắn sidebar trễ
+    }
+    const expand = await expandFilterSidebar(page);
+    const scraped = await safeEval(page, () => {
+        const sidebar = document.querySelector('[data-testid="filters-sidebar"]');
+        const root = sidebar || document;
+        const filters = [];
+        const groups = [];
+        root.querySelectorAll('[data-filters-group]').forEach((groupEl) => {
+            const group = (groupEl.getAttribute('data-filters-group') || '').trim();
+            if (!group) return;
+            groups.push(group);
+            groupEl.querySelectorAll('[data-filters-item]').forEach((itemEl) => {
+                const input = itemEl.querySelector('input[name], input[value]');
+                let nflt = '';
+                let label = '';
+                let count = 0;
+                if (input) {
+                    nflt = (input.getAttribute('name') || input.getAttribute('value') || '').trim();
+                    const aria = (input.getAttribute('aria-label') || '').trim();
+                    const m = aria.match(/^(.*?):\s*([\d.]+)\s*(chỗ nghỉ|properties|stays|chỗ)/i);
+                    if (m) {
+                        label = m[1].trim();
+                        count = parseInt(String(m[2]).replace(/\./g, ''), 10) || 0;
+                    } else if (aria) {
+                        label = aria;
+                    }
+                }
+                if (!nflt) {
+                    const raw = (itemEl.getAttribute('data-filters-item') || '');
+                    const idx = raw.indexOf(':');
+                    if (idx >= 0) nflt = raw.slice(idx + 1).trim();
+                }
+                if (!nflt) return;
+                if (!label) {
+                    label = (itemEl.textContent || '').replace(/\s+/g, ' ').trim();
+                    label = label.replace(/\s*\d[\d.]*\s*(chỗ nghỉ|properties).*$/i, '').trim();
+                }
+                const params = new URLSearchParams(location.search);
+                params.set('nflt', nflt);
+                filters.push({
+                    group,
+                    nflt,
+                    name: nflt,
+                    label: label || nflt,
+                    count,
+                    filter_url: location.origin + location.pathname + '?' + params.toString(),
+                    expanded: true,
+                });
+            });
+        });
+        const q = new URLSearchParams(location.search);
+        return {
+            dest: {
+                ss: q.get('ss'),
+                dest_id: q.get('dest_id'),
+                dest_type: q.get('dest_type'),
+                label: q.get('ss'),
+            },
+            filters,
+            groups,
+        };
+    }) || { dest: {}, filters: [], groups: [] };
+
+    return {
+        dest: scraped.dest || {},
+        filters: scraped.filters || [],
+        hotel_urls: [],
+        debug: {
+            expand,
+            stopped: 'discover',
+            groups: scraped.groups || [],
+        },
+    };
+}
+
+async function expandFilterSidebar(page) {
+    const log = [];
+    const groups = await safeEval(page, () => {
+        return Array.from(document.querySelectorAll('[data-testid="filters-group"], [data-filters-group]')).map((el, i) => ({
+            index: i,
+            group: el.getAttribute('data-filters-group') || '',
+        }));
+    }) || [];
+    for (const g of groups) {
+        const before = await countGroupItems(page, g.index);
+        let clicks = 0;
+        for (let n = 0; n < 8; n++) {
+            const clicked = await safeEval(page, (idx) => {
+                const groupEls = document.querySelectorAll('[data-testid="filters-group"], [data-filters-group]');
+                const el = groupEls[idx];
+                if (!el) return false;
+                const buttons = Array.from(el.querySelectorAll('button, a[role="button"], [role="button"]'));
+                const btn = buttons.find((b) => {
+                    const t = ((b.innerText || b.textContent || '') + ' ' + (b.getAttribute('aria-label') || '')).toLowerCase();
+                    return /hiển thị thêm|xem thêm|show more|see more|\+\s*\d/.test(t);
+                });
+                if (!btn) return false;
+                btn.click();
+                return true;
+            }, g.index);
+            if (!clicked) break;
+            clicks += 1;
+            await waitQuiet(page, 280);
+        }
+        const after = await countGroupItems(page, g.index);
+        log.push({
+            group: g.group,
+            clicks,
+            items_before: before,
+            items_after: after,
+        });
+    }
+    return log;
+}
+
+async function countGroupItems(page, index) {
+    const n = await safeEval(page, (idx) => {
+        const groupEls = document.querySelectorAll('[data-testid="filters-group"], [data-filters-group]');
+        const el = groupEls[idx];
+        if (!el) return 0;
+        return el.querySelectorAll('[data-filters-item]').length;
+    }, index);
+    return Number(n) || 0;
+}
 
 async function collectListingUrlsOnly(page) {
     return safeEval(page, () => {

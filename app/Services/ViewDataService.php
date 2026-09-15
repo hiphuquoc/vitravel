@@ -1932,24 +1932,59 @@ class ViewDataService
         }
 
         $limit = max(1, min(12, $limit));
+        $excludeIds = array_values(array_filter([$excludeServiceId]));
 
         $query = Service::query()
             ->published()
-            ->where('service_category_id', $categoryId)
             ->where('cluster', $cluster)
-            ->when($excludeServiceId, fn ($q) => $q->where('id', '!=', $excludeServiceId))
+            ->when($excludeIds !== [], fn ($q) => $q->whereNotIn('id', $excludeIds))
             ->with([
                 'translations',
                 'category',
                 'seoEntry.translations',
                 'mediaAttachments.media',
                 'options',
-            ])
+            ]);
+
+        $byFk = (clone $query)
+            ->where('service_category_id', $categoryId)
             ->orderBy('sort')
             ->orderByDesc('id')
-            ->limit($limit);
+            ->limit($limit)
+            ->get();
 
-        return $query->get()
+        $items = $byFk;
+        if ($items->count() < $limit) {
+            $need = $limit - $items->count();
+            $gotIds = $items->pluck('id')->all();
+            $m2m = (clone $query)
+                ->whereHas('categories', fn ($cq) => $cq->where('service_categories.id', $categoryId))
+                ->when($gotIds !== [], fn ($q) => $q->whereNotIn('id', $gotIds))
+                ->orderBy('sort')
+                ->orderByDesc('id')
+                ->limit($need)
+                ->get();
+            $items = $items->concat($m2m)->unique('id');
+        }
+
+        if ($cluster === Service::CLUSTER_STAY && $items->count() < $limit && $excludeServiceId) {
+            $seed = Service::query()->find($excludeServiceId);
+            $areaId = $seed?->stay_area_id;
+            if ($areaId) {
+                $need = $limit - $items->count();
+                $gotIds = $items->pluck('id')->all();
+                $byArea = (clone $query)
+                    ->where('stay_area_id', $areaId)
+                    ->when($gotIds !== [], fn ($q) => $q->whereNotIn('id', $gotIds))
+                    ->orderBy('sort')
+                    ->orderByDesc('id')
+                    ->limit($need)
+                    ->get();
+                $items = $items->concat($byArea)->unique('id');
+            }
+        }
+
+        return $items->take($limit)
             ->map(fn (\App\Models\Service $s) => $this->mapService($s, false))
             ->values()
             ->all();
@@ -2139,10 +2174,13 @@ class ViewDataService
 
         // 2. Loại hình lưu trú — ưu tiên JSON path / contains (index-friendly hơn LIKE toàn attrs)
         if ($propertyTypes !== []) {
-            $query->where(function ($q) use ($propertyTypes) {
+            $query->where(function ($q) use ($propertyTypes, $cluster) {
                 foreach ($propertyTypes as $pt) {
                     $q->orWhere('attrs->property_type', $pt)
                       ->orWhereJsonContains('attrs->property_types', $pt);
+                }
+                if ($cluster === Service::CLUSTER_STAY && (bool) config('stay.catalog.enabled', false)) {
+                    $q->orWhereHas('stayProperty', fn ($pq) => $pq->whereIn('property_type', $propertyTypes));
                 }
             });
         }
@@ -2657,6 +2695,38 @@ class ViewDataService
         return SampleData::service($slug, $cluster);
     }
 
+    /**
+     * Stamp HTML cache trang chi tiết stay — đổi khi catalog property cập nhật.
+     */
+    public function stayHtmlCacheStamp(string $slug, string $cluster = 'stay'): ?string
+    {
+        $ids = $this->languageIdChain();
+        $query = Service::query()
+            ->published()
+            ->forCluster($cluster)
+            ->where(function ($q) use ($slug, $ids) {
+                $q->where('code', $slug);
+                if ($ids !== []) {
+                    $q->orWhereHas('seoEntry.translations', fn ($sq) => $sq
+                        ->whereIn('language_id', $ids)
+                        ->where('slug', $slug));
+                }
+            });
+        $service = $query->orderByDesc('id')->first(['id', 'stay_property_id', 'updated_at']);
+        if (! $service) {
+            return null;
+        }
+        $propAt = null;
+        if ($service->stay_property_id) {
+            $propAt = \App\Models\StayProperty::query()
+                ->where('id', $service->stay_property_id)
+                ->value('updated_at');
+        }
+        $stamp = $propAt ?: $service->updated_at;
+
+        return $stamp ? 'sp'.(is_string($stamp) ? strtotime($stamp) : $stamp->getTimestamp()) : null;
+    }
+
     /** @return list<array{q: string, a: string}> */
     public function serviceListingFaqs(): array
     {
@@ -2803,6 +2873,13 @@ class ViewDataService
     protected function attachStayListingPayload(array $payload, Service $service, ?ServiceTranslation $translation): array
     {
         $attrs = is_array($service->attrs) ? $service->attrs : [];
+        try {
+            $catalogAttrs = \App\Services\StayCatalog\StayCatalogFacts::attrs($service);
+            if ($catalogAttrs !== []) {
+                $attrs = \App\Support\StayFacilities::overlayRicherStayAttrs($attrs, $catalogAttrs);
+            }
+        } catch (\Throwable) {
+        }
         $propertyType = (string) ($attrs['property_type'] ?? 'hotel');
 
         $payload['isStay'] = true;
@@ -2859,6 +2936,13 @@ class ViewDataService
         $attrs = \App\Support\StayFacilities::normalizeStayAttrs(
             is_array($service->attrs) ? $service->attrs : [],
         );
+        try {
+            $catalogAttrs = \App\Services\StayCatalog\StayCatalogFacts::attrs($service);
+            if ($catalogAttrs !== [] && $catalogAttrs !== $attrs) {
+                $attrs = \App\Support\StayFacilities::overlayRicherStayAttrs($attrs, $catalogAttrs);
+            }
+        } catch (\Throwable) {
+        }
         try {
             $crawlAttrs = $this->stayCrawlMappedAttrs($service, $attrs);
             if ($crawlAttrs !== []) {
@@ -3029,6 +3113,16 @@ class ViewDataService
             $crawlRooms = $this->stayCrawlRoomPhotos($service);
         } catch (\Throwable) {
             $crawlRooms = [];
+        }
+
+        if ($service->options->isEmpty()) {
+            $catalogRows = \App\Services\StayCatalog\StayCatalogFacts::optionRows($service);
+            if ($catalogRows !== []) {
+                return array_values(array_map(
+                    fn (array $opt) => \App\Support\StayFacilities::mapRoom($opt, $currency, fn ($amount, $cur) => $this->formatMoney($amount, $cur)),
+                    $catalogRows,
+                ));
+            }
         }
 
         return $service->options->map(function ($opt) use ($locale, $currency, $crawlRooms) {

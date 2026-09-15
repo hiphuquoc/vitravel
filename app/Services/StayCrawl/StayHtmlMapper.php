@@ -6,6 +6,9 @@ namespace App\Services\StayCrawl;
 
 use App\Services\AI\SeoPromptRules;
 use App\Support\StayBookingUrl;
+use App\Support\StayCatalog\StayCompleteness;
+use App\Support\StayCatalog\StayGeoParser;
+use App\Support\StayCatalog\StayIdentity;
 use App\Support\StayFacilities;
 use App\Support\StaySeed;
 use DOMDocument;
@@ -19,7 +22,7 @@ use Illuminate\Support\Str;
  */
 final class StayHtmlMapper
 {
-    public const VERSION = 8;
+    public const VERSION = 9;
 
     /**
      * @param  array<string, mixed>  $extracted  kết quả StayHtmlExtractor
@@ -51,6 +54,9 @@ final class StayHtmlMapper
         $nearbyGroups = $nearbyPack['groups'];
         $amenityGroups = $this->amenityGroups($xpath, $popular, $pack);
         $propertyType = $this->propertyType($title, $xpath);
+        $propertyTypes = $this->propertyTypes($title, $xpath, $propertyType);
+        $identity = StayIdentity::fromUrl($sourceUrl);
+        $geo = StayGeoParser::parseAddress($address);
 
         $amenities = $popular;
         foreach ($amenityGroups as $items) {
@@ -65,11 +71,13 @@ final class StayHtmlMapper
             ?: Str::slug($title);
 
         $summary = $description !== '' ? $description : $title;
-        $location = $this->shortLocation($address, $title);
+        $location = StayGeoParser::shortLabel($address, $title);
 
         $attrs = array_filter([
             'property_type' => $propertyType,
+            'property_types' => $propertyTypes,
             'address' => $address,
+            'geo' => $geo,
             'lat' => $coords['lat'] ?? null,
             'lng' => $coords['lng'] ?? null,
             'amenities' => $amenities,
@@ -92,7 +100,16 @@ final class StayHtmlMapper
             'id_required_policy' => $policies['id'] ?? null,
             'age_restriction' => $policies['age'] ?? null,
             'policy_sections' => is_array($policies['_sections'] ?? null) ? $policies['_sections'] : [],
+            'crawl' => array_filter([
+                'source' => $identity['source'],
+                'source_hotel_key' => $identity['source_hotel_key'],
+                'booking_cc' => $identity['booking_cc'],
+                'canonical_url' => $identity['canonical_url'],
+                'dest_id' => $identity['dest_id'],
+                'dest_type' => $identity['dest_type'],
+            ]),
         ], fn ($v) => $v !== null && $v !== '' && $v !== []);
+        $attrs['completeness'] = StayCompleteness::fromAttrs($attrs, $identity['source_hotel_key'], count($rooms));
 
         return [
             'title' => $title,
@@ -1697,6 +1714,9 @@ final class StayHtmlMapper
 
     private function propertyType(string $title, ?DOMXPath $xpath): string
     {
+        foreach ($this->jsonLdTypes($xpath) as $type) {
+            return StaySeed::normalizeType($type);
+        }
         $hay = mb_strtolower($title.' '.$this->firstText($xpath, '//*[@data-testid="PropertyBadges-wrapper"]'));
         foreach ([
             'resort' => 'resort',
@@ -1719,16 +1739,66 @@ final class StayHtmlMapper
         return 'hotel';
     }
 
-    private function shortLocation(?string $address, string $title): ?string
+    /**
+     * @return list<string>
+     */
+    private function propertyTypes(string $title, ?DOMXPath $xpath, string $primary): array
     {
-        if ($address) {
-            $parts = array_map('trim', explode(',', $address));
-            $parts = array_values(array_filter($parts, fn ($p) => $p !== '' && ! preg_match('/việt nam|vietnam/i', $p)));
-
-            return $parts !== [] ? implode(', ', array_slice($parts, -3)) : $address;
+        $out = [$primary];
+        foreach ($this->jsonLdTypes($xpath) as $type) {
+            $norm = StaySeed::normalizeType($type);
+            if (! in_array($norm, $out, true)) {
+                $out[] = $norm;
+            }
         }
 
-        return str_contains(mb_strtolower($title), 'phú quốc') ? 'Phú Quốc' : null;
+        return array_values(array_unique($out));
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function jsonLdTypes(?DOMXPath $xpath): array
+    {
+        if (! $xpath) {
+            return [];
+        }
+        $types = [];
+        $map = [
+            'resort' => 'resort',
+            'hotel' => 'hotel',
+            'motel' => 'hotel',
+            'lodgingbusiness' => 'hotel',
+            'bedandbreakfast' => 'homestay',
+            'vacationrental' => 'villa',
+            'apartment' => 'apartment',
+            'hostel' => 'hostel',
+        ];
+        foreach ($xpath->query('//script[@type="application/ld+json"]') ?: [] as $node) {
+            $raw = trim((string) $node->textContent);
+            if ($raw === '') {
+                continue;
+            }
+            $json = json_decode($raw, true);
+            if (! is_array($json)) {
+                continue;
+            }
+            $docs = isset($json[0]) ? $json : [$json];
+            foreach ($docs as $doc) {
+                if (! is_array($doc)) {
+                    continue;
+                }
+                $rawType = $doc['@type'] ?? null;
+                foreach ((array) $rawType as $t) {
+                    $key = strtolower(preg_replace('/^schema\.org\//i', '', (string) $t) ?? (string) $t);
+                    if (isset($map[$key])) {
+                        $types[] = $map[$key];
+                    }
+                }
+            }
+        }
+
+        return array_values(array_unique($types));
     }
 
     private function unitType(string $name): string

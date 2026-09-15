@@ -55,7 +55,8 @@ final class StayCrawlBrowser
         }
 
         $browserTimeoutSec = max(60, (int) config('stay.crawl.browser_timeout', 180));
-        $isListingUrl = $mode === 'list' || ! preg_match('#/hotel/[a-z]{2}/#i', $url);
+        $isDiscover = $mode === 'list_discover';
+        $isListingUrl = $isDiscover || $mode === 'list' || ! preg_match('#/hotel/[a-z]{2}/#i', $url);
         if ($isListingUrl) {
             $browserTimeoutSec += max(60, (int) config('stay.crawl.list_browser_extra_sec', 240));
         }
@@ -64,7 +65,7 @@ final class StayCrawlBrowser
             'url' => $url,
             'timeout' => $browserTimeoutSec * 1000,
             'proxy' => $useProxy ? $this->proxyConfig() : null,
-            'mode' => $isListingUrl ? 'list' : $mode,
+            'mode' => $isDiscover ? 'list_discover' : ($isListingUrl ? 'list' : $mode),
             'skip_html' => (bool) ($options['skip_html'] ?? false),
             'room_index' => isset($options['room_index']) ? (int) $options['room_index'] : null,
             'room_name' => (string) ($options['room_name'] ?? ''),

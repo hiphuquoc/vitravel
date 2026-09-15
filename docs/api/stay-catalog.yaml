@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: ViTravel Stay Catalog API
+  version: '1.0'
+  description: |
+    API nội bộ chỗ nghỉ canonical (`stay_properties`). Không gắn `X-Project-Code`.
+    Bật bằng `STAY_CATALOG_API_TOKEN`. Overlay listing public dùng `STAY_CATALOG_ENABLED`.
+    Spec: docs/18-stay-catalog-platform.md (P10).
+servers:
+  - url: /api/v1/catalog
+security:
+  - CatalogToken: []
+paths:
+  /areas:
+    get:
+      summary: Cây khu vực geo
+      responses:
+        '200':
+          description: Danh sách area (id, slug, level, parent_id)
+        '401':
+          description: Token sai
+        '403':
+          description: Token chưa cấu hình
+  /stays:
+    get:
+      summary: Danh sách chỗ nghỉ published
+      parameters:
+        - in: query
+          name: area
+          schema: { type: string }
+          description: ID số hoặc slug (kèm descendant)
+        - in: query
+          name: property_type
+          schema: { type: string }
+        - in: query
+          name: taxon_id
+          schema: { type: integer }
+        - in: query
+          name: bbox
+          schema: { type: string }
+          description: minLng,minLat,maxLng,maxLat
+        - in: query
+          name: after
+          schema: { type: integer }
+          description: Cursor (id nhỏ hơn) — thay phân trang page
+        - in: query
+          name: page
+          schema: { type: integer }
+        - in: query
+          name: per_page
+          schema: { type: integer, maximum: 50 }
+      responses:
+        '200':
+          description: items + meta (page hoặc next_cursor)
+        '429':
+          description: Rate limit
+  /stays/{id}:
+    get:
+      summary: Chi tiết catalog (rooms, photos, amenities — không HTML crawl)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200':
+          description: Property + rooms + photos public URL
+        '404':
+          description: Không có
+components:
+  securitySchemes:
+    CatalogToken:
+      type: apiKey
+      in: header
+      name: X-Catalog-Token
+      description: Hoặc Authorization Bearer cùng giá trị STAY_CATALOG_API_TOKEN

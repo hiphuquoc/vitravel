@@ -33,6 +33,8 @@ use App\Http\Controllers\Api\Admin\ReviewApiController;
 use App\Http\Controllers\Api\Admin\ReviewPlatformApiController;
 use App\Http\Controllers\Api\Admin\ServiceApiController;
 use App\Http\Controllers\Api\Admin\StayCrawlApiController;
+use App\Http\Controllers\Api\Admin\CatalogAdminApiController;
+use App\Http\Controllers\Api\CatalogStayApiController;
 use App\Http\Controllers\Api\Admin\ServiceCategoryApiController;
 use App\Http\Controllers\Api\Admin\TeamMemberApiController;
 use App\Http\Controllers\Api\Admin\TourCategoryApiController;
@@ -151,6 +153,12 @@ Route::prefix('v1/admin')->group(function () {
             Route::get('/service-categories', [ServiceCategoryApiController::class, 'index']);
             Route::post('/service-categories', [ServiceCategoryApiController::class, 'store']);
             Route::get('/service-categories/{id}/delete-impact', [ServiceCategoryApiController::class, 'deleteImpact'])->whereNumber('id');
+            Route::get('/service-categories/{id}/catalog-bindings', [CatalogAdminApiController::class, 'categoryBindings'])->whereNumber('id');
+            Route::post('/service-categories/{id}/bind-area', [CatalogAdminApiController::class, 'bindCategory'])->whereNumber('id');
+            Route::post('/service-category-bindings/{id}/sync', [CatalogAdminApiController::class, 'syncBinding'])->whereNumber('id');
+            Route::delete('/service-category-bindings/{id}', [CatalogAdminApiController::class, 'unbind'])->whereNumber('id');
+            Route::get('/stay-areas', [CatalogAdminApiController::class, 'areas']);
+            Route::get('/stay-taxons', [CatalogAdminApiController::class, 'taxons']);
             Route::get('/service-categories/{id}', [ServiceCategoryApiController::class, 'show'])->whereNumber('id');
             Route::put('/service-categories/{id}', [ServiceCategoryApiController::class, 'update'])->whereNumber('id');
             Route::delete('/service-categories/{id}', [ServiceCategoryApiController::class, 'destroy'])->whereNumber('id');
@@ -192,6 +200,31 @@ Route::prefix('v1/admin')->group(function () {
             Route::post('/stay-crawls/items/bulk-delete', [StayCrawlApiController::class, 'bulkDeleteItems']);
             Route::post('/stay-crawls/items/bulk-retry', [StayCrawlApiController::class, 'bulkRetryItems']);
             Route::post('/stay-crawls/items/bulk-reset-status', [StayCrawlApiController::class, 'bulkResetStatus']);
+
+            Route::middleware(\App\Http\Middleware\RequireSuperAdmin::class)->prefix('catalog')->group(function () {
+                Route::get('/', [CatalogAdminApiController::class, 'dashboard']);
+                Route::post('/discover', [CatalogAdminApiController::class, 'discover']);
+                Route::get('/discover/{id}', [CatalogAdminApiController::class, 'showDiscover'])->whereNumber('id');
+                Route::post('/discover/{id}/rerun', [CatalogAdminApiController::class, 'rerunDiscover'])->whereNumber('id');
+                Route::put('/discover/{id}/review', [CatalogAdminApiController::class, 'saveDiscoverReview'])->whereNumber('id');
+                Route::post('/discover/{id}/confirm', [CatalogAdminApiController::class, 'confirmDiscover'])->whereNumber('id');
+                Route::get('/rebuild', [CatalogAdminApiController::class, 'rebuildStats']);
+                Route::post('/rebuild', [CatalogAdminApiController::class, 'rebuild']);
+                Route::get('/areas', [CatalogAdminApiController::class, 'areas']);
+                Route::post('/areas', [CatalogAdminApiController::class, 'storeArea']);
+                Route::post('/areas/seed', [CatalogAdminApiController::class, 'seedAreas']);
+                Route::put('/areas/{id}', [CatalogAdminApiController::class, 'updateArea'])->whereNumber('id');
+                Route::get('/taxons', [CatalogAdminApiController::class, 'taxons']);
+                Route::put('/taxons/{id}', [CatalogAdminApiController::class, 'updateTaxon'])->whereNumber('id');
+                Route::get('/properties', [CatalogAdminApiController::class, 'properties']);
+                Route::get('/properties/{id}/delete-impact', [CatalogAdminApiController::class, 'propertyImpact'])->whereNumber('id');
+                Route::delete('/properties/{id}', [CatalogAdminApiController::class, 'destroyProperty'])->whereNumber('id');
+                Route::get('/bindings', [CatalogAdminApiController::class, 'bindings']);
+                Route::post('/bindings/{id}/sync', [CatalogAdminApiController::class, 'syncBinding'])->whereNumber('id');
+                Route::delete('/bindings/{id}', [CatalogAdminApiController::class, 'unbind'])->whereNumber('id');
+                Route::get('/service-categories/{id}/bindings', [CatalogAdminApiController::class, 'categoryBindings'])->whereNumber('id');
+                Route::post('/service-categories/{id}/bind-area', [CatalogAdminApiController::class, 'bindCategory'])->whereNumber('id');
+            });
             Route::get('/services/{id}/price-table', [PriceTableApiController::class, 'showService'])->whereNumber('id');
             Route::put('/services/{id}/price-table', [PriceTableApiController::class, 'updateService'])->whereNumber('id');
             Route::get('/services/{id}/price-quote', [PriceTableApiController::class, 'quoteService'])->whereNumber('id');
@@ -313,4 +346,13 @@ Route::prefix('v1/admin')->group(function () {
             Route::put('/listing-hubs/{hubKey}', [ListingHubApiController::class, 'update']);
         });
     });
+});
+
+Route::prefix('v1/catalog')->middleware([
+    \App\Http\Middleware\CatalogApiToken::class,
+    'throttle:'.max(10, (int) config('stay.catalog.api_rate_per_minute', 60)).',1',
+])->group(function () {
+    Route::get('/areas', [CatalogStayApiController::class, 'areas']);
+    Route::get('/stays', [CatalogStayApiController::class, 'index']);
+    Route::get('/stays/{id}', [CatalogStayApiController::class, 'show'])->whereNumber('id');
 });

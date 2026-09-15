@@ -143,6 +143,8 @@ class ServiceController extends Controller
 
     public function show(string $cluster, string $category, string $slug)
     {
+        $bust = $cluster === 'stay' ? $this->data->stayHtmlCacheStamp($slug, $cluster) : null;
+
         return $this->cachedHtmlResponse(function () use ($cluster, $category, $slug) {
             $this->assertCluster($cluster);
             $service = $this->data->service($slug, $cluster);
@@ -163,7 +165,7 @@ class ServiceController extends Controller
                 'related' => [],
                 'hub' => $this->data->serviceHub($cluster),
             ])->render();
-        });
+        }, [], false, $bust);
     }
 
     protected function stayPropertyTypes(): array

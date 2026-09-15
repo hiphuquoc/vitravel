@@ -50,4 +50,9 @@ class StayPlace extends Model
         return $this->belongsToMany(Service::class, 'stay_place_service')
             ->withPivot(['distance_meters', 'sort']);
     }
+
+    public function aliases(): HasMany
+    {
+        return $this->hasMany(StayPlaceAlias::class);
+    }
 }

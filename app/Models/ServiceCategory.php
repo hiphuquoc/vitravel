@@ -83,4 +83,9 @@ class ServiceCategory extends Model
     {
         return config("services_catalog.clusters.{$this->cluster}.hub_key");
     }
+
+    public function catalogBindings(): HasMany
+    {
+        return $this->hasMany(StayCategoryBinding::class);
+    }
 }

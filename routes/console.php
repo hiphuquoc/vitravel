@@ -12,3 +12,8 @@ Schedule::command('sitemap:generate')
     ->dailyAt('02:30')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/sitemap-generate.log'));
+
+Schedule::command('stay-catalog:drain-lists')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/stay-catalog-drain-lists.log'));

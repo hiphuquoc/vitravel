@@ -53,4 +53,9 @@ class StayAmenity extends Model
         return $this->belongsToMany(ServiceOption::class, 'stay_amenity_service_option')
             ->withPivot(['sort']);
     }
+
+    public function aliases(): HasMany
+    {
+        return $this->hasMany(StayAmenityAlias::class);
+    }
 }

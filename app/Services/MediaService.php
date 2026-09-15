@@ -37,6 +37,9 @@ class MediaService
         if ($code === null || $code === '') {
             return $folder;
         }
+        if (str_starts_with($folder, 'catalog/')) {
+            return $folder;
+        }
 
         $prefix = 'projects/'.$code;
         if ($folder === '' || $folder === $prefix || str_starts_with($folder, $prefix.'/')) {

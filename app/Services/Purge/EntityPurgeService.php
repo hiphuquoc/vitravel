@@ -93,11 +93,18 @@ final class EntityPurgeService
             foreach ($service->mediaAttachments as $attachment) {
                 $this->support->pushMediaId((int) ($attachment->media_id ?? 0), $mediaIds);
             }
-            $this->support->collectMediaIdsFromAttrs(is_array($service->attrs) ? $service->attrs : [], $mediaIds);
+            $keepCatalogMedia = (int) ($service->stay_property_id ?? 0) > 0
+                && Service::withoutGlobalScopes()
+                    ->where('stay_property_id', $service->stay_property_id)
+                    ->where('id', '!=', $service->id)
+                    ->exists();
+            if (! $keepCatalogMedia) {
+                $this->support->collectMediaIdsFromAttrs(is_array($service->attrs) ? $service->attrs : [], $mediaIds);
 
-            foreach ($service->options as $option) {
-                if ($option instanceof ServiceOption) {
-                    $this->support->collectMediaIdsFromAttrs(is_array($option->attrs) ? $option->attrs : [], $mediaIds);
+                foreach ($service->options as $option) {
+                    if ($option instanceof ServiceOption) {
+                        $this->support->collectMediaIdsFromAttrs(is_array($option->attrs) ? $option->attrs : [], $mediaIds);
+                    }
                 }
             }
 

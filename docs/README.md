@@ -53,6 +53,10 @@ autourasia-clone-docs/
 | `15-pricing.md` | **Bảng giá chi tiết** — đa chiều (ngày × tuỳ chọn × đối tượng khách × promo), quote booking-ready |
 | `16-accommodation-stays.md` | **Lưu trú** — UI, admin, AI, crawler Booking.com |
 | `17-stay-crawl-vps-aapanel.md` | **VPS aaPanel** — Node/Puppeteer/Chrome + `.env` (`STAY_CRAWL_CHROME`, path `/www/wwwroot/vitravel.net`) |
+| `17-hotel-map-engine-technical-spec.md` | **Map khách sạn** — Mapbox, tọa độ, identity nguồn |
+| [`18-stay-catalog-platform.md`](18-stay-catalog-platform.md) | **Catalog chỗ nghỉ dùng chung** — crawler/filter/rebuild ~10k, menu super_admin, phase giao việc (chưa code) |
+| [`decisions/ADR-001-stay-catalog-canonical.md`](decisions/ADR-001-stay-catalog-canonical.md) | **ADR** — canonical property + projection dự án con |
+| [`decisions/booking-filter-sidebar.md`](decisions/booking-filter-sidebar.md) | **Filter Booking** — cấu trúc sidebar, bung «Hiển thị thêm», chính sách lấy/bỏ nhóm |
 | `gcs-standard.md` | Chuẩn GCS đa dự án |
 | [`optimize/README.md`](optimize/README.md) | **Lighthouse / performance** — home, hotel detail/category, checklist code vs hạ tầng |
 

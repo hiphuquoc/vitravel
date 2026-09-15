@@ -463,6 +463,15 @@ final class StayCrawlApiController extends Controller
 
     public function fromCategory(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if (! $user || ! \App\Support\AdminAccess::isSuperAdmin($user)) {
+            return ApiResponse::error(
+                'Crawler danh mục đã chuyển sang Catalog chỗ nghỉ. Form danh mục không còn cào URL.',
+                'GONE',
+                410,
+            );
+        }
+
         @set_time_limit(480);
         try {
             $validated = $request->validate([

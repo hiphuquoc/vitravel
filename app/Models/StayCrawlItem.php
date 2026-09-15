@@ -28,6 +28,7 @@ class StayCrawlItem extends Model
 
     protected $fillable = [
         'project_id', 'job_id', 'source_url', 'canonical_url', 'list_url',
+        'source', 'source_hotel_key', 'booking_cc', 'stay_property_id',
         'status', 'http_status', 'blocked_reason', 'extractor_version',
         'raw_html', 'extracted_html', 'raw_json', 'ai_json', 'service_id',
         'error', 'crawled_at', 'ai_at', 'imported_at',
@@ -54,5 +55,10 @@ class StayCrawlItem extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function stayProperty(): BelongsTo
+    {
+        return $this->belongsTo(StayProperty::class, 'stay_property_id');
     }
 }

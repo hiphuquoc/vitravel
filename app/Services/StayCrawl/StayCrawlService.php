@@ -223,16 +223,30 @@ final class StayCrawlService
     public function queueHotelUrl(string $url, ?StayCrawlJob $job = null, ?string $listUrl = null): StayCrawlItem
     {
         $canonical = StayBookingUrl::canonicalize($url);
+        $identity = \App\Support\StayCatalog\StayIdentity::fromUrl($url);
         $projectId = $job?->project_id ?: ProjectContext::id();
+        $dedupe = (bool) config('stay.catalog.dedupe_crawl', true);
 
-        $item = DB::transaction(function () use ($canonical, $projectId, $url) {
-            $query = StayCrawlItem::query()->lockForUpdate();
-            if ($projectId) {
-                $query->where('project_id', $projectId);
+        $item = DB::transaction(function () use ($canonical, $projectId, $url, $identity, $dedupe) {
+            $query = StayCrawlItem::withoutGlobalScopes()->lockForUpdate();
+            $existing = null;
+            if ($dedupe && $identity['source_hotel_key']) {
+                $existing = (clone $query)->where('source_hotel_key', $identity['source_hotel_key'])->first();
             }
-
-            $existing = $query->where('canonical_url', $canonical)->first();
+            if (! $existing) {
+                $scoped = StayCrawlItem::query()->lockForUpdate();
+                if ($projectId) {
+                    $scoped->where('project_id', $projectId);
+                }
+                $existing = $scoped->where('canonical_url', $canonical)->first();
+            }
             if ($existing) {
+                if (! $existing->source_hotel_key && $identity['source_hotel_key']) {
+                    $existing->source = $identity['source'];
+                    $existing->source_hotel_key = $identity['source_hotel_key'];
+                    $existing->booking_cc = $identity['booking_cc'];
+                }
+
                 return $existing;
             }
 
@@ -240,6 +254,9 @@ final class StayCrawlService
                 'project_id' => $projectId,
                 'canonical_url' => $canonical,
                 'source_url' => $url,
+                'source' => $identity['source'],
+                'source_hotel_key' => $identity['source_hotel_key'],
+                'booking_cc' => $identity['booking_cc'],
                 'status' => StayCrawlItem::STATUS_QUEUED,
             ]);
         });
@@ -263,9 +280,21 @@ final class StayCrawlService
             }
 
             $service = $this->findExistingCrawledService($item, $canonical, $url, $projectId);
+            if (! $service && $identity['source_hotel_key']) {
+                $service = Service::withoutGlobalScopes()
+                    ->where('cluster', Service::CLUSTER_STAY)
+                    ->where(function ($q) use ($identity, $item): void {
+                        $q->where('attrs->crawl->source_hotel_key', $identity['source_hotel_key']);
+                        if ($item->stay_property_id) {
+                            $q->orWhere('stay_property_id', $item->stay_property_id);
+                        }
+                    })
+                    ->orderBy('id')
+                    ->first();
+            }
 
             if ($service) {
-                if (! $item->service_id) {
+                if (! $item->service_id && (int) $service->project_id === (int) $projectId) {
                     $item->service_id = $service->id;
                 }
 
@@ -278,6 +307,7 @@ final class StayCrawlService
                 }
 
                 $this->syncServiceCategory($service, (int) ($job->service_category_id ?: 0));
+                $this->attachCatalogOnQueue($job, $item, $service, $projectId);
             }
         } elseif ($listUrl) {
             $item->list_url = $listUrl;
@@ -362,6 +392,55 @@ final class StayCrawlService
         if (! $service->service_category_id) {
             $service->service_category_id = $catId;
             $service->saveQuietly();
+        }
+    }
+
+    private function attachCatalogOnQueue(
+        StayCrawlJob $job,
+        StayCrawlItem $item,
+        Service $service,
+        ?int $projectId,
+    ): void {
+        $taxonId = (int) data_get($job->meta, 'taxon_id', 0);
+        $property = null;
+        if ($service->stay_property_id) {
+            $property = \App\Models\StayProperty::query()->find($service->stay_property_id);
+        }
+        if (! $property) {
+            try {
+                $property = app(\App\Services\StayCatalog\StayPropertySyncService::class)->upsertFromService($service, $taxonId ?: null);
+            } catch (\Throwable) {
+                $property = null;
+            }
+        } elseif ($taxonId > 0) {
+            app(\App\Services\StayCatalog\StayPropertySyncService::class)->attachTaxon($property, $taxonId);
+        }
+        if ($property && ! $item->stay_property_id) {
+            $item->stay_property_id = $property->id;
+        }
+
+        $categoryId = (int) ($job->service_category_id ?: 0);
+        if ($property && $categoryId > 0 && $projectId && (int) $service->project_id !== (int) $projectId) {
+            $category = ServiceCategory::query()->find($categoryId);
+            if ($category) {
+                try {
+                    $projection = app(\App\Services\StayCatalog\StayCatalogProjectionService::class)
+                        ->ensureProjection($property, $category, $projectId);
+                    $this->syncServiceCategory($projection, $categoryId);
+                } catch (\Throwable) {
+                    // skip projection errors — crawl continue
+                }
+            }
+        }
+
+        $meta = is_array($job->meta) ? $job->meta : [];
+        if ($item->status === StayCrawlItem::STATUS_IMPORTED) {
+            $meta['skipped_existing'] = (int) ($meta['skipped_existing'] ?? 0) + 1;
+            if ($taxonId > 0) {
+                $meta['taxon_attached'] = (int) ($meta['taxon_attached'] ?? 0) + 1;
+            }
+            $job->meta = $meta;
+            $job->saveQuietly();
         }
     }
 

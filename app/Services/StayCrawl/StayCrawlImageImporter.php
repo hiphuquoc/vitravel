@@ -22,7 +22,7 @@ final class StayCrawlImageImporter
      * @param  list<mixed>  $photos
      * @return list<array{url: string, alt: string, media_id: int|null, source_url?: string}>
      */
-    public function importPhotos(array $photos, string $slug, string $role = 'gallery'): array
+    public function importPhotos(array $photos, string $slug, string $role = 'gallery', ?int $propertyId = null): array
     {
         $max = (int) config('stay.crawl.max_images', 120);
         $out = [];
@@ -49,10 +49,10 @@ final class StayCrawlImageImporter
             $index++;
             $media = null;
             if ($local !== '' && is_file($local) && filesize($local) >= 800) {
-                $media = $this->storeLocal($local, $slug, $role.'-'.$index, $alt);
+                $media = $this->storeLocal($local, $slug, $role.'-'.$index, $alt, $propertyId);
             }
             if ($media === null && $url !== '' && preg_match('#^https?://#i', $url)) {
-                $media = $this->storeOne($url, $slug, $role.'-'.$index, $alt);
+                $media = $this->storeOne($url, $slug, $role.'-'.$index, $alt, $propertyId);
             }
             $row = [
                 'url' => $media?->url('lg') ?: $url,
@@ -68,8 +68,13 @@ final class StayCrawlImageImporter
         return $out;
     }
 
-    private function resolveStorageFolder(string $role): string
+    private function resolveStorageFolder(string $role, ?int $propertyId = null): string
     {
+        if ($propertyId && $propertyId > 0) {
+            $kind = str_starts_with($role, 'cover') ? 'cover' : (str_starts_with($role, 'room') ? 'room' : 'gallery');
+
+            return 'catalog/stays/'.$propertyId.'/'.$kind;
+        }
         if (str_starts_with($role, 'cover')) {
             return (string) config('media.stays_crawler_cover', 'stays/crawler-cover');
         }
@@ -80,7 +85,7 @@ final class StayCrawlImageImporter
         return (string) config('media.stays_crawler_gallery', 'stays/crawler-gallery');
     }
 
-    private function storeLocal(string $path, string $slug, string $role, string $alt): ?Media
+    private function storeLocal(string $path, string $slug, string $role, string $alt, ?int $propertyId = null): ?Media
     {
         try {
             $mime = @mime_content_type($path) ?: 'image/jpeg';
@@ -97,7 +102,7 @@ final class StayCrawlImageImporter
             $upload = new UploadedFile($path, Str::slug($role).'.'.$ext, $mime, UPLOAD_ERR_OK, true);
             $media = $this->media->storeUploadedFile(
                 $upload,
-                $this->resolveStorageFolder($role),
+                $this->resolveStorageFolder($role, $propertyId),
                 null,
                 $slug,
                 $role,
@@ -113,7 +118,7 @@ final class StayCrawlImageImporter
         }
     }
 
-    private function storeOne(string $url, string $slug, string $role, string $alt): ?Media
+    private function storeOne(string $url, string $slug, string $role, string $alt, ?int $propertyId = null): ?Media
     {
         try {
             $response = Http::timeout(35)
@@ -150,7 +155,7 @@ final class StayCrawlImageImporter
                 $upload = new UploadedFile($tmp, Str::slug($role).'.'.$ext, $mime, UPLOAD_ERR_OK, true);
                 $media = $this->media->storeUploadedFile(
                     $upload,
-                    $this->resolveStorageFolder($role),
+                    $this->resolveStorageFolder($role, $propertyId),
                     null,
                     $slug,
                     $role,

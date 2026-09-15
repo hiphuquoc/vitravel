@@ -47,7 +47,7 @@ class Service extends Model
         'project_id', 'cluster', 'service_category_id', 'country_id', 'code',
         'price_from', 'currency', 'rating', 'review_count', 'star_rating',
         'is_featured', 'is_hot_deal', 'discount_badge', 'status', 'published_at',
-        'view_count', 'sort', 'attrs',
+        'view_count', 'sort', 'attrs', 'lat', 'lng', 'stay_property_id', 'stay_area_id',
     ];
 
     protected function casts(): array
@@ -63,6 +63,8 @@ class Service extends Model
             'view_count' => 'integer',
             'sort' => 'integer',
             'attrs' => 'array',
+            'lat' => 'float',
+            'lng' => 'float',
         ];
     }
 
@@ -135,5 +137,15 @@ class Service extends Model
         return $this->belongsToMany(StayPlace::class, 'stay_place_service')
             ->withPivot(['distance_meters', 'sort'])
             ->orderByPivot('sort');
+    }
+
+    public function stayProperty(): BelongsTo
+    {
+        return $this->belongsTo(StayProperty::class, 'stay_property_id');
+    }
+
+    public function stayArea(): BelongsTo
+    {
+        return $this->belongsTo(StayArea::class, 'stay_area_id');
     }
 }

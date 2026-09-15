@@ -395,6 +395,7 @@ Cùng shape public/admin: `title`, `content`, `star_rating`, `price_from`, `attr
 - [02-page-specs.md](02-page-specs.md) — hub dịch vụ
 - [14-ai-system-prompts.md](14-ai-system-prompts.md) — prompt enrich + crawl
 - [10-admin-console-api.md](10-admin-console-api.md) — API admin
+- [`18-stay-catalog-platform.md`](18-stay-catalog-platform.md) — **catalog API dùng chung**, tách crawler filter (review rồi mới tạo trang), tái xây ~10k chỗ nghỉ cũ, menu Catalog chỉ siêu quản trị. Vận hành crawler hotel/list hiện tại vẫn là file này.
 - `project/README.md` — key `services`
 
 

@@ -260,4 +260,24 @@ return [
             'password' => env('STAY_CRAWL_PROXY_PASS', env('PROXY_PASSWORD', '')),
         ],
     ],
+
+    /**
+     * Catalog chỗ nghỉ dùng chung (docs/18-stay-catalog-platform.md).
+     * listing overlay + API public: STAY_CATALOG_ENABLED / STAY_CATALOG_API_TOKEN.
+     */
+    'catalog' => [
+        'enabled' => (bool) env('STAY_CATALOG_ENABLED', false),
+        'dedupe_crawl' => filter_var(env('STAY_CATALOG_DEDUPE_CRAWL', true), FILTER_VALIDATE_BOOLEAN),
+        'api_token' => env('STAY_CATALOG_API_TOKEN', ''),
+        'improve_score_below' => (int) env('STAY_CATALOG_IMPROVE_BELOW', 70),
+        'improve_batch' => (int) env('STAY_CATALOG_IMPROVE_BATCH', 40),
+        'landmark_min_count' => (int) env('STAY_CATALOG_LANDMARK_MIN', 5),
+        /** Confirm discover: số list-crawl Chrome spawn cùng lúc (phần còn lại chờ drain). */
+        'list_spawn_max' => (int) env('STAY_CATALOG_LIST_SPAWN_MAX', 1),
+        'api_rate_per_minute' => (int) env('STAY_CATALOG_API_RATE', 60),
+        'facility_seo_labels' => [
+            'beachfront', 'bai bien', 'ho boi', 'pool', 'spa',
+            'gia dinh', 'family', 'tre em', 'sea view', 'nhin ra bien', 'view bien',
+        ],
+    ],
 ];

@@ -30,6 +30,8 @@ final class StayCrawlImporter
         private readonly SeoService $seo,
         private readonly ServicePurgeService $purger,
         private readonly StayTaxonomyService $taxonomy,
+        private readonly \App\Services\StayCatalog\StayPropertySyncService $properties,
+        private readonly \App\Services\StayCatalog\StayAreaResolver $areas,
     ) {}
 
     /**
@@ -56,6 +58,13 @@ final class StayCrawlImporter
         if (! $existing && $slug !== '') {
             $baseCode = 'bk-'.$slug;
             $existing = Service::query()->where('code', $baseCode)->first();
+        }
+        $identity = \App\Support\StayCatalog\StayIdentity::fromUrl((string) ($item->canonical_url ?: $item->source_url));
+        if (! $existing && $identity['source_hotel_key']) {
+            $existing = Service::query()
+                ->where('cluster', Service::CLUSTER_STAY)
+                ->where('attrs->crawl->source_hotel_key', $identity['source_hotel_key'])
+                ->first();
         }
         $code = $existing?->code ?: $this->uniqueCode('bk-'.($slug ?: Str::slug($title)), $categoryId);
         if ($existing) {
@@ -146,6 +155,8 @@ final class StayCrawlImporter
             $serviceAttrs = is_array($service->attrs) ? $service->attrs : [];
             $this->taxonomy->syncServiceTaxonomies($service, $serviceAttrs, $locale);
 
+            $this->syncCatalogLinks($service, $item, $locale);
+
             // Đồng bộ tiện ích phòng cho từng hạng phòng
             foreach ($service->options as $opt) {
                 $optAttrs = is_array($opt->attrs) ? $opt->attrs : [];
@@ -173,6 +184,9 @@ final class StayCrawlImporter
         $crawl['source_url'] = $item->source_url;
         $crawl['canonical_url'] = $item->canonical_url;
         $crawl['source'] = $crawl['source'] ?? 'booking.com';
+        $identity = \App\Support\StayCatalog\StayIdentity::fromUrl((string) ($item->canonical_url ?: $item->source_url));
+        $crawl['source_hotel_key'] = $identity['source_hotel_key'] ?: ($item->source_hotel_key ?? ($crawl['source_hotel_key'] ?? null));
+        $crawl['booking_cc'] = $identity['booking_cc'] ?: ($item->booking_cc ?? ($crawl['booking_cc'] ?? null));
         $crawl['item_id'] = $item->id;
         $crawl['job_id'] = $item->job_id;
         $crawl['crawled_at'] = optional($item->crawled_at)->toIso8601String();
@@ -235,6 +249,8 @@ final class StayCrawlImporter
             'star_rating' => $row['star_rating'] ?? $existing?->star_rating,
             'status' => $existing?->status ?? 'published',
             'attrs' => $row['attrs'] ?? [],
+            'lat' => is_numeric($row['attrs']['lat'] ?? null) ? $row['attrs']['lat'] : $existing?->lat,
+            'lng' => is_numeric($row['attrs']['lng'] ?? null) ? $row['attrs']['lng'] : $existing?->lng,
         ];
     }
 
@@ -536,6 +552,39 @@ final class StayCrawlImporter
         $option->code = $code;
 
         return $option;
+    }
+
+    private function syncCatalogLinks(Service $service, StayCrawlItem $item, string $locale): void
+    {
+        $attrs = is_array($service->attrs) ? $service->attrs : [];
+        $crawl = is_array($attrs['crawl'] ?? null) ? $attrs['crawl'] : [];
+        $lat = is_numeric($service->lat) ? (float) $service->lat : (is_numeric($attrs['lat'] ?? null) ? (float) $attrs['lat'] : null);
+        $lng = is_numeric($service->lng) ? (float) $service->lng : (is_numeric($attrs['lng'] ?? null) ? (float) $attrs['lng'] : null);
+        $area = $this->areas->resolve(
+            (string) ($attrs['address'] ?? ''),
+            isset($crawl['dest_id']) ? (string) $crawl['dest_id'] : null,
+            $lat,
+            $lng,
+            $crawl['booking_cc'] ?? $item->booking_cc,
+        );
+        if ($area && ! $service->stay_area_id) {
+            $service->stay_area_id = $area->id;
+            $service->saveQuietly();
+        }
+
+        $taxonId = (int) data_get($item->job?->meta, 'taxon_id', 0);
+        $property = $this->properties->upsertFromService($service->loadMissing(['options', 'translations']), $taxonId ?: null);
+        if ($property) {
+            $item->stay_property_id = $property->id;
+            $item->source_hotel_key = $item->source_hotel_key ?: $property->source_hotel_key;
+            $item->booking_cc = $item->booking_cc ?: $property->booking_cc;
+            $item->source = $item->source ?: $property->source;
+            $item->saveQuietly();
+            if ((int) $service->stay_property_id !== (int) $property->id) {
+                $service->stay_property_id = $property->id;
+                $service->saveQuietly();
+            }
+        }
     }
 
     private function uniqueCode(string $base, ?int $categoryId = null): string

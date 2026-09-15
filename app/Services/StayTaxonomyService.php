@@ -8,9 +8,12 @@ use App\Models\Language;
 use App\Models\Service;
 use App\Models\ServiceOption;
 use App\Models\StayAmenity;
+use App\Models\StayAmenityAlias;
 use App\Models\StayAmenityTranslation;
 use App\Models\StayPlace;
+use App\Models\StayPlaceAlias;
 use App\Models\StayPlaceTranslation;
+use App\Support\StayCatalog\StayText;
 use App\Support\StayDistance;
 use App\Support\StayFacilities;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +64,25 @@ final class StayTaxonomyService
             throw new \RuntimeException("Language '{$locale}' not found");
         }
 
+        $fold = StayText::foldAmenity($name);
+        if ($fold !== '') {
+            $alias = StayAmenityAlias::query()->where('normalized', $fold)->first();
+            if ($alias) {
+                $amenity = $alias->amenity;
+                if ($amenity) {
+                    $this->amenityCache[$cacheKey] = $amenity->id;
+                    if ($amenity->group_key === 'general' && $groupKey !== 'general') {
+                        $amenity->update(['group_key' => $groupKey]);
+                    }
+                    if ($isHighlight && ! $amenity->is_highlight) {
+                        $amenity->update(['is_highlight' => true]);
+                    }
+
+                    return $amenity;
+                }
+            }
+        }
+
         // Tìm kiếm case-insensitive bằng LOWER()
         $existing = StayAmenityTranslation::query()
             ->where('language_id', $langId)
@@ -77,6 +99,12 @@ final class StayTaxonomyService
                 $amenity->update(['is_highlight' => true]);
             }
             $this->amenityCache[$cacheKey] = $amenity->id;
+            if ($fold !== '') {
+                StayAmenityAlias::query()->firstOrCreate(
+                    ['normalized' => $fold],
+                    ['stay_amenity_id' => $amenity->id, 'alias' => $name],
+                );
+            }
 
             return $amenity;
         }
@@ -95,6 +123,12 @@ final class StayTaxonomyService
             'name' => $name,
             'slug' => Str::slug($name) ?: Str::slug(Str::ascii($name)) ?: null,
         ]);
+        if ($fold !== '') {
+            StayAmenityAlias::query()->firstOrCreate(
+                ['normalized' => $fold],
+                ['stay_amenity_id' => $amenity->id, 'alias' => $name],
+            );
+        }
 
         $this->amenityCache[$cacheKey] = $amenity->id;
 
@@ -127,6 +161,16 @@ final class StayTaxonomyService
             throw new \RuntimeException("Language '{$locale}' not found");
         }
 
+        $fold = StayText::fold($name);
+        if ($fold !== '') {
+            $alias = StayPlaceAlias::query()->where('normalized', $fold)->first();
+            if ($alias?->place) {
+                $this->placeCache[$cacheKey] = $alias->place->id;
+
+                return $alias->place;
+            }
+        }
+
         $existing = StayPlaceTranslation::query()
             ->where('language_id', $langId)
             ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
@@ -155,6 +199,12 @@ final class StayTaxonomyService
             'name' => $name,
             'slug' => Str::slug($name) ?: Str::slug(Str::ascii($name)) ?: null,
         ]);
+        if ($fold !== '') {
+            StayPlaceAlias::query()->firstOrCreate(
+                ['normalized' => $fold],
+                ['stay_place_id' => $place->id, 'alias' => $name],
+            );
+        }
 
         $this->placeCache[$cacheKey] = $place->id;
 

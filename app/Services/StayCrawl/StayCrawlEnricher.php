@@ -236,7 +236,12 @@ final class StayCrawlEnricher
         }
 
         try {
-            $imported = $this->images->importPhotos($photos, $this->mediaSlug($service), 'gallery');
+            $imported = $this->images->importPhotos(
+                $photos,
+                $this->mediaSlug($service),
+                'gallery',
+                $service->stay_property_id ? (int) $service->stay_property_id : null,
+            );
         } finally {
             $this->browser->cleanupImagesDir($imagesDir);
         }
@@ -460,6 +465,7 @@ final class StayCrawlEnricher
                     $photos,
                     $this->mediaSlug($service).'-room-'.($index + 1),
                     'room',
+                    $service->stay_property_id ? (int) $service->stay_property_id : null,
                 );
                 if ($imported !== []) {
                     $usable = array_values(array_filter(

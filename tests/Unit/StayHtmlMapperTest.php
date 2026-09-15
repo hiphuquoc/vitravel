@@ -22,6 +22,11 @@ class StayHtmlMapperTest extends TestCase
         $this->assertSame(7.2, $fields['rating']);
         $this->assertSame(93, $fields['review_count']);
         $this->assertSame('resort', $fields['attrs']['property_type']);
+        $this->assertSame('vn:la-nube-residence-phu-quoc12', $fields['attrs']['crawl']['source_hotel_key'] ?? null);
+        $this->assertSame('vn', $fields['attrs']['crawl']['booking_cc'] ?? null);
+        $this->assertArrayHasKey('geo', $fields['attrs']);
+        $this->assertArrayHasKey('completeness', $fields['attrs']);
+        $this->assertContains('resort', $fields['attrs']['property_types'] ?? []);
         $this->assertStringContainsString('Dương Tơ', (string) $fields['attrs']['address']);
         $this->assertStringNotContainsString('Sau khi đặt phòng', (string) $fields['attrs']['address']);
         $this->assertEqualsWithDelta(10.1834, $fields['attrs']['lat'], 0.001);

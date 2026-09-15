@@ -103,6 +103,10 @@ return [
 
         'ai.use' => 'Dùng AI dịch / xây dựng nội dung',
         'ai.manage' => 'Quản lý prompt AI hệ thống + xem usage',
+
+        'stays.catalog.view' => 'Xem catalog chỗ nghỉ (chỉ siêu quản trị)',
+        'stays.catalog.manage' => 'Sửa catalog / bind / tái xây (chỉ siêu quản trị)',
+        'stays.catalog.crawl' => 'Cào catalog (discover/confirm) (chỉ siêu quản trị)',
     ],
 
     /*
@@ -205,6 +209,7 @@ return [
         'ai' => 'ai',
         'meta' => 'dashboard',
         'users' => 'users',
+        'catalog' => 'stays.catalog',
         'price-guest-types' => 'packages',
     ],
 
@@ -245,6 +250,17 @@ return [
         'POST users' => 'users.manage',
         'PUT users' => 'users.manage',
         'DELETE users' => 'users.manage',
+
+        'GET stay-areas' => 'service_categories.view',
+        'GET stay-taxons' => 'service_categories.view',
+        'POST service-category-bindings' => 'service_categories.update',
+        'DELETE service-category-bindings' => 'service_categories.update',
+
+        'GET catalog' => 'stays.catalog.view',
+        'POST catalog' => 'stays.catalog.crawl',
+        'PUT catalog' => 'stays.catalog.manage',
+        'PATCH catalog' => 'stays.catalog.manage',
+        'DELETE catalog' => 'stays.catalog.manage',
     ],
 
     /*
@@ -276,6 +292,7 @@ return [
         '/settings/ai-prompts' => 'ai.manage',
         '/settings/media' => 'media.view',
         '/settings/users' => 'users.view',
+        '/catalog' => 'stays.catalog.view',
         '/account' => null, // always
     ],
 ];
