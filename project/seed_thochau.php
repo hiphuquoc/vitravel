@@ -81,9 +81,15 @@ $__thochauSeed = array(
         'cluster_units' => array('stay' => 'per_room'),
         'periods' => array(
             array('kind' => 'year', 'label' => 'Giá năm {year}', 'is_promo' => false, 'priority' => 0),
+            // Mùa biển êm Nov–Apr phải tách 2 range cùng năm lịch (không được 11-01 → 04-30 cùng {year})
             array(
-                'kind' => 'range', 'label' => 'Ưu đãi mùa biển êm {year}',
-                'starts_on' => '{year}-11-01', 'ends_on' => '{year}-04-30',
+                'kind' => 'range', 'label' => 'Ưu đãi mùa biển êm — cuối năm {year}',
+                'starts_on' => '{year}-11-01', 'ends_on' => '{year}-12-31',
+                'is_promo' => true, 'priority' => 10, 'amount_multiplier' => 0.92,
+            ),
+            array(
+                'kind' => 'range', 'label' => 'Ưu đãi mùa biển êm — đầu năm {year}',
+                'starts_on' => '{year}-01-01', 'ends_on' => '{year}-04-30',
                 'is_promo' => true, 'priority' => 10, 'amount_multiplier' => 0.92,
             ),
         ),
