@@ -20,6 +20,8 @@ php artisan project:seed phuquy --domain=phuquy.dev --domain=phuquy.net --name="
 php artisan project:seed phuquoc --domain=phuquocangiang.dev --domain=phuquocangiang.com --name="Đảo Phú Quốc"
 # culaocham.net: culaocham.dev (local) + culaocham.net (prod)
 php artisan project:seed culaocham --domain=culaocham.dev --domain=culaocham.net --name="culaocham.net"
+# thochau.net: thochau.dev (local) + thochau.net (prod) — Đảo Thổ Châu (An Giang)
+php artisan project:seed thochau --domain=thochau.dev --domain=thochau.net --name="thochau.net"
 # Đà Lạt: hidalat.dev (local) + hidalat.com (prod) + hidalat.vn
 php artisan project:seed hidalat --domain=hidalat.dev --domain=hidalat.com --domain=hidalat.vn --name="Hi Đà Lạt"
 # Cần Thơ: hicantho.dev (local) + hicantho.com (prod)
@@ -51,6 +53,7 @@ php artisan project:seed hihagiang --fresh-project --domain=hihagiang.dev --name
 | `phuquy` | `project/seed_phuquy.php` | `phuquy.dev` / `phuquy.net` |
 | `phuquoc` | `project/seed_phuquoc.php` | `phuquocangiang.dev` / `phuquocangiang.com` |
 | `culaocham` | `project/seed_culaocham.php` | `culaocham.dev` / `culaocham.net` |
+| `thochau` | `project/seed_thochau.php` | `thochau.dev` / `thochau.net` |
 | `hidalat` | `project/seed_hidalat.php` | `hidalat.dev` / `hidalat.com` / `hidalat.vn` |
 | `hicantho` | `project/seed_hicantho.php` | `hicantho.dev` / `hicantho.com` |
 | `hihagiang` | `project/seed_hihagiang.php` | `hihagiang.dev` / `hihagiang.com` / `hihagiang.vn` |
@@ -78,6 +81,7 @@ project/
   seed_phuquy.php           ← đảo Phú Quý (Bình Thuận): phuquy.dev / phuquy.net
   seed_phuquoc.php          ← đảo Phú Quốc (An Giang): phuquocangiang.dev / phuquocangiang.com — Đảo Phú Quốc
   seed_culaocham.php        ← Cù Lao Chàm (Quảng Nam): culaocham.dev / culaocham.net
+  seed_thochau.php          ← Đảo Thổ Châu (An Giang): thochau.dev / thochau.net
   seed_hidalat.php         ← Đà Lạt (Lâm Đồng): hidalat.dev / hidalat.com — Hi Đà Lạt
   seed_hicantho.php        ← Cần Thơ (ĐBSCL): hicantho.dev / hicantho.com — Hi Cần Thơ
   seed_hihagiang.php       ← Hà Giang (cao nguyên đá): hihagiang.dev / hihagiang.vn — Hi Hà Giang
