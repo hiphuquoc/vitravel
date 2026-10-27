@@ -34,6 +34,8 @@ php artisan project:seed himuine --domain=himuine.dev --domain=himuine.com --nam
 php artisan project:seed hitamdao --domain=hitamdao.dev --domain=hitamdao.com --name="Hi Tam Đảo"
 # Sa Pa: hisapa.dev (local) + hisapa.vn (prod)
 php artisan project:seed hisapa --domain=hisapa.dev --domain=hisapa.vn --name="Hi Sa Pa"
+# Rạch Giá: hirachgia.dev (local) + hirachgia.com (prod)
+php artisan project:seed hirachgia --domain=hirachgia.dev --domain=hirachgia.com --name="Hi Rạch Giá"
 
 # Chỉ seed lại cụm tour — XÓA SẠCH chủ đề/danh mục/SEO/chi tiết tour rồi tạo lại (không đụng bài viết/home/services/cruises)
 php artisan project:seed hidalat --only=tours
@@ -56,6 +58,7 @@ php artisan project:seed hihagiang --fresh-project --domain=hihagiang.dev --name
 | `himuine` | `project/seed_himuine.php` | `himuine.dev` / `himuine.com` |
 | `hitamdao` | `project/seed_hitamdao.php` | `hitamdao.dev` / `hitamdao.com` |
 | `hisapa` | `project/seed_hisapa.php` | `hisapa.dev` / `hisapa.vn` |
+| `hirachgia` | `project/seed_hirachgia.php` | `hirachgia.dev` / `hirachgia.com` |
 
 Tuỳ chọn `meta.primary_domain` / `meta.domains` → bảng `project_domains`.
 
@@ -82,6 +85,7 @@ project/
   seed_himuine.php         ← Mũi Né (Bình Thuận): himuine.dev / himuine.com — Hi Mũi Né
   seed_hitamdao.php        ← Tam Đảo (Vĩnh Phúc): hitamdao.dev / hitamdao.com — Hi Tam Đảo
   seed_hisapa.php          ← Sa Pa (Lào Cai): hisapa.dev / hisapa.vn — Hi Sa Pa
+  seed_hirachgia.php       ← Rạch Giá (Kiên Giang): hirachgia.dev / hirachgia.com — Hi Rạch Giá
 ```
 
 **Dự án mới:** copy `seed_*.php`, sửa `meta` / `company` / catalogue / tours…; dev: thêm file rồi `migrate:fresh --seed` hoặc `project:seed {ten}`.
